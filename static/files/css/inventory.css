@@ -235,8 +235,15 @@
   background-position: 18px 7px;
   display: block;
 }
+
 .inv-create-po {
   background: url(../inventory/icons/Addpo.png) no-repeat left;
+  background-size: 30px 30px;
+  background-position: 18px 7px;
+  display: block;
+}
+.inv-create-ir{
+  background: url(../inventory/icons/ir_icon.png) no-repeat left;
   background-size: 30px 30px;
   background-position: 18px 7px;
   display: block;
@@ -428,7 +435,15 @@
   border-bottom: 1px solid #c4c4c4;
   font-family: AvenirLTStd !important;
 }
-
+.conf-btn{
+  margin-left: 10px;
+    
+    border-radius: 3px;
+    cursor: pointer;
+    color: #2d4e85;
+    padding: 5px;
+    border: 1px solid #2d4e85;
+}
 
 .inv-table th {
   color: #333333;
@@ -442,7 +457,16 @@
   padding: 10px;
   font-family: AvenirLTStd !important;
 }
-
+.cancel-button{
+  background: #fff 0% 0% no-repeat padding-box;
+    box-shadow: 0px 3px 6px #0000003d;
+    opacity: 1;
+    color: #2c4c82;
+    border: 1px solid #2c4c82;
+    border-radius: 3px;
+    padding: 4px 40px 4px 40px;
+    margin: 3px;
+}
 .inv-green-border {
   border-left: 5px solid #10a82f;
 }
@@ -798,6 +822,13 @@ display: flex;
   color: #0085C9;
   opacity: 1;
   font-weight: 600;
+}
+.inv-input-container input{
+    outline:none ;
+}
+.search-input-text{
+  padding:6px;
+  cursor: pointer;
 }
 .inv-sidedrawer{
   height: 100%;

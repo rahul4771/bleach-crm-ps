@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load mathfilters %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+<div class="wrapper"><!--wrapper-->
+    {% include "inventory/common/header.html" %}
+    <section class="content">
+        <div class="container-fluid space topspace">
+            <div class="welcome-wrapper">
+                <!--welcome-wrapper-->
+                <h1 class="dashboard-head av-font">{{request_order.request_order_id}}</h1>
+                <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
+            </div>
+        </div>
+
+        <div class="main-content-holder"><!--main-content-holder-->   
+            <div class="white-wrapper white-wrapper-padding">
+                
+                <div class="row mt-10">
+                   <div class="col-md-4">
+                    <div class="row c-mb-3 ">
+                        <div class="col-xs-5  inv-section-in">Initiated date</div>
+                        <div class="col-xs-7   ">: <span class="inv-section-in">{{request_order.created|date:'d-m-Y'}}</span></div>
+                      </div>
+                      <div class="row mt-10 ">
+                        <div class="col-xs-5  inv-section-in">Initiated by</div>
+                        <div class="col-xs-7   ">: <span class="inv-section-in">{{request_order.requested_by.name}}</span></div>
+                      </div>
+                   </div>
+                </div>
+                <div class="mt-20">                    
+                    {% if request_order.is_received == False %}
+                    <table id="id_table_common" class="inv-table footable" style="border-top:1px solid #c4c4c4; margin-top: -2px; z-index: 10 !important;"> 
+                        <thead>
+                            <tr>
+                                
+                                <th style="width: %;">
+                                    Product ID
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                    Product Name
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                    Category
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %;" class="text-left">
+                                    Product Type
+                                </th>
+                                <th  data-hide="phone,tablet"  style="width: %;" class="text-left">
+                                    Quantity
+                                </th>
+                                <th>
+                                    Status
+                                </th>
+    
+                            </tr>
+                        </thead>
+                     <tbody>
+                      
+                        {% for item in request_order_items %}
+                        <tr>
+                            
+                            <td>
+                                {% if item.product.item_add_type == 'quantity' %}{{item.product.item_code}}{% elif item.product.item_add_type == 'unit' %}{{item.product_unit.unit_code}}{% endif %}
+                            </td>
+                            <td class="text-center">
+                              {{item.product.name}}
+                            </td>
+                            <td class="text-center">
+                                {{item.product.item_category.name}}
+                            </td>
+                            <td class="text-left">
+                                {{item.item_count}} {{item.product.measuring_unit}}
+                            </td>
+                            <td class="text-left">
+                                {% if item.product.item_add_type == 'quantity' %}{{item.item_count}} {{item.product.measuring_unit}}{% elif item.product.item_add_type == 'unit' %}{{item.product_unit.unit_serial_number}}{% endif %}
+                            </td>
+                            <td>
+                                {% if item.status   == 'Out Of Stock' %}
+                                <span class="inv-dot c-out-of-order ml-5"></span>Out Of Stock
+                                {% elif item.status == 'Available' %}
+                                <span class="inv-dot c-active ml-5"></span>Available
+                                {% elif item.status == 'About to Finish' %}
+                                <span class="inv-dot c-about-finish ml-5"></span>About to Finish
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+        
+                      
+                     </tbody>
+    
+                    </table>
+                    {% endif %}
+                    </div>
+                </div>
+                
+
+                <input type="hidden" name="status" id="id_shipment_status" >
+                <div class="d-flex justify-center mt-20 mb-20">
+                    <button class="sent-button" type="button" onclick="changeSelect('approved')" ><i class="far fa-check-circle inv-mr-5"></i>Approve</button>
+                    <button class="view-button  ml-10" type="button" onclick="changeSelect('rejected')" ><i class="fas fa-ban inv-mr-5"></i>Reject</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+</div>
+
+
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+function changeSelect(va){
+    $('#id_shipment_status').val(va);
+    set_params_go();
+}
+
+function set_params_go(args)
+    {
+    var url='{% url 'bleach-inventory:inventory-requestorderapproval' request_order.id %}';
+    var params={shipment_status:$('#id_shipment_status').val()
+    };
+    for(key in args) 
+        params[key]=args[key];
+    var query='';
+    for(key in params)
+        if(params[key]) 
+            query+='&'+key+'='+params[key].toString();
+    query=query.replace('&','?');
+    window.location.href=url+query;  
+    }
+</script>
+{% endblock %}

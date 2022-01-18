@@ -12,7 +12,7 @@ from bleachadmin.models import ServicePriceRange,Settings
 from django.core.mail import send_mail,EmailMultiAlternatives
 from Api.serializers import DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
-from bleachinventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,CheckOutItemUnits,ItemHistory,InventoryAccessory,InventoryFinshedItem
+from bleachinventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,CheckOutItemUnits,ItemHistory,InventoryAccessory,InventoryFinshedItem,ExternalCustomer
 import re
 import random
 import string
@@ -4127,5 +4127,45 @@ class InventoryFinshedItemView(APIView):
 			InventoryFinshedItem.objects.filter(id=id).delete()
 
 			response_dict['success'] = True
+
+		return Response(response_dict, HTTP_200_OK)
+
+
+
+class ExternalCustomersView(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request):
+		response_dict = {'success':False}	
+		
+		try:
+			external_customers   = ExternalCustomer.objects.filter(status=True).values('id','name')
+		except:
+			external_customers   = []
+
+		print(external_customers,"excs")
+		response_dict['external_customers'] = list(external_customers)
+		response_dict['success']            = True
+
+		return Response(response_dict, HTTP_200_OK)
+
+
+class ItemUnitsProduct(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request):
+		response_dict = {'success':False}	
+		
+		product_id  = request.GET.get('product_id')
+
+		item_units_array = []
+		item_units       = ItemUnit.objects.filter(item__id=product_id,status='available')
+		for item in item_units:
+			item_units_array.append({'id':item.id,'unit_code':item.unit_serial_number})
+		
+		response_dict['item_units'] = item_units_array
+		response_dict['success']    = True
 
 		return Response(response_dict, HTTP_200_OK)

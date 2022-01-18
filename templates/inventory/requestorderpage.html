@@ -9,6 +9,7 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="./style.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title>Bleach Cleaning Services </title>
     <style>
       .sos-logo{
@@ -130,7 +131,7 @@ padding: 20px;
         </div>
         :
         <div class="w-50 ml-10 ">
-            00000000000
+            {{request_order.request_order_id}}
         </div> 
   </div>
   <div class="d-flex w-100 sos-details mt-5">
@@ -139,7 +140,7 @@ padding: 20px;
     </div>
     :
     <div class="w-50 ml-10">
-        00/00/0000
+        {{request_order.created|date:'d/m/Y'}}
     </div> 
 </div>
 <div class="d-flex w-100 sos-details mt-5">
@@ -148,7 +149,7 @@ padding: 20px;
   </div>
   :
   <div class="w-50 ml-10">
-    Name
+    {{request_order.requested_by.name}}
   </div> 
 </div>
 <div class="d-flex w-100 sos-details mt-5">
@@ -157,7 +158,7 @@ padding: 20px;
   </div>
   :
   <div class="w-50 ml-10 ">
-    Name
+    {{request_order.received_by.name}}
   </div> 
 </div>
 <div class="d-flex w-100 sos-details mt-5">
@@ -166,7 +167,7 @@ padding: 20px;
     </div>
     :
     <div class="w-50 ml-10 ">
-        type
+        {{request_order.purpose}}
     </div> 
   </div>
 <!-- <div class="d-flex w-100 sos-details mt-5">
@@ -201,31 +202,19 @@ padding: 20px;
         <th> Quantity</th>
       </tr>
       
-      {% for item in check_out_items%}
+      {% for item in request_order.request_order_items %}
       <tr class="sos-table-row">
         <td>
           {{forloop.counter}}
         </td>
         <td>
-          {% if item.service_item %}{{item.service_item.item.name}}{% else %}{{item.item.name}}{% endif %}
+          {{item.product.name}}
         </td>
         <td>
-          {% if item.service_item %}{{item.service_item.item.item_code}}{% else %}{{item.item.item_code}}{% endif %}
+          {% if item.product.item_add_type == 'quantity' %}{{item.product.item_code}}{% elif item.product.item_add_type == 'unit' %}{{item.product_unit.unit_code}}{% endif %}
         </td>
         <td>
-          {% if item.service_item %}
-            {% if item.service_item.item.item_add_type == 'quantity' %} 
-              {{item.units}} {{item.service_item.item.measuring_unit}} (S)
-            {% else %}
-              {{item.units}} unit(S)
-            {% endif %}
-          {% else %}
-            {% if item.item.item_add_type == 'quantity' %} 
-              {{item.units}} {{item.item.measuring_unit}} (S)
-            {% else %}
-              {{item.units}} unit(S)
-            {% endif %}
-          {% endif %}
+          {{item.item_count}} {{item.product.measuring_unit}}
         </td>
       </tr>
       {% endfor %}
@@ -275,6 +264,30 @@ padding: 20px;
     </div>
   </div>
    </div>
+
+   <div style="background: none !important; box-shadow: none !important;" id="container">
+
+    <div class="right-statement">
+      
+  
+     
+      <br>
+      <div style="text-align: center;">
+        <a href="/customer/requestorder/download/{{request_order.id}}"><button class="soa-button" style="background: #289cac;
+          color: #ffffff;
+          outline: none;
+          border: none;
+          padding: 5px 10px 5px 10px;
+          border-radius: 5px;
+          margin-top:50px
+          " > <i class="fas fa-download"></i> Download</button></a>
+      </div> 
+       
+     
+    </div>
+
+
+    </div>
 
     <!-- Optional JavaScript; choose one of the two! -->
 

@@ -271,9 +271,26 @@
                                      
                                      <br>
                                      <div class="inv-item-amount2">
-                                         {% if inventory_item.item_add_type == 'unit' %}{{inventory_item.unit_count}}{% else %}{{inventory_item.total_quantity|floatformat:3}}{% endif %} <span style="font-size: 16px;"> {% if inventory_item.item_add_type == 'unit' %}Unit{% else %}{{inventory_item.measuring_unit}}{% endif %} </span>                    
+                                         {% if inventory_item.item_add_type == 'unit' %}{{inventory_item.unit_count}}{% else %}{{inventory_item.total_quantity|floatformat:3}}{% endif %} <span style="font-size: 16px;" id="unit_data"> {% if inventory_item.item_add_type == 'unit' %}Unit{% else %}{{inventory_item.measuring_unit}}{% endif %} </span>                    
                                      </div>
+
                                  </div>
+
+                    <input type="hidden" name="item_id" value="{{inventory_item.id}}" id="item_id">
+                    
+                    {% if inventory_item.item_add_type == 'quantity' %}
+                    <div id="unit_edit_data" style="display: none;">
+                    <div class="model-input-name ">Select Unit</div>
+                   
+                    <select  name="item_unit_data" id="unit_select" class="minimal av-font inv-hide" required="required" >
+                        <option value="L" {% if inventory_item.measuring_unit == 'L' %} selected {% endif %}>L</option>
+                        <option value="kg" {% if inventory_item.measuring_unit == 'kg' %} selected {% endif %}>kg</option>
+                        <option value="piece" {% if inventory_item.measuring_unit == 'piece' %} selected {% endif %}>piece</option>
+                        <option value="pack" {% if inventory_item.measuring_unit == 'pack' %} selected {% endif %}>pack</option>
+                    </select>
+                    </div>
+                    {% endif %}
+
                                 </div>
                             </div>           
                          </div>
@@ -627,7 +644,7 @@
                                         <td>{{history.added_by.name|default_if_none:'-'}}</td>
                                         <td>{{history.item_action}}</td>
                                         <td>{{history.item_remark|default_if_none:'-'}}</td>
-                                        {% if history.item_action == 'PURCHASE ORDER' or history.item_action == 'STOCK IN' %}
+                                        {% if history.item_action == 'PURCHASE ORDER' or history.item_action == 'STOCK IN' or history.item_action == 'ITEM RETURN' %}
                                         <td style="color:green"><i class="fa fa-plus" aria-hidden="true"></i> {{history.quantity|floatformat:2}}</td>
                                         {% else %}
                                         <td style="color:red"><i class="fa fa-minus" aria-hidden="true"></i> {{history.quantity|floatformat:2}}</td>
@@ -797,11 +814,14 @@
             {% if inventory_item.item_add_type == 'unit' %}
             <input type="hidden" name="action" value="add_unit" id="unit_action" >
             {% else %}
-            <input type="hidden" name="action" value="add_quantity" >
+            <input type="hidden" name="action" value="add_quantity" id="quantity_action">
             {% endif %}
 
             <input type="hidden" name="store" id="id_pro_sel" value="" />
+            <input type="hidden" name="externaluser" id="id_user_sel" value="" />
             <input type="hidden" name="edit_unit_id" id="id_unit_edit" >
+            
+            {% if inventory_item.item_type == 'RAW MATERIALS' or inventory_item.item_type == 'ASSETS' %}
             <div class="row mt-20">
                 <div class="col-md-12 " id="id_add_method">
                     <div class="model-input-name">Select add method</div>
@@ -811,6 +831,7 @@
                         <ul class="drop">
                             <li onclick="chooseaddmethod('po')"><a>Add By PO</a></li>
                             <li onclick="chooseaddmethod('man')"><a> Manual </a></li> 
+                            <li onclick="chooseaddmethod('itr')"><a> Item Return </a></li> 
                             
 
                         </ul>
@@ -818,6 +839,9 @@
                 </div>
 
             </div>
+            
+            {% endif %}
+            
             <div id="id_po">
                 <div class="row mt-20">
                     <div class="col-md-12 ">
@@ -838,7 +862,59 @@
     
                 <hr> 
             </div>
-           <div id="id_man">
+
+           
+            <div id="id_itr">
+                <div class="row mt-20">
+                    <div class="col-md-12 ">
+                        <div class="model-input-name required-field">User</div>
+
+                        <div style="position: relative;">
+                            <div class="inv-input-container inv-border h-30">
+                                <input autocomplete="off" onclick="ExternalUserListShow()" type="text" id="user-name" name="user_name" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showExternalUsers()" required>
+                            </div>
+                            <div id="id_search2" class="row inv-result-box" style="display: none;">
+                            
+                            </div>
+                        </div>
+                    </div>
+    
+                </div>
+
+                {% if inventory_item.item_add_type == 'unit' %}
+                <div class="row mt-20">
+                    <div class="col-md-12 ">
+                        <div class="model-input-name required-field">Unit</div>
+
+                        <select name="return_unit" class="minimal av-font " required>
+                            <option value="">--Select Unit</option>
+                            {% for unit in unavailable_units %}
+                                <option value="{{unit.id}}">{{unit.unit_code}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+    
+                </div>
+                {% endif %}
+
+                {% if inventory_item.item_add_type == 'quantity' %}
+                <div class="row mt-20">
+                    <div class="col-md-12 ">
+                        <div class="model-input-name required-field">Quantity</div>
+
+                        <div class="inv-input-container h-30"> 
+                            <input type="number" step="0.001"  class="w-p-100 inv-in" name="return_quantity" id="return_quantity_id" value="1" required>
+                        </div>
+                    </div>
+
+                </div>
+                {% endif %}
+    
+                <hr> 
+            </div>
+           
+           
+            <div id="id_man">
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name required-field">Store</div>
@@ -868,6 +944,7 @@
             </div>
             {% endif %}
 
+            {% if inventory_item.item_type == 'RAW MATERIALS' or inventory_item.item_type == 'ASSETS' %}
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name required-field">Purchase Date</div>
@@ -878,6 +955,7 @@
                 </div>
 
             </div>
+            {% endif %}
             {% comment %} <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Unit Code</div>
@@ -891,6 +969,8 @@
             
             
             {% if inventory_item.item_add_type == 'unit' %}
+            
+            {% if inventory_item.item_type == 'RAW MATERIALS' or inventory_item.item_type == 'ASSETS' %}
             <div class="row mt-20 expiry_date_div" hidden>
                 <div class="col-md-12 ">
                     <div class="model-input-name required-field">Expiry Date</div>
@@ -908,6 +988,7 @@
                 </div>
 
             </div>
+            {% endif %}
 
             <div class="row mt-20">
                 <div class="col-md-12 ">
@@ -949,7 +1030,7 @@
                     <div class="model-input-name required-field">Quantity</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="number" step="0.001"  class="w-p-100 inv-in" name="quantity" id="quantity_id" value="1" required>
+                        <input type="number" step="0.001"  class="w-p-100 inv-in" name="inventory_item_quantity" id="quantity_id" value="1" required>
                       </div>
                 </div>
 
@@ -963,6 +1044,12 @@
         </div>
         <div class="inv-drawer-footer">
             <button class="sent-button" type="button" id="submit-btn" onclick="formvalidation()">Submit</button>
+            
+            {% if inventory_item.item_type == 'FINISHED GOODS' %}
+            <button class="sent-button" type="button" onclick="formvalidation()">Submit</button>
+            {% endif %}
+
+            <button class="sent-button" id="return-item-btn" type="button" onclick="formvalidation('itemreturn')">Item Return</button>
             <a href="#" id="load_po"><button class="sent-button" type="button" id="po-btn" >Purchase Order</button></a>
             <button class="sent-button" type="button" id="update-unit-btn" onclick="formvalidation()">Update Unit</button>    
         </form>
@@ -1687,6 +1774,7 @@ $(function () {
     var select_methddrp = new DropDown($('#select_methddrp'));
     var select_methddrp2 = new DropDown($('#select_methddrp2'));
     var select_methddrp1 = new DropDown($('#select_methddrp1'));
+    var select_methddrp3 = new DropDown($('#select_methddrp3'));
     {% for attribute in attributes %}
     var dd{{forloop.counter}} = new DropDown($('#noble-gases{{forloop.counter}}'));
     {% endfor %}
@@ -1704,14 +1792,33 @@ $(function () {
 
     function chooseaddmethod(val){
         if(val == 'po'){
+            $('#unit_action').val('add_unit')
+            $('#quantity_action').val('add_quantity')
             $('#id_po').show()
             $('#id_man').hide()
+            $('#id_itr').hide()
             $('#po-btn').show()
             $('#submit-btn').hide()
-        }else{
+            $('#return-item-btn').hide()
+        }
+        else if(val == 'itr'){
+            $('#unit_action').val('return_item')
+            $('#quantity_action').val('return_item')
+            $('#id_itr').show()
             $('#id_po').hide()
+            $('#id_man').hide()
+            $('#po-btn').hide()
+            $('#return-item-btn').show()
+            $('#submit-btn').hide()
+        }
+        else{
+            $('#unit_action').val('add_unit')
+            $('#quantity_action').val('add_quantity')
+            $('#id_po').hide()
+            $('#id_itr').hide()
             $('#id_man').show()
             $('#po-btn').hide()
+            $('#return-item-btn').hide()
             $('#submit-btn').show()
         }
     }
@@ -1756,13 +1863,15 @@ function selectFileInp(){
         //console.log($(va).data('name'), '#id_attribute_value{{attribute.id}}', "ava")
         $('#id_attribute_value'+$(va).data('attributeid')+'').val($(va).data('id'))
     }
-    
 
 
     $(document).ready(function () {
+        
         $('#id_man').hide();
         $('#id_po').hide();
+        $('#id_itr').hide()
         $('#submit-btn').hide()
+        $('#return-item-btn').hide()
         $('#po-btn').hide()
         $('.owl-carousel').owlCarousel({
             items: 1,
@@ -1924,6 +2033,9 @@ function editItemData(){
     document.getElementById('id_des_text').style.display = 'block';
     document.getElementById('id_res_val').style.display = 'none';
     document.getElementById('id_res_text').style.display = 'block';
+    document.getElementById('unit_data').style.display = 'none';
+    document.getElementById('unit_edit_data').style.display = 'block';
+    document.getElementById('unit_select').style.display = 'block';
 
     
 }
@@ -1953,6 +2065,10 @@ function doneEdit(){
         document.getElementById('id_des_text').style.display = 'none';
         document.getElementById('id_res_val').style.display = 'block';
         document.getElementById('id_res_text').style.display = 'none';
+        document.getElementById('unit_data').style.display = 'block';
+    document.getElementById('unit_edit_data').style.display = 'none';
+    document.getElementById('unit_select').style.display = 'none';
+
         document.getElementById("itemdetailsform").submit();
     }
     
@@ -2002,7 +2118,13 @@ function openNavAddBundle(d) {
     if(d == 'add'){
         document.getElementById("myform").reset();
         $('#id_add_method').show();
-        $('#id_man').hide();
+        
+        {% if inventory_item.item_type == 'FINISHED GOODS' %}
+            $('#id_man').show();
+        {% else %}
+            $('#id_man').hide();
+        {% endif %}
+
         $('#id_po').hide();
         $('#update-unit-btn').hide();
         $('#id_unit_status').val('available');
@@ -2169,6 +2291,21 @@ function openNavAddSubparts(d){
         document.getElementById("id_search").style.display="block"
     }
 
+    async function ExternalUserListShow(){
+        $('#id_search2').empty();
+        var result = await _get('api/external_customers/');
+        
+        if(result.status == 200){
+            console.log(result,"valo")
+            $.each(result.data.external_customers,function(key,value){
+                console.log(value.name,"valo")
+                $('#id_search2').append('<div class="col-md-12 inv-search-drop" id="id_externaluser'+value.id+'" style="padding:0px !important;" onclick="closeExternalUsersShow(this)" data-pro="'+value.id+'" data-name="'+value.name+'"><div class="inv-search-result">'+value.name+'</div></div>');
+            })
+        }
+
+        document.getElementById("id_search2").style.display="block"
+    }
+
     function showProducts(){
         $('#id_search').empty();
         console.log(products,"prd")
@@ -2203,36 +2340,113 @@ function openNavAddSubparts(d){
         document.getElementById("id_search").style.display="none"
     }
 
-//form empty field validation
-    function formvalidation(){
+
+    async function showExternalUsers(){
+        $('#id_search2').empty();
+        console.log(products,"prd")
+
+        var result = await _get('api/external_customers/');
+        
+        if(result.status == 200){
+            console.log(result,"valo")
+            $.each(result.data.external_customers,function(key,value){
+                console.log(value.name,"valo")
+                $('#id_search2').append('<div class="col-md-12 inv-search-drop" id="id_externaluser'+value.id+'" style="padding:0px !important;" onclick="closeExternalUsersShow(this)" data-pro="'+value.id+'" data-name="'+value.name+'"><div class="inv-search-result">'+value.name+'</div></div>');
+            })
+
+            if($('#user-name').val() !=""){
+                document.getElementById("id_search2").style.display="block"
+    
+                }else{
+                document.getElementById("id_search2").style.display="none"
+    
+                }
+        }
+
+    }
+
+    function closeExternalUsersShow(d){
+        console.log(d);
+        var proId = $(d).attr("data-pro")
+        $('#id_user_sel').val($(d).attr("data-pro"));
+        //$('#unit_price_id').val($(d).attr("data-productprice"));
+        //$('#id_total_price').val($(d).attr("data-productprice"));
+        $('#user-name').val($(d).attr("data-name"));
+
+
+        document.getElementById("id_search2").style.display="none"
+    }
+
+    //form empty field validation
+    function formvalidation(d){
         console.log($('input[name=unit_price]').val(),"lolo")
         
-        {% if inventory_item.item_add_type == 'unit' %}
+        
+        
+        {% if inventory_item.item_type == 'FINISHED GOODS' %}
 
             if ($('input[name=storename]').val() == ''){
                 $('input[name=storename]').addClass('red-border-input');
             }else if ($('input[name=serial_number]').val() == ''){
                 $('input[name=serial_number]').addClass('red-border-input');
-            }else if ($('input[name=purchase_date]').val() == ''){
-                $('input[name=purchase_date]').addClass('red-border-input');
             }else if ($('input[name=unit_price]').val() == ''){
                 $('input[name=unit_price]').addClass('red-border-input');
             }else{
                 $('#myform').submit();
             }
-
+        
         {% else %}
+        
+            {% if inventory_item.item_add_type == 'unit' %}
 
-            if ($('input[name=storename]').val() == ''){
-                $('input[name=storename]').addClass('red-border-input');
-            }else if ($('input[name=purchase_date]').val() == ''){
-                $('input[name=purchase_date]').addClass('red-border-input');
-            }else if ($('input[name=quantity]').val() == ''){
-                console.log("logoo")
-                $('input[name=quantity]').addClass('red-border-input');
-            }else{
-                $('#myform').submit();
-            }
+                if (d == 'itemreturn'){
+                    if ($('input[name=user_name]').val() == ''){
+                        $('input[name=user_name]').addClass('red-border-input');
+                    }else if ($('input[name=return_quantity]').val() == ''){
+                        $('input[name=return_quantity]').addClass('red-border-input');
+                    }else{
+                        $('#myform').submit();
+                    }
+                }    
+                else{
+                    if ($('input[name=storename]').val() == ''){
+                        $('input[name=storename]').addClass('red-border-input');
+                    }else if ($('input[name=serial_number]').val() == ''){
+                        $('input[name=serial_number]').addClass('red-border-input');
+                    }else if ($('input[name=purchase_date]').val() == ''){
+                        $('input[name=purchase_date]').addClass('red-border-input');
+                    }else if ($('input[name=unit_price]').val() == ''){
+                        $('input[name=unit_price]').addClass('red-border-input');
+                    }else{
+                        $('#myform').submit();
+                    }
+                }
+            {% else %}
+
+                if (d == 'itemreturn'){
+                    if ($('input[name=user_name]').val() == ''){
+                        $('input[name=user_name]').addClass('red-border-input');
+                    }else if ($('input[name=return_unit]').val() == ''){
+                        $('input[name=return_unit]').addClass('red-border-input');
+                    }else{
+                        $('#myform').submit();
+                    }
+                }    
+                else{    
+                    console.log("largoo")
+                
+                    if ($('input[name=storename]').val() == ''){
+                        $('input[name=storename]').addClass('red-border-input');
+                    }else if ($('input[name=purchase_date]').val() == ''){
+                        $('input[name=purchase_date]').addClass('red-border-input');
+                    }else if ($('input[name=inventory_item_quantity]').val() == ''){
+                        console.log("logoo")
+                        $('input[name=inventory_item_quantity]').addClass('red-border-input');
+                    }else{
+                        $('#myform').submit();
+                    }
+                }
+            {% endif %}
 
         {% endif %}
     }

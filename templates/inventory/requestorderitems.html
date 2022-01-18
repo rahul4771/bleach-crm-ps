@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load mathfilters %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+<div class="wrapper"><!--wrapper-->
+    {% include "inventory/common/header.html" %}
+    <section class="content">
+        <div class="container-fluid space topspace">
+            <div class="welcome-wrapper">
+                <!--welcome-wrapper-->
+                <h1 class="dashboard-head av-font">{{request_order.request_order_id}}</h1>
+                <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
+            </div>
+        </div>
+        <!-- Check out confirmation modal begins here-->
+        <div class="modal fade" id="stockoutModal" role="dialog">
+            <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12 mt-20">
+    
+                            
+                            <div class="d-flex ">
+                                <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Are you sure do you want to stock out ?</p></div>
+                                <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+    
+                                    <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                                </button>
+        
+                            </div>
+                        </div>
+                    </div>
+                   
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <form method="POST" action="" >{% csrf_token %}
+                            <input type="hidden" name="action" value="stock_out" />
+                            <input type="hidden" name="item_id" id="id_item" />
+                            <div class="cancel-model-content">
+                                <button class="sent-button" type="submit" >Stock Out</button>
+                                <button data-dismiss="modal" class="view-button">Cancel</button>
+                              
+                            </div>
+                            </form>
+                        </div>
+        
+                    </div>
+                </div>
+            </div>
+          </div>
+        <!-- check out confirmationmodal ends here-->
+        <div class="main-content-holder"><!--main-content-holder-->   
+            <div class="white-wrapper white-wrapper-padding">
+                
+                <div class="row mt-10">
+                   <div class="col-md-4">
+                    <div class="row c-mb-3 ">
+                        <div class="col-xs-5  inv-section-in">Initiated date</div>
+                        <div class="col-xs-7   ">: <span class="inv-section-in">{{request_order.created|date:'d-m-Y'}}</span></div>
+                      </div>
+                      <div class="row mt-10 ">
+                        <div class="col-xs-5  inv-section-in">Initiated by</div>
+                        <div class="col-xs-7   ">: <span class="inv-section-in">{{request_order.requested_by.name}}</span></div>
+                      </div>
+                   </div>
+                </div>
+
+                <div class="mt-20">
+                    
+                    <table id="id_table_common" class="inv-table footable" style="border-top:1px solid #c4c4c4; margin-top: -2px; z-index: 10 !important;"> 
+                        <thead>
+                            <tr>
+                                
+                                <th style="width: %;">
+                                    Product ID
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                    Product Name
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                    Category
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %;" class="text-left">
+                                    Product Type
+                                </th>
+                                <th  data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                    Quantity
+                                </th>
+                               
+                                <th>
+                                    Status
+                                </th>
+    
+                            </tr>
+                        </thead>
+                     <tbody>
+                      
+                        {% for item in request_order_items %}
+                        <tr>
+                            
+                            <td>
+                            {% if item.product.item_add_type == 'quantity' %}{{item.product.item_code}}{% elif item.product.item_add_type == 'unit' %}{{item.product_unit.unit_code}}{% endif %}
+                            </td>
+                            <td class="text-center">
+                              {{item.product.name}}
+                            </td>
+                            <td class="text-center">
+                                {{item.product.item_category.name}}
+                            </td>
+                            <td class="text-left">
+                                {{item.product.item_type}}
+                            </td>
+                            <td class="text-center">
+                                {{item.item_count}} {{item.product.measuring_unit}}
+                              </td>                          
+                            <td>
+                                {% if item.status   == 'Out Of Stock' %}
+                                <span class="inv-dot c-out-of-order ml-5"></span>Out Of Stock
+                                {% elif item.status == 'Available' %}
+                                <span class="inv-dot c-active ml-5"></span>Available
+                                {% elif item.status == 'About to Finish' %}
+                                <span class="inv-dot c-about-finish ml-5"></span>About to Finish
+                                {% elif item.status   == 'Not Available' %}
+                                <span class="inv-dot c-out-of-order ml-5"></span>Not Available
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+        
+                      
+                     </tbody>
+    
+                    </table>
+                    {% if is_all_items_available and request_order.is_admin_approved and not request_order.is_received %}
+                    <div class="mt-20 text-center">
+                        <button class="inv-plan-btn" onclick="openNavAddStore('add')" data-toggle="modal" data-target="#stockoutModal">  Stock Out</button>
+
+                    </div>
+                    {% endif %}
+                </div>
+                
+            </div>
+        </div>
+    </section>
+</div>
+
+
+
+{% endblock %}
+
+{% block javascript %}
+
+{% endblock %}

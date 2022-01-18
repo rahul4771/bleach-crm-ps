@@ -10,7 +10,7 @@
         <div class="container-fluid space topspace">
             <div class="welcome-wrapper">
                 <!--welcome-wrapper-->
-                <h1 class="dashboard-head">Category</h1>
+                <h1 class="dashboard-head">Categories</h1>
                 <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
             </div>
         </div>
@@ -85,13 +85,19 @@
                                 {% endif %}
                             </td>
                             <td>
-                                <a href="/bleach-inventory/segment/{{category.id}}/" target="_blank"<button class="inv-plan-btn" onclick="openNavaddSegment2()"> <img class="view-img2" src="{% static 'files/inventory/view.png' %}" alt=""> View Segment</button></a>
-                                <button class="inv-plan-img-btn edit_category" onclick="showDrawer('edit')" data-categoryid="{{category.id}}" data-categoryname="{{category.name}}" data-categorycode="{{category.category_code}}" data-categorystatus="{{category.status}}" > <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
-                                {% if request.user.user_type == 'INVENTORYADMIN' %}
-                                <button class="inv-plan-img-btn delete_category" data-categoryid="{{category.id}}" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
-                                {% else %}
-                                <button class="inv-plan-img-btn2-disabled" disabled> <img class="btn-img2" src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
-                                {% endif %}
+                                <div class="btn-group" id="actionDropdown">
+                                    <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+                                      Action
+                                      <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
+                                    </div>
+                                    <div class="dropdown-menu" id="dropdown-menu-orders">   
+                                        <a class="d-flex dropdown-orders" href="/bleach-inventory/segment/{{category.id}}/"><img src="{% static 'files/inventory/view.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">View Segment</div></a>    
+ 
+                                      <a class="d-flex dropdown-orders"  onclick="showDrawer('edit')" data-categoryid="{{category.id}}" data-categoryname="{{category.name}}" data-categorycode="{{category.category_code}}" data-categorystatus="{{category.status}}"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit</div></a>    
+                                      <a class="d-flex dropdown-orders" data-categoryid="{{category.id}}" data-toggle="modal" data-target="#deleteModel"><img src="{% static 'files/inventory/bin.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Delete</div></a>                                                                                                       
+                                    </div>
+                                  </div>
+                              
                             </td>
                         </tr>
                         {% endfor %}

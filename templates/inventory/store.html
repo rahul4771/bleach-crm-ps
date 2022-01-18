@@ -10,7 +10,7 @@
         <div class="container-fluid space topspace">
             <div class="welcome-wrapper">
                 <!--welcome-wrapper-->
-                <h1 class="dashboard-head">Store</h1>
+                <h1 class="dashboard-head">Stores</h1>
                 <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
             </div>
         </div>
@@ -76,7 +76,7 @@
                                 <span class="inv-dot c-inactive ml-5"></span>Not Active
                                 {% endif %}
                             </td>
-                            <td style="float: right;">
+                            <td class="text-center">
                               
                                 <button class="inv-plan-img-btn edit_store" onclick="openNavAddStore('edit')" data-storeid="{{store.id}}" data-storename="{{store.store_name}}" data-storecontact="{{store.contact}}" data-storecode="{{store.store_code}}" data-storeaddress="{{store.address}}" data-storestatus="{{store.status}}" > <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
                                 {% if request.user.user_type == 'INVENTORYADMIN' %}

@@ -42,9 +42,11 @@
                 
                   <div class="d-flex mt-20">
                         <div class="nav-tab-item-active" v-if="selected_item=='ALL'">
+                            <img src="{% static 'files/inventory/icons/all_icon.png'%}" class="tab-logo"/>
                             All
                         </div>
                         <div class="nav-tab-item" v-else @click="selectItem('ALL')">
+                            <img src="{% static 'files/inventory/icons/all_icon.png'%}" class="tab-logo"/>
                             All
                         </div>
                         <div class="nav-tab-item-active " v-if="selected_item=='RAW MATERIALS'">
@@ -90,8 +92,8 @@
                     </div>
                 </div>
                 <!-- ALL ITEMS BEGINS HERE-->
-                <div class="mt-20"  v-if="selected_item=='ALL'">
-                    <table class="inv-table footable" style="border-top:1px solid #c4c4c4"> 
+                <div class="mt-20"  v-show="selected_item=='ALL'">
+                    <table class="inv-table footable  phone breakpoint footable-loaded" style="border-top:1px solid #c4c4c4"> 
                         <thead>
                             <tr>
                                 <th style="width: %;">
@@ -106,12 +108,12 @@
                                 <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                     Category
                                 </th>
-                                <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                {% comment %} <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                     Segment
                                 </th>
                                <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                     Line
-                                </th>
+                                </th> {% endcomment %}
                                 <th data-hide="phone,tablet"  class="text-center">
                                     Available Qty
                                 </th>
@@ -139,12 +141,12 @@
                             </td>
                             <td class="text-center">
                                 {{item.item_category.name}}
-                            <td class="text-center td-md-width">
+                            {% comment %} <td class="text-center td-md-width">
                                 {{item.item_segment.name}}
                             </td>
                             <td class="text-center td-md-width" >
                                 {{item.item_line.name}}
-                            </td>
+                            </td> {% endcomment %}
                             <td class="text-center">
                                 {% if item.item_add_type == 'quantity' %}
                                 {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}
@@ -186,9 +188,9 @@
                                     <div class="dropdown-menu" id="dropdown-menu-orders">  
                                         <a class="d-flex dropdown-orders"  href="/bleach-inventory/item/{{item.id}}"><img src="{% static 'files/inventory/view.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">View</div></a>    
 
-                                      <a class="d-flex dropdown-orders" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-item_type="{{item.item_type}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}" data-itempackage="{{item.is_package}}"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit </div></a>    
+                                      {% comment %} <a class="d-flex dropdown-orders" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-item_type="{{item.item_type}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}" data-itempackage="{{item.is_package}}"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit </div></a>     {% endcomment %}
                                       {% if request.user.user_type == 'INVENTORYADMIN' %}
-                                      <a class="d-flex dropdown-orders" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}" ><img src="{% static 'files/inventory/bin.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Delete </div></a>                                                                                                       
+                                      <a class="d-flex dropdown-orders delete-item" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}" ><img src="{% static 'files/inventory/bin.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Delete </div></a>                                                                                                       
                                       {% endif %}
                                     </div>
                                   </div>
@@ -252,9 +254,9 @@
                 </div>
                   <!-- ALL ITEMS ENDS HERE-->
                 <!-- Raw materials begins here -->
-                <div class="mt-20"  v-if="selected_item=='RAW MATERIALS'">
+                <div class="mt-20"  v-show="selected_item=='RAW MATERIALS'">
                     
-                        <table class="inv-table footable" style="border-top:1px solid #c4c4c4"> 
+                        <table class="inv-table footable  phone breakpoint footable-loaded" style="border-top:1px solid #c4c4c4"> 
                             <thead>
                                 <tr>
                                     <th style="width: %;">
@@ -269,12 +271,12 @@
                                     <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                         Category
                                     </th>
-                                    <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                    {% comment %} <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                         Segment
                                     </th>
                                    <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                         Line
-                                    </th>
+                                    </th> {% endcomment %}
                                     <th data-hide="phone,tablet"  class="text-center">
                                         Available Qty
                                     </th>
@@ -302,12 +304,12 @@
                                 </td>
                                 <td class="text-center">
                                     {{item.item_category.name}}
-                                <td class="text-center td-md-width">
+                                {% comment %} <td class="text-center td-md-width">
                                     {{item.item_segment.name}}
                                 </td>
                                 <td class="text-center td-md-width" >
                                     {{item.item_line.name}}
-                                </td>
+                                </td> {% endcomment %}
                                 <td class="text-center">
                                     {% if item.item_add_type == 'quantity' %}
                                     {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}
@@ -349,9 +351,9 @@
                                         <div class="dropdown-menu" id="dropdown-menu-orders">  
                                             <a class="d-flex dropdown-orders"  href="/bleach-inventory/item/{{item.id}}"><img src="{% static 'files/inventory/view.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">View</div></a>    
 
-                                          <a class="d-flex dropdown-orders" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-item_type="{{item.item_type}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}" data-itempackage="{{item.is_package}}"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit </div></a>    
+                                          {% comment %} <a class="d-flex dropdown-orders" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-item_type="{{item.item_type}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}" data-itempackage="{{item.is_package}}"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit </div></a>     {% endcomment %}
                                           {% if request.user.user_type == 'INVENTORYADMIN' %}
-                                          <a class="d-flex dropdown-orders" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}" ><img src="{% static 'files/inventory/bin.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Delete </div></a>                                                                                                       
+                                          <a class="d-flex dropdown-orders delete-item" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}" ><img src="{% static 'files/inventory/bin.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Delete </div></a>                                                                                                       
                                           {% endif %}
                                         </div>
                                       </div>
@@ -415,7 +417,7 @@
                 </div>
                 <!-- Raw materials ends here -->
                 <!-- Assets begins here -->
-                <div class="mt-20"  v-if="selected_item=='ASSETS'">
+                <div class="mt-20"  v-show="selected_item=='ASSETS'">
                     
                             <table class="inv-table footable" style="border-top:1px solid #c4c4c4"> 
                                 <thead>
@@ -432,12 +434,12 @@
                                         <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                             Category
                                         </th>
-                                        <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                        {% comment %} <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                             Segment
                                         </th>
                                        <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                             Line
-                                        </th>
+                                        </th> {% endcomment %}
                                         <th data-hide="phone,tablet"  class="text-center">
                                             Available Qty
                                         </th>
@@ -465,12 +467,12 @@
                                     </td>
                                     <td class="text-center">
                                         {{item.item_category.name}}
-                                    <td class="text-center td-md-width">
+                                    {% comment %} <td class="text-center td-md-width">
                                         {{item.item_segment.name}}
                                     </td>
                                     <td class="text-center td-md-width" >
                                         {{item.item_line.name}}
-                                    </td>
+                                    </td> {% endcomment %}
                                     <td class="text-center">
                                         {% if item.item_add_type == 'quantity' %}
                                         {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}
@@ -514,9 +516,9 @@
                                             <div class="dropdown-menu" id="dropdown-menu-orders">  
                                                 <a class="d-flex dropdown-orders"  href="/bleach-inventory/item/{{item.id}}"><img src="{% static 'files/inventory/view.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">View</div></a>    
 
-                                              <a class="d-flex dropdown-orders" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-item_type="{{item.item_type}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}" data-itempackage="{{item.is_package}}"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit </div></a>    
+                                              {% comment %} <a class="d-flex dropdown-orders" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-item_type="{{item.item_type}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}" data-itempackage="{{item.is_package}}"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit </div></a>     {% endcomment %}
                                               {% if request.user.user_type == 'INVENTORYADMIN' %}
-                                              <a class="d-flex dropdown-orders" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}" ><img src="{% static 'files/inventory/bin.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Delete </div></a>                                                                                                       
+                                              <a class="d-flex dropdown-orders delete-item" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}" ><img src="{% static 'files/inventory/bin.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Delete </div></a>                                                                                                       
                                               {% endif %}
                                             </div>
                                           </div>
@@ -596,12 +598,12 @@
                                         <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                             Category
                                         </th>
-                                        <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                        {% comment %} <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                             Segment
                                         </th>
                                        <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                             Line
-                                        </th>
+                                        </th> {% endcomment %}
                                         <th data-hide="phone,tablet"  class="text-center">
                                             Available Qty
                                         </th>
@@ -629,12 +631,12 @@
                                     </td>
                                     <td class="text-center">
                                         {{item.item_category.name}}
-                                    <td class="text-center td-md-width">
+                                    {% comment %} <td class="text-center td-md-width">
                                         {{item.item_segment.name}}
                                     </td>
                                     <td class="text-center td-md-width" >
                                         {{item.item_line.name}}
-                                    </td>
+                                    </td> {% endcomment %}
                                     <td class="text-center">
                                         {% if item.item_add_type == 'quantity' %}
                                         {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}
@@ -677,9 +679,9 @@
                                             <div class="dropdown-menu" id="dropdown-menu-orders">  
                                                 <a class="d-flex dropdown-orders"  href="/bleach-inventory/item/{{item.id}}"><img src="{% static 'files/inventory/view.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">View</div></a>    
 
-                                              <a class="d-flex dropdown-orders" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-item_type="{{item.item_type}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}" data-itempackage="{{item.is_package}}"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit </div></a>    
+                                              {% comment %} <a class="d-flex dropdown-orders" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-item_type="{{item.item_type}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}" data-itempackage="{{item.is_package}}"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit </div></a>     {% endcomment %}
                                               {% if request.user.user_type == 'INVENTORYADMIN' %}
-                                              <a class="d-flex dropdown-orders" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}" ><img src="{% static 'files/inventory/bin.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Delete </div></a>                                                                                                       
+                                              <a class="d-flex dropdown-orders delete-item" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}" ><img src="{% static 'files/inventory/bin.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Delete </div></a>                                                                                                       
                                               {% endif %}
                                             </div>
                                           </div>
@@ -1056,7 +1058,7 @@
                         <input type="hidden" name="item_id" id="id_item" />
                         <div class="cancel-model-content">
                             <button class="sent-button" >Delete</button>
-                            <button data-dismiss="modal" class="view-button">Cancel</button>
+                            <button data-dismiss="modal" type="button" class="view-button">Cancel</button>
                           
                         </div>
                         </form>
