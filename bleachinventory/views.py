@@ -2382,24 +2382,21 @@ class InventoryCreateInventoryRequest(View):
 
 			messages.success(request,"Item Added successfully!")
 
-
-		if action == 'order_close':
-			request_order_id = request.POST.get('request_order_id')
-
-			request_order                    = RequestOrder.objects.get(id=request_order_id)
-			request_order.is_order_completed = True
-			request_order.save()
-			
-			messages.success(request,"Inventory Request Order Completed successfully!")
-
 		if action == 'edit_item':
 			request_item_id         = request.POST.get('request_item_id')			
-			product                 = request.POST.get('item')			
-			item_count              = request.POST.get('item_count')
-
+			product                 = request.POST.get('item')	
+			add_type                = request.POST.get('add_type')
 			request_item            = RequestOrderItems.objects.get(id=request_item_id)
-			request_item.product_id = product
-			request_item.item_count = item_count
+
+			if add_type == 'quantity':
+				item_count                   = request.POST.get('item_count')
+				request_item.product_id      = product
+				request_item.item_count      = item_count
+			elif add_type == 'unit':
+				unit_id                      = request.POST.get('unit_id')
+				request_item.product_id      = product
+				request_item.product_unit_id = unit_id
+				
 			request_item.save()
 			
 			messages.success(request,"Item Updated successfully!")
@@ -2410,6 +2407,15 @@ class InventoryCreateInventoryRequest(View):
 			RequestOrderItems.objects.get(id=item_id).delete()
 			
 			messages.success(request,"Item Deleted successfully!")
+
+		if action == 'order_close':
+			request_order_id = request.POST.get('request_order_id')
+
+			request_order                    = RequestOrder.objects.get(id=request_order_id)
+			request_order.is_order_completed = True
+			request_order.save()
+			
+			messages.success(request,"Inventory Request Order Completed successfully!")
 
 		return redirect('bleach-inventory:inventory-createinventoryrequest')
 
