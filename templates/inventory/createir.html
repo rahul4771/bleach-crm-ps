@@ -318,11 +318,11 @@
                             
                   
                     <div class="wrap-drop" id="noble-gases3">
-                    <input style="display:none" id="selected_unit_id" name="unit_id"  required/>
+                    <input style="display:none" id="selected_unit_id" name="unit_id" />
                     <span v-if="!selected_unit">--Select Unit--</span>
                     <span v-else="selected_unit"><% selected_unit.unit_code %>
                     </span>
-                    <input v-if="selected_unit" style="display: none;" name="unit_id" :value="selected_unit.id"/>
+                    <input v-if="selected_unit" style="display: none;" name="unit_id" :value="selected_unit.id" required/>
                     <ul class="drop">
                         
                         <li v-for="(item,index) in units" v-bind:key="index" @click="dropSelectUnit(item)" ><a>
