@@ -557,6 +557,8 @@ class InventoryItems(IsInventoryAdminUser,View):
 		stores = Store.objects.filter(status=True)
 
 		available_item_units = item_units.filter(status='available').count()
+		unavailable_item_units = item_units.filter(status='unavailable')
+
 		available_quantity = item_history.aggregate(total_quantity=Sum('quantity'))['total_quantity']
 		if not available_quantity:
 			available_quantity = 0
@@ -600,7 +602,7 @@ class InventoryItems(IsInventoryAdminUser,View):
 
 		print(purchase_orders,"orddd")
 
-		return render(request,'inventory/item.html',{"stores":stores,"item_attributes":item_attributes,"inventory_item":inventory_item,"attributes":attributes,"categories":categories,"item_units":item_units,"item_history":item_history,"new_unit_code":new_unit_code,"purchase_orders":purchase_orders})
+		return render(request,'inventory/item.html',{"stores":stores,"item_attributes":item_attributes,"inventory_item":inventory_item,"attributes":attributes,"categories":categories,"item_units":item_units,"item_history":item_history,"new_unit_code":new_unit_code,"purchase_orders":purchase_orders,"unavailable_units":unavailable_item_units})
 
 	def post(self,request,item_id):
 		action =request.POST.get('action')
@@ -660,22 +662,29 @@ class InventoryItems(IsInventoryAdminUser,View):
 
 
 		if action == "add_unit":
+			item = InventoryItem.objects.get(id=item_id)
+
 			store_id = request.POST.get('store')
 			serial_number = request.POST.get('serial_number')
-			purchase_date = request.POST.get('purchase_date')
-			expiry_date = request.POST.get('expiry_date')
+			print(serial_number,"serl")
+			if item.item_type != 'FINISHED GOODS':
+				purchase_date = request.POST.get('purchase_date')
+				expiry_date = request.POST.get('expiry_date')
 			
-			no_expiry = request.POST.get('no_expiry')
-			if no_expiry == 'on':
-				expiry = True
+				no_expiry = request.POST.get('no_expiry')
+				if no_expiry == 'on':
+					expiry = True
+				else:
+					expiry = True
 			else:
-				expiry = True
+				purchase_date = None
+				expiry_date = None
+				expiry = False
+			
 			unit_price = request.POST.get('unit_price')
 			status = request.POST.get('unit_status')
 
 			store = Store.objects.get(id=int(store_id))
-
-			item = InventoryItem.objects.get(id=item_id)
 
 			item_code = item.item_code
 
@@ -739,6 +748,29 @@ class InventoryItems(IsInventoryAdminUser,View):
 			item.save()
 
 			messages.success(request,"Quantity Added Successfully !")
+
+		if action == 'return_item':
+			externaluser = ExternalCustomer.objects.get( id=int(request.POST.get('external_user')) ) 
+
+			if item.item_add_type == 'unit':
+				unit_id = request.POST.get('unit_id')
+				itemunit = ItemUnit.objects.get(id=int(unit_id))
+				itemunit.status = 'available'
+				itemunit.save()
+			else:
+				quantity = request.POST.get('return_quantity')
+
+				request_order_item = RequestOrderItems.objects.filter(request_order__requested_by=externaluser,product=item).last()
+
+				ItemHistory.objects.create(
+					item = item,
+					item_action = 'ITEM RETURN',
+					item_remark = request_order_item.request_order.request_order_id,
+					quantity = quantity
+				)
+
+			messages.success(request,"Item received !")
+
 
 		if action == "edit_unit":
 			unit_id = request.POST.get('edit_unit_id')

@@ -251,8 +251,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                           
-                                            
+                                        
                                             {% for order in orders %}
                                             <tr>
                                                 <td class="inv-blue-border">
@@ -304,6 +303,8 @@
     
                                                 </td>
                                             </tr>
+                                            {% empty %}
+                                            <tr><td></td><td></td><td><img src="{% static 'files/inventory/icons/nodata.png' %}" width="100px" height="100px"></td><td></td><td></td><td></td></tr>
                                             {% endfor %}
 
                                             
