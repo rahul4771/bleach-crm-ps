@@ -211,10 +211,10 @@ padding: 20px;
           {{item.product.name}}
         </td>
         <td>
-          {{item.product.item_code}}
+          {% if item.product.item_add_type == 'quantity' %}{{item.product.item_code}}{% elif item.product.item_add_type == 'unit' %}{{item.product_unit.unit_code}}{% endif %}
         </td>
         <td>
-          {{item.item_count}}
+          {{item.item_count}} {{item.product.measuring_unit}}
         </td>
       </tr>
       {% endfor %}
