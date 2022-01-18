@@ -744,7 +744,7 @@ function subQty(){
         if(d == 'edit'){
             app.selected_product={
                 name:$(item_data).data('productname'),
-                id:String($(item_data).data('itemid')),
+                id:String($(item_data).data('productid')),
                 item_add_type:$(item_data).data('item_add_type')
             }
             $('#pro-name').val(app.selected_product.name)
