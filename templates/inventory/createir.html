@@ -743,6 +743,7 @@ function subQty(){
             hideselectedoptions();
         }
         if(d == 'edit'){
+            $('#id_edit_item').val($(item_data).data('itemid'))
             app.selected_product={
                 name:$(item_data).data('productname'),
                 id:String($(item_data).data('productid')),
