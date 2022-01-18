@@ -2530,7 +2530,7 @@ class InventoryEditRequestOrder(IsInventoryAdminUser,View):
 				
 				messages.success(request,"Inventory Request Order Completed successfully!")
 
-			return redirect('bleach-inventory:inventory-editrequestorder',request_order_id)
+			return redirect('bleach-inventory:inventory-requestorder')
 
 
 class RequestOrderApproval(IsInventoryAdmin,View):
