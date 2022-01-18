@@ -92,7 +92,7 @@
                     </div>
                 </div>
                 <!-- ALL ITEMS BEGINS HERE-->
-                <div class="mt-20"  v-if="selected_item=='ALL'">
+                <div class="mt-20"  v-show="selected_item=='ALL'">
                     <table class="inv-table footable  phone breakpoint footable-loaded" style="border-top:1px solid #c4c4c4"> 
                         <thead>
                             <tr>
@@ -254,7 +254,7 @@
                 </div>
                   <!-- ALL ITEMS ENDS HERE-->
                 <!-- Raw materials begins here -->
-                <div class="mt-20"  v-if="selected_item=='RAW MATERIALS'">
+                <div class="mt-20"  v-show="selected_item=='RAW MATERIALS'">
                     
                         <table class="inv-table footable  phone breakpoint footable-loaded" style="border-top:1px solid #c4c4c4"> 
                             <thead>
@@ -417,7 +417,7 @@
                 </div>
                 <!-- Raw materials ends here -->
                 <!-- Assets begins here -->
-                <div class="mt-20"  v-if="selected_item=='ASSETS'">
+                <div class="mt-20"  v-show="selected_item=='ASSETS'">
                     
                             <table class="inv-table footable" style="border-top:1px solid #c4c4c4"> 
                                 <thead>
