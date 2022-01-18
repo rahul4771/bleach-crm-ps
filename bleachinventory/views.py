@@ -2434,21 +2434,22 @@ class InventoryCreateInventoryRequest(View):
 			messages.success(request,"Item Deleted successfully!")
 
 		if action == 'order_close':
+			print(request.POST)
 			request_order_id = request.POST.get('request_order_id')
 
 			request_order    = RequestOrder.objects.get(id=request_order_id)
 
-			requester_id     = request.POST.get('requester_id')	
-			if requester_id:
+			requested_by     = request.POST.get('requested_by')	
+			if requested_by:
 				try:
-					requester = ExternalCustomer.objects.get(name=requester_id)
+					requester = ExternalCustomer.objects.get(name=requested_by)
 				except:
-					requester = ExternalCustomer.objects.create(name=requester_id)
+					requester = ExternalCustomer.objects.create(name=requested_by)
 				
 				if requester:
 					request_order.requested_by = requester
 
-			purpose                    = request.GET.get('purpose')
+			purpose                    = request.POST.get('purpose')
 			if purpose:
 				request_order.purpose  = purpose
 
@@ -2478,22 +2479,6 @@ class InventoryEditRequestOrder(IsInventoryAdminUser,View):
 				new_item_code = 'BLIR'+str(todate.year)+''+str(todate.month)+'1001'
 			
 			request_order = RequestOrder.objects.create(request_order_id=new_item_code,created_by=request.user)
-
-		requester_id                      = request.GET.get('requester_id')
-	
-		if requester_id:
-			try:
-				requester = ExternalCustomer.objects.get(name=requester_id)
-			except:
-				requester = ExternalCustomer.objects.create(name=requester_id)
-
-			request_order.requested_by = requester
-			request_order.save()
-
-		purpose                           = request.GET.get('purpose')
-		if purpose:
-			request_order.purpose         = purpose
-			request_order.save()
 		
 		inventory_items     = InventoryItem.objects.filter(~Q(item_type='FINISHED GOODS'))
 		request_order_items = RequestOrderItems.objects.filter(request_order=request_order)

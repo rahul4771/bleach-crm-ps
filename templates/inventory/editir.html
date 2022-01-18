@@ -141,7 +141,7 @@
                         
                         <div class="model-input-name">Purpose</div>
                             
-                            <input type="text" hidden id="purpose_id" name="purpose" required>
+                            <input type="text" hidden id="purpose_id" name="purpose" value="{{request_order.purpose}}" required>
                             <div class="wrap-drop" id="noble-gases2">
                             {% if not request_order.purpose %}
                             <span>--Select Purpose--</span>
@@ -630,13 +630,13 @@ $(function () {
 function dropSelectRequester(id){
     console.log(id)
     $('#requester_id').val(id);
-    set_params_go();
+    //set_params_go();
 }
 
 function dropSelectPurpose(id){
     console.log(id)
     $('#purpose_id').val(id);
-    set_params_go();
+    //set_params_go();
 }
 
 
@@ -850,23 +850,6 @@ function subQty(){
         $('#id_item_count').val($(this).data('itemcount'));
         $('.count').val($(this).data('itemcount'));
     })
-    
-    function set_params_go(args)
-    {
-        
-    var url='{% url 'bleach-inventory:inventory-editrequestorder' request_order.id %}';
-    var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),requester_id:$('#requester_id').val(),purpose:$('#purpose_id').val()
-    };
-    
-    for(key in args) 
-        params[key]=args[key];
-    var query='';
-    for(key in params)
-        if(params[key]) 
-            query+='&'+key+'='+params[key].toString();
-    query=query.replace('&','?');
-    window.location.href=url+query;  
-    }
 
 </script>
 {% endblock %}
