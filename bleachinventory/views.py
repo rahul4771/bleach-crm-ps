@@ -745,6 +745,7 @@ class InventoryItems(IsInventoryAdminUser,View):
 			item = item,
 			purchase_store=store,
 			purchase_date = purchase_date,
+			item_action = 'MANUAL',
 			quantity = quantity,
 			added_by = request.user
 			)
