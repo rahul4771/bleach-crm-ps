@@ -141,7 +141,7 @@
                         
                         <div class="model-input-name">Purpose</div>
                             
-                            <input type="text" hidden id="purpose_id" name="purpose"  required>
+                            <input type="text" hidden id="purpose_id" name="purpose"  >
                             <div class="wrap-drop" id="noble-gases2">
                             {% if not request_order.purpose %}
                             <span>--Select Purpose--</span>
@@ -631,13 +631,11 @@ $(function () {
 function dropSelectRequester(id){
     console.log(id)
     $('#requester_id').val(id);
-  //  set_params_go();
 }
 
 function dropSelectPurpose(id){
     console.log(id)
     $('#purpose_id').val(id);
-   // set_params_go();
 }
 
 

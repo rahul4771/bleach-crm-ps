@@ -277,14 +277,20 @@
                                  </div>
 
                     <input type="hidden" name="item_id" value="{{inventory_item.id}}" id="item_id">
+                    
+                    {% if inventory_item.item_add_type == 'quantity' %}
                     <div id="unit_edit_data" style="display: none;">
                     <div class="model-input-name ">Select Unit</div>
                    
-                    <select  name="item_unit_data" id="unit_select" class="minimal av-font inv-hide" required="required" >
-                        <option value="">--Select Unit--</option><option value="1" selected="">option 1</option>
-                        <option value="2">Option 2</option>
+                    <select  name="item_unit_data" id="unit_select" class="minimal av-font inv-hide" >
+                        <option value="L" {% if inventory_item.measuring_unit == 'L' %} selected {% endif %}>L</option>
+                        <option value="kg" {% if inventory_item.measuring_unit == 'kg' %} selected {% endif %}>kg</option>
+                        <option value="piece" {% if inventory_item.measuring_unit == 'piece' %} selected {% endif %}>piece</option>
+                        <option value="pack" {% if inventory_item.measuring_unit == 'pack' %} selected {% endif %}>pack</option>
                     </select>
-                </div>
+                    </div>
+                    {% endif %}
+
                                 </div>
                             </div>           
                          </div>
@@ -346,7 +352,7 @@
                                {% empty %}
                                <div class="col-md-12">
                                 <div class="row c-mb-3 mt-20">
-                                    <div class="col-xs-6 av-font">Add attribute values</div>
+                                    <div class="col-xs-6 av-font">No Attributes</div>
                                     <div class="col-xs-6 av-font"></div>
                                 </div>
                                
@@ -638,7 +644,7 @@
                                         <td>{{history.added_by.name|default_if_none:'-'}}</td>
                                         <td>{{history.item_action}}</td>
                                         <td>{{history.item_remark|default_if_none:'-'}}</td>
-                                        {% if history.item_action == 'PURCHASE ORDER' or history.item_action == 'STOCK IN' %}
+                                        {% if history.item_action == 'PURCHASE ORDER' or history.item_action == 'STOCK IN' or history.item_action == 'ITEM RETURN' %}
                                         <td style="color:green"><i class="fa fa-plus" aria-hidden="true"></i> {{history.quantity|floatformat:2}}</td>
                                         {% else %}
                                         <td style="color:red"><i class="fa fa-minus" aria-hidden="true"></i> {{history.quantity|floatformat:2}}</td>
@@ -1024,7 +1030,7 @@
                     <div class="model-input-name required-field">Quantity</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="number" step="0.001"  class="w-p-100 inv-in" name="quantity" id="quantity_id" value="1" required>
+                        <input type="number" step="0.001"  class="w-p-100 inv-in" name="inventory_item_quantity" id="quantity_id" value="1" required>
                       </div>
                 </div>
 
@@ -1041,10 +1047,9 @@
             
             {% if inventory_item.item_type == 'FINISHED GOODS' %}
             <button class="sent-button" type="button" onclick="formvalidation()">Submit</button>
-            {% else %}
-            <button class="sent-button" id="return-item-btn" type="button" onclick="formvalidation()">Item Return</button>
             {% endif %}
 
+            <button class="sent-button" id="return-item-btn" type="button" onclick="formvalidation('itemreturn')">Item Return</button>
             <a href="#" id="load_po"><button class="sent-button" type="button" id="po-btn" >Purchase Order</button></a>
             <button class="sent-button" type="button" id="update-unit-btn" onclick="formvalidation()">Update Unit</button>    
         </form>
@@ -2029,8 +2034,12 @@ function editItemData(){
     document.getElementById('id_res_val').style.display = 'none';
     document.getElementById('id_res_text').style.display = 'block';
     document.getElementById('unit_data').style.display = 'none';
-    document.getElementById('unit_edit_data').style.display = 'block';
-    document.getElementById('unit_select').style.display = 'block';
+    if (document.getElementById('unit_edit_data')){
+        console.log("lp2")
+        document.getElementById('unit_edit_data').style.display = 'block';
+        document.getElementById('unit_select').style.display = 'block';
+    }
+    
 
     
 }
@@ -2061,8 +2070,12 @@ function doneEdit(){
         document.getElementById('id_res_val').style.display = 'block';
         document.getElementById('id_res_text').style.display = 'none';
         document.getElementById('unit_data').style.display = 'block';
-    document.getElementById('unit_edit_data').style.display = 'none';
-    document.getElementById('unit_select').style.display = 'none';
+        if (document.getElementById('unit_edit_data')){
+            console.log("lp1")
+            document.getElementById('unit_edit_data').style.display = 'none';
+            document.getElementById('unit_select').style.display = 'none';
+        }
+    
 
         document.getElementById("itemdetailsform").submit();
     }
@@ -2373,8 +2386,10 @@ function openNavAddSubparts(d){
     }
 
     //form empty field validation
-    function formvalidation(){
+    function formvalidation(d){
         console.log($('input[name=unit_price]').val(),"lolo")
+        
+        
         
         {% if inventory_item.item_type == 'FINISHED GOODS' %}
 
@@ -2392,31 +2407,53 @@ function openNavAddSubparts(d){
         
             {% if inventory_item.item_add_type == 'unit' %}
 
-                if ($('input[name=storename]').val() == ''){
-                    $('input[name=storename]').addClass('red-border-input');
-                }else if ($('input[name=serial_number]').val() == ''){
-                    $('input[name=serial_number]').addClass('red-border-input');
-                }else if ($('input[name=purchase_date]').val() == ''){
-                    $('input[name=purchase_date]').addClass('red-border-input');
-                }else if ($('input[name=unit_price]').val() == ''){
-                    $('input[name=unit_price]').addClass('red-border-input');
-                }else{
-                    $('#myform').submit();
+                if (d == 'itemreturn'){
+                    if ($('input[name=user_name]').val() == ''){
+                        $('input[name=user_name]').addClass('red-border-input');
+                    }else if ($('input[name=return_quantity]').val() == ''){
+                        $('input[name=return_quantity]').addClass('red-border-input');
+                    }else{
+                        $('#myform').submit();
+                    }
+                }    
+                else{
+                    if ($('input[name=storename]').val() == ''){
+                        $('input[name=storename]').addClass('red-border-input');
+                    }else if ($('input[name=serial_number]').val() == ''){
+                        $('input[name=serial_number]').addClass('red-border-input');
+                    }else if ($('input[name=purchase_date]').val() == ''){
+                        $('input[name=purchase_date]').addClass('red-border-input');
+                    }else if ($('input[name=unit_price]').val() == ''){
+                        $('input[name=unit_price]').addClass('red-border-input');
+                    }else{
+                        $('#myform').submit();
+                    }
                 }
-
             {% else %}
 
-                if ($('input[name=storename]').val() == ''){
-                    $('input[name=storename]').addClass('red-border-input');
-                }else if ($('input[name=purchase_date]').val() == ''){
-                    $('input[name=purchase_date]').addClass('red-border-input');
-                }else if ($('input[name=quantity]').val() == ''){
-                    console.log("logoo")
-                    $('input[name=quantity]').addClass('red-border-input');
-                }else{
-                    $('#myform').submit();
+                if (d == 'itemreturn'){
+                    if ($('input[name=user_name]').val() == ''){
+                        $('input[name=user_name]').addClass('red-border-input');
+                    }else if ($('input[name=return_unit]').val() == ''){
+                        $('input[name=return_unit]').addClass('red-border-input');
+                    }else{
+                        $('#myform').submit();
+                    }
+                }    
+                else{    
+                    console.log("largoo")
+                
+                    if ($('input[name=storename]').val() == ''){
+                        $('input[name=storename]').addClass('red-border-input');
+                    }else if ($('input[name=purchase_date]').val() == ''){
+                        $('input[name=purchase_date]').addClass('red-border-input');
+                    }else if ($('input[name=inventory_item_quantity]').val() == ''){
+                        console.log("logoo")
+                        $('input[name=inventory_item_quantity]').addClass('red-border-input');
+                    }else{
+                        $('#myform').submit();
+                    }
                 }
-
             {% endif %}
 
         {% endif %}

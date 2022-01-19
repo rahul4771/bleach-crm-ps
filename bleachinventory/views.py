@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
-from bleachinventory.models import CheckOutItems,CheckOutItemUnits,ItemHistory,Category,Segment,Line,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems,RequestOrder,RequestOrderItems,ExternalCustomer,InventoryAccessory
+from bleachinventory.models import ExternalCustomer,CheckOutItems,CheckOutItemUnits,ItemHistory,Category,Segment,Line,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems,RequestOrder,RequestOrderItems,InventoryAccessory
 from user.models import UserProfile
 from django.contrib import messages
 import re
@@ -615,6 +615,8 @@ class InventoryItems(IsInventoryAdminUser,View):
 			line_id = request.POST.get('item_line')
 			print(category_id,segment_id,line_id,"ids")
 
+			item_unit_data = request.POST.get('item_unit_data')
+
 			if category_id:
 				category = Category.objects.get(id=int(category_id))
 			else:
@@ -636,6 +638,7 @@ class InventoryItems(IsInventoryAdminUser,View):
 			item.item_category = category
 			item.item_segment = segment
 			item.item_line = line
+			item.measuring_unit = item_unit_data
 			item.description = request.POST.get('description')
 			item.reserve_count = request.POST.get('reserve')
 			item.save()
@@ -732,7 +735,7 @@ class InventoryItems(IsInventoryAdminUser,View):
 			purchase_date = request.POST.get('purchase_date')
 			print(purchase_date,"pd")
 			
-			quantity = request.POST.get('quantity')
+			quantity = request.POST.get('inventory_item_quantity')
 
 			store = Store.objects.get(id=int(store_id))
 
@@ -742,6 +745,7 @@ class InventoryItems(IsInventoryAdminUser,View):
 			item = item,
 			purchase_store=store,
 			purchase_date = purchase_date,
+			item_action = 'MANUAL',
 			quantity = quantity,
 			added_by = request.user
 			)
@@ -752,27 +756,37 @@ class InventoryItems(IsInventoryAdminUser,View):
 			messages.success(request,"Quantity Added Successfully !")
 
 		if action == 'return_item':
-			externaluser = ExternalCustomer.objects.get( id=int(request.POST.get('external_user')) ) 
+			item = InventoryItem.objects.get(id=item_id)
+
+			externaluser = ExternalCustomer.objects.get( id=int(request.POST.get('externaluser')) ) 
 
 			if item.item_add_type == 'unit':
-				unit_id = request.POST.get('unit_id')
+				unit_id = request.POST.get('return_unit')
 				itemunit = ItemUnit.objects.get(id=int(unit_id))
 				itemunit.status = 'available'
 				itemunit.save()
+
+				messages.success(request,"Item received !")
 			else:
 				quantity = request.POST.get('return_quantity')
 
 				request_order_item = RequestOrderItems.objects.filter(request_order__requested_by=externaluser,product=item).last()
 
-				ItemHistory.objects.create(
-					item = item,
-					item_action = 'ITEM RETURN',
-					item_remark = request_order_item.request_order.request_order_id,
-					quantity = quantity
-				)
+				if request_order_item:
+					ItemHistory.objects.create(
+						item = item,
+						item_action = 'ITEM RETURN',
+						item_remark = request_order_item.request_order.request_order_id,
+						quantity = quantity,
+						added_by = request.user
+					)
 
-			messages.success(request,"Item received !")
+					item.total_quantity = float(item.total_quantity) + float(quantity)
+					item.save()
 
+					messages.success(request,"Item received !")
+				else:
+					messages.error(request,"No Returns !")
 
 		if action == "edit_unit":
 			unit_id = request.POST.get('edit_unit_id')
@@ -2434,28 +2448,33 @@ class InventoryCreateInventoryRequest(View):
 			messages.success(request,"Item Deleted successfully!")
 
 		if action == 'order_close':
+			print(request.POST)
 			request_order_id = request.POST.get('request_order_id')
 
 			request_order    = RequestOrder.objects.get(id=request_order_id)
 
-			requester_id     = request.POST.get('requester_id')	
-			if requester_id:
+			requested_by     = request.POST.get('requested_by')	
+			if requested_by:
 				try:
-					requester = ExternalCustomer.objects.get(name=requester_id)
+					requester = ExternalCustomer.objects.get(name=requested_by)
 				except:
-					requester = ExternalCustomer.objects.create(name=requester_id)
+					requester = ExternalCustomer.objects.create(name=requested_by)
 				
 				if requester:
 					request_order.requested_by = requester
 
-			purpose                    = request.GET.get('purpose')
+			purpose                    = request.POST.get('purpose')
 			if purpose:
 				request_order.purpose  = purpose
 
 			request_order.is_order_completed = True
+			if request.user.user_type == 'INVENTORYADMIN': 
+				request_order.is_admin_approved = True
 			request_order.save()
 			
 			messages.success(request,"Inventory Request Order Completed successfully!")
+
+			return redirect('bleach-inventory:inventory-requestorderitems',request_order.id)
 
 		return redirect('bleach-inventory:inventory-createinventoryrequest')
 
@@ -2478,22 +2497,6 @@ class InventoryEditRequestOrder(IsInventoryAdminUser,View):
 				new_item_code = 'BLIR'+str(todate.year)+''+str(todate.month)+'1001'
 			
 			request_order = RequestOrder.objects.create(request_order_id=new_item_code,created_by=request.user)
-
-		requester_id                      = request.GET.get('requester_id')
-	
-		if requester_id:
-			try:
-				requester = ExternalCustomer.objects.get(name=requester_id)
-			except:
-				requester = ExternalCustomer.objects.create(name=requester_id)
-
-			request_order.requested_by = requester
-			request_order.save()
-
-		purpose                           = request.GET.get('purpose')
-		if purpose:
-			request_order.purpose         = purpose
-			request_order.save()
 		
 		inventory_items     = InventoryItem.objects.filter(~Q(item_type='FINISHED GOODS'))
 		request_order_items = RequestOrderItems.objects.filter(request_order=request_order)
@@ -2571,9 +2574,13 @@ class InventoryEditRequestOrder(IsInventoryAdminUser,View):
 					request_order.purpose  = purpose
 				
 				request_order.is_order_completed = True
+				if request.user.user_type == 'INVENTORYADMIN': 
+					request_order.is_admin_approved = True
 				request_order.save()
 				
 				messages.success(request,"Inventory Request Order Completed successfully!")
+				
+				return redirect('bleach-inventory:inventory-requestorderitems',request_order.id)
 
 			return redirect('bleach-inventory:inventory-requestorder')
 
@@ -2612,7 +2619,9 @@ class RequestOrderApproval(IsInventoryAdmin,View):
 						request_order_item.status = 'Available'
 				
 				elif request_order_item.product.item_add_type == 'unit':
-					reminign_items = float(request_order_item.item_count)-float(request_order_item.product.total_quantity)
+					print(request_order_item.item_count,request_order_item.product.total_quantity,"newmo")
+					unitcount = ItemUnit.objects.filter(status='available',item=request_order_item.product).count()
+					reminign_items = float(request_order_item.item_count)-float(unitcount)
 					if	request_order_item.product_unit.status == 'available' and reminign_items > 0:
 						request_order_item.status = 'Available'
 					else:
@@ -2631,7 +2640,7 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 		if request_order_items:
 			for request_order_item in request_order_items:
 				if request_order_item.product.item_add_type == 'quantity':
-					reminign_items = float(request_order_item.item_count)-float(request_order_item.product.total_quantity)
+					reminign_items = float(request_order_item.product.total_quantity)-float(request_order_item.item_count)
 					if reminign_items < 0:
 						request_order_item.status = 'Out Of Stock'
 						is_all_items_available       = False
@@ -2641,8 +2650,8 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 						request_order_item.status = 'Available'
 				
 				elif request_order_item.product.item_add_type == 'unit':
-					reminign_items = float(request_order_item.item_count)-float(request_order_item.product.total_quantity)
-					if	request_order_item.product_unit.status == 'available' and reminign_items > 0:
+					unitcount = ItemUnit.objects.filter(status='available',item=request_order_item.product).count()
+					if	request_order_item.product_unit.status == 'available' and float(unitcount) >= float(request_order_item.item_count):
 						request_order_item.status = 'Available'
 					else:
 						request_order_item.status = 'Not Available'
@@ -2661,8 +2670,7 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 			if request_order_items:
 				for request_order_item in request_order_items:
 					if request_order_item.product.item_add_type == 'quantity':
-						reminign_items = float(request_order_item.item_count)-float(request_order_item.product.total_quantity)
-						if reminign_items < 0:
+						if float(request_order_item.product.total_quantity) <= 0 or float(request_order_item.product.total_quantity) < float(request_order_item.item_count):
 							request_order_item.status    = 'Out Of Stock'
 							is_all_items_available       = False
 
@@ -2670,8 +2678,8 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 							return redirect('bleach-inventory:inventory-requestorderitems',request_order_id)
 				
 					elif request_order_item.product.item_add_type == 'unit':
-						reminign_items = float(request_order_item.item_count)-float(request_order_item.product.total_quantity)
-						if not (request_order_item.product_unit.status == 'available' and reminign_items > 0):
+						unitcount = ItemUnit.objects.filter(status='available',item=request_order_item.product).count()
+						if not (request_order_item.product_unit.status == 'available' and float(unitcount) >= float(request_order_item.item_count)):
 							request_order_item.status    = 'Not Available'
 							is_all_items_available       = False
 						
@@ -2682,10 +2690,21 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 			if is_all_items_available == True:
 				if request_order_items:
 					for request_order_item in request_order_items:
-						request_order_item.product.total_quantity = float(request_order_item.product.total_quantity)-float(request_order_item.item_count)
+						
+						if request_order_item.product.item_add_type == 'quantity':
+							request_order_item.product.total_quantity = float(request_order_item.product.total_quantity)-float(request_order_item.item_count)
+						
 						request_order_item.product.save()
 						request_order_item.is_received             = True
 						request_order_item.save()
+
+						ItemHistory.objects.create(
+						item = request_order_item.product,
+						item_action = 'ITEM REQUEST',
+						item_remark = request_order_item.request_order.request_order_id,
+						quantity = request_order_item.item_count,
+						added_by = request.user
+						)
 
 						#update unit item status
 						if request_order_item.product_unit:
