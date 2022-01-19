@@ -16,7 +16,8 @@ ITEMHISTORY_CHOICES=(
     ('STOCK IN','STOCK IN'),
     ('STOCK OUT','STOCK OUT'),
     ('ITEM REQUEST','ITEM REQUEST'),
-    ('ITEM RETURN','ITEM RETURN')
+    ('ITEM RETURN','ITEM RETURN'),
+    ('MANUAL','MANUAL'),
 )
 
 ITEM_STATUS_CHOICES=(
@@ -447,7 +448,7 @@ class RequestOrder(models.Model):
     
     
     created_by          = models.ForeignKey(UserProfile,blank=True,null=True,related_name='created_by_request_order')
-    requested_by        = models.ForeignKey('ExternalCustomer',blank=True,null=True,related_name='requested_by_request_order')
+    requested_by        = models.ForeignKey(ExternalCustomer,blank=True,null=True,related_name='requested_by_request_order')
     approved_by         = models.ForeignKey(UserProfile,blank=True,null=True,related_name='approved_by_request_order')
     received_by         = models.ForeignKey(UserProfile,blank=True,null=True,related_name='send_by_request_order')
     rejected_by         = models.ForeignKey(UserProfile,blank=True,null=True,related_name='rejected_by_request_order')
