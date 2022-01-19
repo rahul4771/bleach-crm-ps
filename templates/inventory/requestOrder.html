@@ -42,13 +42,13 @@
                         <thead>
                             <tr>
                                 <th style="width: %;">
-                                    RO ID
+                                    Item Request ID
                                 </th>
                                 <th data-hide="phone,tablet"  style="width: %; text-align: center;">
                                     Initiated Date
                                 </th>
                                 <th data-hide="phone,tablet"  style="width: %;" class="text-center">
-                                    Initiated by
+                                    Requested by
                                 </th>
                                 <th  data-hide="phone,tablet"  style="width: %;" class="text-center td-md-width">
                                     Purpose
@@ -94,22 +94,28 @@
                             </td>
                         <td class="text-center">       
                         
-                        <a href="/bleach-inventory/requestOrder/items/{{order.id}}/"><button class="inv-plan-img-btn"> <img class="view-img"
-                                    src="{% static 'files/inventory/view.png' %}" alt="">
-                        </button></a>
+                            <div class="btn-group" id="actionDropdown">
+                                <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+                                  Action
+                                  <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
+                                </div>
+                                <div class="dropdown-menu" id="dropdown-menu-orders">  
                         
-                        {% if order.is_admin_approved == True %}
-                        <a href="/bleach-inventory/requestorderpage/{{order.id}}/"><button class="inv-plan-img-btn"> <img class=""
-                            src="{% static 'files/inventory/invoice.png' %}" alt=""></button></a>
-                        {% else %}
-                        <button class="inv-plan-img-btn2-disabled" disabled> <img class="btn-img2" src="{% static 'files/inventory/invoice.png' %}" alt=""></button>
-                        {% endif %}
-                                
-                        <a href="/bleach-inventory/editro/{{order.id}}"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button></a>
+                                    <a class="d-flex dropdown-orders" href="/bleach-inventory/requestOrder/items/{{order.id}}/"> <img class="dropdown-icon2 pr-2"
+                                            src="{% static 'files/inventory/view.png' %}" alt=""><div class="ml-2 dropdown-text">View</div></a>
+                        
+                                    {% if order.is_admin_approved == True %}
+                                    <a class="d-flex dropdown-orders" href="/bleach-inventory/requestorderpage/{{order.id}}/"> <img class="dropdown-icon2 pr-2"
+                                        src="{% static 'files/inventory/invoice.png' %}" alt=""><div class="ml-2 dropdown-text">Invoice</div></a>
+                                    {% endif %}
+                                            
+                                    <a class="d-flex dropdown-orders" href="/bleach-inventory/editro/{{order.id}}"> <img class="dropdown-icon2 pr-2" src="{% static 'files/inventory/pencil.png' %}"  alt=""> <div class="ml-2 dropdown-text">Edit</div></a>
 
-                        {% if request.user.user_type == 'INVENTORYADMIN' %}
-                        <button class="inv-plan-img-btn delete-order" data-id="{{order.id}}"  data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
-                        {% endif %}
+                                    {% if request.user.user_type == 'INVENTORYADMIN' %}
+                                    <a class="d-flex dropdown-orders delete-order" data-id="{{order.id}}"  data-toggle="modal" data-target="#deleteModel"> <img class="dropdown-icon2 pr-2" src="{% static 'files/inventory/bin.png' %}"  alt=""> <div class="ml-2 dropdown-text">Delete</div></a>
+                                    {% endif %}
+                                </div>
+                            </div>
                         
                         </td>
                         </tr>
@@ -127,13 +133,19 @@
                         <thead>
                             <tr>
                                 <th style="width: %;">
-                                    RO ID
+                                    Item Request ID
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                    Requested by
                                 </th>
                                 <th data-hide="phone,tablet"  style="width: %; text-align: center;">
                                     Initiated Date
                                 </th>
+                                <th data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                    Received Date
+                                </th>
                                 <th data-hide="phone,tablet"  style="width: %;" class="text-center">
-                                    Initiated by
+                                    Received by
                                 </th>
                                 <th  data-hide="phone,tablet"  style="width: %;" class="text-center td-md-width">
                                     Purpose
@@ -153,10 +165,18 @@
                                 {{order.request_order_id}}
                             </td>
                             <td class="text-center">
+                                {{order.requested_by.name}}
+                            </td>
+                            <td class="text-center">
                                 {{order.created|date:'d-m-Y'}}
                             </td>
                             <td class="text-center">
-                                {{order.requested_by.name}}
+                                {{order.received_date|date:'d-m-Y'}}
+                            </td>
+                            
+                            <td class="text-center">
+                                {{order.received_by.name}}
+                            </td>
                             <td class="text-center">
                                 {{order.purpose}}
                             </td>
@@ -164,14 +184,25 @@
                                 {{order.total_added_units}}
                             </td>
                             <td class="text-center">
+
+                                <div class="btn-group" id="actionDropdown">
+                                    <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+                                      Action
+                                      <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
+                                    </div>
+                                    <div class="dropdown-menu" id="dropdown-menu-orders">  
+                            
+                                        <a class="d-flex dropdown-orders" href="/bleach-inventory/requestOrder/items/{{order.id}}/"> <img class="dropdown-icon2 pr-2"
+                                                src="{% static 'files/inventory/view.png' %}" alt=""><div class="ml-2 dropdown-text">View</div></a>
+                            
+                                        {% if order.is_admin_approved == True %}
+                                        <a class="d-flex dropdown-orders" href="/bleach-inventory/requestorderpage/{{order.id}}/"> <img class="dropdown-icon2 pr-2"
+                                            src="{% static 'files/inventory/invoice.png' %}" alt=""><div class="ml-2 dropdown-text">Invoice</div></a>
+                                        {% endif %}
+                                    </div>
+                                </div>
                                
-                        <a href="/bleach-inventory/requestOrder/items/{{order.id}}/"><button class="inv-plan-img-btn"> <img class="view-img"
-                                    src="{% static 'files/inventory/view.png' %}" alt="">
-                        </button></a>
-                        <a href="/bleach-inventory/requestorderpage/{{order.id}}/"><button class="inv-plan-img-btn"> <img class=""
-                            src="{% static 'files/inventory/invoice.png' %}" alt=""></button></a>
-                        </button></a>
-                        </td>
+                            </td>
                         </tr>
                         {% endif %}
                         {% endfor %}

@@ -3921,7 +3921,7 @@ class ItemsCheckInAPI(APIView):
 					inventoryitemunit.status = 'available'
 					inventoryitemunit.save()
 
-			if checkin_item.item and checkin_item.item.item_add_type == 'quantity':
+			if checkin_item.item and checkin_item.item.item_add_type == 'quantity' and float(item_quantities[count]) > 0:
 				print("pam")
 				inventoryitem = InventoryItem.objects.get(id=int(checkin_item.item.id))
 				inventoryitem.total_quantity = float(inventoryitem.total_quantity) + float(item_quantities[count])
@@ -3938,7 +3938,7 @@ class ItemsCheckInAPI(APIView):
 
 				count += 1
 
-			if checkin_item.service_item and checkin_item.service_item.item.item_add_type == 'quantity':
+			if checkin_item.service_item and checkin_item.service_item.item.item_add_type == 'quantity' and float(item_quantities[count]) > 0:
 				inventoryitem = InventoryItem.objects.get(id=int(checkin_item.service_item.item.id))
 				inventoryitem.total_quantity = float(inventoryitem.total_quantity) + float(item_quantities[count])
 				inventoryitem.save()
