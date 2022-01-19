@@ -907,7 +907,7 @@ def requestorder_html_to_pdf_view(request,request_order_id):
 	main_doc.write_pdf(target='/home/pdf/tmp/requestorder/requestorder.pdf');
 	fs=FileSystemStorage('/home/pdf/tmp/requestorder/')
 	
-	with fs.open('purchaseorder.pdf') as pdf:
+	with fs.open('requestorder.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
 		response['Content-Disposition'] = 'attachment; filename="'+request_order.request_order_id+'_requestorder.pdf"'
 		return response

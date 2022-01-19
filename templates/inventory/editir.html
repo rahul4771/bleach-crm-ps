@@ -795,7 +795,13 @@ function subQty(){
     }
 
     function showProducts(){
-      
+        var products = [];
+            {% for item in inventory_items %}
+                var tempId = '{{item.id}}';
+                var tempName = '{{item.name}}';
+                var productType = '{{item.item_add_type}}'
+                products.push({id:tempId,name:tempName,item_add_type:productType})
+            {% endfor %}
         $('#id_search').empty();
         for (var j=0; j<products.length; j++) {
             if (products[j].name.toUpperCase().match($('#pro-name').val().toUpperCase())){
