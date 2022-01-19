@@ -2651,7 +2651,6 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 				
 				elif request_order_item.product.item_add_type == 'unit':
 					unitcount = ItemUnit.objects.filter(status='available',item=request_order_item.product).count()
-					# reminign_items = float(request_order_item.item_count)-float(unitcount)
 					if	request_order_item.product_unit.status == 'available' and float(unitcount) >= float(request_order_item.item_count):
 						request_order_item.status = 'Available'
 					else:
@@ -2679,7 +2678,6 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 							return redirect('bleach-inventory:inventory-requestorderitems',request_order_id)
 				
 					elif request_order_item.product.item_add_type == 'unit':
-						# reminign_items = float(request_order_item.item_count)-float(request_order_item.product.total_quantity)
 						unitcount = ItemUnit.objects.filter(status='available',item=request_order_item.product).count()
 						if not (request_order_item.product_unit.status == 'available' and float(unitcount) >= float(request_order_item.item_count)):
 							request_order_item.status    = 'Not Available'
