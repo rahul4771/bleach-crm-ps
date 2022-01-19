@@ -2640,7 +2640,7 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 		if request_order_items:
 			for request_order_item in request_order_items:
 				if request_order_item.product.item_add_type == 'quantity':
-					reminign_items = float(request_order_item.item_count)-float(request_order_item.product.total_quantity)
+					reminign_items = float(request_order_item.product.total_quantity)-float(request_order_item.item_count)
 					if reminign_items < 0:
 						request_order_item.status = 'Out Of Stock'
 						is_all_items_available       = False
@@ -2671,7 +2671,6 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 			if request_order_items:
 				for request_order_item in request_order_items:
 					if request_order_item.product.item_add_type == 'quantity':
-						# reminign_items = float(request_order_item.item_count)-float(request_order_item.product.total_quantity)
 						if float(request_order_item.product.total_quantity) <= 0 or float(request_order_item.product.total_quantity) < float(request_order_item.item_count):
 							request_order_item.status    = 'Out Of Stock'
 							is_all_items_available       = False
