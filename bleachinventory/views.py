@@ -2460,6 +2460,8 @@ class InventoryCreateInventoryRequest(View):
 			
 			messages.success(request,"Inventory Request Order Completed successfully!")
 
+			return redirect('bleach-inventory:inventory-requestorderitems',request_order.id)
+
 		return redirect('bleach-inventory:inventory-createinventoryrequest')
 
 
@@ -2563,6 +2565,8 @@ class InventoryEditRequestOrder(IsInventoryAdminUser,View):
 				request_order.save()
 				
 				messages.success(request,"Inventory Request Order Completed successfully!")
+				
+				return redirect('bleach-inventory:inventory-requestorderitems',request_order.id)
 
 			return redirect('bleach-inventory:inventory-requestorder')
 
