@@ -104,25 +104,36 @@
                             </td>
                             <td class="text-center">
                                
-                        <a href="/bleach-inventory/purchaseOrder/items/{{order.id}}/"><button class="inv-plan-img-btn"> <img class="view-img"
-                                    src="{% static 'files/inventory/view.png' %}" alt="">
-                        </button></a>
-                        {% if order.is_admin_approved == True %}
-                        <a href="/bleach-inventory/purchaseorderpage/{{order.id}}/"><button class="inv-plan-img-btn"> <img class=""
-                            src="{% static 'files/inventory/invoice.png' %}" alt="">
-                        {% else %}
-                        <button class="inv-plan-img-btn2-disabled" disabled> <img class="btn-img2" src="{% static 'files/inventory/invoice.png' %}" alt=""></button>
-                        {% endif %}
-                
-                {% if order.is_admin_approved == False or order.is_rejected == True %}                
-                <a href="/bleach-inventory/editpo/{{order.id}}"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button></a>
-                {% else %}
-                <button class="inv-plan-img-btn2-disabled" disabled> <img class="btn-img2" src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
-                {% endif %}
+                                <div class="btn-group" id="actionDropdown">
+                                    <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+                                      Action
+                                      <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
+                                    </div>
+                                    <div class="dropdown-menu" id="dropdown-menu-orders">  
+                                        
+                                        <a class="d-flex dropdown-orders"  href="/bleach-inventory/purchaseOrder/items/{{order.id}}/"><img src="{% static 'files/inventory/view.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">View</div></a>    
 
-                {% if request.user.user_type == 'INVENTORYADMIN' %}
-                <button class="inv-plan-img-btn delete-order" data-id="{{order.id}}"  data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
-                {% endif %}
+                                        {% if order.is_admin_approved == True %}
+                                            <a class="d-flex dropdown-orders" href="/bleach-inventory/purchaseorderpage/{{order.id}}/"><img
+                                                src="{% static 'files/inventory/invoice.png' %}" class="dropdown-icon2 pr-2" alt=""><div class="ml-2 dropdown-text">Invoice</div></a>
+                                        {% else %}
+                                            <a class="inv-plan-img-btn2-disabled d-flex dropdown-orders" disabled> <img class="btn-img2 dropdown-icon2 pr-2" src="{% static 'files/inventory/invoice.png' %}" alt=""><div class="ml-2 dropdown-text">Invoice</div></a>
+                                        {% endif %}
+
+                                        {% if order.is_admin_approved == False or order.is_rejected == True %}                
+                                        <a class="d-flex dropdown-orders" href="/bleach-inventory/editpo/{{order.id}}"><img class="dropdown-icon2 pr-2" src="{% static 'files/inventory/pencil.png' %}"  alt=""><div class="ml-2 dropdown-text">Edit</div></a>
+                                        {% else %}
+                                        <a class="d-flex dropdown-orders inv-plan-img-btn2-disabled" disabled> <img class="dropdown-icon2 pr-2 btn-img2" src="{% static 'files/inventory/pencil.png' %}"  alt=""><div class="ml-2 dropdown-text">Edit</div> </a>
+                                        {% endif %}
+
+                                      
+                                        {% if request.user.user_type == 'INVENTORYADMIN' %}
+                                        <a class="d-flex dropdown-orders delete-order" data-id="{{order.id}}"  data-toggle="modal" data-target="#deleteModel"> <img class="dropdown-icon2" src="{% static 'files/inventory/bin.png' %}"  alt=""> <div class="ml-2 dropdown-text">Delete</div> </button>
+                                        {% endif %}
+                                      
+                                    </div>
+                                  </div>
+                        
                             </td>
                         </tr>
                         {% endif %}
@@ -193,7 +204,40 @@
                             </td>
                             <td class="text-center">
                                
-                        <a href="/bleach-inventory/purchaseOrder/items/{{order.id}}/"><button class="inv-plan-img-btn"> <img class="view-img"
+                                <div class="btn-group" id="actionDropdown">
+                                    <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+                                      Action
+                                      <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
+                                    </div>
+                                    <div class="dropdown-menu" id="dropdown-menu-orders">  
+                                        
+                                        <a class="d-flex dropdown-orders"  href="/bleach-inventory/purchaseOrder/items/{{order.id}}/"><img src="{% static 'files/inventory/view.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">View</div></a>    
+
+                                        {% if order.is_admin_approved == True %}
+                                            <a class="d-flex dropdown-orders" href="/bleach-inventory/purchaseorderpage/{{order.id}}/"><img
+                                                src="{% static 'files/inventory/invoice.png' %}" class="dropdown-icon2 pr-2" alt=""><div class="ml-2 dropdown-text">Invoice</div></a>
+                                        {% else %}
+                                            <a class="inv-plan-img-btn2-disabled d-flex dropdown-orders" disabled> <img class="btn-img2 dropdown-icon2 pr-2" src="{% static 'files/inventory/invoice.png' %}" alt=""><div class="ml-2 dropdown-text">Invoice</div></a>
+                                        {% endif %}
+
+                                        {% if request.user.user_type == 'INVENTORYADMIN' %}
+                                            {% if order.is_admin_approved == False or order.is_rejected == True %}                
+                                            <a class="d-flex dropdown-orders" href="/bleach-inventory/editpo/{{order.id}}"><img class="dropdown-icon2 pr-2" src="{% static 'files/inventory/pencil.png' %}"  alt=""><div class="ml-2 dropdown-text">Edit</div></a>
+                                            {% else %}
+                                            <a class="d-flex dropdown-orders inv-plan-img-btn2-disabled" disabled> <img class="dropdown-icon2 pr-2 btn-img2" src="{% static 'files/inventory/pencil.png' %}"  alt=""><div class="ml-2 dropdown-text">Edit</div> </a>
+                                            {% endif %}
+
+                                            <a class="d-flex dropdown-orders delete-order" data-id="{{order.id}}"  data-toggle="modal" data-target="#deleteModel"> <img class="dropdown-icon2" src="{% static 'files/inventory/bin.png' %}"  alt=""> <div class="ml-2 dropdown-text">Delete</div> </button>
+                                        {% endif %}
+                                      
+                                    </div>
+                                  </div>
+                        
+                        
+                        
+                        
+                        
+                                {% comment %} <a href="/bleach-inventory/purchaseOrder/items/{{order.id}}/"><button class="inv-plan-img-btn"> <img class="view-img"
                                     src="{% static 'files/inventory/icons/view.png' %}" alt="">
                         </button></a>
                         <a href="/bleach-inventory/purchaseorderpage/{{order.id}}/"><button class="inv-plan-img-btn"> <img 
@@ -205,7 +249,7 @@
                 {% else %}
                 <button class="inv-plan-img-btn2-disabled" > <img class="btn-img2" src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
                 <button class="inv-plan-img-btn2-disabled" > <img class="btn-img2" src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-                {% endif %}
+                {% endif %} {% endcomment %}
                             </td>
                         </tr>
                         {% endif %}
