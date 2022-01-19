@@ -2614,7 +2614,9 @@ class RequestOrderApproval(IsInventoryAdmin,View):
 						request_order_item.status = 'Available'
 				
 				elif request_order_item.product.item_add_type == 'unit':
-					reminign_items = float(request_order_item.item_count)-float(request_order_item.product.total_quantity)
+					print(request_order_item.item_count,request_order_item.product.total_quantity,"newmo")
+					unitcount = ItemUnit.objects.filter(status='available',item=request_order_item.product).count()
+					reminign_items = float(request_order_item.item_count)-float(unitcount)
 					if	request_order_item.product_unit.status == 'available' and reminign_items > 0:
 						request_order_item.status = 'Available'
 					else:
@@ -2643,8 +2645,9 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 						request_order_item.status = 'Available'
 				
 				elif request_order_item.product.item_add_type == 'unit':
-					reminign_items = float(request_order_item.item_count)-float(request_order_item.product.total_quantity)
-					if	request_order_item.product_unit.status == 'available' and reminign_items > 0:
+					unitcount = ItemUnit.objects.filter(status='available',item=request_order_item.product).count()
+					# reminign_items = float(request_order_item.item_count)-float(unitcount)
+					if	request_order_item.product_unit.status == 'available' and float(unitcount) >= float(request_order_item.item_count):
 						request_order_item.status = 'Available'
 					else:
 						request_order_item.status = 'Not Available'
@@ -2663,8 +2666,8 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 			if request_order_items:
 				for request_order_item in request_order_items:
 					if request_order_item.product.item_add_type == 'quantity':
-						reminign_items = float(request_order_item.item_count)-float(request_order_item.product.total_quantity)
-						if reminign_items < 0:
+						# reminign_items = float(request_order_item.item_count)-float(request_order_item.product.total_quantity)
+						if float(request_order_item.product.total_quantity) <= 0 or float(request_order_item.product.total_quantity) < float(request_order_item.item_count):
 							request_order_item.status    = 'Out Of Stock'
 							is_all_items_available       = False
 
@@ -2672,8 +2675,9 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 							return redirect('bleach-inventory:inventory-requestorderitems',request_order_id)
 				
 					elif request_order_item.product.item_add_type == 'unit':
-						reminign_items = float(request_order_item.item_count)-float(request_order_item.product.total_quantity)
-						if not (request_order_item.product_unit.status == 'available' and reminign_items > 0):
+						# reminign_items = float(request_order_item.item_count)-float(request_order_item.product.total_quantity)
+						unitcount = ItemUnit.objects.filter(status='available',item=request_order_item.product).count()
+						if not (request_order_item.product_unit.status == 'available' and float(unitcount) >= float(request_order_item.item_count)):
 							request_order_item.status    = 'Not Available'
 							is_all_items_available       = False
 						
@@ -2684,7 +2688,10 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 			if is_all_items_available == True:
 				if request_order_items:
 					for request_order_item in request_order_items:
-						request_order_item.product.total_quantity = float(request_order_item.product.total_quantity)-float(request_order_item.item_count)
+						
+						if request_order_item.product.item_add_type == 'quantity':
+							request_order_item.product.total_quantity = float(request_order_item.product.total_quantity)-float(request_order_item.item_count)
+						
 						request_order_item.product.save()
 						request_order_item.is_received             = True
 						request_order_item.save()
