@@ -2034,8 +2034,12 @@ function editItemData(){
     document.getElementById('id_res_val').style.display = 'none';
     document.getElementById('id_res_text').style.display = 'block';
     document.getElementById('unit_data').style.display = 'none';
-    document.getElementById('unit_edit_data').style.display = 'block';
-    document.getElementById('unit_select').style.display = 'block';
+    if (document.getElementById('unit_edit_data')){
+        console.log("lp2")
+        document.getElementById('unit_edit_data').style.display = 'block';
+        document.getElementById('unit_select').style.display = 'block';
+    }
+    
 
     
 }
@@ -2066,8 +2070,12 @@ function doneEdit(){
         document.getElementById('id_res_val').style.display = 'block';
         document.getElementById('id_res_text').style.display = 'none';
         document.getElementById('unit_data').style.display = 'block';
-    document.getElementById('unit_edit_data').style.display = 'none';
-    document.getElementById('unit_select').style.display = 'none';
+        if (document.getElementById('unit_edit_data')){
+            console.log("lp1")
+            document.getElementById('unit_edit_data').style.display = 'none';
+            document.getElementById('unit_select').style.display = 'none';
+        }
+    
 
         document.getElementById("itemdetailsform").submit();
     }
