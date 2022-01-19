@@ -1660,7 +1660,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 							try:
 								checkout_item = CheckOutItems.objects.get(visit=visit,service_item=service_item,service_item__ingredient=ingredient)
 							except:
-								checkout_item = CheckOutItems.objects.create(visit=visit,service_item=service_item,units=recommended_quantity,is_swapped_item=False)
+								checkout_item = CheckOutItems.objects.create(visit=visit,service_item=service_item,units=math.ceil(recommended_quantity),is_swapped_item=False)
 								
 								if service_item.item.item_add_type == 'unit':
 									itemunits = ItemUnit.objects.filter(item=service_item.item,status='available')[:int(variable_recommended_quantity)]
@@ -1679,7 +1679,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 							try:
 								checkout_item = CheckOutItems.objects.get(visit=visit,service_item=service_item,service_item__ingredient=ingredient)
 							except:
-								checkout_item = CheckOutItems.objects.create(visit=visit,service_item=service_item,units=item['total_quantity'],is_swapped_item=False)
+								checkout_item = CheckOutItems.objects.create(visit=visit,service_item=service_item,units=math.ceil(item['total_quantity']),is_swapped_item=False)
 							
 								if service_item.item.item_add_type == 'unit':
 									itemunits = ItemUnit.objects.filter(item=service_item.item,status='available')[:int(item['total_quantity'])]
@@ -2235,7 +2235,7 @@ class InventoryServices(IsInventoryAdminUser,View):
 
 			get_servicetype = ServiceRecipe.objects.get(service=service_type)          
 
-			ServiceRecipeIngredients.objects.create(service_or_person=recipe_type,service_type=get_servicetype,ingredient=ingredient,quantity=item_count,status=item_status)
+			ServiceRecipeIngredients.objects.create(service_or_person=recipe_type,service_type=get_servicetype,ingredient=ingredient,quantity=math.ceil(item_count),status=item_status)
 
 			messages.success(request,"Ingredient Added successfully!")
 
@@ -2264,7 +2264,7 @@ class InventoryServices(IsInventoryAdminUser,View):
 
 			serviceingredient.service_or_person = recipe_type
 			serviceingredient.ingredient = ingredient
-			serviceingredient.quantity = item_count
+			serviceingredient.quantity = math.ceil(item_count)
 			serviceingredient.status = item_status
 			serviceingredient.save()
 
