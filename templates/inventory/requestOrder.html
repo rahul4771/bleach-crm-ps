@@ -104,12 +104,8 @@
                         {% else %}
                         <button class="inv-plan-img-btn2-disabled" disabled> <img class="btn-img2" src="{% static 'files/inventory/invoice.png' %}" alt=""></button>
                         {% endif %}
-                
-                        {% if order.is_admin_approved == False or order.is_rejected == True %}                
+                                
                         <a href="/bleach-inventory/editro/{{order.id}}"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button></a>
-                        {% else %}
-                        <button class="inv-plan-img-btn2-disabled" disabled> <img class="btn-img2" src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
-                        {% endif %}
 
                         {% if request.user.user_type == 'INVENTORYADMIN' %}
                         <button class="inv-plan-img-btn delete-order" data-id="{{order.id}}"  data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
