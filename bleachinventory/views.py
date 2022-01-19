@@ -551,9 +551,9 @@ class InventoryBundle(IsInventoryAdminUser,View):
 
 class InventoryItems(IsInventoryAdminUser,View):
 	def get(self,request,item_id):
-		inventory_item = InventoryItem.objects.prefetch_related(Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images')).annotate(quantity_total=Sum('unit_item_history__quantity'),unit_count=Sum(Case(When(unit_item__status='available',then=1),default=0,output_field=IntegerField())),total_unit_price=Sum(Case(When(unit_item__status='available',then='unit_item__unit_price'),default=0,output_field=FloatField()))).get(id=item_id)
+		inventory_item = InventoryItem.objects.prefetch_related(Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images')).get(id=item_id)
 		categories = Category.objects.all()
-		item_units = ItemUnit.objects.filter(item=inventory_item).prefetch_related(Prefetch('checkoutitem_unit',CheckOutItemUnits.objects.all().select_related('checkout_item__visit').prefetch_related(Prefetch('checkout_item__visit__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')),to_attr='checkout_unit'))
+		item_units = ItemUnit.objects.filter(item=inventory_item).prefetch_related(Prefetch('product_request_unit',queryset=RequestOrderItems.objects.filter(is_received=True),to_attr='request_item_unit'),Prefetch('checkoutitem_unit',CheckOutItemUnits.objects.all().select_related('checkout_item__visit').prefetch_related(Prefetch('checkout_item__visit__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')),to_attr='checkout_unit'))
 		item_history = ItemHistory.objects.filter(item=inventory_item)
 
 		stores = Store.objects.filter(status=True)
@@ -604,7 +604,59 @@ class InventoryItems(IsInventoryAdminUser,View):
 
 		print(purchase_orders,"orddd")
 
-		return render(request,'inventory/item.html',{"stores":stores,"item_attributes":item_attributes,"inventory_item":inventory_item,"attributes":attributes,"categories":categories,"item_units":item_units,"item_history":item_history,"new_unit_code":new_unit_code,"purchase_orders":purchase_orders,"unavailable_units":unavailable_item_units})
+		#PAGINATION CLIENTS
+		no_of_entries = request.GET.get('no_of_entries')
+		if not no_of_entries:
+			no_of_entries = 20
+
+		if inventory_item.item_add_type == 'unit':
+
+			page = request.GET.get('page',1)
+			paginator=Paginator(item_units,no_of_entries)
+			try:
+				item_units=paginator.page(page)
+			except PageNotAnInteger:
+				item_units=paginator.page(1)
+			except EmptyPage:
+				item_units = paginator.page(paginator.num_pages)
+
+			# Get the index of the current page
+			index = item_units.number - 1  # edited to something easier without index
+			# This value is maximum index of your pages, so the last page - 1
+			max_index = len(paginator.page_range)
+			# You want a range of 7, so lets calculate where to slice the list
+			start_index = index - 3 if index >= 3 else 0
+			end_index = index + 3 if index <= max_index - 3 else max_index
+			# Get our new page range. In the latest versions of Django page_range returns
+			# an iterator. Thus pass it to list, to make our slice possible again.
+			page_range = list(paginator.page_range)[start_index:end_index]
+			entry_per_page=(item_units.end_index())-(item_units.start_index())+1
+
+		else:
+
+			page = request.GET.get('page',1)
+			paginator=Paginator(item_history,no_of_entries)
+			try:
+				item_history=paginator.page(page)
+			except PageNotAnInteger:
+				item_history=paginator.page(1)
+			except EmptyPage:
+				item_history = paginator.page(paginator.num_pages)
+
+			# Get the index of the current page
+			index = item_history.number - 1  # edited to something easier without index
+			# This value is maximum index of your pages, so the last page - 1
+			max_index = len(paginator.page_range)
+			# You want a range of 7, so lets calculate where to slice the list
+			start_index = index - 3 if index >= 3 else 0
+			end_index = index + 3 if index <= max_index - 3 else max_index
+			# Get our new page range. In the latest versions of Django page_range returns
+			# an iterator. Thus pass it to list, to make our slice possible again.
+			page_range = list(paginator.page_range)[start_index:end_index]
+			entry_per_page=(item_history.end_index())-(item_history.start_index())+1
+
+
+		return render(request,'inventory/item.html',{"available_item_units":available_item_units,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"stores":stores,"item_attributes":item_attributes,"inventory_item":inventory_item,"attributes":attributes,"categories":categories,"item_units":item_units,"item_history":item_history,"new_unit_code":new_unit_code,"purchase_orders":purchase_orders,"unavailable_units":unavailable_item_units})
 
 	def post(self,request,item_id):
 		action =request.POST.get('action')

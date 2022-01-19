@@ -271,7 +271,7 @@
                                      
                                      <br>
                                      <div class="inv-item-amount2">
-                                         {% if inventory_item.item_add_type == 'unit' %}{{inventory_item.unit_count}}{% else %}{{inventory_item.total_quantity|floatformat:3}}{% endif %} <span style="font-size: 16px;" id="unit_data"> {% if inventory_item.item_add_type == 'unit' %}Unit{% else %}{{inventory_item.measuring_unit}}{% endif %} </span>                    
+                                         {% if inventory_item.item_add_type == 'unit' %}{{available_item_units}}{% else %}{{inventory_item.total_quantity|floatformat:3}}{% endif %} <span style="font-size: 16px;" id="unit_data"> {% if inventory_item.item_add_type == 'unit' %}Unit{% else %}{{inventory_item.measuring_unit}}{% endif %} </span>                    
                                      </div>
 
                                  </div>
@@ -398,14 +398,14 @@
                                 {% elif inventory_item.item_type == 'FINISHED GOODS' %}
                                 <div class="col-md-12">
                                     <div class="mb-10 inv-item-head-sub-2 d-flex" >
-                                        Sub Parts
-                                        <button class="inv-blue-btn" type="button" onclick="openNavAddSubparts('add')" style="margin-left:auto;font-weight:500"> <i class="fa fa-plus mr-10" aria-hidden="true"></i><span style="font-size:16px;">Add Subparts </span></button>
+                                        Ingredients
+                                        <button class="inv-blue-btn" type="button" onclick="openNavAddSubparts('add')" style="margin-left:auto;font-weight:500"> <i class="fa fa-plus mr-10" aria-hidden="true"></i><span style="font-size:16px;">Add Ingredients </span></button>
 
-                                        <div class="edit-div" style="position: relative;margin-left: 20px;">
+                                        {% comment %} <div class="edit-div" style="position: relative;margin-left: 20px;">
                                             <img id="id_editButton" onclick="editItemDetials()" class="inv-edit-img"
                                             src="{% static 'files/icons/edit.png' %}">
                                           
-                                        </div>
+                                        </div> {% endcomment %}
                                     </div>
                                 </div>
                                 <div class="col-md-6" v-for="(item,index) in subparts" v-bind:key="index"> <!-- loop this tag-->
@@ -497,6 +497,22 @@
                             Item Log
                             
                         </div>
+                        <br>
+                        <div class="d-flex">
+                            <div>
+                                <label for="favcity" style="width:100%;"> 
+                                    <select style="padding: 5px 50px 5px 7px !important; " name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
+                                    <option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
+                                    <option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
+                                    <option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
+                                    </select>
+                                    </label>
+                            </div>
+                            <div class="right-pos">
+                                <p>{{no_of_entries}} Entries</p>
+                            </div>
+                        </div>
+
                         <div class="d-flex d-grid">
                            
                             <div class="right-pos m-mt-10">
@@ -567,9 +583,17 @@
                                         {% if unit.status == 'unavailable' %}
                                             {% if unit.checkout_unit %}
                                                 {% for checkoutunit in unit.checkout_unit %}
+                                                {% if forloop.last %} 
                                                     {% for team in checkoutunit.checkout_item.visit.cleaning_team %}
                                                         {{team.team_leader.name}}
-                                                    {% endfor %}    
+                                                    {% endfor %}  
+                                                {% endif %}
+                                                {% endfor %}
+                                            {% elif unit.request_item_unit %}
+                                                {% for itemunit in unit.request_item_unit %}
+                                                    {% if forloop.last %}
+                                                        {{itemunit.request_order.requested_by.name}}
+                                                    {% endif %}
                                                 {% endfor %}
                                             {% else %}
                                             -
@@ -602,6 +626,57 @@
                          
 
                         </table>
+
+                        <div class="text-right">
+                            <ul class="pagination">
+        
+                                {% if item_units.has_previous %}
+                                <li class="page-item">
+                                  <a class="page-link" href="?page={{ item_units.previous_page_number }}&no_of_entries={{no_of_entries}}" aria-label="Previous">
+                                    <span aria-hidden="true">«</span>
+                                    <span class="sr-only">Previous</span>
+                                  </a>
+                                </li>
+                                {% else %}
+                                <li class="page-item">
+                                  <a class="page-link" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">«</span>
+                                    <span class="sr-only">Previous</span>
+                                  </a>
+                                </li>
+                                {% endif %}
+        
+                                {% for pg in page_range %}
+                                    {% if vus.number == pg %}
+                                        <li class="page-item"><a class="page-link active" href="?page={{pg}}&no_of_entries={{no_of_entries}}" >{{pg}}</a></li> 
+                                    {% else %}
+                                        <li class="page-item"><a class="page-link" href="?page={{pg}}&no_of_entries={{no_of_entries}}" >{{pg}}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+        
+                                {% if item_units.has_next %}
+                                <li class="page-item">
+                                  <a class="page-link" href="?page={{ item_units.next_page_number }}&no_of_entries={{no_of_entries}}" aria-label="Next">
+                                    <span aria-hidden="true">»</span>
+                                    <span class="sr-only">Next</span>
+                                  </a>
+                                </li>
+                                {% else %}
+                                <li class="page-item">
+                                  <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">»</span>
+                                    <span class="sr-only">Next</span>
+                                  </a>
+                                </li>
+                                {% endif %}
+                                
+                              </ul>
+                        </div>
+        
+                        <div style="color: #928F8F;">
+                            Showing {{item_units.start_index}} to {{item_units.end_index}} of {{item_units.paginator.count}} entries
+                        </div>
+
                     </div>
                 </div>
 
@@ -609,13 +684,32 @@
 
 
                 <div class="row mt-20">
+                    
                     <div class="col-md-12">
+                        
                         <div class="inv-item-head-sub-2">
                             
                             Item Log
                             
                         </div>
+                        <br>
+                        <div class="d-flex">
+                            <div>
+                                <label for="favcity" style="width:100%;"> 
+                                    <select style="padding: 5px 50px 5px 7px !important; " name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
+                                    <option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
+                                    <option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
+                                    <option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
+                                    </select>
+                                    </label>
+                            </div>
+                            <div class="right-pos">
+                                <p>{{no_of_entries}} Entries</p>
+                            </div>
+                        </div>
+
                         <div class="mt-5" style="border-top: 1px solid #c4c4c4;">
+                            
                             <table class="inv-table footable">
                                 <thead>
                                     <tr>
@@ -644,7 +738,7 @@
                                         <td>{{history.added_by.name|default_if_none:'-'}}</td>
                                         <td>{{history.item_action}}</td>
                                         <td>{{history.item_remark|default_if_none:'-'}}</td>
-                                        {% if history.item_action == 'PURCHASE ORDER' or history.item_action == 'STOCK IN' or history.item_action == 'ITEM RETURN' %}
+                                        {% if history.item_action == 'PURCHASE ORDER' or history.item_action == 'STOCK IN' or history.item_action == 'ITEM RETURN' or history.item_action == 'MANUAL' %}
                                         <td style="color:green"><i class="fa fa-plus" aria-hidden="true"></i> {{history.quantity|floatformat:2}}</td>
                                         {% else %}
                                         <td style="color:red"><i class="fa fa-minus" aria-hidden="true"></i> {{history.quantity|floatformat:2}}</td>
@@ -653,6 +747,58 @@
                                     {% endfor %}
                                 </tbody>
                             </table>
+
+                            <div class="text-right">
+                                <ul class="pagination">
+            
+                                    {% if item_history.has_previous %}
+                                    <li class="page-item">
+                                      <a class="page-link" href="?page={{ item_history.previous_page_number }}&no_of_entries={{no_of_entries}}" aria-label="Previous">
+                                        <span aria-hidden="true">«</span>
+                                        <span class="sr-only">Previous</span>
+                                      </a>
+                                    </li>
+                                    {% else %}
+                                    <li class="page-item">
+                                      <a class="page-link" href="#" aria-label="Previous">
+                                        <span aria-hidden="true">«</span>
+                                        <span class="sr-only">Previous</span>
+                                      </a>
+                                    </li>
+                                    {% endif %}
+            
+                                    {% for pg in page_range %}
+                                        {% if vus.number == pg %}
+                                            <li class="page-item"><a class="page-link active" href="?page={{pg}}&no_of_entries={{no_of_entries}}" >{{pg}}</a></li> 
+                                        {% else %}
+                                            <li class="page-item"><a class="page-link" href="?page={{pg}}&no_of_entries={{no_of_entries}}" >{{pg}}</a></li>
+                                        {% endif %}
+                                    {% endfor %}
+            
+                                    {% if item_history.has_next %}
+                                    <li class="page-item">
+                                      <a class="page-link" href="?page={{ item_history.next_page_number }}&no_of_entries={{no_of_entries}}" aria-label="Next">
+                                        <span aria-hidden="true">»</span>
+                                        <span class="sr-only">Next</span>
+                                      </a>
+                                    </li>
+                                    {% else %}
+                                    <li class="page-item">
+                                      <a class="page-link" href="#" aria-label="Next">
+                                        <span aria-hidden="true">»</span>
+                                        <span class="sr-only">Next</span>
+                                      </a>
+                                    </li>
+                                    {% endif %}
+                                    
+                                  </ul>
+                            </div>
+            
+                            <div style="color: #928F8F;">
+                                Showing {{item_history.start_index}} to {{item_history.end_index}} of {{item_history.paginator.count}} entries
+                            </div>
+
+
                         </div>
                     </div>
                 </div>
@@ -733,7 +879,7 @@
         <div class="inv-sidedrawer-inner" style="height:100%">
             <div class="d-flex">
                 <div class="inv-drawer-head" id="supHead">
-                 Add Subparts
+                 Add Ingredients
                 </div>
                 <div class="right-pos">
 
@@ -2210,12 +2356,12 @@ function openNavAddSubparts(d){
       $('#update-subparts-btn').hide();
       $('#submit-btn-subparts').show()
         
-          $("#supHead").text("Add Sub Parts");
+          $("#supHead").text("Add Ingredients");
          
       
   }
       if(d == 'edit'){
-          $("#supHead").text("Edit Sub Parts");
+          $("#supHead").text("Edit Ingredients");
           $('#update-subparts-btn').show();
           $('#submit-btn-subparts').hide()
           
@@ -2458,6 +2604,20 @@ function openNavAddSubparts(d){
 
         {% endif %}
     }
-   
+ 
+    function set_params_go(args)
+    {
+    var url='{% url 'bleach-inventory:inventory-item' inventory_item.id %}';
+    var params={no_of_entries:$('#no_of_entries').val(),
+    };
+    for(key in args) 
+        params[key]=args[key];
+    var query='';
+    for(key in params)
+        if(params[key]) 
+            query+='&'+key+'='+params[key].toString();
+    query=query.replace('&','?');
+    window.location.href=url+query;  
+    }
 </script>
 {% endblock %}
