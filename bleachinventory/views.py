@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
-from bleachinventory.models import CheckOutItems,CheckOutItemUnits,ItemHistory,Category,Segment,Line,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems,RequestOrder,RequestOrderItems,ExternalCustomer,InventoryAccessory
+from bleachinventory.models import CheckOutItems,CheckOutItemUnits,ItemHistory,Category,Segment,Line,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems,RequestOrder,RequestOrderItems,InventoryAccessory
 from user.models import UserProfile
 from django.contrib import messages
 import re
@@ -757,8 +757,9 @@ class InventoryItems(IsInventoryAdminUser,View):
 		if action == 'return_item':
 			item = InventoryItem.objects.get(id=item_id)
 
-			externaluser = ExternalCustomer.objects.get( id=int(request.POST.get('externaluser')) ) 
+			# externaluser = ExternalCustomer.objects.get( id=int(request.POST.get('externaluser')) ) 
 
+			externaluser = None
 			if item.item_add_type == 'unit':
 				unit_id = request.POST.get('return_unit')
 				itemunit = ItemUnit.objects.get(id=int(unit_id))
@@ -2454,10 +2455,11 @@ class InventoryCreateInventoryRequest(View):
 
 			requested_by     = request.POST.get('requested_by')	
 			if requested_by:
-				try:
-					requester = ExternalCustomer.objects.get(name=requested_by)
-				except:
-					requester = ExternalCustomer.objects.create(name=requested_by)
+				# try:
+				# 	requester = ExternalCustomer.objects.get(name=requested_by)
+				# except:
+				# 	requester = ExternalCustomer.objects.create(name=requested_by)
+				requester = None
 				
 				if requester:
 					request_order.requested_by = requester
@@ -2558,10 +2560,11 @@ class InventoryEditRequestOrder(IsInventoryAdminUser,View):
 				
 				requester_id     = request.POST.get('requester_id')	
 				if requester_id:
-					try:
-						requester = ExternalCustomer.objects.get(name=requester_id)
-					except:
-						requester = ExternalCustomer.objects.create(name=requester_id)
+					# try:
+					# 	requester = ExternalCustomer.objects.get(name=requester_id)
+					# except:
+					# 	requester = ExternalCustomer.objects.create(name=requester_id)
+					requester = None
 					
 					if requester:
 						request_order.requested_by = requester

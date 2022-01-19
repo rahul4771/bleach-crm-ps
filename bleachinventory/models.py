@@ -424,17 +424,17 @@ class CheckOutItemUnits(models.Model):
     def __str__(self):
         return self.checkout_item.visit.order.order_no
 
-class ExternalCustomer(models.Model):
-    name      = models.CharField(max_length=100,blank=True,null=True,unique=True)
+# class ExternalCustomer(models.Model):
+#     name      = models.CharField(max_length=100,blank=True,null=True,unique=True)
     
-    status    = models.BooleanField(default=True,blank=False,null=False)
-    created   = models.DateTimeField(auto_now_add=True)
+#     status    = models.BooleanField(default=True,blank=False,null=False)
+#     created   = models.DateTimeField(auto_now_add=True)
 
-    def __unicode__(self):
-        return str(self.name)
+#     def __unicode__(self):
+#         return str(self.name)
 
-    def __str__(self):
-        return str(self.name)
+#     def __str__(self):
+#         return str(self.name)
 
 class RequestOrder(models.Model):
     request_order_id    = models.CharField(max_length=50,blank=False,null=False)
@@ -447,7 +447,7 @@ class RequestOrder(models.Model):
     
     
     created_by          = models.ForeignKey(UserProfile,blank=True,null=True,related_name='created_by_request_order')
-    requested_by        = models.ForeignKey(ExternalCustomer,blank=True,null=True,related_name='requested_by_request_order')
+    # requested_by        = models.ForeignKey(ExternalCustomer,blank=True,null=True,related_name='requested_by_request_order')
     approved_by         = models.ForeignKey(UserProfile,blank=True,null=True,related_name='approved_by_request_order')
     received_by         = models.ForeignKey(UserProfile,blank=True,null=True,related_name='send_by_request_order')
     rejected_by         = models.ForeignKey(UserProfile,blank=True,null=True,related_name='rejected_by_request_order')
