@@ -282,7 +282,7 @@
                     <div id="unit_edit_data" style="display: none;">
                     <div class="model-input-name ">Select Unit</div>
                    
-                    <select  name="item_unit_data" id="unit_select" class="minimal av-font inv-hide" required="required" >
+                    <select  name="item_unit_data" id="unit_select" class="minimal av-font inv-hide" >
                         <option value="L" {% if inventory_item.measuring_unit == 'L' %} selected {% endif %}>L</option>
                         <option value="kg" {% if inventory_item.measuring_unit == 'kg' %} selected {% endif %}>kg</option>
                         <option value="piece" {% if inventory_item.measuring_unit == 'piece' %} selected {% endif %}>piece</option>
@@ -352,7 +352,7 @@
                                {% empty %}
                                <div class="col-md-12">
                                 <div class="row c-mb-3 mt-20">
-                                    <div class="col-xs-6 av-font">Add attribute values</div>
+                                    <div class="col-xs-6 av-font">No Attributes</div>
                                     <div class="col-xs-6 av-font"></div>
                                 </div>
                                
