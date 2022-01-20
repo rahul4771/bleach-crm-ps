@@ -18,7 +18,18 @@
   font-family: FarCasablanca;
   src: url(../font/Far_Casablanca.otf);
 }
-
+#all_table{
+  display:none
+}
+#raw_materials_table{
+  display:none
+}
+#assets_table{
+  display:none
+}
+#finished_goods_table{
+  display:none
+}
 .mt-5{
   margin-top: 5px !important;
 }
@@ -456,6 +467,9 @@
   color: #333333;
   padding: 10px;
   font-family: AvenirLTStd !important;
+}
+ .inv-tabs .active{
+  border-bottom: 3px solid #2d4e85 !important;
 }
 .cancel-button{
   background: #fff 0% 0% no-repeat padding-box;
@@ -1184,6 +1198,9 @@ border-radius: 3px;
 }
 
 @media only screen and (max-width: 600px) {
+  .tab-text{
+    display: none;
+  }
   .inv-total-box{
     padding: 20px;
       background: aliceblue;
