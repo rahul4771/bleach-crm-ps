@@ -342,19 +342,19 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
                 </td>
                 <td>
                   
-                    {% if item.item.item_add_type == 'unit' or item.service_item.item.item_add_type == 'unit' %}
+                    <!-- {% if item.item.item_add_type == 'unit' or item.service_item.item.item_add_type == 'unit' %}
                     <button type="button" class="inv-plan-img-btn" data-toggle="modal" data-target="#tableModal" onclick="listunits({{item.id}})"> <img src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
                     {% else %}
                     <button type="button" class="inv-plan-img-btn2-disabled" disabled> <img class="btn-img2" src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
                     {% endif %}
-                  
+                   -->
                     {% if item.service_item.item.item_add_type == 'quantity' %}
                     <button type="button" class="inv-plan-img-btn" onclick="swapModal({{item.service_item.ingredient.id}},{{item.id}})" > <img src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>
                     {% else %}
                     <button type="button" class="inv-plan-img-btn2-disabled" disabled > <img class="btn-img2" src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>
                     {% endif %}
 
-                    <button class="inv-plan-img-btn" type="button" onclick="openEditbtns({{item.id}})"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>  
+                    <button class="inv-plan-img-btn" type="button" onclick="openNavEditStore('{{item.id}}','{{item.service_item.ingredient.ingredient}}','{{item.units}}')"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>  
 
                     <button class="inv-plan-img-btn" type="button" data-toggle="modal" data-target="#deleteModel" onclick="delete_checkout_item(this)" data-checkoutid="{{item.id}}" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
                 </td>
@@ -489,7 +489,7 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
               
           </div>
 
-          <div>Available : <span id="id_item_count">0</span></div>
+          <div class="mt-10">Available : <span id="id_item_count">0</span></div>
 
       </div>
 
@@ -504,7 +504,72 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
   </div>
 </div>
 
+<!-- edit item begins here-->
+<div id="editStore" class="inv-sidedrawer">
+
+  <div class="inv-sidedrawer-inner">
+      <div class="d-flex">
+          <div class="inv-drawer-head" id="itemHead">
+              Edit Item
+          </div>
+          <div class="right-pos">
+
+              <button onclick="closeNavEditStore()" class="img-button">
+                  <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+              </button>
+          </div>
+      </div>
+      <hr>
+
+      {% comment %} <form method="POST" action="" >{% csrf_token %}
+      <input type="hidden" name="action" value="add_item" /> {% endcomment %}
+      
+      <div class="row mt-20">
+        <div class="col-md-12 ">
+          <div class="model-input-name">Item</div>
+          <input type="hidden" name="item" id="edit_id_item" value="" />
+          <div style="position: relative;">
+              <div class="inv-input-container inv-border h-30">
+                  <input autocomplete="off"  type="text" id="edit_pro_name" style="border: none !important; width: 90%;" class=" inv-in"  disabled >
+                 
+              </div>
+              <div id="id_search" class="row inv-result-box" style="display: none;">
+                
+              </div>
+          </div>
+         <br>
+          <div class="qty-container">
+    
+            <div class="quantity">
+              
+                <a class="quantity__minus pointer" onclick="decrement()"><span>-</span></a>
+                <input  type="number" class="quantity__input item_quantity" step="0.01"  id="edit_id_qty" value="0" name="checkout_quantity" oninput="quantitychange()" >
+                <a  class="quantity__plus pointer" onclick="increment()"><span>+</span></a>
+              
+              </div>
+              
+          </div>
+
+          <div class="mt-10">Available : <span id="edit_id_item_count">0</span></div>
+
+      </div>
+
+      </div>
+
+
+  </div>
+  <div class="inv-drawer-footer">
+      <button class="sent-button" onclick="itemadd()">Submit</button>
+      {% comment %} </form> {% endcomment %}
+      <button data-dismiss="modal" onclick="closeNavEditStore()" class="view-button">Cancel</button>
+  </div>
+</div>
+
+
+<!-- edit item ends here-->
 <!-- swap item -->
+
+
 <div id="addStore2" class="inv-sidedrawer">
 
   <div class="inv-sidedrawer-inner">
@@ -1080,7 +1145,19 @@ function hideselectedoptions(){
           $('#id_item_count').text(result.data.item_count);
         }
     }
-
+    async function editquantitychange(){
+      
+      var item_id = $('#edit_id_item').val();
+      var quantity = $('#edit_id_qty').val() ;
+      
+    
+      var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+        if(result.status == 200){
+          console.log(result.data.item_available,result.data.item_count,"lop1")
+          $('#edit_id_qty').val(result.data.item_quantity);
+          $('#edit_id_item_count').text(result.data.item_count);
+        }
+    }
     async function swapquantitychange(){
       
       var item_id = $('#id_pro_sel2').val();
@@ -1472,6 +1549,29 @@ var products = [];
         document.getElementById("addStore").style.width = "30%";
     }  
     hideselectedoptions();
+}
+function openNavEditStore(item,item_name,qty) {
+  console.log("item i s"+item+"item name is "+item_name)
+     $('#id_search').empty();
+     $('#edit_id_item').val(item)
+     $('#edit_pro_name').val(item_name)
+     $('#edit_id_qty').val(qty)
+      
+     editquantitychange()
+   
+    
+    if(screen.width<= 600){
+        document.getElementById("editStore").style.width = "100%";
+    }else if(screen.width<= 720){
+        document.getElementById("editStore").style.width = "50%";
+    }
+    else{
+        document.getElementById("editStore").style.width = "30%";
+    }  
+    hideselectedoptions();
+}
+function closeNavEditStore() {
+    document.getElementById("editStore").style.width = "0";
 }
 function closeNavAddStore() {
     document.getElementById("addStore").style.width = "0";
