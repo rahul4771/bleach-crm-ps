@@ -4,7 +4,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-<div class="wrapper" id="app" v-cloak><!--wrapper-->
+    
+<div class="wrapper" ><!--wrapper-->
     {% include "inventory/common/header.html" %}
     <section class="content">
         <div class="container-fluid space topspace">
@@ -39,45 +40,33 @@
                         <button class="inv-blue-btn filter_btn"  data-toggle="modal" data-target="#filterModel" > Filter </button>
                     </div>
                 </div>
+                <!-- tab begins here-->
+                <ul class="nav nav-tabs mt-20 inv-tabs">
+                    <li class="nav-item">
+                      <a class="nav-link active" href="#" onclick="makeActive('all_table',this)">
+                        <img src="{% static 'files/inventory/icons/all_icon.png'%}" class="tab-logo"/>  
+                       <span class="tab-text"> All</span> </a>
+                    </li>
+                    <li class="nav-item" >
+                      <a class="nav-link" href="#" onclick="makeActive('raw_materials_table',this)">
+                        <img src="{% static 'files/inventory/raw_materials.png'%}" class="tab-logo"/>  
+                        <span class="tab-text">Raw Materials</span> </a>
+                    </li>
+                    <li class="nav-item" >
+                      <a class="nav-link" href="#" onclick="makeActive('assets_table',this)">
+                        <img src="{% static 'files/inventory/assets.png'%}" class="tab-logo"/>
+                        <span class="tab-text">  Assets </span></a>
+                    </li>
+                    <li class="nav-item" >
+                      <a class="nav-link " href="#" onclick="makeActive('finished_goods_table',this)">
+                        <img src="{% static 'files/inventory/finished_goods.png'%}" class="tab-logo"/>
+  
+                        <span class="tab-text">  Finished Goods</span></a>
+                    </li>
+                  </ul>
+                <!-- tab ends here-->
                 
-                  <div class="d-flex mt-20">
-                        <div class="nav-tab-item-active" v-if="selected_item=='ALL'">
-                            <img src="{% static 'files/inventory/icons/all_icon.png'%}" class="tab-logo"/>
-                            All
-                        </div>
-                        <div class="nav-tab-item" v-else @click="selectItem('ALL')">
-                            <img src="{% static 'files/inventory/icons/all_icon.png'%}" class="tab-logo"/>
-                            All
-                        </div>
-                        <div class="nav-tab-item-active " v-if="selected_item=='RAW MATERIALS'">
-                            <img src="{% static 'files/inventory/raw_materials.png'%}" class="tab-logo"/>
-                          Raw Materials
-                        </div>
-                        <div class="nav-tab-item" v-else @click="selectItem('RAW MATERIALS')">
-                            <img src="{% static 'files/inventory/raw_materials.png'%}" class="tab-logo"/>
-                            Raw Materials
-                          </div>
-                          <div class="nav-tab-item-active" v-if="selected_item=='ASSETS'" >
-                            <img src="{% static 'files/inventory/assets.png'%}" class="tab-logo"/>
-                            Assets
-                          </div>
-                          <div class="nav-tab-item" v-else @click="selectItem('ASSETS')">
-                            <img src="{% static 'files/inventory/assets.png'%}" class="tab-logo"/>
-                            Assets
-                            </div>
-                            <div class="nav-tab-item-active" v-if="selected_item=='FINISHED GOODS'" >
-                                <img src="{% static 'files/inventory/finished_goods.png'%}" class="tab-logo"/>
-                                Finished Goods
-                              </div>
-                              <div class="nav-tab-item" v-else @click="selectItem('FINISHED GOODS')">
-                                <img src="{% static 'files/inventory/finished_goods.png'%}" class="tab-logo"/>
-                                Finished Goods
-                                </div>
-                        
-                       
-                  </div>
-                <br><br>
-                <div class="d-flex">
+                <div class="d-flex mt-20">
                     <div>
                         <label for="favcity" style="width:100%;"> 
                             <select style="padding: 5px 50px 5px 7px !important; " name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
@@ -92,15 +81,15 @@
                     </div>
                 </div>
                 <!-- ALL ITEMS BEGINS HERE-->
-                <div class="mt-20"  v-show="selected_item=='ALL'">
-                    <table class="inv-table footable     " style="border-top:1px solid #c4c4c4"> 
+                <div class="mt-20" id="all_table"  >
+                    <table class="inv-table footable" style="border-top:1px solid #c4c4c4"> 
                         <thead>
                             <tr>
                                 <th style="width: %;">
                                     Item Type
                                 </th>
                                 <th style="width: %;">
-                                    Item Name
+                                    Item
                                 </th>
                                 <th data-hide="phone,tablet"  style="width: %; text-align: center;">
                                     Item code
@@ -108,12 +97,12 @@
                                 <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                     Category
                                 </th>
-                                {% comment %} <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                     Segment
                                 </th>
                                <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                     Line
-                                </th> {% endcomment %}
+                                </th>
                                 <th data-hide="phone,tablet"  class="text-center">
                                     Available Qty
                                 </th>
@@ -141,12 +130,12 @@
                             </td>
                             <td class="text-center">
                                 {{item.item_category.name}}
-                            {% comment %} <td class="text-center td-md-width">
+                            <td class="text-center td-md-width">
                                 {{item.item_segment.name}}
                             </td>
                             <td class="text-center td-md-width" >
                                 {{item.item_line.name}}
-                            </td> {% endcomment %}
+                            </td>
                             <td class="text-center">
                                 {% if item.item_add_type == 'quantity' %}
                                 {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}
@@ -180,20 +169,14 @@
                                 {% endif %}
                             </td>
                             <td class="text-center">
-                                <div class="btn-group" id="actionDropdown">
-                                    <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
-                                      Action
-                                      <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
-                                    </div>
-                                    <div class="dropdown-menu" id="dropdown-menu-orders">  
-                                        <a class="d-flex dropdown-orders"  href="/bleach-inventory/item/{{item.id}}"><img src="{% static 'files/inventory/view.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">View</div></a>    
-
-                                      {% comment %} <a class="d-flex dropdown-orders" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-item_type="{{item.item_type}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}" data-itempackage="{{item.is_package}}"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit </div></a>     {% endcomment %}
-                                      {% if request.user.user_type == 'INVENTORYADMIN' %}
-                                      <a class="d-flex dropdown-orders delete-item" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}" ><img src="{% static 'files/inventory/bin.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Delete </div></a>                                                                                                       
-                                      {% endif %}
-                                    </div>
-                                  </div>
+                                <a href="/bleach-inventory/item/{{item.id}}">
+                                <button class="inv-plan-img-btn"> <img class="view-img" src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
+                                </a>
+                                <button class="inv-plan-img-btn edit-item" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-item_type="{{item.item_type}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}" data-itempackage="{{item.is_package}}"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
+                                
+                                {% if request.user.user_type == 'INVENTORYADMIN' %}
+                                <button class="inv-plan-img-btn delete-item"  data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
@@ -254,9 +237,9 @@
                 </div>
                   <!-- ALL ITEMS ENDS HERE-->
                 <!-- Raw materials begins here -->
-                <div class="mt-20"  v-show="selected_item=='RAW MATERIALS'">
+                <div class="mt-20"  id="raw_materials_table">
                     
-                        <table class="inv-table footable     " style="border-top:1px solid #c4c4c4"> 
+                        <table class="inv-table footable" style="border-top:1px solid #c4c4c4"> 
                             <thead>
                                 <tr>
                                     <th style="width: %;">
@@ -271,12 +254,12 @@
                                     <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                         Category
                                     </th>
-                                    {% comment %} <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                    <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                         Segment
                                     </th>
                                    <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                         Line
-                                    </th> {% endcomment %}
+                                    </th>
                                     <th data-hide="phone,tablet"  class="text-center">
                                         Available Qty
                                     </th>
@@ -304,12 +287,12 @@
                                 </td>
                                 <td class="text-center">
                                     {{item.item_category.name}}
-                                {% comment %} <td class="text-center td-md-width">
+                                <td class="text-center td-md-width">
                                     {{item.item_segment.name}}
                                 </td>
                                 <td class="text-center td-md-width" >
                                     {{item.item_line.name}}
-                                </td> {% endcomment %}
+                                </td>
                                 <td class="text-center">
                                     {% if item.item_add_type == 'quantity' %}
                                     {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}
@@ -343,20 +326,14 @@
                                     {% endif %}
                                 </td>
                                 <td class="text-center">
-                                    <div class="btn-group" id="actionDropdown">
-                                        <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
-                                          Action
-                                          <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
-                                        </div>
-                                        <div class="dropdown-menu" id="dropdown-menu-orders">  
-                                            <a class="d-flex dropdown-orders"  href="/bleach-inventory/item/{{item.id}}"><img src="{% static 'files/inventory/view.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">View</div></a>    
-
-                                          {% comment %} <a class="d-flex dropdown-orders" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-item_type="{{item.item_type}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}" data-itempackage="{{item.is_package}}"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit </div></a>     {% endcomment %}
-                                          {% if request.user.user_type == 'INVENTORYADMIN' %}
-                                          <a class="d-flex dropdown-orders delete-item" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}" ><img src="{% static 'files/inventory/bin.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Delete </div></a>                                                                                                       
-                                          {% endif %}
-                                        </div>
-                                      </div>
+                                    <a href="/bleach-inventory/item/{{item.id}}">
+                                    <button class="inv-plan-img-btn"> <img class="view-img" src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
+                                    </a>
+                                    <button class="inv-plan-img-btn edit-item" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-item_type="{{item.item_type}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}" data-itempackage="{{item.is_package}}"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
+                                    
+                                    {% if request.user.user_type == 'INVENTORYADMIN' %}
+                                    <button class="inv-plan-img-btn delete-item"  data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% endfor %}
@@ -417,9 +394,9 @@
                 </div>
                 <!-- Raw materials ends here -->
                 <!-- Assets begins here -->
-                <div class="mt-20"  v-show="selected_item=='ASSETS'">
+                <div class="mt-20"  id="assets_table">
                     
-                            <table class="inv-table footable     " style="border-top:1px solid #c4c4c4"> 
+                            <table class="inv-table footable" style="border-top:1px solid #c4c4c4"> 
                                 <thead>
                                     <tr>
                                         <th style="width: %;">
@@ -434,12 +411,12 @@
                                         <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                             Category
                                         </th>
-                                        {% comment %} <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                        <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                             Segment
                                         </th>
                                        <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                             Line
-                                        </th> {% endcomment %}
+                                        </th>
                                         <th data-hide="phone,tablet"  class="text-center">
                                             Available Qty
                                         </th>
@@ -467,12 +444,12 @@
                                     </td>
                                     <td class="text-center">
                                         {{item.item_category.name}}
-                                    {% comment %} <td class="text-center td-md-width">
+                                    <td class="text-center td-md-width">
                                         {{item.item_segment.name}}
                                     </td>
                                     <td class="text-center td-md-width" >
                                         {{item.item_line.name}}
-                                    </td> {% endcomment %}
+                                    </td>
                                     <td class="text-center">
                                         {% if item.item_add_type == 'quantity' %}
                                         {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}
@@ -506,22 +483,14 @@
                                         {% endif %}
                                     </td>
                                     <td class="text-center">
-                                       
-
-                                        <div class="btn-group" id="actionDropdown">
-                                            <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
-                                              Action
-                                              <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
-                                            </div>
-                                            <div class="dropdown-menu" id="dropdown-menu-orders">  
-                                                <a class="d-flex dropdown-orders"  href="/bleach-inventory/item/{{item.id}}"><img src="{% static 'files/inventory/view.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">View</div></a>    
-
-                                              {% comment %} <a class="d-flex dropdown-orders" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-item_type="{{item.item_type}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}" data-itempackage="{{item.is_package}}"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit </div></a>     {% endcomment %}
-                                              {% if request.user.user_type == 'INVENTORYADMIN' %}
-                                              <a class="d-flex dropdown-orders delete-item" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}" ><img src="{% static 'files/inventory/bin.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Delete </div></a>                                                                                                       
-                                              {% endif %}
-                                            </div>
-                                          </div>
+                                        <a href="/bleach-inventory/item/{{item.id}}">
+                                        <button class="inv-plan-img-btn"> <img class="view-img" src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
+                                        </a>
+                                        <button class="inv-plan-img-btn edit-item" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-item_type="{{item.item_type}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}" data-itempackage="{{item.is_package}}"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
+                                        
+                                        {% if request.user.user_type == 'INVENTORYADMIN' %}
+                                        <button class="inv-plan-img-btn delete-item"  data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                                        {% endif %}
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -581,9 +550,9 @@
                             </div>
                 <!-- Assets ends here -->
                   <!--FINISHED GOODS begins here -->
-                  <div class="mt-20"  v-if="selected_item=='FINISHED GOODS'">
+                  <div class="mt-20"  id="finished_goods_table">
                     
-                            <table class="inv-table footable     " style="border-top:1px solid #c4c4c4"> 
+                            <table class="inv-table footable" style="border-top:1px solid #c4c4c4"> 
                                 <thead>
                                     <tr>
                                         <th style="width: %;">
@@ -598,12 +567,12 @@
                                         <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                             Category
                                         </th>
-                                        {% comment %} <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                        <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                             Segment
                                         </th>
                                        <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                             Line
-                                        </th> {% endcomment %}
+                                        </th>
                                         <th data-hide="phone,tablet"  class="text-center">
                                             Available Qty
                                         </th>
@@ -631,12 +600,12 @@
                                     </td>
                                     <td class="text-center">
                                         {{item.item_category.name}}
-                                    {% comment %} <td class="text-center td-md-width">
+                                    <td class="text-center td-md-width">
                                         {{item.item_segment.name}}
                                     </td>
                                     <td class="text-center td-md-width" >
                                         {{item.item_line.name}}
-                                    </td> {% endcomment %}
+                                    </td>
                                     <td class="text-center">
                                         {% if item.item_add_type == 'quantity' %}
                                         {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}
@@ -670,21 +639,14 @@
                                         {% endif %}
                                     </td>
                                     <td class="text-center">
-                                       
-                                        <div class="btn-group" id="actionDropdown">
-                                            <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
-                                              Action
-                                              <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
-                                            </div>
-                                            <div class="dropdown-menu" id="dropdown-menu-orders">  
-                                                <a class="d-flex dropdown-orders"  href="/bleach-inventory/item/{{item.id}}"><img src="{% static 'files/inventory/view.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">View</div></a>    
-
-                                              {% comment %} <a class="d-flex dropdown-orders" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-item_type="{{item.item_type}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}" data-itempackage="{{item.is_package}}"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit </div></a>     {% endcomment %}
-                                              {% if request.user.user_type == 'INVENTORYADMIN' %}
-                                              <a class="d-flex dropdown-orders delete-item" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}" ><img src="{% static 'files/inventory/bin.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Delete </div></a>                                                                                                       
-                                              {% endif %}
-                                            </div>
-                                          </div>
+                                        <a href="/bleach-inventory/item/{{item.id}}">
+                                        <button class="inv-plan-img-btn"> <img class="view-img" src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
+                                        </a>
+                                        <button class="inv-plan-img-btn edit-item" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-item_type="{{item.item_type}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}" data-itempackage="{{item.is_package}}"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
+                                        
+                                        {% if request.user.user_type == 'INVENTORYADMIN' %}
+                                        <button class="inv-plan-img-btn delete-item"  data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                                        {% endif %}
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -1058,7 +1020,7 @@
                         <input type="hidden" name="item_id" id="id_item" />
                         <div class="cancel-model-content">
                             <button class="sent-button" >Delete</button>
-                            <button data-dismiss="modal" type="button" class="view-button">Cancel</button>
+                            <button data-dismiss="modal" class="view-button">Cancel</button>
                           
                         </div>
                         </form>
@@ -1190,6 +1152,29 @@
     )
 </script>
 <script>
+    var itemtypeurl = new URL(window.location.href)
+    if(itemtypeurl.searchParams.get('item_type'))
+    {
+        var selected_item = itemtypeurl.searchParams.get('item_type').slice(1,-1)
+        if (!selected_item){
+            $('#all_table').show()
+        }
+        else{
+            if(selected_item=='RAW MATERIALS'){
+                $('#raw_materials_table').show()
+            }
+            else if(selected_item=='ASSETS'){
+                $('#assets_table').show()
+            }
+            else if(selected_item=='FINISHED GOODS'){
+                $('#finished_goods_table').show()
+            }
+        }
+    }
+    else{
+        $('#all_table').show()
+    }
+     
     function DropDown(el) {
     this.dd = el;
     this.placeholder = this.dd.children('span');
@@ -1245,7 +1230,17 @@ $(function () {
 });
 </script>
 <script>
-
+function makeActive(item,tab){
+    $('.active').removeClass('active')
+    $('#all_table').hide()
+    $('#raw_materials_table').hide()
+    $('#assets_table').hide()
+    $('#finished_goods_table').hide()
+    $('#'+item).show()
+    if(!$(tab).hasClass('active')){
+        $(tab).addClass('active')
+    }
+}
 function changeSelect8(va){
         $('#id_item_type').val(va)
     }
