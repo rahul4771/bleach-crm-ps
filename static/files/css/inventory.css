@@ -30,6 +30,9 @@
 #finished_goods_table{
   display:none
 }
+.nav-item:hover .tab-text{
+  color:#2c4c82;
+}
 .mt-5{
   margin-top: 5px !important;
 }
