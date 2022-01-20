@@ -1158,6 +1158,16 @@ border-radius: 3px;
   font-family: AvenirLTStd !important;
   color: #333333;
 }
+.sent-button[disabled]{
+  opacity:0.2;
+}
+.inv-item-checkbox{
+  border: 1px solid #2d4e85 !important;
+  background:#ffffff !important;
+}
+.inv-item-checkbox:checked{
+  background: #2b4c82 !important;
+}
 @media only screen and (max-width: 1280px) {
   .table-w-20{
     width: 20%;

@@ -264,7 +264,13 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
 
          
         <div class="row mt-20">
-          <div class="col-md-12">
+          <div class="col-md-3 col-md-offset-9 text-right">
+            <input type="hidden" name="selected_list"/>
+            <button class="sent-button" disabled id="item_del_btn">
+              Delete
+            </button>
+          </div>
+          <div class="col-md-12 mt-20">
             <div class="inv-check-orderhead">
               Recommended List
             </div>
@@ -272,6 +278,8 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
               <table class="inv-table footable"> 
                 <thead>
                   <tr>
+                    <th><input type="checkbox" class="inv-item-checkbox" onchange="selectAllItems()" name="all_select_items">
+                    </th>
                       <th style="width: %;">
                         Ingredient
                       </th>
@@ -301,6 +309,8 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
 
                 {% for item in check_out_items %}
                 <tr data-itemid="{{item.item.id}}" id="id_tr_{{item.id}}">
+                  <td><input type="checkbox" name="selected_items" value="{{item.id}}"  class="inv-item-checkbox items_selected" id="id_check_{{item.id}}" onchange="getItems()">
+                  </td>
                 <td>{% if item.service_item %}{{item.service_item.ingredient.ingredient}}{% else %}-{% endif %}</td>
                 <td {% if item.service_item %}id="id_item_name_{{item.service_item.item.id}}"{% else %}id="id_item_name_{{item.item.id}}"{% endif %} >
                   {% if item.service_item %}{{item.service_item.item.name}}{% else %}{{item.item.name}}{% endif %}
@@ -662,7 +672,34 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
 {% block javascript %}
 
 <script>
+function getItems(){
+  //console.log("item selected are"+$("input[name=item_option]").val());
+  var values = $("input[name='selected_items']:checked").map(function(){
+      return $(this).val();
+    }).get();
+    $("input[name='selected_list']").val(values)
+    if(values.length>0)
+    {
+    $( "#item_del_btn" ).prop( "disabled", false );
+    }
+    else{
+      $( "#item_del_btn" ).prop( "disabled", true );
+    }
 
+    console.log("selected list is "+$("input[name='selected_list']").val())
+}
+function selectAllItems(){
+  if($("input[name='all_select_items']").is(":checked"))
+  {
+  $("input[name='selected_items']").prop('checked', true);
+  getItems()
+  }
+  else{
+    $("input[name='selected_items']").prop('checked', false);
+  getItems()
+  }
+
+}
 async function swapModal(id,checkout_item_id){
   console.log(id)
   $('#id_ingredient').val(id);
