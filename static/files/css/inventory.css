@@ -18,6 +18,9 @@
   font-family: FarCasablanca;
   src: url(../font/Far_Casablanca.otf);
 }
+.mob-only{
+  display:none;
+}
 #all_table{
   display:none
 }
@@ -1201,6 +1204,12 @@ border-radius: 3px;
 }
 
 @media only screen and (max-width: 600px) {
+  .mob-only{
+    display:block;
+  }
+  .desktop-only{
+    display:none;
+  }
   .tab-text{
     display: none;
   }

@@ -399,7 +399,7 @@
                                 <div class="col-md-12">
                                     <div class="mb-10 inv-item-head-sub-2 d-flex" >
                                         Ingredients
-                                        <button class="inv-blue-btn" type="button" onclick="openNavAddSubparts('add')" style="margin-left:auto;font-weight:500"> <i class="fa fa-plus mr-10" aria-hidden="true"></i><span style="font-size:16px;">Add Ingredients </span></button>
+                                        <button class="inv-blue-btn desktop-only" type="button" onclick="openNavAddSubparts('add')" style="margin-left:auto;font-weight:500"> <i class="fa fa-plus mr-10" aria-hidden="true"></i><span style="font-size:16px;">Add Ingredients </span></button>
 
                                         {% comment %} <div class="edit-div" style="position: relative;margin-left: 20px;">
                                             <img id="id_editButton" onclick="editItemDetials()" class="inv-edit-img"
@@ -407,6 +407,8 @@
                                           
                                         </div> {% endcomment %}
                                     </div>
+                                    <button class="inv-blue-btn mob-only" type="button" onclick="openNavAddSubparts('add')" style="font-weight:500"> <i class="fa fa-plus mr-10" aria-hidden="true"></i><span style="font-size:16px;">Add Ingredients </span></button>
+
                                 </div>
                                 <div class="col-md-6" v-for="(item,index) in subparts" v-bind:key="index"> <!-- loop this tag-->
                                     <div class="inv-acc-card mt-10">
@@ -522,7 +524,7 @@
                         </div>
                     </div>
                     <div class="col-md-12 mt-10">
-                        <table class="inv-table footable">
+                        <table class="inv-table footable main-table">
                             <thead>
                                 <tr>
                                     <th style="width: %;">
@@ -556,17 +558,17 @@
                             <tbody>
                                 {% for unit in item_units %}
                                 <tr>
-                                    <td>
+                                    <td data-label="Unit ID">
                                         {{unit.unit_code}}
                                     </td>
-                                    <td>
+                                    <td data-label="serial No.">
                                         {{unit.unit_serial_number}}
                                     </td>
-                                    <td>
+                                    <td data-label="Purchase Date">
                                         {{unit.purchase_date|date:'d-m-Y'}}
                                     </td>
                                     
-                                    <td >
+                                    <td data-label="Expiry Date">
                                         {% if unit.expiry_date %}
                                         {{unit.expiry_date|date:'d-m-Y'}}
                                         {% else %}
@@ -575,11 +577,11 @@
 
                                         
                                     </td>
-                                    {% comment %} <td class="text-center">
+                                    {% comment %} <td class="text-center" data-label="Unit Price">
                                         {{unit.unit_price|floatformat:3}} KD
                                     </td> {% endcomment %}
                                     
-                                    <td>
+                                    <td data-label="Custody">
                                         {% if unit.status == 'unavailable' %}
                                             {% if unit.checkout_unit %}
                                                 {% for checkoutunit in unit.checkout_unit %}
@@ -603,7 +605,7 @@
                                         {% endif %}
                                     </td>
 
-                                    <td class="">
+                                    <td class="" data-label="Status">
                                         <span class="inv-dot {% if unit.status == 'available' %}c-active{% elif unit.status == 'under_repair' %}c-expired{% elif unit.status == 'out_of_order' %}c-out-of-order{% elif unit.status == 'unavailable' %}c-inactive{% endif %} ml-5"></span>
                                         {% if unit.status == 'available' %}Available{% elif unit.status == 'under_repair' %}Under Repair{% elif unit.status == 'out_of_order' %}Out of Order{% elif unit.status == 'unavailable' %}Unavailable{% endif %}
     
