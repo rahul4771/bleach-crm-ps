@@ -82,7 +82,7 @@
         <div class="green-bg-lg">{% if cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}One-Time{% else %}Subscription{% endif %}</div>
         {% comment %} <div class="blue-bg-lg">{% if cleaning_team_detail.order_scheduler.order.payment_status == 'COMPLETED' %}Paid{% elif cleaning_team_detail.order_scheduler.order.payment_status == 'ON_HOLD' %}ON HOLD<{% else %}Pending{% endif %}</div> {% endcomment %}
 
-        <div class="customer-name"> {{cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.name}} ({% if cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.name == 'Kitchen ' %})</div>
+        <div class="customer-name"> {{cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.name}}</div>
         <br>
         <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_method}}</div>
         <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.order_scheduler_book.area_type}}</div>
