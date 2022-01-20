@@ -1560,6 +1560,11 @@ class InventoryCheckout(IsInventoryAdminUser,View):
 class InventoryCreateCheckout(IsInventoryAdminUser,View):
 	def get(self,request,visit_id):
 		visit = OrderScheduler.objects.select_related('order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections')).get(id=int(visit_id))
+		
+		# visits = OrderScheduler.objects.select_related('order_scheduler_book').filter(order__order_no=visit.order.order_no,start_at__date=visit.start_at.date()).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections'))
+		
+		# print(visits,"viss")
+
 		items = InventoryItem.objects.filter(Q(item_status='available')|Q(item_status='about_to_finish'))
 		print(items,"its")
 		service = visit.order_scheduler_book.service_type
@@ -1660,14 +1665,16 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 							try:
 								checkout_item = CheckOutItems.objects.get(visit=visit,service_item=service_item,service_item__ingredient=ingredient)
 							except:
-								checkout_item = CheckOutItems.objects.create(visit=visit,service_item=service_item,units=math.ceil(recommended_quantity),is_swapped_item=False)
+								if service_item.item.item_add_type == 'quantity':
+									CheckOutItems.objects.create(visit=visit,service_item=service_item,units=math.ceil(recommended_quantity),is_swapped_item=False)
 								
 								if service_item.item.item_add_type == 'unit':
 									itemunits = ItemUnit.objects.filter(item=service_item.item,status='available')[:int(variable_recommended_quantity)]
 									print(itemunits,"rrr")
 									for unit in itemunits:
 										print(unit,"rrr2")
-										CheckOutItemUnits.objects.create(checkout_item=checkout_item,item_unit=unit)
+										CheckOutItems.objects.create(visit=visit,service_item=service_item,item_unit=unit,units=1,is_swapped_item=False)
+										# CheckOutItemUnits.objects.create(checkout_item=checkout_item,item_unit=unit)
 								
 								variable_recommended_quantity = 0
 								print(variable_recommended_quantity,"testchek1")
@@ -1679,13 +1686,15 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 							try:
 								checkout_item = CheckOutItems.objects.get(visit=visit,service_item=service_item,service_item__ingredient=ingredient)
 							except:
-								checkout_item = CheckOutItems.objects.create(visit=visit,service_item=service_item,units=math.ceil(item['total_quantity']),is_swapped_item=False)
+								if service_item.item.item_add_type == 'quantity':
+									CheckOutItems.objects.create(visit=visit,service_item=service_item,units=math.ceil(item['total_quantity']),is_swapped_item=False)
 							
 								if service_item.item.item_add_type == 'unit':
 									itemunits = ItemUnit.objects.filter(item=service_item.item,status='available')[:int(item['total_quantity'])]
 									print(itemunits,"rrr3")
 									for unit in itemunits:
-										CheckOutItemUnits.objects.create(checkout_item=checkout_item,item_unit=unit)
+										CheckOutItems.objects.create(visit=visit,service_item=service_item,item_unit=unit,units=1,is_swapped_item=False)
+										# CheckOutItemUnits.objects.create(checkout_item=checkout_item,item_unit=unit)
 
 							print("klap2")     
 

@@ -281,6 +281,9 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
                       <th data-hide="phone,tablet"  style="width: %; ">
                           Item Code
                       </th>
+                      <th data-hide="phone,tablet"  style="width: %; ">
+                        Unit Code
+                      </th>
                       <th data-hide="phone,tablet"  style="width: %;" >
                         Quantity
                       </th>
@@ -306,6 +309,9 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
                   {% if item.service_item %}{{item.service_item.item.name}}{% else %}{{item.item.name}}{% endif %}
                 </td>
                 <td>{% if item.service_item %}{{item.service_item.item.item_code}}{% else %}{{item.item.item_code}}{% endif %}</td>
+                
+                <td>{% if item.item_unit %}{{item.item_unit.unit_code}}{% else %}-{% endif %}</td>
+                
                 <td>
                 
                 <div class="qty-container qty-box-{{item.id}}" hidden>
@@ -332,11 +338,11 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
                 </td>
                 <td>
                   
-                    {% if item.item.item_add_type == 'unit' or item.service_item.item.item_add_type == 'unit' %}
+                    {% comment %} {% if item.item.item_add_type == 'unit' or item.service_item.item.item_add_type == 'unit' %}
                     <button type="button" class="inv-plan-img-btn" data-toggle="modal" data-target="#tableModal" onclick="listunits({{item.id}})"> <img src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
                     {% else %}
                     <button type="button" class="inv-plan-img-btn2-disabled" disabled> <img class="btn-img2" src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
-                    {% endif %}
+                    {% endif %} {% endcomment %}
                   
                     {% if item.service_item.item.item_add_type == 'quantity' %}
                     <button type="button" class="inv-plan-img-btn" onclick="swapModal({{item.service_item.ingredient.id}},{{item.id}})" > <img src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>
@@ -457,6 +463,7 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="col-md-12 ">
           <div class="model-input-name">Item</div>
           <input type="hidden" name="item" id="id_pro_sel" value="" />
+          <input type="hidden" name="item_unit_id" id="id_pro_sel3" value="" />
           <div style="position: relative;">
               <div class="inv-input-container inv-border h-30">
                   <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" >
@@ -467,7 +474,21 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
               </div>
           </div>
          <br>
-          <div class="qty-container">
+
+         <div class="unit-container" hidden>
+            <div class="model-input-name">Unit</div>
+            <div style="position: relative;">
+              <div class="inv-input-container inv-border h-30">
+                  <input autocomplete="off" onclick="ProductListShow3()" type="text" id="pro-name3" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts3()">
+
+                  </div>
+                  <div id="id_search3" class="row inv-result-box" style="display: none;">
+                    
+                  </div>
+              </div>
+          </div>
+
+          <div class="qty-container" hidden>
     
             <div class="quantity">
               
@@ -582,7 +603,7 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
 
 
 <!-- swap unit -->
-<div id="addStore3" class="inv-sidedrawer">
+{% comment %} <div id="addStore3" class="inv-sidedrawer">
 
   <div class="inv-sidedrawer-inner">
       <div class="d-flex">
@@ -598,7 +619,6 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
       </div>
       <hr>
 
-      {% comment %} <form method="POST" action="" >{% csrf_token %} {% endcomment %}
       <div class="row mt-20">
         <div class="col-md-12 ">
           <div class="model-input-name">Unit</div>
@@ -648,10 +668,9 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
   </div>
   <div class="inv-drawer-footer">
       <button class="sent-button" type="button" onclick="unitswap()">Submit</button>
-      {% comment %} </form> {% endcomment %}
       <button data-dismiss="modal" onclick="closeNavAddStore3()" class="view-button">Cancel</button>
   </div>
-</div>
+</div> {% endcomment %}
 
 
 </div>
@@ -808,7 +827,7 @@ function hideselectedoptions(){
       var quantity = $('#id_qty').val();
       console.log(item_id,visit_id,"po")
     
-      var result = await _get('api/inventory-checkout-item-add/?item_id='+item_id+'&visit_id='+visit_id+'&quantity='+quantity);
+      var result = await _get('api/inventory-checkout-item-add/?item_id='+item_id+'&visit_id='+visit_id+'&quantity='+quantity+'&unit_id='+$('#id_pro_sel3').val());
         if(result.status == 200){
           console.log(result.data.success,"resss")
           if (result.data.success == true){
@@ -822,6 +841,7 @@ function hideselectedoptions(){
                           `+result.data.item_name+`
                         </td>
                         <td>`+result.data.item_code+`</td>
+                        <td>`+result.data.unit_code+`</td>
                         <td>
                           <div class="qty-container qty-box-`+result.data.checkout_item_id+`" hidden>
                             <div class="quantity">
@@ -839,7 +859,7 @@ function hideselectedoptions(){
                           </div>
                         </td>
                         <td>
-                            <button type="button" class="inv-plan-img-btn" data-toggle="modal" data-target="#tableModal" onclick="listunits(`+result.data.checkout_item_id+`)"> <img src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
+    
                             <button type="button" class="inv-plan-img-btn2-disabled" disabled > <img class="btn-img2" src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>
                             <button class="inv-plan-img-btn" type="button" onclick="openEditbtns(`+result.data.checkout_item_id+`)"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>  
                             <button class="inv-plan-img-btn" type="button" data-toggle="modal" data-target="#deleteModel" onclick="delete_checkout_item(this)" data-checkoutid="`+result.data.checkout_item_id+`" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
@@ -858,6 +878,7 @@ function hideselectedoptions(){
                           `+result.data.item_name+`
                         </td>
                         <td>`+result.data.item_code+`</td>
+                        <td>`+result.data.unit_code+`</td>
                         <td>
 
                           <div class="qty-container qty-box-`+result.data.checkout_item_id+`" hidden>
@@ -877,7 +898,7 @@ function hideselectedoptions(){
 
                         </td>
                         <td>
-                            <button type="button" class="inv-plan-img-btn2-disabled" disabled> <img class="btn-img2" src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
+                            
                             <button type="button" class="inv-plan-img-btn2-disabled" disabled > <img class="btn-img2" src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>
                             <button class="inv-plan-img-btn" type="button" onclick="openEditbtns(`+result.data.checkout_item_id+`)"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>  
                             <button class="inv-plan-img-btn" type="button" data-toggle="modal" data-target="#deleteModel" onclick="delete_checkout_item(this)" data-checkoutid="`+result.data.checkout_item_id+`" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
@@ -1235,7 +1256,9 @@ var products = [];
 {% for item in items %}
     var tempId = '{{item.id}}';
     var tempName = '{{item.name}}';
-    products.push({id:tempId,name:tempName})
+    var tempitemtype = '{{item.item_add_type}}';
+    console.log(tempitemtype,"ittyp")
+    products.push({id:tempId,name:tempName,item_add_type:tempitemtype})
    // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
 
     {% endfor %}
@@ -1314,24 +1337,24 @@ var products = [];
 
 
         function showProducts(){
-    $('#id_search').empty();
-    for (var j=0; j<products.length; j++) {
-        if (products[j].name.toUpperCase().match($('#pro-name').val().toUpperCase())){
-            console.log(products[j]);
-    $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeProductShow(this)"  data-pro="'+products[j].id+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
+            $('#id_search').empty();
+            for (var j=0; j<products.length; j++) {
+                if (products[j].name.toUpperCase().match($('#pro-name').val().toUpperCase())){
+                    console.log(products[j],"pros");
+            $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeProductShow(this)"  data-pro="'+products[j].id+'" data-itemtype="'+products[j].item_add_type+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
 
-        }
-    }
-        console.log( $('#pro-name').val());
-        if($('#pro-name').val() !=""){
-        document.getElementById("id_search").style.display="block"
+                }
+            }
+            console.log( $('#pro-name').val());
+            if($('#pro-name').val() !=""){
+            document.getElementById("id_search").style.display="block"
 
-        }else{
-        document.getElementById("id_search").style.display="none"
+            }else{
+            document.getElementById("id_search").style.display="none"
 
-        }
+            }
         
-    }
+        }
 
 
     function showProducts2(){
@@ -1374,13 +1397,41 @@ var products = [];
           
       }
 
-    function closeProductShow(d){
+    async function closeProductShow(d){
         console.log(d);
         var proId = $(d).attr("data-pro")
         $('#id_pro_sel').val($(d).attr("data-pro"));
         $('#pro-name').val($(d).attr("data-name"));
-
+        console.log($(d).attr('data-itemtype'),"unitera")
         quantitychange();
+
+        if ($(d).attr('data-itemtype') == 'unit'){
+          console.log("unitera")
+
+          $('#id_search3').empty()
+          $('#pro-name3').val('')
+
+        var result = await _get('api/item_units/?product_id='+$(d).attr("data-pro"));
+        if(result.status == 200){
+            //console.log(result.data.ingredient,"ing")
+                        
+                  $.each(result.data.item_units,function(key,value){
+                      console.log(value.item_name,"lo")
+                      var tempId = value.id;
+                      var tempName = value.unit_code;
+
+                      $('#id_search3').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" id="id_product'+value.id+'"  onclick="closeProductShow3(this)" data-pro="'+value.id+'" data-name="'+value.unit_code+'"><div class="inv-search-result">'+value.unit_code+'</div></div>');
+                  })     
+
+        }
+
+        $('.unit-container').show()
+        $('.qty-container').hide()
+
+        }else{
+          $('.unit-container').hide()
+          $('.qty-container').show()
+        }
 
         document.getElementById("id_search").style.display="none"
     }
@@ -1417,12 +1468,10 @@ var products = [];
      $('#id_search').empty();
      
         {% for item in items %}
-    var tempId = '{{item.id}}';
-    var tempName = '{{item.name}}';
 
-    $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" id="id_product{{item.id}}"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+          $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" id="id_product{{item.id}}"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-itemtype="{{item.item_add_type}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
 
-    {% endfor %}
+        {% endfor %}
 
    
     

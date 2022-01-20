@@ -3542,8 +3542,10 @@ class ItemQuantityCheck(APIView):
 
 		item = InventoryItem.objects.annotate(quantity_total=Sum('unit_item_history__quantity'),unit_count=Sum(Case(When(unit_item__status='available',then=1),default=0,output_field=IntegerField()))).get(id=int(item_id))
 		
+		unitcount = ItemUnit.objects.filter(item=item,status='available').count()
+		
 		if item.item_add_type == 'unit':
-			item_count = item.unit_count
+			item_count = unitcount
 
 			if float(item_count) >= float(quantity) :
 				response_dict['item_available'] = True
@@ -3585,6 +3587,7 @@ class CheckOutItemAdd(APIView):
 		service_item = request.GET.get('item_id')
 		visit_id = request.GET.get('visit_id')
 		quantity = request.GET.get('quantity')
+		unit_id = request.GET.get('unit_id')
 
 		print(service_item,visit_id,"vis")
 		visit = OrderScheduler.objects.get(id=int(visit_id))
@@ -3603,24 +3606,32 @@ class CheckOutItemAdd(APIView):
 
 		if int(service_item) in combined_checkout_items_id_list:
 			response_dict['message'] = 'Item already added'
+			print("itemadddoret")
 		else:
 			print("itemaddd")
 			if item.item_status == 'available' or item.item_status == 'about_to_finish':
 
-				checkout_item = CheckOutItems.objects.create(visit=visit,item=item,units=quantity)
+				if unit_id:
+					itemunit = ItemUnit.objects.get(id=int(unit_id),status='available')
+					checkout_item = CheckOutItems.objects.create(visit=visit,item=item,units=1,item_unit=itemunit)
+				else:
+					checkout_item = CheckOutItems.objects.create(visit=visit,item=item,units=quantity)
 				response_dict['checkout_item_id'] = checkout_item.id
 				response_dict['item_id'] = checkout_item.item.id
 				response_dict['item_name'] = checkout_item.item.name
 				response_dict['item_code'] = checkout_item.item.item_code
+				
+				if checkout_item.item_unit.unit_code:
+					response_dict['unit_code'] = checkout_item.item_unit.unit_code
+				else:
+					response_dict['unit_code'] = '-'
+
 				response_dict['item_quantity'] = checkout_item.units
 
 				if checkout_item.item.item_add_type == 'unit':
 					response_dict['item_unit'] = 'unit'
 					response_dict['item_type'] = 'unit'
 					
-					itemunits = ItemUnit.objects.filter(item=checkout_item.item,status='available')[:int(quantity)]
-					for unit in itemunits:
-						CheckOutItemUnits.objects.create(checkout_item=checkout_item,item_unit=unit)
 				else:
 					response_dict['item_unit'] = checkout_item.item.measuring_unit
 					response_dict['item_type'] = 'quantity'
@@ -3908,18 +3919,24 @@ class ItemsCheckInAPI(APIView):
 			checkin_item.check_in_user = UserProfile.objects.get(id=int(request.data.get('inventory_user')),is_active=True)
 			
 			if checkin_item.item and checkin_item.item.item_add_type == 'unit':
+				inventoryitemunit = ItemUnit.objects.get(id=int(checkin_item.item_unit.id))
+				inventoryitemunit.status = 'available'
+				inventoryitemunit.save()
 				print("pam")
-				for itemunit in checkin_item.checkin_item_units:
-					inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
-					inventoryitemunit.status = 'available'
-					inventoryitemunit.save()
+				# for itemunit in checkin_item.checkin_item_units:
+				# 	inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
+				# 	inventoryitemunit.status = 'available'
+				# 	inventoryitemunit.save()
 
 			if checkin_item.service_item and checkin_item.service_item.item.item_add_type == 'unit':
-				for itemunit in checkin_item.checkin_item_units:
-					print(itemunit.item_unit.id,"itunitid")
-					inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
-					inventoryitemunit.status = 'available'
-					inventoryitemunit.save()
+				inventoryitemunit = ItemUnit.objects.get(id=int(checkin_item.item_unit.id))
+				inventoryitemunit.status = 'available'
+				inventoryitemunit.save()
+				# for itemunit in checkin_item.checkin_item_units:
+				# 	print(itemunit.item_unit.id,"itunitid")
+				# 	inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
+				# 	inventoryitemunit.status = 'available'
+				# 	inventoryitemunit.save()
 
 			if checkin_item.item and checkin_item.item.item_add_type == 'quantity' and float(item_quantities[count]) > 0:
 				print("pam")
@@ -4164,7 +4181,7 @@ class ItemUnitsProduct(APIView):
 		item_units       = ItemUnit.objects.filter(item__id=product_id,status='available')
 		for item in item_units:
 			item_units_array.append({'id':item.id,'unit_code':item.unit_code})
-		
+		print(item_units_array,"uarr")
 		response_dict['item_units'] = item_units_array
 		response_dict['success']    = True
 
