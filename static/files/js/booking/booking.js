@@ -3095,6 +3095,10 @@ checkSelectedDate(){
     this.total_size = 0
     this.sofa_size=0
     this.chair_size=0
+    this.new_kitchen_nocabinet_size=0
+    this.new_kitchen_cabinet_size=0
+    this.old_kitchen_cabinet_size=0
+    this.old_kitchen_nocabinet_size=0
     console.log("called me & "+this.schedule_serviceTypes_selected)
     for(var j=0;j<this.schedule_serviceTypes_selected.length;j++)
     {
