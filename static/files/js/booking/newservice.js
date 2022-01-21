@@ -3118,9 +3118,14 @@ $(document).ready(function(){
       }
     },
     findSelectedTotalSize() {
+     
       this.total_size = 0
       this.sofa_size=0
       this.chair_size=0
+      this.new_kitchen_nocabinet_size=0
+    this.new_kitchen_cabinet_size=0
+    this.old_kitchen_cabinet_size=0
+    this.old_kitchen_nocabinet_size=0
       console.log("called me & "+this.schedule_serviceTypes_selected)
       for(var j=0;j<this.schedule_serviceTypes_selected.length;j++)
       {
@@ -5546,6 +5551,7 @@ $(document).ready(function(){
           service_to_select
         )
         .then((response) => {
+          var total_estimated_size = 0;
           var total_highpricewindow_size = 0;
           var total_lowpricewindow_size = 0;
           var total_highpricefacade_size = 0;
@@ -5663,7 +5669,12 @@ $(document).ready(function(){
                   data["lowpricewindow_perhour_cleaning"]
               );
           } else {
-            var total_estimated_size = this.total_size;
+           // var total_estimated_size = this.total_size;
+           for(var ose=0;ose<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;ose++){
+            if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ose].section.size){
+              total_estimated_size=total_estimated_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ose].section.size.max_size
+            }
+          }
             var productivity = data["perhour_cleaning"];
             console.log("productivity is "+productivity)
             var manhour = parseInt(total_estimated_size / productivity);
