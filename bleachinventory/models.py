@@ -397,6 +397,7 @@ class CheckOutItems(models.Model):
     visit                = models.ForeignKey(OrderScheduler,blank=False,null=False,related_name='visit_checkout')
     service_item         = models.ForeignKey(ServiceRecipeItems,blank=True,null=True,related_name='service_item_checkout')
     item                 = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='item_checkout')
+    item_unit            = models.ForeignKey(ItemUnit,blank=True,null=True,related_name='item_checkout_unit')
     units                = models.CharField(default=0,max_length=10,blank=False,null=False)
     is_swapped_item      = models.BooleanField(default=False,blank=False,null=False)
     is_checked_out       = models.BooleanField(default=False,blank=False,null=False)
