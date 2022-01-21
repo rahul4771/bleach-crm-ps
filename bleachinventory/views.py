@@ -1576,6 +1576,9 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 		check_out_items = CheckOutItems.objects.filter(visit=visit).prefetch_related(Prefetch('checkoutitem',queryset=CheckOutItemUnits.objects.all(),to_attr='checkoutitem_units'))
 
 		if visit.stock_out_items_saved == False:
+			print("mokklap2")   
+			visit.stock_out_items_saved = True
+			visit.save()
 			for section in visit.order_scheduler_book.sections:
 			
 				if section.size.isnumeric() == True:
@@ -1673,7 +1676,10 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 									print(itemunits,"rrr")
 									for unit in itemunits:
 										print(unit,"rrr2")
-										CheckOutItems.objects.create(visit=visit,service_item=service_item,item_unit=unit,units=1,is_swapped_item=False)
+										try:
+											CheckOutItems.objects.get(visit=visit,service_item=service_item,item_unit=unit)
+										except:
+											CheckOutItems.objects.create(visit=visit,service_item=service_item,item_unit=unit,units=1,is_swapped_item=False)
 										# CheckOutItemUnits.objects.create(checkout_item=checkout_item,item_unit=unit)
 								
 								variable_recommended_quantity = 0
@@ -1693,13 +1699,17 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 									itemunits = ItemUnit.objects.filter(item=service_item.item,status='available')[:int(item['total_quantity'])]
 									print(itemunits,"rrr3")
 									for unit in itemunits:
-										CheckOutItems.objects.create(visit=visit,service_item=service_item,item_unit=unit,units=1,is_swapped_item=False)
+										try:
+											CheckOutItems.objects.get(visit=visit,service_item=service_item,item_unit=unit)
+										except:
+											CheckOutItems.objects.create(visit=visit,service_item=service_item,item_unit=unit,units=1,is_swapped_item=False)
 										# CheckOutItemUnits.objects.create(checkout_item=checkout_item,item_unit=unit)
 
 							print("klap2")     
 
 						else:
 							pass
+			
 
 			print(service_recipe_ingredients,"itt")
 		return render(request,'inventory/createCheckout.html',{"stock_out":stock_out,"price_ranges":price_ranges,"visit":visit,"items":items,"check_out_items":check_out_items})
@@ -1719,35 +1729,6 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 			messages.success(request,"List Reset!")
 
 		if action == 'save_checkout_list':
-			quantities = request.POST.get('quantities')
-			
-			quantities = quantities.split(",")
-
-			checkout_items=CheckOutItems.objects.filter(visit=visit)
-
-			count = 0
-
-			for item in checkout_items:
-				print(quantities[count],"cown")
-				item.units = quantities[count]
-				item.save()
-
-				#updating units
-				if item.service_item and item.service_item.item.item_add_type == 'unit':
-					existing_units = CheckOutItemUnits.objects.filter(checkout_item=item).delete()
-					itemunits = ItemUnit.objects.filter(item=item.service_item.item,status='available')[:round(float(quantities[count]))]
-					print(itemunits,"rrr3")
-					for unit in itemunits:
-						CheckOutItemUnits.objects.create(checkout_item=item,item_unit=unit)
-
-				if item.item and item.item.item_add_type == 'unit':
-					existing_units = CheckOutItemUnits.objects.filter(checkout_item=item).delete()
-					itemunits = ItemUnit.objects.filter(item=item.item,status='available')[:int(quantities[count])]
-					print(itemunits,"rrr3")
-					for unit in itemunits:
-						CheckOutItemUnits.objects.create(checkout_item=item,item_unit=unit)
-
-				count += 1
 
 			visit.stock_out_items_saved = True
 			visit.save()
@@ -1756,9 +1737,9 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 
 
 		if action == 'submit_checkout_list':
-			quantities = request.POST.get('quantities')
+			# quantities = request.POST.get('quantities')
 			
-			quantities = quantities.split(",")
+			# quantities = quantities.split(",")
 
 			checkout_items=CheckOutItems.objects.filter(visit=visit,is_checked_out=False)
 
@@ -1766,25 +1747,25 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 				
 			for item in checkout_items:
 
-				print(quantities[count],"cown")
-				item.units = quantities[count]
-				item.save()
+				# print(quantities[count],"cown")
+				# item.units = quantities[count]
+				# item.save()
 
 				count += 1
 
 				if item.item and item.item.item_add_type == 'unit':
-					inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(status='available'),to_attr='item_units')).get(id=int(item.item.id))
-					if inventoryitem.item_units:
-						for unit in inventoryitem.item_units[:int(item.units)]:
-							unit.status = 'unavailable'
-							unit.save()
+	
+					if item.item_unit:
+						itemunit = ItemUnit.objects.get(id=int(item.item_unit.id))
+						itemunit.status = 'unavailable'
+						itemunit.save()
 
 				if item.item and item.item.item_add_type == 'quantity':
 					inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(status='available'),to_attr='item_units')).get(id=int(item.item.id))
 					
 					print(inventoryitem.total_quantity,"krok")
 					if float(inventoryitem.total_quantity) >= float(item.units):
-						inventoryitem.total_quantity = float(inventoryitem.total_quantity) - float(item.units)
+						inventoryitem.total_quantity = round(float(inventoryitem.total_quantity) - float(item.units),2)
 						inventoryitem.save()
 						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),item_action='STOCK OUT',item_remark=visit.order.order_no,added_by=request.user)
 					else:
@@ -1792,18 +1773,17 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 						return redirect('bleach-inventory:inventory-createcheckout',visit_id)
 
 				if item.service_item and item.service_item.item.item_add_type == 'unit':
-					inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(status='available'),to_attr='item_units')).get(id=int(item.service_item.item.id))
 					
-					if inventoryitem.item_units:
-						for unit in inventoryitem.item_units[:math.floor(float(item.units))]:
-							unit.status = 'unavailable'
-							unit.save()
+					if item.item_unit:
+						itemunit = ItemUnit.objects.get(id=int(item.item_unit.id))
+						itemunit.status = 'unavailable'
+						itemunit.save()
 
 				if item.service_item and item.service_item.item.item_add_type == 'quantity':
 					inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(status='available'),to_attr='item_units')).get(id=int(item.service_item.item.id))
 					
 					if float(inventoryitem.total_quantity) >= float(item.units):
-						inventoryitem.total_quantity = float(inventoryitem.total_quantity) - float(item.units)
+						inventoryitem.total_quantity = round(float(inventoryitem.total_quantity) - float(item.units),2)
 						inventoryitem.save()
 						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),item_action='STOCK OUT',item_remark=visit.order.order_no,added_by=request.user)
 

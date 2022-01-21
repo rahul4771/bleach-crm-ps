@@ -177,7 +177,7 @@
                     <input type="hidden" name="action" value="order_close" />
                 <div class="row mt-30">
                     <div class="col-md-12 ">
-                        <table class="inv-table footable" style="border-top: 1px solid #c4c4c4;">
+                        <table class="inv-table footable main-table" style="border-top: 1px solid #c4c4c4;">
                             <thead>
                                 <tr>
                                     <th style="width: 15%;">
@@ -203,11 +203,11 @@
                             <tbody id="item_table">
                                 {% for item in request_order_items %}
                                 <tr data-itemid="{{item.product.id}}">
-                                    <td>{% if item.product.item_add_type == 'quantity' %}{{item.product.item_code}}{% elif item.product.item_add_type == 'unit' %}{{item.product_unit.unit_code}}{% endif %}</td>
-                                    <td>{{item.product.name}}</td>
-                                    <td style="text-align: center;">{{item.product.item_type}}</td>
-                                    <td style="text-align: center;">{{item.product.item_category.name}}</td>
-                                    <td style="text-align: center;">{{item.item_count}} {{item.product.measuring_unit}}</td>
+                                    <td data-label="Item Code">{% if item.product.item_add_type == 'quantity' %}{{item.product.item_code}}{% elif item.product.item_add_type == 'unit' %}{{item.product_unit.unit_code}}{% endif %}</td>
+                                    <td data-label="Item Name">{{item.product.name}}</td>
+                                    <td style="text-align: center;" data-label="Item Type">{{item.product.item_type}}</td>
+                                    <td style="text-align: center;" data-label="Category">{{item.product.item_category.name}}</td>
+                                    <td style="text-align: center;" data-label="Quantity">{{item.item_count}} {{item.product.measuring_unit}}</td>
                                     <td style="text-align: center;"> 
                                         
                                                 <div class="btn-group" id="actionDropdown">

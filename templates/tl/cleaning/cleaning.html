@@ -233,7 +233,7 @@
    <div class="inv-check-section">
      <div class="d-flex ">
        <div class="inv-check-section-head san-font">
-        Section {{forloop.counter}} : {{section.section_name}}
+        Section {{forloop.counter}} : {{section.section_name}} {% if cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.name == 'Kitchen Cleaning' %} ({% if section.new_kitchen %}New Kitchen{% else %}Old Kitchen{% endif %}{% if section.is_cabinet %} With Cabinet{% else %} Without Cabinet{% endif %})  {% elif cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.name == 'Window Cleaning' %}({% if section.is_highprice_window %}Old Window{% else %}New Window{% endif %})  {% elif cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.name == 'Facade Cleaning' %}({% if section.is_highprice_facade %}Old Facade{% else %}New Facade{% endif %}) {% endif %}
          
        </div>
        

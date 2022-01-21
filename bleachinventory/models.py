@@ -110,7 +110,7 @@ class InventoryItem(models.Model):
     item_code       =   models.CharField(max_length=50,blank=False,null=False)
     description     =   models.TextField(max_length=1000,blank=True,null=True)
     reserve_count   =   models.CharField(max_length=10,blank=True,null=True)
-    total_quantity  =   models.CharField(max_length=10,blank=True,null=True,default=0)
+    total_quantity  =   models.CharField(max_length=100,blank=True,null=True,default=0)
     is_reusable     =   models.BooleanField(blank=False,null=False)
     item_status     =   models.CharField(max_length=50,blank=True,null=True,choices=ITEM_STATUS_CHOICES)
     item_add_type   =   models.CharField(max_length=50,blank=True,null=True,choices=ITEM_ADD_TYPE_CHOICES)
