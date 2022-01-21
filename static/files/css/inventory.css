@@ -21,7 +21,7 @@
 .mob-only{
   display:none;
 }
-#all_table{
+/* #all_table{
   display:none
 }
 #raw_materials_table{
@@ -32,7 +32,7 @@
 }
 #finished_goods_table{
   display:none
-}
+} */
 .nav-item:hover .tab-text{
   color:#2c4c82;
 }
@@ -474,9 +474,9 @@
   padding: 10px;
   font-family: AvenirLTStd !important;
 }
- .inv-tabs .active{
+ /* .inv-tabs .active{
   border-bottom: 3px solid #2d4e85 !important;
-}
+} */
 .cancel-button{
   background: #fff 0% 0% no-repeat padding-box;
     box-shadow: 0px 3px 6px #0000003d;

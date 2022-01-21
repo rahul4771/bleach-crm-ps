@@ -3141,6 +3141,7 @@ checkSelectedDate(){
 
        console.log("i m inside")
     for (var i=0;i < this.multiServicesBill[serIndex].bill.length; i++) {
+      this.total_size=0
       if(this.multiServicesBill[serIndex].bill[i].section.size)
       {
      console.log("section sixze is"+this.multiServicesBill[serIndex].bill[i].section.size.max_size)
@@ -5510,6 +5511,7 @@ try {
         service_to_select
       )
       .then((response) => {
+        var total_estimated_size =0
         var total_highpricewindow_size = 0;
         var total_lowpricewindow_size = 0;
         var total_highpricefacade_size = 0;
@@ -5627,7 +5629,12 @@ try {
                 data["lowpricewindow_perhour_cleaning"]
             );
         } else {
-          var total_estimated_size = this.total_size;
+          //var total_estimated_size = this.total_size;
+          for(var ose=0;ose<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;ose++){
+            if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ose].section.size){
+              total_estimated_size=total_estimated_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ose].section.size.max_size
+            }
+          }
           var productivity = data["perhour_cleaning"];
           console.log("productivity is "+productivity)
           var manhour = parseInt(total_estimated_size / productivity);
