@@ -3857,7 +3857,7 @@ class CheckOutItemSwap(APIView):
 			response_dict['item_name'] = checkout.service_item.item.name
 			response_dict['item_code'] = checkout.service_item.item.item_code
 
-			if checkout.item_unit.unit_code:
+			if checkout.item_unit:
 				response_dict['unit_code'] = checkout.item_unit.unit_code
 			else:
 				response_dict['unit_code'] = '-'
