@@ -264,7 +264,13 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
 
          
         <div class="row mt-20">
-          <div class="col-md-12">
+          <div class="col-md-3 col-md-offset-9 text-right">
+            <input type="hidden" name="selected_list"/>
+            <button class="sent-button" data-toggle="modal" data-target="#deleteModel" disabled id="item_del_btn">
+              Delete
+            </button>
+          </div>
+          <div class="col-md-12 mt-20">
             <div class="inv-check-orderhead">
               Recommended List
             </div>
@@ -272,6 +278,8 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
               <table class="inv-table footable"> 
                 <thead>
                   <tr>
+                    <th><input type="checkbox" class="inv-item-checkbox" onchange="selectAllItems()" name="all_select_items">
+                    </th>
                       <th style="width: %;">
                         Ingredient
                       </th>
@@ -280,6 +288,9 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
                       </th>
                       <th data-hide="phone,tablet"  style="width: %; ">
                           Item Code
+                      </th>
+                      <th data-hide="phone,tablet"  style="width: %; ">
+                        Unit Code
                       </th>
                       <th data-hide="phone,tablet"  style="width: %;" >
                         Quantity
@@ -295,58 +306,43 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
                 {% else %}
                 <input type="hidden" name="action" value="save_checkout_list">
                 {% endif %}
-                <input type="hidden" name="quantities" >
+      
               
                 <tbody id="id_table">
 
                 {% for item in check_out_items %}
                 <tr data-itemid="{{item.item.id}}" id="id_tr_{{item.id}}">
+                  <td><input type="checkbox" name="selected_items" value="{{item.id}}"  class="inv-item-checkbox items_selected" id="id_check_{{item.id}}" onchange="getItems()">
+                  </td>
                 <td>{% if item.service_item %}{{item.service_item.ingredient.ingredient}}{% else %}-{% endif %}</td>
                 <td {% if item.service_item %}id="id_item_name_{{item.service_item.item.id}}"{% else %}id="id_item_name_{{item.item.id}}"{% endif %} >
                   {% if item.service_item %}{{item.service_item.item.name}}{% else %}{{item.item.name}}{% endif %}
                 </td>
-                <td>{% if item.service_item %}{{item.service_item.item.item_code}}{% else %}{{item.item.item_code}}{% endif %}</td>
-                <td>
+                <td >{% if item.service_item %}{{item.service_item.item.item_code}}{% else %}{{item.item.item_code}}{% endif %}</td>
                 
-                <div class="qty-container qty-box-{{item.id}}" hidden>
-                  <div class="quantity">
-                    {% if item.service_item %}
-                      <a class="quantity__minus pointer" onclick="decrementupdate({{item.id}},{{item.service_item.item.id}})"><span>-</span></a>
-                      <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_{{item.id}}" value="{{item.units}}" name="checkout_quantity" oninput="quantitychangeupdate({{item.id}},{{item.service_item.item.id}})" >
-                      <a  class="quantity__plus pointer" onclick="incrementupdate({{item.id}},{{item.service_item.item.id}})"><span>+</span></a>
-                    {% else %}
-                      <a class="quantity__minus pointer" onclick="decrementupdate({{item.id}},{{item.item.id}})"><span>-</span></a>
-                      <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_{{item.id}}" value="{{item.units}}" name="checkout_quantity" oninput="quantitychangeupdate({{item.id}},{{item.item.id}})" >
-                      <a  class="quantity__plus pointer" onclick="incrementupdate({{item.id}},{{item.item.id}})"><span>+</span></a>
-                    {% endif %}
-
-                    {% if item.service_item %}  {% if item.service_item.item.item_add_type == 'quantity' %}{{item.service_item.item.measuring_unit}}{% else %}unit{% endif %} {% else %}  {% if item.item.item_add_type == 'quantity' %}{{item.item.measuring_unit}}{% else %}unit{% endif %}  {% endif %}
-                    </div>
-                    
-                </div>
+                <td id="unit_code_{{item.id}}" >{% if item.item_unit %}{{item.item_unit.unit_code}}{% else %}-{% endif %}</td>
                 
-                <div class="qty-box2-{{item.id}}" >
+                <td id="item_qty_{{item.id}}">
                   {{item.units}} {% if item.service_item %}  {% if item.service_item.item.item_add_type == 'quantity' %}{{item.service_item.item.measuring_unit}}{% else %}unit{% endif %} {% else %}  {% if item.item.item_add_type == 'quantity' %}{{item.item.measuring_unit}}{% else %}unit{% endif %}  {% endif %}
-                </div>
-
                 </td>
+
                 <td>
                   
-                    {% if item.item.item_add_type == 'unit' or item.service_item.item.item_add_type == 'unit' %}
+                    <!-- {% if item.item.item_add_type == 'unit' or item.service_item.item.item_add_type == 'unit' %}
                     <button type="button" class="inv-plan-img-btn" data-toggle="modal" data-target="#tableModal" onclick="listunits({{item.id}})"> <img src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
                     {% else %}
                     <button type="button" class="inv-plan-img-btn2-disabled" disabled> <img class="btn-img2" src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
                     {% endif %}
-                  
+                   -->
                     {% if item.service_item.item.item_add_type == 'quantity' %}
                     <button type="button" class="inv-plan-img-btn" onclick="swapModal({{item.service_item.ingredient.id}},{{item.id}})" > <img src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>
                     {% else %}
                     <button type="button" class="inv-plan-img-btn2-disabled" disabled > <img class="btn-img2" src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>
                     {% endif %}
 
-                    <button class="inv-plan-img-btn" type="button" onclick="openEditbtns({{item.id}})"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>  
+                    <button class="inv-plan-img-btn" type="button" {% if item.service_item %}onclick="openNavEditStore('{{item.id}}','{{item.service_item.item.name}}','{{item.units}}','{{item.service_item.item.id}}','{{item.service_item.item.item_add_type}}')"{% else %}onclick="openNavEditStore('{{item.id}}','{{item.item.name}}','{{item.units}}','{{item.item.id}}','{{item.item.item_add_type}}')"{% endif %}> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>  
 
-                    <button class="inv-plan-img-btn" type="button" data-toggle="modal" data-target="#deleteModel" onclick="delete_checkout_item(this)" data-checkoutid="{{item.id}}" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                    {% comment %} <button class="inv-plan-img-btn" type="button" data-toggle="modal" data-target="#deleteModel" onclick="delete_checkout_item(this)" data-checkoutid="{{item.id}}" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button> {% endcomment %}
                 </td>
                 </tr>
 
@@ -457,6 +453,7 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="col-md-12 ">
           <div class="model-input-name">Item</div>
           <input type="hidden" name="item" id="id_pro_sel" value="" />
+          <input type="hidden" name="item_unit_id" id="id_pro_sel3" value="" />
           <div style="position: relative;">
               <div class="inv-input-container inv-border h-30">
                   <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" >
@@ -467,7 +464,21 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
               </div>
           </div>
          <br>
-          <div class="qty-container">
+
+         <div class="unit-container" hidden>
+            <div class="model-input-name">Unit</div>
+            <div style="position: relative;">
+              <div class="inv-input-container inv-border h-30">
+                  <input autocomplete="off" onclick="ProductListShow3()" type="text" id="pro-name3" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts3()">
+
+                  </div>
+                  <div id="id_search3" class="row inv-result-box" style="display: none;">
+                    
+                  </div>
+              </div>
+          </div>
+
+          <div class="qty-container" hidden>
     
             <div class="quantity">
               
@@ -479,7 +490,7 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
               
           </div>
 
-          <div>Available : <span id="id_item_count">0</span></div>
+          <div class="mt-10">Available : <span id="id_item_count">0</span></div>
 
       </div>
 
@@ -494,7 +505,88 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
   </div>
 </div>
 
+<!-- edit item begins here-->
+<div id="editStore" class="inv-sidedrawer">
+
+  <div class="inv-sidedrawer-inner">
+      <div class="d-flex">
+          <div class="inv-drawer-head" id="itemHead">
+              Edit Item
+          </div>
+          <div class="right-pos">
+
+              <button onclick="closeNavEditStore()" class="img-button">
+                  <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+              </button>
+          </div>
+      </div>
+      <hr>
+
+      {% comment %} <form method="POST" action="" >{% csrf_token %}
+      <input type="hidden" name="action" value="add_item" /> {% endcomment %}
+      
+      <div class="row mt-20">
+        <div class="col-md-12 ">
+          <div class="model-input-name">Item</div>
+          <input type="hidden" name="item" id="edit_id_item" value="" />
+          <input type="hidden" name="inventory_item" id="inventory_item_id" value="" />
+          <input type="hidden" name="inventory_item_unit" id="inventory_item_unit_id" value="" />
+          <div style="position: relative;">
+              <div class="inv-input-container inv-border h-30">
+                  <input autocomplete="off"  type="text" id="edit_pro_name" style="border: none !important; width: 90%;" class=" inv-in"  disabled >
+                 
+              </div>
+              <div id="id_search" class="row inv-result-box" style="display: none;">
+                
+              </div>
+          </div>
+         <br>
+          
+         <div class="unit-container" >
+          <div class="model-input-name">Unit</div>
+          <div style="position: relative;">
+            <div class="inv-input-container inv-border h-30">
+                <input autocomplete="off" onclick="ProductListShow4()" type="text" id="pro-name4" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts3()">
+
+                </div>
+                <div id="id_search4" class="row inv-result-box" style="display: none;">
+                  
+                </div>
+            </div>
+        </div>
+         
+         <div class="qty-container">
+    
+            <div class="quantity">
+              
+                <a class="quantity__minus pointer" onclick="editdecrement()"><span>-</span></a>
+                <input  type="number" class="quantity__input item_quantity" step="0.01"  id="edit_id_qty" value="0" name="checkout_quantity" oninput="editquantitychange()" >
+                <a  class="quantity__plus pointer" onclick="editincrement()"><span>+</span></a>
+              
+              </div>
+              
+          </div>
+
+          <div class="mt-10">Available : <span id="edit_id_item_count">0</span></div>
+
+      </div>
+
+      </div>
+
+
+  </div>
+  <div class="inv-drawer-footer">
+      <button class="sent-button" onclick="itemupdate()">Submit</button>
+      {% comment %} </form> {% endcomment %}
+      <button data-dismiss="modal" onclick="closeNavEditStore()" class="view-button">Cancel</button>
+  </div>
+</div>
+
+
+<!-- edit item ends here-->
 <!-- swap item -->
+
+
 <div id="addStore2" class="inv-sidedrawer">
 
   <div class="inv-sidedrawer-inner">
@@ -582,7 +674,7 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
 
 
 <!-- swap unit -->
-<div id="addStore3" class="inv-sidedrawer">
+{% comment %} <div id="addStore3" class="inv-sidedrawer">
 
   <div class="inv-sidedrawer-inner">
       <div class="d-flex">
@@ -598,7 +690,6 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
       </div>
       <hr>
 
-      {% comment %} <form method="POST" action="" >{% csrf_token %} {% endcomment %}
       <div class="row mt-20">
         <div class="col-md-12 ">
           <div class="model-input-name">Unit</div>
@@ -648,10 +739,9 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
   </div>
   <div class="inv-drawer-footer">
       <button class="sent-button" type="button" onclick="unitswap()">Submit</button>
-      {% comment %} </form> {% endcomment %}
       <button data-dismiss="modal" onclick="closeNavAddStore3()" class="view-button">Cancel</button>
   </div>
-</div>
+</div> {% endcomment %}
 
 
 </div>
@@ -662,7 +752,34 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
 {% block javascript %}
 
 <script>
+function getItems(){
+  //console.log("item selected are"+$("input[name=item_option]").val());
+  var values = $("input[name='selected_items']:checked").map(function(){
+      return $(this).val();
+    }).get();
+    $("input[name='selected_list']").val(values)
+    if(values.length>0)
+    {
+    $( "#item_del_btn" ).prop( "disabled", false );
+    }
+    else{
+      $( "#item_del_btn" ).prop( "disabled", true );
+    }
 
+    console.log("selected list is "+$("input[name='selected_list']").val())
+}
+function selectAllItems(){
+  if($("input[name='all_select_items']").is(":checked"))
+  {
+  $("input[name='selected_items']").prop('checked', true);
+  getItems()
+  }
+  else{
+    $("input[name='selected_items']").prop('checked', false);
+  getItems()
+  }
+
+}
 async function swapModal(id,checkout_item_id){
   console.log(id)
   $('#id_ingredient').val(id);
@@ -804,11 +921,12 @@ function hideselectedoptions(){
     async function itemadd(){
 
       var item_id = $('#id_pro_sel').val() ;
+      var edit_item_id = $('#inventory_item_id').val();
       var visit_id = "{{visit.id}}" ;
       var quantity = $('#id_qty').val();
       console.log(item_id,visit_id,"po")
     
-      var result = await _get('api/inventory-checkout-item-add/?item_id='+item_id+'&visit_id='+visit_id+'&quantity='+quantity);
+      var result = await _get('api/inventory-checkout-item-add/?item_id='+item_id+'&visit_id='+visit_id+'&quantity='+quantity+'&unit_id='+$('#id_pro_sel3').val()+'&edit_item_id='+edit_item_id);
         if(result.status == 200){
           console.log(result.data.success,"resss")
           if (result.data.success == true){
@@ -817,32 +935,24 @@ function hideselectedoptions(){
                     $('#id_table').append(
 
                       `<tr data-itemid="`+result.data.item_id+`" id="id_tr_`+result.data.checkout_item_id+`">
-                        <td></td>
+                        
+                        <td><input type="checkbox" name="selected_items" value="`+result.data.checkout_item_id+`"  class="inv-item-checkbox items_selected" id="id_check_`+result.data.checkout_item_id+`" onchange="getItems()">
+                        </td>
+                        <td>-</td>
                         <td id="id_item_name_`+result.data.item_id+`" >
                           `+result.data.item_name+`
                         </td>
                         <td>`+result.data.item_code+`</td>
-                        <td>
-                          <div class="qty-container qty-box-`+result.data.checkout_item_id+`" hidden>
-                            <div class="quantity">
-                  
-                              <a class="quantity__minus pointer" onclick="decrementupdate(`+result.data.checkout_item_id+`,`+result.data.item_id+`)"><span>-</span></a>
-                              <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_`+result.data.checkout_item_id+`" value="`+result.data.item_quantity+`" name="checkout_quantity" oninput="quantitychangeupdate(`+result.data.checkout_item_id+`,`+result.data.item_id+`)" >
-                              <a  class="quantity__plus pointer" onclick="incrementupdate(`+result.data.checkout_item_id+`,`+result.data.item_id+`)"><span>+</span></a>
-                              unit
-                            </div>
-                              
-                          </div>
-                          
-                          <div class="qty-box2-`+result.data.checkout_item_id+`" >
+                        <td id="unit_code_`+result.data.checkout_item_id+`">`+result.data.unit_code+`</td>
+                        <td id="item_qty_`+result.data.checkout_item_id+`">
+
                             `+result.data.item_quantity+` unit
-                          </div>
+                          
                         </td>
                         <td>
-                            <button type="button" class="inv-plan-img-btn" data-toggle="modal" data-target="#tableModal" onclick="listunits(`+result.data.checkout_item_id+`)"> <img src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
+    
                             <button type="button" class="inv-plan-img-btn2-disabled" disabled > <img class="btn-img2" src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>
-                            <button class="inv-plan-img-btn" type="button" onclick="openEditbtns(`+result.data.checkout_item_id+`)"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>  
-                            <button class="inv-plan-img-btn" type="button" data-toggle="modal" data-target="#deleteModel" onclick="delete_checkout_item(this)" data-checkoutid="`+result.data.checkout_item_id+`" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                            <button class="inv-plan-img-btn" type="button" onclick="openNavEditStore(`+result.data.checkout_item_id+`,'`+result.data.item_name+`',`+result.data.item_quantity+`,`+result.data.item_id+`,'unit')"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>  
                             
                         </td>
                         </tr>`
@@ -853,34 +963,24 @@ function hideselectedoptions(){
                 $('#id_table').append(
 
                       `<tr data-itemid="`+result.data.item_id+`" id="id_tr_`+result.data.checkout_item_id+`">
-                        <td></td>
+                        
+                        <td><input type="checkbox" name="selected_items" value="`+result.data.checkout_item_id+`"  class="inv-item-checkbox items_selected" id="id_check_`+result.data.checkout_item_id+`" onchange="getItems()">
+                        </td>
+                        <td>-</td>
                         <td id="id_item_name_`+result.data.item_id+`" >
                           `+result.data.item_name+`
                         </td>
                         <td>`+result.data.item_code+`</td>
-                        <td>
+                        <td id="unit_code_`+result.data.checkout_item_id+`">`+result.data.unit_code+`</td>
+                        <td id="item_qty_`+result.data.checkout_item_id+`">
 
-                          <div class="qty-container qty-box-`+result.data.checkout_item_id+`" hidden>
-                            <div class="quantity">
-                  
-                              <a class="quantity__minus pointer" onclick="decrementupdate(`+result.data.checkout_item_id+`,`+result.data.item_id+`)"><span>-</span></a>
-                              <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_`+result.data.checkout_item_id+`" value="`+result.data.item_quantity+`" name="checkout_quantity" oninput="quantitychangeupdate(`+result.data.checkout_item_id+`,`+result.data.item_id+`)" >
-                              <a  class="quantity__plus pointer" onclick="incrementupdate(`+result.data.checkout_item_id+`,`+result.data.item_id+`)"><span>+</span></a>
-                              `+result.data.item_unit+`
-                            </div>
-                              
-                          </div>
-                          
-                          <div class="qty-box2-`+result.data.checkout_item_id+`" >
                             `+result.data.item_quantity+` `+result.data.item_unit+`
-                          </div>
-
+                          
                         </td>
                         <td>
-                            <button type="button" class="inv-plan-img-btn2-disabled" disabled> <img class="btn-img2" src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
+                            
                             <button type="button" class="inv-plan-img-btn2-disabled" disabled > <img class="btn-img2" src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>
-                            <button class="inv-plan-img-btn" type="button" onclick="openEditbtns(`+result.data.checkout_item_id+`)"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>  
-                            <button class="inv-plan-img-btn" type="button" data-toggle="modal" data-target="#deleteModel" onclick="delete_checkout_item(this)" data-checkoutid="`+result.data.checkout_item_id+`" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                            <button class="inv-plan-img-btn" type="button" onclick="openNavEditStore(`+result.data.checkout_item_id+`,'`+result.data.item_name+`',`+result.data.item_quantity+`,`+result.data.item_id+`,'quantity')"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>  
                             
                         </td>
                         </tr>`
@@ -891,7 +991,34 @@ function hideselectedoptions(){
               showNotification(result.data.message,'success')
           }else{
           closeNavAddStore()
-          showNotification(result.data.message,'error')
+          showNotification(result.data.message,'success')
+          }
+        }
+    }
+
+
+
+    async function itemupdate(){
+
+      var checkout_item_id = $('#edit_id_item').val();
+      var edit_item_id = $('#inventory_item_id').val();
+      var visit_id = "{{visit.id}}" ;
+      var quantity = $('#edit_id_qty').val();
+      console.log(visit_id,quantity,"po")
+    
+      var result = await _get('api/inventory-checkout-item-edit/?checkout_item_id='+checkout_item_id+'&visit_id='+visit_id+'&quantity='+quantity+'&unit_id='+$('#inventory_item_unit_id').val()+'&edit_item_id='+edit_item_id);
+        if(result.status == 200){
+          console.log(result.data.success,"resss")
+          if (result.data.success == true){
+            console.log(result.data.checkout_item_id,result.data.unit_code,result.data.item_quantity,"uppdatee")
+              $('#unit_code_'+result.data.checkout_item_id+'').text(result.data.unit_code);
+              $('#item_qty_'+result.data.checkout_item_id+'').text(result.data.item_quantity+' '+result.data.item_unit);
+
+              closeNavEditStore()
+              showNotification(result.data.message,'success')
+          }else{
+            closeNavEditStore()
+          showNotification(result.data.message,'success')
           }
         }
     }
@@ -911,7 +1038,7 @@ function hideselectedoptions(){
     //checkout item delete
     async function itemdelete(){
 
-      var item_id = $('#checkout_item_id').val() ;
+      var item_id = $("input[name='selected_list']").val() ;
       
       console.log(item_id,"po")
     
@@ -921,7 +1048,9 @@ function hideselectedoptions(){
 
           $('.cancel_btn').click();
 
-          $('#id_tr_'+result.data.checkout_item_id+'').remove();
+          $.each(result.data.deleted_items_list,function(key,value){
+            $('#id_tr_'+value+'').remove();
+          })
         }
     }
 
@@ -946,27 +1075,17 @@ function hideselectedoptions(){
                 `+result.data.item_name+`
               </td>
               <td>`+result.data.item_code+`</td>
+              <td>`+result.data.unit_code+`</td>
               <td>
-                <div class="qty-container qty-box-`+result.data.checkout_item_id+`" hidden>
-                  <div class="quantity">
-        
-                    <a class="quantity__minus pointer" onclick="decrementupdate(`+result.data.checkout_item_id+`,`+result.data.item_id+`)"><span>-</span></a>
-                    <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_`+result.data.checkout_item_id+`" value="`+quantity+`" name="checkout_quantity" oninput="quantitychangeupdate(`+result.data.checkout_item_id+`,`+result.data.item_id+`)" >
-                    <a  class="quantity__plus pointer" onclick="incrementupdate(`+result.data.checkout_item_id+`,`+result.data.item_id+`)"><span>+</span></a>
-                    unit
-                  </div>
-                    
-                </div>
                 
-                <div class="qty-box2-`+result.data.checkout_item_id+`" >
                   `+quantity+` unit
-                </div>
+                
               </td>
               <td>
-                <button type="button" class="inv-plan-img-btn" data-toggle="modal" data-target="#tableModal" onclick="listunits(`+result.data.checkout_item_id+`)"> <img src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
+                
                 <button type="button" class="inv-plan-img-btn2-disabled" disabled > <img class="btn-img2" src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>
-                <button class="inv-plan-img-btn" type="button" onclick="openEditbtns(`+result.data.checkout_item_id+`)"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>  
-                <button class="inv-plan-img-btn" type="button" data-toggle="modal" data-target="#deleteModel" onclick="delete_checkout_item(this)" data-checkoutid="`+result.data.checkout_item_id+`" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                <button class="inv-plan-img-btn" type="button" onclick="openNavEditStore(`+result.data.checkout_item_id+`,'`+result.data.item_name+`',`+result.data.item_quantity+`,`+result.data.item_id+`,'unit')"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>  
+                
                 </td>`
             )
           }else{
@@ -976,27 +1095,17 @@ function hideselectedoptions(){
                 `+result.data.item_name+`
               </td>
               <td>`+result.data.item_code+`</td>
+              <td>`+result.data.unit_code+`</td>
               <td>
-                <div class="qty-container qty-box-`+result.data.checkout_item_id+`" hidden>
-                  <div class="quantity">
-        
-                    <a class="quantity__minus pointer" onclick="decrementupdate(`+result.data.checkout_item_id+`,`+result.data.item_id+`)"><span>-</span></a>
-                    <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_`+result.data.checkout_item_id+`" value="`+quantity+`" name="checkout_quantity" oninput="quantitychangeupdate(`+result.data.checkout_item_id+`,`+result.data.item_id+`)" >
-                    <a  class="quantity__plus pointer" onclick="incrementupdate(`+result.data.checkout_item_id+`,`+result.data.item_id+`)"><span>+</span></a>
-                    `+result.data.item_unit+`
-                  </div>
-                    
-                </div>
                 
-                <div class="qty-box2-`+result.data.checkout_item_id+`" >
                   `+result.data.item_quantity+` `+result.data.item_unit+`
-                </div>
+                
               </td>
               <td>
-                <button type="button" class="inv-plan-img-btn2-disabled" disabled> <img class="btn-img2" src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
+                
                 <button type="button" class="inv-plan-img-btn" onclick="swapModal(`+result.data.ingredient_id+`,`+result.data.checkout_item_id+`)" > <img src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>
-                <button class="inv-plan-img-btn" type="button" onclick="openEditbtns(`+result.data.checkout_item_id+`)"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>  
-                <button class="inv-plan-img-btn" type="button" data-toggle="modal" data-target="#deleteModel" onclick="delete_checkout_item(this)" data-checkoutid="`+result.data.checkout_item_id+`" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                
+                <button class="inv-plan-img-btn" type="button" onclick="openNavEditStore(`+result.data.checkout_item_id+`,'`+result.data.item_name+`',`+result.data.item_quantity+`,`+result.data.item_id+`,'quantity')"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>  
                 </td>`
             )
           }
@@ -1023,13 +1132,6 @@ function hideselectedoptions(){
     }
 
 
-    function openEditbtns(id){
-      $('.qty-box-'+id+'').show()
-      $('.qty-box2-'+id+'').hide()
-      
-    }
-
-
     async function quantitychange(){
       
       var item_id = $('#id_pro_sel').val();
@@ -1044,6 +1146,19 @@ function hideselectedoptions(){
         }
     }
 
+    async function editquantitychange(){
+      
+      var item_id = $('#inventory_item_id').val();
+      var quantity = $('#edit_id_qty').val() ;
+      
+    
+      var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+        if(result.status == 200){
+          console.log(result.data.item_available,result.data.item_count,"lop1")
+          $('#edit_id_qty').val(result.data.item_quantity);
+          $('#edit_id_item_count').text(result.data.item_count);
+        }
+    }
     async function swapquantitychange(){
       
       var item_id = $('#id_pro_sel2').val();
@@ -1074,6 +1189,26 @@ async function increment(){
 
       $('#id_qty').val(result.data.item_quantity);
       $('#id_item_count').text(result.data.item_count);
+      
+    }
+}
+
+async function editincrement(){
+  console.log($('#id_pro_sel2').val(),"prose")
+  
+  var item_id = $('#inventory_item_id').val();
+
+  $('#edit_id_qty').val(parseInt($('#edit_id_qty').val()) + 1 );
+
+  var quantity = parseInt($('#edit_id_qty').val()) ;
+  console.log(item_id,quantity,"po")
+
+  var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+    if(result.status == 200){
+      console.log(result.data.item_available,"lop2")
+
+      $('#edit_id_qty').val(result.data.item_quantity);
+      $('#edit_id_item_count').text(result.data.item_count);
       
     }
 }
@@ -1115,6 +1250,27 @@ async function decrement(){
     if(result.status == 200){
       console.log(result.data.item_available,"lop3")
       $('#id_qty').val(result.data.item_quantity);
+    }
+}
+
+async function editdecrement(){
+  var item_id = $('#inventory_item_id').val();
+
+  if ($('#edit_id_qty').val() > 0) {
+  $('#edit_id_qty').val(parseInt($('#edit_id_qty').val()) - 1 );
+  }
+
+  if ($('#edit_id_qty').val() == 0) {
+    $('#edit_id_qty').val(parseInt($('#edit_id_qty').val()) - 1 );
+    $('#edit_id_qty').val(0);
+  }
+
+  var quantity = parseInt($('#edit_id_qty').val()) ;
+
+  var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+    if(result.status == 200){
+      console.log(result.data.item_available,"lop3")
+      $('#edit_id_qty').val(result.data.item_quantity);
     }
 }
 
@@ -1235,7 +1391,9 @@ var products = [];
 {% for item in items %}
     var tempId = '{{item.id}}';
     var tempName = '{{item.name}}';
-    products.push({id:tempId,name:tempName})
+    var tempitemtype = '{{item.item_add_type}}';
+    console.log(tempitemtype,"ittyp")
+    products.push({id:tempId,name:tempName,item_add_type:tempitemtype})
    // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
 
     {% endfor %}
@@ -1250,14 +1408,6 @@ var products = [];
     {% endfor %}
     
     function stocksubmit(){
-      var quantities = [] ;
-
-      $('input[name="checkout_quantity"]').each(function(){
-        console.log($(this).val(),"valli")
-        quantities.push($(this).val())
-      })
-      console.log(quantities.toString(),"quop")
-      $('input[name="quantities"').val(quantities);
       $('#stockform').submit()
     }
 
@@ -1314,24 +1464,24 @@ var products = [];
 
 
         function showProducts(){
-    $('#id_search').empty();
-    for (var j=0; j<products.length; j++) {
-        if (products[j].name.toUpperCase().match($('#pro-name').val().toUpperCase())){
-            console.log(products[j]);
-    $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeProductShow(this)"  data-pro="'+products[j].id+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
+            $('#id_search').empty();
+            for (var j=0; j<products.length; j++) {
+                if (products[j].name.toUpperCase().match($('#pro-name').val().toUpperCase())){
+                    console.log(products[j],"pros");
+            $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeProductShow(this)"  data-pro="'+products[j].id+'" data-itemtype="'+products[j].item_add_type+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
 
-        }
-    }
-        console.log( $('#pro-name').val());
-        if($('#pro-name').val() !=""){
-        document.getElementById("id_search").style.display="block"
+                }
+            }
+            console.log( $('#pro-name').val());
+            if($('#pro-name').val() !=""){
+            document.getElementById("id_search").style.display="block"
 
-        }else{
-        document.getElementById("id_search").style.display="none"
+            }else{
+            document.getElementById("id_search").style.display="none"
 
-        }
+            }
         
-    }
+        }
 
 
     function showProducts2(){
@@ -1374,13 +1524,43 @@ var products = [];
           
       }
 
-    function closeProductShow(d){
+  
+
+    async function closeProductShow(d){
         console.log(d);
         var proId = $(d).attr("data-pro")
         $('#id_pro_sel').val($(d).attr("data-pro"));
         $('#pro-name').val($(d).attr("data-name"));
-
+        console.log($(d).attr('data-itemtype'),"unitera")
         quantitychange();
+
+        if ($(d).attr('data-itemtype') == 'unit'){
+          console.log("unitera")
+
+          $('#id_search3').empty()
+          $('#pro-name3').val('')
+
+        var result = await _get('api/item_units/?product_id='+$(d).attr("data-pro"));
+        if(result.status == 200){
+            //console.log(result.data.ingredient,"ing")
+                        
+                  $.each(result.data.item_units,function(key,value){
+                      console.log(value.item_name,"lo")
+                      var tempId = value.id;
+                      var tempName = value.unit_code;
+
+                      $('#id_search3').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" id="id_product'+value.id+'"  onclick="closeProductShow3(this)" data-pro="'+value.id+'" data-name="'+value.unit_code+'"><div class="inv-search-result">'+value.unit_code+'</div></div>');
+                  })     
+
+        }
+
+        $('.unit-container').show()
+        $('.qty-container').hide()
+
+        }else{
+          $('.unit-container').hide()
+          $('.qty-container').show()
+        }
 
         document.getElementById("id_search").style.display="none"
     }
@@ -1405,6 +1585,16 @@ var products = [];
       document.getElementById("id_search3").style.display="none"
   }
 
+  function closeProductShow4(d){
+    console.log(d);
+    var proId = $(d).attr("data-pro")
+    $('#inventory_item_unit_id').val($(d).attr("data-pro"));
+    $('#pro-name4').val($(d).attr("data-name"));
+
+
+    document.getElementById("id_search4").style.display="none"
+}
+
 
 
    $("#pro-name").click(function(){
@@ -1417,12 +1607,10 @@ var products = [];
      $('#id_search').empty();
      
         {% for item in items %}
-    var tempId = '{{item.id}}';
-    var tempName = '{{item.name}}';
 
-    $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" id="id_product{{item.id}}"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+          $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" id="id_product{{item.id}}"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-itemtype="{{item.item_add_type}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
 
-    {% endfor %}
+        {% endfor %}
 
    
     
@@ -1435,6 +1623,54 @@ var products = [];
         document.getElementById("addStore").style.width = "30%";
     }  
     hideselectedoptions();
+}
+
+
+async function openNavEditStore(item,item_name,qty,inventory_item_id,item_type) {
+  console.log("item i s"+item+"item name is "+item_name)
+     $('#id_search').empty();
+     $('#edit_id_item').val(item)
+     $('#inventory_item_id').val(inventory_item_id)
+     $('#edit_pro_name').val(item_name)
+     $('#edit_id_qty').val(qty)
+      
+     editquantitychange()
+
+     if (item_type == 'unit'){
+       $('.unit-container').show()
+       $('.qty-container').hide()
+       $('#id_search4').empty()
+        var result = await _get('api/item_units/?product_id='+inventory_item_id+'&visit_id='+'{{visit.id}}');
+            if(result.status == 200){
+                //console.log(result.data.ingredient,"ing")
+                            
+                      $.each(result.data.checkout_item_units,function(key,value){
+                          console.log(value.unit_code,"lopez")
+                          var tempId = value.id;
+                          var tempName = value.unit_code;
+
+                          $('#id_search4').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" id="id_product'+value.id+'"  onclick="closeProductShow4(this)" data-pro="'+value.id+'" data-name="'+value.unit_code+'"><div class="inv-search-result">'+value.unit_code+'</div></div>');
+                      })     
+
+            }
+      }else{
+          $('.unit-container').hide()
+          $('.qty-container').show()
+      }
+   
+    
+    if(screen.width<= 600){
+        document.getElementById("editStore").style.width = "100%";
+    }else if(screen.width<= 720){
+        document.getElementById("editStore").style.width = "50%";
+    }
+    else{
+        document.getElementById("editStore").style.width = "30%";
+    }  
+    hideselectedoptions();
+}
+function closeNavEditStore() {
+    document.getElementById("editStore").style.width = "0";
 }
 function closeNavAddStore() {
     document.getElementById("addStore").style.width = "0";
@@ -1481,6 +1717,11 @@ function ProductListShow2(){
 function ProductListShow3(){
   searchFlag = true;
   document.getElementById("id_search3").style.display="block"
+}
+
+function ProductListShow4(){
+  searchFlag = true;
+  document.getElementById("id_search4").style.display="block"
 }
 
 function showOf(id){

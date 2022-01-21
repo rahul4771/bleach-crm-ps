@@ -43,22 +43,22 @@
                 <!-- tab begins here-->
                 <ul class="nav nav-tabs mt-20 inv-tabs">
                     <li class="nav-item">
-                      <a class="nav-link active" href="#" onclick="makeActive('all_table',this)">
+                      <a class="nav-link active" href="#all_table" data-toggle="tab" id="all-tab" role="tab" aria-controls="all_table" aria-selected="true" >
                         <img src="{% static 'files/inventory/icons/all_icon.png'%}" class="tab-logo"/>  
                        <span class="tab-text"> All</span> </a>
                     </li>
                     <li class="nav-item" >
-                      <a class="nav-link" href="#" onclick="makeActive('raw_materials_table',this)">
+                      <a class="nav-link" href="#raw_materials_table" id="raw-materials-tab" data-toggle="tab" role="tab" aria-controls="raw_materials_table" aria-selected="false">
                         <img src="{% static 'files/inventory/raw_materials.png'%}" class="tab-logo"/>  
                         <span class="tab-text">Raw Materials</span> </a>
                     </li>
                     <li class="nav-item" >
-                      <a class="nav-link" href="#" onclick="makeActive('assets_table',this)">
+                      <a class="nav-link" href="#assets_table"  id="assets-tab" role="tab"  data-toggle="tab" aria-controls="assets_table" aria-selected="false">
                         <img src="{% static 'files/inventory/assets.png'%}" class="tab-logo"/>
                         <span class="tab-text">  Assets </span></a>
                     </li>
                     <li class="nav-item" >
-                      <a class="nav-link " href="#" onclick="makeActive('finished_goods_table',this)">
+                      <a class="nav-link " href="#finished_goods_table"  id="finished-goods-tab" data-toggle="tab"  role="tab" aria-controls="finished_goods_table" aria-selected="false">
                         <img src="{% static 'files/inventory/finished_goods.png'%}" class="tab-logo"/>
   
                         <span class="tab-text">  Finished Goods</span></a>
@@ -80,9 +80,10 @@
                         <p>{{no_of_entries}} Entries</p>
                     </div>
                 </div>
+                <div class="tab-content">
                 <!-- ALL ITEMS BEGINS HERE-->
-                <div class="mt-20" id="all_table"  >
-                    <table class="inv-table footable" style="border-top:1px solid #c4c4c4"> 
+                <div class="tab-pane mt-20" id="all_table"  role="tabpanel" aria-labelledby="all-tab">
+                    <table class="inv-table footable common-table" style="border-top:1px solid #c4c4c4"> 
                         <thead>
                             <tr>
                                 <th style="width: %;">
@@ -237,7 +238,7 @@
                 </div>
                   <!-- ALL ITEMS ENDS HERE-->
                 <!-- Raw materials begins here -->
-                <div class="mt-20"  id="raw_materials_table">
+                <div class="mt-20 tab-pane fade common-table"  id="raw_materials_table" role="tabpanel" aria-labelledby="raw-materials-tab">
                     
                         <table class="inv-table footable" style="border-top:1px solid #c4c4c4"> 
                             <thead>
@@ -394,7 +395,7 @@
                 </div>
                 <!-- Raw materials ends here -->
                 <!-- Assets begins here -->
-                <div class="mt-20"  id="assets_table">
+                <div class="mt-20 tab-pane fade common-table"  id="assets_table" role="tabpanel" aria-labelledby="assets-tab">
                     
                             <table class="inv-table footable" style="border-top:1px solid #c4c4c4"> 
                                 <thead>
@@ -550,7 +551,7 @@
                             </div>
                 <!-- Assets ends here -->
                   <!--FINISHED GOODS begins here -->
-                  <div class="mt-20"  id="finished_goods_table">
+                  <div class="mt-20 tab-pane fade common-table"  id="finished_goods_table" role="tabpanel" aria-labelledby="finished-goods-tab">
                     
                             <table class="inv-table footable" style="border-top:1px solid #c4c4c4"> 
                                 <thead>
@@ -704,6 +705,7 @@
             
                             </div>
                 <!-- FINISHED GOODS ends here -->
+                </div>
                 {% comment %} <div class="text-right">
                     <ul class="pagination">
 
@@ -1152,29 +1154,29 @@
     )
 </script>
 <script>
-    var itemtypeurl = new URL(window.location.href)
-    if(itemtypeurl.searchParams.get('item_type'))
-    {
-        var selected_item = itemtypeurl.searchParams.get('item_type').slice(1,-1)
-        if (!selected_item){
-            $('#all_table').show()
-        }
-        else{
-            if(selected_item=='RAW MATERIALS'){
-                $('#raw_materials_table').show()
-            }
-            else if(selected_item=='ASSETS'){
-                $('#assets_table').show()
-            }
-            else if(selected_item=='FINISHED GOODS'){
-                $('#finished_goods_table').show()
-            }
-        }
-    }
-    else{
-        $('#all_table').show()
-    }
-     
+    // var itemtypeurl = new URL(window.location.href)
+    // if(itemtypeurl.searchParams.get('item_type'))
+    // {
+    //     var selected_item = itemtypeurl.searchParams.get('item_type').slice(1,-1)
+    //     if (!selected_item){
+    //         $('#all_table').show()
+    //     }
+    //     else{
+    //         if(selected_item=='RAW MATERIALS'){
+    //             $('#raw_materials_table').show()
+    //         }
+    //         else if(selected_item=='ASSETS'){
+    //             $('#assets_table').show()
+    //         }
+    //         else if(selected_item=='FINISHED GOODS'){
+    //             $('#finished_goods_table').show()
+    //         }
+    //     }
+    // }
+    // else{
+    //     $('#all_table').show()
+    // }
+    $('#all-tab').click()
     function DropDown(el) {
     this.dd = el;
     this.placeholder = this.dd.children('span');
