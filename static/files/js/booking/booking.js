@@ -3742,7 +3742,7 @@ responsive:{
        
       )
       .then((response) => {
-        this.submit_loader=false
+       // this.submit_loader=false
         
        if(this.last_image_stat){
         window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id

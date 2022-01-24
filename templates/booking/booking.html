@@ -3554,7 +3554,7 @@ Fill all the details of the Buildings  to proceed
       class="ma-2"
       outlined
       color="primary"
-      @click="goToSchedule()"
+      @click.once="goToSchedule()"
       v-if="!scheduleStat"
     >
       Schedule
@@ -3563,7 +3563,7 @@ Fill all the details of the Buildings  to proceed
     class="ma-2"
     outlined
     color="primary"
-    @click="scheduleTogether()"
+    @click.once="scheduleTogether()"
     v-if="scheduleStat  && !custBookStat"
   >
     Schedule
@@ -3580,7 +3580,7 @@ Fill all the details of the Buildings  to proceed
       class="ma-2 text-white"
     v-if="checkScheduleStatus() && !custBookStat"
       color="primary"
-     @click="arrangeData()"
+     @click.once="arrangeData()"
      :loading="submit_loader"
     >
       Submit
@@ -3589,7 +3589,7 @@ Fill all the details of the Buildings  to proceed
       class="ma-2 text-white"
     v-if="custBookStat"
       color="primary"
-     @click="arrangeCustData()"
+     @click.once="arrangeCustData()"
      :loading="submit_loader"
     >
       Submit
