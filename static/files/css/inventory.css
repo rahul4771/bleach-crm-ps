@@ -484,7 +484,21 @@
 .inv-tabs>li>a{
 border:none !important;
 }
-
+.inv-sep-bg{
+  padding-top: 40px;
+    background: #edf1f5;
+    border-radius:10px;
+}
+.inv-sep-line{
+  border-bottom: 1px dashed #2d4e85;
+    padding-bottom: 20px;
+}
+.inv-order-title{
+  font-size: 24px;
+    font-weight: 700;
+    font-family: AvenirLTStd !important;
+    color: #2d4e85;
+}
 .cancel-button{
   background: #fff 0% 0% no-repeat padding-box;
     box-shadow: 0px 3px 6px #0000003d;

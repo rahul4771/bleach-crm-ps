@@ -98,12 +98,12 @@
                                 <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                     Category
                                 </th>
-                                <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                {% comment %} <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                     Segment
                                 </th>
                                <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                     Line
-                                </th>
+                                </th> {% endcomment %}
                                 <th data-hide="phone,tablet"  class="text-center">
                                     Available Qty
                                 </th>
@@ -131,12 +131,12 @@
                             </td>
                             <td class="text-center">
                                 {{item.item_category.name}}
-                            <td class="text-center td-md-width">
+                            {% comment %} <td class="text-center td-md-width">
                                 {{item.item_segment.name}}
                             </td>
                             <td class="text-center td-md-width" >
                                 {{item.item_line.name}}
-                            </td>
+                            </td> {% endcomment %}
                             <td class="text-center">
                                 {% if item.item_add_type == 'quantity' %}
                                 {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}
@@ -255,12 +255,12 @@
                                     <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                         Category
                                     </th>
-                                    <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                    {% comment %} <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                         Segment
                                     </th>
                                    <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                         Line
-                                    </th>
+                                    </th> {% endcomment %}
                                     <th data-hide="phone,tablet"  class="text-center">
                                         Available Qty
                                     </th>
@@ -288,12 +288,12 @@
                                 </td>
                                 <td class="text-center">
                                     {{item.item_category.name}}
-                                <td class="text-center td-md-width">
+                                {% comment %} <td class="text-center td-md-width">
                                     {{item.item_segment.name}}
                                 </td>
                                 <td class="text-center td-md-width" >
                                     {{item.item_line.name}}
-                                </td>
+                                </td> {% endcomment %}
                                 <td class="text-center">
                                     {% if item.item_add_type == 'quantity' %}
                                     {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}
@@ -412,12 +412,12 @@
                                         <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                             Category
                                         </th>
-                                        <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                        {% comment %} <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                             Segment
                                         </th>
                                        <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                             Line
-                                        </th>
+                                        </th> {% endcomment %}
                                         <th data-hide="phone,tablet"  class="text-center">
                                             Available Qty
                                         </th>
@@ -445,12 +445,12 @@
                                     </td>
                                     <td class="text-center">
                                         {{item.item_category.name}}
-                                    <td class="text-center td-md-width">
+                                    {% comment %} <td class="text-center td-md-width">
                                         {{item.item_segment.name}}
                                     </td>
                                     <td class="text-center td-md-width" >
                                         {{item.item_line.name}}
-                                    </td>
+                                    </td> {% endcomment %}
                                     <td class="text-center">
                                         {% if item.item_add_type == 'quantity' %}
                                         {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}
@@ -568,12 +568,12 @@
                                         <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                             Category
                                         </th>
-                                        <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                        {% comment %} <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                             Segment
                                         </th>
                                        <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                             Line
-                                        </th>
+                                        </th> {% endcomment %}
                                         <th data-hide="phone,tablet"  class="text-center">
                                             Available Qty
                                         </th>
@@ -601,12 +601,12 @@
                                     </td>
                                     <td class="text-center">
                                         {{item.item_category.name}}
-                                    <td class="text-center td-md-width">
+                                    {% comment %} <td class="text-center td-md-width">
                                         {{item.item_segment.name}}
                                     </td>
                                     <td class="text-center td-md-width" >
                                         {{item.item_line.name}}
-                                    </td>
+                                    </td> {% endcomment %}
                                     <td class="text-center">
                                         {% if item.item_add_type == 'quantity' %}
                                         {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}

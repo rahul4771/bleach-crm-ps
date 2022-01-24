@@ -3621,7 +3621,7 @@ class CheckOutItemAdd(APIView):
 				response_dict['item_name'] = checkout_item.item.name
 				response_dict['item_code'] = checkout_item.item.item_code
 				
-				if checkout_item.item_unit.unit_code:
+				if checkout_item.item_unit:
 					response_dict['unit_code'] = checkout_item.item_unit.unit_code
 				else:
 					response_dict['unit_code'] = '-'
@@ -3956,23 +3956,43 @@ class ItemsCheckInAPI(APIView):
 		items_list = []
 
 		for item in return_items:
+			item_dict = {}
+
 			if item.service_item:
-				item_dict = {
-					'item_id' : item.id,
-					'item_name' : item.service_item.item.name,
-					'item_code' : item.service_item.item.item_code,
-					'item_type' : item.service_item.item.item_add_type,
-					'quantity' : item.units
-				}
+				if item.service_item.item.item_add_type == 'unit':
+					if item.item_unit:
+						item_code = item.item_unit.unit_code
+					else:
+						item_code = '-'
+				else:
+					item_code = item.service_item.item.item_code
+
+				if item.service_item.item.is_reusable == True:
+					item_dict = {
+						'item_id' : item.id,
+						'item_name' : item.service_item.item.name,
+						'item_code' : item_code,
+						'item_type' : item.service_item.item.item_add_type,
+						'quantity' : item.units
+					}
 			
 			if item.item:
-				item_dict = {
-					'item_id' : item.id,
-					'item_name' : item.item.name,
-					'item_code' : item.item.item_code,
-					'item_type' : item.item.item_add_type,
-					'quantity' : item.units
-				}
+				if item.item.item_add_type == 'unit':
+					if item.item_unit:
+						item_code = item.item_unit.unit_code
+					else:
+						item_code = '-'
+				else:
+					item_code = item.item.item_code
+
+				if item.item.is_reusable == True:
+					item_dict = {
+						'item_id' : item.id,
+						'item_name' : item.item.name,
+						'item_code' : item_code,
+						'item_type' : item.item.item_add_type,
+						'quantity' : item.units
+					}
 			items_list.append(item_dict)
 
 		response_dict['items_list'] = items_list
@@ -3993,7 +4013,12 @@ class ItemsCheckInAPI(APIView):
 
 		for item_id in item_ids:
 			checkin_item = CheckOutItems.objects.prefetch_related(Prefetch('checkoutitem',CheckOutItemUnits.objects.all(),to_attr="checkin_item_units")).get(id=int(item_id),is_checked_in=False)
-			visit = OrderScheduler.objects.get(id=int(checkin_item.visit.id))
+			visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(checkin_item.visit.id))
+
+			for team in visit.cleaning_team:
+				team_leader = team.team_leader
+
+			visits = OrderScheduler.objects.filter(order__order_no=visit.order.order_no,start_at=visit.start_at,cleaning_team_order_scheduler__team_leader=team_leader)
 
 			print(item_quantities[count],"iom")
 			checkin_item.is_checked_in = True
@@ -4054,8 +4079,9 @@ class ItemsCheckInAPI(APIView):
 
 			checkin_item.save()
 
-			visit.stock_in_initiated = True
-			visit.save()
+			for visit in visits:
+				visit.stock_in_initiated = True
+				visit.save()
 
 		response_dict = {'success':True}
 
