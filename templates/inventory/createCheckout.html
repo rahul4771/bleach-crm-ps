@@ -84,12 +84,19 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
      
       <!--main-content-holder-->
       <div class="white-wrapper white-wrapper-padding">
+        <div class="row">
+        <div class="col-md-12">
+          <div class="inv-order-title">
+            <!-- {{visits.order.order_no}} -->
+            BLC123445567
+          </div>
+        </div>
+      </div>
         {% for visit in visits %}
-        <div class="row av-font">
+        <div class="row av-font mt-20 inv-sep-bg">
+          
           <div class="col-md-3">
-            <div class="inv-check-orderhead">
-              {{visit.order.order_no}}
-            </div>
+            
             <div class="inv-text-normal">
               {{visit.order_scheduler_book.service_type}}
             </div>
@@ -154,7 +161,7 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
 
         {% for section in visit.order_scheduler_book.sections %}
 
-        <div class="row mt-20">
+        <div class="row mt-20 inv-sep-line">
           <div class="col-md-12 pl-0">
            <div class="inv-check-section">
              <div class="d-flex ">
