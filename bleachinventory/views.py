@@ -1495,6 +1495,19 @@ class InventoryOrder(IsInventoryAdminUser,View):
 		else:
 			orders = OrderScheduler.objects.filter(start_at__date=order_date).filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')|Q(work_status='CLEANING_FULFILLED')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
 		
+		calendar_order_schedules_list       = []
+		calendar_order_schedules_duplicates = []
+		calendar_order_schedules_alls       = CleaningTeam.objects.select_related('team_leader','order_scheduler__order').filter(order_scheduler__start_at__date=order_date).filter(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler__work_status='CLEANING_IN_PROGRESS')|Q(order_scheduler__work_status='CLEANING_FULFILLED')).annotate(duplicate=Concat('order_scheduler__start_at','order_scheduler__order__id','team_leader__id',output_field=CharField()))
+		for calendar_order_schedules_all in calendar_order_schedules_alls:
+			if not calendar_order_schedules_all.duplicate in calendar_order_schedules_duplicates:
+				calendar_order_schedules_list.append(calendar_order_schedules_all.order_scheduler.id)
+				calendar_order_schedules_duplicates.append(calendar_order_schedules_all.duplicate)
+		
+		if search:
+			orders = OrderScheduler.objects.filter(id__in=calendar_order_schedules_list).filter(Q(order_scheduler_book__service_type__icontains=search)|Q(cleaning_team_order_scheduler__team_leader__name__icontains=search)).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
+		else:
+			orders = OrderScheduler.objects.filter(id__in=calendar_order_schedules_list).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
+
 		#PAGINATION ORDERS
 		no_of_entries = request.GET.get('no_of_entries')
 		if not no_of_entries:
