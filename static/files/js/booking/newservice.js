@@ -3779,7 +3779,7 @@ $(document).ready(function(){
          
         )
         .then((response) => {
-          this.submit_loader=false
+         // this.submit_loader=false
           
          if(this.last_image_stat){
           window.location.href='/common/client/order/details/'+this.order_details_id
