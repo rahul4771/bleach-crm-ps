@@ -84,6 +84,7 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
      
       <!--main-content-holder-->
       <div class="white-wrapper white-wrapper-padding">
+        {% for visit in visits %}
         <div class="row av-font">
           <div class="col-md-3">
             <div class="inv-check-orderhead">
@@ -261,7 +262,7 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
          </div>
 
           {% endfor %}
-
+        {% endfor %}
          
         <div class="row mt-20">
           <div class="col-md-3 col-md-offset-9 text-right">
