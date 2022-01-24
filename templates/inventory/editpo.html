@@ -173,14 +173,20 @@
                                     <td>
                                         <button type="button" class="inv-plan-img-btn edit-item-btn" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.item}}" data-unitprice="{{item.unit_price}}" data-itemcount="{{item.item_count}}" data-totalprice="{{item.total_price}}"> <img
                                             src="{% static 'files/inventory/icons/edit.png' %}" alt="" onclick="openNavAddStore('edit')"> </button>
+                                        
+                                        {% if forloop.first and forloop.last %}
+                                        <button type="button" class="inv-plan-img-btn delete-item-btn inv-plan-img-btn2-disabled" disabled> <img
+                                            src="{% static 'files/inventory/icons/delete.png' %}" alt="" class="btn-img2"> </button>
+                                        {% else %}
                                         <button type="button" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"  class="inv-plan-img-btn delete-item-btn"> <img
                                                 src="{% static 'files/inventory/icons/delete.png' %}" alt=""> </button>
-                                    </td>
+                                        {% endif %}
+                                        </td>
                                 </tr>
                                 {% endfor %}
                                 <tr><td></td><td></td><td></td><td><b>Total Price</b></td><td><b>{{purchase_order.total_order_price|floatformat:3}} KD</b></td><td></td></tr>
                                
-                                {% if purchase_order.supplier != None %}
+                                {% if purchase_order.supplier != None and not purchase_order.is_admin_approved %}
                                 <tr  id="id_addrow">
                                     <td>
                                         <button class="inv-plan-btn" onclick="openNavAddStore('add')" type="button"> <img
@@ -208,6 +214,7 @@
             </div>
         </div>
     </section>
+
     <div id="addStore" class="inv-sidedrawer">
 
         <div class="inv-sidedrawer-inner">
@@ -235,7 +242,11 @@
 
                     <div style="position: relative;">
                         <div class="inv-input-container inv-border h-30">
-                            <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" name="product" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()">
+                            {% if purchase_order.is_admin_approved %}
+                            <input autocomplete="off" type="text" id="pro-name" name="product" style="border: none !important; width: 90%;" class=" inv-in" disabled>
+                            {% else %}
+                            <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" name="product" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" >
+                            {% endif %}
                             <!-- <div class="inv-hr"></div>
                             <div class="model-filter">
                                 <button class="inv-normal-btn" onclick="showDrop()">
@@ -254,20 +265,18 @@
                 </div>
 
             </div>
-            {% comment %} <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name">Unit Price   <span id="id_price"> 00</span></div>
-                </div>
-
-            </div> {% endcomment %}
 
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Unit Price</div>
 
                     <div class="inv-input-container h-30"> 
+                        {% if purchase_order.is_admin_approved %}
+                        <input type="text"  class="w-p-100 inv-in" id="id_unit_price" name="unit_price" disabled>
+                        {% else %}
                         <input type="text"  class="w-p-100 inv-in" id="id_unit_price" name="unit_price" onchange onpropertychange oninput="calc_total_price()">
-                      </div>
+                        {% endif %}
+                    </div>
                 </div>
 
             </div>
@@ -308,6 +317,7 @@
 
 
         </div>
+
         <div class="inv-drawer-footer">
             <button class="sent-button purchaseorder-form-btn" type="submit" >Submit</button>
             </form>
