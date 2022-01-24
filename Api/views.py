@@ -3993,7 +3993,12 @@ class ItemsCheckInAPI(APIView):
 
 		for item_id in item_ids:
 			checkin_item = CheckOutItems.objects.prefetch_related(Prefetch('checkoutitem',CheckOutItemUnits.objects.all(),to_attr="checkin_item_units")).get(id=int(item_id),is_checked_in=False)
-			visit = OrderScheduler.objects.get(id=int(checkin_item.visit.id))
+			visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(checkin_item.visit.id))
+
+			for team in visit.cleaning_team:
+				team_leader = team.team_leader
+
+			visits = OrderScheduler.objects.filter(order__order_no=visit.order.order_no,start_at__date=visit.start_at.date(),cleaning_team_order_scheduler__team_leader=team_leader)
 
 			print(item_quantities[count],"iom")
 			checkin_item.is_checked_in = True
@@ -4054,8 +4059,9 @@ class ItemsCheckInAPI(APIView):
 
 			checkin_item.save()
 
-			visit.stock_in_initiated = True
-			visit.save()
+			for visit in visits:
+				visit.stock_in_initiated = True
+				visit.save()
 
 		response_dict = {'success':True}
 
