@@ -76,6 +76,7 @@
                         </thead>
                      <tbody>
                         {% for item in checkout_items %}
+                        {% if item.service_item.item.is_reusable == 'True' or item.item.is_reusable == 'True' %}
                         <tr>
                             <td class="td-md-width">
                                 {{item.visit.order.order_no}}
@@ -101,6 +102,7 @@
                                 </button>
                             </td>
                         </tr>
+                        {% endif %}
                         {% endfor %}
                      </tbody>
                        

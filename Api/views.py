@@ -3956,6 +3956,7 @@ class ItemsCheckInAPI(APIView):
 		items_list = []
 
 		for item in return_items:
+			item_dict = {}
 
 			if item.service_item:
 				if item.service_item.item.item_add_type == 'unit':
@@ -3966,13 +3967,14 @@ class ItemsCheckInAPI(APIView):
 				else:
 					item_code = item.service_item.item.item_code
 
-				item_dict = {
-					'item_id' : item.id,
-					'item_name' : item.service_item.item.name,
-					'item_code' : item_code,
-					'item_type' : item.service_item.item.item_add_type,
-					'quantity' : item.units
-				}
+				if item.service_item.item.is_reusable == True:
+					item_dict = {
+						'item_id' : item.id,
+						'item_name' : item.service_item.item.name,
+						'item_code' : item_code,
+						'item_type' : item.service_item.item.item_add_type,
+						'quantity' : item.units
+					}
 			
 			if item.item:
 				if item.item.item_add_type == 'unit':
@@ -3982,14 +3984,15 @@ class ItemsCheckInAPI(APIView):
 						item_code = '-'
 				else:
 					item_code = item.item.item_code
-					
-				item_dict = {
-					'item_id' : item.id,
-					'item_name' : item.item.name,
-					'item_code' : item_code,
-					'item_type' : item.item.item_add_type,
-					'quantity' : item.units
-				}
+
+				if item.item.is_reusable == True:
+					item_dict = {
+						'item_id' : item.id,
+						'item_name' : item.item.name,
+						'item_code' : item_code,
+						'item_type' : item.item.item_add_type,
+						'quantity' : item.units
+					}
 			items_list.append(item_dict)
 
 		response_dict['items_list'] = items_list
