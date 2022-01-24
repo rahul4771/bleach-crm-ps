@@ -1584,7 +1584,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 		items = InventoryItem.objects.filter(Q(item_status='available')|Q(item_status='about_to_finish'))
 		print(items,"its")
 		# service = visit.order_scheduler_book.service_type
-		price_ranges = ServicePriceRange.objects.filter(is_active=True,service_type=service)
+		price_ranges = None
 		stock_out = request.GET.get('stockout')
 		print(stock_out,"stk")
 		max_area = 0
@@ -1595,12 +1595,14 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 		if visit.stock_out_items_saved == False:
 			
 			cleaners_items_count_list = []
+			items_list = []
 
 			for visit in visits: 
 				visit.stock_out_items_saved = True
 				visit.save()
 
 				service = visit.order_scheduler_book.service_type
+				price_ranges = ServicePriceRange.objects.filter(is_active=True,service_type=service)
 
 				for section in visit.order_scheduler_book.sections:
 				
@@ -1646,7 +1648,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 
 							recommended_quantity = float(cleaners) * float(quantity_per_person)
 
-					items_list = []
+					# items_list = []
 					for service_item in ingredient.service_recipe_items:    
 
 						
@@ -1680,7 +1682,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 						items_list.append(item_dict)        
 			
 
-					newlist = sorted(items_list, key=lambda d: d['total_quantity'], reverse=True) 
+			newlist = sorted(items_list, key=lambda d: d['total_quantity'], reverse=True) 
 					
 			# variable_recommended_quantity = recommended_quantity
 
