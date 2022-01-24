@@ -30,7 +30,7 @@
                     </div>
 
                     
-                    <div class="right-pos">
+                    <div class="right-pos inv-btn-group">
                         {% comment %} <button class="inv-plan-btn">
                             <i class="fa fa-filter mr-5" aria-hidden="true"></i>
                             Filter
@@ -43,7 +43,7 @@
                 <!-- tab begins here-->
                 <ul class="nav nav-tabs mt-20 inv-tabs">
                     <li class="nav-item">
-                      <a class="nav-link active" href="#all_table" data-toggle="tab" id="all-tab" role="tab" aria-controls="all_table" aria-selected="true" >
+                      <a class="nav-link" href="#all_table" data-toggle="tab" id="all-tab" role="tab" aria-controls="all_table" aria-selected="true" >
                         <img src="{% static 'files/inventory/icons/all_icon.png'%}" class="tab-logo"/>  
                        <span class="tab-text"> All</span> </a>
                     </li>
@@ -1125,6 +1125,7 @@
 
 {% block javascript %}
 <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+
 <script>
     const app=new Vue({
     el: '#app',
@@ -1176,7 +1177,32 @@
     // else{
     //     $('#all_table').show()
     // }
+    var itemtypeurl = new URL(window.location.href)
+        var search_data=itemtypeurl.searchParams.get('item_type')
+        if(search_data)
+        {
+            var selected_item = itemtypeurl.searchParams.get('item_type').slice(1,-1)
+            if (!selected_item){
+            $('#all-tab').click()
+        }
+        else if(selected_item=='RAW MATERIALS'){
+            $('#raw-materials-tab').click()
+        }
+        else if(selected_item=='ASSETS'){
+            $('#assets-tab').click()
+        }
+        else if(selected_item=='FINISHED GOODS'){
+            $('#finished-goods-tab').click()
+        }
+        }
+      
+      
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+
+  $('.footable').trigger('footable_resize');
+});
     $('#all-tab').click()
+    $('.footable').trigger('footable_resize');
     function DropDown(el) {
     this.dd = el;
     this.placeholder = this.dd.children('span');
@@ -1232,6 +1258,11 @@ $(function () {
 });
 </script>
 <script>
+    function reinitFootable(){
+        
+    $('.footable').trigger('footable_resize');
+
+    }
 function makeActive(item,tab){
     $('.active').removeClass('active')
     $('#all_table').hide()

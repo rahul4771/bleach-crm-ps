@@ -9,6 +9,7 @@ import math
 from datetime import date,datetime,timedelta
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,Max,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField,CharField,Prefetch
+from django.db.models.functions import Cast,TruncDate,ExtractMonth,ExtractYear,Concat
 from order.models import OrderScheduler
 from senior_team_leader.models import CleaningTeam,CleaningTeamMember
 from bleachadmin.models import ServicePriceRange
@@ -52,7 +53,6 @@ class InventoryHome(IsInventoryAdminUser,View):
 		print(order_date,"ser")
 		
 		purchase_items = items.filter(Q(item_status='out_of_stock') | Q(item_status='about_to_finish')).prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.all(),to_attr='units'))
-		orders = OrderScheduler.objects.filter(start_at__date=order_date).filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')|Q(work_status='CLEANING_FULFILLED')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
 		
 		found = set()
 
@@ -63,8 +63,19 @@ class InventoryHome(IsInventoryAdminUser,View):
 
 		request_orders  = RequestOrder.objects.filter(is_admin_approved=False,is_received=False,is_rejected=False,status=True,is_order_completed=True)
 		ro_count        = request_orders.count()
+
+		teamassign_to_date             = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)
+
+		calendar_order_schedules_list       = []
+		calendar_order_schedules_duplicates = []
+		calendar_order_schedules_alls       = CleaningTeam.objects.select_related('team_leader','order_scheduler__order').filter(order_scheduler__start_at__date=order_date).filter(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler__work_status='CLEANING_IN_PROGRESS')|Q(order_scheduler__work_status='CLEANING_FULFILLED')).annotate(duplicate=Concat('order_scheduler__start_at','order_scheduler__end_at','order_scheduler__order__id','team_leader__id',output_field=CharField()))
+		for calendar_order_schedules_all in calendar_order_schedules_alls:
+			if not calendar_order_schedules_all.duplicate in calendar_order_schedules_duplicates:
+				calendar_order_schedules_list.append(calendar_order_schedules_all.order_scheduler.id)
+				calendar_order_schedules_duplicates.append(calendar_order_schedules_all.duplicate)
+		orders = OrderScheduler.objects.filter(id__in=calendar_order_schedules_list).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
 		
-		return render(request,'inventory/home.html',{"items_count":items_count,"recent_items":recent_items,"purchase_items":purchase_items,"orders":orders,"purchase_orders":purchase_orders,"po_count":po_count,"request_orders":request_orders,"ro_count":ro_count,"order_date":order_date})
+		return render(request,'inventory/home.html',{"items_count":items_count,"recent_items":recent_items,"purchase_items":purchase_items,"orders":orders,"purchase_orders":purchase_orders,"po_count":po_count,"request_orders":request_orders,"ro_count":ro_count,"order_date":order_date,"orders":orders})
 
 # Category.
 class InventoryCategory(IsInventoryAdminUser,View):
