@@ -3779,7 +3779,7 @@ $(document).ready(function(){
          
         )
         .then((response) => {
-          this.submit_loader=false
+         // this.submit_loader=false
           
          if(this.last_image_stat){
           window.location.href='/common/client/order/details/'+this.order_details_id
@@ -5612,6 +5612,7 @@ $(document).ready(function(){
               parseInt(
                 this.old_kitchen_nocabinet_size / data["oldkitchenwithoutcabinet_perhour_cleaning"]
               )
+              console.log("kitchen sise is new with cabinet : "+this.new_kitchen_cabinet_size+"new without cabinet :"+this.new_kitchen_nocabinet_size+"old with cabinet :"+this.old_kitchen_cabinet_size+" old without cabinet : "+this.old_kitchen_nocabinet_size)
               //To find addons man hour 
               var addon_manhour=0
               for(var ao=0;ao<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;ao++){
