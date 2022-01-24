@@ -3998,7 +3998,7 @@ class ItemsCheckInAPI(APIView):
 			for team in visit.cleaning_team:
 				team_leader = team.team_leader
 
-			visits = OrderScheduler.objects.filter(order__order_no=visit.order.order_no,start_at__date=visit.start_at.date(),cleaning_team_order_scheduler__team_leader=team_leader)
+			visits = OrderScheduler.objects.filter(order__order_no=visit.order.order_no,start_at=visit.start_at,cleaning_team_order_scheduler__team_leader=team_leader)
 
 			print(item_quantities[count],"iom")
 			checkin_item.is_checked_in = True

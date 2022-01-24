@@ -1790,31 +1790,32 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 		return render(request,'inventory/createCheckout.html',{"max_area":max_area,"cleaners":cleaners,"stock_out":stock_out,"price_ranges":price_ranges,"visit":checkout_visit,"visits":visits,"items":items,"check_out_items":check_out_items})
 
 	def post(self,request,visit_id):
-		visit = OrderScheduler.objects.select_related('order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections')).get(id=int(visit_id))
+		checkout_visit = OrderScheduler.objects.select_related('order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections')).get(id=int(visit_id))
 		
-		for team in visit.cleaning_team:
+		for team in checkout_visit.cleaning_team:
 			team_leader = team.team_leader
 
-		visits = OrderScheduler.objects.filter(order__order_no=visit.order.order_no,start_at__date=visit.start_at.date(),cleaning_team_order_scheduler__team_leader=team_leader)
+		visits = OrderScheduler.objects.filter(order__order_no=checkout_visit.order.order_no,start_at=checkout_visit.start_at,cleaning_team_order_scheduler__team_leader=team_leader)
 		
 		print(visits,"vissts")
 
-		service = visit.order_scheduler_book.service_type
 		action = request.POST.get('action')
 
 		if action == 'reset_list':
 			print("ress")
-			checkout_items = CheckOutItems.objects.filter(visit=visit).delete()
+			checkout_items = CheckOutItems.objects.filter(visit=checkout_visit).delete()
 
-			visit.stock_out_items_saved = False
-			visit.save()
+			for visit in visits:
+				visit.stock_out_items_saved = False
+				visit.save()
 
 			messages.success(request,"List Reset!")
 
 		if action == 'save_checkout_list':
 
-			visit.stock_out_items_saved = True
-			visit.save()
+			for visit in visits:
+				visit.stock_out_items_saved = True
+				visit.save()
 			messages.success(request,"Check Out List saved !")
 			return redirect('bleach-inventory:inventory-order')
 
@@ -1824,7 +1825,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 			
 			# quantities = quantities.split(",")
 
-			checkout_items=CheckOutItems.objects.filter(visit=visit,is_checked_out=False)
+			checkout_items=CheckOutItems.objects.filter(visit=checkout_visit,is_checked_out=False)
 
 			count = 0
 				
@@ -1850,7 +1851,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 					if float(inventoryitem.total_quantity) >= float(item.units):
 						inventoryitem.total_quantity = round(float(inventoryitem.total_quantity) - float(item.units),2)
 						inventoryitem.save()
-						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),item_action='STOCK OUT',item_remark=visit.order.order_no,added_by=request.user)
+						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),item_action='STOCK OUT',item_remark=checkout_visit.order.order_no,added_by=request.user)
 					else:
 						messages.error(request,"Quantity limit exceeded !")
 						return redirect('bleach-inventory:inventory-createcheckout',visit_id)
@@ -1868,7 +1869,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 					if float(inventoryitem.total_quantity) >= float(item.units):
 						inventoryitem.total_quantity = round(float(inventoryitem.total_quantity) - float(item.units),2)
 						inventoryitem.save()
-						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),item_action='STOCK OUT',item_remark=visit.order.order_no,added_by=request.user)
+						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),item_action='STOCK OUT',item_remark=checkout_visit.order.order_no,added_by=request.user)
 
 				item.is_checked_out = True
 				item.checked_out_date = date.today()
