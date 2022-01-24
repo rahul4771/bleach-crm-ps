@@ -3621,7 +3621,7 @@ class CheckOutItemAdd(APIView):
 				response_dict['item_name'] = checkout_item.item.name
 				response_dict['item_code'] = checkout_item.item.item_code
 				
-				if checkout_item.item_unit.unit_code:
+				if checkout_item.item_unit:
 					response_dict['unit_code'] = checkout_item.item_unit.unit_code
 				else:
 					response_dict['unit_code'] = '-'
@@ -3956,20 +3956,37 @@ class ItemsCheckInAPI(APIView):
 		items_list = []
 
 		for item in return_items:
+
 			if item.service_item:
+				if item.service_item.item.item_add_type == 'unit':
+					if item.item_unit:
+						item_code = item.item_unit.unit_code
+					else:
+						item_code = '-'
+				else:
+					item_code = item.service_item.item.item_code
+
 				item_dict = {
 					'item_id' : item.id,
 					'item_name' : item.service_item.item.name,
-					'item_code' : item.service_item.item.item_code,
+					'item_code' : item_code,
 					'item_type' : item.service_item.item.item_add_type,
 					'quantity' : item.units
 				}
 			
 			if item.item:
+				if item.item.item_add_type == 'unit':
+					if item.item_unit:
+						item_code = item.item_unit.unit_code
+					else:
+						item_code = '-'
+				else:
+					item_code = item.item.item_code
+					
 				item_dict = {
 					'item_id' : item.id,
 					'item_name' : item.item.name,
-					'item_code' : item.item.item_code,
+					'item_code' : item_code,
 					'item_type' : item.item.item_add_type,
 					'quantity' : item.units
 				}

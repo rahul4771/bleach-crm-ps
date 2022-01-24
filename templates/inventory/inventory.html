@@ -131,12 +131,12 @@
                             </td>
                             <td class="text-center">
                                 {{item.item_category.name}}
-                            <td class="text-center td-md-width">
+                            {% comment %} <td class="text-center td-md-width">
                                 {{item.item_segment.name}}
                             </td>
                             <td class="text-center td-md-width" >
                                 {{item.item_line.name}}
-                            </td>
+                            </td> {% endcomment %}
                             <td class="text-center">
                                 {% if item.item_add_type == 'quantity' %}
                                 {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}
@@ -288,12 +288,12 @@
                                 </td>
                                 <td class="text-center">
                                     {{item.item_category.name}}
-                                <td class="text-center td-md-width">
+                                {% comment %} <td class="text-center td-md-width">
                                     {{item.item_segment.name}}
                                 </td>
                                 <td class="text-center td-md-width" >
                                     {{item.item_line.name}}
-                                </td>
+                                </td> {% endcomment %}
                                 <td class="text-center">
                                     {% if item.item_add_type == 'quantity' %}
                                     {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}
@@ -445,12 +445,12 @@
                                     </td>
                                     <td class="text-center">
                                         {{item.item_category.name}}
-                                    <td class="text-center td-md-width">
+                                    {% comment %} <td class="text-center td-md-width">
                                         {{item.item_segment.name}}
                                     </td>
                                     <td class="text-center td-md-width" >
                                         {{item.item_line.name}}
-                                    </td>
+                                    </td> {% endcomment %}
                                     <td class="text-center">
                                         {% if item.item_add_type == 'quantity' %}
                                         {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}
