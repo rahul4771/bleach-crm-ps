@@ -3956,6 +3956,7 @@ class ItemsCheckInAPI(APIView):
 		items_list = []
 
 		for item in return_items:
+			item_dict = {}
 
 			if item.service_item:
 				if item.service_item.item.item_add_type == 'unit':
@@ -3966,13 +3967,14 @@ class ItemsCheckInAPI(APIView):
 				else:
 					item_code = item.service_item.item.item_code
 
-				item_dict = {
-					'item_id' : item.id,
-					'item_name' : item.service_item.item.name,
-					'item_code' : item_code,
-					'item_type' : item.service_item.item.item_add_type,
-					'quantity' : item.units
-				}
+				if item.service_item.item.is_reusable == True:
+					item_dict = {
+						'item_id' : item.id,
+						'item_name' : item.service_item.item.name,
+						'item_code' : item_code,
+						'item_type' : item.service_item.item.item_add_type,
+						'quantity' : item.units
+					}
 			
 			if item.item:
 				if item.item.item_add_type == 'unit':
@@ -3982,14 +3984,15 @@ class ItemsCheckInAPI(APIView):
 						item_code = '-'
 				else:
 					item_code = item.item.item_code
-					
-				item_dict = {
-					'item_id' : item.id,
-					'item_name' : item.item.name,
-					'item_code' : item_code,
-					'item_type' : item.item.item_add_type,
-					'quantity' : item.units
-				}
+
+				if item.item.is_reusable == True:
+					item_dict = {
+						'item_id' : item.id,
+						'item_name' : item.item.name,
+						'item_code' : item_code,
+						'item_type' : item.item.item_add_type,
+						'quantity' : item.units
+					}
 			items_list.append(item_dict)
 
 		response_dict['items_list'] = items_list
@@ -4010,12 +4013,12 @@ class ItemsCheckInAPI(APIView):
 
 		for item_id in item_ids:
 			checkin_item = CheckOutItems.objects.prefetch_related(Prefetch('checkoutitem',CheckOutItemUnits.objects.all(),to_attr="checkin_item_units")).get(id=int(item_id),is_checked_in=False)
-			visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(checkin_item.visit.id))
+			checkout_visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(checkin_item.visit.id))
 
-			for team in visit.cleaning_team:
+			for team in checkout_visit.cleaning_team:
 				team_leader = team.team_leader
 
-			visits = OrderScheduler.objects.filter(order__order_no=visit.order.order_no,start_at=visit.start_at,cleaning_team_order_scheduler__team_leader=team_leader)
+			visits = OrderScheduler.objects.filter(order__order_no=checkout_visit.order.order_no,start_at=checkout_visit.start_at,cleaning_team_order_scheduler__team_leader=team_leader)
 
 			print(item_quantities[count],"iom")
 			checkin_item.is_checked_in = True
