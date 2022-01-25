@@ -4025,24 +4025,28 @@ class ItemsCheckInAPI(APIView):
 			checkin_item.check_in_user = UserProfile.objects.get(id=int(request.data.get('inventory_user')),is_active=True)
 			
 			if checkin_item.item and checkin_item.item.item_add_type == 'unit':
-				inventoryitemunit = ItemUnit.objects.get(id=int(checkin_item.item_unit.id))
-				inventoryitemunit.status = 'available'
-				inventoryitemunit.save()
-				print("pam")
-				# for itemunit in checkin_item.checkin_item_units:
-				# 	inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
-				# 	inventoryitemunit.status = 'available'
-				# 	inventoryitemunit.save()
+				if checkin_item.item_unit:
+					inventoryitemunit = ItemUnit.objects.get(id=int(checkin_item.item_unit.id))
+					inventoryitemunit.status = 'available'
+					inventoryitemunit.save()
+					print("pam")
+				else:
+					for itemunit in checkin_item.checkin_item_units:
+						inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
+						inventoryitemunit.status = 'available'
+						inventoryitemunit.save()
 
 			if checkin_item.service_item and checkin_item.service_item.item.item_add_type == 'unit':
-				inventoryitemunit = ItemUnit.objects.get(id=int(checkin_item.item_unit.id))
-				inventoryitemunit.status = 'available'
-				inventoryitemunit.save()
-				# for itemunit in checkin_item.checkin_item_units:
-				# 	print(itemunit.item_unit.id,"itunitid")
-				# 	inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
-				# 	inventoryitemunit.status = 'available'
-				# 	inventoryitemunit.save()
+				if checkin_item.item_unit:
+					inventoryitemunit = ItemUnit.objects.get(id=int(checkin_item.item_unit.id))
+					inventoryitemunit.status = 'available'
+					inventoryitemunit.save()
+				else:
+					for itemunit in checkin_item.checkin_item_units:
+						print(itemunit.item_unit.id,"itunitid")
+						inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
+						inventoryitemunit.status = 'available'
+						inventoryitemunit.save()
 
 			if checkin_item.item and checkin_item.item.item_add_type == 'quantity' and float(item_quantities[count]) > 0:
 				print("pam")
