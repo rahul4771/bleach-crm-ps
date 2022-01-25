@@ -122,8 +122,6 @@
 
                                         {% if order.is_rejected == True or order.is_received == False %}                
                                         <a class="d-flex dropdown-orders" href="/bleach-inventory/editpo/{{order.id}}"><img class="dropdown-icon2 pr-2" src="{% static 'files/inventory/pencil.png' %}"  alt=""><div class="ml-2 dropdown-text">Edit</div></a>
-                                        {% else %}
-                                        <a class="d-flex dropdown-orders inv-plan-img-btn2-disabled" disabled> <img class="dropdown-icon2 pr-2 btn-img2" src="{% static 'files/inventory/pencil.png' %}"  alt=""><div class="ml-2 dropdown-text">Edit</div> </a>
                                         {% endif %}
 
                                       
