@@ -6,6 +6,7 @@ from order.models import OrderScheduler
 UNIT_STATUS_CHOICES=(
 	('available','available'),
 	('unavailable','unavailable'),
+    ('working','working'),
     ('out_of_order','out_of_order'),
     ('under_repair','under_repair'),
 	('expired','expired')
@@ -172,6 +173,7 @@ class ItemUnit(models.Model):
     purchase_date   =   models.DateField(blank=True,null=True)
     expiry_date     =   models.DateField(blank=True,null=True)
     no_expiry       =   models.BooleanField(default=False,blank=False,null=False)
+    is_available    =   models.BooleanField(default=True,blank=False,null=False)
     unit_price      =   models.CharField(max_length=10,blank=False,null=False)
     status          =   models.CharField(max_length=50,default='available',blank=False,null=False,choices=UNIT_STATUS_CHOICES)
     created         =   models.DateTimeField(auto_now_add=True)
@@ -384,7 +386,8 @@ class ItemHistory(models.Model):
     purchase_date   =   models.DateField(blank=True,null=True)
     purchase_store  =   models.ForeignKey(Store,blank=True,null=True,related_name='quantity_store')
     quantity        =   models.CharField(max_length=50,blank=False,null=False)
-    added_by        =   models.ForeignKey(UserProfile,blank=False,null=False,related_name='addedby_item_history')
+    added_by        =   models.ForeignKey(UserProfile,blank=True,null=True,related_name='addedby_item_history')
+    external_user   =   models.CharField(max_length=100,blank=True,null=True)
     created         =   models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
