@@ -3998,7 +3998,7 @@ class ItemsCheckInAPI(APIView):
 						'item_type' : item.item.item_add_type,
 						'quantity' : item.units
 					}
-				items_list.append(item_dict)
+					items_list.append(item_dict)
 
 		response_dict['items_list'] = items_list
 		response_dict['order_no'] = item.visit.order.order_no,
