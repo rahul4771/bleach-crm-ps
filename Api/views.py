@@ -4013,12 +4013,12 @@ class ItemsCheckInAPI(APIView):
 
 		for item_id in item_ids:
 			checkin_item = CheckOutItems.objects.prefetch_related(Prefetch('checkoutitem',CheckOutItemUnits.objects.all(),to_attr="checkin_item_units")).get(id=int(item_id),is_checked_in=False)
-			visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(checkin_item.visit.id))
+			checkout_visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(checkin_item.visit.id))
 
-			for team in visit.cleaning_team:
+			for team in checkout_visit.cleaning_team:
 				team_leader = team.team_leader
 
-			visits = OrderScheduler.objects.filter(order__order_no=visit.order.order_no,start_at=visit.start_at,cleaning_team_order_scheduler__team_leader=team_leader)
+			visits = OrderScheduler.objects.filter(order__order_no=checkout_visit.order.order_no,start_at=checkout_visit.start_at,cleaning_team_order_scheduler__team_leader=team_leader)
 
 			print(item_quantities[count],"iom")
 			checkin_item.is_checked_in = True
