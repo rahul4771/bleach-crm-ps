@@ -288,7 +288,7 @@
                                     <td>{{item.product.supplier_item_id}}</td>
                                     <td>{{item.product.item}}</td>
                                     <td style="text-align: center;">{{item.unit_price|floatformat:3}} KD</td>
-                                    <td style="text-align: center;">{{item.item_count}} {% if item.product.item.measuring_unit %}{{item.product.item.measuring_unit}}(s){% else %}Unit(s){% endif %}</td>
+                                    <td style="text-align: center;">{{item.item_count|floatformat:0}} {% if item.product.item.measuring_unit %}{{item.product.item.measuring_unit}}(s){% else %}Unit(s){% endif %}</td>
                                     {% comment %} <td style="text-align: center;">{% if item.product.item.measuring_unit %}{{item.product.item.measuring_unit}}(s){% else %}Unit(s){% endif %}</td> {% endcomment %}
                                     <td style="text-align: center;">{{item.total_price|floatformat:3}} KD</td>
                                     <td style="text-align: center;"> 

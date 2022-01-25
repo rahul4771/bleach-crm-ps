@@ -331,7 +331,7 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <td id="unit_code_{{item.id}}" >{% if item.item_unit %}{{item.item_unit.unit_code}}{% else %}-{% endif %}</td>
                 
                 <td id="item_qty_{{item.id}}">
-                  {{item.units}} {% if item.service_item %}  {% if item.service_item.item.item_add_type == 'quantity' %}{{item.service_item.item.measuring_unit}}{% else %}unit{% endif %} {% else %}  {% if item.item.item_add_type == 'quantity' %}{{item.item.measuring_unit}}{% else %}unit{% endif %}  {% endif %}
+                  {{item.units|floatformat:0}} {% if item.service_item %}  {% if item.service_item.item.item_add_type == 'quantity' %}{{item.service_item.item.measuring_unit}}{% else %}unit{% endif %} {% else %}  {% if item.item.item_add_type == 'quantity' %}{{item.item.measuring_unit}}{% else %}unit{% endif %}  {% endif %}
                 </td>
 
                 <td>

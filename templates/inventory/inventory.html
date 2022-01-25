@@ -139,13 +139,13 @@
                             </td> {% endcomment %}
                             <td class="text-center">
                                 {% if item.item_add_type == 'quantity' %}
-                                {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}
+                                {{item.total_quantity|floatformat:0}} {{item.measuring_unit}}
                                 {% else %}
-                                {{item.unit_count}} unit
+                                {{item.unit_count|floatformat:0}} unit
                                 {% endif %}
                             </td>
                             <td class="text-center">
-                                {{item.reserve_count|floatformat:3}} {% if item.item_add_type == 'quantity' %}{{item.measuring_unit}}{% else %}unit{% endif %}
+                                {{item.reserve_count|floatformat:0}} {% if item.item_add_type == 'quantity' %}{{item.measuring_unit}}{% else %}unit{% endif %}
                             </td>
                             {% comment %} <td>
                                 {% if item.status == True %}
@@ -296,13 +296,13 @@
                                 </td> {% endcomment %}
                                 <td class="text-center">
                                     {% if item.item_add_type == 'quantity' %}
-                                    {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}
+                                    {{item.total_quantity|floatformat:0}} {{item.measuring_unit}}
                                     {% else %}
-                                    {{item.unit_count}} unit
+                                    {{item.unit_count|floatformat:0}} unit
                                     {% endif %}
                                 </td>
                                 <td class="text-center">
-                                    {{item.reserve_count|floatformat:3}} {% if item.item_add_type == 'quantity' %}{{item.measuring_unit}}{% else %}unit{% endif %}
+                                    {{item.reserve_count|floatformat:0}} {% if item.item_add_type == 'quantity' %}{{item.measuring_unit}}{% else %}unit{% endif %}
                                 </td>
                                 {% comment %} <td>
                                     {% if item.status == True %}
@@ -453,13 +453,13 @@
                                     </td> {% endcomment %}
                                     <td class="text-center">
                                         {% if item.item_add_type == 'quantity' %}
-                                        {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}
+                                        {{item.total_quantity|floatformat:0}} {{item.measuring_unit}}
                                         {% else %}
-                                        {{item.unit_count}} unit
+                                        {{item.unit_count|floatformat:0}} unit
                                         {% endif %}
                                     </td>
                                     <td class="text-center">
-                                        {{item.reserve_count|floatformat:3}} {% if item.item_add_type == 'quantity' %}{{item.measuring_unit}}{% else %}unit{% endif %}
+                                        {{item.reserve_count|floatformat:0}} {% if item.item_add_type == 'quantity' %}{{item.measuring_unit}}{% else %}unit{% endif %}
                                     </td>
                                     {% comment %} <td>
                                         {% if item.status == True %}
@@ -609,13 +609,13 @@
                                     </td> {% endcomment %}
                                     <td class="text-center">
                                         {% if item.item_add_type == 'quantity' %}
-                                        {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}
+                                        {{item.total_quantity|floatformat:0}} {{item.measuring_unit}}
                                         {% else %}
-                                        {{item.unit_count}} unit
+                                        {{item.unit_count|floatformat:0}} unit
                                         {% endif %}
                                     </td>
                                     <td class="text-center">
-                                        {{item.reserve_count|floatformat:3}} {% if item.item_add_type == 'quantity' %}{{item.measuring_unit}}{% else %}unit{% endif %}
+                                        {{item.reserve_count|floatformat:0}} {% if item.item_add_type == 'quantity' %}{{item.measuring_unit}}{% else %}unit{% endif %}
                                     </td>
                                     {% comment %} <td>
                                         {% if item.status == True %}

@@ -271,7 +271,7 @@
                                      
                                      <br>
                                      <div class="inv-item-amount2">
-                                         {% if inventory_item.item_add_type == 'unit' %}{{available_item_units}}{% else %}{{inventory_item.total_quantity|floatformat:3}}{% endif %} <span style="font-size: 16px;" id="unit_data"> {% if inventory_item.item_add_type == 'unit' %}Unit{% else %}{{inventory_item.measuring_unit}}{% endif %} </span>                    
+                                         {% if inventory_item.item_add_type == 'unit' %}{{available_item_units|floatformat:0}}{% else %}{{inventory_item.total_quantity|floatformat:0}}{% endif %} <span style="font-size: 16px;" id="unit_data"> {% if inventory_item.item_add_type == 'unit' %}Unit{% else %}{{inventory_item.measuring_unit}}{% endif %} </span>                    
                                      </div>
 
                                  </div>
@@ -305,7 +305,7 @@
                                                </div>    
                                              <!-- 135 Unit  -->
                                              <!-- <span id="id_res_val" class="inv-item-amount2"> {{inventory_item.reserve_count|default_if_none:'0'}}  <span style="font-size: 25px;"> unit(s) </span> </span> -->
-                                             <div id="id_res_val" class="inv-item-amount2"> {{inventory_item.reserve_count|default_if_none:'0'}}  <span style="font-size: 16px;"> {% if inventory_item.item_add_type == 'unit' %}Unit{% else %}{{inventory_item.measuring_unit}}{% endif %} </span>  </div>
+                                             <div id="id_res_val" class="inv-item-amount2"> {{inventory_item.reserve_count|floatformat:0|default_if_none:'0'}}  <span style="font-size: 16px;"> {% if inventory_item.item_add_type == 'unit' %}Unit{% else %}{{inventory_item.measuring_unit}}{% endif %} </span>  </div>
                                   </div>
                                  </div>
                              </div>

@@ -168,7 +168,7 @@
                                     <td>{{item.product.supplier_item_id}}</td>
                                     <td>{{item.product.item}}</td>
                                     <td>{{item.unit_price|floatformat:3}} KD</td>
-                                    <td>{{item.item_count}}</td>
+                                    <td>{{item.item_count|floatformat:0}}</td>
                                     <td>{{item.total_price|floatformat:3}} KD</td>
                                     <td>
                                         <button type="button" class="inv-plan-img-btn edit-item-btn" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.item}}" data-unitprice="{{item.unit_price}}" data-itemcount="{{item.item_count}}" data-totalprice="{{item.total_price}}"> <img
