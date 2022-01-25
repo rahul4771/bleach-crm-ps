@@ -172,6 +172,7 @@ class ItemUnit(models.Model):
     purchase_date   =   models.DateField(blank=True,null=True)
     expiry_date     =   models.DateField(blank=True,null=True)
     no_expiry       =   models.BooleanField(default=False,blank=False,null=False)
+    is_available    =   models.BooleanField(default=True,blank=False,null=False)
     unit_price      =   models.CharField(max_length=10,blank=False,null=False)
     status          =   models.CharField(max_length=50,default='available',blank=False,null=False,choices=UNIT_STATUS_CHOICES)
     created         =   models.DateTimeField(auto_now_add=True)

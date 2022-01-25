@@ -606,7 +606,7 @@
                                     </td>
 
                                     <td class="" data-label="Status">
-                                        <span class="inv-dot {% if unit.status == 'available' %}c-active{% elif unit.status == 'under_repair' %}c-expired{% elif unit.status == 'out_of_order' %}c-out-of-order{% elif unit.status == 'unavailable' %}c-inactive{% endif %} ml-5"></span>
+                                        <span class="inv-dot {% if unit.is_available == True %}c-active{% else %}{% if unit.status == 'under_repair' %}c-expired{% elif unit.status == 'out_of_order' %}c-out-of-order{% elif unit.status == 'unavailable' %}c-inactive{% endif %}{% endif %} ml-5"></span>
                                         {% if unit.status == 'available' %}Available{% elif unit.status == 'under_repair' %}Under Repair{% elif unit.status == 'out_of_order' %}Out of Order{% elif unit.status == 'unavailable' %}Unavailable{% endif %}
     
                                     </td>
