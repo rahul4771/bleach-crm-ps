@@ -485,8 +485,8 @@
             <div class="row mt-10">
                 <div class="col-md-12">
                     <div class="d-flex">
-                        <div style="font-weight: 400;" class="inv-check-orderhead">
-                            Name
+                        <div style="font-weight: 400;" class="inv-check-orderhead order_team">
+                            
                         </div>
                       
                     </div>
@@ -497,7 +497,7 @@
                   <div style="border-top:1px solid #c4c4c4">
                     <table class="inv-table"> 
                         <tr>
-                            <th></th>
+                            <th><input type="checkbox" class="inv-item-checkbox" onchange="selectAllItems()" name="all_select_items"></th>
                             <th style="width: %;">
                                 Item
                             </th>
@@ -666,15 +666,12 @@ async function openNavAddStore(visit_id) {
               .then(function (response) {
                   
                   console.log(response,"resp")
+                  $('.order_team').text(response.data.order_no+' - '+response.data.team_leader)
 
                   $.each(response.data.items_list,function(obj,value){
-                    if (value.item_type == 'quantity'){
-                        $('#items_container').append('<tr><td><label style="padding-left: 0px !important;" class="c-container"><input type="checkbox" class="item_check" data-itemid="'+value.item_id+'"><span style="top:-4px !important;" class="c-checkmark"></span></label></td><td >'+value.item_name+'</td><td >'+value.item_code+'</td><td ><div class="d-flex"><a class="quantity__minus pointer" onclick="decrement('+value.item_id+')"><span>-</span></a><input type="number" class="quantity__input" id="id_qty_'+value.item_id+'" value="0" oninput="quantitychange('+value.item_id+','+value.quantity+')" name="qty"><a class="quantity__plus pointer" onclick="increment('+value.item_id+','+value.quantity+')"><span>+</span></a></div></td></tr>');
-                    }
-                    if (value.item_type == 'unit'){
-                        //$('#items_container').append('<tr><td><label style="padding-left: 0px !important;" class="c-container"><input type="checkbox" class="item_check" data-itemid="'+value.item_id+'"><span style="top:-4px !important;" class="c-checkmark"></span></label></td><td >'+value.item_name+'</td><td >'+value.item_code+'</td><td >'+value.quantity+'</td></tr>');
-                        $('#items_container').append('<tr><td><label style="padding-left: 0px !important;" class="c-container"><input type="checkbox" class="item_check" data-itemid="'+value.item_id+'"><span style="top:-4px !important;" class="c-checkmark"></span></label></td><td >'+value.item_name+'</td><td >'+value.item_code+'</td><td ><div class="d-flex"><a class="quantity__minus pointer" onclick="decrement('+value.item_id+')"><span>-</span></a><input type="number" class="quantity__input" id="id_qty_'+value.item_id+'" value="'+value.quantity+'" oninput="quantitychange('+value.item_id+','+value.quantity+')" name="qty"><a class="quantity__plus pointer" onclick="increment('+value.item_id+','+value.quantity+')"><span>+</span></a></div></td></tr>');
-                    }
+                    
+                        $('#items_container').append('<tr><td><label style="padding-left: 0px !important;" class="c-container"><input type="checkbox" class="inv-item-checkbox item_check" data-itemid="'+value.item_id+'"><span style="top:-4px !important;" class="c-checkmark"></span></label></td><td >'+value.item_name+'</td><td >'+value.item_code+'</td><td ><div class="d-flex"><a class="quantity__minus pointer" onclick="decrement('+value.item_id+')"><span>-</span></a><input type="number" class="quantity__input" id="id_qty_'+value.item_id+'" value="'+value.quantity+'" oninput="quantitychange('+value.item_id+','+value.quantity+')" name="qty"><a class="quantity__plus pointer" onclick="increment('+value.item_id+','+value.quantity+')"><span>+</span></a></div></td></tr>');
+                    
                     })
                   
 
@@ -695,6 +692,19 @@ async function openNavAddStore(visit_id) {
       
       }
       
+      //checkbox all select
+      function selectAllItems(){
+        if($("input[name='all_select_items']").is(":checked"))
+        {
+        $(".item_check").prop('checked', true);
+        getItems()
+        }
+        else{
+            $(".item_check").prop('checked', false);
+        getItems()
+        }
+      
+      }
 
       function quantitychange(id,quantity){
         if ( parseFloat($('#id_qty_'+id).val()) > parseFloat(quantity) ){

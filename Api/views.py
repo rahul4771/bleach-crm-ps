@@ -3949,14 +3949,18 @@ class ItemsCheckInAPI(APIView):
 
 		print(visit_id,"lpo")
 
-		visit = OrderScheduler.objects.get(id=int(visit_id))
+		visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(visit_id))
+
+		for team in visit.cleaning_team:
+			team_leader = team.team_leader.name
+			response_dict['team_leader'] = team_leader
 
 		return_items = CheckOutItems.objects.filter(is_checked_in=False,visit=visit)
+		
 
 		items_list = []
 
 		for item in return_items:
-			item_dict = {}
 
 			if item.service_item:
 				if item.service_item.item.item_add_type == 'unit':
@@ -3975,6 +3979,7 @@ class ItemsCheckInAPI(APIView):
 						'item_type' : item.service_item.item.item_add_type,
 						'quantity' : item.units
 					}
+					items_list.append(item_dict)
 			
 			if item.item:
 				if item.item.item_add_type == 'unit':
@@ -3993,11 +3998,12 @@ class ItemsCheckInAPI(APIView):
 						'item_type' : item.item.item_add_type,
 						'quantity' : item.units
 					}
-			items_list.append(item_dict)
+					items_list.append(item_dict)
 
 		response_dict['items_list'] = items_list
+		response_dict['order_no'] = item.visit.order.order_no,
 
-		print(return_items,"ret")
+		print(items_list,"ret")
 
 		return Response(response_dict, HTTP_200_OK)
 
@@ -4025,24 +4031,28 @@ class ItemsCheckInAPI(APIView):
 			checkin_item.check_in_user = UserProfile.objects.get(id=int(request.data.get('inventory_user')),is_active=True)
 			
 			if checkin_item.item and checkin_item.item.item_add_type == 'unit':
-				inventoryitemunit = ItemUnit.objects.get(id=int(checkin_item.item_unit.id))
-				inventoryitemunit.status = 'available'
-				inventoryitemunit.save()
-				print("pam")
-				# for itemunit in checkin_item.checkin_item_units:
-				# 	inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
-				# 	inventoryitemunit.status = 'available'
-				# 	inventoryitemunit.save()
+				if checkin_item.item_unit:
+					inventoryitemunit = ItemUnit.objects.get(id=int(checkin_item.item_unit.id))
+					inventoryitemunit.status = 'available'
+					inventoryitemunit.save()
+					print("pam")
+				else:
+					for itemunit in checkin_item.checkin_item_units:
+						inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
+						inventoryitemunit.status = 'available'
+						inventoryitemunit.save()
 
 			if checkin_item.service_item and checkin_item.service_item.item.item_add_type == 'unit':
-				inventoryitemunit = ItemUnit.objects.get(id=int(checkin_item.item_unit.id))
-				inventoryitemunit.status = 'available'
-				inventoryitemunit.save()
-				# for itemunit in checkin_item.checkin_item_units:
-				# 	print(itemunit.item_unit.id,"itunitid")
-				# 	inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
-				# 	inventoryitemunit.status = 'available'
-				# 	inventoryitemunit.save()
+				if checkin_item.item_unit:
+					inventoryitemunit = ItemUnit.objects.get(id=int(checkin_item.item_unit.id))
+					inventoryitemunit.status = 'available'
+					inventoryitemunit.save()
+				else:
+					for itemunit in checkin_item.checkin_item_units:
+						print(itemunit.item_unit.id,"itunitid")
+						inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
+						inventoryitemunit.status = 'available'
+						inventoryitemunit.save()
 
 			if checkin_item.item and checkin_item.item.item_add_type == 'quantity' and float(item_quantities[count]) > 0:
 				print("pam")

@@ -61,7 +61,7 @@
                                    Team Leader
                                 </th>
                                 <th data-hide="phone,tablet"  style="width: %;" class="text-center">
-                                    Item Code
+                                    Item / Unit Code
                                 </th>
                                 <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                    Item Name
@@ -76,7 +76,7 @@
                         </thead>
                      <tbody>
                         {% for item in checkout_items %}
-                        {% if item.service_item.item.is_reusable == True or item.item.is_reusable == True %}
+                        
                         <tr>
                             <td class="td-md-width">
                                 {{item.visit.order.order_no}}
@@ -87,7 +87,7 @@
                                 {% endfor %}
                             </td>
                             <td class="text-center">
-                                {% if item.service_item %}{{item.service_item.item.item_code}}{% else %}{{item.item.item_code}}{% endif %}
+                                {% if item.item_unit %} {{item.item_unit.unit_code}} {% else %} {% if item.service_item %}{{item.service_item.item.item_code}}{% else %}{{item.item.item_code}}{% endif %} {% endif %}
                             <td class="text-center td-md-width">
                                 {% if item.service_item %}{{item.service_item.item.name}}{% else %}{{item.item.name}}{% endif %}
                             </td>
@@ -102,7 +102,7 @@
                                 </button>
                             </td>
                         </tr>
-                        {% endif %}
+                        
                         {% endfor %}
                      </tbody>
                        
@@ -187,8 +187,8 @@
             <div class="row mt-10">
                 <div class="col-md-12">
                     <div class="d-flex">
-                        <div style="font-weight: 400;" class="inv-check-orderhead">
-                            Name
+                        <div style="font-weight: 400;" class="inv-check-orderhead order_team">
+                            
                         </div>
                       
                     </div>
@@ -199,12 +199,12 @@
                   <div style="border-top:1px solid #c4c4c4">
                     <table class="inv-table"> 
                         <tr>
-                            <th></th>
+                            <th><input type="checkbox" class="inv-item-checkbox" onchange="selectAllItems()" name="all_select_items"></th>
                             <th style="width: %;">
                                 Item
                             </th>
                             <th style="width: %;">
-                                Item code
+                                Item / Unit code
                             </th>
                             <th style="width: %;">
                                 Quantity
@@ -383,123 +383,8 @@
 {% endblock %}
 
 {% block javascript %}
+
 <script>
-    function DropDown(el) {
-    this.dd = el;
-    this.placeholder = this.dd.children('span');
-    this.opts = this.dd.find('ul.drop li');
-    this.val = '';
-    this.index = -1;
-    this.initEvents();
-}
-
-DropDown.prototype = {
-    initEvents: function () {
-        var obj = this;
-        obj.dd.on('click', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            $(this).toggleClass('active');
-        });
-        obj.opts.on('click', function () {
-            var opt = $(this);
-            obj.val = opt.text();
-            obj.index = opt.index();
-            obj.placeholder.text(obj.val);
-            opt.siblings().removeClass('selected');
-            opt.filter(':contains("' + obj.val + '")').addClass('selected');
-        }).change();
-    },
-    getValue: function () {
-        return this.val;
-    },
-    getIndex: function () {
-        return this.index;
-    }
-};
-
-$(function () {
-    // create new variable for each menu
-    var dd1 = new DropDown($('#noble-gases'));
-    var dd2 = new DropDown($('#noble-gases2'));
-    var dd3 = new DropDown($('#noble-gases3'));
-    var dd4 = new DropDown($('#noble-gases4'));
-    var dd5 = new DropDown($('#noble-gases5'));
-    var dd6 = new DropDown($('#noble-gases6'));
-    var dd7 = new DropDown($('#noble-gases7'));
-
-
-
-    // var dd2 = new DropDown($('#other-gases'));
-    $(document).click(function () {
-        // close menu on document click
-        $('.wrap-drop').removeClass('active');
-    });
-});
-</script>
-<script>
-
-     
-function changeSelect4(va){
-        $('#item_status_id').val(va)
-    }
-
-function changeSelect5(va){
-        $('#item_reusable_id').val(va)
-    }
-
-function changeSelect6(va){
-        $('#itemadd_type_id').val(va)
-    }
-
-function changeSelect7(va){
-        $('#unit_measure_id').val(va)
-    }
-
-function changeSelect(va){
-        $('#id_category').val(va);
-        $('#id_segment').val('');
-        var category_id = $('#id_category').val();
-        getsegments(category_id);
-        $('.line_dropdown').hide();
-        $('#id_line').attr("required",false);
-    }
-
-    function changeSelect2(id){
-        $('#id_line').val('');
-         $('#id_segment').val(id);
-        $('#id_seg_text').text($('#seg_id'+id).text());
-        var segment_id = $('#id_segment').val();
-        getlines(segment_id);
-    }
-    function changeSelect3(id){
-         $('#id_line').val(id);
-        $('#id_line_text').text($('#line_id'+id).text());
-       
-    }
-    $(document).ready(function(){
-        $('.segment_dropdown').hide();
-        $('.line_dropdown').hide();
-
-        getsegments($('#category_filter_id').val());
-
-        {% if item_segment %}
-            getlines({{item_segment}});
-        {% else %}
-            getlines($('#segment_filter_id').val());
-        {% endif %}
-
-    })
-
-    $('.filter_btn').click(function(){
-        {% if item_segment %}
-        $("#segment_filter_id option[value="+{{item_segment}}+"]").attr('selected', true);
-        {% endif %}
-
-        {% if item_line %}
-        $("#line_filter_id option[value="+{{item_line}}+"]").attr('selected', true);
-        {% endif %}
-    })
 
     async function openNavAddStore(visit_id) {
         $('#items_container').empty();
@@ -516,15 +401,12 @@ function changeSelect(va){
         axios.get(url+'/api/items-check-in/',{params:{item_user:visit_id}})
               .then(function (response) {
                   
-                  console.log(response,"resp")
+                  console.log(response.data,"resp")
+                  $('.order_team').text(response.data.order_no+' - '+response.data.team_leader)
 
                   $.each(response.data.items_list,function(obj,value){
-                    if (value.item_type == 'quantity'){
-                        $('#items_container').append('<tr><td><label style="padding-left: 0px !important;" class="c-container"><input type="checkbox" class="item_check" data-itemid="'+value.item_id+'"><span style="top:-4px !important;" class="c-checkmark"></span></label></td><td >'+value.item_name+'</td><td >'+value.item_code+'</td><td ><div class="d-flex"><a class="quantity__minus pointer" onclick="decrement('+value.item_id+')"><span>-</span></a><input type="text" class="quantity__input" id="id_qty_'+value.item_id+'" value="0" oninput="quantitychange('+value.item_id+','+value.quantity+')" name="qty"><a class="quantity__plus pointer" onclick="increment('+value.item_id+','+value.quantity+')"><span>+</span></a></div></td></tr>');
-                    }
-                    if (value.item_type == 'unit'){
-                        $('#items_container').append('<tr><td><label style="padding-left: 0px !important;" class="c-container"><input type="checkbox" class="item_check" data-itemid="'+value.item_id+'"><span style="top:-4px !important;" class="c-checkmark"></span></label></td><td >'+value.item_name+'</td><td >'+value.item_code+'</td><td ><div class="d-flex"><a class="quantity__minus pointer" onclick="decrement('+value.item_id+')"><span>-</span></a><input type="text" class="quantity__input" id="id_qty_'+value.item_id+'" value="'+value.quantity+'" oninput="quantitychange('+value.item_id+','+value.quantity+')" name="qty"><a class="quantity__plus pointer" onclick="increment('+value.item_id+','+value.quantity+')"><span>+</span></a></div></td></tr>');
-                    }
+                    
+                        $('#items_container').append('<tr><td><label style="padding-left: 0px !important;" class="c-container"><input type="checkbox" class="inv-item-checkbox item_check" data-itemid="'+value.item_id+'"><span style="top:-4px !important;" class="c-checkmark"></span></label></td><td >'+value.item_name+'</td><td >'+value.item_code+'</td><td ><div class="d-flex"><a class="quantity__minus pointer" onclick="decrement('+value.item_id+')"><span>-</span></a><input type="text" class="quantity__input" id="id_qty_'+value.item_id+'" value="'+value.quantity+'" oninput="quantitychange('+value.item_id+','+value.quantity+')" name="qty"><a class="quantity__plus pointer" onclick="increment('+value.item_id+','+value.quantity+')"><span>+</span></a></div></td></tr>');
                     })
                   
 
@@ -568,166 +450,20 @@ function changeSelect(va){
     function closeNavAddStore() {
         document.getElementById("addStore").style.width = "0";
     }
-
-
-    //form validation
-    function formvalidation(){
-
-        if ($('input[name=item_name]').val() == ''){
-            $('input[name=item_name]').addClass('red-border-input');
-        }else if ($('input[name=item_category]').val() == ''){
-            $('#noble-gases').addClass('red-border-input');
-        }else if ($('input[name=item_segment]').val() == ''){
-            $('#noble-gases2').addClass('red-border-input');
-        }else if ($('input[name=item_line]').val() == ''){
-            $('#noble-gases3').addClass('red-border-input');
-        }else{
-            console.log("lolo")
-            $('#myForm').submit();
-        }
-    }
-
     
-    async function getsegments(category_id){
-         var result = await _get('api/inventory-segments/?category_id='+category_id);
-         $('#id_segment').find('option').remove();
-         $('#id_line').find('option').remove();
-         if(result.status == 200){
-             console.log(result.data.inventory_segment,"stat")
-            if (result.data.inventory_segment.length > 0){
-                $('#id_seg_text').text('--Select Segment--');
-                $('#id_ul_seg').empty();
-                $('#id_segment').attr("required",true);
-                $.each(result.data.inventory_segment,function(key,value){
-                    console.log(key.id,value.id,"stat")
-                    var tempName = String(value.name)
-                    console.log(tempName)
-                        $('#id_ul_seg').append(' <li id="seg_id'+value.id+'" data-id='+value.id+'  onclick="changeSelect2('+value.id+')" ><a>'+value.name+'</a></li>')
-                        $('#segment_filter_id').append('<option value="'+value.id+'" >'+value.name+'</option>')
-                    })
-                // $('#id_segment').find('option').remove();
-                // $('#id_segment').append('<option value="">--Select Segment--</option>')
-                // $('#id_segment').attr("required",true);
-                // $.each(result.data.inventory_segment,function(key,value){
-                //     console.log(key.id,value.id,"stat")
-                //         $('#id_segment').append('<option value='+value.id+'>'+value.name+'</option>')
-                // })
 
-                $('.segment_dropdown').show();
-            }else{
-                console.log('No Segments','error')
-            }
-            
-         }else{
-             $('#id_segment').attr("required",false);
-            showNotification('Something went wrong','error')
-         }
-    }
-
-    async function getlines(segment_id){
-         var result = await _get('api/inventory-lines/?segment_id='+segment_id);
-         
-         if(result.status == 200){
-             console.log(result.data.inventory_line,"stat")
-            if (result.data.inventory_line.length > 0 ){
-                $('#id_line_text').text('--Select Line--');
-                $('#id_ul_line').empty();
-
-                $.each(result.data.inventory_line,function(key,value){
-                    console.log(key.id,value.id,"stat")
-                       
-                        $('#id_ul_line').append(' <li id="line_id'+value.id+'" data-id='+value.id+'  onclick="changeSelect3('+value.id+')" ><a>'+value.name+'</a></li>')
-                        $('#line_filter_id').append('<option value='+value.id+'>'+value.name+'</option>')
-                    })
-                // $('#id_line').find('option').remove();
-                // $('#id_line').append('<option value="">--Select Line--</option>')
-                // $('#id_line').attr("required",true);
-                // $.each(result.data.inventory_line,function(key,value){
-                //     console.log(key.id,value.id,"stat")
-                //         $('#id_line').append('<option value='+value.id+'>'+value.name+'</option>')
-                // })
-
-                $('.line_dropdown').show();
-            }else{
-                $('#id_line').attr("required",false);
-                console.log('No Lines','error')
-            }
-            
-         }else{
-            showNotification('Something went wrong','error')
-         }
-    }
-   
-    //filter data load
-    $('#category_filter_id').change(function(){
-        getsegments($(this).val());
-    })
-
-    $('#segment_filter_id').change(function(){
-        getlines($(this).val());
-    })
-
-    $('#id_category').change(function(){
-        var category_id = $('#id_category').val();
-        console.log(category_id,"cid")
-        getsegments(category_id);
-        $('.line_dropdown').hide();
-        $('#id_line').attr("required",false);
-    })
-
-    $('#id_segment').change(function(){
-        var segment_id = $('#id_segment').val();
-        console.log(segment_id,"cid")
-        getlines(segment_id);
-    })
-
-
-    //edit attribute
-    $('.edit-item').click(async function(){
-        
-        $('#id_edit_item').val($(this).data('itemid'));
-        $('#item_action').val('edit_item');
-        $('#id_item_name').val($(this).data('itemname'));
-        $('#id_item_code').val($(this).data('itemcode'));
-        $('#id_item_reserve').val($(this).data('itemreserve'));
-        $('#id_item_description').val($(this).data('itemdescription'));
-
-       await getsegments($(this).data('itemcategory'));
-       await getlines($(this).data('itemsegment'));
-        
-        document.getElementById("id_category").value = $(this).data('itemcategory');
-        document.getElementById("id_line").value = $(this).data('itemline');
-        document.getElementById("id_segment").value = $(this).data('itemsegment');
-        $('#id_selectText').text($('#cat_id'+$(this).data('itemcategory')).text());
-        $('#id_seg_text').text($('#seg_id'+$(this).data('itemsegment')).text());
-       $('#id_line_text').text($('#line_id'+$(this).data('itemline')).text());
-       console.log($(this).data('itemstatus'),'s')
-        document.getElementById("item_status_id").value = $(this).data('itemstatus');
-        document.getElementById("item_reusable_id").value = $(this).data('itemreusbale');
-        document.getElementById("itemadd_type_id").value = $(this).data('itemaddtype');
-        document.getElementById("unit_measure_id").value = $(this).data('unitmeasure');
-        $('#id_selectText5').text($(this).data('itemaddtype'));
-        $('#id_selectText6').text($(this).data('unitmeasure'));
-
-        if($('#item_status_id').val() == 'True'){
-            console.log("true")
-            $('#id_selectText3').text('Active');
-        }else{
-            $('#id_selectText3').text('Inactive');
-
+    function selectAllItems(){
+        if($("input[name='all_select_items']").is(":checked"))
+        {
+        $(".item_check").prop('checked', true);
+        getItems()
         }
-
-        if($('#item_reusable_id').val() == 'True'){
-            console.log("true")
-            $('#id_selectText4').text('Yes');
-        }else{
-           $('#id_selectText4').text('No');
-
+        else{
+            $(".item_check").prop('checked', false);
+        getItems()
         }
-        
-        $('.item-form-btn').text('Update');
-
-    })
+      
+      }
 
     function checkinsubmit(){
         
@@ -759,15 +495,10 @@ function changeSelect(va){
         
     }
 
-    //delete item
-    $('.delete-item').click(function(){
-        $('#id_item').val($(this).data('itemid'));
-    })
-
     function set_params_go(args)
     {
     var url='{% url 'bleach-inventory:pending-items' %}';
-    var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),item_category:$('#category_filter_id').val(),item_segment:$('#segment_filter_id').val(),item_line:$('#line_filter_id').val(),item_status:$('#item_status_filter_id').val()
+    var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),
     };
     for(key in args) 
         params[key]=args[key];
