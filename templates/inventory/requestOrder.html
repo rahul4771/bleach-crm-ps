@@ -108,8 +108,10 @@
                                     <a class="d-flex dropdown-orders" href="/bleach-inventory/requestorderpage/{{order.id}}/"> <img class="dropdown-icon2 pr-2"
                                         src="{% static 'files/inventory/invoice.png' %}" alt=""><div class="ml-2 dropdown-text">Invoice</div></a>
                                     {% endif %}
-                                            
+
+                                    {% if order.is_rejected == True or order.is_admin_approved == False %}
                                     <a class="d-flex dropdown-orders" href="/bleach-inventory/editro/{{order.id}}"> <img class="dropdown-icon2 pr-2" src="{% static 'files/inventory/pencil.png' %}"  alt=""> <div class="ml-2 dropdown-text">Edit</div></a>
+                                    {% endif %}
 
                                     {% if request.user.user_type == 'INVENTORYADMIN' %}
                                     <a class="d-flex dropdown-orders delete-order" data-id="{{order.id}}"  data-toggle="modal" data-target="#deleteModel"> <img class="dropdown-icon2 pr-2" src="{% static 'files/inventory/bin.png' %}"  alt=""> <div class="ml-2 dropdown-text">Delete</div></a>
