@@ -271,7 +271,7 @@
                                      
                                      <br>
                                      <div class="inv-item-amount2">
-                                         {% if inventory_item.item_add_type == 'unit' %}{{available_item_units|floatformat:0}}{% else %}{{inventory_item.total_quantity|floatformat:0}}{% endif %} <span style="font-size: 16px;" id="unit_data"> {% if inventory_item.item_add_type == 'unit' %}Unit{% else %}{{inventory_item.measuring_unit}}{% endif %} </span>                    
+                                         {% if inventory_item.item_add_type == 'unit' %}{{available_item_units}}{% else %}{{inventory_item.total_quantity|floatformat:3}}{% endif %} <span style="font-size: 16px;" id="unit_data"> {% if inventory_item.item_add_type == 'unit' %}Unit{% else %}{{inventory_item.measuring_unit}}{% endif %} </span>                    
                                      </div>
 
                                  </div>
@@ -305,7 +305,7 @@
                                                </div>    
                                              <!-- 135 Unit  -->
                                              <!-- <span id="id_res_val" class="inv-item-amount2"> {{inventory_item.reserve_count|default_if_none:'0'}}  <span style="font-size: 25px;"> unit(s) </span> </span> -->
-                                             <div id="id_res_val" class="inv-item-amount2"> {{inventory_item.reserve_count|floatformat:0|default_if_none:'0'}}  <span style="font-size: 16px;"> {% if inventory_item.item_add_type == 'unit' %}Unit{% else %}{{inventory_item.measuring_unit}}{% endif %} </span>  </div>
+                                             <div id="id_res_val" class="inv-item-amount2"> {{inventory_item.reserve_count|default_if_none:'0'}}  <span style="font-size: 16px;"> {% if inventory_item.item_add_type == 'unit' %}Unit{% else %}{{inventory_item.measuring_unit}}{% endif %} </span>  </div>
                                   </div>
                                  </div>
                              </div>
@@ -606,8 +606,8 @@
                                     </td>
 
                                     <td class="" data-label="Status">
-                                        <span class="inv-dot {% if unit.is_available == True %}c-active{% else %}{% if unit.status == 'under_repair' %}c-expired{% elif unit.status == 'out_of_order' %}c-out-of-order{% elif unit.status == 'unavailable' %}c-inactive{% endif %}{% endif %} ml-5"></span>
-                                        {% if unit.status == 'available' %}Available{% elif unit.status == 'under_repair' %}Under Repair{% elif unit.status == 'out_of_order' %}Out of Order{% elif unit.status == 'unavailable' %}Unavailable{% endif %}
+                                        <span class="inv-dot {% if unit.status == 'working' %} {% if unit.is_available == True %}c-active{% else %}c-inactive{% endif %} {% elif unit.status == 'under_repair' %}c-expired{% elif unit.status == 'out_of_order' %}c-out-of-order{% endif %} ml-5"></span>
+                                        {% if unit.status == 'working' %}{% if unit.is_available == True %}Available{% else %}Unavailable{% endif %}{% elif unit.status == 'under_repair' %}Under Repair{% elif unit.status == 'out_of_order' %}Out of Order{% endif %}
     
                                     </td>
                                     <td class="text-center">
@@ -737,7 +737,7 @@
                                     {% for history in item_history %}
                                     <tr>
                                         <td>{{history.created|date:"d-m-Y"}}</td>
-                                        <td>{{history.added_by.name|default_if_none:'-'}}</td>
+                                        <td>{% if history.added_by %}{{history.added_by.name|default_if_none:'-'}}{% else %}{{history.external_user}}{% endif %}</td>
                                         <td>{{history.item_action}}</td>
                                         <td>{{history.item_remark|default_if_none:'-'}}</td>
                                         {% if history.item_action == 'PURCHASE ORDER' or history.item_action == 'STOCK IN' or history.item_action == 'ITEM RETURN' or history.item_action == 'MANUAL' %}
@@ -1162,7 +1162,7 @@
                     <div class="wrap-drop" id="noble-gases-unitstatus" style="z-index: 2 !important;"  >
                         <span id="id_selectText6">Available</span>
                         <ul class="drop">
-                            <li onclick="changeSelect('available')"><a>Available</a></li>
+                            <li onclick="changeSelect('working')"><a>Working</a></li>
                             <li onclick="changeSelect('out_of_order')"><a>Out of Order</a></li> 
                             <li onclick="changeSelect('under_repair')"><a>Under Repair</a></li> 
                         </ul>

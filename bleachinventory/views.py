@@ -407,7 +407,7 @@ class InventoryBundle(IsInventoryAdminUser,View):
 			for item in bundle.bundle_items:
 				for unit in item.bundle_item_units:
 					item_unit = ItemUnit.objects.get(id=int(unit.item_unit.id))
-					item_unit.status = 'available'
+					item_unit.status = 'working'
 					item_unit.save()
 
 			bundle.delete()
@@ -672,7 +672,7 @@ class InventoryItems(IsInventoryAdminUser,View):
 		return render(request,'inventory/item.html',{"available_item_units":available_item_units,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"stores":stores,"item_attributes":item_attributes,"inventory_item":inventory_item,"attributes":attributes,"categories":categories,"item_units":item_units,"item_history":item_history,"new_unit_code":new_unit_code,"purchase_orders":purchase_orders,"unavailable_units":unavailable_item_units})
 
 	def post(self,request,item_id):
-		action =request.POST.get('action')
+		action = request.POST.get('action')
 
 		if action == 'edit_item_details':
 			category_id = request.POST.get('item_category')
@@ -828,7 +828,7 @@ class InventoryItems(IsInventoryAdminUser,View):
 			if item.item_add_type == 'unit':
 				unit_id = request.POST.get('return_unit')
 				itemunit = ItemUnit.objects.get(id=int(unit_id))
-				itemunit.status = 'available'
+				itemunit.status = 'working'
 				itemunit.is_available = True
 				itemunit.save()
 
@@ -844,7 +844,7 @@ class InventoryItems(IsInventoryAdminUser,View):
 						item_action = 'ITEM RETURN',
 						item_remark = request_order_item.request_order.request_order_id,
 						quantity = quantity,
-						added_by = request.user
+						external_user = request_order_item.request_order.requested_by.name
 					)
 
 					item.total_quantity = float(item.total_quantity) + float(quantity)
@@ -883,6 +883,10 @@ class InventoryItems(IsInventoryAdminUser,View):
 			unit.expiry = expiry
 			unit.unit_price = unit_price
 			unit.status = status
+			if status == 'out_of_order' or status == 'under_repair':
+				unit.is_available = False
+			if status == 'working':
+				unit.is_available = True
 			unit.save()
 
 			messages.success(request,"Unit Updated Successfully !")
@@ -1160,7 +1164,8 @@ class InventoryStore(IsInventoryAdminUser,View):
 class InventoryInv(IsInventoryAdminUser,View):
 	def get(self,request):
 		
-		# ItemUnit.objects.exclude(status='available').update(is_available=False)
+		ItemUnit.objects.exclude(status='available').update(is_available=False)
+		ItemUnit.objects.filter(Q(status='available')|Q(status='unavailable')).update(status='working')
 
 		search = request.GET.get('search')
 		item_type = request.GET.get('item_type',None)
@@ -1743,7 +1748,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 					if item['total_quantity'] > 0 and float(item['total_quantity']) >= float(item['recommended_quantity']):
 						
 						try:
-							checkout_item = CheckOutItems.objects.get(visit=checkout_visit,service_item=service_item,service_item__ingredient=service_item.ingredient)
+							checkout_item = CheckOutItems.objects.get(visit=checkout_visit,service_item=service_item,service_item__ingredient=service_item.ingredient,is_checked_out=False)
 							print(checkout_item,"yuv1")
 						except:
 							print("yuv2")
@@ -1758,7 +1763,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 								for unit in itemunits:
 									print(unit,"rrr2")
 									try:
-										CheckOutItems.objects.get(visit=checkout_visit,item_unit=unit)
+										CheckOutItems.objects.get(visit=checkout_visit,item_unit=unit,is_checked_out=False)
 									except:
 										CheckOutItems.objects.create(visit=checkout_visit,service_item=service_item,item_unit=unit,units=1,is_swapped_item=False)
 									# CheckOutItemUnits.objects.create(checkout_item=checkout_item,item_unit=unit)
@@ -1769,7 +1774,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 					elif item['total_quantity'] > 0 and float(item['total_quantity']) < float(item['recommended_quantity']):
 						
 						try:
-							checkout_item = CheckOutItems.objects.get(visit=checkout_visit,service_item=service_item,service_item__ingredient=service_item.ingredient)
+							checkout_item = CheckOutItems.objects.get(visit=checkout_visit,service_item=service_item,service_item__ingredient=service_item.ingredient,is_checked_out=False)
 						except:
 							if service_item.item.item_add_type == 'quantity':
 								CheckOutItems.objects.create(visit=checkout_visit,service_item=service_item,units=math.ceil(item['total_quantity']),is_swapped_item=False)
@@ -1779,7 +1784,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 								print(itemunits,"rrr3")
 								for unit in itemunits:
 									try:
-										CheckOutItems.objects.get(visit=checkout_visit,item_unit=unit)
+										CheckOutItems.objects.get(visit=checkout_visit,item_unit=unit,is_checked_out=False)
 									except:
 										CheckOutItems.objects.create(visit=checkout_visit,service_item=service_item,item_unit=unit,units=1,is_swapped_item=False)
 									# CheckOutItemUnits.objects.create(checkout_item=checkout_item,item_unit=unit)
@@ -1845,7 +1850,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 	
 					if item.item_unit:
 						itemunit = ItemUnit.objects.get(id=int(item.item_unit.id))
-						itemunit.status = 'unavailable'
+						itemunit.status = 'working'
 						itemunit.is_available=False
 						itemunit.save()
 
@@ -1856,7 +1861,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 					if float(inventoryitem.total_quantity) >= float(item.units):
 						inventoryitem.total_quantity = round(float(inventoryitem.total_quantity) - float(item.units),2)
 						inventoryitem.save()
-						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),item_action='STOCK OUT',item_remark=checkout_visit.order.order_no,added_by=request.user)
+						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),item_action='STOCK OUT',item_remark=checkout_visit.order.order_no,added_by=team_leader)
 					else:
 						messages.error(request,"Quantity limit exceeded !")
 						return redirect('bleach-inventory:inventory-createcheckout',visit_id)
@@ -1865,7 +1870,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 					
 					if item.item_unit:
 						itemunit = ItemUnit.objects.get(id=int(item.item_unit.id))
-						itemunit.status = 'unavailable'
+						itemunit.status = 'working'
 						itemunit.is_available=False
 						itemunit.save()
 
@@ -1875,7 +1880,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 					if float(inventoryitem.total_quantity) >= float(item.units):
 						inventoryitem.total_quantity = round(float(inventoryitem.total_quantity) - float(item.units),2)
 						inventoryitem.save()
-						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),item_action='STOCK OUT',item_remark=checkout_visit.order.order_no,added_by=request.user)
+						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),item_action='STOCK OUT',item_remark=checkout_visit.order.order_no,added_by=team_leader)
 
 				item.is_checked_out = True
 				item.checked_out_date = date.today()
@@ -1961,7 +1966,7 @@ class PurchaseOrderItemsPage(IsInventoryAdminUser,View):
 				item = InventoryItem.objects.get(id=int(product))
 				purchase_order_item = PurchaseOrderItems.objects.get(purchase_order=purchase_order,product__item__id=int(product))
 				print(item,item_counts[loopcount], "itm")
-				ItemHistory.objects.create(purchase_order=purchase_order,item=item,quantity=item_counts[loopcount],item_action='PURCHASE ORDER',item_remark=purchase_order.purchase_order_id,added_by=request.user)
+				ItemHistory.objects.create(purchase_order=purchase_order,item=item,quantity=item_counts[loopcount],item_action='PURCHASE ORDER',item_remark=purchase_order.purchase_order_id,added_by=purchase_order_item.purchase_order.initiated_by)
 				
 				item.total_quantity = float(item.total_quantity) + float(item_counts[loopcount])
 				item.save()
@@ -2835,12 +2840,12 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 						item_action = 'ITEM REQUEST',
 						item_remark = request_order_item.request_order.request_order_id,
 						quantity = request_order_item.item_count,
-						added_by = request.user
+						external_user = request_order_item.request_order.requested_by.name
 						)
 
 						#update unit item status
 						if request_order_item.product_unit:
-							request_order_item.product_unit.status = 'unavailable'
+							request_order_item.product_unit.status = 'working'
 							request_order_item.product_unit.is_available=False
 							request_order_item.product_unit.save()
 

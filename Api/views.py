@@ -4033,28 +4033,28 @@ class ItemsCheckInAPI(APIView):
 			if checkin_item.item and checkin_item.item.item_add_type == 'unit':
 				if checkin_item.item_unit:
 					inventoryitemunit = ItemUnit.objects.get(id=int(checkin_item.item_unit.id))
-					inventoryitemunit.status = 'available'
+					inventoryitemunit.status = 'working'
 					inventoryitemunit.is_available=True
 					inventoryitemunit.save()
 					print("pam")
 				else:
 					for itemunit in checkin_item.checkin_item_units:
 						inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
-						inventoryitemunit.status = 'available'
+						inventoryitemunit.status = 'working'
 						inventoryitemunit.is_available=True
 						inventoryitemunit.save()
 
 			if checkin_item.service_item and checkin_item.service_item.item.item_add_type == 'unit':
 				if checkin_item.item_unit:
 					inventoryitemunit = ItemUnit.objects.get(id=int(checkin_item.item_unit.id))
-					inventoryitemunit.status = 'available'
+					inventoryitemunit.status = 'working'
 					inventoryitemunit.is_available=True
 					inventoryitemunit.save()
 				else:
 					for itemunit in checkin_item.checkin_item_units:
 						print(itemunit.item_unit.id,"itunitid")
 						inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
-						inventoryitemunit.status = 'available'
+						inventoryitemunit.status = 'working'
 						inventoryitemunit.is_available=True
 						inventoryitemunit.save()
 
@@ -4070,7 +4070,7 @@ class ItemsCheckInAPI(APIView):
 				item_action='STOCK IN',
 				item_remark=checkin_item.visit.order.order_no,
 				purchase_date= date.today(),
-				added_by = inventory_user
+				added_by = team_leader
 				)
 
 				count += 1
@@ -4086,7 +4086,7 @@ class ItemsCheckInAPI(APIView):
 				item_action='STOCK IN',
 				item_remark=checkin_item.visit.order.order_no,
 				purchase_date= date.today(),
-				added_by = inventory_user
+				added_by = team_leader
 				)
 
 				count += 1
