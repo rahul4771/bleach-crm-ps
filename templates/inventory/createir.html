@@ -207,7 +207,7 @@
                                     <td data-label="Item Name">{{item.product.name}}</td>
                                     <td style="text-align: center;" data-label="Item Type">{{item.product.item_type}}</td>
                                     <td style="text-align: center;" data-label="Category">{{item.product.item_category.name}}</td>
-                                    <td style="text-align: center;" data-label="Quantity">{{item.item_count}} {{item.product.measuring_unit}}</td>
+                                    <td style="text-align: center;" data-label="Quantity">{{item.item_count|floatformat:0}} {{item.product.measuring_unit}}</td>
                                     <td style="text-align: center;"> 
                                         
                                                 <div class="btn-group" id="actionDropdown">
