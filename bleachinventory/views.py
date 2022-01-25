@@ -1164,8 +1164,8 @@ class InventoryStore(IsInventoryAdminUser,View):
 class InventoryInv(IsInventoryAdminUser,View):
 	def get(self,request):
 		
-		ItemUnit.objects.exclude(status='available').update(is_available=False)
-		ItemUnit.objects.filter(Q(status='available')|Q(status='unavailable')).update(status='working')
+		# ItemUnit.objects.exclude(status='available').update(is_available=False)
+		# ItemUnit.objects.filter(Q(status='available')|Q(status='unavailable')).update(status='working')
 
 		search = request.GET.get('search')
 		item_type = request.GET.get('item_type',None)
