@@ -94,7 +94,9 @@
                                         <a class="d-flex dropdown-orders" href="/bleach-inventory/segment/{{category.id}}/"><img src="{% static 'files/inventory/view.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">View Segment</div></a>    
  
                                       <a class="d-flex dropdown-orders"  onclick="showDrawer('edit')" data-categoryid="{{category.id}}" data-categoryname="{{category.name}}" data-categorycode="{{category.category_code}}" data-categorystatus="{{category.status}}"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit</div></a>    
+                                        {% if category.segments_count == 0 %}
                                       <a class="d-flex dropdown-orders" data-categoryid="{{category.id}}" data-toggle="modal" data-target="#deleteModel"><img src="{% static 'files/inventory/bin.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Delete</div></a>                                                                                                       
+                                        {% endif %}
                                     </div>
                                   </div>
                               
