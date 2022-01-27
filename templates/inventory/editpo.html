@@ -449,6 +449,11 @@ function showAdditem(){
                 calc_total_price();
             })
 
+            input.keyup(function(e) {
+                e.preventDefault();
+                calc_total_price();
+            })
+
             
             var urlc = window.location.href;
             console.log(urlc)
@@ -587,14 +592,15 @@ function showAdditem(){
         $('#id_total_price').val(total_price);
     }
 
+    $('.delete-item-btn').click(function(){
+        $('#id_item').val($(this).data('itemid'));
+    })
+
     $('#id_unit_price').change(function(){
         console.log("logm")
         calc_total_price();
     })
 
-    $('.delete-item-btn').click(function(){
-        $('#id_item').val($(this).data('itemid'));
-    })
 
     $('.edit-item-btn').click(function(){
         $('#id_edit_item').val($(this).data('itemid'));
