@@ -1167,6 +1167,11 @@ class InventoryInv(IsInventoryAdminUser,View):
 		# ItemUnit.objects.exclude(status='available').update(is_available=False)
 		# ItemUnit.objects.filter(Q(status='available')|Q(status='unavailable')).update(status='working')
 
+		# histories = ItemHistory.objects.filter(Q(item_action='STOCK OUT')|Q(item_action='STOCK IN'))
+		# for item in histories:
+		# 	team = CleaningTeam.objects.filter(visit__order__order_no=)
+			
+
 		search = request.GET.get('search')
 		item_type = request.GET.get('item_type',None)
 

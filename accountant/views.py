@@ -2564,12 +2564,12 @@ def export_users_xls(request):
 		#sales details
 		ws = wb.add_sheet('ORDER HISTORY',cell_overwrite_ok = True)
 	
-		columns = ['Quotation Date','Order No.','Customer ID','Customer Name','Type of Service','Cleaning Policy','Payment Policy','Job Starting Date','Total Amount','Discount','Net Amount','Quotation Status','Evaluator']
+		columns = ['Quotation Date','Order No.','Customer ID','Customer Name','Type of Service','Cleaning Policy','Payment Policy','Job Starting Date','Total Amount','Discount','Fine Amount','Writeback Amount','Promocode Amount','Additional Charge','Cancelled Amount','Net Amount','Quotation Status','Evaluator']
 		
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
 
-		evaluations = Evaluation.objects.filter(is_active=True,evaluation_order__is_active=True,evaluation_order__created__range=(prev_date_start,todate_date_end)).values_list('evaluation_order__created','evaluation_id','customer__customer_id','customer__name','id','id','payment_method','id','evaluation_details__estimated_cost','evaluation_details__discount','evaluation_details__total_cost','id','evaluation_details__evaluator__name')
+		evaluations = Evaluation.objects.filter(is_active=True,evaluation_order__is_active=True,evaluation_order__created__range=(prev_date_start,todate_date_end)).values_list('evaluation_order__created','evaluation_id','customer__customer_id','customer__name','id','id','payment_method','id','estimated_cost','discount','fine_amount','writeback_amount','promocode_amount','additional_charge','cancelled_amount','total_cost','id','evaluation_details__evaluator__name')
 		
 		rows = []
 		
@@ -2580,7 +2580,7 @@ def export_users_xls(request):
 			estimated_cost = evaluation_list[8]
 			
 			#cleaning policy, service type
-			evaluationbooks = EvaluationBook.objects.filter(is_active=True,evaluation_details__evaluation__id=int(evaluation_list[11])).values('cleaning_policy','service_type__name','discount')
+			evaluationbooks = EvaluationBook.objects.filter(is_active=True,evaluation_details__evaluation__id=int(evaluation_list[16])).values('cleaning_policy','service_type__name','discount')
 			print(evaluationbooks,"ebooks")
 
 			found = set()
@@ -2606,7 +2606,7 @@ def export_users_xls(request):
 			evaluation_list[5] = tuple(cleaning_policies)
 
 			#job starting date
-			orderschedule = OrderScheduler.objects.filter(is_active=True,evaluation_details__evaluation__id=int(evaluation_list[11])).values('start_at').first()
+			orderschedule = OrderScheduler.objects.filter(is_active=True,evaluation_details__evaluation__id=int(evaluation_list[16])).values('start_at').first()
 			
 			print(orderschedule,"osched")
 			if orderschedule:
@@ -2615,7 +2615,7 @@ def export_users_xls(request):
 				evaluation_list[7] = '-'
 
 			#evaluator
-			evaluationdetails = EvaluationDetails.objects.filter(is_active=True,evaluation__id=int(evaluation_list[11])).values('evaluator__name','evaluation__call_attender__name')
+			evaluationdetails = EvaluationDetails.objects.filter(is_active=True,evaluation__id=int(evaluation_list[16])).values('evaluator__name','evaluation__call_attender__name')
 			
 			evaluators = []
 			for detail in evaluationdetails:
@@ -2636,59 +2636,39 @@ def export_users_xls(request):
 						found.add(detail['evaluation__call_attender__name'])
 					
 				
-			evaluation_list[12] = tuple(evaluators)
+			evaluation_list[17] = tuple(evaluators)
 
 
 			#quotation status
-			order = Order.objects.filter(is_active=True,evaluation__id=int(evaluation_list[11])).values('evaluation__writeback_amount','evaluation__promocode_amount','evaluation__cancelled_amount','evaluation__fine_amount','evaluation__additional_charge','evaluation__quatation_status','payment_status','preamount_paid','order_status','evaluation__discount').first()
+			order = Order.objects.filter(is_active=True,evaluation__id=int(evaluation_list[16])).values('evaluation__writeback_amount','evaluation__promocode_amount','evaluation__cancelled_amount','evaluation__fine_amount','evaluation__additional_charge','evaluation__quatation_status','payment_status','preamount_paid','order_status','evaluation__discount').first()
 			
 			
 
 			if order:
-				if order['evaluation__discount']:
-					evaluation_list[9] = order['evaluation__discount']
-					estimated_cost -= float(order['evaluation__discount'])
-
-				if order['evaluation__writeback_amount']:
-					estimated_cost -= float(order['evaluation__writeback_amount'])
-
-				if order['evaluation__promocode_amount']:
-					estimated_cost -= float(order['evaluation__promocode_amount'])
-
-				if order['evaluation__cancelled_amount']:
-					estimated_cost -= float(order['evaluation__cancelled_amount'])
-
-				if order['evaluation__fine_amount']:
-					estimated_cost += float(order['evaluation__fine_amount'])
-
-				if order['evaluation__additional_charge']:
-					estimated_cost += float(order['evaluation__additional_charge'])
-
-				evaluation_list[10] = estimated_cost
 
 				if order['evaluation__quatation_status'] == 'APPROVED':
 					if order['payment_status'] == 'COMPLETED' or order['preamount_paid'] != 0 or evaluation_list[6] == 'POSTPAID':
 						if order['order_status'] == 'APPROVED_BY_CLIENT':
-							evaluation_list[11] = 'APPROVED'
+							evaluation_list[16] = 'APPROVED'
 						elif order['order_status'] == 'ORDER_IN_PROGRESS':
-							evaluation_list[11] = 'ORDER IN PROGRESS'
+							evaluation_list[16] = 'ORDER IN PROGRESS'
 						elif order['order_status'] == 'ORDER_CLOSED':
-							evaluation_list[11] = 'COMPLETED'
+							evaluation_list[16] = 'COMPLETED'
 						else:
-							evaluation_list[11] = '-'
+							evaluation_list[16] = '-'
 					else:
-						evaluation_list[11] = 'APPROVED-NOT PAID'
+						evaluation_list[16] = 'APPROVED-NOT PAID'
 
 				elif order['evaluation__quatation_status'] == 'REJECTED':
-					evaluation_list[11] = 'REJECTED'
+					evaluation_list[16] = 'REJECTED'
 				elif order['evaluation__quatation_status'] == 'PENDING':
-					evaluation_list[11] = 'PENDING'
+					evaluation_list[16] = 'PENDING'
 				elif order['evaluation__quatation_status'] == 'EXPIRED':
-					evaluation_list[11] = 'EXPIRED'
+					evaluation_list[16] = 'EXPIRED'
 				else:
-					evaluation_list[11] = 'EVALUATING'
+					evaluation_list[16] = 'EVALUATING'
 			else:
-				evaluation_list[11] = '-'
+				evaluation_list[16] = '-'
 
 			evaluation = tuple(evaluation_list)
 
