@@ -167,7 +167,7 @@
                                 <tr data-itemid="{{item.product.id}}">
                                     <td>{{item.product.supplier_item_id}}</td>
                                     <td>{{item.product.item}}</td>
-                                    <td>{{item.product.item_price|floatformat:3}} KD</td>
+                                    <td>{% if item.unit_price %}{{item.unit_price|floatformat:3}}{% else %}{{item.product.item_price|floatformat:3}}{% endif %} KD</td>
                                     <td>{{item.item_count|floatformat:0}}</td>
                                     <td>{{item.total_price|floatformat:3}} KD</td>
                                     <td>
