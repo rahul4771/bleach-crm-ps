@@ -1167,6 +1167,11 @@ class InventoryInv(IsInventoryAdminUser,View):
 		# ItemUnit.objects.exclude(status='available').update(is_available=False)
 		# ItemUnit.objects.filter(Q(status='available')|Q(status='unavailable')).update(status='working')
 
+		# histories = ItemHistory.objects.filter(Q(item_action='STOCK OUT')|Q(item_action='STOCK IN'))
+		# for item in histories:
+		# 	team = CleaningTeam.objects.filter(visit__order__order_no=)
+			
+
 		search = request.GET.get('search')
 		item_type = request.GET.get('item_type',None)
 
@@ -1940,7 +1945,7 @@ class PurchaseOrderApproval(IsInventoryAdmin,View):
 class PurchaseOrderItemsPage(IsInventoryAdminUser,View):
 	def get(self,request,purchase_order_id):
 		stores = Store.objects.filter(status=True)
-		purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.all(),to_attr='purchase_order_items')).annotate(po_total=Sum('purchase_order_purchase_order_item__total_price')).get(id=int(purchase_order_id))
+		purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.select_related('product').all(),to_attr='purchase_order_items')).annotate(po_total=Sum('purchase_order_purchase_order_item__total_price')).get(id=int(purchase_order_id))
 		shipment_status = request.GET.get('shipment_status')
 		if shipment_status == 'complete':
 			purchase_order.is_received = True
@@ -2055,7 +2060,7 @@ class PurchaseOrderItemsPage(IsInventoryAdminUser,View):
 
 class InventoryPurchaseOrderPage(View):
 	def get(self,request,purchase_order_id):
-		purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.all(),to_attr='purchase_order_items')).get(id=int(purchase_order_id))
+		purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.select_related('product').all(),to_attr='purchase_order_items')).get(id=int(purchase_order_id))
 		return render(request,'inventory/purchaseorderpage.html',{"purchase_order":purchase_order})
 
 class InventoryCreatePurchaseOrder(View):
@@ -2104,7 +2109,7 @@ class InventoryCreatePurchaseOrder(View):
 		else:
 			store = None
 
-		purchase_order_items = PurchaseOrderItems.objects.filter(purchase_order=purchase_order,purchase_order__supplier=purchase_order.supplier)
+		purchase_order_items = PurchaseOrderItems.objects.select_related('product').filter(purchase_order=purchase_order,purchase_order__supplier=purchase_order.supplier)
 
 		return render(request,'inventory/createpo.html',{"items":items,"suppliers":suppliers,"stores":stores,"supplier":supplier,"store":store,"purchase_order":purchase_order,"purchase_order_items":purchase_order_items})
 
@@ -2198,7 +2203,7 @@ class InventoryCreatePurchaseOrder(View):
 class InventoryEditPurchaseOrder(IsInventoryAdminUser,View):
 	def get(self,request,purchase_order_id):
 
-		purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.all(),to_attr='purchase_order_items')).annotate(total_order_price=Sum('purchase_order_purchase_order_item__total_price')).get(id=int(purchase_order_id))
+		purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.select_related('product').all(),to_attr='purchase_order_items')).annotate(total_order_price=Sum('purchase_order_purchase_order_item__total_price')).get(id=int(purchase_order_id))
 
 		suppliers = Supplier.objects.filter(status=True)
 
@@ -2211,10 +2216,6 @@ class InventoryEditPurchaseOrder(IsInventoryAdminUser,View):
 			supplier = None
 
 		items = SupplierItems.objects.filter(supplier=purchase_order.supplier)
-
-		print(items,"im")
-
-		# purchase_order_items = PurchaseOrderItems.objects.filter(purchase_order=purchase_order,purchase_order__supplier=purchase_order.supplier).annotate(total_price=Sum('total_price'))
 
 		return render(request,'inventory/editpo.html',{"items":items,"suppliers":suppliers,"supplier":supplier,"purchase_order":purchase_order})
 

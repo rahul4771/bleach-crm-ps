@@ -287,12 +287,12 @@
                                 <tr data-itemid="{{item.product.id}}">
                                     <td>{{item.product.supplier_item_id}}</td>
                                     <td>{{item.product.item}}</td>
-                                    <td style="text-align: center;">{{item.unit_price|floatformat:3}} KD</td>
+                                    <td style="text-align: center;">{{item.product.item_price|floatformat:3}} KD</td>
                                     <td style="text-align: center;">{{item.item_count|floatformat:0}} {% if item.product.item.measuring_unit %}{{item.product.item.measuring_unit}}(s){% else %}Unit(s){% endif %}</td>
                                     {% comment %} <td style="text-align: center;">{% if item.product.item.measuring_unit %}{{item.product.item.measuring_unit}}(s){% else %}Unit(s){% endif %}</td> {% endcomment %}
                                     <td style="text-align: center;">{{item.total_price|floatformat:3}} KD</td>
                                     <td style="text-align: center;"> 
-                                        <button type="button" class="inv-plan-img-btn edit-item-btn" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.item}}" data-unitprice="{{item.unit_price}}" data-itemcount="{{item.item_count}}" data-totalprice="{{item.total_price}}"> <img
+                                        <button type="button" class="inv-plan-img-btn edit-item-btn" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.item}}" data-unitprice="{{item.product.item_price}}" data-itemcount="{{item.item_count}}" data-totalprice="{{item.total_price}}"> <img
                                             src="{% static 'files/inventory/pencil.png' %}" alt="" onclick="openNavAddStore('edit')"> </button>
                                         <button type="button" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"  class="inv-plan-img-btn delete-item-btn"> <img
                                                 src="{% static 'files/inventory/bin.png' %}" alt=""> </button>
