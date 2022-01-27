@@ -89,7 +89,7 @@
                                 {{order.total_units|floatformat:0}}
                             </td>
                             <td class="text-center">
-                               {{order.total_price}}
+                               {{order.total_price|floatformat:3}}
                             </td>
                             <td>
                                 {% if order.is_rejected == True %}
@@ -191,7 +191,7 @@
                                 {{order.total_units}}
                             </td>
                             <td class="text-center">
-                               {{order.total_price}}
+                               {{order.total_price|floatformat:3}}
                             </td>
                             <td>
                                 {% if order.total_units == order.total_added_units %}

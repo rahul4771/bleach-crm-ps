@@ -82,18 +82,14 @@
                                 <th data-hide="phone,tablet"  style="width: %; text-align: center;">
                                     Product Name
                                 </th>
-                                <th data-hide="phone,tablet"  style="width: %;" class="text-left">
-                                    Number of units
-                                </th>
                                 <th  data-hide="phone,tablet"  style="width: %;" class="text-left">
                                     Unit Cost
                                 </th>
-                               
-                                <!-- <th>
-                                    Status
-                                </th> -->
-                                <th>
-                                   Net Cost
+                                <th data-hide="phone,tablet"  style="width: %;" class="text-left">
+                                    Number of units
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %;" class="text-left">
+                                    Net Price
                                 </th>
     
                             </tr>
@@ -110,20 +106,11 @@
                               {{item.product.item.name}}
                             </td>
                             <td class="text-left">
-                              {{item.item_count}}
-                              </td>
-
-                            <td class="text-left">
-                               {{item.unit_price|floatformat:3}}
-                            </td>
-                          
-                            <!-- <td>
-                                {% if item.is_received == True %}
-                                <span class="inv-dot c-active ml-5"></span>Added
-                                {% else %}
-                                <span class="inv-dot c-active ml-5"></span>Waiting
-                                {% endif %}
-                            </td> -->
+                                {% if item.unit_price %}{{item.unit_price|floatformat:3}}{% else %}{{item.product.item_price|floatformat:3}}{% endif %}
+                             </td>
+                             <td class="text-left">
+                                {{item.item_count}}
+                                </td>
                             <td class="item_net_cost">{{item.total_price|floatformat:3}}</td>
                         </tr>
                         {% endfor %}
@@ -150,11 +137,14 @@
                                 <th data-hide="phone,tablet"  style="width: %; text-align: center;">
                                     Product Name
                                 </th>
+                                <th  data-hide="phone,tablet"  style="width: %;" class="text-left">
+                                    Unit Cost
+                                </th>
                                 <th data-hide="phone,tablet"  style="width: %;" class="text-left">
                                     Number of units
                                 </th>
-                                <th  data-hide="phone,tablet"  style="width: %;" class="text-left">
-                                    Unit Cost
+                                <th data-hide="phone,tablet"  style="width: %;" class="text-left">
+                                    Net Price
                                 </th>
                                
                                 <th>
@@ -184,12 +174,14 @@
                               {{item.product.item.name}}
                             </td>
                             <td class="text-left">
-                              {{item.item_count}}
-                              </td>
-
-                            <td class="text-left">
-                               {{item.unit_price|floatformat:3}}
-                            </td>
+                                {% if item.unit_price %}{{item.unit_price|floatformat:3}}{% else %}{{item.product.item_price|floatformat:3}}{% endif %}
+                             </td>
+                             <td class="text-left">
+                                {{item.item_count}}
+                                </td>
+                             <td class="text-left">
+                                 {{item.total_price|floatformat:3}}
+                             </td>
                           
                             <td>
                                 {% if item.is_received == True %}
@@ -222,11 +214,14 @@
                                 <th data-hide="phone,tablet"  style="width: %; text-align: center;">
                                     Product Name
                                 </th>
+                                <th  data-hide="phone,tablet"  style="width: %;" class="text-left">
+                                    Unit Cost
+                                </th>
                                 <th data-hide="phone,tablet"  style="width: %;" class="text-left">
                                     Number of units
                                 </th>
-                                <th  data-hide="phone,tablet"  style="width: %;" class="text-left">
-                                    Unit Cost
+                                <th data-hide="phone,tablet"  style="width: %;" class="text-left">
+                                    Net Price
                                 </th>
                                
                                 <th>
@@ -249,19 +244,18 @@
                             <td>
                                 {{item.product.item.item_code}}
                             </td>
-                            <td class="text-center">
-                              {{item.product.item.name}}
-                            </td>
                             <td class="text-left">
-                              {% if item.added_item_count != item.item_count %}
-                              {{item.item_count|sub:item.added_item_count}}
-                              {% else %} {{item.item_count}} {% endif %}
-                              </td>
-
-                            <td class="text-left">
-                               {{item.unit_price|floatformat:3}}
-                            </td>
-                          
+                                {% if item.unit_price %}{{item.unit_price|floatformat:3}}{% else %}{{item.product.item_price|floatformat:3}}{% endif %}
+                             </td>
+                             <td class="text-left">
+                                {% if item.added_item_count != item.item_count %}
+                                {{item.item_count|sub:item.added_item_count}}
+                                {% else %} {{item.item_count}} {% endif %}
+                                </td>
+                             <td class="text-left">
+                                 {{item.total_price|floatformat:3}}
+                             </td>
+                        
                             <td>
                                 {% if item.added_item_count == item.item_count %}
                                 <span class="inv-dot c-active ml-5"></span>Added

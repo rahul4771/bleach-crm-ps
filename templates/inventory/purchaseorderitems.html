@@ -133,6 +133,7 @@
                             </td>
                         </tr>
                         {% endfor %}
+                        <tr><td></td><td></td><td></td><td><b>Total Price</b></td><td><b>{{purchase_order.po_total|floatformat:3}} KD</b></td><td></td></tr>
         
                       
                      </tbody>
@@ -212,6 +213,7 @@
                         </tr>
                         {% endif %}
                         {% endfor %}
+                        <tr><td></td><td></td><td></td><td></td><td><b>Total Price</b></td><td><b>{{purchase_order.total_qty_order_price|floatformat:3}} KD</b></td><td></td></tr>
         
                       
                      </tbody>
@@ -288,6 +290,7 @@
                         </tr>
                         {% endif %}
                         {% endfor %}
+                        <tr><td></td><td></td><td></td><td></td><td><b>Total Price</b></td><td><b>{{purchase_order.total_unit_order_price|floatformat:3}} KD</b></td><td></td></tr>
         
                       
                      </tbody>
