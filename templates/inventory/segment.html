@@ -74,7 +74,7 @@
                                 
                                         {{segment.name}}
                                     </td>
-                                    <td class="text-center">
+                                    <td class="text-center linecount">
                                         {{segment.lines_count}}
                                     </td>
                                     <td>
@@ -88,8 +88,10 @@
                                     <td>
                                   
                                         <button class="inv-plan-img-btn edit_segment" data-segmentid="{{segment.id}}" data-segmentname="{{segment.name}}" data-segmentstatus="{{segment.status}}" onclick="showDrawer('edit')" > <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
+                                        
+                                        {% if segment.lines_count == 0 %}
                                         <button class="inv-plan-img-btn delete_segment" data-segmentid="{{segment.id}}" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
-        
+                                        {% endif %}
                                     </td>
                                 </tr>
                                 {% endfor %}                               
@@ -664,6 +666,7 @@ $(function () {
 
          var result = await _get('api/inventory-lines/?segment_id='+segment_id);
          if(result.status == 200){
+             
             if (result.data.inventory_line.length > 0){
                 $(".line_table tr:not(:first)").remove(); 
                 var edit = "edit";
@@ -691,6 +694,7 @@ $(function () {
          var result = await _post('api/inventory-lines/',formdata);
          
          if(result.status == 200){
+            $('.linecount').text(result.data.inventory_line.length)
             if (result.data.inventory_line.length > 0){
                 $(".line_table tr:not(:first)").remove(); 
                 var edit = "edit";
@@ -719,6 +723,7 @@ $(function () {
          var result = await _post('api/inventory-lines/',formdata);
          
          if(result.status == 200){
+            $('.linecount').text(result.data.inventory_line.length)
             if (result.data.inventory_line.length > 0){
                 $(".line_table tr:not(:first)").remove(); 
                 var edit = "edit";

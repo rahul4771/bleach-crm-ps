@@ -2809,8 +2809,13 @@ class InventoryLinesAPI(APIView):
 
 			line = Line.objects.get(id=int(line_id))
 			segment_id = line.segment.id
-
-			line.delete()
+			line_items = InventoryItem.objects.filter(item_line=line).count()
+			
+			if line_items == 0:
+				line.delete()
+				response_dict['alert_message'] = 'Line Deleted !'			
+			else:
+				response_dict['alert_message'] = 'Cannot Delete Line !'	
 
 			try:
 				inventory_lines = Line.objects.filter(segment__id=int(segment_id))
@@ -2820,8 +2825,6 @@ class InventoryLinesAPI(APIView):
 			line_serializer = InventoryLineSerializer(inventory_lines,many=True).data
 				
 			response_dict['inventory_line'] = line_serializer
-
-			response_dict['alert_message'] = 'Line Deleted !'			
 
 		return Response(response_dict,HTTP_200_OK)
 
