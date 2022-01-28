@@ -828,24 +828,22 @@
             </div>
             <hr>
             <div class="row mt-20">
-                <div class="col-md-12 " id="id_add_method">
-                   
-                    <input type="hidden" name="item_id" value="{{inventory_item.id}}" id="item_id">
+                <div class="col-md-12 ">
                     <div class="model-input-name required-field">Select Item</div>
-                   
-                    <div class="wrap-drop" id="select_methddrp1" style="z-index: 4;" >
-                        <span id="id_selectText"><% selected_item.accessory_name %></span>
-                        <ul class="drop">
-                            <li @click="chooseItem(item)" v-for="(item,index) in raw_materials" v-bind:key="item">
-                             <a> <% item.accessory_name %></a>  
-                            </li>
-                            
 
-                        </ul>
-                      
-                      
+                    <div style="position: relative;">
+                        <div class="inv-input-container inv-border h-30">
+                            <input type="hidden" name="item_id" v-model="item_id">
+                            <input autocomplete="off" @click="openAccessories()" @blur="checkItem()" type="text"  style="border: none !important; width: 90%;" class=" inv-in"  @input="searchItems()" required v-model="acc_name">
+                        </div>
+                        <div  class="row inv-result-box"  id="rs-box" v-if="open_accessory">
+                            <div class="col-md-12 "  style="padding:0px !important;" v-for="(item_val,rindex) in filtered_items" v-bind:key="rindex" @click="selectItem(item_val)" >
+                                <div class="inv-search-result" ><% item_val.accessory_name%></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+               
                 <div class="col-md-12 ">
                     <div class="model-input-name required-field mt-20">Quantity</div>
 
@@ -892,7 +890,7 @@
             </div>
             <hr>
             <div class="row mt-20">
-                <div class="col-md-12 " id="id_add_method">
+                <!-- <div class="col-md-12 " id="id_add_method">
                    
                     <input type="hidden" name="item_id" value="{{inventory_item.id}}" id="item_id">
                     <div class="model-input-name required-field">Select Item</div>
@@ -908,6 +906,21 @@
                         </ul>
                       
                       
+                    </div>
+                </div> -->
+                <div class="col-md-12 ">
+                    <div class="model-input-name required-field">Select Item</div>
+
+                    <div style="position: relative;">
+                        <div class="inv-input-container inv-border h-30">
+                            <input type="hidden" name="item_id" v-model="item_id">
+                            <input autocomplete="off" @click="openAccessories()" @blur="checkItem()" type="text"  style="border: none !important; width: 90%;" class=" inv-in"  @input="searchItems()" required v-model="acc_name">
+                        </div>
+                        <div  class="row inv-result-box"  id="rs-box" v-if="open_accessory">
+                            <div class="col-md-12 "  style="padding:0px !important;" v-for="(item_val,rindex) in filtered_items" v-bind:key="rindex" @click="selectItem(item_val)" >
+                                <div class="inv-search-result" ><% item_val.accessory_name%></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-12 ">
@@ -1660,7 +1673,12 @@
      accessories:[],
      edit_item_id:'',
      current_item:'',
-     subparts:[]
+     subparts:[],
+     acc_name:'',
+     filtered_items:[],
+     testname:'',
+     item_id:'',
+     open_accessory:false
     },
     mounted(){
         this.url = api;
@@ -1669,6 +1687,28 @@
        this.getSubparts()
     },
     methods:{
+        checkItem(){
+            var selected=this.raw_materials.filter(item=>item.accessory_name.toUpperCase().startsWith(this.acc_name.toUpperCase()))
+            if(selected.length==0){
+                this.acc_name=''
+                this.item_id=''
+            }
+        },
+        selectItem(item){
+           this.item_id=item.accessory_id
+           this.acc_name=item.accessory_name
+            this.open_accessory=false
+        },
+        searchItems(){
+            this.filtered_items=this.raw_materials.filter(item=>item.accessory_name.toUpperCase().startsWith(this.acc_name.toUpperCase()))
+        },
+        openAccessories(){
+            this.open_accessory=true
+        },
+        closeAccessories(){
+            this.open_accessory=false
+            $('#rs-box').hide()
+        },
         deleteSubpart(item){
             this.current_item=item
         },
@@ -1726,6 +1766,7 @@
             
             axios.get(this.url+'/api/rawmaterials/').then(response=>{
                 this.raw_materials=response.data.inventoryitem_list
+                this.filtered_items=[...this.raw_materials]
             })
         },
         addAccessory(){
