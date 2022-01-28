@@ -125,6 +125,19 @@ class InventoryItem(models.Model):
     def __str__(self):
         return self.name
 
+
+class QuantityStoreDetails(models.Model):
+    item_store           = models.ForeignKey(Store,blank=True,null=True,related_name='quantity_store')
+    quantity_item        = models.ForeignKey(InventoryItem,blank=False,null=False,related_name='quantity_store_item')
+    quantity             = models.FloatField(max_length=10,blank=True,null=True,default=0)
+    created              = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return str(self.item_store.store_name)
+
+    def __str__(self):
+        return self.item_store.store_name
+
 class InventoryAccessory(models.Model):
     inventory_item       =  models.ForeignKey(InventoryItem,blank=False,null=False,related_name='accessory_inventory')
     inventory_accessory  =  models.ForeignKey(InventoryItem,blank=False,null=False,related_name='accessory_item')  
@@ -384,7 +397,6 @@ class ItemHistory(models.Model):
     item_action     =   models.CharField(max_length=50,default='PURCHASE ORDER',blank=False,null=False,choices=ITEMHISTORY_CHOICES)
     item_remark     =   models.CharField(max_length=50,blank=True,null=True)
     purchase_date   =   models.DateField(blank=True,null=True)
-    purchase_store  =   models.ForeignKey(Store,blank=True,null=True,related_name='quantity_store')
     quantity        =   models.CharField(max_length=50,blank=False,null=False)
     added_by        =   models.ForeignKey(UserProfile,blank=True,null=True,related_name='addedby_item_history')
     external_user   =   models.CharField(max_length=100,blank=True,null=True)
