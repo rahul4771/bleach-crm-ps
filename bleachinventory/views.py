@@ -1945,7 +1945,7 @@ class PurchaseOrderApproval(IsInventoryAdmin,View):
 class PurchaseOrderItemsPage(IsInventoryAdminUser,View):
 	def get(self,request,purchase_order_id):
 		stores = Store.objects.filter(status=True)
-		purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.select_related('product').all(),to_attr='purchase_order_items')).annotate(po_total=Sum('purchase_order_purchase_order_item__total_price')).get(id=int(purchase_order_id))
+		purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.select_related('product').all(),to_attr='purchase_order_items')).annotate(po_total=Sum('purchase_order_purchase_order_item__total_price'),total_qty_order_price=Sum(Case(When(purchase_order_purchase_order_item__product__item__item_add_type='quantity',then='purchase_order_purchase_order_item__total_price'),default=0,output_field=IntegerField())),total_unit_order_price=Sum(Case(When(purchase_order_purchase_order_item__product__item__item_add_type='unit',then='purchase_order_purchase_order_item__total_price'),default=0,output_field=IntegerField()))).get(id=int(purchase_order_id))
 		shipment_status = request.GET.get('shipment_status')
 		if shipment_status == 'complete':
 			purchase_order.is_received = True
