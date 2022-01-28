@@ -2809,8 +2809,13 @@ class InventoryLinesAPI(APIView):
 
 			line = Line.objects.get(id=int(line_id))
 			segment_id = line.segment.id
-
-			line.delete()
+			line_items = InventoryItem.objects.filter(item_line=line).count()
+			
+			if line_items == 0:
+				line.delete()
+				response_dict['alert_message'] = 'Line Deleted !'			
+			else:
+				response_dict['alert_message'] = 'Cannot Delete Line !'	
 
 			try:
 				inventory_lines = Line.objects.filter(segment__id=int(segment_id))
@@ -2820,8 +2825,6 @@ class InventoryLinesAPI(APIView):
 			line_serializer = InventoryLineSerializer(inventory_lines,many=True).data
 				
 			response_dict['inventory_line'] = line_serializer
-
-			response_dict['alert_message'] = 'Line Deleted !'			
 
 		return Response(response_dict,HTTP_200_OK)
 
@@ -2920,7 +2923,7 @@ class InventoryItemsAPI(APIView):
 		item_id = request.GET.get('item_id')
 		print(item_id,"attrsed")
 		try:
-			item_units = ItemUnit.objects.filter(item__id=int(item_id),status='available')
+			item_units = ItemUnit.objects.filter(item__id=int(item_id),is_available=True)
 			unit_count = item_units.count()
 		except:
 			item_units = None
@@ -3540,9 +3543,9 @@ class ItemQuantityCheck(APIView):
 
 		print(item_id,quantity,"qty")
 
-		item = InventoryItem.objects.annotate(quantity_total=Sum('unit_item_history__quantity'),unit_count=Sum(Case(When(unit_item__status='available',then=1),default=0,output_field=IntegerField()))).get(id=int(item_id))
+		item = InventoryItem.objects.annotate(quantity_total=Sum('unit_item_history__quantity'),unit_count=Sum(Case(When(unit_item__is_available=True,then=1),default=0,output_field=IntegerField()))).get(id=int(item_id))
 		
-		unitcount = ItemUnit.objects.filter(item=item,status='available').count()
+		unitcount = ItemUnit.objects.filter(item=item,is_available=True).count()
 		
 		if item.item_add_type == 'unit':
 			item_count = unitcount
@@ -3612,7 +3615,7 @@ class CheckOutItemAdd(APIView):
 			if item.item_status == 'available' or item.item_status == 'about_to_finish':
 
 				if unit_id:
-					itemunit = ItemUnit.objects.get(id=int(unit_id),status='available')
+					itemunit = ItemUnit.objects.get(id=int(unit_id),is_available=True)
 					checkout_item = CheckOutItems.objects.create(visit=visit,item=item,units=1,item_unit=itemunit)
 				else:
 					checkout_item = CheckOutItems.objects.create(visit=visit,item=item,units=quantity)
@@ -3621,7 +3624,7 @@ class CheckOutItemAdd(APIView):
 				response_dict['item_name'] = checkout_item.item.name
 				response_dict['item_code'] = checkout_item.item.item_code
 				
-				if checkout_item.item_unit.unit_code:
+				if checkout_item.item_unit:
 					response_dict['unit_code'] = checkout_item.item_unit.unit_code
 				else:
 					response_dict['unit_code'] = '-'
@@ -3661,7 +3664,7 @@ class CheckOutItemEdit(APIView):
 
 		if checkout_item_id:
 			if unit_id:
-				itemunit = ItemUnit.objects.get(id=int(unit_id),status='available')
+				itemunit = ItemUnit.objects.get(id=int(unit_id),is_available=True)
 				
 				checkout_item = CheckOutItems.objects.get(id=int(checkout_item_id),visit=visit)
 				checkout_item.item_unit = itemunit
@@ -3757,9 +3760,9 @@ class CheckOutItemUnitsList(APIView):
 		
 		# for unit dropdown
 		if checkout_item.service_item:
-			units_list = ItemUnit.objects.filter(item=checkout_item.service_item.item,status='available')
+			units_list = ItemUnit.objects.filter(item=checkout_item.service_item.item,is_available=True)
 		else:
-			units_list = ItemUnit.objects.filter(item=checkout_item.item,status='available')
+			units_list = ItemUnit.objects.filter(item=checkout_item.item,is_available=True)
 
 		print(checkout_unit_id_list,"udroplist")
 		unit_dropdown_list = []
@@ -3840,7 +3843,7 @@ class CheckOutItemSwap(APIView):
 				CheckOutItemUnits.objects.filter(checkout_item=checkout).delete()
 
 			if swap_item.item.item_add_type == 'unit':
-				itemunits = ItemUnit.objects.filter(item__id=int(swap_item.item.id),status='available')[:int(quantity)]
+				itemunits = ItemUnit.objects.filter(item__id=int(swap_item.item.id),is_available=True)[:int(quantity)]
 
 				for unit in itemunits:
 					CheckOutItemUnits.objects.create(checkout_item=checkout,item_unit=unit)
@@ -3949,35 +3952,61 @@ class ItemsCheckInAPI(APIView):
 
 		print(visit_id,"lpo")
 
-		visit = OrderScheduler.objects.get(id=int(visit_id))
+		visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(visit_id))
+
+		for team in visit.cleaning_team:
+			team_leader = team.team_leader.name
+			response_dict['team_leader'] = team_leader
 
 		return_items = CheckOutItems.objects.filter(is_checked_in=False,visit=visit)
+		
 
 		items_list = []
 
 		for item in return_items:
+
 			if item.service_item:
-				item_dict = {
-					'item_id' : item.id,
-					'item_name' : item.service_item.item.name,
-					'item_code' : item.service_item.item.item_code,
-					'item_type' : item.service_item.item.item_add_type,
-					'quantity' : item.units
-				}
+				if item.service_item.item.item_add_type == 'unit':
+					if item.item_unit:
+						item_code = item.item_unit.unit_code
+					else:
+						item_code = '-'
+				else:
+					item_code = item.service_item.item.item_code
+
+				if item.service_item.item.is_reusable == True:
+					item_dict = {
+						'item_id' : item.id,
+						'item_name' : item.service_item.item.name,
+						'item_code' : item_code,
+						'item_type' : item.service_item.item.item_add_type,
+						'quantity' : item.units
+					}
+					items_list.append(item_dict)
 			
 			if item.item:
-				item_dict = {
-					'item_id' : item.id,
-					'item_name' : item.item.name,
-					'item_code' : item.item.item_code,
-					'item_type' : item.item.item_add_type,
-					'quantity' : item.units
-				}
-			items_list.append(item_dict)
+				if item.item.item_add_type == 'unit':
+					if item.item_unit:
+						item_code = item.item_unit.unit_code
+					else:
+						item_code = '-'
+				else:
+					item_code = item.item.item_code
+
+				if item.item.is_reusable == True:
+					item_dict = {
+						'item_id' : item.id,
+						'item_name' : item.item.name,
+						'item_code' : item_code,
+						'item_type' : item.item.item_add_type,
+						'quantity' : item.units
+					}
+					items_list.append(item_dict)
 
 		response_dict['items_list'] = items_list
+		response_dict['order_no'] = item.visit.order.order_no,
 
-		print(return_items,"ret")
+		print(items_list,"ret")
 
 		return Response(response_dict, HTTP_200_OK)
 
@@ -3993,36 +4022,44 @@ class ItemsCheckInAPI(APIView):
 
 		for item_id in item_ids:
 			checkin_item = CheckOutItems.objects.prefetch_related(Prefetch('checkoutitem',CheckOutItemUnits.objects.all(),to_attr="checkin_item_units")).get(id=int(item_id),is_checked_in=False)
-			visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(checkin_item.visit.id))
+			checkout_visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(checkin_item.visit.id))
 
-			for team in visit.cleaning_team:
+			for team in checkout_visit.cleaning_team:
 				team_leader = team.team_leader
 
-			visits = OrderScheduler.objects.filter(order__order_no=visit.order.order_no,start_at__date=visit.start_at.date(),cleaning_team_order_scheduler__team_leader=team_leader)
+			visits = OrderScheduler.objects.filter(order__order_no=checkout_visit.order.order_no,start_at=checkout_visit.start_at,cleaning_team_order_scheduler__team_leader=team_leader)
 
 			print(item_quantities[count],"iom")
 			checkin_item.is_checked_in = True
 			checkin_item.check_in_user = UserProfile.objects.get(id=int(request.data.get('inventory_user')),is_active=True)
 			
 			if checkin_item.item and checkin_item.item.item_add_type == 'unit':
-				inventoryitemunit = ItemUnit.objects.get(id=int(checkin_item.item_unit.id))
-				inventoryitemunit.status = 'available'
-				inventoryitemunit.save()
-				print("pam")
-				# for itemunit in checkin_item.checkin_item_units:
-				# 	inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
-				# 	inventoryitemunit.status = 'available'
-				# 	inventoryitemunit.save()
+				if checkin_item.item_unit:
+					inventoryitemunit = ItemUnit.objects.get(id=int(checkin_item.item_unit.id))
+					inventoryitemunit.status = 'working'
+					inventoryitemunit.is_available=True
+					inventoryitemunit.save()
+					print("pam")
+				else:
+					for itemunit in checkin_item.checkin_item_units:
+						inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
+						inventoryitemunit.status = 'working'
+						inventoryitemunit.is_available=True
+						inventoryitemunit.save()
 
 			if checkin_item.service_item and checkin_item.service_item.item.item_add_type == 'unit':
-				inventoryitemunit = ItemUnit.objects.get(id=int(checkin_item.item_unit.id))
-				inventoryitemunit.status = 'available'
-				inventoryitemunit.save()
-				# for itemunit in checkin_item.checkin_item_units:
-				# 	print(itemunit.item_unit.id,"itunitid")
-				# 	inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
-				# 	inventoryitemunit.status = 'available'
-				# 	inventoryitemunit.save()
+				if checkin_item.item_unit:
+					inventoryitemunit = ItemUnit.objects.get(id=int(checkin_item.item_unit.id))
+					inventoryitemunit.status = 'working'
+					inventoryitemunit.is_available=True
+					inventoryitemunit.save()
+				else:
+					for itemunit in checkin_item.checkin_item_units:
+						print(itemunit.item_unit.id,"itunitid")
+						inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
+						inventoryitemunit.status = 'working'
+						inventoryitemunit.is_available=True
+						inventoryitemunit.save()
 
 			if checkin_item.item and checkin_item.item.item_add_type == 'quantity' and float(item_quantities[count]) > 0:
 				print("pam")
@@ -4036,7 +4073,7 @@ class ItemsCheckInAPI(APIView):
 				item_action='STOCK IN',
 				item_remark=checkin_item.visit.order.order_no,
 				purchase_date= date.today(),
-				added_by = inventory_user
+				added_by = team_leader
 				)
 
 				count += 1
@@ -4052,7 +4089,7 @@ class ItemsCheckInAPI(APIView):
 				item_action='STOCK IN',
 				item_remark=checkin_item.visit.order.order_no,
 				purchase_date= date.today(),
-				added_by = inventory_user
+				added_by = team_leader
 				)
 
 				count += 1
@@ -4268,7 +4305,7 @@ class ItemUnitsProduct(APIView):
 		item_units_array = []
 		checkout_item_units_array = []
 
-		item_units       = ItemUnit.objects.filter(item__id=product_id,status='available')
+		item_units       = ItemUnit.objects.filter(item__id=product_id,is_available=True)
 		for item in item_units:
 			item_units_array.append({'id':item.id,'unit_code':item.unit_code})
 

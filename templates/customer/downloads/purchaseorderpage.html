@@ -152,7 +152,7 @@
           {% comment %} <td style="text-align: right;" >Sterilization</td> {% endcomment %}
           <td style="text-align: right;" >{{item.item_count}}</td>
 
-          <td style="text-align: right;" >{{item.unit_price|floatformat:3}}</td> 
+          <td style="text-align: right;" >{% if item.unit_price %}{{item.unit_price|floatformat:3}}{% else %}{{item.product.item_price|floatformat:3}}{% endif %}</td> 
           {% comment %} <td style="text-align: right;" >{{item.total_price|floatformat:3}}</td>
           <td style="text-align: right;" >100.000</td> {% endcomment %}
           <td style="text-align: right;" class="item_total">{{item.total_price|floatformat:3}}</td>

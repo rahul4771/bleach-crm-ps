@@ -126,7 +126,7 @@
                                 {{item.product.item_type}}
                             </td>
                             <td class="text-center">
-                                {{item.item_count}} {{item.product.measuring_unit}}
+                                {{item.item_count|floatformat:0}} {{item.product.measuring_unit}}
                               </td>                          
                             <td>
                                 {% if item.status   == 'Out Of Stock' %}

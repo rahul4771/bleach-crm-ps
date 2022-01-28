@@ -86,10 +86,10 @@
                                 {{order.supplier.supplier_name}}
                             </td>
                             <td class="text-center">
-                                {{order.total_units}}
+                                {{order.total_units|floatformat:0}}
                             </td>
                             <td class="text-center">
-                               {{order.total_price}}
+                               {{order.total_price|floatformat:3}}
                             </td>
                             <td>
                                 {% if order.is_rejected == True %}
@@ -120,10 +120,8 @@
                                             <a class="inv-plan-img-btn2-disabled d-flex dropdown-orders" disabled> <img class="btn-img2 dropdown-icon2 pr-2" src="{% static 'files/inventory/invoice.png' %}" alt=""><div class="ml-2 dropdown-text">Invoice</div></a>
                                         {% endif %}
 
-                                        {% if order.is_admin_approved == False or order.is_rejected == True %}                
+                                        {% if order.is_rejected == True or order.is_received == False %}                
                                         <a class="d-flex dropdown-orders" href="/bleach-inventory/editpo/{{order.id}}"><img class="dropdown-icon2 pr-2" src="{% static 'files/inventory/pencil.png' %}"  alt=""><div class="ml-2 dropdown-text">Edit</div></a>
-                                        {% else %}
-                                        <a class="d-flex dropdown-orders inv-plan-img-btn2-disabled" disabled> <img class="dropdown-icon2 pr-2 btn-img2" src="{% static 'files/inventory/pencil.png' %}"  alt=""><div class="ml-2 dropdown-text">Edit</div> </a>
                                         {% endif %}
 
                                       
@@ -193,7 +191,7 @@
                                 {{order.total_units}}
                             </td>
                             <td class="text-center">
-                               {{order.total_price}}
+                               {{order.total_price|floatformat:3}}
                             </td>
                             <td>
                                 {% if order.total_units == order.total_added_units %}

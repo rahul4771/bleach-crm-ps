@@ -873,7 +873,7 @@ def quatation_html_to_pdf_view(request,evaluation_id):
 
 def purchaseorder_html_to_pdf_view(request,purchase_order_id):
 
-	purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.all(),to_attr='purchase_order_items')).get(id=int(purchase_order_id))
+	purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.select_related('product').all(),to_attr='purchase_order_items')).get(id=int(purchase_order_id))
 	
 	items_total_price = 0
 

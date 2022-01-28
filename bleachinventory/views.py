@@ -407,7 +407,7 @@ class InventoryBundle(IsInventoryAdminUser,View):
 			for item in bundle.bundle_items:
 				for unit in item.bundle_item_units:
 					item_unit = ItemUnit.objects.get(id=int(unit.item_unit.id))
-					item_unit.status = 'available'
+					item_unit.status = 'working'
 					item_unit.save()
 
 			bundle.delete()
@@ -429,7 +429,7 @@ class InventoryBundle(IsInventoryAdminUser,View):
 			used_units = []
 
 			if int(inventory_item_unit_count) >= int(item_count) :
-				selected_units = ItemUnit.objects.filter(item=inventory_item,status='available')[:int(item_count)]
+				selected_units = ItemUnit.objects.filter(item=inventory_item,is_available=True)[:int(item_count)]
 
 				for unit in selected_units:
 					total_item_price += float(unit.unit_price)
@@ -440,7 +440,7 @@ class InventoryBundle(IsInventoryAdminUser,View):
 				item_count = item_count
 
 			else:
-				selected_units = ItemUnit.objects.filter(item=inventory_item,status='available')[:int(inventory_item_unit_count)]
+				selected_units = ItemUnit.objects.filter(item=inventory_item,is_available=True)[:int(inventory_item_unit_count)]
 
 				for unit in selected_units:
 					total_item_price += float(unit.unit_price)
@@ -479,7 +479,7 @@ class InventoryBundle(IsInventoryAdminUser,View):
 			used_units = []
 
 			if int(inventory_item_unit_count) >= int(item_count) :
-				selected_units = ItemUnit.objects.filter(item=inventory_item,status='available')[:int(item_count)]
+				selected_units = ItemUnit.objects.filter(item=inventory_item,is_available=True)[:int(item_count)]
 
 				for unit in selected_units:
 					total_item_price += float(unit.unit_price)
@@ -490,7 +490,7 @@ class InventoryBundle(IsInventoryAdminUser,View):
 				item_count = item_count
 
 			else:
-				selected_units = ItemUnit.objects.filter(item=inventory_item,status='available')[:int(inventory_item_unit_count)]
+				selected_units = ItemUnit.objects.filter(item=inventory_item,is_available=True)[:int(inventory_item_unit_count)]
 
 				for unit in selected_units:
 					total_item_price += float(unit.unit_price)
@@ -567,12 +567,12 @@ class InventoryItems(IsInventoryAdminUser,View):
 		inventory_item = InventoryItem.objects.prefetch_related(Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images')).get(id=item_id)
 		categories = Category.objects.all()
 		item_units = ItemUnit.objects.filter(item=inventory_item).prefetch_related(Prefetch('product_request_unit',queryset=RequestOrderItems.objects.filter(is_received=True),to_attr='request_item_unit'),Prefetch('checkoutitem_unit',CheckOutItemUnits.objects.all().select_related('checkout_item__visit').prefetch_related(Prefetch('checkout_item__visit__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')),to_attr='checkout_unit'))
-		item_history = ItemHistory.objects.filter(item=inventory_item)
+		item_history = ItemHistory.objects.filter(item=inventory_item).order_by('-id')
 
 		stores = Store.objects.filter(status=True)
 
-		available_item_units = item_units.filter(status='available').count()
-		unavailable_item_units = item_units.filter(status='unavailable')
+		available_item_units = item_units.filter(is_available=True).count()
+		unavailable_item_units = item_units.filter(is_available=False)
 
 		available_quantity = item_history.aggregate(total_quantity=Sum('quantity'))['total_quantity']
 		if not available_quantity:
@@ -672,7 +672,7 @@ class InventoryItems(IsInventoryAdminUser,View):
 		return render(request,'inventory/item.html',{"available_item_units":available_item_units,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"stores":stores,"item_attributes":item_attributes,"inventory_item":inventory_item,"attributes":attributes,"categories":categories,"item_units":item_units,"item_history":item_history,"new_unit_code":new_unit_code,"purchase_orders":purchase_orders,"unavailable_units":unavailable_item_units})
 
 	def post(self,request,item_id):
-		action =request.POST.get('action')
+		action = request.POST.get('action')
 
 		if action == 'edit_item_details':
 			category_id = request.POST.get('item_category')
@@ -828,7 +828,8 @@ class InventoryItems(IsInventoryAdminUser,View):
 			if item.item_add_type == 'unit':
 				unit_id = request.POST.get('return_unit')
 				itemunit = ItemUnit.objects.get(id=int(unit_id))
-				itemunit.status = 'available'
+				itemunit.status = 'working'
+				itemunit.is_available = True
 				itemunit.save()
 
 				messages.success(request,"Item received !")
@@ -843,7 +844,7 @@ class InventoryItems(IsInventoryAdminUser,View):
 						item_action = 'ITEM RETURN',
 						item_remark = request_order_item.request_order.request_order_id,
 						quantity = quantity,
-						added_by = request.user
+						external_user = request_order_item.request_order.requested_by.name
 					)
 
 					item.total_quantity = float(item.total_quantity) + float(quantity)
@@ -882,6 +883,10 @@ class InventoryItems(IsInventoryAdminUser,View):
 			unit.expiry = expiry
 			unit.unit_price = unit_price
 			unit.status = status
+			if status == 'out_of_order' or status == 'under_repair':
+				unit.is_available = False
+			if status == 'working':
+				unit.is_available = True
 			unit.save()
 
 			messages.success(request,"Unit Updated Successfully !")
@@ -1158,6 +1163,15 @@ class InventoryStore(IsInventoryAdminUser,View):
 
 class InventoryInv(IsInventoryAdminUser,View):
 	def get(self,request):
+		
+		# ItemUnit.objects.exclude(status='available').update(is_available=False)
+		# ItemUnit.objects.filter(Q(status='available')|Q(status='unavailable')).update(status='working')
+
+		# histories = ItemHistory.objects.filter(Q(item_action='STOCK OUT')|Q(item_action='STOCK IN'))
+		# for item in histories:
+		# 	team = CleaningTeam.objects.filter(visit__order__order_no=)
+			
+
 		search = request.GET.get('search')
 		item_type = request.GET.get('item_type',None)
 
@@ -1189,22 +1203,22 @@ class InventoryInv(IsInventoryAdminUser,View):
 		print(item_category,item_segment,item_line,item_status,"mkk")
 
 		if search:
-			inventory_items                 = InventoryItem.objects.filter(Q(name__icontains=search)|Q(item_code__icontains=search)).annotate(unit_count=Sum(Case(When(unit_item__status='available',then=1),default=0,output_field=IntegerField())))
+			inventory_items                 = InventoryItem.objects.filter(Q(name__icontains=search)|Q(item_code__icontains=search)).annotate(unit_count=Sum(Case(When(unit_item__is_available=True,then=1),default=0,output_field=IntegerField())))
 
-			inventory_items_rawmaterials    = InventoryItem.objects.filter(item_type='RAW MATERIALS').filter(Q(name__icontains=search)|Q(item_code__icontains=search)).annotate(unit_count=Sum(Case(When(unit_item__status='available',then=1),default=0,output_field=IntegerField())))
+			inventory_items_rawmaterials    = InventoryItem.objects.filter(item_type='RAW MATERIALS').filter(Q(name__icontains=search)|Q(item_code__icontains=search)).annotate(unit_count=Sum(Case(When(unit_item__is_available=True,then=1),default=0,output_field=IntegerField())))
 		
-			inventory_items_assets          = InventoryItem.objects.filter(item_type='ASSETS').filter(Q(name__icontains=search)|Q(item_code__icontains=search)).annotate(unit_count=Sum(Case(When(unit_item__status='available',then=1),default=0,output_field=IntegerField())))
+			inventory_items_assets          = InventoryItem.objects.filter(item_type='ASSETS').filter(Q(name__icontains=search)|Q(item_code__icontains=search)).annotate(unit_count=Sum(Case(When(unit_item__is_available=True,then=1),default=0,output_field=IntegerField())))
 		
-			inventory_items_finishedgoods   = InventoryItem.objects.filter(item_type='FINISHED GOODS').filter(Q(name__icontains=search)|Q(item_code__icontains=search)).annotate(unit_count=Sum(Case(When(unit_item__status='available',then=1),default=0,output_field=IntegerField())))
+			inventory_items_finishedgoods   = InventoryItem.objects.filter(item_type='FINISHED GOODS').filter(Q(name__icontains=search)|Q(item_code__icontains=search)).annotate(unit_count=Sum(Case(When(unit_item__is_available=True,then=1),default=0,output_field=IntegerField())))
 
 		else:
-			inventory_items                 = InventoryItem.objects.all().annotate(unit_count=Sum(Case(When(unit_item__status='available',then=1),default=0,output_field=IntegerField())))
+			inventory_items                 = InventoryItem.objects.all().annotate(unit_count=Sum(Case(When(unit_item__is_available=True,then=1),default=0,output_field=IntegerField())))
 
-			inventory_items_rawmaterials    = InventoryItem.objects.filter(item_type='RAW MATERIALS').annotate(unit_count=Sum(Case(When(unit_item__status='available',then=1),default=0,output_field=IntegerField())))
+			inventory_items_rawmaterials    = InventoryItem.objects.filter(item_type='RAW MATERIALS').annotate(unit_count=Sum(Case(When(unit_item__is_available=True,then=1),default=0,output_field=IntegerField())))
 		
-			inventory_items_assets          = InventoryItem.objects.filter(item_type='ASSETS').annotate(unit_count=Sum(Case(When(unit_item__status='available',then=1),default=0,output_field=IntegerField())))
+			inventory_items_assets          = InventoryItem.objects.filter(item_type='ASSETS').annotate(unit_count=Sum(Case(When(unit_item__is_available=True,then=1),default=0,output_field=IntegerField())))
 		
-			inventory_items_finishedgoods   = InventoryItem.objects.filter(item_type='FINISHED GOODS').annotate(unit_count=Sum(Case(When(unit_item__status='available',then=1),default=0,output_field=IntegerField())))
+			inventory_items_finishedgoods   = InventoryItem.objects.filter(item_type='FINISHED GOODS').annotate(unit_count=Sum(Case(When(unit_item__is_available=True,then=1),default=0,output_field=IntegerField())))
 
 		# inventory_items.filter(measuring_unit='number').update(measuring_unit='piece')
 
@@ -1213,7 +1227,7 @@ class InventoryInv(IsInventoryAdminUser,View):
 			reserve_units = item.reserve_count
 			
 			if item.item_add_type == 'unit':
-				available_item_units = ItemUnit.objects.filter(item=item,status='available').count()
+				available_item_units = ItemUnit.objects.filter(item=item,is_available=True).count()
 
 				if int(available_item_units) < int(reserve_units) and int(available_item_units) > 0:
 					item.item_status = 'about_to_finish'
@@ -1547,9 +1561,9 @@ class PendingItems(IsInventoryAdminUser,View):
 		search = request.GET.get('search')
 
 		if search:
-			checkout_items = CheckOutItems.objects.filter(is_checked_in=False,visit__stock_in_initiated=True).filter(Q(visit__order__order_no__icontains=search)|Q(is_collected_by__name__icontains=search)|Q(service_item__item__name__icontains=search)|Q(item__name__icontains=search)|Q(service_item__item__item_code__icontains=search)|Q(item__item_code__icontains=search)).select_related('visit').prefetch_related(Prefetch('visit__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team'))
+			checkout_items = CheckOutItems.objects.filter(is_checked_in=False,visit__stock_in_initiated=True).filter(Q(service_item__item__is_reusable=True)|Q(item__is_reusable=True)).filter(Q(visit__order__order_no__icontains=search)|Q(is_collected_by__name__icontains=search)|Q(service_item__item__name__icontains=search)|Q(item__name__icontains=search)|Q(service_item__item__item_code__icontains=search)|Q(item__item_code__icontains=search)).select_related('visit').prefetch_related(Prefetch('visit__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team'))
 		else:
-			checkout_items = CheckOutItems.objects.filter(is_checked_in=False,visit__stock_in_initiated=True).select_related('visit').prefetch_related(Prefetch('visit__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team'))
+			checkout_items = CheckOutItems.objects.filter(is_checked_in=False,visit__stock_in_initiated=True).filter(Q(service_item__item__is_reusable=True)|Q(item__is_reusable=True)).select_related('visit').prefetch_related(Prefetch('visit__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team'))
 		
 		#PAGINATION ITEMS
 		no_of_entries = request.GET.get('no_of_entries')
@@ -1665,7 +1679,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 					for service_item in ingredient.service_recipe_items:    
 
 						
-						item = InventoryItem.objects.annotate(quantity_total=Sum(Case(When(unit_item__status='available',then=1),default=0,output_field=IntegerField()))).get(id=int(service_item.item.id))
+						item = InventoryItem.objects.annotate(quantity_total=Sum(Case(When(unit_item__is_available=True,then=1),default=0,output_field=IntegerField()))).get(id=int(service_item.item.id))
 						
 						
 						if service_item.item.item_add_type == 'unit':
@@ -1739,7 +1753,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 					if item['total_quantity'] > 0 and float(item['total_quantity']) >= float(item['recommended_quantity']):
 						
 						try:
-							checkout_item = CheckOutItems.objects.get(visit=checkout_visit,service_item=service_item,service_item__ingredient=service_item.ingredient)
+							checkout_item = CheckOutItems.objects.get(visit=checkout_visit,service_item=service_item,service_item__ingredient=service_item.ingredient,is_checked_out=False)
 							print(checkout_item,"yuv1")
 						except:
 							print("yuv2")
@@ -1749,12 +1763,12 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 							
 							if service_item.item.item_add_type == 'unit':
 								print("yuv4nok")
-								itemunits = ItemUnit.objects.filter(item=service_item.item,status='available')[:int(item['recommended_quantity'])]
+								itemunits = ItemUnit.objects.filter(item=service_item.item,is_available=True)[:int(item['recommended_quantity'])]
 								print(itemunits,"rrr")
 								for unit in itemunits:
 									print(unit,"rrr2")
 									try:
-										CheckOutItems.objects.get(visit=checkout_visit,item_unit=unit)
+										CheckOutItems.objects.get(visit=checkout_visit,item_unit=unit,is_checked_out=False)
 									except:
 										CheckOutItems.objects.create(visit=checkout_visit,service_item=service_item,item_unit=unit,units=1,is_swapped_item=False)
 									# CheckOutItemUnits.objects.create(checkout_item=checkout_item,item_unit=unit)
@@ -1765,17 +1779,17 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 					elif item['total_quantity'] > 0 and float(item['total_quantity']) < float(item['recommended_quantity']):
 						
 						try:
-							checkout_item = CheckOutItems.objects.get(visit=checkout_visit,service_item=service_item,service_item__ingredient=service_item.ingredient)
+							checkout_item = CheckOutItems.objects.get(visit=checkout_visit,service_item=service_item,service_item__ingredient=service_item.ingredient,is_checked_out=False)
 						except:
 							if service_item.item.item_add_type == 'quantity':
 								CheckOutItems.objects.create(visit=checkout_visit,service_item=service_item,units=math.ceil(item['total_quantity']),is_swapped_item=False)
 						
 							if service_item.item.item_add_type == 'unit':
-								itemunits = ItemUnit.objects.filter(item=service_item.item,status='available')[:int(item['total_quantity'])]
+								itemunits = ItemUnit.objects.filter(item=service_item.item,is_available=True)[:int(item['total_quantity'])]
 								print(itemunits,"rrr3")
 								for unit in itemunits:
 									try:
-										CheckOutItems.objects.get(visit=checkout_visit,item_unit=unit)
+										CheckOutItems.objects.get(visit=checkout_visit,item_unit=unit,is_checked_out=False)
 									except:
 										CheckOutItems.objects.create(visit=checkout_visit,service_item=service_item,item_unit=unit,units=1,is_swapped_item=False)
 									# CheckOutItemUnits.objects.create(checkout_item=checkout_item,item_unit=unit)
@@ -1790,31 +1804,32 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 		return render(request,'inventory/createCheckout.html',{"max_area":max_area,"cleaners":cleaners,"stock_out":stock_out,"price_ranges":price_ranges,"visit":checkout_visit,"visits":visits,"items":items,"check_out_items":check_out_items})
 
 	def post(self,request,visit_id):
-		visit = OrderScheduler.objects.select_related('order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections')).get(id=int(visit_id))
+		checkout_visit = OrderScheduler.objects.select_related('order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections')).get(id=int(visit_id))
 		
-		for team in visit.cleaning_team:
+		for team in checkout_visit.cleaning_team:
 			team_leader = team.team_leader
 
-		visits = OrderScheduler.objects.filter(order__order_no=visit.order.order_no,start_at__date=visit.start_at.date(),cleaning_team_order_scheduler__team_leader=team_leader)
+		visits = OrderScheduler.objects.filter(order__order_no=checkout_visit.order.order_no,start_at=checkout_visit.start_at,cleaning_team_order_scheduler__team_leader=team_leader)
 		
 		print(visits,"vissts")
 
-		service = visit.order_scheduler_book.service_type
 		action = request.POST.get('action')
 
 		if action == 'reset_list':
 			print("ress")
-			checkout_items = CheckOutItems.objects.filter(visit=visit).delete()
+			checkout_items = CheckOutItems.objects.filter(visit=checkout_visit).delete()
 
-			visit.stock_out_items_saved = False
-			visit.save()
+			for visit in visits:
+				visit.stock_out_items_saved = False
+				visit.save()
 
 			messages.success(request,"List Reset!")
 
 		if action == 'save_checkout_list':
 
-			visit.stock_out_items_saved = True
-			visit.save()
+			for visit in visits:
+				visit.stock_out_items_saved = True
+				visit.save()
 			messages.success(request,"Check Out List saved !")
 			return redirect('bleach-inventory:inventory-order')
 
@@ -1824,7 +1839,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 			
 			# quantities = quantities.split(",")
 
-			checkout_items=CheckOutItems.objects.filter(visit=visit,is_checked_out=False)
+			checkout_items=CheckOutItems.objects.filter(visit=checkout_visit,is_checked_out=False)
 
 			count = 0
 				
@@ -1840,17 +1855,18 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 	
 					if item.item_unit:
 						itemunit = ItemUnit.objects.get(id=int(item.item_unit.id))
-						itemunit.status = 'unavailable'
+						itemunit.status = 'working'
+						itemunit.is_available=False
 						itemunit.save()
 
 				if item.item and item.item.item_add_type == 'quantity':
-					inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(status='available'),to_attr='item_units')).get(id=int(item.item.id))
+					inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(is_available=True),to_attr='item_units')).get(id=int(item.item.id))
 					
 					print(inventoryitem.total_quantity,"krok")
 					if float(inventoryitem.total_quantity) >= float(item.units):
 						inventoryitem.total_quantity = round(float(inventoryitem.total_quantity) - float(item.units),2)
 						inventoryitem.save()
-						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),item_action='STOCK OUT',item_remark=visit.order.order_no,added_by=request.user)
+						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),item_action='STOCK OUT',item_remark=checkout_visit.order.order_no,added_by=team_leader)
 					else:
 						messages.error(request,"Quantity limit exceeded !")
 						return redirect('bleach-inventory:inventory-createcheckout',visit_id)
@@ -1859,16 +1875,17 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 					
 					if item.item_unit:
 						itemunit = ItemUnit.objects.get(id=int(item.item_unit.id))
-						itemunit.status = 'unavailable'
+						itemunit.status = 'working'
+						itemunit.is_available=False
 						itemunit.save()
 
 				if item.service_item and item.service_item.item.item_add_type == 'quantity':
-					inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(status='available'),to_attr='item_units')).get(id=int(item.service_item.item.id))
+					inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(is_available=True),to_attr='item_units')).get(id=int(item.service_item.item.id))
 					
 					if float(inventoryitem.total_quantity) >= float(item.units):
 						inventoryitem.total_quantity = round(float(inventoryitem.total_quantity) - float(item.units),2)
 						inventoryitem.save()
-						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),item_action='STOCK OUT',item_remark=visit.order.order_no,added_by=request.user)
+						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),item_action='STOCK OUT',item_remark=checkout_visit.order.order_no,added_by=team_leader)
 
 				item.is_checked_out = True
 				item.checked_out_date = date.today()
@@ -1928,7 +1945,7 @@ class PurchaseOrderApproval(IsInventoryAdmin,View):
 class PurchaseOrderItemsPage(IsInventoryAdminUser,View):
 	def get(self,request,purchase_order_id):
 		stores = Store.objects.filter(status=True)
-		purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.all(),to_attr='purchase_order_items')).annotate(po_total=Sum('purchase_order_purchase_order_item__total_price')).get(id=int(purchase_order_id))
+		purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.select_related('product').all(),to_attr='purchase_order_items')).annotate(po_total=Sum('purchase_order_purchase_order_item__total_price'),total_qty_order_price=Sum(Case(When(purchase_order_purchase_order_item__product__item__item_add_type='quantity',then='purchase_order_purchase_order_item__total_price'),default=0,output_field=IntegerField())),total_unit_order_price=Sum(Case(When(purchase_order_purchase_order_item__product__item__item_add_type='unit',then='purchase_order_purchase_order_item__total_price'),default=0,output_field=IntegerField()))).get(id=int(purchase_order_id))
 		shipment_status = request.GET.get('shipment_status')
 		if shipment_status == 'complete':
 			purchase_order.is_received = True
@@ -1954,7 +1971,7 @@ class PurchaseOrderItemsPage(IsInventoryAdminUser,View):
 				item = InventoryItem.objects.get(id=int(product))
 				purchase_order_item = PurchaseOrderItems.objects.get(purchase_order=purchase_order,product__item__id=int(product))
 				print(item,item_counts[loopcount], "itm")
-				ItemHistory.objects.create(purchase_order=purchase_order,item=item,quantity=item_counts[loopcount],item_action='PURCHASE ORDER',item_remark=purchase_order.purchase_order_id,added_by=request.user)
+				ItemHistory.objects.create(purchase_order=purchase_order,item=item,quantity=item_counts[loopcount],item_action='PURCHASE ORDER',item_remark=purchase_order.purchase_order_id,added_by=purchase_order_item.purchase_order.initiated_by)
 				
 				item.total_quantity = float(item.total_quantity) + float(item_counts[loopcount])
 				item.save()
@@ -2043,7 +2060,7 @@ class PurchaseOrderItemsPage(IsInventoryAdminUser,View):
 
 class InventoryPurchaseOrderPage(View):
 	def get(self,request,purchase_order_id):
-		purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.all(),to_attr='purchase_order_items')).get(id=int(purchase_order_id))
+		purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.select_related('product').all(),to_attr='purchase_order_items')).get(id=int(purchase_order_id))
 		return render(request,'inventory/purchaseorderpage.html',{"purchase_order":purchase_order})
 
 class InventoryCreatePurchaseOrder(View):
@@ -2092,7 +2109,7 @@ class InventoryCreatePurchaseOrder(View):
 		else:
 			store = None
 
-		purchase_order_items = PurchaseOrderItems.objects.filter(purchase_order=purchase_order,purchase_order__supplier=purchase_order.supplier)
+		purchase_order_items = PurchaseOrderItems.objects.select_related('product').filter(purchase_order=purchase_order,purchase_order__supplier=purchase_order.supplier)
 
 		return render(request,'inventory/createpo.html',{"items":items,"suppliers":suppliers,"stores":stores,"supplier":supplier,"store":store,"purchase_order":purchase_order,"purchase_order_items":purchase_order_items})
 
@@ -2186,7 +2203,7 @@ class InventoryCreatePurchaseOrder(View):
 class InventoryEditPurchaseOrder(IsInventoryAdminUser,View):
 	def get(self,request,purchase_order_id):
 
-		purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.all(),to_attr='purchase_order_items')).annotate(total_order_price=Sum('purchase_order_purchase_order_item__total_price')).get(id=int(purchase_order_id))
+		purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.select_related('product').all(),to_attr='purchase_order_items')).annotate(total_order_price=Sum('purchase_order_purchase_order_item__total_price')).get(id=int(purchase_order_id))
 
 		suppliers = Supplier.objects.filter(status=True)
 
@@ -2199,10 +2216,6 @@ class InventoryEditPurchaseOrder(IsInventoryAdminUser,View):
 			supplier = None
 
 		items = SupplierItems.objects.filter(supplier=purchase_order.supplier)
-
-		print(items,"im")
-
-		# purchase_order_items = PurchaseOrderItems.objects.filter(purchase_order=purchase_order,purchase_order__supplier=purchase_order.supplier).annotate(total_price=Sum('total_price'))
 
 		return render(request,'inventory/editpo.html',{"items":items,"suppliers":suppliers,"supplier":supplier,"purchase_order":purchase_order})
 
@@ -2745,9 +2758,9 @@ class RequestOrderApproval(IsInventoryAdmin,View):
 				
 				elif request_order_item.product.item_add_type == 'unit':
 					print(request_order_item.item_count,request_order_item.product.total_quantity,"newmo")
-					unitcount = ItemUnit.objects.filter(status='available',item=request_order_item.product).count()
+					unitcount = ItemUnit.objects.filter(is_available=True,item=request_order_item.product).count()
 					reminign_items = float(request_order_item.item_count)-float(unitcount)
-					if	request_order_item.product_unit.status == 'available' and reminign_items > 0:
+					if	request_order_item.product_unit.is_available == True and reminign_items > 0:
 						request_order_item.status = 'Available'
 					else:
 						request_order_item.status = 'Not Available'
@@ -2775,8 +2788,8 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 						request_order_item.status = 'Available'
 				
 				elif request_order_item.product.item_add_type == 'unit':
-					unitcount = ItemUnit.objects.filter(status='available',item=request_order_item.product).count()
-					if	request_order_item.product_unit.status == 'available' and float(unitcount) >= float(request_order_item.item_count):
+					unitcount = ItemUnit.objects.filter(is_available=True,item=request_order_item.product).count()
+					if	request_order_item.product_unit.is_available == True and float(unitcount) >= float(request_order_item.item_count):
 						request_order_item.status = 'Available'
 					else:
 						request_order_item.status = 'Not Available'
@@ -2803,8 +2816,8 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 							return redirect('bleach-inventory:inventory-requestorderitems',request_order_id)
 				
 					elif request_order_item.product.item_add_type == 'unit':
-						unitcount = ItemUnit.objects.filter(status='available',item=request_order_item.product).count()
-						if not (request_order_item.product_unit.status == 'available' and float(unitcount) >= float(request_order_item.item_count)):
+						unitcount = ItemUnit.objects.filter(is_available=True,item=request_order_item.product).count()
+						if not (request_order_item.product_unit.is_available == True and float(unitcount) >= float(request_order_item.item_count)):
 							request_order_item.status    = 'Not Available'
 							is_all_items_available       = False
 						
@@ -2828,12 +2841,13 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 						item_action = 'ITEM REQUEST',
 						item_remark = request_order_item.request_order.request_order_id,
 						quantity = request_order_item.item_count,
-						added_by = request.user
+						external_user = request_order_item.request_order.requested_by.name
 						)
 
 						#update unit item status
 						if request_order_item.product_unit:
-							request_order_item.product_unit.status = 'unavailable'
+							request_order_item.product_unit.status = 'working'
+							request_order_item.product_unit.is_available=False
 							request_order_item.product_unit.save()
 
 				request_order.is_received  = True
