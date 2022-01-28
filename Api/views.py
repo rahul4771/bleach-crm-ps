@@ -12,7 +12,7 @@ from bleachadmin.models import ServicePriceRange,Settings
 from django.core.mail import send_mail,EmailMultiAlternatives
 from Api.serializers import DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
-from bleachinventory.models import QuantityStoreDetails,ExternalCustomer,Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,CheckOutItemUnits,ItemHistory,InventoryAccessory,InventoryFinshedItem
+from bleachinventory.models import QuantityStoreDetails,ExternalCustomer,Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,CheckOutItemUnits,ItemHistory,InventoryAccessory,InventoryFinshedItem,Store
 import re
 import random
 import string
@@ -4320,6 +4320,26 @@ class ItemUnitsProduct(APIView):
 		print(checkout_item_units_array,"uarr2")
 		response_dict['item_units'] = item_units_array
 		response_dict['checkout_item_units'] = checkout_item_units_array
+		response_dict['success']    = True
+
+		return Response(response_dict, HTTP_200_OK)
+
+class ItemStores(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request):
+		response_dict = {'success':False}	
+		
+		stores       = Store.objects.all()
+		
+		store_array = []
+
+		for store in stores:
+			store_array.append({'id':store.id,'store_name':store.store_name})
+
+		print(store_array,"uarr2")
+		response_dict['stores'] = store_array
 		response_dict['success']    = True
 
 		return Response(response_dict, HTTP_200_OK)
