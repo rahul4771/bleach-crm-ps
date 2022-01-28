@@ -45,6 +45,9 @@
                                     Item Request ID
                                 </th>
                                 <th data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                    Initiated By
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %; text-align: center;">
                                     Initiated Date
                                 </th>
                                 <th data-hide="phone,tablet"  style="width: %;" class="text-center">
@@ -69,6 +72,9 @@
                         <tr>
                             <td>
                                 {{order.request_order_id}}
+                            </td>
+                            <td class="text-center">
+                                {{order.created_by.name}}
                             </td>
                             <td class="text-center">
                                 {{order.created|date:'d-m-Y'}}
