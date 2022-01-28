@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
-from bleachinventory.models import ExternalCustomer,CheckOutItems,CheckOutItemUnits,ItemHistory,Category,Segment,Line,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems,RequestOrder,RequestOrderItems,InventoryAccessory
+from bleachinventory.models import QuantityStoreDetails,ExternalCustomer,CheckOutItems,CheckOutItemUnits,ItemHistory,Category,Segment,Line,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems,RequestOrder,RequestOrderItems,InventoryAccessory
 from user.models import UserProfile
 from django.contrib import messages
 import re
@@ -808,12 +808,22 @@ class InventoryItems(IsInventoryAdminUser,View):
 
 			ItemHistory.objects.create(
 			item = item,
-			purchase_store=store,
 			purchase_date = purchase_date,
 			item_action = 'MANUAL',
 			quantity = quantity,
 			added_by = request.user
 			)
+
+			try:
+				quantitystore = QuantityStoreDetails.objects.get(item_store=store,quantity_item = item)
+				quantitystore.quantity = float(quantitystore.quantity) + float(quantity)
+				quantitystore.save()
+			except:
+				QuantityStoreDetails.objects.create(
+				item_store = store,
+				quantity_item = item,
+				quantity = quantity
+				)
 			
 			item.total_quantity = float(item.total_quantity)+float(quantity)
 			item.save()
@@ -846,6 +856,17 @@ class InventoryItems(IsInventoryAdminUser,View):
 						quantity = quantity,
 						external_user = request_order_item.request_order.requested_by.name
 					)
+
+					# try:
+					# 	quantitystore = QuantityStoreDetails.objects.get(item_store=store,quantity_item = item)
+					# 	quantitystore.quantity = float(quantitystore.quantity) + float(quantity)
+					# 	quantitystore.save()
+					# except:
+					# 	QuantityStoreDetails.objects.create(
+					# 	item_store = store,
+					# 	quantity_item = item,
+					# 	quantity = quantity
+					# 	)
 
 					item.total_quantity = float(item.total_quantity) + float(quantity)
 					item.save()
@@ -1867,6 +1888,17 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 						inventoryitem.total_quantity = round(float(inventoryitem.total_quantity) - float(item.units),2)
 						inventoryitem.save()
 						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),item_action='STOCK OUT',item_remark=checkout_visit.order.order_no,added_by=team_leader)
+
+						# try:
+						# 	quantitystore = QuantityStoreDetails.objects.get(item_store=store,quantity_item = item)
+						# 	quantitystore.quantity = float(quantitystore.quantity) + float(quantity)
+						# 	quantitystore.save()
+						# except:
+						# 	QuantityStoreDetails.objects.create(
+						# 	item_store = store,
+						# 	quantity_item = item,
+						# 	quantity = quantity
+						# 	)
 					else:
 						messages.error(request,"Quantity limit exceeded !")
 						return redirect('bleach-inventory:inventory-createcheckout',visit_id)
@@ -1886,6 +1918,17 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 						inventoryitem.total_quantity = round(float(inventoryitem.total_quantity) - float(item.units),2)
 						inventoryitem.save()
 						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),item_action='STOCK OUT',item_remark=checkout_visit.order.order_no,added_by=team_leader)
+
+						# try:
+						# 	quantitystore = QuantityStoreDetails.objects.get(item_store=store,quantity_item = item)
+						# 	quantitystore.quantity = float(quantitystore.quantity) + float(quantity)
+						# 	quantitystore.save()
+						# except:
+						# 	QuantityStoreDetails.objects.create(
+						# 	item_store = store,
+						# 	quantity_item = item,
+						# 	quantity = quantity
+						# 	)
 
 				item.is_checked_out = True
 				item.checked_out_date = date.today()
@@ -1973,6 +2016,17 @@ class PurchaseOrderItemsPage(IsInventoryAdminUser,View):
 				print(item,item_counts[loopcount], "itm")
 				ItemHistory.objects.create(purchase_order=purchase_order,item=item,quantity=item_counts[loopcount],item_action='PURCHASE ORDER',item_remark=purchase_order.purchase_order_id,added_by=purchase_order_item.purchase_order.initiated_by)
 				
+				try:
+					quantitystore = QuantityStoreDetails.objects.get(item_store=purchase_order.store,quantity_item = item)
+					quantitystore.quantity = float(quantitystore.quantity) + float(quantity)
+					quantitystore.save()
+				except:
+					QuantityStoreDetails.objects.create(
+					item_store = purchase_order.store,
+					quantity_item = item,
+					quantity = quantity
+					)
+
 				item.total_quantity = float(item.total_quantity) + float(item_counts[loopcount])
 				item.save()
 
@@ -2843,6 +2897,17 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 						quantity = request_order_item.item_count,
 						external_user = request_order_item.request_order.requested_by.name
 						)
+
+						# try:
+						# 	quantitystore = QuantityStoreDetails.objects.get(item_store=store,quantity_item = item)
+						# 	quantitystore.quantity = float(quantitystore.quantity) + float(quantity)
+						# 	quantitystore.save()
+						# except:
+						# 	QuantityStoreDetails.objects.create(
+						# 	item_store = store,
+						# 	quantity_item = item,
+						# 	quantity = quantity
+						# 	)
 
 						#update unit item status
 						if request_order_item.product_unit:
