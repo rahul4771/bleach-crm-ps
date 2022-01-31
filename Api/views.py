@@ -4005,6 +4005,7 @@ class ItemsCheckInAPI(APIView):
 
 		response_dict['items_list'] = items_list
 		response_dict['order_no'] = item.visit.order.order_no,
+		response_dict['visit_id'] = item.visit.id,
 
 		print(items_list,"ret")
 
@@ -4016,10 +4017,11 @@ class ItemsCheckInAPI(APIView):
 		item_quantities   = request.data.get('quantities')
 		user_id = request.data.get('inventory_user')
 		inventory_user = UserProfile.objects.get(id=int(user_id))
+		visit_id = request.data.get('visit_id')
 		print(item_quantities,"qts")
 
 		count = 0
-
+		
 		for item_id in item_ids:
 			checkin_item = CheckOutItems.objects.prefetch_related(Prefetch('checkoutitem',CheckOutItemUnits.objects.all(),to_attr="checkin_item_units")).get(id=int(item_id),is_checked_in=False)
 			checkout_visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(checkin_item.visit.id))
@@ -4099,6 +4101,18 @@ class ItemsCheckInAPI(APIView):
 			for visit in visits:
 				visit.stock_in_initiated = True
 				visit.save()
+
+		#saving check in status if items are empty
+		checkout_visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(visit_id))
+		
+		for team in checkout_visit.cleaning_team:
+			team_leader = team.team_leader
+
+		visits = OrderScheduler.objects.filter(order__order_no=checkout_visit.order.order_no,start_at=checkout_visit.start_at,cleaning_team_order_scheduler__team_leader=team_leader)
+
+		for visit in visits:
+			visit.stock_in_initiated = True
+			visit.save()
 
 		response_dict = {'success':True}
 
@@ -4343,3 +4357,169 @@ class ItemStores(APIView):
 		response_dict['success']    = True
 
 		return Response(response_dict, HTTP_200_OK)
+
+
+class CheckOutStoreItemsUpdateAPI(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+	def get(self,request):
+		response_dict = {'success':True}
+
+		visit_id    = request.GET.get('item_user')
+
+		print(visit_id,"lpo")
+
+		visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(visit_id))
+
+		for team in visit.cleaning_team:
+			team_leader = team.team_leader.name
+			response_dict['team_leader'] = team_leader
+
+		return_items = CheckOutItems.objects.filter(is_checked_in=False,visit=visit)
+		
+
+		items_list = []
+
+		for item in return_items:
+
+			if item.service_item:
+				if item.service_item.item.item_add_type == 'unit':
+					if item.item_unit:
+						item_code = item.item_unit.unit_code
+					else:
+						item_code = '-'
+				else:
+					item_code = item.service_item.item.item_code
+
+				if item.service_item.item.is_reusable == True:
+					item_dict = {
+						'item_id' : item.id,
+						'item_name' : item.service_item.item.name,
+						'item_code' : item_code,
+						'item_type' : item.service_item.item.item_add_type,
+						'quantity' : item.units
+					}
+					items_list.append(item_dict)
+			
+			if item.item:
+				if item.item.item_add_type == 'unit':
+					if item.item_unit:
+						item_code = item.item_unit.unit_code
+					else:
+						item_code = '-'
+				else:
+					item_code = item.item.item_code
+
+				if item.item.is_reusable == True:
+					item_dict = {
+						'item_id' : item.id,
+						'item_name' : item.item.name,
+						'item_code' : item_code,
+						'item_type' : item.item.item_add_type,
+						'quantity' : item.units
+					}
+					items_list.append(item_dict)
+
+		response_dict['items_list'] = items_list
+		response_dict['order_no'] = item.visit.order.order_no,
+
+		print(items_list,"ret")
+
+		return Response(response_dict, HTTP_200_OK)
+
+	def post(self,request):
+		
+		item_ids    = request.data.get('item_ids')
+		item_quantities   = request.data.get('quantities')
+		user_id = request.data.get('inventory_user')
+		inventory_user = UserProfile.objects.get(id=int(user_id))
+		print(item_quantities,"qts")
+
+		count = 0
+
+		for item_id in item_ids:
+			checkin_item = CheckOutItems.objects.prefetch_related(Prefetch('checkoutitem',CheckOutItemUnits.objects.all(),to_attr="checkin_item_units")).get(id=int(item_id),is_checked_in=False)
+			checkout_visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(checkin_item.visit.id))
+
+			for team in checkout_visit.cleaning_team:
+				team_leader = team.team_leader
+
+			visits = OrderScheduler.objects.filter(order__order_no=checkout_visit.order.order_no,start_at=checkout_visit.start_at,cleaning_team_order_scheduler__team_leader=team_leader)
+
+			print(item_quantities[count],"iom")
+			checkin_item.is_checked_in = True
+			checkin_item.check_in_user = UserProfile.objects.get(id=int(request.data.get('inventory_user')),is_active=True)
+			
+			if checkin_item.item and checkin_item.item.item_add_type == 'unit':
+				if checkin_item.item_unit:
+					inventoryitemunit = ItemUnit.objects.get(id=int(checkin_item.item_unit.id))
+					inventoryitemunit.status = 'working'
+					inventoryitemunit.is_available=True
+					inventoryitemunit.save()
+					print("pam")
+				else:
+					for itemunit in checkin_item.checkin_item_units:
+						inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
+						inventoryitemunit.status = 'working'
+						inventoryitemunit.is_available=True
+						inventoryitemunit.save()
+
+			if checkin_item.service_item and checkin_item.service_item.item.item_add_type == 'unit':
+				if checkin_item.item_unit:
+					inventoryitemunit = ItemUnit.objects.get(id=int(checkin_item.item_unit.id))
+					inventoryitemunit.status = 'working'
+					inventoryitemunit.is_available=True
+					inventoryitemunit.save()
+				else:
+					for itemunit in checkin_item.checkin_item_units:
+						print(itemunit.item_unit.id,"itunitid")
+						inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
+						inventoryitemunit.status = 'working'
+						inventoryitemunit.is_available=True
+						inventoryitemunit.save()
+
+			if checkin_item.item and checkin_item.item.item_add_type == 'quantity' and float(item_quantities[count]) > 0:
+				print("pam")
+				inventoryitem = InventoryItem.objects.get(id=int(checkin_item.item.id))
+				inventoryitem.total_quantity = float(inventoryitem.total_quantity) + float(item_quantities[count])
+				inventoryitem.save()
+
+				ItemHistory.objects.create(
+				item = inventoryitem,
+				quantity = item_quantities[count],
+				item_action='STOCK IN',
+				item_remark=checkin_item.visit.order.order_no,
+				purchase_date= date.today(),
+				added_by = team_leader
+				)
+
+				count += 1
+
+			if checkin_item.service_item and checkin_item.service_item.item.item_add_type == 'quantity' and float(item_quantities[count]) > 0:
+				inventoryitem = InventoryItem.objects.get(id=int(checkin_item.service_item.item.id))
+				inventoryitem.total_quantity = float(inventoryitem.total_quantity) + float(item_quantities[count])
+				inventoryitem.save()
+
+				ItemHistory.objects.create(
+				item = inventoryitem,
+				quantity = item_quantities[count],
+				item_action='STOCK IN',
+				item_remark=checkin_item.visit.order.order_no,
+				purchase_date= date.today(),
+				added_by = team_leader
+				)
+
+				count += 1
+
+			checkin_item.save()
+
+			for visit in visits:
+				visit.stock_in_initiated = True
+				visit.save()
+
+		response_dict = {'success':True}
+
+		return Response(response_dict, HTTP_200_OK)
+
+
+

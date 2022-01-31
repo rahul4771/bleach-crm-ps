@@ -485,6 +485,7 @@
             <div class="row mt-10">
                 <div class="col-md-12">
                     <div class="d-flex">
+                        <input type="hidden" name="id_visit" id="visit_id" >
                         <div style="font-weight: 400;" class="inv-check-orderhead order_team">
                             
                         </div>
@@ -667,12 +668,18 @@ async function openNavAddStore(visit_id) {
                   
                   console.log(response,"resp")
                   $('.order_team').text(response.data.order_no+' - '+response.data.team_leader)
+                  $('#visit_id').val(response.data.visit_id);
+
+                  if (response.data.items_list.length == 0){
+                    $('#items_container').append('<tr><td>No items</td></tr>');
+                  }
 
                   $.each(response.data.items_list,function(obj,value){
-                    
                         $('#items_container').append('<tr><td><label style="padding-left: 0px !important;" class="c-container"><input type="checkbox" class="inv-item-checkbox item_check" data-itemid="'+value.item_id+'"><span style="top:-4px !important;" class="c-checkmark"></span></label></td><td >'+value.item_name+'</td><td >'+value.item_code+'</td><td ><div class="d-flex"><a class="quantity__minus pointer" onclick="decrement('+value.item_id+')"><span>-</span></a><input type="number" class="quantity__input" id="id_qty_'+value.item_id+'" value="'+value.quantity+'" oninput="quantitychange('+value.item_id+','+value.quantity+')" name="qty"><a class="quantity__plus pointer" onclick="increment('+value.item_id+','+value.quantity+')"><span>+</span></a></div></td></tr>');
                     
                     })
+
+                    
                   
 
               })
@@ -776,7 +783,8 @@ async function openNavAddStore(visit_id) {
         var formdata = {
             'item_ids' : item_ids,
             'inventory_user' : "{{request.user.id}}",
-            'quantities' : item_qtys
+            'quantities' : item_qtys,
+            'visit_id' : $('#visit_id').val()
         }
 
         axios.post(url+'/api/items-check-in/',formdata)

@@ -272,12 +272,12 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
         {% endfor %}
         <div class="row mt-20">
           <div class="col-md-3 ">
-              <div class="model-input-name required-field">Store</div>
-              <input autocomplete="off"  type="hidden" id="store_id" name="store_id" >
+              <div class="model-input-name required-field">Store{{store.name}}</div>
+              <input autocomplete="off"  type="hidden" id="store_id" name="store_id" value="1" >
 
               <div style="position: relative;">
                   <div class="inv-input-container inv-border h-30">
-                      <input autocomplete="off" onclick="storeListShow()" type="text" id="store-name" name="storename" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showStores()" required>
+                      <input autocomplete="off" onclick="storeListShow()" type="text" id="store-name" name="storename" value="{{store.name}}" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showStores()" required>
                   </div>
                   <div id="id_store_search" class="row inv-result-box" style="display: none;height:auto;max-height:200px;">
                     
@@ -1504,9 +1504,8 @@ var products = [];
         $('#store_id').val($(d).attr("data-pro"));
         $('#store-name').val($(d).attr("data-name"));
 
-      
-
         document.getElementById("id_store_search").style.display="none"
+        set_params_go()
     }
     async function closeProductShow(d){
         console.log(d);
@@ -1723,6 +1722,21 @@ function showOf(id){
   }
   //document.getElementById("id_sec_item_"+id).style.display = "none";
 }
+
+function set_params_go(args)
+    {
+    var url='{% url 'bleach-inventory:inventory-createcheckout' visit.id %}';
+    var params={store_id:$('#store_id').val(),
+    };
+    for(key in args) 
+        params[key]=args[key];
+    var query='';
+    for(key in params)
+        if(params[key]) 
+            query+='&'+key+'='+params[key].toString();
+    query=query.replace('&','?');
+    window.location.href=url+query;  
+    }
 
 
 </script>

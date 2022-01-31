@@ -1640,189 +1640,207 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 
 		check_out_items = CheckOutItems.objects.filter(visit=checkout_visit).prefetch_related(Prefetch('checkoutitem',queryset=CheckOutItemUnits.objects.all(),to_attr='checkoutitem_units'))
 
-		if checkout_visit.stock_out_items_saved == False:
-			
-			cleaners_items_count_list = []
-			items_list = []
+		store_id = request.GET.get('store_id')
+		
+		if store_id:
+			store = Store.objects.get(id=int(store_id))
 
-			for visit in visits: 
-				visit.stock_out_items_saved = True
+			CheckOutItems.objects.filter(visit=checkout_visit).delete()
+
+			for visit in visits:
+				visit.stock_out_items_saved = False
 				visit.save()
 
-				service = visit.order_scheduler_book.service_type
-				price_ranges = ServicePriceRange.objects.filter(is_active=True,service_type=service)
-
-				for section in visit.order_scheduler_book.sections:
+			if checkout_visit.stock_out_items_saved == False:
 				
-					if section.size.isnumeric() == True:
-						max_area += float(section.size)
-						print(max_area,"mx")
-					else:
-						print("mok")
-						if visit.order_scheduler_book.service_type.name == 'Upholstery Cleaning':
-							
-							for price_range in price_ranges:
-								if price_range.name == section.size and price_range.service_type == section.evaluation_book.service_type and price_range.upholstery_type == section.upholstery_type:
-									max_area += float(price_range.maximum_area)
-						else:
-							for price_range in price_ranges:
-								if price_range.name == section.size and price_range.service_type == section.evaluation_book.service_type and section.evaluation_book.service_type.name != 'Mattress Cleaning' and price_range.is_newkitchen == section.new_kitchen and price_range.is_cabinet == section.is_cabinet and price_range.is_highprice_facade == section.is_highprice_facade and price_range.is_highprice_window == section.is_highprice_window:
-									max_area += float(price_range.maximum_area)
-			
-				cleaners += visit.no_of_cleaners
+				cleaners_items_count_list = []
+				items_list = []
 
-				service_recipe_ingredients = ServiceRecipeIngredients.objects.filter(service_type__service=service).prefetch_related(Prefetch('item_ingredient',queryset=ServiceRecipeItems.objects.all(),to_attr='service_recipe_items'))
+				for visit in visits: 
+					visit.stock_out_items_saved = True
+					visit.save()
 
-				# recommended quantity calc
+					service = visit.order_scheduler_book.service_type
+					price_ranges = ServicePriceRange.objects.filter(is_active=True,service_type=service)
+
+					for section in visit.order_scheduler_book.sections:
 					
-				for ingredient in service_recipe_ingredients:
-					service_quantity = ingredient.quantity
-
-					recommended_quantity = 0
-
-					if ingredient.service_or_person == 'service':
-						
-						service_area = ingredient.service_type.area_size
-						
-						if service_area != '0':
-							recommended_quantity = float(math.ceil(float(max_area) / float(service_area)) * float(service_quantity))
-
-					else:
-						service_person = ingredient.service_type.staff_count
-
-						if service_person != '0':
-							
-							quantity_per_person = float(service_quantity) / float(service_person)
-
-							recommended_quantity = float(cleaners) * float(quantity_per_person)
-
-					# items_list = []
-					for service_item in ingredient.service_recipe_items:    
-
-						
-						item = InventoryItem.objects.annotate(quantity_total=Sum(Case(When(unit_item__is_available=True,then=1),default=0,output_field=IntegerField()))).get(id=int(service_item.item.id))
-						
-						
-						if service_item.item.item_add_type == 'unit':
-							item_dict = {
-								'item_id' : item.id,
-								'item_name' : item.name,
-								'total_quantity' : float(item.quantity_total),
-								'item_type' : item.item_add_type,
-								'service' : visit.order_scheduler_book.service_type.name,
-								'service_item_id' : service_item.id,
-								'recommended_quantity' : recommended_quantity
-							}
-							print(item.quantity_total,"qx")
+						if section.size.isnumeric() == True:
+							max_area += float(section.size)
+							print(max_area,"mx")
 						else:
+							print("mok")
+							if visit.order_scheduler_book.service_type.name == 'Upholstery Cleaning':
+								
+								for price_range in price_ranges:
+									if price_range.name == section.size and price_range.service_type == section.evaluation_book.service_type and price_range.upholstery_type == section.upholstery_type:
+										max_area += float(price_range.maximum_area)
+							else:
+								for price_range in price_ranges:
+									if price_range.name == section.size and price_range.service_type == section.evaluation_book.service_type and section.evaluation_book.service_type.name != 'Mattress Cleaning' and price_range.is_newkitchen == section.new_kitchen and price_range.is_cabinet == section.is_cabinet and price_range.is_highprice_facade == section.is_highprice_facade and price_range.is_highprice_window == section.is_highprice_window:
+										max_area += float(price_range.maximum_area)
+				
+					cleaners += visit.no_of_cleaners
 
-							item_dict = {
-								'item_id' : item.id,
-								'item_name' : item.name,
-								'total_quantity' : float(item.total_quantity),
-								'item_type' : item.item_add_type,
-								'service' : visit.order_scheduler_book.service_type.name,
-								'service_item_id' : service_item.id,
-								'recommended_quantity' : recommended_quantity
-							}
-							print(item.total_quantity,"qx2")
+					service_recipe_ingredients = ServiceRecipeIngredients.objects.filter(service_type__service=service).prefetch_related(Prefetch('item_ingredient',queryset=ServiceRecipeItems.objects.all(),to_attr='service_recipe_items'))
 
-						items_list.append(item_dict)        
-			
-
-			#removng duplicate item counts for same service
-			service_combined_list = []
-
-			service_found = set()
-			for i in items_list:
-				if i['service'] not in service_found:
-					service_dicts = [item for item in items_list if item['service'] == i['service']]
-					service_found.add(i['service'])
-
-					item_found = set()
-
-					for service_item in service_dicts:
-						if service_item['item_id'] not in item_found:
-							
-							item_dicts = [item for item in service_dicts if item['item_id'] == service_item['item_id']]
-							
-							maxQuantity = max(item_dicts, key=lambda x:x['recommended_quantity'])
-							
-							item_found.add(service_item['item_id'])
-							service_combined_list.append(maxQuantity)				
-
-			print(service_combined_list,"eye66")
-
-			newlist = sorted(service_combined_list, key=lambda d: d['total_quantity'], reverse=True) 
-					
-			# variable_recommended_quantity = recommended_quantity
-
-			print(items_list,"itlist44")
-			print(newlist,"newitlist44")
-
-			for item in newlist:
-				if int(item['recommended_quantity']) != 0:
-					print(item['recommended_quantity'],item['total_quantity'],"recqty")
-
-					service_item = ServiceRecipeItems.objects.get(id=int(item['service_item_id']))
-					print(service_item.ingredient,"servzz")
-
-					# crtd = CheckOutItems.objects.create(visit=checkout_visit,service_item=service_item,units=math.ceil(float(item['recommended_quantity'])),is_swapped_item=False)
-
-					# print(crtd,"corrtf")
-
-					if item['total_quantity'] > 0 and float(item['total_quantity']) >= float(item['recommended_quantity']):
+					# recommended quantity calc
 						
-						try:
-							checkout_item = CheckOutItems.objects.get(visit=checkout_visit,service_item=service_item,service_item__ingredient=service_item.ingredient,is_checked_out=False)
-							print(checkout_item,"yuv1")
-						except:
-							print("yuv2")
-							if service_item.item.item_add_type == 'quantity':
-								print("yuv3nok")
-								CheckOutItems.objects.create(visit=checkout_visit,service_item=service_item,units=math.ceil(float(item['recommended_quantity'])),is_swapped_item=False)
+					for ingredient in service_recipe_ingredients:
+						service_quantity = ingredient.quantity
+
+						recommended_quantity = 0
+
+						if ingredient.service_or_person == 'service':
+							
+							service_area = ingredient.service_type.area_size
+							
+							if service_area != '0':
+								recommended_quantity = float(math.ceil(float(max_area) / float(service_area)) * float(service_quantity))
+
+						else:
+							service_person = ingredient.service_type.staff_count
+
+							if service_person != '0':
+								
+								quantity_per_person = float(service_quantity) / float(service_person)
+
+								recommended_quantity = float(cleaners) * float(quantity_per_person)
+
+						# items_list = []
+						for service_item in ingredient.service_recipe_items:    
+
+							
+							item = InventoryItem.objects.annotate(quantity_total=Sum(Case(When(unit_item__is_available=True,then=1),default=0,output_field=IntegerField()))).get(id=int(service_item.item.id))
+							
 							
 							if service_item.item.item_add_type == 'unit':
-								print("yuv4nok")
-								itemunits = ItemUnit.objects.filter(item=service_item.item,is_available=True)[:int(item['recommended_quantity'])]
-								print(itemunits,"rrr")
-								for unit in itemunits:
-									print(unit,"rrr2")
-									try:
-										CheckOutItems.objects.get(visit=checkout_visit,item_unit=unit,is_checked_out=False)
-									except:
-										CheckOutItems.objects.create(visit=checkout_visit,service_item=service_item,item_unit=unit,units=1,is_swapped_item=False)
-									# CheckOutItemUnits.objects.create(checkout_item=checkout_item,item_unit=unit)
+
+								itemstore = ItemUnit.objects.filter(item=item,store=store).count()
+								if itemstore > 0:
+									item_dict = {
+										'item_id' : item.id,
+										'item_name' : item.name,
+										'total_quantity' : float(item.quantity_total),
+										'item_type' : item.item_add_type,
+										'service' : visit.order_scheduler_book.service_type.name,
+										'service_item_id' : service_item.id,
+										'recommended_quantity' : recommended_quantity
+									}
+									print(item.quantity_total,"qx")
+
+									items_list.append(item_dict) 
+							else:
+								itemstore = QuantityStoreDetails.objects.filter(item_store=store,quantity_item=item).first()
+
+								if itemstore:
+									item_dict = {
+										'item_id' : item.id,
+										'item_name' : item.name,
+										'total_quantity' : float(itemstore.quantity),
+										'item_type' : item.item_add_type,
+										'service' : visit.order_scheduler_book.service_type.name,
+										'service_item_id' : service_item.id,
+										'recommended_quantity' : recommended_quantity
+									}
+									print(item.total_quantity,"qx2")
+
+									items_list.append(item_dict)        
+				
+
+				#removng duplicate item counts for same service
+				service_combined_list = []
+
+				service_found = set()
+				for i in items_list:
+					if i['service'] not in service_found:
+						service_dicts = [item for item in items_list if item['service'] == i['service']]
+						service_found.add(i['service'])
+
+						item_found = set()
+
+						for service_item in service_dicts:
+							if service_item['item_id'] not in item_found:
+								
+								item_dicts = [item for item in service_dicts if item['item_id'] == service_item['item_id']]
+								
+								maxQuantity = max(item_dicts, key=lambda x:x['recommended_quantity'])
+								
+								item_found.add(service_item['item_id'])
+								service_combined_list.append(maxQuantity)				
+
+				print(service_combined_list,"eye66")
+
+				newlist = sorted(service_combined_list, key=lambda d: d['total_quantity'], reverse=True) 
+						
+				# variable_recommended_quantity = recommended_quantity
+
+				print(items_list,"itlist44")
+				print(newlist,"newitlist44")
+
+				for item in newlist:
+					if int(item['recommended_quantity']) != 0:
+						print(item['recommended_quantity'],item['total_quantity'],"recqty")
+
+						service_item = ServiceRecipeItems.objects.get(id=int(item['service_item_id']))
+						print(service_item.ingredient,"servzz")
+
+						# crtd = CheckOutItems.objects.create(visit=checkout_visit,service_item=service_item,units=math.ceil(float(item['recommended_quantity'])),is_swapped_item=False)
+
+						# print(crtd,"corrtf")
+
+						if item['total_quantity'] > 0 and float(item['total_quantity']) >= float(item['recommended_quantity']):
 							
-		
-						print("klap")
-
-					elif item['total_quantity'] > 0 and float(item['total_quantity']) < float(item['recommended_quantity']):
-						
-						try:
-							checkout_item = CheckOutItems.objects.get(visit=checkout_visit,service_item=service_item,service_item__ingredient=service_item.ingredient,is_checked_out=False)
-						except:
-							if service_item.item.item_add_type == 'quantity':
-								CheckOutItems.objects.create(visit=checkout_visit,service_item=service_item,units=math.ceil(item['total_quantity']),is_swapped_item=False)
-						
-							if service_item.item.item_add_type == 'unit':
-								itemunits = ItemUnit.objects.filter(item=service_item.item,is_available=True)[:int(item['total_quantity'])]
-								print(itemunits,"rrr3")
-								for unit in itemunits:
-									try:
-										CheckOutItems.objects.get(visit=checkout_visit,item_unit=unit,is_checked_out=False)
-									except:
-										CheckOutItems.objects.create(visit=checkout_visit,service_item=service_item,item_unit=unit,units=1,is_swapped_item=False)
-									# CheckOutItemUnits.objects.create(checkout_item=checkout_item,item_unit=unit)
-
-						print("klap2")     
-
-					else:
-						pass
+							try:
+								checkout_item = CheckOutItems.objects.get(visit=checkout_visit,service_item=service_item,service_item__ingredient=service_item.ingredient,is_checked_out=False)
+								print(checkout_item,"yuv1")
+							except:
+								print("yuv2")
+								if service_item.item.item_add_type == 'quantity':
+									print("yuv3nok")
+									CheckOutItems.objects.create(visit=checkout_visit,service_item=service_item,units=math.ceil(float(item['recommended_quantity'])),is_swapped_item=False)
+								
+								if service_item.item.item_add_type == 'unit':
+									print("yuv4nok")
+									itemunits = ItemUnit.objects.filter(item=service_item.item,store=store,is_available=True)[:int(item['recommended_quantity'])]
+									print(itemunits,"rrr")
+									for unit in itemunits:
+										print(unit,"rrr2")
+										try:
+											CheckOutItems.objects.get(visit=checkout_visit,item_unit=unit,is_checked_out=False)
+										except:
+											CheckOutItems.objects.create(visit=checkout_visit,service_item=service_item,item_unit=unit,units=1,is_swapped_item=False)
+										# CheckOutItemUnits.objects.create(checkout_item=checkout_item,item_unit=unit)
+								
 			
+							print("klap")
 
-			print(service_recipe_ingredients,"itt")
-		return render(request,'inventory/createCheckout.html',{"max_area":max_area,"cleaners":cleaners,"stock_out":stock_out,"price_ranges":price_ranges,"visit":checkout_visit,"visits":visits,"items":items,"check_out_items":check_out_items})
+						elif item['total_quantity'] > 0 and float(item['total_quantity']) < float(item['recommended_quantity']):
+							
+							try:
+								checkout_item = CheckOutItems.objects.get(visit=checkout_visit,service_item=service_item,service_item__ingredient=service_item.ingredient,is_checked_out=False)
+							except:
+								if service_item.item.item_add_type == 'quantity':
+									CheckOutItems.objects.create(visit=checkout_visit,service_item=service_item,units=math.ceil(item['total_quantity']),is_swapped_item=False)
+							
+								if service_item.item.item_add_type == 'unit':
+									itemunits = ItemUnit.objects.filter(item=service_item.item,store=store,is_available=True)[:int(item['total_quantity'])]
+									print(itemunits,"rrr3")
+									for unit in itemunits:
+										try:
+											CheckOutItems.objects.get(visit=checkout_visit,item_unit=unit,is_checked_out=False)
+										except:
+											CheckOutItems.objects.create(visit=checkout_visit,service_item=service_item,item_unit=unit,units=1,is_swapped_item=False)
+										# CheckOutItemUnits.objects.create(checkout_item=checkout_item,item_unit=unit)
+
+							print("klap2")     
+
+						else:
+							pass
+				
+
+				print(service_recipe_ingredients,"itt")
+		return render(request,'inventory/createCheckout.html',{"store":store,"max_area":max_area,"cleaners":cleaners,"stock_out":stock_out,"price_ranges":price_ranges,"visit":checkout_visit,"visits":visits,"items":items,"check_out_items":check_out_items})
 
 	def post(self,request,visit_id):
 		checkout_visit = OrderScheduler.objects.select_related('order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections')).get(id=int(visit_id))
@@ -1935,6 +1953,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 				item.save()
 
 			for visit in visits:
+				print("visittest")
 				visit.stock_out_items_saved = True
 				visit.stock_out_items_submitted = True
 				visit.save()
