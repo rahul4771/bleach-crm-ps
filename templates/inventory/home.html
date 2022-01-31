@@ -190,7 +190,7 @@
                     </div>
                     {% endif %}
 
-                    
+                    {% if request.user.user_type != 'PURCHASINGOFFICER' %}
                     <div class="row mt-10">
                         <div class="col-md-12">
                             <div class="white-wrapper white-wrapper-padding m-0" style="margin-bottom: 0px !important;">
@@ -319,9 +319,10 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
                     
 
-
+                    {% if request.user.user_type != 'STOCKCONTROLLER' %}
                     <div class="row mt-10">
                         <div class="col-md-12">
                             <div class="white-wrapper white-wrapper-padding m-0">
@@ -432,6 +433,7 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
                 </div>
                 {% comment %} <div class="col-md-6 col-lg-3 mt-10 ">
                     <div class="white-wrapper white-wrapper-padding m-0">
