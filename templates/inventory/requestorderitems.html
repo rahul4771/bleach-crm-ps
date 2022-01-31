@@ -39,6 +39,7 @@
                         <div class="col-md-12 text-center">
                             <form method="POST" action="" >{% csrf_token %}
                             <input type="hidden" name="action" value="stock_out" />
+                            <input type="hidden" name="store" value="{{store.id}}" />
                             <input type="hidden" name="item_id" id="id_item" />
                             <div class="cancel-model-content">
                                 <button class="sent-button" type="submit" >Stock Out</button>
