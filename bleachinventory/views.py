@@ -833,12 +833,16 @@ class InventoryItems(IsInventoryAdminUser,View):
 		if action == 'return_item':
 			item = InventoryItem.objects.get(id=item_id)
 
+			store_id = request.POST.get('store')
+			store = Store.objects.get(id=int(store_id))
+
 			externaluser = ExternalCustomer.objects.get( id=int(request.POST.get('externaluser')) ) 
 
 			if item.item_add_type == 'unit':
 				unit_id = request.POST.get('return_unit')
 				itemunit = ItemUnit.objects.get(id=int(unit_id))
 				itemunit.status = 'working'
+				itemunit.store = store
 				itemunit.is_available = True
 				itemunit.save()
 
@@ -857,16 +861,16 @@ class InventoryItems(IsInventoryAdminUser,View):
 						external_user = request_order_item.request_order.requested_by.name
 					)
 
-					# try:
-					# 	quantitystore = QuantityStoreDetails.objects.get(item_store=store,quantity_item = item)
-					# 	quantitystore.quantity = float(quantitystore.quantity) + float(quantity)
-					# 	quantitystore.save()
-					# except:
-					# 	QuantityStoreDetails.objects.create(
-					# 	item_store = store,
-					# 	quantity_item = item,
-					# 	quantity = quantity
-					# 	)
+					try:
+						quantitystore = QuantityStoreDetails.objects.get(item_store=store,quantity_item = item)
+						quantitystore.quantity = float(quantitystore.quantity) + float(quantity)
+						quantitystore.save()
+					except:
+						QuantityStoreDetails.objects.create(
+						item_store = store,
+						quantity_item = item,
+						quantity = quantity
+						)
 
 					item.total_quantity = float(item.total_quantity) + float(quantity)
 					item.save()
@@ -1840,6 +1844,9 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 				
 
 				print(service_recipe_ingredients,"itt")
+		else:
+			store = Store.objects.get(id=1)
+
 		return render(request,'inventory/createCheckout.html',{"store":store,"max_area":max_area,"cleaners":cleaners,"stock_out":stock_out,"price_ranges":price_ranges,"visit":checkout_visit,"visits":visits,"items":items,"check_out_items":check_out_items})
 
 	def post(self,request,visit_id):
@@ -1877,6 +1884,9 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 			# quantities = request.POST.get('quantities')
 			
 			# quantities = quantities.split(",")
+			store_id = request.POST.get('store_id')
+			store = Store.objects.get(id=int(store_id))
+			print(store,"storra")
 
 			checkout_items=CheckOutItems.objects.filter(visit=checkout_visit,is_checked_out=False)
 
@@ -1890,6 +1900,11 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 
 				count += 1
 
+				try:
+					store_item     = QuantityStoreDetails.objects.get(item_store=store,quantity_item=item.item)
+				except:
+					store_item     = None
+
 				if item.item and item.item.item_add_type == 'unit':
 	
 					if item.item_unit:
@@ -1899,24 +1914,19 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 						itemunit.save()
 
 				if item.item and item.item.item_add_type == 'quantity':
+					
 					inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(is_available=True),to_attr='item_units')).get(id=int(item.item.id))
 					
 					print(inventoryitem.total_quantity,"krok")
-					if float(inventoryitem.total_quantity) >= float(item.units):
+					if float(store_item.quantity) >= float(item.units):
 						inventoryitem.total_quantity = round(float(inventoryitem.total_quantity) - float(item.units),2)
 						inventoryitem.save()
+
+						store_item.quantity = round(float(store_item.quantity) - float(item.units),2)
+						store_item.save()
+
 						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),item_action='STOCK OUT',item_remark=checkout_visit.order.order_no,added_by=team_leader)
 
-						# try:
-						# 	quantitystore = QuantityStoreDetails.objects.get(item_store=store,quantity_item = item)
-						# 	quantitystore.quantity = float(quantitystore.quantity) + float(quantity)
-						# 	quantitystore.save()
-						# except:
-						# 	QuantityStoreDetails.objects.create(
-						# 	item_store = store,
-						# 	quantity_item = item,
-						# 	quantity = quantity
-						# 	)
 					else:
 						messages.error(request,"Quantity limit exceeded !")
 						return redirect('bleach-inventory:inventory-createcheckout',visit_id)
@@ -1932,21 +1942,14 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 				if item.service_item and item.service_item.item.item_add_type == 'quantity':
 					inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(is_available=True),to_attr='item_units')).get(id=int(item.service_item.item.id))
 					
-					if float(inventoryitem.total_quantity) >= float(item.units):
+					if float(store_item.quantity) >= float(item.units):
 						inventoryitem.total_quantity = round(float(inventoryitem.total_quantity) - float(item.units),2)
 						inventoryitem.save()
-						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),item_action='STOCK OUT',item_remark=checkout_visit.order.order_no,added_by=team_leader)
 
-						# try:
-						# 	quantitystore = QuantityStoreDetails.objects.get(item_store=store,quantity_item = item)
-						# 	quantitystore.quantity = float(quantitystore.quantity) + float(quantity)
-						# 	quantitystore.save()
-						# except:
-						# 	QuantityStoreDetails.objects.create(
-						# 	item_store = store,
-						# 	quantity_item = item,
-						# 	quantity = quantity
-						# 	)
+						store_item.quantity = round(float(store_item.quantity) - float(item.units),2)
+						store_item.save()
+
+						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),item_action='STOCK OUT',item_remark=checkout_visit.order.order_no,added_by=team_leader)
 
 				item.is_checked_out = True
 				item.checked_out_date = date.today()
@@ -2912,7 +2915,7 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 							return redirect('bleach-inventory:inventory-requestorderitems',request_order_id)
 				
 					elif request_order_item.product.item_add_type == 'unit':
-						unitcount = ItemUnit.objects.filter(is_available=True,item=request_order_item.product).count()
+						unitcount = ItemUnit.objects.filter(is_available=True,store=store,item=request_order_item.product).count()
 						if not (request_order_item.product_unit.is_available == True and float(unitcount) >= float(request_order_item.item_count)):
 							request_order_item.status    = 'Not Available'
 							is_all_items_available       = False

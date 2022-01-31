@@ -273,7 +273,7 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="row mt-20">
           <div class="col-md-3 ">
               <div class="model-input-name required-field">Store{{store.name}}</div>
-              <input autocomplete="off"  type="hidden" id="store_id" name="store_id" value="1" >
+              <input autocomplete="off" class="store_id" type="hidden" id="store_id" name="store_id" value="1" >
 
               <div style="position: relative;">
                   <div class="inv-input-container inv-border h-30">
@@ -326,6 +326,7 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
               <form id="stockform" method="POST" action="" >{% csrf_token %}
                 {% if stock_out == 'stockout' %}
                 <input type="hidden" name="action" value="submit_checkout_list">
+                <input type="hidden" class="store_id" name="store_id" value="1" >
                 {% else %}
                 <input type="hidden" name="action" value="save_checkout_list">
                 {% endif %}
@@ -703,6 +704,13 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
 {% block javascript %}
 
 <script>
+
+  
+
+  $('.store_id').val({{store.id}});
+  $('#store-name').val("{{store.store_name}}");
+
+
   var stores=[]
   getStores()
   async function getStores(){
@@ -1501,7 +1509,7 @@ var products = [];
       function closeStoreShow(d){
         console.log(d);
         var proId = $(d).attr("data-pro")
-        $('#store_id').val($(d).attr("data-pro"));
+        $('.store_id').val($(d).attr("data-pro"));
         $('#store-name').val($(d).attr("data-name"));
 
         document.getElementById("id_store_search").style.display="none"
