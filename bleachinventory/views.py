@@ -2838,19 +2838,23 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 		if request_order_items:
 			for request_order_item in request_order_items:
 				if request_order_item.product.item_add_type == 'quantity':
-					reminign_items = float(request_order_item.product.total_quantity)-float(request_order_item.item_count)
-					# store_items    = 
+					try:
+						store_item     = QuantityStoreDetails.objects.get(item_store=store,quantity_item=request_order_item.product)
+						reminign_items = float(store_item.quantity)-float(request_order_item.item_count)
+					except:
+						store_item     = None
+						reminign_items = 0
 
-					if reminign_items < 0:
+					if reminign_items <= 0:
 						request_order_item.status = 'Out Of Stock'
 						is_all_items_available       = False
-					elif reminign_items <= float(request_order_item.product.reserve_count) and reminign_items >= 0:
+					elif reminign_items <= float(request_order_item.product.reserve_count) and reminign_items > 0:
 						request_order_item.status = 'About to Finish'
 					else:
 						request_order_item.status = 'Available'
 				
 				elif request_order_item.product.item_add_type == 'unit':
-					unitcount = ItemUnit.objects.filter(is_available=True,item=request_order_item.product).count()
+					unitcount = ItemUnit.objects.filter(is_available=True,item=request_order_item.product,store=store).count()
 					if	request_order_item.product_unit.is_available == True and float(unitcount) >= float(request_order_item.item_count):
 						request_order_item.status = 'Available'
 					else:
