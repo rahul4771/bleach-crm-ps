@@ -52,20 +52,33 @@
             <li class="inv-dash"><a href="/bleach-inventory/dashboard/" title="Dashboard"><span>Dashboard</span></a></li>
             <li class="inv-inv"><a href="/bleach-inventory/inventory/" title="Inventory"><span>Inventory</span></a></li>
             <li class="inv-orders"><a href="/bleach-inventory/order/" title="Orders"><span>Orders</span></a></li>
+            {% if request.user.user_type != 'PURCHASINGOFFICER' %}
             <li class="inv-pending"><a href="/bleach-inventory/pendingitems/" title="Pending"><span>Pending Items</span></a></li>
+            {% endif %}
+            {% if request.user.user_type != 'STOCKCONTROLLER' %}
             <li class="inv-purchase-order"><a href="/bleach-inventory/purchaseOrder/" title="Purchase Order"><span>Purchase Orders</span></a></li>
+            {% endif %}
+            {% if request.user.user_type != 'PURCHASINGOFFICER' %}
             <li class="inv-purchase-order"><a href="/bleach-inventory/requestorder/" title="Item Requests"><span>Item Requests</span></a></li>
+            {% endif %}
             {% comment %} <li class="inv-bundils"><a href="/bleach-inventory/bundle/" title="Bundles"><span>Bundles</span></a></li> {% endcomment %}
+            {% if request.user.user_type != 'STOCKCONTROLLER' %}
             <li class="inv-servicerecipe"><a href="/bleach-inventory/services/" title="Services"><span>ServiceRecipe</span></a></li>
             <li class="inv-supplers"><a href="/bleach-inventory/supplier/" title="Suppliers"><span>Suppliers</span></a></li>
             <li class="inv-store border"><a href="/bleach-inventory/store/" title="Stores"><span>Stores</span></a></li>
+            {% endif %}
             <br>
-            <br><br>    
+            <br><br> 
+            {% if request.user.user_type != 'STOCKCONTROLLER' %}   
             <li class="inv-create-po"><a href="/bleach-inventory/createpo/" title="Create PO"><span>Create PO</span></a></li>
+            {% endif %}
+            {% if request.user.user_type != 'PURCHASINGOFFICER' %}
             <li class="inv-create-ir"><a href="/bleach-inventory/createir/" title="Create IR"><span>Create IR</span></a></li>
-
+            {% endif %}
+            {% if request.user.user_type != 'STOCKCONTROLLER' %}
             <li class="inv-cat"><a href="/bleach-inventory/category/" title="Category"><span>Categories</span></a></li>
             <li class="inv-attributes"><a href="/bleach-inventory/attribute/" title="Attributes"><span>Attributes</span></a></li>
+            {% endif %}
             {% comment %} <li class="inv-user border"><a style="color: #cccccc;"title="User"><span>User</span></a></li> {% endcomment %}
 
             </ul>
