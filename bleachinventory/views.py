@@ -2827,12 +2827,20 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 	def get(self,request,request_order_id):
 		request_order       = RequestOrder.objects.get(id=request_order_id)
 		request_order_items = RequestOrderItems.objects.select_related('product').filter(request_order=request_order)
+		
+		try:
+			store               = Store.objects.get(id=request.GET.get('store'))
+		except:
+			store               = Store.objects.first()
+
 		#item availability check
 		is_all_items_available = True
 		if request_order_items:
 			for request_order_item in request_order_items:
 				if request_order_item.product.item_add_type == 'quantity':
 					reminign_items = float(request_order_item.product.total_quantity)-float(request_order_item.item_count)
+					# store_items    = 
+
 					if reminign_items < 0:
 						request_order_item.status = 'Out Of Stock'
 						is_all_items_available       = False
@@ -2850,7 +2858,7 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 						is_all_items_available       = False
 						
 				
-		return render(request,"inventory/requestorderitems.html",{"request_order":request_order,"request_order_items":request_order_items,"is_all_items_available":is_all_items_available})
+		return render(request,"inventory/requestorderitems.html",{"request_order":request_order,"request_order_items":request_order_items,"is_all_items_available":is_all_items_available,"store":store})
 
 	def post(self,request,request_order_id):
 		request_order       = RequestOrder.objects.get(id=request_order_id)
