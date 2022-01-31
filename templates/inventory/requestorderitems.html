@@ -13,6 +13,7 @@
                 <!--welcome-wrapper-->
                 <h1 class="dashboard-head av-font">{{request_order.request_order_id}}</h1>
                 <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
+               
             </div>
         </div>
         <!-- Check out confirmation modal begins here-->
@@ -90,7 +91,7 @@
                             <div class="inv-input-container inv-border h-30">
                                 <input autocomplete="off" onclick="storeListShow()" type="text" id="store-name" name="storename" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showStores()" required>
                             </div>
-                            <div id="id_store_search" class="row inv-result-box" style="display: none;height:auto;max-height:200px;">
+                            <div id="id_store_search" class="row inv-result-box" style="display: none;height:auto;max-height:200px;z-index:2000;">
                               
                             </div>
                         </div>
@@ -179,13 +180,17 @@
 
 
 
+
 {% endblock %}
 
 {% block javascript %}
 <script>
 {% if store %}
-"{{store.id}}"
-"{{store.name}}"
+
+
+$('#store_id').val({{store.id}});
+ $('#store-name').val("{{store.store_name}}");
+
 {% endif %}
 
 var stores=[]
@@ -225,6 +230,8 @@ function showStores(){
         
         }
         function closeStoreShow(d){
+            $('#store_id').val($(d).attr("data-pro"));
+        $('#store-name').val($(d).attr("data-name"));
         var proId = $(d).attr("data-pro")
         set_params_go({'store':proId})
       
