@@ -2838,8 +2838,11 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 		if request_order_items:
 			for request_order_item in request_order_items:
 				if request_order_item.product.item_add_type == 'quantity':
-					reminign_items = float(request_order_item.product.total_quantity)-float(request_order_item.item_count)
-					# store_items    = 
+					try:
+						store_item     = QuantityStoreDetails.objects.get(item_store=store,quantity_item=request_order_item.product)
+						reminign_items = float(store_item.quantity)-float(request_order_item.item_count)
+					except:
+						reminign_items = -1
 
 					if reminign_items < 0:
 						request_order_item.status = 'Out Of Stock'
@@ -2850,7 +2853,7 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 						request_order_item.status = 'Available'
 				
 				elif request_order_item.product.item_add_type == 'unit':
-					unitcount = ItemUnit.objects.filter(is_available=True,item=request_order_item.product).count()
+					unitcount = ItemUnit.objects.filter(is_available=True,item=request_order_item.product,store=store).count()
 					if	request_order_item.product_unit.is_available == True and float(unitcount) >= float(request_order_item.item_count):
 						request_order_item.status = 'Available'
 					else:
@@ -2863,6 +2866,12 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 	def post(self,request,request_order_id):
 		request_order       = RequestOrder.objects.get(id=request_order_id)
 		request_order_items = RequestOrderItems.objects.select_related('product').filter(request_order=request_order)              
+
+		try:
+			store               = Store.objects.get(id=request.POST.get('store'))
+		except:
+			store               = Store.objects.first()
+
 		action              = request.POST.get('action')
 		if action == 'stock_out':
 			#item availability check
@@ -2870,7 +2879,13 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 			if request_order_items:
 				for request_order_item in request_order_items:
 					if request_order_item.product.item_add_type == 'quantity':
-						if float(request_order_item.product.total_quantity) <= 0 or float(request_order_item.product.total_quantity) < float(request_order_item.item_count):
+						
+						try:
+							store_item     = QuantityStoreDetails.objects.get(item_store=store,quantity_item=request_order_item.product)
+						except:
+							store_item     = None
+						
+						if float(store_item.quantity) <= 0 or float(store_item.quantity) < float(request_order_item.item_count):
 							request_order_item.status    = 'Out Of Stock'
 							is_all_items_available       = False
 
@@ -2893,11 +2908,13 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 						
 						if request_order_item.product.item_add_type == 'quantity':
 							request_order_item.product.total_quantity = float(request_order_item.product.total_quantity)-float(request_order_item.item_count)
+							store_item.quantity                       = float(store_item.quantity)-float(request_order_item.item_count)
 						
 						request_order_item.product.save()
 						request_order_item.is_received             = True
 						request_order_item.save()
-
+						store_item.save()
+						
 						ItemHistory.objects.create(
 						item = request_order_item.product,
 						item_action = 'ITEM REQUEST',
@@ -2906,18 +2923,6 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 						external_user = request_order_item.request_order.requested_by.name
 						)
 
-						# try:
-						# 	quantitystore = QuantityStoreDetails.objects.get(item_store=store,quantity_item = item)
-						# 	quantitystore.quantity = float(quantitystore.quantity) + float(quantity)
-						# 	quantitystore.save()
-						# except:
-						# 	QuantityStoreDetails.objects.create(
-						# 	item_store = store,
-						# 	quantity_item = item,
-						# 	quantity = quantity
-						# 	)
-
-						#update unit item status
 						if request_order_item.product_unit:
 							request_order_item.product_unit.status = 'working'
 							request_order_item.product_unit.is_available=False

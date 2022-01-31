@@ -48,7 +48,7 @@ class Signin(View):
 			if request.user.user_type == 'BOOKINGOFFICER':	
 				return redirect('booking-officer:bookingofficerdash-board')
 
-			if request.user.user_type == 'INVENTORYADMIN' or request.user.user_type == 'INVENTORYUSER':	
+			if request.user.user_type == 'INVENTORYADMIN' or request.user.user_type == 'INVENTORYUSER' or request.user.user_type == 'STOCKCONTROLLER' or request.user.user_type == 'PURCHASINGOFFICER':	
 				return redirect('bleach-inventory:inventorydash-board')
 		else:		
 			return render(request,'user/login.html',{})
@@ -88,7 +88,11 @@ class Signin(View):
 				return redirect('accountant:accountantdash-board')
 
 			if request.user.user_type == 'QUALITYCONTROLL':	
-				return redirect('qc:qcdash-board')		
+				return redirect('qc:qcdash-board')
+
+			if request.user.user_type == 'INVENTORYADMIN' or request.user.user_type == 'INVENTORYUSER' or request.user.user_type == 'STOCKCONTROLLER' or request.user.user_type == 'PURCHASINGOFFICER':
+				print("helllooooooooooooooooo")
+				return redirect('bleach-inventory:inventorydash-board')
 		else:
 			messages.error(request, "Username or Password Invalid")
 
