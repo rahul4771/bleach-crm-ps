@@ -146,14 +146,11 @@
                                 <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                     Requested by
                                 </th>
-                                <th data-hide="phone,tablet"  style="width: %; text-align: center;">
-                                    Initiated Date
-                                </th>
-                                <th data-hide="phone,tablet"  style="width: %; text-align: center;">
-                                    Received Date
-                                </th>
                                 <th data-hide="phone,tablet"  style="width: %;" class="text-center">
-                                    Received by
+                                    Issued by
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                    Issued Date
                                 </th>
                                 <th  data-hide="phone,tablet"  style="width: %;" class="text-center td-md-width">
                                     Purpose
@@ -176,14 +173,10 @@
                                 {{order.requested_by.name}}
                             </td>
                             <td class="text-center">
-                                {{order.created|date:'d-m-Y'}}
+                                {{order.received_by.name}}
                             </td>
                             <td class="text-center">
                                 {{order.received_date|date:'d-m-Y'}}
-                            </td>
-                            
-                            <td class="text-center">
-                                {{order.received_by.name}}
                             </td>
                             <td class="text-center">
                                 {{order.purpose}}
