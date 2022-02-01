@@ -473,7 +473,7 @@
         <div class="inv-sidedrawer-inner">
             <div class="d-flex">
                 <div class="inv-drawer-head" id="itemHead">
-                    Stock-in
+                    Stock-in 
                 </div>
                 <div class="right-pos">
 
@@ -493,7 +493,21 @@
                       
                     </div>
                 </div>
+                <div class="col-md-6 mt-20">
+                    <div class="model-input-name required-field">Store</div>
+                    <input autocomplete="off"  type="hidden" id="store_id" name="store_id" >
+      
+                    <div style="position: relative;">
+                        <div class="inv-input-container inv-border h-30">
+                            <input autocomplete="off" onclick="storeListShow()" type="text" id="store-name" name="storename" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showStores()" required>
+                        </div>
+                        <div id="id_store_search" class="row inv-result-box" style="display: none;height:auto;max-height:200px;z-index:2000;">
+                          
+                        </div>
+                    </div>
+                </div>
             </div>
+
           <div class="row mt-20">
               <div class="col-md-12">
                   <div style="border-top:1px solid #c4c4c4">
@@ -600,6 +614,7 @@
 
 <script src="{% static '/files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js'%}"></script>
 <script>
+
     $(document).ready(function () {
     $('.count').prop('disabled', true);
     $(document).on('click', '.plus', function () {
@@ -620,6 +635,51 @@
         $('#id_day_text').text('Today')
     }
   });
+  var stores=[]
+  getStores()
+  async function getStores(){
+   
+    var result = await _get('api/item_stores/');
+    if(result.status==200)
+    {
+    stores=result.data.stores
+    }
+  }
+  getStores()
+    function storeListShow(){
+    searchFlag = true;
+    document.getElementById("id_store_search").style.display="block"
+    showStores()
+}
+function showStores(){
+          console.log("stores is "+JSON.stringify(stores))
+            $('#id_store_search').empty();
+            for (var j=0; j<stores.length; j++) {
+                if (stores[j].store_name.toUpperCase().match($('#store-name').val().toUpperCase())){
+                   
+            $('#id_store_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeStoreShow(this)"  data-pro="'+stores[j].id+'" data-name="'+stores[j].store_name+'"><div class="inv-search-result">'+stores[j].store_name+'</div></div>');
+
+                }
+            }
+            console.log( $('#store-name').val());
+            if($('#store-name').val() !=""){
+            document.getElementById("id_store_search").style.display="block"
+
+            }else{
+            document.getElementById("id_store_search").style.display="block"
+
+            }
+        
+        }
+        function closeStoreShow(d){
+            $('#store_id').val($(d).attr("data-pro"));
+        $('#store-name').val($(d).attr("data-name"));
+        var proId = $(d).attr("data-pro")
+      //  set_params_go({'store':proId})
+      
+
+        document.getElementById("id_store_search").style.display="none"
+    }
 
  //datepicker script start   
  function viewPicker(){
