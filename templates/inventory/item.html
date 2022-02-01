@@ -264,9 +264,10 @@
                     </div>
                     <div class="col-md-3">
                         <div class="  h-100 m-mt-30">
-                            <div class="inv-item-card ">
+                            <div class="inv-item-card " >
                              <div class="av-font text-center">
                                  Inventory
+                                 <i class="fas fa-arrow-circle-right" onclick="openNavInventoryPopup()" style="float:right;color: #2d4e85;cursor:pointer"></i>
                                  <div style="text-align: center;" class=" av-font mt-10 mb-10">
                                      
                                      <br>
@@ -950,6 +951,88 @@
 
     </div>
     </div>
+     <!--- popup begins here-->
+     <div id="inventory_popup" class="inv-sidedrawer">
+
+        <div class="inv-sidedrawer-inner" style="height:100%">
+            <div class="d-flex">
+                <div class="inv-drawer-head">
+                 Inventory
+                </div>
+                <div class="right-pos">
+
+                    <button onclick="closeNavInventoryPopup()" class="img-button">
+                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                    </button>
+                </div>
+            </div>
+            <hr>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <table class="inv-table footable main-table" style="max-height:70vh;overflow: scroll;">
+                        <thead>
+                            <tr>
+                                <th style="width: %;">
+                                   Store Name
+                                </th>
+                                <th style="width: %;">
+                                    Quantity
+                                </th>
+                               
+                               
+                            </tr>
+                        </thead>
+                        <tbody>
+                           
+                            <tr>
+                                <td data-label="Unit ID">
+                                    00000000
+                                </td>
+                                <td data-label="serial No.">
+                                    232
+                                </td>
+                                
+                            </tr>
+                            <tr>
+                                <td data-label="Unit ID">
+                                    00000000
+                                </td>
+                                <td data-label="serial No.">
+                                    232
+                                </td>
+                                
+                            </tr>
+                            <tr>
+                                <td data-label="Unit ID">
+                                    00000000
+                                </td>
+                                <td data-label="serial No.">
+                                    232
+                                </td>
+                                
+                            </tr>
+                            </tbody>
+                            </table>
+
+                </div>
+               
+                
+               
+
+            </div>
+
+           
+        <div class="inv-drawer-footer">
+              
+        
+                        <button data-dismiss="modal" onclick="closeNavInventoryPopup()" class="view-button">Close</button>
+        </div>
+        
+
+    </div>
+    </div>
+
+    <!--- popup ends here-->
 
     <!--- edit sub parts ends here-->
 
@@ -2098,6 +2181,10 @@ function selectFileInp(){
     function closeNavAdd() {
         document.getElementById("addBundle2").style.width = "0";
     }
+    function closeNavInventoryPopup(){
+        document.getElementById("inventory_popup").style.width = "0";
+        
+    }
 
 function viewImgModel(){
     console.log('c')
@@ -2348,6 +2435,16 @@ function openNavAddBundle(d) {
         }
         else{
             document.getElementById("addBundle").style.width = "30%";
+        }  
+    }
+    function openNavInventoryPopup(){
+        if(screen.width<= 600){
+            document.getElementById("inventory_popup").style.width = "100%";
+        }else if(screen.width<= 720){
+            document.getElementById("inventory_popup").style.width = "50%";
+        }
+        else{
+            document.getElementById("inventory_popup").style.width = "30%";
         }  
     }
     function openNavAddAccessories(d) {
