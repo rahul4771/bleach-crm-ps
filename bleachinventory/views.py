@@ -2660,7 +2660,7 @@ class InventoryCreateInventoryRequest(View):
 				request_order.purpose  = purpose
 
 			request_order.is_order_completed = True
-			if request.user.user_type == 'INVENTORYADMIN': 
+			if request.user.user_type == 'INVENTORYADMIN' or purpose == 'INVENTORY PREPARATION': 
 				request_order.is_admin_approved = True
 			request_order.save()
 			
