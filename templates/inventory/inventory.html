@@ -36,7 +36,10 @@
                             Filter
                         </button> {% endcomment %}
 
+                        {% if request.user.user_type != 'STOCKCONTROLLER' %}
                         <button class="inv-blue-btn"  onclick="openNavAddStore('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Item </button>
+                        {% endif %}
+
                         <button class="inv-blue-btn filter_btn"  data-toggle="modal" data-target="#filterModel" > Filter </button>
                     </div>
                 </div>

@@ -564,7 +564,7 @@ class InventoryBundle(IsInventoryAdminUser,View):
 class InventoryItems(IsInventoryAdminUser,View):
 	def get(self,request,item_id):
 		
-		inventory_item = InventoryItem.objects.prefetch_related(Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images')).get(id=item_id)
+		inventory_item = InventoryItem.objects.prefetch_related(Prefetch('quantity_store_item',queryset=QuantityStoreDetails.objects.select_related('item_store').all(),to_attr='storequantity'),Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images')).get(id=item_id)
 		categories = Category.objects.all()
 		item_units = ItemUnit.objects.filter(item=inventory_item).prefetch_related(Prefetch('product_request_unit',queryset=RequestOrderItems.objects.filter(is_received=True),to_attr='request_item_unit'),Prefetch('checkoutitem_unit',CheckOutItemUnits.objects.all().select_related('checkout_item__visit').prefetch_related(Prefetch('checkout_item__visit__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')),to_attr='checkout_unit'))
 		item_history = ItemHistory.objects.filter(item=inventory_item).order_by('-id')
@@ -2690,7 +2690,7 @@ class InventoryCreateInventoryRequest(View):
 				request_order.purpose  = purpose
 
 			request_order.is_order_completed = True
-			if request.user.user_type == 'INVENTORYADMIN': 
+			if request.user.user_type == 'INVENTORYADMIN' or purpose == 'INVENTORY PREPARATION': 
 				request_order.is_admin_approved = True
 			request_order.save()
 			

@@ -69,10 +69,10 @@
             {% endif %}
             <br>
             <br><br> 
-            {% if request.user.user_type != 'STOCKCONTROLLER' %}   
+            {% if request.user.user_type != 'STOCKCONTROLLER' and request.user.user_type != 'INVENTORYADMIN' %}   
             <li class="inv-create-po"><a href="/bleach-inventory/createpo/" title="Create PO"><span>Create PO</span></a></li>
             {% endif %}
-            {% if request.user.user_type != 'PURCHASINGOFFICER' %}
+            {% if request.user.user_type != 'PURCHASINGOFFICER' and request.user.user_type != 'INVENTORYADMIN' %}
             <li class="inv-create-ir"><a href="/bleach-inventory/createir/" title="Create IR"><span>Create IR</span></a></li>
             {% endif %}
             {% if request.user.user_type != 'STOCKCONTROLLER' %}
