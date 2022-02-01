@@ -1900,11 +1900,6 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 
 				count += 1
 
-				try:
-					store_item     = QuantityStoreDetails.objects.get(item_store=store,quantity_item=item.item)
-				except:
-					store_item     = None
-
 				if item.item and item.item.item_add_type == 'unit':
 	
 					if item.item_unit:
@@ -1914,6 +1909,11 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 						itemunit.save()
 
 				if item.item and item.item.item_add_type == 'quantity':
+
+					try:
+						store_item     = QuantityStoreDetails.objects.get(item_store=store,quantity_item=item.item)
+					except:
+						store_item     = None
 					
 					inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(is_available=True),to_attr='item_units')).get(id=int(item.item.id))
 					
@@ -1940,6 +1940,12 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 						itemunit.save()
 
 				if item.service_item and item.service_item.item.item_add_type == 'quantity':
+					
+					try:
+						store_item     = QuantityStoreDetails.objects.get(item_store=store,quantity_item=item.service_item.item)
+					except:
+						store_item     = None
+
 					inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(is_available=True),to_attr='item_units')).get(id=int(item.service_item.item.id))
 					
 					if float(store_item.quantity) >= float(item.units):
@@ -2029,6 +2035,8 @@ class PurchaseOrderItemsPage(IsInventoryAdminUser,View):
 		if action == 'add_quantity_to_inventory':
 			products = request.POST.getlist('product_id')
 			item_counts = request.POST.getlist('item_count')
+			store_id = request.POST.get('store_id')
+			store = Store.objects.get(id=int(store_id))
 			print(products,item_counts,"cts")
 
 			loopcount = 0
@@ -2039,14 +2047,14 @@ class PurchaseOrderItemsPage(IsInventoryAdminUser,View):
 				ItemHistory.objects.create(purchase_order=purchase_order,item=item,quantity=item_counts[loopcount],item_action='PURCHASE ORDER',item_remark=purchase_order.purchase_order_id,added_by=purchase_order_item.purchase_order.initiated_by)
 				
 				try:
-					quantitystore = QuantityStoreDetails.objects.get(item_store=purchase_order.store,quantity_item = item)
-					quantitystore.quantity = float(quantitystore.quantity) + float(quantity)
+					quantitystore = QuantityStoreDetails.objects.get(item_store=store,quantity_item = item)
+					quantitystore.quantity = float(quantitystore.quantity) + float(item_counts[loopcount])
 					quantitystore.save()
 				except:
 					QuantityStoreDetails.objects.create(
-					item_store = purchase_order.store,
+					item_store = store,
 					quantity_item = item,
-					quantity = quantity
+					quantity = item_counts[loopcount]
 					)
 
 				item.total_quantity = float(item.total_quantity) + float(item_counts[loopcount])

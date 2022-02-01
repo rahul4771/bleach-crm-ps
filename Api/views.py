@@ -4016,6 +4016,8 @@ class ItemsCheckInAPI(APIView):
 		item_ids    = request.data.get('item_ids')
 		item_quantities   = request.data.get('quantities')
 		user_id = request.data.get('inventory_user')
+		store_id = request.data.get('store_id')
+		store = Store.objects.get(id=int(store_id))
 		inventory_user = UserProfile.objects.get(id=int(user_id))
 		visit_id = request.data.get('visit_id')
 		print(item_quantities,"qts")
@@ -4039,6 +4041,7 @@ class ItemsCheckInAPI(APIView):
 				if checkin_item.item_unit:
 					inventoryitemunit = ItemUnit.objects.get(id=int(checkin_item.item_unit.id))
 					inventoryitemunit.status = 'working'
+					inventoryitemunit.store = store
 					inventoryitemunit.is_available=True
 					inventoryitemunit.save()
 					print("pam")
@@ -4046,6 +4049,7 @@ class ItemsCheckInAPI(APIView):
 					for itemunit in checkin_item.checkin_item_units:
 						inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
 						inventoryitemunit.status = 'working'
+						inventoryitemunit.store = store
 						inventoryitemunit.is_available=True
 						inventoryitemunit.save()
 
@@ -4053,6 +4057,7 @@ class ItemsCheckInAPI(APIView):
 				if checkin_item.item_unit:
 					inventoryitemunit = ItemUnit.objects.get(id=int(checkin_item.item_unit.id))
 					inventoryitemunit.status = 'working'
+					inventoryitemunit.store = store
 					inventoryitemunit.is_available=True
 					inventoryitemunit.save()
 				else:
@@ -4060,6 +4065,7 @@ class ItemsCheckInAPI(APIView):
 						print(itemunit.item_unit.id,"itunitid")
 						inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
 						inventoryitemunit.status = 'working'
+						inventoryitemunit.store = store
 						inventoryitemunit.is_available=True
 						inventoryitemunit.save()
 
@@ -4068,6 +4074,17 @@ class ItemsCheckInAPI(APIView):
 				inventoryitem = InventoryItem.objects.get(id=int(checkin_item.item.id))
 				inventoryitem.total_quantity = float(inventoryitem.total_quantity) + float(item_quantities[count])
 				inventoryitem.save()
+
+				try:
+					quantitystore = QuantityStoreDetails.objects.get(item_store=store,quantity_item = checkin_item.item)
+					quantitystore.quantity = float(quantitystore.quantity) + float(item_quantities[count])
+					quantitystore.save()
+				except:
+					QuantityStoreDetails.objects.create(
+					item_store = store,
+					quantity_item = checkin_item.item,
+					quantity = float(item_quantities[count])
+					)
 
 				ItemHistory.objects.create(
 				item = inventoryitem,
@@ -4084,6 +4101,17 @@ class ItemsCheckInAPI(APIView):
 				inventoryitem = InventoryItem.objects.get(id=int(checkin_item.service_item.item.id))
 				inventoryitem.total_quantity = float(inventoryitem.total_quantity) + float(item_quantities[count])
 				inventoryitem.save()
+
+				try:
+					quantitystore = QuantityStoreDetails.objects.get(item_store=store,quantity_item = checkin_item.item)
+					quantitystore.quantity = float(quantitystore.quantity) + float(item_quantities[count])
+					quantitystore.save()
+				except:
+					QuantityStoreDetails.objects.create(
+					item_store = store,
+					quantity_item = checkin_item.item,
+					quantity = float(item_quantities[count])
+					)
 
 				ItemHistory.objects.create(
 				item = inventoryitem,

@@ -846,7 +846,8 @@ async function openNavAddStore(visit_id) {
             'item_ids' : item_ids,
             'inventory_user' : "{{request.user.id}}",
             'quantities' : item_qtys,
-            'visit_id' : $('#visit_id').val()
+            'visit_id' : $('#visit_id').val(),
+            'store_id' : $('#store_id').val(),
         }
 
         axios.post(url+'/api/items-check-in/',formdata)
