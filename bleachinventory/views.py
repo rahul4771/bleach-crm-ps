@@ -1274,10 +1274,10 @@ class InventoryInv(IsInventoryAdminUser,View):
 		# for item in histories:
 		# 	team = CleaningTeam.objects.filter(visit__order__order_no=)
 
-		qty_items = InventoryItem.objects.filter(item_add_type='quantity')
-		store = Store.objects.filter(store_name='AL-RAI STORE').first()
-		for item in qty_items:
-			QuantityStoreDetails.objects.create(item_store=store,quantity_item=item,quantity=item.total_quantity)
+		# qty_items = InventoryItem.objects.filter(item_add_type='quantity')
+		# store = Store.objects.filter(store_name='AL-RAI STORE').first()
+		# for item in qty_items:
+		# 	QuantityStoreDetails.objects.create(item_store=store,quantity_item=item,quantity=item.total_quantity)
 			
 		# ItemHistory.objects.all().update(quantity_location=store)
 			
