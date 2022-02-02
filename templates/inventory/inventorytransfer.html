@@ -101,65 +101,19 @@
                 <div class="row mt-20">
                     
                     <div class="col-md-3">
-                        <div class="model-input-name">Select Supplier</div>
-                        
-                       {% comment %} <select id="supplier_id" class="minimal" onchange="set_params_go();">
-                            {% if purchase_order.supplier == None %}
-                                <option value="">--Select Supplier--</option>
-                            
-                                {% for supplier in suppliers %}
-                                <option value="{{supplier.id}}">{{supplier.supplier_name}}</option>
-                                {% endfor %}
-                            {% else %}
-                                <option value="{{purchase_order.supplier.id}}" selected>{{purchase_order.supplier.supplier_name}}</option>
-                            {% endif %}
-
-                        </select> {% endcomment %}
-                       
-                       
-                          <input type="text" hidden id="supplier_id" >
-                         <div class="wrap-drop" id="noble-gases" id="supplier_id" >
-                            {% if purchase_order.supplier == None %}
-                            <span>--Select Supplier--</span>
-                            <ul class="drop">
-                                {% for supplier in suppliers %}
-                                <li onclick="dropSelectSeller({{supplier.id}})" ><a>{{supplier.supplier_name}}</a></li>
-                                {% endfor %}
-                            </ul>
-                            {% else %}
-                            <span>{{purchase_order.supplier.supplier_name}}</span>
-                            <ul class="drop">
-                               
-                                <li class="drop-selected" ><a>{{purchase_order.supplier.supplier_name}}</a></li>
-                                
-                            </ul>
-                            {% endif %}
+                        <div class="col-md-6 mt-20">
+                            <div class="model-input-name required-field">Store</div>
+                            <input autocomplete="off"  type="hidden" id="store_id" name="store_id" >
+              
+                            <div style="position: relative;">
+                                <div class="inv-input-container inv-border h-30">
+                                    <input autocomplete="off" onclick="storeListShow()" type="text" id="store-name" name="storename" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showStores()" required>
+                                </div>
+                                <div id="id_store_search" class="row inv-result-box" style="display: none;height:auto;max-height:200px;z-index:2000;">
+                                  
+                                </div>
+                            </div>
                         </div>
-                        <br><br>
-
-
-                        
-                        <div class="model-input-name">Select Store</div>
-                        
-                            <input type="text" hidden id="store_id" >
-                            <div class="wrap-drop" id="noble-gases2" id="store_id" >
-                            {% if purchase_order.store == None %}
-                            <span>--Select Store--</span>
-                            <ul class="drop">
-                                {% for store in stores %}
-                                <li onclick="dropSelectStore({{store.id}})" ><a>{{store.store_name}}</a></li>
-                                {% endfor %}
-                            </ul>
-                            {% else %}
-                            <span>{{purchase_order.store.store_name}}</span>
-                            <ul class="drop">
-                                
-                                <li class="drop-selected" ><a>{{purchase_order.store.store_name}}</a></li>
-                                
-                            </ul>
-                            {% endif %}
-                        </div>
-                        <br><br>
                        
                         
                         {% if purchase_order.supplier != None %}
