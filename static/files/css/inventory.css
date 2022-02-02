@@ -315,6 +315,18 @@
   min-width: 20px;
   text-align: center;
 }
+.inv-blue-btn-outline{
+  background: #ffffff 0% 0% no-repeat padding-box;
+  border: 2px solid #2e4e85 !important;
+  border-radius: 6px;
+  opacity: 1;
+  padding: 8px 25px 8px 25px;
+  color: #2e4e85;
+  border: none;
+}
+.p-7{
+  padding:7px;
+}
 .inv-blue-btn {
   background: #2e4e85 0% 0% no-repeat padding-box;
   border: 2px solid #2e4e85;
@@ -412,6 +424,16 @@
   height: 34px;
 
  
+}
+.inv-dropdown{
+  color:#ffffff !important;
+}
+.inv-dropdown-item{
+  cursor: pointer;
+  color:#2e4e85
+}
+.inv-dropdown-item:hover{
+  background: aliceblue;
 }
 .inv-plan-img-btn2-disabled .btn-img2{
   height: 22px !important;
