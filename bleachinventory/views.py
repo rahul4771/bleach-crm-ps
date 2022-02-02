@@ -1277,7 +1277,7 @@ class InventoryInv(IsInventoryAdminUser,View):
 		qty_items = InventoryItem.objects.filter(item_add_type='quantity')
 		store = Store.objects.filter(store_name='AL-RAI STORE').first()
 		for item in qty_items:
-			QuantityStoreDetails.objects.create(store=store,item=item,quantity=item.total_quantity)
+			QuantityStoreDetails.objects.create(item_store=store,quantity_item=item,quantity=item.total_quantity)
 			
 		ItemHistory.objects.all().update(quantity_location=store)
 			
