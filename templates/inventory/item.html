@@ -267,9 +267,7 @@
                             <div class="inv-item-card " >
                              <div class="av-font text-center">
                                  Inventory
-                                 {% if inventory_item.storequantity %}
                                  <i class="fas fa-arrow-circle-right" onclick="openNavInventoryPopup()" style="float:right;color: #2d4e85;cursor:pointer"></i>
-                                 {% endif %}
                                  <div style="text-align: center;" class=" av-font mt-10 mb-10">
                                      
                                      <br>
@@ -609,19 +607,16 @@
                                     </td>
 
                                     <td class="" data-label="Status">
-                                        <span class="inv-dot {% if unit.status == 'working' %} {% if unit.is_available == True %}c-active{% else %}c-inactive{% endif %} {% elif unit.status == 'under_repair' %}c-expired{% elif unit.status == 'out_of_order' %}c-out-of-order{% elif unit.status == 'disposed' %}c-inactive{% endif %} ml-5"></span>
-                                        {% if unit.status == 'working' %}{% if unit.is_available == True %}Available{% else %}Unavailable{% endif %}{% elif unit.status == 'under_repair' %}Under Repair{% elif unit.status == 'out_of_order' %}Out of Order{% elif unit.status == 'disposed' %}Disposed{% endif %}
+                                        <span class="inv-dot {% if unit.status == 'working' %} {% if unit.is_available == True %}c-active{% else %}c-inactive{% endif %} {% elif unit.status == 'under_repair' %}c-expired{% elif unit.status == 'out_of_order' %}c-out-of-order{% endif %} ml-5"></span>
+                                        {% if unit.status == 'working' %}{% if unit.is_available == True %}Available{% else %}Unavailable{% endif %}{% elif unit.status == 'under_repair' %}Under Repair{% elif unit.status == 'out_of_order' %}Out of Order{% endif %}
     
                                     </td>
                                     <td class="text-center">
                                       
     
-                                        {% if unit.status != 'disposed' %}
                                         <button onclick="openNavAddBundle('edit')" class="inv-plan-img-btn edit-unit-btn" data-unitid="{{unit.id}}" data-unitcode="{{unit.unit_code}}" data-unitstoreid="{{unit.store.id}}" data-unitstorename="{{unit.store.store_name}}" data-purchasedate="{{unit.purchase_date|date:'Y-m-d'}}" data-expirydate="{{unit.expiry_date|date:'Y-m-d'}}" data-noexpiry="{{unit.no_expiry}}" data-serialnumber="{{unit.unit_serial_number}}" data-unitprice="{{unit.unit_price|floatformat:3}}" data-status="{{unit.status}}"> <img
                                                 src="{% static 'files/inventory/icons/edit.png' %}" alt="">
                                         </button>
-                                        {% endif %}
-
                                         <button class="inv-plan-img-btn delete-unit-btn" data-unitid="{{unit.id}}" data-toggle="modal" data-target="#deleteModel"> <img
                                                 src="{% static 'files/inventory/icons/delete.png' %}" alt="">
                                         </button>
@@ -734,9 +729,6 @@
                                             Details
                                         </th>
                                         <th data-hide="phone,tablet"  style="width: %; ">
-                                            Location
-                                        </th>
-                                        <th data-hide="phone,tablet"  style="width: %; ">
                                             Quantity
                                         </th>
                                       
@@ -749,20 +741,11 @@
                                         <td>{% if history.added_by %}{{history.added_by.name|default_if_none:'-'}}{% else %}{{history.external_user}}{% endif %}</td>
                                         <td>{{history.item_action}}</td>
                                         <td>{{history.item_remark|default_if_none:'-'}}</td>
-                                        
-                                        <td >{{history.quantity_location|default_if_none:'-'}}</td>
-
                                         {% if history.item_action == 'PURCHASE ORDER' or history.item_action == 'STOCK IN' or history.item_action == 'ITEM RETURN' or history.item_action == 'MANUAL' %}
                                         <td style="color:green"><i class="fa fa-plus" aria-hidden="true"></i> {{history.quantity|floatformat:2}}</td>
-                                        {% elif history.item_action == 'TRANSFER' %}
-                                        <td style="color:gray"><i class="fas fa-exchange-alt mr-10" aria-hidden="true"></i> {{history.quantity|floatformat:2}}</td>
-                                        {% elif history.item_action == 'DISPOSE' %}
-                                        <td style="color:red"><i class="fa fa-minus" aria-hidden="true"></i> {{history.quantity|floatformat:2}}</td>
                                         {% else %}
                                         <td style="color:red"><i class="fa fa-minus" aria-hidden="true"></i> {{history.quantity|floatformat:2}}</td>
-                                        {% endif  %}
-
-                                        
+                                        {% endif %}
                                     </tr>
                                     {% endfor %}
                                 </tbody>
@@ -1000,19 +983,32 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% if inventory_item.storequantity %}
-                            {% for inventory_store in inventory_item.storequantity %}
+                           
                             <tr>
                                 <td data-label="Unit ID">
-                                    {{inventory_store.item_store.store_name}}
+                                    00000000
                                 </td>
                                 <td data-label="serial No.">
-                                    {{inventory_store.quantity}}
+                                    232
                                 </td>
                                 
                             </tr>
-                            {% endfor %}
-                            {% endif %}
+                            <tr>
+                                <td data-label="Unit ID">
+                                    00000000
+                                </td>
+                                <td data-label="serial No.">
+                                    232
+                                </td>
+                                
+                            </tr>
+                            <tr>
+                                <td data-label="Unit ID">
+                                    00000000
+                                </td>
+                                <td data-label="serial No.">
+                                    232
+                                </td>
                                 
                             </tr>
                             </tbody>
@@ -1044,7 +1040,7 @@
 
         <div class="inv-sidedrawer-inner">
             <div class="d-flex">
-                <div class="inv-drawer-head" id="supHeadUnit">
+                <div class="inv-drawer-head" id="supHead">
                     Add Unit
                 </div>
                 <div class="right-pos">
@@ -1114,22 +1110,6 @@
            
             <div id="id_itr">
                 <div class="row mt-20">
-                    <div class="col-md-12 " id="unit_store_id" >
-                        <div class="model-input-name required-field">Store</div>
-    
-                        <div style="position: relative;">
-                            <div class="inv-input-container inv-border h-30">
-                                <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" name="storename" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" required>
-                            </div>
-                            <div id="id_search" class="row inv-result-box" style="display: none;">
-                              
-                            </div>
-                        </div>
-                    </div>
-    
-                </div>
-
-                <div class="row mt-20">
                     <div class="col-md-12 ">
                         <div class="model-input-name required-field">User</div>
 
@@ -1179,7 +1159,7 @@
            
            
             <div id="id_man">
-            <div class="row mt-20">
+            <div class="row mt-20" id="store_data">
                 <div class="col-md-12 ">
                     <div class="model-input-name required-field">Store</div>
 
@@ -2433,21 +2413,21 @@ function openNavAddBundle(d) {
         $('#update-unit-btn').hide();
         $('#id_unit_status').val('available');
         $("#id_selectText").text("Select PO");
+        $("#store_data").show()
             {% if inventory_item.item_add_type == 'unit' %}
-            $("#supHeadUnit").text("Add Unit");
+            $("#supHead").text("Add Unit");
             {% else %}
             $("#supHead").text("Add Quantity");
             {% endif %}
             $("#unit_action").val("add_unit");
-            $("#unit_store_id").show();
         }
         if(d == 'edit'){
-            $("#supHeadUnit").text("Edit Unit");
+            $("#supHead").text("Edit Unit");
             $('#update-unit-btn').show();
             $('#submit-btn').hide()
             $('#po-btn').hide()
             $("#unit_action").val("edit_unit");
-            $("#unit_store_id").hide();
+            $("#store_data").hide()
             
         }
         if(screen.width<= 600){
