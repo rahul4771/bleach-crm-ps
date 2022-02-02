@@ -145,7 +145,7 @@
                
               
 
-                <div class="row mt-30">
+                {% comment %} <div class="row mt-30">
                     <div class="col-md-12 ">
                         <table class="inv-table footable" style="border-top: 1px solid #c4c4c4;">
                             <thead>
@@ -195,7 +195,7 @@
                                   <a  onclick="showRe()" class="view-button2 pointer">Cancel</a>
                    
                 </div>
-                {% endif %}
+                {% endif %} {% endcomment %}
 
             </div>
         </div>
@@ -540,6 +540,7 @@ function showStores(){
         
 
             document.getElementById("id_store_search").style.display="none"
+            getProducts()
         }
 
     function closeStoreShow2(d){
@@ -561,50 +562,48 @@ function dropSelectStore(id){
 
 var products=[]
 getProducts()
-async function getStores(){
- 
-  var result = await _get('api/inventory-items-list/');
+async function getProducts(){
+ console.log("logggo")
+  var result = await _get('api/inventory-items-list/?store_id='+$('#store_id').val());
   if(result.status==200)
   {
-  stores=result.data.items
+      console.log(result.data.items,"iteams")
+    products=result.data.items
   }
 }
-getStores()
-  function storeListShow(){
+getProducts()
+  function ProductListShow(){
   searchFlag = true;
-  document.getElementById("id_store_search").style.display="block"
-  showStores()
+  document.getElementById("id_search3").style.display="block"
+  showProducts()
 }
 
 
-    function ProductListShow(){
-        document.getElementById("id_search3").style.display="block"
-    }
-
-    function showProducts(){
-        $('#id_search3').empty();
-        for (var j=0; j<products.length; j++) {
-            if (products[j].name.toUpperCase().match($('#pro-name').val().toUpperCase())){
-                console.log(products[j]);
-        $('#id_search3').append('<div class="col-md-12 inv-search-drop" id="id_product'+products[j].id+'" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-productprice="'+products[j].price+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
-
-            }
-        }
-            console.log( $('#item-name').val());
-            if($('#item-name').val() !=""){
-            document.getElementById("id_search3").style.display="block"
-
-            }else{
-            document.getElementById("id_search3").style.display="none"
-
-            }
-            
-        }
+        function showProducts(){
+            console.log("products is "+JSON.stringify(products))
+              $('#id_search3').empty();
+              for (var j=0; j<products.length; j++) {
+                  if (products[j].item_name.toUpperCase().match($('#item-name').val().toUpperCase())){
+                     
+              $('#id_search3').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeProductShow(this)"  data-pro="'+products[j].item_id+'" data-name="'+products[j].item_name+'"><div class="inv-search-result">'+products[j].item_name+'</div></div>');
+  
+                  }
+              }
+              console.log( $('#item-name').val());
+              if($('#item-name').val() !=""){
+              document.getElementById("id_search3").style.display="block"
+  
+              }else{
+              document.getElementById("id_search3").style.display="block"
+  
+              }
+          
+          }
 
     function closeProductShow(d){
         console.log(d);
         var proId = $(d).attr("data-pro")
-        $('#id_pro_sel').val($(d).attr("data-pro"));
+        $('#item_id').val($(d).attr("data-pro"));
         $('#item-name').val($(d).attr("data-name"));
 
 
