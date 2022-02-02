@@ -978,6 +978,31 @@ class InventoryTransfer(View):
 class ItemDispose(View):
 	def get(self,request):
 		return render(request,'inventory/itemdispose.html',{})
+	def get(self,request):
+		from_store = request.POST.get('from_store')
+		item_id    = request.POST.get('item_id')
+
+		item       = InventoryItem.objects.get(id=item_id)
+		if item.item_add_type == 'quantity':
+			quantity   = request.POST.get('quantity')
+
+			store_item = QuantityStoreDetails.objects.get(item_store_id=from_store,quantity_item=item)
+			store_item.quantity -= quantity
+			store_item.save()
+
+			item.total_quantity -= quantity
+			item.save()
+
+			ItemHistory.objects.create(item=item,item_action='DISPOSE',quantity=quantity,added_by=request.user,item_remark='Disposed')
+
+		if item.item_add_type == 'unit':
+			unit_item_ids = (request.POST.get('unit_items')).split(",")
+			if unit_item_ids:
+				unit_items    = ItemUnit.objects.filter(id__in=unit_item_ids).update(status='disposed')
+
+		messages.success(request,"Inventory Items Disposed Succesfully")
+		
+		return redirect('bleach-inventory:item-dispose')
 
 
 class InventorySupplier(IsInventoryAdminUser,View):
