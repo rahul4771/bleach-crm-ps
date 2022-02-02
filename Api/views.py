@@ -3013,7 +3013,7 @@ class InventoryItemsListAPI(APIView):
 				item_dict = {}
 				item_dict['item_id'] = qty.quantity_item.id
 				item_dict['item_name'] = qty.quantity_item.name
-				item_dict['item_type'] = qty.item.item_add_type
+				item_dict['item_type'] = qty.quantity_item.item_add_type
 				items.append(item_dict)
 		# except:
 		# 	store = None

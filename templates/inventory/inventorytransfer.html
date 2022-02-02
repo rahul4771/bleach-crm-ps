@@ -138,6 +138,8 @@
                                   
                                 </div>
                             </div><br>
+                            
+                            <div id="unit_div" hidden>
                             <div class="model-input-name required-field">Multiselect </div>
                             <input type="hidden" name="multisel_val" v-model="multisel_val"/>
                             <div class="mt-10">
@@ -154,13 +156,16 @@
                                  
                                ></multiselect>
                             </div><br>
+                            </div>
+
+                            <div id="quantity_div" hidden>
                             <div class="model-input-name required-field">Quantity </div>
                             <div class="quantity">
                                 <a class="quantity__minus pointer" @click="subQty()"><span>-</span></a>
                                 <input  type="text" class="quantity__input" value="1" id="id_item_count" name="item_count" v-model="qty_val" >
                                 <a  class="quantity__plus pointer" @click="addQty()"><span>+</span></a>
                               </div>
-                       
+                            </div>
                     </div>
                     
                 </div>
@@ -599,6 +604,9 @@ function showStores(){
 
             document.getElementById("id_store_search").style.display="none"
             getProducts()
+
+            $('#item_id').val('')
+            $('#item-name').val('')
         }
 
     function closeStoreShow2(d){
@@ -643,7 +651,7 @@ getProducts()
               for (var j=0; j<products.length; j++) {
                   if (products[j].item_name.toUpperCase().match($('#item-name').val().toUpperCase())){
                      
-              $('#id_search3').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeProductShow(this)"  data-pro="'+products[j].item_id+'" data-name="'+products[j].item_name+'"><div class="inv-search-result">'+products[j].item_name+'</div></div>');
+              $('#id_search3').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeProductShow(this)"  data-pro="'+products[j].item_id+'" data-itemtype='+products[j].item_type+' data-name="'+products[j].item_name+'"><div class="inv-search-result">'+products[j].item_name+'</div></div>');
   
                   }
               }
@@ -663,6 +671,14 @@ getProducts()
         var proId = $(d).attr("data-pro")
         $('#item_id').val($(d).attr("data-pro"));
         $('#item-name').val($(d).attr("data-name"));
+
+        if ($(d).attr("data-itemtype") == 'unit'){
+            $('#unit_div').show();
+            $('#quantity_div').hide();
+        }else{
+            $('#unit_div').hide();
+            $('#quantity_div').show();
+        }
 
 
         document.getElementById("id_search3").style.display="none"
