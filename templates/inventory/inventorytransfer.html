@@ -146,7 +146,7 @@
                                 v-model="multi_val"
                                  placeholder="Select Item"
                                  
-                                 :options="['OPTION1','OPTION2','OPTION3']"
+                                 :options="option_data"
                                  :multiple="true"
                                  :taggable="false"
                                  :show-labels="false"
@@ -449,7 +449,8 @@
     data: {
      multi_val:'',
      qty_val:1,
-     multisel_val:''
+     multisel_val:'',
+     option_data:['Option 1','option 2','option 3']
     
     },
     mounted(){
