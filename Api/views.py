@@ -3625,11 +3625,11 @@ class ItemQuantityCheck(APIView):
 				response_dict['item_quantity'] = quantity
 			else:
 				response_dict['item_available'] = False
-				response_dict['item_quantity'] = item_count
+				response_dict['item_quantity'] = round(float(item_count),2)
 
 			item_count = float(item_count)
 			print(round(item_count,3),"roun")
-			response_dict['item_count'] = round(item_count,3)
+			response_dict['item_count'] = round(item_count,2)
 
 		response_dict['success'] = True
 

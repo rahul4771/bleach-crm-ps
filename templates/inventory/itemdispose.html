@@ -83,7 +83,7 @@
                             <div class="model-input-name required-field">Quantity </div>
                             <div class="quantity">
                                 <a class="quantity__minus pointer" @click="subQty()"><span>-</span></a>
-                                <input  type="text" class="quantity__input" value="1" id="id_item_count" name="item_count" v-model="qty_val" >
+                                <input  type="text" class="quantity__input" value="1" id="id_item_count" name="item_count" v-model="qty_val" oninput="quantitychange()">
                                 <a  class="quantity__plus pointer" @click="addQty()"><span>+</span></a>
                               </div>
                             </div>
@@ -125,11 +125,13 @@
     methods:{
         addQty(){
             this.qty_val++
+            increment()
         },
         subQty(){
             if(this.qty_val>1){
                 this.qty_val--
             }
+            decrement()
         },
         selectItem(){
             var id_array=[]
@@ -354,7 +356,59 @@ getProducts()
         document.getElementById("id_search3").style.display="none"
     }
 
-    
+    async function increment(){
+  
+        var item_id = $('#item_id').val();
+      
+        $('#id_item_count').val(parseInt($('#id_item_count').val()) + 1 );
+      
+        var quantity = parseInt($('#id_item_count').val()) ;
+        console.log(item_id,quantity,"po")
+      
+        var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+          if(result.status == 200){
+            console.log(result.data.item_available,"lop2")
+      
+            $('#id_item_count').val(result.data.item_quantity);
+            
+          }
+      }
+
+      async function decrement(){
+        var item_id = $('#item_id').val();
+      
+        if ($('#id_item_count').val() > 0) {
+        $('#id_item_count').val(parseInt($('#id_item_count').val()) - 1 );
+        }
+      
+        if ($('#id_item_count').val() == 0) {
+          $('#id_item_count').val(parseInt($('#id_item_count').val()) - 1 );
+          $('#id_item_count').val(0);
+        }
+      
+        var quantity = parseInt($('#id_item_count').val()) ;
+      
+        var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+          if(result.status == 200){
+            console.log(result.data.item_available,"lop3")
+            $('#id_item_count').val(result.data.item_quantity);
+          }
+      }
+
+      async function quantitychange(){
+      
+        var item_id = $('#item_id').val();
+        var quantity = $('#id_item_count').val() ;
+        console.log(item_id,quantity,"poRK")
+
+          var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+          if(result.status == 200){
+            console.log(result.data.item_available,"lop2")
+      
+            $('#id_item_count').val(result.data.item_quantity);
+            
+          }
+      }
     
     function set_params_go(args)
     {
