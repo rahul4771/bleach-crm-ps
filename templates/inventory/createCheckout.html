@@ -270,7 +270,22 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
 
           {% endfor %}
         {% endfor %}
-         
+        <div class="row mt-20">
+          <div class="col-md-3 ">
+              <div class="model-input-name required-field">Store{{store.name}}</div>
+              <input autocomplete="off" class="store_id" type="hidden" id="store_id" name="store_id" value="1" >
+
+              <div style="position: relative;">
+                  <div class="inv-input-container inv-border h-30">
+                      <input autocomplete="off" onclick="storeListShow()" type="text" id="store-name" name="storename" value="{{store.name}}" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showStores()" required>
+                  </div>
+                  <div id="id_store_search" class="row inv-result-box" style="display: none;height:auto;max-height:200px;">
+                    
+                  </div>
+              </div>
+          </div>
+
+      </div>
         <div class="row mt-20">
           <div class="col-md-3 col-md-offset-9 text-right">
             <input type="hidden" name="selected_list"/>
@@ -278,7 +293,7 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
               Delete
             </button>
           </div>
-          <div class="col-md-12 mt-20">
+          <div class="col-md-12 mt-20" style="z-index:1">
             <div class="inv-check-orderhead">
               Recommended List
             </div>
@@ -311,6 +326,7 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
               <form id="stockform" method="POST" action="" >{% csrf_token %}
                 {% if stock_out == 'stockout' %}
                 <input type="hidden" name="action" value="submit_checkout_list">
+                <input type="hidden" class="store_id" name="store_id" value="1" >
                 {% else %}
                 <input type="hidden" name="action" value="save_checkout_list">
                 {% endif %}
@@ -688,6 +704,24 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
 {% block javascript %}
 
 <script>
+
+  
+
+  $('.store_id').val({{store.id}});
+  $('#store-name').val("{{store.store_name}}");
+
+
+  var stores=[]
+  getStores()
+  async function getStores(){
+   
+    var result = await _get('api/item_stores/');
+    if(result.status==200)
+    {
+    stores=result.data.stores
+    }
+  }
+
 function getItems(){
   //console.log("item selected are"+$("input[name=item_option]").val());
   var values = $("input[name='selected_items']:checked").map(function(){
@@ -1409,6 +1443,26 @@ var products = [];
             }
         
         }
+        function showStores(){
+          console.log("stores is "+JSON.stringify(stores))
+            $('#id_store_search').empty();
+            for (var j=0; j<stores.length; j++) {
+                if (stores[j].store_name.toUpperCase().match($('#store-name').val().toUpperCase())){
+                   
+            $('#id_store_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeStoreShow(this)"  data-pro="'+stores[j].id+'" data-name="'+stores[j].store_name+'"><div class="inv-search-result">'+stores[j].store_name+'</div></div>');
+
+                }
+            }
+            console.log( $('#store-name').val());
+            if($('#store-name').val() !=""){
+            document.getElementById("id_store_search").style.display="block"
+
+            }else{
+            document.getElementById("id_store_search").style.display="block"
+
+            }
+        
+        }
 
 
     function showProducts2(){
@@ -1452,7 +1506,15 @@ var products = [];
       }
 
   
+      function closeStoreShow(d){
+        console.log(d);
+        var proId = $(d).attr("data-pro")
+        $('.store_id').val($(d).attr("data-pro"));
+        $('#store-name').val($(d).attr("data-name"));
 
+        document.getElementById("id_store_search").style.display="none"
+        set_params_go()
+    }
     async function closeProductShow(d){
         console.log(d);
         var proId = $(d).attr("data-pro")
@@ -1636,6 +1698,11 @@ function ProductListShow(){
     searchFlag = true;
     document.getElementById("id_search").style.display="block"
 }
+function storeListShow(){
+    searchFlag = true;
+    document.getElementById("id_store_search").style.display="block"
+    showStores()
+}
 
 function ProductListShow2(){
     searchFlag = true;
@@ -1663,6 +1730,21 @@ function showOf(id){
   }
   //document.getElementById("id_sec_item_"+id).style.display = "none";
 }
+
+function set_params_go(args)
+    {
+    var url='{% url 'bleach-inventory:inventory-createcheckout' visit.id %}';
+    var params={store_id:$('#store_id').val(),
+    };
+    for(key in args) 
+        params[key]=args[key];
+    var query='';
+    for(key in params)
+        if(params[key]) 
+            query+='&'+key+'='+params[key].toString();
+    query=query.replace('&','?');
+    window.location.href=url+query;  
+    }
 
 
 </script>

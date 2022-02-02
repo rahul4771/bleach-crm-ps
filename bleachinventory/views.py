@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
-from bleachinventory.models import ExternalCustomer,CheckOutItems,CheckOutItemUnits,ItemHistory,Category,Segment,Line,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems,RequestOrder,RequestOrderItems,InventoryAccessory
+from bleachinventory.models import QuantityStoreDetails,ExternalCustomer,CheckOutItems,CheckOutItemUnits,ItemHistory,Category,Segment,Line,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems,RequestOrder,RequestOrderItems,InventoryAccessory
 from user.models import UserProfile
 from django.contrib import messages
 import re
@@ -564,7 +564,7 @@ class InventoryBundle(IsInventoryAdminUser,View):
 class InventoryItems(IsInventoryAdminUser,View):
 	def get(self,request,item_id):
 		
-		inventory_item = InventoryItem.objects.prefetch_related(Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images')).get(id=item_id)
+		inventory_item = InventoryItem.objects.prefetch_related(Prefetch('quantity_store_item',queryset=QuantityStoreDetails.objects.select_related('item_store').all(),to_attr='storequantity'),Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images')).get(id=item_id)
 		categories = Category.objects.all()
 		item_units = ItemUnit.objects.filter(item=inventory_item).prefetch_related(Prefetch('product_request_unit',queryset=RequestOrderItems.objects.filter(is_received=True),to_attr='request_item_unit'),Prefetch('checkoutitem_unit',CheckOutItemUnits.objects.all().select_related('checkout_item__visit').prefetch_related(Prefetch('checkout_item__visit__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')),to_attr='checkout_unit'))
 		item_history = ItemHistory.objects.filter(item=inventory_item).order_by('-id')
@@ -808,12 +808,23 @@ class InventoryItems(IsInventoryAdminUser,View):
 
 			ItemHistory.objects.create(
 			item = item,
-			purchase_store=store,
 			purchase_date = purchase_date,
 			item_action = 'MANUAL',
 			quantity = quantity,
+			quantity_location = store,
 			added_by = request.user
 			)
+
+			try:
+				quantitystore = QuantityStoreDetails.objects.get(item_store=store,quantity_item = item)
+				quantitystore.quantity = float(quantitystore.quantity) + float(quantity)
+				quantitystore.save()
+			except:
+				QuantityStoreDetails.objects.create(
+				item_store = store,
+				quantity_item = item,
+				quantity = quantity
+				)
 			
 			item.total_quantity = float(item.total_quantity)+float(quantity)
 			item.save()
@@ -823,12 +834,16 @@ class InventoryItems(IsInventoryAdminUser,View):
 		if action == 'return_item':
 			item = InventoryItem.objects.get(id=item_id)
 
+			store_id = request.POST.get('store')
+			store = Store.objects.get(id=int(store_id))
+
 			externaluser = ExternalCustomer.objects.get( id=int(request.POST.get('externaluser')) ) 
 
 			if item.item_add_type == 'unit':
 				unit_id = request.POST.get('return_unit')
 				itemunit = ItemUnit.objects.get(id=int(unit_id))
 				itemunit.status = 'working'
+				itemunit.store = store
 				itemunit.is_available = True
 				itemunit.save()
 
@@ -844,8 +859,20 @@ class InventoryItems(IsInventoryAdminUser,View):
 						item_action = 'ITEM RETURN',
 						item_remark = request_order_item.request_order.request_order_id,
 						quantity = quantity,
+						quantity_location = store,
 						external_user = request_order_item.request_order.requested_by.name
 					)
+
+					try:
+						quantitystore = QuantityStoreDetails.objects.get(item_store=store,quantity_item = item)
+						quantitystore.quantity = float(quantitystore.quantity) + float(quantity)
+						quantitystore.save()
+					except:
+						QuantityStoreDetails.objects.create(
+						item_store = store,
+						quantity_item = item,
+						quantity = quantity
+						)
 
 					item.total_quantity = float(item.total_quantity) + float(quantity)
 					item.save()
@@ -939,6 +966,82 @@ class InventoryItems(IsInventoryAdminUser,View):
 			messages.success(request,"Image Deleted successfully!")
 
 		return redirect('bleach-inventory:inventory-item',item_id)
+
+
+class InventoryTransfer(View):
+	def get(self,request):
+		return render(request,'inventory/inventorytransfer.html',{})
+	def post(self,request):
+		from_store = request.POST.get('store_id')
+		to_store = request.POST.get('store_id2')
+		item_id    = request.POST.get('item_id')
+
+		store1 = Store.objects.get(id=int(from_store))
+		store2 = Store.objects.get(id=int(to_store))
+
+		item       = InventoryItem.objects.get(id=item_id)
+		if item.item_add_type == 'quantity':
+			quantity   = request.POST.get('item_count')
+			if float(item.total_quantity) >= float(quantity):
+				quantitystore1 = QuantityStoreDetails.objects.get(item_store=store1,quantity_item=item)
+				quantitystore1.quantity = float(quantitystore1.quantity) - float(quantity)
+				quantitystore1.save()
+
+				try:
+					quantitystore2 = QuantityStoreDetails.objects.get(item_store=store2,quantity_item = item)
+					quantitystore2.quantity = float(quantitystore2.quantity) + float(quantity)
+					quantitystore2.save()
+				except:
+					QuantityStoreDetails.objects.create(
+					item_store = store2,
+					quantity_item = item,
+					quantity = quantity
+					)
+
+				ItemHistory.objects.create(item=item,item_action='TRANSFER',quantity=quantity,added_by=request.user,item_remark='Inventory Transfer')
+		
+		if item.item_add_type == 'unit':
+			unit_item_ids = (request.POST.get('item_units')).split(",")
+			if unit_item_ids:
+				unit_items    = ItemUnit.objects.filter(id__in=unit_item_ids,is_available=True).update(store=store2)
+
+		messages.success(request,"Inventory Items Transferred Succesfully")
+		
+		return redirect('bleach-inventory:inventory-transfer')
+
+
+class ItemDispose(View):
+	def get(self,request):
+		return render(request,'inventory/itemdispose.html',{})
+	def post(self,request):
+		from_store = request.POST.get('store_id')
+		item_id    = request.POST.get('item_id')
+
+		store = Store.objects.get(id=int(from_store))
+
+		item       = InventoryItem.objects.get(id=item_id)
+		if item.item_add_type == 'quantity':
+			quantity   = request.POST.get('item_count')
+
+			if float(item.total_quantity) >= float(quantity):
+				store_item = QuantityStoreDetails.objects.get(item_store=store,quantity_item=item)
+				store_item.quantity = float(store_item.quantity) - float(quantity)
+				store_item.save()
+
+				item.total_quantity = float(item.total_quantity) - float(quantity)
+				item.save()
+
+				ItemHistory.objects.create(item=item,item_action='DISPOSE',quantity=quantity,quantity_location = store,added_by=request.user,item_remark='Disposed')
+
+		if item.item_add_type == 'unit':
+			unit_item_ids = (request.POST.get('item_units')).split(",")
+			if unit_item_ids:
+				unit_items    = ItemUnit.objects.filter(id__in=unit_item_ids,is_available=True).update(status='disposed',is_available=False)
+
+		messages.success(request,"Inventory Items Disposed Succesfully")
+		
+		return redirect('bleach-inventory:item-dispose')
+
 
 class InventorySupplier(IsInventoryAdminUser,View):
 	def get(self,request):
@@ -1170,6 +1273,13 @@ class InventoryInv(IsInventoryAdminUser,View):
 		# histories = ItemHistory.objects.filter(Q(item_action='STOCK OUT')|Q(item_action='STOCK IN'))
 		# for item in histories:
 		# 	team = CleaningTeam.objects.filter(visit__order__order_no=)
+
+		qty_items = InventoryItem.objects.filter(item_add_type='quantity')
+		store = Store.objects.filter(store_name='AL-RAI STORE').first()
+		for item in qty_items:
+			QuantityStore.objects.create(store=store,item=item,quantity=item.total_quantity)
+			
+		ItemHistory.objects.all().update(quantity_location=store)
 			
 
 		search = request.GET.get('search')
@@ -1619,189 +1729,210 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 
 		check_out_items = CheckOutItems.objects.filter(visit=checkout_visit).prefetch_related(Prefetch('checkoutitem',queryset=CheckOutItemUnits.objects.all(),to_attr='checkoutitem_units'))
 
-		if checkout_visit.stock_out_items_saved == False:
-			
-			cleaners_items_count_list = []
-			items_list = []
+		store_id = request.GET.get('store_id')
+		
+		if store_id:
+			store = Store.objects.get(id=int(store_id))
 
-			for visit in visits: 
-				visit.stock_out_items_saved = True
+			CheckOutItems.objects.filter(visit=checkout_visit).delete()
+
+			for visit in visits:
+				visit.stock_out_items_saved = False
 				visit.save()
 
-				service = visit.order_scheduler_book.service_type
-				price_ranges = ServicePriceRange.objects.filter(is_active=True,service_type=service)
-
-				for section in visit.order_scheduler_book.sections:
+			if checkout_visit.stock_out_items_saved == False:
 				
-					if section.size.isnumeric() == True:
-						max_area += float(section.size)
-						print(max_area,"mx")
-					else:
-						print("mok")
-						if visit.order_scheduler_book.service_type.name == 'Upholstery Cleaning':
-							
-							for price_range in price_ranges:
-								if price_range.name == section.size and price_range.service_type == section.evaluation_book.service_type and price_range.upholstery_type == section.upholstery_type:
-									max_area += float(price_range.maximum_area)
-						else:
-							for price_range in price_ranges:
-								if price_range.name == section.size and price_range.service_type == section.evaluation_book.service_type and section.evaluation_book.service_type.name != 'Mattress Cleaning' and price_range.is_newkitchen == section.new_kitchen and price_range.is_cabinet == section.is_cabinet and price_range.is_highprice_facade == section.is_highprice_facade and price_range.is_highprice_window == section.is_highprice_window:
-									max_area += float(price_range.maximum_area)
-			
-				cleaners += visit.no_of_cleaners
+				cleaners_items_count_list = []
+				items_list = []
 
-				service_recipe_ingredients = ServiceRecipeIngredients.objects.filter(service_type__service=service).prefetch_related(Prefetch('item_ingredient',queryset=ServiceRecipeItems.objects.all(),to_attr='service_recipe_items'))
+				for visit in visits: 
+					visit.stock_out_items_saved = True
+					visit.save()
 
-				# recommended quantity calc
+					service = visit.order_scheduler_book.service_type
+					price_ranges = ServicePriceRange.objects.filter(is_active=True,service_type=service)
+
+					for section in visit.order_scheduler_book.sections:
 					
-				for ingredient in service_recipe_ingredients:
-					service_quantity = ingredient.quantity
-
-					recommended_quantity = 0
-
-					if ingredient.service_or_person == 'service':
-						
-						service_area = ingredient.service_type.area_size
-						
-						if service_area != '0':
-							recommended_quantity = float(math.ceil(float(max_area) / float(service_area)) * float(service_quantity))
-
-					else:
-						service_person = ingredient.service_type.staff_count
-
-						if service_person != '0':
-							
-							quantity_per_person = float(service_quantity) / float(service_person)
-
-							recommended_quantity = float(cleaners) * float(quantity_per_person)
-
-					# items_list = []
-					for service_item in ingredient.service_recipe_items:    
-
-						
-						item = InventoryItem.objects.annotate(quantity_total=Sum(Case(When(unit_item__is_available=True,then=1),default=0,output_field=IntegerField()))).get(id=int(service_item.item.id))
-						
-						
-						if service_item.item.item_add_type == 'unit':
-							item_dict = {
-								'item_id' : item.id,
-								'item_name' : item.name,
-								'total_quantity' : float(item.quantity_total),
-								'item_type' : item.item_add_type,
-								'service' : visit.order_scheduler_book.service_type.name,
-								'service_item_id' : service_item.id,
-								'recommended_quantity' : recommended_quantity
-							}
-							print(item.quantity_total,"qx")
+						if section.size.isnumeric() == True:
+							max_area += float(section.size)
+							print(max_area,"mx")
 						else:
+							print("mok")
+							if visit.order_scheduler_book.service_type.name == 'Upholstery Cleaning':
+								
+								for price_range in price_ranges:
+									if price_range.name == section.size and price_range.service_type == section.evaluation_book.service_type and price_range.upholstery_type == section.upholstery_type:
+										max_area += float(price_range.maximum_area)
+							else:
+								for price_range in price_ranges:
+									if price_range.name == section.size and price_range.service_type == section.evaluation_book.service_type and section.evaluation_book.service_type.name != 'Mattress Cleaning' and price_range.is_newkitchen == section.new_kitchen and price_range.is_cabinet == section.is_cabinet and price_range.is_highprice_facade == section.is_highprice_facade and price_range.is_highprice_window == section.is_highprice_window:
+										max_area += float(price_range.maximum_area)
+				
+					cleaners += visit.no_of_cleaners
 
-							item_dict = {
-								'item_id' : item.id,
-								'item_name' : item.name,
-								'total_quantity' : float(item.total_quantity),
-								'item_type' : item.item_add_type,
-								'service' : visit.order_scheduler_book.service_type.name,
-								'service_item_id' : service_item.id,
-								'recommended_quantity' : recommended_quantity
-							}
-							print(item.total_quantity,"qx2")
+					service_recipe_ingredients = ServiceRecipeIngredients.objects.filter(service_type__service=service).prefetch_related(Prefetch('item_ingredient',queryset=ServiceRecipeItems.objects.all(),to_attr='service_recipe_items'))
 
-						items_list.append(item_dict)        
-			
-
-			#removng duplicate item counts for same service
-			service_combined_list = []
-
-			service_found = set()
-			for i in items_list:
-				if i['service'] not in service_found:
-					service_dicts = [item for item in items_list if item['service'] == i['service']]
-					service_found.add(i['service'])
-
-					item_found = set()
-
-					for service_item in service_dicts:
-						if service_item['item_id'] not in item_found:
-							
-							item_dicts = [item for item in service_dicts if item['item_id'] == service_item['item_id']]
-							
-							maxQuantity = max(item_dicts, key=lambda x:x['recommended_quantity'])
-							
-							item_found.add(service_item['item_id'])
-							service_combined_list.append(maxQuantity)				
-
-			print(service_combined_list,"eye66")
-
-			newlist = sorted(service_combined_list, key=lambda d: d['total_quantity'], reverse=True) 
-					
-			# variable_recommended_quantity = recommended_quantity
-
-			print(items_list,"itlist44")
-			print(newlist,"newitlist44")
-
-			for item in newlist:
-				if int(item['recommended_quantity']) != 0:
-					print(item['recommended_quantity'],item['total_quantity'],"recqty")
-
-					service_item = ServiceRecipeItems.objects.get(id=int(item['service_item_id']))
-					print(service_item.ingredient,"servzz")
-
-					# crtd = CheckOutItems.objects.create(visit=checkout_visit,service_item=service_item,units=math.ceil(float(item['recommended_quantity'])),is_swapped_item=False)
-
-					# print(crtd,"corrtf")
-
-					if item['total_quantity'] > 0 and float(item['total_quantity']) >= float(item['recommended_quantity']):
+					# recommended quantity calc
 						
-						try:
-							checkout_item = CheckOutItems.objects.get(visit=checkout_visit,service_item=service_item,service_item__ingredient=service_item.ingredient,is_checked_out=False)
-							print(checkout_item,"yuv1")
-						except:
-							print("yuv2")
-							if service_item.item.item_add_type == 'quantity':
-								print("yuv3nok")
-								CheckOutItems.objects.create(visit=checkout_visit,service_item=service_item,units=math.ceil(float(item['recommended_quantity'])),is_swapped_item=False)
+					for ingredient in service_recipe_ingredients:
+						service_quantity = ingredient.quantity
+
+						recommended_quantity = 0
+
+						if ingredient.service_or_person == 'service':
+							
+							service_area = ingredient.service_type.area_size
+							
+							if service_area != '0':
+								recommended_quantity = float(math.ceil(float(max_area) / float(service_area)) * float(service_quantity))
+
+						else:
+							service_person = ingredient.service_type.staff_count
+
+							if service_person != '0':
+								
+								quantity_per_person = float(service_quantity) / float(service_person)
+
+								recommended_quantity = float(cleaners) * float(quantity_per_person)
+
+						# items_list = []
+						for service_item in ingredient.service_recipe_items:    
+
+							
+							item = InventoryItem.objects.annotate(quantity_total=Sum(Case(When(unit_item__is_available=True,then=1),default=0,output_field=IntegerField()))).get(id=int(service_item.item.id))
+							
 							
 							if service_item.item.item_add_type == 'unit':
-								print("yuv4nok")
-								itemunits = ItemUnit.objects.filter(item=service_item.item,is_available=True)[:int(item['recommended_quantity'])]
-								print(itemunits,"rrr")
-								for unit in itemunits:
-									print(unit,"rrr2")
-									try:
-										CheckOutItems.objects.get(visit=checkout_visit,item_unit=unit,is_checked_out=False)
-									except:
-										CheckOutItems.objects.create(visit=checkout_visit,service_item=service_item,item_unit=unit,units=1,is_swapped_item=False)
-									# CheckOutItemUnits.objects.create(checkout_item=checkout_item,item_unit=unit)
+
+								itemstore = ItemUnit.objects.filter(item=item,store=store).count()
+								if itemstore > 0:
+									item_dict = {
+										'item_id' : item.id,
+										'item_name' : item.name,
+										'total_quantity' : float(item.quantity_total),
+										'item_type' : item.item_add_type,
+										'service' : visit.order_scheduler_book.service_type.name,
+										'service_item_id' : service_item.id,
+										'recommended_quantity' : recommended_quantity
+									}
+									print(item.quantity_total,"qx")
+
+									items_list.append(item_dict) 
+							else:
+								itemstore = QuantityStoreDetails.objects.filter(item_store=store,quantity_item=item).first()
+
+								if itemstore:
+									item_dict = {
+										'item_id' : item.id,
+										'item_name' : item.name,
+										'total_quantity' : float(itemstore.quantity),
+										'item_type' : item.item_add_type,
+										'service' : visit.order_scheduler_book.service_type.name,
+										'service_item_id' : service_item.id,
+										'recommended_quantity' : recommended_quantity
+									}
+									print(item.total_quantity,"qx2")
+
+									items_list.append(item_dict)        
+				
+
+				#removng duplicate item counts for same service
+				service_combined_list = []
+
+				service_found = set()
+				for i in items_list:
+					if i['service'] not in service_found:
+						service_dicts = [item for item in items_list if item['service'] == i['service']]
+						service_found.add(i['service'])
+
+						item_found = set()
+
+						for service_item in service_dicts:
+							if service_item['item_id'] not in item_found:
+								
+								item_dicts = [item for item in service_dicts if item['item_id'] == service_item['item_id']]
+								
+								maxQuantity = max(item_dicts, key=lambda x:x['recommended_quantity'])
+								
+								item_found.add(service_item['item_id'])
+								service_combined_list.append(maxQuantity)				
+
+				print(service_combined_list,"eye66")
+
+				newlist = sorted(service_combined_list, key=lambda d: d['total_quantity'], reverse=True) 
+						
+				# variable_recommended_quantity = recommended_quantity
+
+				print(items_list,"itlist44")
+				print(newlist,"newitlist44")
+
+				for item in newlist:
+					if int(item['recommended_quantity']) != 0:
+						print(item['recommended_quantity'],item['total_quantity'],"recqty")
+
+						service_item = ServiceRecipeItems.objects.get(id=int(item['service_item_id']))
+						print(service_item.ingredient,"servzz")
+
+						# crtd = CheckOutItems.objects.create(visit=checkout_visit,service_item=service_item,units=math.ceil(float(item['recommended_quantity'])),is_swapped_item=False)
+
+						# print(crtd,"corrtf")
+
+						if item['total_quantity'] > 0 and float(item['total_quantity']) >= float(item['recommended_quantity']):
 							
-		
-						print("klap")
-
-					elif item['total_quantity'] > 0 and float(item['total_quantity']) < float(item['recommended_quantity']):
-						
-						try:
-							checkout_item = CheckOutItems.objects.get(visit=checkout_visit,service_item=service_item,service_item__ingredient=service_item.ingredient,is_checked_out=False)
-						except:
-							if service_item.item.item_add_type == 'quantity':
-								CheckOutItems.objects.create(visit=checkout_visit,service_item=service_item,units=math.ceil(item['total_quantity']),is_swapped_item=False)
-						
-							if service_item.item.item_add_type == 'unit':
-								itemunits = ItemUnit.objects.filter(item=service_item.item,is_available=True)[:int(item['total_quantity'])]
-								print(itemunits,"rrr3")
-								for unit in itemunits:
-									try:
-										CheckOutItems.objects.get(visit=checkout_visit,item_unit=unit,is_checked_out=False)
-									except:
-										CheckOutItems.objects.create(visit=checkout_visit,service_item=service_item,item_unit=unit,units=1,is_swapped_item=False)
-									# CheckOutItemUnits.objects.create(checkout_item=checkout_item,item_unit=unit)
-
-						print("klap2")     
-
-					else:
-						pass
+							try:
+								checkout_item = CheckOutItems.objects.get(visit=checkout_visit,service_item=service_item,service_item__ingredient=service_item.ingredient,is_checked_out=False)
+								print(checkout_item,"yuv1")
+							except:
+								print("yuv2")
+								if service_item.item.item_add_type == 'quantity':
+									print("yuv3nok")
+									CheckOutItems.objects.create(visit=checkout_visit,service_item=service_item,units=math.ceil(float(item['recommended_quantity'])),is_swapped_item=False)
+								
+								if service_item.item.item_add_type == 'unit':
+									print("yuv4nok")
+									itemunits = ItemUnit.objects.filter(item=service_item.item,store=store,is_available=True)[:int(item['recommended_quantity'])]
+									print(itemunits,"rrr")
+									for unit in itemunits:
+										print(unit,"rrr2")
+										try:
+											CheckOutItems.objects.get(visit=checkout_visit,item_unit=unit,is_checked_out=False)
+										except:
+											CheckOutItems.objects.create(visit=checkout_visit,service_item=service_item,item_unit=unit,units=1,is_swapped_item=False)
+										# CheckOutItemUnits.objects.create(checkout_item=checkout_item,item_unit=unit)
+								
 			
+							print("klap")
 
-			print(service_recipe_ingredients,"itt")
-		return render(request,'inventory/createCheckout.html',{"max_area":max_area,"cleaners":cleaners,"stock_out":stock_out,"price_ranges":price_ranges,"visit":checkout_visit,"visits":visits,"items":items,"check_out_items":check_out_items})
+						elif item['total_quantity'] > 0 and float(item['total_quantity']) < float(item['recommended_quantity']):
+							
+							try:
+								checkout_item = CheckOutItems.objects.get(visit=checkout_visit,service_item=service_item,service_item__ingredient=service_item.ingredient,is_checked_out=False)
+							except:
+								if service_item.item.item_add_type == 'quantity':
+									CheckOutItems.objects.create(visit=checkout_visit,service_item=service_item,units=math.ceil(item['total_quantity']),is_swapped_item=False)
+							
+								if service_item.item.item_add_type == 'unit':
+									itemunits = ItemUnit.objects.filter(item=service_item.item,store=store,is_available=True)[:int(item['total_quantity'])]
+									print(itemunits,"rrr3")
+									for unit in itemunits:
+										try:
+											CheckOutItems.objects.get(visit=checkout_visit,item_unit=unit,is_checked_out=False)
+										except:
+											CheckOutItems.objects.create(visit=checkout_visit,service_item=service_item,item_unit=unit,units=1,is_swapped_item=False)
+										# CheckOutItemUnits.objects.create(checkout_item=checkout_item,item_unit=unit)
+
+							print("klap2")     
+
+						else:
+							pass
+				
+
+				print(service_recipe_ingredients,"itt")
+		else:
+			store = Store.objects.get(id=1)
+
+		return render(request,'inventory/createCheckout.html',{"store":store,"max_area":max_area,"cleaners":cleaners,"stock_out":stock_out,"price_ranges":price_ranges,"visit":checkout_visit,"visits":visits,"items":items,"check_out_items":check_out_items})
 
 	def post(self,request,visit_id):
 		checkout_visit = OrderScheduler.objects.select_related('order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections')).get(id=int(visit_id))
@@ -1838,6 +1969,9 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 			# quantities = request.POST.get('quantities')
 			
 			# quantities = quantities.split(",")
+			store_id = request.POST.get('store_id')
+			store = Store.objects.get(id=int(store_id))
+			print(store,"storra")
 
 			checkout_items=CheckOutItems.objects.filter(visit=checkout_visit,is_checked_out=False)
 
@@ -1860,13 +1994,24 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 						itemunit.save()
 
 				if item.item and item.item.item_add_type == 'quantity':
+
+					try:
+						store_item     = QuantityStoreDetails.objects.get(item_store=store,quantity_item=item.item)
+					except:
+						store_item     = None
+					
 					inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(is_available=True),to_attr='item_units')).get(id=int(item.item.id))
 					
 					print(inventoryitem.total_quantity,"krok")
-					if float(inventoryitem.total_quantity) >= float(item.units):
+					if float(store_item.quantity) >= float(item.units):
 						inventoryitem.total_quantity = round(float(inventoryitem.total_quantity) - float(item.units),2)
 						inventoryitem.save()
-						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),item_action='STOCK OUT',item_remark=checkout_visit.order.order_no,added_by=team_leader)
+
+						store_item.quantity = round(float(store_item.quantity) - float(item.units),2)
+						store_item.save()
+
+						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),quantity_location=store,item_action='STOCK OUT',item_remark=checkout_visit.order.order_no,added_by=team_leader)
+
 					else:
 						messages.error(request,"Quantity limit exceeded !")
 						return redirect('bleach-inventory:inventory-createcheckout',visit_id)
@@ -1880,18 +2025,29 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 						itemunit.save()
 
 				if item.service_item and item.service_item.item.item_add_type == 'quantity':
+					
+					try:
+						store_item     = QuantityStoreDetails.objects.get(item_store=store,quantity_item=item.service_item.item)
+					except:
+						store_item     = None
+
 					inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(is_available=True),to_attr='item_units')).get(id=int(item.service_item.item.id))
 					
-					if float(inventoryitem.total_quantity) >= float(item.units):
+					if float(store_item.quantity) >= float(item.units):
 						inventoryitem.total_quantity = round(float(inventoryitem.total_quantity) - float(item.units),2)
 						inventoryitem.save()
-						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),item_action='STOCK OUT',item_remark=checkout_visit.order.order_no,added_by=team_leader)
+
+						store_item.quantity = round(float(store_item.quantity) - float(item.units),2)
+						store_item.save()
+
+						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),quantity_location=store,item_action='STOCK OUT',item_remark=checkout_visit.order.order_no,added_by=team_leader)
 
 				item.is_checked_out = True
 				item.checked_out_date = date.today()
 				item.save()
 
 			for visit in visits:
+				print("visittest")
 				visit.stock_out_items_saved = True
 				visit.stock_out_items_submitted = True
 				visit.save()
@@ -1964,6 +2120,8 @@ class PurchaseOrderItemsPage(IsInventoryAdminUser,View):
 		if action == 'add_quantity_to_inventory':
 			products = request.POST.getlist('product_id')
 			item_counts = request.POST.getlist('item_count')
+			store_id = request.POST.get('store_id')
+			store = Store.objects.get(id=int(store_id))
 			print(products,item_counts,"cts")
 
 			loopcount = 0
@@ -1971,8 +2129,19 @@ class PurchaseOrderItemsPage(IsInventoryAdminUser,View):
 				item = InventoryItem.objects.get(id=int(product))
 				purchase_order_item = PurchaseOrderItems.objects.get(purchase_order=purchase_order,product__item__id=int(product))
 				print(item,item_counts[loopcount], "itm")
-				ItemHistory.objects.create(purchase_order=purchase_order,item=item,quantity=item_counts[loopcount],item_action='PURCHASE ORDER',item_remark=purchase_order.purchase_order_id,added_by=purchase_order_item.purchase_order.initiated_by)
+				ItemHistory.objects.create(purchase_order=purchase_order,quantity_location=store,item=item,quantity=item_counts[loopcount],item_action='PURCHASE ORDER',item_remark=purchase_order.purchase_order_id,added_by=purchase_order_item.purchase_order.initiated_by)
 				
+				try:
+					quantitystore = QuantityStoreDetails.objects.get(item_store=store,quantity_item = item)
+					quantitystore.quantity = float(quantitystore.quantity) + float(item_counts[loopcount])
+					quantitystore.save()
+				except:
+					QuantityStoreDetails.objects.create(
+					item_store = store,
+					quantity_item = item,
+					quantity = item_counts[loopcount]
+					)
+
 				item.total_quantity = float(item.total_quantity) + float(item_counts[loopcount])
 				item.save()
 
@@ -2606,7 +2775,7 @@ class InventoryCreateInventoryRequest(View):
 				request_order.purpose  = purpose
 
 			request_order.is_order_completed = True
-			if request.user.user_type == 'INVENTORYADMIN': 
+			if request.user.user_type == 'INVENTORYADMIN' or purpose == 'INVENTORY PREPARATION': 
 				request_order.is_admin_approved = True
 			request_order.save()
 			
@@ -2773,12 +2942,23 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 	def get(self,request,request_order_id):
 		request_order       = RequestOrder.objects.get(id=request_order_id)
 		request_order_items = RequestOrderItems.objects.select_related('product').filter(request_order=request_order)
+		
+		try:
+			store               = Store.objects.get(id=request.GET.get('store'))
+		except:
+			store               = Store.objects.first()
+
 		#item availability check
 		is_all_items_available = True
 		if request_order_items:
 			for request_order_item in request_order_items:
 				if request_order_item.product.item_add_type == 'quantity':
-					reminign_items = float(request_order_item.product.total_quantity)-float(request_order_item.item_count)
+					try:
+						store_item     = QuantityStoreDetails.objects.get(item_store=store,quantity_item=request_order_item.product)
+						reminign_items = float(store_item.quantity)-float(request_order_item.item_count)
+					except:
+						reminign_items = -1
+
 					if reminign_items < 0:
 						request_order_item.status = 'Out Of Stock'
 						is_all_items_available       = False
@@ -2788,7 +2968,7 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 						request_order_item.status = 'Available'
 				
 				elif request_order_item.product.item_add_type == 'unit':
-					unitcount = ItemUnit.objects.filter(is_available=True,item=request_order_item.product).count()
+					unitcount = ItemUnit.objects.filter(is_available=True,item=request_order_item.product,store=store).count()
 					if	request_order_item.product_unit.is_available == True and float(unitcount) >= float(request_order_item.item_count):
 						request_order_item.status = 'Available'
 					else:
@@ -2796,11 +2976,17 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 						is_all_items_available       = False
 						
 				
-		return render(request,"inventory/requestorderitems.html",{"request_order":request_order,"request_order_items":request_order_items,"is_all_items_available":is_all_items_available})
+		return render(request,"inventory/requestorderitems.html",{"request_order":request_order,"request_order_items":request_order_items,"is_all_items_available":is_all_items_available,"store":store})
 
 	def post(self,request,request_order_id):
 		request_order       = RequestOrder.objects.get(id=request_order_id)
 		request_order_items = RequestOrderItems.objects.select_related('product').filter(request_order=request_order)              
+
+		try:
+			store               = Store.objects.get(id=request.POST.get('store'))
+		except:
+			store               = Store.objects.first()
+
 		action              = request.POST.get('action')
 		if action == 'stock_out':
 			#item availability check
@@ -2808,7 +2994,13 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 			if request_order_items:
 				for request_order_item in request_order_items:
 					if request_order_item.product.item_add_type == 'quantity':
-						if float(request_order_item.product.total_quantity) <= 0 or float(request_order_item.product.total_quantity) < float(request_order_item.item_count):
+						
+						try:
+							store_item     = QuantityStoreDetails.objects.get(item_store=store,quantity_item=request_order_item.product)
+						except:
+							store_item     = None
+						
+						if float(store_item.quantity) <= 0 or float(store_item.quantity) < float(request_order_item.item_count):
 							request_order_item.status    = 'Out Of Stock'
 							is_all_items_available       = False
 
@@ -2816,7 +3008,7 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 							return redirect('bleach-inventory:inventory-requestorderitems',request_order_id)
 				
 					elif request_order_item.product.item_add_type == 'unit':
-						unitcount = ItemUnit.objects.filter(is_available=True,item=request_order_item.product).count()
+						unitcount = ItemUnit.objects.filter(is_available=True,store=store,item=request_order_item.product).count()
 						if not (request_order_item.product_unit.is_available == True and float(unitcount) >= float(request_order_item.item_count)):
 							request_order_item.status    = 'Not Available'
 							is_all_items_available       = False
@@ -2831,20 +3023,22 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 						
 						if request_order_item.product.item_add_type == 'quantity':
 							request_order_item.product.total_quantity = float(request_order_item.product.total_quantity)-float(request_order_item.item_count)
+							store_item.quantity                       = float(store_item.quantity)-float(request_order_item.item_count)
 						
 						request_order_item.product.save()
 						request_order_item.is_received             = True
 						request_order_item.save()
-
+						store_item.save()
+						
 						ItemHistory.objects.create(
 						item = request_order_item.product,
 						item_action = 'ITEM REQUEST',
+						quantity_location=store,
 						item_remark = request_order_item.request_order.request_order_id,
 						quantity = request_order_item.item_count,
 						external_user = request_order_item.request_order.requested_by.name
 						)
 
-						#update unit item status
 						if request_order_item.product_unit:
 							request_order_item.product_unit.status = 'working'
 							request_order_item.product_unit.is_available=False

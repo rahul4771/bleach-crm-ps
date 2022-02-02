@@ -264,9 +264,10 @@
                     </div>
                     <div class="col-md-3">
                         <div class="  h-100 m-mt-30">
-                            <div class="inv-item-card ">
+                            <div class="inv-item-card " >
                              <div class="av-font text-center">
                                  Inventory
+                                 <i class="fas fa-arrow-circle-right" onclick="openNavInventoryPopup()" style="float:right;color: #2d4e85;cursor:pointer"></i>
                                  <div style="text-align: center;" class=" av-font mt-10 mb-10">
                                      
                                      <br>
@@ -606,9 +607,8 @@
                                     </td>
 
                                     <td class="" data-label="Status">
-                                        <span class="inv-dot {% if unit.status == 'working' %} {% if unit.is_available == True %}c-active{% else %}c-inactive{% endif %} {% elif unit.status == 'under_repair' %}c-expired{% elif unit.status == 'out_of_order' %}c-out-of-order{% endif %} ml-5"></span>
-                                        {% if unit.status == 'working' %}{% if unit.is_available == True %}Available{% else %}Unavailable{% endif %}{% elif unit.status == 'under_repair' %}Under Repair{% elif unit.status == 'out_of_order' %}Out of Order{% endif %}
-    
+                                        <span class="inv-dot {% if unit.status == 'working' %} {% if unit.is_available == True %}c-active{% else %}c-inactive{% endif %} {% elif unit.status == 'under_repair' %}c-expired{% elif unit.status == 'out_of_order' %}c-out-of-order{% elif unit.status == 'disposed' %}c-out-of-order{% endif %} ml-5"></span>
+                                        {% if unit.status == 'working' %}{% if unit.is_available == True %}Available{% else %}Unavailable{% endif %}{% elif unit.status == 'under_repair' %}Under Repair{% elif unit.status == 'out_of_order' %}Out of Order{% elif unit.status == 'disposed' %}Disposed{% endif %}
                                     </td>
                                     <td class="text-center">
                                       
@@ -616,10 +616,11 @@
                                         <button onclick="openNavAddBundle('edit')" class="inv-plan-img-btn edit-unit-btn" data-unitid="{{unit.id}}" data-unitcode="{{unit.unit_code}}" data-unitstoreid="{{unit.store.id}}" data-unitstorename="{{unit.store.store_name}}" data-purchasedate="{{unit.purchase_date|date:'Y-m-d'}}" data-expirydate="{{unit.expiry_date|date:'Y-m-d'}}" data-noexpiry="{{unit.no_expiry}}" data-serialnumber="{{unit.unit_serial_number}}" data-unitprice="{{unit.unit_price|floatformat:3}}" data-status="{{unit.status}}"> <img
                                                 src="{% static 'files/inventory/icons/edit.png' %}" alt="">
                                         </button>
+                                        {% if request.user.user_type == 'INVENTORYADMIN' %}
                                         <button class="inv-plan-img-btn delete-unit-btn" data-unitid="{{unit.id}}" data-toggle="modal" data-target="#deleteModel"> <img
                                                 src="{% static 'files/inventory/icons/delete.png' %}" alt="">
                                         </button>
-    
+                                        {% endif %}
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -828,24 +829,22 @@
             </div>
             <hr>
             <div class="row mt-20">
-                <div class="col-md-12 " id="id_add_method">
-                   
-                    <input type="hidden" name="item_id" value="{{inventory_item.id}}" id="item_id">
+                <div class="col-md-12 ">
                     <div class="model-input-name required-field">Select Item</div>
-                   
-                    <div class="wrap-drop" id="select_methddrp1" style="z-index: 4;" >
-                        <span id="id_selectText"><% selected_item.accessory_name %></span>
-                        <ul class="drop">
-                            <li @click="chooseItem(item)" v-for="(item,index) in raw_materials" v-bind:key="item">
-                             <a> <% item.accessory_name %></a>  
-                            </li>
-                            
 
-                        </ul>
-                      
-                      
+                    <div style="position: relative;">
+                        <div class="inv-input-container inv-border h-30">
+                            <input type="hidden" name="item_id" v-model="item_id">
+                            <input autocomplete="off" @click="openAccessories()" @blur="checkItem()" type="text"  style="border: none !important; width: 90%;" class=" inv-in"  @input="searchItems()" required v-model="acc_name">
+                        </div>
+                        <div  class="row inv-result-box"  id="rs-box" v-if="open_accessory">
+                            <div class="col-md-12 "  style="padding:0px !important;" v-for="(item_val,rindex) in filtered_items" v-bind:key="rindex" @click="selectItem(item_val)" >
+                                <div class="inv-search-result" ><% item_val.accessory_name%></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+               
                 <div class="col-md-12 ">
                     <div class="model-input-name required-field mt-20">Quantity</div>
 
@@ -892,7 +891,7 @@
             </div>
             <hr>
             <div class="row mt-20">
-                <div class="col-md-12 " id="id_add_method">
+                <!-- <div class="col-md-12 " id="id_add_method">
                    
                     <input type="hidden" name="item_id" value="{{inventory_item.id}}" id="item_id">
                     <div class="model-input-name required-field">Select Item</div>
@@ -908,6 +907,21 @@
                         </ul>
                       
                       
+                    </div>
+                </div> -->
+                <div class="col-md-12 ">
+                    <div class="model-input-name required-field">Select Item</div>
+
+                    <div style="position: relative;">
+                        <div class="inv-input-container inv-border h-30">
+                            <input type="hidden" name="item_id" v-model="item_id">
+                            <input autocomplete="off" @click="openAccessories()" @blur="checkItem()" type="text"  style="border: none !important; width: 90%;" class=" inv-in"  @input="searchItems()" required v-model="acc_name">
+                        </div>
+                        <div  class="row inv-result-box"  id="rs-box" v-if="open_accessory">
+                            <div class="col-md-12 "  style="padding:0px !important;" v-for="(item_val,rindex) in filtered_items" v-bind:key="rindex" @click="selectItem(item_val)" >
+                                <div class="inv-search-result" ><% item_val.accessory_name%></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-12 ">
@@ -937,6 +951,88 @@
 
     </div>
     </div>
+     <!--- popup begins here-->
+     <div id="inventory_popup" class="inv-sidedrawer">
+
+        <div class="inv-sidedrawer-inner" style="height:100%">
+            <div class="d-flex">
+                <div class="inv-drawer-head">
+                 Inventory
+                </div>
+                <div class="right-pos">
+
+                    <button onclick="closeNavInventoryPopup()" class="img-button">
+                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                    </button>
+                </div>
+            </div>
+            <hr>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <table class="inv-table footable main-table" style="max-height:70vh;overflow: scroll;">
+                        <thead>
+                            <tr>
+                                <th style="width: %;">
+                                   Store Name
+                                </th>
+                                <th style="width: %;">
+                                    Quantity
+                                </th>
+                               
+                               
+                            </tr>
+                        </thead>
+                        <tbody>
+                           
+                            <tr>
+                                <td data-label="Unit ID">
+                                    00000000
+                                </td>
+                                <td data-label="serial No.">
+                                    232
+                                </td>
+                                
+                            </tr>
+                            <tr>
+                                <td data-label="Unit ID">
+                                    00000000
+                                </td>
+                                <td data-label="serial No.">
+                                    232
+                                </td>
+                                
+                            </tr>
+                            <tr>
+                                <td data-label="Unit ID">
+                                    00000000
+                                </td>
+                                <td data-label="serial No.">
+                                    232
+                                </td>
+                                
+                            </tr>
+                            </tbody>
+                            </table>
+
+                </div>
+               
+                
+               
+
+            </div>
+
+           
+        <div class="inv-drawer-footer">
+              
+        
+                        <button data-dismiss="modal" onclick="closeNavInventoryPopup()" class="view-button">Close</button>
+        </div>
+        
+
+    </div>
+    </div>
+
+    <!--- popup ends here-->
 
     <!--- edit sub parts ends here-->
 
@@ -1063,7 +1159,7 @@
            
            
             <div id="id_man">
-            <div class="row mt-20">
+            <div class="row mt-20" id="store_data">
                 <div class="col-md-12 ">
                     <div class="model-input-name required-field">Store</div>
 
@@ -1660,7 +1756,12 @@
      accessories:[],
      edit_item_id:'',
      current_item:'',
-     subparts:[]
+     subparts:[],
+     acc_name:'',
+     filtered_items:[],
+     testname:'',
+     item_id:'',
+     open_accessory:false
     },
     mounted(){
         this.url = api;
@@ -1669,6 +1770,28 @@
        this.getSubparts()
     },
     methods:{
+        checkItem(){
+            var selected=this.raw_materials.filter(item=>item.accessory_name.toUpperCase().startsWith(this.acc_name.toUpperCase()))
+            if(selected.length==0){
+                this.acc_name=''
+                this.item_id=''
+            }
+        },
+        selectItem(item){
+           this.item_id=item.accessory_id
+           this.acc_name=item.accessory_name
+            this.open_accessory=false
+        },
+        searchItems(){
+            this.filtered_items=this.raw_materials.filter(item=>item.accessory_name.toUpperCase().startsWith(this.acc_name.toUpperCase()))
+        },
+        openAccessories(){
+            this.open_accessory=true
+        },
+        closeAccessories(){
+            this.open_accessory=false
+            $('#rs-box').hide()
+        },
         deleteSubpart(item){
             this.current_item=item
         },
@@ -1726,6 +1849,7 @@
             
             axios.get(this.url+'/api/rawmaterials/').then(response=>{
                 this.raw_materials=response.data.inventoryitem_list
+                this.filtered_items=[...this.raw_materials]
             })
         },
         addAccessory(){
@@ -2057,6 +2181,10 @@ function selectFileInp(){
     function closeNavAdd() {
         document.getElementById("addBundle2").style.width = "0";
     }
+    function closeNavInventoryPopup(){
+        document.getElementById("inventory_popup").style.width = "0";
+        
+    }
 
 function viewImgModel(){
     console.log('c')
@@ -2285,6 +2413,7 @@ function openNavAddBundle(d) {
         $('#update-unit-btn').hide();
         $('#id_unit_status').val('available');
         $("#id_selectText").text("Select PO");
+        $("#store_data").show()
             {% if inventory_item.item_add_type == 'unit' %}
             $("#supHead").text("Add Unit");
             {% else %}
@@ -2298,6 +2427,7 @@ function openNavAddBundle(d) {
             $('#submit-btn').hide()
             $('#po-btn').hide()
             $("#unit_action").val("edit_unit");
+            $("#store_data").hide()
             
         }
         if(screen.width<= 600){
@@ -2307,6 +2437,16 @@ function openNavAddBundle(d) {
         }
         else{
             document.getElementById("addBundle").style.width = "30%";
+        }  
+    }
+    function openNavInventoryPopup(){
+        if(screen.width<= 600){
+            document.getElementById("inventory_popup").style.width = "100%";
+        }else if(screen.width<= 720){
+            document.getElementById("inventory_popup").style.width = "50%";
+        }
+        else{
+            document.getElementById("inventory_popup").style.width = "30%";
         }  
     }
     function openNavAddAccessories(d) {

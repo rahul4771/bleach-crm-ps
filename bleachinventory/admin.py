@@ -1,5 +1,5 @@
 from django.contrib import admin
-from bleachinventory.models import CheckOutItems,CheckOutItemUnits,ItemHistory,PurchaseOrder,PurchaseOrderItems,Category,Line,Segment,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems,BundleItemUnits,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,InventoryAccessory,InventoryFinshedItem,RequestOrder,RequestOrderItems,ExternalCustomer
+from bleachinventory.models import QuantityStoreDetails,CheckOutItems,CheckOutItemUnits,ItemHistory,PurchaseOrder,PurchaseOrderItems,Category,Line,Segment,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems,BundleItemUnits,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,InventoryAccessory,InventoryFinshedItem,RequestOrder,RequestOrderItems,ExternalCustomer,Store
 # Register your models here.
 
 admin.site.register(Category)
@@ -29,3 +29,5 @@ admin.site.register(CheckOutItemUnits)
 admin.site.register(ExternalCustomer)
 admin.site.register(RequestOrder)
 admin.site.register(RequestOrderItems)
+admin.site.register(QuantityStoreDetails)
+admin.site.register(Store)

@@ -12,7 +12,7 @@ from bleachadmin.models import ServicePriceRange,Settings
 from django.core.mail import send_mail,EmailMultiAlternatives
 from Api.serializers import DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
-from bleachinventory.models import ExternalCustomer,Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,CheckOutItemUnits,ItemHistory,InventoryAccessory,InventoryFinshedItem
+from bleachinventory.models import QuantityStoreDetails,ExternalCustomer,Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,CheckOutItemUnits,ItemHistory,InventoryAccessory,InventoryFinshedItem,Store
 import re
 import random
 import string
@@ -2988,6 +2988,60 @@ class InventorySupplierItemsAPI(APIView):
 		response_dict['items']=items
 		return Response(response_dict,HTTP_200_OK)
 
+class InventoryItemsListAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		response_dict = {}
+		store_id = request.GET.get('store_id')
+		product_id = request.GET.get('product_id')
+		print(store_id,"attrsedan")
+		# try:
+		store = Store.objects.filter(id=int(store_id))
+		itemslist = InventoryItem.objects.all().prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(is_available=True,store=store),to_attr='item_units'),Prefetch('quantity_store_item',queryset=QuantityStoreDetails.objects.filter(item_store=store),to_attr='quantity_items'))
+		
+		units = []
+		if product_id:
+			itemunits = ItemUnit.objects.filter(is_available=True,store=store,item__id=int(product_id))
+			
+			for unit in itemunits:
+				unit_dict={
+					'id' : unit.id,
+					'unit_code' : unit.unit_code
+				}
+				units.append(unit_dict)
+		
+		items = []
+		for item in itemslist:
+			for unit in item.item_units:
+				item_dict = {}
+				item_dict['item_id'] = unit.item.id
+				item_dict['item_name'] = unit.item.name
+				item_dict['item_type'] = unit.item.item_add_type
+				items.append(item_dict)
+
+			for qty in item.quantity_items:
+				item_dict = {}
+				item_dict['item_id'] = qty.quantity_item.id
+				item_dict['item_name'] = qty.quantity_item.name
+				item_dict['item_type'] = qty.quantity_item.item_add_type
+				items.append(item_dict)
+
+		
+		# except:
+		# 	store = None
+		# 	items = None
+		print(items,"iteams")
+
+		res_list = []
+		for i in range(len(items)):
+			if items[i] not in items[i + 1:]:
+				res_list.append(items[i])
+		response_dict['items']=res_list
+		response_dict['units']=units
+		return Response(response_dict,HTTP_200_OK)
+
 
 class InventoryServiceRecipeAPI(APIView):
 	permission_classes  	=   (AllowAny,)
@@ -3571,11 +3625,11 @@ class ItemQuantityCheck(APIView):
 				response_dict['item_quantity'] = quantity
 			else:
 				response_dict['item_available'] = False
-				response_dict['item_quantity'] = item_count
+				response_dict['item_quantity'] = round(float(item_count),2)
 
 			item_count = float(item_count)
 			print(round(item_count,3),"roun")
-			response_dict['item_count'] = round(item_count,3)
+			response_dict['item_count'] = round(item_count,2)
 
 		response_dict['success'] = True
 
@@ -4005,6 +4059,7 @@ class ItemsCheckInAPI(APIView):
 
 		response_dict['items_list'] = items_list
 		response_dict['order_no'] = item.visit.order.order_no,
+		response_dict['visit_id'] = item.visit.id,
 
 		print(items_list,"ret")
 
@@ -4015,11 +4070,14 @@ class ItemsCheckInAPI(APIView):
 		item_ids    = request.data.get('item_ids')
 		item_quantities   = request.data.get('quantities')
 		user_id = request.data.get('inventory_user')
+		store_id = request.data.get('store_id')
+		store = Store.objects.get(id=int(store_id))
 		inventory_user = UserProfile.objects.get(id=int(user_id))
+		visit_id = request.data.get('visit_id')
 		print(item_quantities,"qts")
 
 		count = 0
-
+		
 		for item_id in item_ids:
 			checkin_item = CheckOutItems.objects.prefetch_related(Prefetch('checkoutitem',CheckOutItemUnits.objects.all(),to_attr="checkin_item_units")).get(id=int(item_id),is_checked_in=False)
 			checkout_visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(checkin_item.visit.id))
@@ -4037,6 +4095,7 @@ class ItemsCheckInAPI(APIView):
 				if checkin_item.item_unit:
 					inventoryitemunit = ItemUnit.objects.get(id=int(checkin_item.item_unit.id))
 					inventoryitemunit.status = 'working'
+					inventoryitemunit.store = store
 					inventoryitemunit.is_available=True
 					inventoryitemunit.save()
 					print("pam")
@@ -4044,6 +4103,7 @@ class ItemsCheckInAPI(APIView):
 					for itemunit in checkin_item.checkin_item_units:
 						inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
 						inventoryitemunit.status = 'working'
+						inventoryitemunit.store = store
 						inventoryitemunit.is_available=True
 						inventoryitemunit.save()
 
@@ -4051,6 +4111,7 @@ class ItemsCheckInAPI(APIView):
 				if checkin_item.item_unit:
 					inventoryitemunit = ItemUnit.objects.get(id=int(checkin_item.item_unit.id))
 					inventoryitemunit.status = 'working'
+					inventoryitemunit.store = store
 					inventoryitemunit.is_available=True
 					inventoryitemunit.save()
 				else:
@@ -4058,6 +4119,7 @@ class ItemsCheckInAPI(APIView):
 						print(itemunit.item_unit.id,"itunitid")
 						inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
 						inventoryitemunit.status = 'working'
+						inventoryitemunit.store = store
 						inventoryitemunit.is_available=True
 						inventoryitemunit.save()
 
@@ -4067,10 +4129,22 @@ class ItemsCheckInAPI(APIView):
 				inventoryitem.total_quantity = float(inventoryitem.total_quantity) + float(item_quantities[count])
 				inventoryitem.save()
 
+				try:
+					quantitystore = QuantityStoreDetails.objects.get(item_store=store,quantity_item = checkin_item.item)
+					quantitystore.quantity = float(quantitystore.quantity) + float(item_quantities[count])
+					quantitystore.save()
+				except:
+					QuantityStoreDetails.objects.create(
+					item_store = store,
+					quantity_item = checkin_item.item,
+					quantity = float(item_quantities[count])
+					)
+
 				ItemHistory.objects.create(
 				item = inventoryitem,
 				quantity = item_quantities[count],
 				item_action='STOCK IN',
+				quantity_location=store,
 				item_remark=checkin_item.visit.order.order_no,
 				purchase_date= date.today(),
 				added_by = team_leader
@@ -4083,10 +4157,22 @@ class ItemsCheckInAPI(APIView):
 				inventoryitem.total_quantity = float(inventoryitem.total_quantity) + float(item_quantities[count])
 				inventoryitem.save()
 
+				try:
+					quantitystore = QuantityStoreDetails.objects.get(item_store=store,quantity_item = checkin_item.item)
+					quantitystore.quantity = float(quantitystore.quantity) + float(item_quantities[count])
+					quantitystore.save()
+				except:
+					QuantityStoreDetails.objects.create(
+					item_store = store,
+					quantity_item = checkin_item.item,
+					quantity = float(item_quantities[count])
+					)
+
 				ItemHistory.objects.create(
 				item = inventoryitem,
 				quantity = item_quantities[count],
 				item_action='STOCK IN',
+				quantity_location=store,
 				item_remark=checkin_item.visit.order.order_no,
 				purchase_date= date.today(),
 				added_by = team_leader
@@ -4099,6 +4185,18 @@ class ItemsCheckInAPI(APIView):
 			for visit in visits:
 				visit.stock_in_initiated = True
 				visit.save()
+
+		#saving check in status if items are empty
+		checkout_visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(visit_id))
+		
+		for team in checkout_visit.cleaning_team:
+			team_leader = team.team_leader
+
+		visits = OrderScheduler.objects.filter(order__order_no=checkout_visit.order.order_no,start_at=checkout_visit.start_at,cleaning_team_order_scheduler__team_leader=team_leader)
+
+		for visit in visits:
+			visit.stock_in_initiated = True
+			visit.save()
 
 		response_dict = {'success':True}
 
@@ -4323,3 +4421,191 @@ class ItemUnitsProduct(APIView):
 		response_dict['success']    = True
 
 		return Response(response_dict, HTTP_200_OK)
+
+class ItemStores(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request):
+		response_dict = {'success':False}	
+		
+		stores       = Store.objects.all()
+		
+		store_array = []
+
+		for store in stores:
+			store_array.append({'id':store.id,'store_name':store.store_name})
+
+		print(store_array,"uarr2")
+		response_dict['stores'] = store_array
+		response_dict['success']    = True
+
+		return Response(response_dict, HTTP_200_OK)
+
+
+class CheckOutStoreItemsUpdateAPI(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+	def get(self,request):
+		response_dict = {'success':True}
+
+		visit_id    = request.GET.get('item_user')
+
+		print(visit_id,"lpo")
+
+		visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(visit_id))
+
+		for team in visit.cleaning_team:
+			team_leader = team.team_leader.name
+			response_dict['team_leader'] = team_leader
+
+		return_items = CheckOutItems.objects.filter(is_checked_in=False,visit=visit)
+		
+
+		items_list = []
+
+		for item in return_items:
+
+			if item.service_item:
+				if item.service_item.item.item_add_type == 'unit':
+					if item.item_unit:
+						item_code = item.item_unit.unit_code
+					else:
+						item_code = '-'
+				else:
+					item_code = item.service_item.item.item_code
+
+				if item.service_item.item.is_reusable == True:
+					item_dict = {
+						'item_id' : item.id,
+						'item_name' : item.service_item.item.name,
+						'item_code' : item_code,
+						'item_type' : item.service_item.item.item_add_type,
+						'quantity' : item.units
+					}
+					items_list.append(item_dict)
+			
+			if item.item:
+				if item.item.item_add_type == 'unit':
+					if item.item_unit:
+						item_code = item.item_unit.unit_code
+					else:
+						item_code = '-'
+				else:
+					item_code = item.item.item_code
+
+				if item.item.is_reusable == True:
+					item_dict = {
+						'item_id' : item.id,
+						'item_name' : item.item.name,
+						'item_code' : item_code,
+						'item_type' : item.item.item_add_type,
+						'quantity' : item.units
+					}
+					items_list.append(item_dict)
+
+		response_dict['items_list'] = items_list
+		response_dict['order_no'] = item.visit.order.order_no,
+
+		print(items_list,"ret")
+
+		return Response(response_dict, HTTP_200_OK)
+
+	def post(self,request):
+		
+		item_ids    = request.data.get('item_ids')
+		item_quantities   = request.data.get('quantities')
+		user_id = request.data.get('inventory_user')
+		inventory_user = UserProfile.objects.get(id=int(user_id))
+		print(item_quantities,"qts")
+
+		count = 0
+
+		for item_id in item_ids:
+			checkin_item = CheckOutItems.objects.prefetch_related(Prefetch('checkoutitem',CheckOutItemUnits.objects.all(),to_attr="checkin_item_units")).get(id=int(item_id),is_checked_in=False)
+			checkout_visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(checkin_item.visit.id))
+
+			for team in checkout_visit.cleaning_team:
+				team_leader = team.team_leader
+
+			visits = OrderScheduler.objects.filter(order__order_no=checkout_visit.order.order_no,start_at=checkout_visit.start_at,cleaning_team_order_scheduler__team_leader=team_leader)
+
+			print(item_quantities[count],"iom")
+			checkin_item.is_checked_in = True
+			checkin_item.check_in_user = UserProfile.objects.get(id=int(request.data.get('inventory_user')),is_active=True)
+			
+			if checkin_item.item and checkin_item.item.item_add_type == 'unit':
+				if checkin_item.item_unit:
+					inventoryitemunit = ItemUnit.objects.get(id=int(checkin_item.item_unit.id))
+					inventoryitemunit.status = 'working'
+					inventoryitemunit.is_available=True
+					inventoryitemunit.save()
+					print("pam")
+				else:
+					for itemunit in checkin_item.checkin_item_units:
+						inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
+						inventoryitemunit.status = 'working'
+						inventoryitemunit.is_available=True
+						inventoryitemunit.save()
+
+			if checkin_item.service_item and checkin_item.service_item.item.item_add_type == 'unit':
+				if checkin_item.item_unit:
+					inventoryitemunit = ItemUnit.objects.get(id=int(checkin_item.item_unit.id))
+					inventoryitemunit.status = 'working'
+					inventoryitemunit.is_available=True
+					inventoryitemunit.save()
+				else:
+					for itemunit in checkin_item.checkin_item_units:
+						print(itemunit.item_unit.id,"itunitid")
+						inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
+						inventoryitemunit.status = 'working'
+						inventoryitemunit.is_available=True
+						inventoryitemunit.save()
+
+			if checkin_item.item and checkin_item.item.item_add_type == 'quantity' and float(item_quantities[count]) > 0:
+				print("pam")
+				inventoryitem = InventoryItem.objects.get(id=int(checkin_item.item.id))
+				inventoryitem.total_quantity = float(inventoryitem.total_quantity) + float(item_quantities[count])
+				inventoryitem.save()
+
+				ItemHistory.objects.create(
+				item = inventoryitem,
+				quantity = item_quantities[count],
+				item_action='STOCK IN',
+				quantity_location=store,
+				item_remark=checkin_item.visit.order.order_no,
+				purchase_date= date.today(),
+				added_by = team_leader
+				)
+
+				count += 1
+
+			if checkin_item.service_item and checkin_item.service_item.item.item_add_type == 'quantity' and float(item_quantities[count]) > 0:
+				inventoryitem = InventoryItem.objects.get(id=int(checkin_item.service_item.item.id))
+				inventoryitem.total_quantity = float(inventoryitem.total_quantity) + float(item_quantities[count])
+				inventoryitem.save()
+
+				ItemHistory.objects.create(
+				item = inventoryitem,
+				quantity = item_quantities[count],
+				item_action='STOCK IN',
+				quantity_location=store,
+				item_remark=checkin_item.visit.order.order_no,
+				purchase_date= date.today(),
+				added_by = team_leader
+				)
+
+				count += 1
+
+			checkin_item.save()
+
+			for visit in visits:
+				visit.stock_in_initiated = True
+				visit.save()
+
+		response_dict = {'success':True}
+
+		return Response(response_dict, HTTP_200_OK)
+
+
+

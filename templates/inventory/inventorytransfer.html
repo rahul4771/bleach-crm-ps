@@ -1,0 +1,441 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
+<div class="wrapper">
+    <!--wrapper-->
+    {% include "inventory/common/header.html" %}
+    <section class="content">
+        <div class="container-fluid space topspace">
+            <div class="welcome-wrapper">
+                <!--welcome-wrapper-->
+                <h1 class="dashboard-head">Inventory Transfer</h1>
+                <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
+            </div>
+        </div>
+
+        <div class="main-content-holder" id="app">
+            <!--main-content-holder-->
+            <div class="white-wrapper white-wrapper-padding2">
+                <div class="row">
+                    <div class="col-md-12">
+                        <span class="inv-po-id">{{purchase_order.purchase_order_id}}</span>
+                    </div>
+                </div>
+                
+            <form method="POST" action="">{% csrf_token %}
+                <div class="row mt-20">
+                    
+                    <div class="col-md-3">
+                        
+                            <div class="model-input-name required-field">From</div>
+                            <input autocomplete="off"  type="hidden" id="store_id" name="store_id" >
+              
+                            <div style="position: relative;">
+                                <div class="inv-input-container inv-border h-30">
+                                    <input autocomplete="off" onclick="storeListShow()" type="text" id="store-name" name="storename" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showStores()" required>
+                                </div>
+                                <div id="id_store_search" class="row inv-result-box" style="display: none;height:auto;max-height:200px;z-index:2000;">
+                                  
+                                </div>
+                            </div>
+                            <br><br>
+                            <div class="model-input-name required-field">To</div>
+                            <input autocomplete="off"  type="hidden" id="store_id2" name="store_id2" >
+              
+                            <div style="position: relative;">
+                                <div class="inv-input-container inv-border h-30">
+                                    <input autocomplete="off" onclick="storeListShow2()" type="text" id="store-name2" name="storename2" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showStores2()" required>
+                                </div>
+                                <div id="id_store_search2" class="row inv-result-box" style="display: none;height:auto;max-height:200px;z-index:2000;">
+                                  
+                                </div>
+                            </div>
+                            <br><br>
+                            <div class="model-input-name required-field">Item</div>
+                            <input autocomplete="off"  type="hidden" id="item_id" name="item_id" >
+              
+                            <div style="position: relative;">
+                                <div class="inv-input-container inv-border h-30">
+                                    <input autocomplete="off" onclick="ProductListShow()" type="text" id="item-name" name="itemname" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" required>
+                                </div>
+                                <div id="id_search3" class="row inv-result-box" style="display: none;height:auto;max-height:200px;z-index:2000;">
+                                  
+                                </div>
+                            </div><br>
+                            
+                            <div id="unit_div" hidden>
+                            <div class="model-input-name required-field">Multiselect </div>
+                            <input type="hidden" name="item_units" v-model="multisel_val" />
+                            <div class="mt-10">
+                                <multiselect
+                       
+                                v-model="multi_val"
+                                 placeholder="Select Item"
+                                 
+                                 :options="option_data"
+                                 :multiple="true"
+                                 :taggable="false"
+                                 :show-labels="false"
+                                 label="unit_code"
+                                 track-by="id"
+                                
+                                 @input="selectItem()"
+                                 
+                               ></multiselect>
+                            </div><br>
+                            </div>
+
+                            <div id="quantity_div" hidden>
+                            <div class="model-input-name required-field">Quantity </div>
+                            <div class="quantity">
+                                <a class="quantity__minus pointer" @click="subQty()"><span>-</span></a>
+                                <input  type="text" class="quantity__input" value="1" id="id_item_count" name="item_count" v-model="qty_val" oninput="quantitychange()" >
+                                <a  class="quantity__plus pointer" @click="addQty()"><span>+</span></a>
+                              </div>
+                            </div>
+                    </div>
+                    
+                </div>
+                <br>
+                <button type="submit" class="inv-blue-btn">Transfer</button>
+            </form> 
+
+            </div>
+        </div>
+    </section>
+      
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+<script src="https://unpkg.com/vue-multiselect@2.1.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+
+<script>
+    const app=new Vue({
+    el: '#app',
+    delimiters: ['<%', '%>'],
+    components: { Multiselect: window.VueMultiselect.default },
+    data: {
+     multi_val:'',
+     qty_val:1,
+     multisel_val:'',
+     option_data:[],
+    
+    },
+    mounted(){
+       
+       
+    },
+    methods:{
+        addQty(){
+            this.qty_val++
+            increment()
+        },
+        subQty(){
+            if(this.qty_val>1){
+                this.qty_val--
+            }
+            decrement()
+        },
+        selectItem(){
+            var id_array=[]
+            for(var i=0;i<this.multi_val.length;i++){
+                id_array.push(this.multi_val[i].id)
+            }
+                this.multisel_val=id_array.join(',')
+        }
+    }
+}
+    )
+</script>
+<script>
+    function DropDown(el) {
+    this.dd = el;
+    this.placeholder = this.dd.children('span');
+    this.opts = this.dd.find('ul.drop li');
+    this.val = '';
+    this.index = -1;
+    this.initEvents();
+}
+
+
+
+   
+DropDown.prototype = {
+    initEvents: function () {
+        var obj = this;
+        obj.dd.on('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(this).toggleClass('active');
+        });
+        obj.opts.on('click', function () {
+            var opt = $(this);
+            obj.val = opt.text();
+            obj.index = opt.index();
+            obj.placeholder.text(obj.val);
+            opt.siblings().removeClass('selected');
+            opt.filter(':contains("' + obj.val + '")').addClass('selected');
+        }).change();
+    },
+    getValue: function () {
+        return this.val;
+    },
+    getIndex: function () {
+        return this.index;
+    }
+};
+
+$(function () {
+    // create new variable for each menu
+    var dd1 = new DropDown($('#noble-gases'));
+    var dd2 = new DropDown($('#noble-gases2'));
+    // var dd2 = new DropDown($('#other-gases'));
+    $(document).click(function () {
+        // close menu on document click
+        $('.wrap-drop').removeClass('active');
+    });
+});
+</script>
+
+<script>
+
+    var stores=[]
+  getStores()
+  async function getStores(){
+   
+    var result = await _get('api/item_stores/');
+    if(result.status==200)
+    {
+    stores=result.data.stores
+    }
+  }
+  getStores()
+    function storeListShow(){
+    searchFlag = true;
+    document.getElementById("id_store_search").style.display="block"
+    showStores()
+}
+
+function storeListShow2(){
+    searchFlag = true;
+    document.getElementById("id_store_search2").style.display="block"
+    showStores2()
+}
+
+function showStores(){
+          console.log("stores is "+JSON.stringify(stores))
+            $('#id_store_search').empty();
+            for (var j=0; j<stores.length; j++) {
+                if (stores[j].store_name.toUpperCase().match($('#store-name').val().toUpperCase())){
+                   
+            $('#id_store_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeStoreShow(this)"  data-pro="'+stores[j].id+'" data-name="'+stores[j].store_name+'"><div class="inv-search-result">'+stores[j].store_name+'</div></div>');
+
+                }
+            }
+            console.log( $('#store-name').val());
+            if($('#store-name').val() !=""){
+            document.getElementById("id_store_search").style.display="block"
+
+            }else{
+            document.getElementById("id_store_search").style.display="block"
+
+            }
+        
+        }
+
+        function showStores2(){
+            console.log("stores is "+JSON.stringify(stores))
+              $('#id_store_search2').empty();
+              for (var j=0; j<stores.length; j++) {
+                  if (stores[j].store_name.toUpperCase().match($('#store-name2').val().toUpperCase())){
+                     
+              $('#id_store_search2').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeStoreShow2(this)"  data-pro="'+stores[j].id+'" data-name="'+stores[j].store_name+'"><div class="inv-search-result">'+stores[j].store_name+'</div></div>');
+  
+                  }
+              }
+              console.log( $('#store-name2').val());
+              if($('#store-name2').val() !=""){
+              document.getElementById("id_store_search2").style.display="block"
+  
+              }else{
+              document.getElementById("id_store_search2").style.display="block"
+  
+              }
+          
+          }
+
+        function closeStoreShow(d){
+            $('#store_id').val($(d).attr("data-pro"));
+            $('#store-name').val($(d).attr("data-name"));
+            var proId = $(d).attr("data-pro")
+        //  set_params_go({'store':proId})
+        
+
+            document.getElementById("id_store_search").style.display="none"
+            getProducts()
+
+            $('#item_id').val('')
+            $('#item-name').val('')
+        }
+
+    function closeStoreShow2(d){
+        $('#store_id2').val($(d).attr("data-pro"));
+        $('#store-name2').val($(d).attr("data-name"));
+        var proId = $(d).attr("data-pro")
+    //  set_params_go({'store':proId})
+    
+
+        document.getElementById("id_store_search2").style.display="none"
+    }
+
+
+function dropSelectStore(id){
+    console.log(id)
+    $('#store_id').val(id);
+    set_params_go();
+}
+
+var products=[]
+getProducts()
+async function getProducts(){
+ console.log("logggo")
+  var result = await _get('api/inventory-items-list/?store_id='+$('#store_id').val());
+  if(result.status==200)
+  {
+      console.log(result.data.items,"iteams")
+    products=result.data.items
+  }
+}
+getProducts()
+  function ProductListShow(){
+  searchFlag = true;
+  document.getElementById("id_search3").style.display="block"
+  showProducts()
+}
+
+
+        function showProducts(){
+            console.log("products is "+JSON.stringify(products))
+              $('#id_search3').empty();
+              for (var j=0; j<products.length; j++) {
+                  if (products[j].item_name.toUpperCase().match($('#item-name').val().toUpperCase())){
+                     
+              $('#id_search3').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeProductShow(this)"  data-pro="'+products[j].item_id+'" data-itemtype='+products[j].item_type+' data-name="'+products[j].item_name+'"><div class="inv-search-result">'+products[j].item_name+'</div></div>');
+  
+                  }
+              }
+              console.log( $('#item-name').val());
+              if($('#item-name').val() !=""){
+              document.getElementById("id_search3").style.display="block"
+  
+              }else{
+              document.getElementById("id_search3").style.display="block"
+  
+              }
+          
+          }
+
+    async function closeProductShow(d){
+        console.log(d);
+        var proId = $(d).attr("data-pro")
+        $('#item_id').val($(d).attr("data-pro"));
+        $('#item-name').val($(d).attr("data-name"));
+
+        if ($(d).attr("data-itemtype") == 'unit'){
+            $('#unit_div').show();
+            $('#quantity_div').hide();
+
+            var result = await _get('api/inventory-items-list/?store_id='+$('#store_id').val()+'&product_id='+$(d).attr("data-pro"));
+            if(result.status==200)
+            {
+                app.option_data = result.data.units;
+            }
+        }else{
+            $('#unit_div').hide();
+            $('#quantity_div').show();
+        }
+
+
+        document.getElementById("id_search3").style.display="none"
+    }
+
+
+      async function increment(){
+  
+        var item_id = $('#item_id').val();
+      
+        $('#id_item_count').val(parseInt($('#id_item_count').val()) + 1 );
+      
+        var quantity = parseInt($('#id_item_count').val()) ;
+        console.log(item_id,quantity,"po")
+      
+        var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+          if(result.status == 200){
+            console.log(result.data.item_available,"lop2")
+      
+            $('#id_item_count').val(result.data.item_quantity);
+            
+          }
+      }
+
+      async function decrement(){
+        var item_id = $('#item_id').val();
+      
+        if ($('#id_item_count').val() > 0) {
+        $('#id_item_count').val(parseInt($('#id_item_count').val()) - 1 );
+        }
+      
+        if ($('#id_item_count').val() == 0) {
+          $('#id_item_count').val(parseInt($('#id_item_count').val()) - 1 );
+          $('#id_item_count').val(0);
+        }
+      
+        var quantity = parseInt($('#id_item_count').val()) ;
+      
+        var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+          if(result.status == 200){
+            console.log(result.data.item_available,"lop3")
+            $('#id_item_count').val(result.data.item_quantity);
+          }
+      }
+
+      async function quantitychange(){
+      
+        var item_id = $('#item_id').val();
+        var quantity = $('#id_item_count').val() ;
+        console.log(item_id,quantity,"poRK")
+
+          var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+          if(result.status == 200){
+            console.log(result.data.item_available,"lop2")
+      
+            $('#id_item_count').val(result.data.item_quantity);
+            
+          }
+      }
+    
+    function set_params_go(args)
+    {
+    var url='{% url 'bleach-inventory:inventory-transfer' %}';
+    var params={store_id2:$('#store_id2').val(),store_id:$('#store_id').val()
+    };
+    for(key in args) 
+        params[key]=args[key];
+    var query='';
+    for(key in params)
+        if(params[key]) 
+            query+='&'+key+'='+params[key].toString();
+    query=query.replace('&','?');
+    window.location.href=url+query;  
+    }
+
+</script>
+{% endblock %}

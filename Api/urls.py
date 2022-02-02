@@ -54,6 +54,7 @@ urlpatterns = [
 	url(r'^inventory-items/$',views.InventoryItemsAPI.as_view(),name='api-inventory-items'),
 	# url(r'^inventory-attribute-values/$',views.InventoryAttributeValuesAPI.as_view(),name='api-inventory-attribute-values'),
 	url(r'^inventory-supplier-items/$',views.InventorySupplierItemsAPI.as_view(),name='api-inventory-supplier-items'),
+	url(r'^inventory-items-list/$',views.InventoryItemsListAPI.as_view(),name='api-inventory--items-list'),
 	url(r'^inventory-bundle-items/$',views.InventoryBundleItemsAPI.as_view(),name='api-inventory-bundle-items'),
 	url(r'^inventory-service-ingredients/$',views.InventoryServiceRecipeAPI.as_view(),name='api-inventory-service-ingredients'),
 	url(r'^inventory-service-area/$',views.InventoryServiceAreaAPI.as_view(),name='api-inventory-service-area'),
@@ -70,6 +71,7 @@ urlpatterns = [
 	url(r'^finished_item/(?P<inventory_id>\d+)/$',views.InventoryFinshedItemView.as_view(),name='api-finished_item'),
 	url(r'^external_customers/$',views.ExternalCustomersView.as_view(),name='api-external-customers'),
 	url(r'^item_units/$',views.ItemUnitsProduct.as_view(),name='api-item-units'),
+	url(r'^item_stores/$',views.ItemStores.as_view(),name='api-item-stores'),
 	###Team Leader Mobile app API'S
 	url(r'^login/$',views.LoginAPI.as_view(),name='api-login'),
 	url(r'^tl/home/$',views.TlHomeAPI.as_view(),name='api-stlhome'),

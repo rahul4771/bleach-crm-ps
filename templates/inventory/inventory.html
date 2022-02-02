@@ -36,8 +36,26 @@
                             Filter
                         </button> {% endcomment %}
 
+                        <!-- {% if request.user.user_type != 'STOCKCONTROLLER' %}
                         <button class="inv-blue-btn"  onclick="openNavAddStore('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Item </button>
-                        <button class="inv-blue-btn filter_btn"  data-toggle="modal" data-target="#filterModel" > Filter </button>
+                        {% endif %} -->
+                        <div class="d-flex">
+                        <button class="inv-blue-btn-outline filter_btn"  data-toggle="modal" data-target="#filterModel" ><i class="fas fa-filter mr-10"></i> Filter </button>
+                        <div class="dropdown ml-10">
+                            <button class="btn inv-blue-btn dropdown-toggle inv-dropdown" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              More Actions <i class="fas fa-caret-down ml-10"></i>
+                            </button>
+                            <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
+                              {% if request.user.user_type != 'STOCKCONTROLLER' %}
+                              <div class="dropdown-item inv-dropdown-item p-7" onclick="openNavAddStore('add')"><i class="fas fa-plus-circle mr-10"></i>Add</div>
+                              {% endif %}
+                              <div class="dropdown-item  inv-dropdown-item p-7" onclick="window.location.href='/bleach-inventory/inventory-transfer/';"><i class="fas fa-exchange-alt mr-10"></i>Transfer</div>
+                              {% if request.user.user_type == 'STOCKCONTROLLER' or request.user.user_type == 'INVENTORYADMIN' %}
+                              <div class="dropdown-item  inv-dropdown-item p-7" onclick="window.location.href='/bleach-inventory/item-dispose/';" ><i class="far fa-trash-alt mr-10"></i>Dispose</div>
+                              {% endif %}
+                            </div>
+                          </div>
+                        </div>
                     </div>
                 </div>
                 <!-- tab begins here-->
@@ -795,7 +813,7 @@
 
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name required-field">Item</div>
+                    <div class="model-input-name required-field">Item Name</div>
 
                     <div class="inv-input-container h-30"> 
                         <input type="text"  class="w-p-100 inv-in" name="item_name" id="id_item_name">
