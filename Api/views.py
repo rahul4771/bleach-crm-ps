@@ -2995,11 +2995,23 @@ class InventoryItemsListAPI(APIView):
 	def get(self,request):
 		response_dict = {}
 		store_id = request.GET.get('store_id')
+		product_id = request.GET.get('product_id')
 		print(store_id,"attrsedan")
 		# try:
 		store = Store.objects.filter(id=int(store_id))
 		itemslist = InventoryItem.objects.all().prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(is_available=True,store=store),to_attr='item_units'),Prefetch('quantity_store_item',queryset=QuantityStoreDetails.objects.filter(item_store=store),to_attr='quantity_items'))
-
+		
+		units = []
+		if product_id:
+			itemunits = ItemUnit.objects.filter(is_available=True,store=store,item__id=int(product_id))
+			
+			for unit in itemunits:
+				unit_dict={
+					'id' : unit.id,
+					'unit_code' : unit.unit_code
+				}
+				units.append(unit_dict)
+		
 		items = []
 		for item in itemslist:
 			for unit in item.item_units:
@@ -3015,6 +3027,8 @@ class InventoryItemsListAPI(APIView):
 				item_dict['item_name'] = qty.quantity_item.name
 				item_dict['item_type'] = qty.quantity_item.item_add_type
 				items.append(item_dict)
+
+		
 		# except:
 		# 	store = None
 		# 	items = None
@@ -3025,6 +3039,7 @@ class InventoryItemsListAPI(APIView):
 			if items[i] not in items[i + 1:]:
 				res_list.append(items[i])
 		response_dict['items']=res_list
+		response_dict['units']=units
 		return Response(response_dict,HTTP_200_OK)
 
 
