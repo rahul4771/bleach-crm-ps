@@ -152,6 +152,9 @@
                                  :multiple="true"
                                  :taggable="false"
                                  :show-labels="false"
+                                 label="unit_code"
+                                 track-by="id"
+                                
                                  @input="selectItem()"
                                  
                                ></multiselect>
@@ -455,7 +458,7 @@
      multi_val:'',
      qty_val:1,
      multisel_val:'',
-     option_data:['Option 1','option 2','option 3']
+     option_data:[{'id':1,'unit_code':'UC123'},{'id':2,'unit_code':'UC456'},{'id':3,'unit_code':'UC678'}],
     
     },
     mounted(){
@@ -472,7 +475,11 @@
             }
         },
         selectItem(){
-                this.multisel_val=this.multi_val.join(',')
+            var id_array=[]
+            for(var i=0;i<this.multi_val.length;i++){
+                id_array.push(this.multi_val[i].id)
+            }
+                this.multisel_val=id_array.join(',')
         }
     }
 }
