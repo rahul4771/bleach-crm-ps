@@ -568,6 +568,8 @@ class InventoryItems(IsInventoryAdminUser,View):
 		# store = Store.objects.filter(store_name='AL-RAI STORE').first()
 		# for item in qty_items:
 		# 	QuantityStore.objects.create(store=store,item=item,quantity=item.total_quantity)
+			
+		# ItemHistory.objects.filter()
 
 		inventory_item = InventoryItem.objects.prefetch_related(Prefetch('quantity_store_item',queryset=QuantityStoreDetails.objects.select_related('item_store').all(),to_attr='storequantity'),Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images')).get(id=item_id)
 		categories = Category.objects.all()
@@ -1012,7 +1014,7 @@ class InventoryTransfer(View):
 
 		messages.success(request,"Inventory Items Transferred Succesfully")
 		
-		return redirect('bleach-inventory:item-dispose')
+		return redirect('bleach-inventory:inventory-transfer')
 
 
 class ItemDispose(View):
