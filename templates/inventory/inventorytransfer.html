@@ -101,8 +101,8 @@
                 <div class="row mt-20">
                     
                     <div class="col-md-3">
-                        <div class="col-md-6 mt-20">
-                            <div class="model-input-name required-field">Store</div>
+                        
+                            <div class="model-input-name required-field">From</div>
                             <input autocomplete="off"  type="hidden" id="store_id" name="store_id" >
               
                             <div style="position: relative;">
@@ -113,97 +113,33 @@
                                   
                                 </div>
                             </div>
-                        </div>
-                       
-                        
-                        {% if purchase_order.supplier != None %}
-                        <div class="inv-po-cu">
-                            <div class="row mt-20">
-                                <div class="col-md-12 inv-text-normal2">
-                                    Initiated Date : {{purchase_order.created|date:'d-m-Y'}}
+                            <br><br>
+                            <div class="model-input-name required-field">To</div>
+                            <input autocomplete="off"  type="hidden" id="store_id2" name="store_id2" >
+              
+                            <div style="position: relative;">
+                                <div class="inv-input-container inv-border h-30">
+                                    <input autocomplete="off" onclick="storeListShow2()" type="text" id="store-name2" name="storename2" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showStores2()" required>
+                                </div>
+                                <div id="id_store_search2" class="row inv-result-box" style="display: none;height:auto;max-height:200px;z-index:2000;">
+                                  
                                 </div>
                             </div>
-            
-                            <div class="row mt-20">
-                                <div class="col-md-12 inv-text-normal2">
-                                    Initiated By : {{purchase_order.initiated_by.name}}
+                            <br><br>
+                            <div class="model-input-name required-field">Item</div>
+                            <input autocomplete="off"  type="hidden" id="item_id" name="item_id" >
+              
+                            <div style="position: relative;">
+                                <div class="inv-input-container inv-border h-30">
+                                    <input autocomplete="off" onclick="ProductListShow()" type="text" id="item-name" name="itemname" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" required>
+                                </div>
+                                <div id="id_search3" class="row inv-result-box" style="display: none;height:auto;max-height:200px;z-index:2000;">
+                                  
                                 </div>
                             </div>
-                            <div class="row mt-20">
-                                <div class="col-md-12 inv-text-normal2">
-                                    Supplier Address : {{purchase_order.supplier.address}}
-                                </div>
-                            </div>
-                            <div class="row mt-20" >
-                                <div class="col-md-12 inv-text-normal2">
-                                    Supplier Contact : {{purchase_order.supplier.contact}}
-                                </div>
-                            </div>
-                        </div>
-                       
-                         <div class="row mt-20">
-                            <div class="col-md-12 inv-text-normal2">
-                                Supplier Terms : {{purchase_order.supplier.terms}}
-                            </div>
-                        </div>
-                        {% endif %}
-        
                        
                     </div>
                     
-                    <form method="POST" action="" >{% csrf_token %}
-                    <input type="hidden" name="action" value="order_close" />
-                    <div class="col-md-3 col-md-offset-6" >
-                        <div class="row ">
-                            <div class="col-md-12 ">
-                                <div class="model-input-name">Discount</div>
-        
-                                <div class="inv-input-container h-30"> 
-                                    <input type="number" step="0.01"  class="w-p-100 inv-in" name="discount" value="0.000" >
-                                </div>
-                            </div>
-        
-                        </div>
-        
-                        <div class="row mt-20">
-                            <div class="col-md-12 ">
-                                <div class="model-input-name">Tax</div>
-        
-                                <div class="inv-input-container h-30"> 
-                                    <input type="number" step="0.01" class="w-p-100 inv-in" name="tax" value="0.000" >
-                                </div>
-                            </div>
-        
-                        </div>
-        
-                        <div class="row mt-20">
-                            <div class="col-md-12 ">
-                                <div class="model-input-name">Shipping Charges</div>
-        
-                                <div class="inv-input-container h-30"> 
-                                    <input type="number" step="0.01"  class="w-p-100 inv-in" name="shipping_charges" value="0.000" >
-                                </div>
-                            </div>
-        
-                        </div>
-        
-                        <div class="row mt-20">
-                            <div class="col-md-12 ">
-                                <div class="model-input-name">Other Charges</div>
-        
-                                <div class="inv-input-container h-30"> 
-                                    <input type="text"  class="w-p-100 inv-in" name="other_charges" value="0.000" >
-                                </div>
-                            </div>
-        
-                        </div>
-                    </div>
-                    
-                    <!-- <div class="col-md-9 text-right">
-                        <button class="inv-plan-btn" onclick="openNavAddStore()"> <img
-                            src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5"
-                            alt=""> Add Item</button>
-                    </div> -->
                 </div>
                 
                
@@ -214,26 +150,15 @@
                         <table class="inv-table footable" style="border-top: 1px solid #c4c4c4;">
                             <thead>
                                 <tr>
-                                    <th style="width: 15%;">
+                                    <th>
                                         Product ID
                                     </th>
-                                    <th style="width: %;" data-hide="phone,tablet" >
+                                    <th data-hide="phone,tablet" >
                                         Product
                                     </th>
                                     <th data-hide="phone,tablet" style="text-align: center;">
-                                        Unit Price
-                                    </th>
-                                    <th data-hide="phone,tablet" style="text-align: center;">
                                         Quantity
-                                    </th>
-                                    {% comment %} <th data-hide="phone,tablet" style="text-align: center;">
-                                        unit
-                                    </th> {% endcomment %}
-                                    <th data-hide="phone,tablet" style="text-align: center;">
-                                        Net Price
-                                    </th>
-
-                                    <th data-hide="phone,tablet" style="text-align: center;">Action</th>
+                                    </th> 
                                 </tr>
                             </thead>
                             <tbody id="item_table">
@@ -241,19 +166,10 @@
                                 <tr data-itemid="{{item.product.id}}">
                                     <td>{{item.product.supplier_item_id}}</td>
                                     <td>{{item.product.item}}</td>
-                                    <td style="text-align: center;">{% if item.unit_price %}{{item.unit_price|floatformat:3}}{% else %}{{item.product.item_price|floatformat:3}}{% endif %} KD</td>
                                     <td style="text-align: center;">{{item.item_count|floatformat:0}} {% if item.product.item.measuring_unit %}{{item.product.item.measuring_unit}}(s){% else %}Unit(s){% endif %}</td>
-                                    {% comment %} <td style="text-align: center;">{% if item.product.item.measuring_unit %}{{item.product.item.measuring_unit}}(s){% else %}Unit(s){% endif %}</td> {% endcomment %}
-                                    <td style="text-align: center;">{{item.total_price|floatformat:3}} KD</td>
-                                    <td style="text-align: center;"> 
-                                        <button type="button" class="inv-plan-img-btn edit-item-btn" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.item}}" data-unitprice="{{item.product.item_price}}" data-itemcount="{{item.item_count}}" data-totalprice="{{item.total_price}}"> <img
-                                            src="{% static 'files/inventory/pencil.png' %}" alt="" onclick="openNavAddStore('edit')"> </button>
-                                        <button type="button" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"  class="inv-plan-img-btn delete-item-btn"> <img
-                                                src="{% static 'files/inventory/bin.png' %}" alt=""> </button>
-                                    </td>
                                 </tr>
                                 {% empty %}
-                                <td></td><td></td><td>No Data</td><td></td><td></td><td></td>
+                                <td></td><td>No Data</td><td></td>
                                 {% endfor %}
                                
                                 {% if purchase_order.supplier != None %}
@@ -550,51 +466,92 @@ $(function () {
 </script>
 
 <script>
-     function hideselectedoptions(){
-            
 
-            var tempItem = [];
-            var itemIn = [];
-            var div = true;
+    var stores=[]
+  getStores()
+  async function getStores(){
+   
+    var result = await _get('api/item_stores/');
+    if(result.status==200)
+    {
+    stores=result.data.stores
+    }
+  }
+  getStores()
+    function storeListShow(){
+    searchFlag = true;
+    document.getElementById("id_store_search").style.display="block"
+    showStores()
+}
 
-            $('#id_search div').each(function(i) {
-                if (div == true){
-                    console.log($(this),"pro")
-                    tempItem.push($(this).data("pro"))
-                    //console.log($(this).data("id"));
-                    div = false;
-                }else{
-                    div = true;
-                }
-                
-            })
-          
-            $('#item_table tr').each(function() {
-                itemIn.push($(this).data("itemid"))
-                //console.log('table',$(this).data("itemid"));
-            })
+function storeListShow2(){
+    searchFlag = true;
+    document.getElementById("id_store_search2").style.display="block"
+    showStores2()
+}
 
-            itemIn.pop();
+function showStores(){
+          console.log("stores is "+JSON.stringify(stores))
+            $('#id_store_search').empty();
+            for (var j=0; j<stores.length; j++) {
+                if (stores[j].store_name.toUpperCase().match($('#store-name').val().toUpperCase())){
+                   
+            $('#id_store_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeStoreShow(this)"  data-pro="'+stores[j].id+'" data-name="'+stores[j].store_name+'"><div class="inv-search-result">'+stores[j].store_name+'</div></div>');
 
-            console.log(tempItem,itemIn,"lopp")
-
-            for(var i =0;i<tempItem.length;i++){
-                document.getElementById("id_product"+tempItem[i]).style.display ="block";
-                for(var j = 0;j<itemIn.length;j++){
-                    if(tempItem[i] == itemIn[j]){
-                        console.log('to be hide',tempItem[i]);
-                        document.getElementById("id_product"+tempItem[i]).style.display ="none";
-                    }
                 }
             }
-            console.log(tempItem,itemIn)
+            console.log( $('#store-name').val());
+            if($('#store-name').val() !=""){
+            document.getElementById("id_store_search").style.display="block"
+
+            }else{
+            document.getElementById("id_store_search").style.display="block"
+
+            }
+        
+        }
+
+        function showStores2(){
+            console.log("stores is "+JSON.stringify(stores))
+              $('#id_store_search2').empty();
+              for (var j=0; j<stores.length; j++) {
+                  if (stores[j].store_name.toUpperCase().match($('#store-name2').val().toUpperCase())){
+                     
+              $('#id_store_search2').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeStoreShow2(this)"  data-pro="'+stores[j].id+'" data-name="'+stores[j].store_name+'"><div class="inv-search-result">'+stores[j].store_name+'</div></div>');
+  
+                  }
+              }
+              console.log( $('#store-name2').val());
+              if($('#store-name2').val() !=""){
+              document.getElementById("id_store_search2").style.display="block"
+  
+              }else{
+              document.getElementById("id_store_search2").style.display="block"
+  
+              }
+          
+          }
+
+        function closeStoreShow(d){
+            $('#store_id').val($(d).attr("data-pro"));
+            $('#store-name').val($(d).attr("data-name"));
+            var proId = $(d).attr("data-pro")
+        //  set_params_go({'store':proId})
+        
+
+            document.getElementById("id_store_search").style.display="none"
+        }
+
+    function closeStoreShow2(d){
+        $('#store_id2').val($(d).attr("data-pro"));
+        $('#store-name2').val($(d).attr("data-name"));
+        var proId = $(d).attr("data-pro")
+    //  set_params_go({'store':proId})
+    
+
+        document.getElementById("id_store_search2").style.display="none"
     }
 
-function dropSelectSeller(id){
-    console.log(id)
-    $('#supplier_id').val(id);
-    set_params_go();
-}
 
 function dropSelectStore(id){
     console.log(id)
@@ -602,171 +559,45 @@ function dropSelectStore(id){
     set_params_go();
 }
 
-function showRe(){
-    console.log('j')
-    $('#id_c').click();
+var products=[]
+getProducts()
+async function getStores(){
+ 
+  var result = await _get('api/inventory-items-list/');
+  if(result.status==200)
+  {
+  stores=result.data.items
+  }
 }
-
-function showAdditem(){
-
+getStores()
+  function storeListShow(){
+  searchFlag = true;
+  document.getElementById("id_store_search").style.display="block"
+  showStores()
 }
-        var products = [];
-        {% for item in items %}
-            var tempId = '{{item.id}}';
-            var tempName = '{{item.item.name}}';
-            var tempPrice = '{{item.item_price}}';
-            products.push({id:tempId,name:tempName,price:tempPrice})
-        // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
-
-        {% endfor %}
-
-    	$(document).ready(function(){
-
-
-            const minus = $('.quantity__minus');
-            const plus = $('.quantity__plus');
-            const input = $('.quantity__input');
-            minus.click(function(e) {
-                e.preventDefault();
-                var value = input.val();
-                if (value > 1) {
-                value--;
-                }
-                input.val(value);
-                calc_total_price();
-                e.preventDefault();
-
-            });
-            
-            plus.click(function(e) {
-                e.preventDefault();
-                var value = input.val();
-                value++;
-                input.val(value);
-                calc_total_price();
-            })
-
-            $('.active-right').hide();
-            
-            var urlc = window.location.href;
-            console.log(urlc)
-            if(urlc.includes('supplier_id')){
-                var supid = urlc.split("=")[1];
-                console.log(supid);
-                $('#supplier_id').val(supid);
-            }
-            var products = [];
-            {% for item in items %}
-                var tempId = '{{item.id}}';
-                var tempName = '{{item.item.name}}';
-                var tempPrice = '{{item.item_price}}';
-            products.push({id:tempId,name:tempName,price:tempPrice})
-            // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
-
-            {% endfor %}
-
-		    $('.count').val(1);
-   			$(document).on('click','.plus',function(){
-				$('.count').val(parseInt($('.count').val()) + 1 );
-                console.log($('#id_item_count').val(),'firs')
-               // $('#id_item_count').val(parseInt($('#id_item_count').val()) + 1 );
-                console.log($('#id_item_count').val(),'se')
-
-                calc_total_price();
-                console.log($('#id_item_count').val(),"countval")
-    		});
-        	$(document).on('click','.minus',function(){
-                
-                if($('.count').val() >= 1){
-                    $('.count').val(parseInt($('.count').val()) - 1 );
-                //$('#id_item_count').val(parseInt($('#id_item_count').val()) - 1 )
-    				if ($('.count').val() == 0) {
-                        $('#id_item_count').val(1);
-						$('.count').val(1);
-					}
-                    calc_total_price();
-                    console.log($('.count').val(),"countval")
-                }
-    			
-    	    	});
- 		});
-    
-    function showDrop() {
-       document.getElementById("id_cat").style.display="block"
-    }
-
-
-    function openNavAddStore(d) {
-        $('#id_search').empty();
-        {% for item in items %}
-
-    var tempId = '{{item.id}}';
-    var tempName = '{{item.item.name}}';
-    console.log(tempId,tempName)
-   
-    $('#id_search').append('<div class="col-md-12 inv-search-drop" id="id_product{{item.id}}" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-productprice="{{item.item_price}}" data-name="{{item.item}}"><div class="inv-search-result">{{item.item}}</div></div>');
-
-    {% endfor %}
-
-       // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
-        if(d == 'add'){
-            $('#itemHead').text('Add Item');
-            $('#purchase_order_action').val('add_item');
-            $('.purchaseorder-form-btn').text('Add');
-
-            $('#pro-name').val('');
-            $('#id_pro_sel').val('');
-            $('#id_unit_price').val('');
-            $('#id_item_count').val(1);
-            $('.count').val(1);
-            $('#id_total_price').val('');
-            hideselectedoptions();
-        }
-        if(d == 'edit'){
-            $('#itemHead').text('Edit Item');
-            $('#purchase_order_action').val('edit_item');
-            $('.purchaseorder-form-btn').text('Update');
-            hideselectedoptions();
-
-        }
-        document.body.style.backgroundColor = "rgba(0,0,0,0.4) !important";
-        if (screen.width <= 600) {
-            document.getElementById("addStore").style.width = "100%";
-        } else if (screen.width <= 720) {
-            document.getElementById("addStore").style.width = "50%";
-        }
-        else {
-            document.getElementById("addStore").style.width = "30%";
-        }
-    }
-    function closeNavAddStore() {
-        document.getElementById("addStore").style.width = "0";
-    }
-
 
 
     function ProductListShow(){
-        document.getElementById("id_search").style.display="block"
+        document.getElementById("id_search3").style.display="block"
     }
 
     function showProducts(){
-        $('#id_search').empty();
+        $('#id_search3').empty();
         for (var j=0; j<products.length; j++) {
             if (products[j].name.toUpperCase().match($('#pro-name').val().toUpperCase())){
                 console.log(products[j]);
-        $('#id_search').append('<div class="col-md-12 inv-search-drop" id="id_product'+products[j].id+'" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-productprice="'+products[j].price+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
+        $('#id_search3').append('<div class="col-md-12 inv-search-drop" id="id_product'+products[j].id+'" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-productprice="'+products[j].price+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
 
             }
         }
-            console.log( $('#pro-name').val());
-            if($('#pro-name').val() !=""){
-            document.getElementById("id_search").style.display="block"
+            console.log( $('#item-name').val());
+            if($('#item-name').val() !=""){
+            document.getElementById("id_search3").style.display="block"
 
             }else{
-            document.getElementById("id_search").style.display="none"
+            document.getElementById("id_search3").style.display="none"
 
             }
-            hideselectedoptions();
             
         }
 
@@ -774,50 +605,18 @@ function showAdditem(){
         console.log(d);
         var proId = $(d).attr("data-pro")
         $('#id_pro_sel').val($(d).attr("data-pro"));
-        $('#id_unit_price').val($(d).attr("data-productprice"));
-        $('#id_total_price').val($(d).attr("data-productprice"));
-        $('#pro-name').val($(d).attr("data-name"));
+        $('#item-name').val($(d).attr("data-name"));
 
 
-        document.getElementById("id_search").style.display="none"
+        document.getElementById("id_search3").style.display="none"
     }
 
-    function calc_total_price(){
-        console.log("c")
-        var unit_price = $('#id_unit_price').val();
-        var count = $('#id_item_count').val();
-        console.log("log")
-        var total_price = parseFloat(unit_price * count);
-        $('#id_total_price').val(total_price);
-    }
-
-    $('.delete-item-btn').click(function(){
-        $('#id_item').val($(this).data('itemid'));
-    })
-
-    $('.edit-item-btn').click(function(){
-        $('#id_edit_item').val($(this).data('itemid'));
-        $('#pro-name').val($(this).data('productname'));
-        $('#id_pro_sel').val($(this).data('productid'));
-        $('#id_unit_price').val($(this).data('unitprice'));
-        $('#id_item_count').val($(this).data('itemcount'));
-        $('.count').val($(this).data('itemcount'));
-        $('#id_total_price').val($(this).data('totalprice'));
-    })
+    
     
     function set_params_go(args)
     {
-       // console.log($('#supplier_id').val())
-        //  if($('#supplier_id').val()!='--Select Supplier--'){
-        //      document.getElementById("id_search").style.display="none"
-        //  }else if($('#supplier_id').val()!=''){
-        //      document.getElementById("id_search").style.display="none"
-        //  }
-        // else{
-        //      document.getElementById("id_search").style.display="block"
-        //  }
-    var url='{% url 'bleach-inventory:inventory-createpurchaseorder' %}';
-    var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),supplier_id:$('#supplier_id').val(),store_id:$('#store_id').val()
+    var url='{% url 'bleach-inventory:inventory-transfer' %}';
+    var params={store_id2:$('#store_id2').val(),store_id:$('#store_id').val()
     };
     for(key in args) 
         params[key]=args[key];

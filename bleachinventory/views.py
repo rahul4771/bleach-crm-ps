@@ -975,6 +975,10 @@ class InventoryTransfer(View):
 	def get(self,request):
 		return render(request,'inventory/inventorytransfer.html',{})
 
+class ItemDispose(View):
+	def get(self,request):
+		return render(request,'inventory/itemdispose.html',{})
+
 
 class InventorySupplier(IsInventoryAdminUser,View):
 	def get(self,request):

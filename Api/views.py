@@ -2988,6 +2988,40 @@ class InventorySupplierItemsAPI(APIView):
 		response_dict['items']=items
 		return Response(response_dict,HTTP_200_OK)
 
+class InventoryItemsListAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		response_dict = {}
+		store_id = request.GET.get('store_id')
+		print(store_id,"attrsed2")
+		try:
+			store = Store.objects.filter(id=int(store_id))
+			itemslist1 = ItemUnit.objects.filter(is_available=True,store=store).distinct('item')
+			itemslist2 = QuantityStoreDetails.objects.filter(item_store=store).distinct('quantity_item')
+
+			items = []
+			for item in itemslist:
+				item_dict = {}
+				item_dict['item_id'] = item.id
+				item_dict['product_id'] = item.item.id
+				item_dict['product_name'] = item.item.name
+				items.append(item_dict)
+
+			for item in itemslist2:
+				item_dict = {}
+				item_dict['item_id'] = item.id
+				item_dict['product_id'] = item.item.id
+				item_dict['product_name'] = item.item.name
+				items.append(item_dict)
+		except:
+			store = None
+			items = None
+		
+		response_dict['items']=items
+		return Response(response_dict,HTTP_200_OK)
+
 
 class InventoryServiceRecipeAPI(APIView):
 	permission_classes  	=   (AllowAny,)
