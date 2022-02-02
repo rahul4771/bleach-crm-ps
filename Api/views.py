@@ -2995,31 +2995,36 @@ class InventoryItemsListAPI(APIView):
 	def get(self,request):
 		response_dict = {}
 		store_id = request.GET.get('store_id')
-		print(store_id,"attrsed2")
-		try:
-			store = Store.objects.filter(id=int(store_id))
-			itemslist1 = ItemUnit.objects.filter(is_available=True,store=store).distinct('item')
-			itemslist2 = QuantityStoreDetails.objects.filter(item_store=store).distinct('quantity_item')
+		print(store_id,"attrsedan")
+		# try:
+		store = Store.objects.filter(id=int(store_id))
+		itemslist = InventoryItem.objects.all().prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(is_available=True,store=store),to_attr='item_units'),Prefetch('quantity_store_item',queryset=QuantityStoreDetails.objects.filter(item_store=store),to_attr='quantity_items'))
 
-			items = []
-			for item in itemslist:
+		items = []
+		for item in itemslist:
+			for unit in item.item_units:
 				item_dict = {}
-				item_dict['item_id'] = item.id
-				item_dict['product_id'] = item.item.id
-				item_dict['product_name'] = item.item.name
+				item_dict['item_id'] = unit.item.id
+				item_dict['item_name'] = unit.item.name
+				item_dict['item_type'] = unit.item.item_add_type
 				items.append(item_dict)
 
-			for item in itemslist2:
+			for qty in item.quantity_items:
 				item_dict = {}
-				item_dict['item_id'] = item.id
-				item_dict['product_id'] = item.item.id
-				item_dict['product_name'] = item.item.name
+				item_dict['item_id'] = qty.quantity_item.id
+				item_dict['item_name'] = qty.quantity_item.name
+				item_dict['item_type'] = qty.item.item_add_type
 				items.append(item_dict)
-		except:
-			store = None
-			items = None
-		
-		response_dict['items']=items
+		# except:
+		# 	store = None
+		# 	items = None
+		print(items,"iteams")
+
+		res_list = []
+		for i in range(len(items)):
+			if items[i] not in items[i + 1:]:
+				res_list.append(items[i])
+		response_dict['items']=res_list
 		return Response(response_dict,HTTP_200_OK)
 
 

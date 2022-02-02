@@ -78,6 +78,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
 <div class="wrapper">
     <!--wrapper-->
     {% include "inventory/common/header.html" %}
@@ -90,7 +91,7 @@
             </div>
         </div>
 
-        <div class="main-content-holder">
+        <div class="main-content-holder" id="app">
             <!--main-content-holder-->
             <div class="white-wrapper white-wrapper-padding2">
                 <div class="row">
@@ -136,7 +137,32 @@
                                 <div id="id_search3" class="row inv-result-box" style="display: none;height:auto;max-height:200px;z-index:2000;">
                                   
                                 </div>
-                            </div>
+                            </div><br>
+                            <div class="model-input-name required-field">Multiselect </div>
+                            <input type="hidden" name="multisel_val" v-model="multisel_val"/>
+                            <div class="mt-10">
+                                <multiselect
+                       
+                                v-model="multi_val"
+                                 placeholder="Select Item"
+                                 
+                                 :options="option_data"
+                                 :multiple="true"
+                                 :taggable="false"
+                                 :show-labels="false"
+                                 label="unit_code"
+                                 track-by="id"
+                                
+                                 @input="selectItem()"
+                                 
+                               ></multiselect>
+                            </div><br>
+                            <div class="model-input-name required-field">Quantity </div>
+                            <div class="quantity">
+                                <a class="quantity__minus pointer" @click="subQty()"><span>-</span></a>
+                                <input  type="text" class="quantity__input" value="1" id="id_item_count" name="item_count" v-model="qty_val" >
+                                <a  class="quantity__plus pointer" @click="addQty()"><span>+</span></a>
+                              </div>
                        
                     </div>
                     
@@ -145,7 +171,7 @@
                
               
 
-                <div class="row mt-30">
+                {% comment %} <div class="row mt-30">
                     <div class="col-md-12 ">
                         <table class="inv-table footable" style="border-top: 1px solid #c4c4c4;">
                             <thead>
@@ -184,7 +210,7 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </div> -->
                 
                 {% if purchase_order_items %}
                 <input type="hidden" name="purchase_order_id" value="{{purchase_order.id}}" />
@@ -195,7 +221,7 @@
                                   <a  onclick="showRe()" class="view-button2 pointer">Cancel</a>
                    
                 </div>
-                {% endif %}
+                {% endif %} {% endcomment %}
 
             </div>
         </div>
@@ -415,6 +441,45 @@
 {% endblock %}
 
 {% block javascript %}
+<script src="https://unpkg.com/vue-multiselect@2.1.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+
+<script>
+    const app=new Vue({
+    el: '#app',
+    delimiters: ['<%', '%>'],
+    components: { Multiselect: window.VueMultiselect.default },
+    data: {
+     multi_val:'',
+     qty_val:1,
+     multisel_val:'',
+     option_data:[{'id':1,'unit_code':'UC123'},{'id':2,'unit_code':'UC456'},{'id':3,'unit_code':'UC678'}],
+    
+    },
+    mounted(){
+       
+       
+    },
+    methods:{
+        addQty(){
+            this.qty_val++
+        },
+        subQty(){
+            if(this.qty_val>1){
+                this.qty_val--
+            }
+        },
+        selectItem(){
+            var id_array=[]
+            for(var i=0;i<this.multi_val.length;i++){
+                id_array.push(this.multi_val[i].id)
+            }
+                this.multisel_val=id_array.join(',')
+        }
+    }
+}
+    )
+</script>
 <script>
     function DropDown(el) {
     this.dd = el;
@@ -540,6 +605,7 @@ function showStores(){
         
 
             document.getElementById("id_store_search").style.display="none"
+            getProducts()
         }
 
     function closeStoreShow2(d){
@@ -561,50 +627,48 @@ function dropSelectStore(id){
 
 var products=[]
 getProducts()
-async function getStores(){
- 
-  var result = await _get('api/inventory-items-list/');
+async function getProducts(){
+ console.log("logggo")
+  var result = await _get('api/inventory-items-list/?store_id='+$('#store_id').val());
   if(result.status==200)
   {
-  stores=result.data.items
+      console.log(result.data.items,"iteams")
+    products=result.data.items
   }
 }
-getStores()
-  function storeListShow(){
+getProducts()
+  function ProductListShow(){
   searchFlag = true;
-  document.getElementById("id_store_search").style.display="block"
-  showStores()
+  document.getElementById("id_search3").style.display="block"
+  showProducts()
 }
 
 
-    function ProductListShow(){
-        document.getElementById("id_search3").style.display="block"
-    }
-
-    function showProducts(){
-        $('#id_search3').empty();
-        for (var j=0; j<products.length; j++) {
-            if (products[j].name.toUpperCase().match($('#pro-name').val().toUpperCase())){
-                console.log(products[j]);
-        $('#id_search3').append('<div class="col-md-12 inv-search-drop" id="id_product'+products[j].id+'" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-productprice="'+products[j].price+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
-
-            }
-        }
-            console.log( $('#item-name').val());
-            if($('#item-name').val() !=""){
-            document.getElementById("id_search3").style.display="block"
-
-            }else{
-            document.getElementById("id_search3").style.display="none"
-
-            }
-            
-        }
+        function showProducts(){
+            console.log("products is "+JSON.stringify(products))
+              $('#id_search3').empty();
+              for (var j=0; j<products.length; j++) {
+                  if (products[j].item_name.toUpperCase().match($('#item-name').val().toUpperCase())){
+                     
+              $('#id_search3').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeProductShow(this)"  data-pro="'+products[j].item_id+'" data-name="'+products[j].item_name+'"><div class="inv-search-result">'+products[j].item_name+'</div></div>');
+  
+                  }
+              }
+              console.log( $('#item-name').val());
+              if($('#item-name').val() !=""){
+              document.getElementById("id_search3").style.display="block"
+  
+              }else{
+              document.getElementById("id_search3").style.display="block"
+  
+              }
+          
+          }
 
     function closeProductShow(d){
         console.log(d);
         var proId = $(d).attr("data-pro")
-        $('#id_pro_sel').val($(d).attr("data-pro"));
+        $('#item_id').val($(d).attr("data-pro"));
         $('#item-name').val($(d).attr("data-name"));
 
 
