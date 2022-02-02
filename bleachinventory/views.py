@@ -564,13 +564,6 @@ class InventoryBundle(IsInventoryAdminUser,View):
 class InventoryItems(IsInventoryAdminUser,View):
 	def get(self,request,item_id):
 		
-		qty_items = InventoryItem.objects.filter(item_add_type='quantity')
-		store = Store.objects.filter(store_name='AL-RAI STORE').first()
-		for item in qty_items:
-			QuantityStore.objects.create(store=store,item=item,quantity=item.total_quantity)
-			
-		ItemHistory.objects.all().update(quantity_location=store)
-
 		inventory_item = InventoryItem.objects.prefetch_related(Prefetch('quantity_store_item',queryset=QuantityStoreDetails.objects.select_related('item_store').all(),to_attr='storequantity'),Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images')).get(id=item_id)
 		categories = Category.objects.all()
 		item_units = ItemUnit.objects.filter(item=inventory_item).prefetch_related(Prefetch('product_request_unit',queryset=RequestOrderItems.objects.filter(is_received=True),to_attr='request_item_unit'),Prefetch('checkoutitem_unit',CheckOutItemUnits.objects.all().select_related('checkout_item__visit').prefetch_related(Prefetch('checkout_item__visit__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')),to_attr='checkout_unit'))
@@ -1280,6 +1273,13 @@ class InventoryInv(IsInventoryAdminUser,View):
 		# histories = ItemHistory.objects.filter(Q(item_action='STOCK OUT')|Q(item_action='STOCK IN'))
 		# for item in histories:
 		# 	team = CleaningTeam.objects.filter(visit__order__order_no=)
+
+		qty_items = InventoryItem.objects.filter(item_add_type='quantity')
+		store = Store.objects.filter(store_name='AL-RAI STORE').first()
+		for item in qty_items:
+			QuantityStore.objects.create(store=store,item=item,quantity=item.total_quantity)
+			
+		ItemHistory.objects.all().update(quantity_location=store)
 			
 
 		search = request.GET.get('search')
