@@ -9,7 +9,8 @@ UNIT_STATUS_CHOICES=(
     ('working','working'),
     ('out_of_order','out_of_order'),
     ('under_repair','under_repair'),
-	('expired','expired')
+	('expired','expired'),
+    ('disposed','disposed'),
 	)
 
 ITEMHISTORY_CHOICES=(
@@ -19,6 +20,8 @@ ITEMHISTORY_CHOICES=(
     ('ITEM REQUEST','ITEM REQUEST'),
     ('ITEM RETURN','ITEM RETURN'),
     ('MANUAL','MANUAL'),
+    ('TRANSFER','TRANSFER'),
+    ('DISPOSE','DISPOSE'),
 )
 
 ITEM_STATUS_CHOICES=(
