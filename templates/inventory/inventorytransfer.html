@@ -78,6 +78,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
 <div class="wrapper">
     <!--wrapper-->
     {% include "inventory/common/header.html" %}
@@ -90,7 +91,7 @@
             </div>
         </div>
 
-        <div class="main-content-holder">
+        <div class="main-content-holder" id="app">
             <!--main-content-holder-->
             <div class="white-wrapper white-wrapper-padding2">
                 <div class="row">
@@ -136,7 +137,29 @@
                                 <div id="id_search3" class="row inv-result-box" style="display: none;height:auto;max-height:200px;z-index:2000;">
                                   
                                 </div>
-                            </div>
+                            </div><br>
+                            <div class="model-input-name required-field">Multiselect </div>
+                            <input type="hidden" name="multisel_val" v-model="multisel_val"/>
+                            <div class="mt-10">
+                                <multiselect
+                       
+                                v-model="multi_val"
+                                 placeholder="Select Item"
+                                 
+                                 :options="['OPTION1','OPTION2','OPTION3']"
+                                 :multiple="true"
+                                 :taggable="false"
+                                 :show-labels="false"
+                                 @input="selectItem()"
+                                 
+                               ></multiselect>
+                            </div><br>
+                            <div class="model-input-name required-field">Quantity </div>
+                            <div class="quantity">
+                                <a class="quantity__minus pointer" @click="subQty()"><span>-</span></a>
+                                <input  type="text" class="quantity__input" value="1" id="id_item_count" name="item_count" v-model="qty_val" >
+                                <a  class="quantity__plus pointer" @click="addQty()"><span>+</span></a>
+                              </div>
                        
                     </div>
                     
@@ -184,7 +207,7 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </div> -->
                 
                 {% if purchase_order_items %}
                 <input type="hidden" name="purchase_order_id" value="{{purchase_order.id}}" />
@@ -415,6 +438,40 @@
 {% endblock %}
 
 {% block javascript %}
+<script src="https://unpkg.com/vue-multiselect@2.1.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+
+<script>
+    const app=new Vue({
+    el: '#app',
+    delimiters: ['<%', '%>'],
+    components: { Multiselect: window.VueMultiselect.default },
+    data: {
+     multi_val:'',
+     qty_val:1,
+     multisel_val:''
+    
+    },
+    mounted(){
+       
+       
+    },
+    methods:{
+        addQty(){
+            this.qty_val++
+        },
+        subQty(){
+            if(this.qty_val>1){
+                this.qty_val--
+            }
+        },
+        selectItem(){
+                this.multisel_val=this.multi_val.join(',')
+        }
+    }
+}
+    )
+</script>
 <script>
     function DropDown(el) {
     this.dd = el;
