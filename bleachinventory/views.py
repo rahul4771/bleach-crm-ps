@@ -564,12 +564,12 @@ class InventoryBundle(IsInventoryAdminUser,View):
 class InventoryItems(IsInventoryAdminUser,View):
 	def get(self,request,item_id):
 		
-		# qty_items = InventoryItem.objects.filter(item_add_type='quantity')
-		# store = Store.objects.filter(store_name='AL-RAI STORE').first()
-		# for item in qty_items:
-		# 	QuantityStore.objects.create(store=store,item=item,quantity=item.total_quantity)
+		qty_items = InventoryItem.objects.filter(item_add_type='quantity')
+		store = Store.objects.filter(store_name='AL-RAI STORE').first()
+		for item in qty_items:
+			QuantityStore.objects.create(store=store,item=item,quantity=item.total_quantity)
 			
-		# ItemHistory.objects.filter()
+		ItemHistory.objects.all().update(quantity_location=store)
 
 		inventory_item = InventoryItem.objects.prefetch_related(Prefetch('quantity_store_item',queryset=QuantityStoreDetails.objects.select_related('item_store').all(),to_attr='storequantity'),Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images')).get(id=item_id)
 		categories = Category.objects.all()
