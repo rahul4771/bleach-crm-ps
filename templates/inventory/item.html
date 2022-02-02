@@ -995,35 +995,23 @@
                             </tr>
                         </thead>
                         <tbody>
-                           
+                            {% if inventory_item.storequantity %}
+                            {% for inventory_store in inventory_item.storequantity %}
                             <tr>
                                 <td data-label="Unit ID">
-                                    00000000
+                                    {{inventory_store.item_store.store_name}}
                                 </td>
                                 <td data-label="serial No.">
-                                    232
+                                    {{inventory_store.quantity}}
                                 </td>
                                 
                             </tr>
-                            <tr>
-                                <td data-label="Unit ID">
-                                    00000000
-                                </td>
-                                <td data-label="serial No.">
-                                    232
-                                </td>
-                                
-                            </tr>
-                            <tr>
-                                <td data-label="Unit ID">
-                                    00000000
-                                </td>
-                                <td data-label="serial No.">
-                                    232
-                                </td>
+                            {% endfor %}
+                            {% endif %}
                                 
                             </tr>
                             </tbody>
+
                             </table>
 
                 </div>
