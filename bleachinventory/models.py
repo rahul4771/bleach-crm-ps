@@ -401,6 +401,7 @@ class ItemHistory(models.Model):
     item_remark     =   models.CharField(max_length=50,blank=True,null=True)
     purchase_date   =   models.DateField(blank=True,null=True)
     quantity        =   models.CharField(max_length=50,blank=False,null=False)
+    quantity_location= models.ForeignKey(Store,blank=True,null=True,related_name='history_store')
     added_by        =   models.ForeignKey(UserProfile,blank=True,null=True,related_name='addedby_item_history')
     external_user   =   models.CharField(max_length=100,blank=True,null=True)
     created         =   models.DateTimeField(auto_now_add=True)

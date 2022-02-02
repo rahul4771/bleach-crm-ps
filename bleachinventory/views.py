@@ -816,6 +816,7 @@ class InventoryItems(IsInventoryAdminUser,View):
 			purchase_date = purchase_date,
 			item_action = 'MANUAL',
 			quantity = quantity,
+			quantity_location = store,
 			added_by = request.user
 			)
 
@@ -863,6 +864,7 @@ class InventoryItems(IsInventoryAdminUser,View):
 						item_action = 'ITEM RETURN',
 						item_remark = request_order_item.request_order.request_order_id,
 						quantity = quantity,
+						quantity_location = store,
 						external_user = request_order_item.request_order.requested_by.name
 					)
 
@@ -974,31 +976,72 @@ class InventoryItems(IsInventoryAdminUser,View):
 class InventoryTransfer(View):
 	def get(self,request):
 		return render(request,'inventory/inventorytransfer.html',{})
+	def post(self,request):
+		from_store = request.POST.get('store_id')
+		to_store = request.POST.get('store_id2')
+		item_id    = request.POST.get('item_id')
+
+		store1 = Store.objects.get(id=int(from_store))
+		store2 = Store.objects.get(id=int(to_store))
+
+		item       = InventoryItem.objects.get(id=item_id)
+		if item.item_add_type == 'quantity':
+			quantity   = request.POST.get('item_count')
+			if float(item.total_quantity) >= float(quantity):
+				quantitystore1 = QuantityStoreDetails.objects.get(item_store=store1,quantity_item=item)
+				quantitystore1.quantity = float(quantitystore1.quantity) - float(quantity)
+				quantitystore1.save()
+
+				try:
+					quantitystore2 = QuantityStoreDetails.objects.get(item_store=store2,quantity_item = item)
+					quantitystore2.quantity = float(quantitystore2.quantity) + float(quantity)
+					quantitystore2.save()
+				except:
+					QuantityStoreDetails.objects.create(
+					item_store = store2,
+					quantity_item = item,
+					quantity = quantity
+					)
+
+				ItemHistory.objects.create(item=item,item_action='TRANSFER',quantity=quantity,added_by=request.user,item_remark='Inventory Transfer')
+		
+		if item.item_add_type == 'unit':
+			unit_item_ids = (request.POST.get('item_units')).split(",")
+			if unit_item_ids:
+				unit_items    = ItemUnit.objects.filter(id__in=unit_item_ids,is_available=True).update(store=store2)
+
+		messages.success(request,"Inventory Items Transferred Succesfully")
+		
+		return redirect('bleach-inventory:item-dispose')
+
 
 class ItemDispose(View):
 	def get(self,request):
 		return render(request,'inventory/itemdispose.html',{})
-	def get(self,request):
-		from_store = request.POST.get('from_store')
+	def post(self,request):
+		from_store = request.POST.get('store_id')
 		item_id    = request.POST.get('item_id')
+
+		store = Store.objects.get(id=int(from_store))
 
 		item       = InventoryItem.objects.get(id=item_id)
 		if item.item_add_type == 'quantity':
-			quantity   = request.POST.get('quantity')
+			quantity   = request.POST.get('item_count')
 
-			store_item = QuantityStoreDetails.objects.get(item_store_id=from_store,quantity_item=item)
-			store_item.quantity -= quantity
-			store_item.save()
+			if float(item.total_quantity) >= float(quantity):
+				store_item = QuantityStoreDetails.objects.get(item_store=store,quantity_item=item)
+				store_item.quantity = float(store_item.quantity) - float(quantity)
+				store_item.save()
 
-			item.total_quantity -= quantity
-			item.save()
+				item.total_quantity = float(item.total_quantity) - float(quantity)
+				item.save()
 
-			ItemHistory.objects.create(item=item,item_action='DISPOSE',quantity=quantity,added_by=request.user,item_remark='Disposed')
+				ItemHistory.objects.create(item=item,item_action='DISPOSE',quantity=quantity,quantity_location = store,added_by=request.user,item_remark='Disposed')
 
 		if item.item_add_type == 'unit':
-			unit_item_ids = (request.POST.get('unit_items')).split(",")
+			unit_item_ids = (request.POST.get('item_units')).split(",")
 			if unit_item_ids:
-				unit_items    = ItemUnit.objects.filter(id__in=unit_item_ids).update(status='disposed')
+				unit_items    = ItemUnit.objects.filter(id__in=unit_item_ids,is_available=True).update(status='disposed',is_available=False)
 
 		messages.success(request,"Inventory Items Disposed Succesfully")
 		
@@ -1965,7 +2008,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 						store_item.quantity = round(float(store_item.quantity) - float(item.units),2)
 						store_item.save()
 
-						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),item_action='STOCK OUT',item_remark=checkout_visit.order.order_no,added_by=team_leader)
+						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),quantity_location=store,item_action='STOCK OUT',item_remark=checkout_visit.order.order_no,added_by=team_leader)
 
 					else:
 						messages.error(request,"Quantity limit exceeded !")
@@ -1995,7 +2038,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 						store_item.quantity = round(float(store_item.quantity) - float(item.units),2)
 						store_item.save()
 
-						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),item_action='STOCK OUT',item_remark=checkout_visit.order.order_no,added_by=team_leader)
+						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),quantity_location=store,item_action='STOCK OUT',item_remark=checkout_visit.order.order_no,added_by=team_leader)
 
 				item.is_checked_out = True
 				item.checked_out_date = date.today()
@@ -2084,7 +2127,7 @@ class PurchaseOrderItemsPage(IsInventoryAdminUser,View):
 				item = InventoryItem.objects.get(id=int(product))
 				purchase_order_item = PurchaseOrderItems.objects.get(purchase_order=purchase_order,product__item__id=int(product))
 				print(item,item_counts[loopcount], "itm")
-				ItemHistory.objects.create(purchase_order=purchase_order,item=item,quantity=item_counts[loopcount],item_action='PURCHASE ORDER',item_remark=purchase_order.purchase_order_id,added_by=purchase_order_item.purchase_order.initiated_by)
+				ItemHistory.objects.create(purchase_order=purchase_order,quantity_location=store,item=item,quantity=item_counts[loopcount],item_action='PURCHASE ORDER',item_remark=purchase_order.purchase_order_id,added_by=purchase_order_item.purchase_order.initiated_by)
 				
 				try:
 					quantitystore = QuantityStoreDetails.objects.get(item_store=store,quantity_item = item)
@@ -2988,6 +3031,7 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 						ItemHistory.objects.create(
 						item = request_order_item.product,
 						item_action = 'ITEM REQUEST',
+						quantity_location=store,
 						item_remark = request_order_item.request_order.request_order_id,
 						quantity = request_order_item.item_count,
 						external_user = request_order_item.request_order.requested_by.name

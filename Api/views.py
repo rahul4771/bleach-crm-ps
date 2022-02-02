@@ -4144,6 +4144,7 @@ class ItemsCheckInAPI(APIView):
 				item = inventoryitem,
 				quantity = item_quantities[count],
 				item_action='STOCK IN',
+				quantity_location=store,
 				item_remark=checkin_item.visit.order.order_no,
 				purchase_date= date.today(),
 				added_by = team_leader
@@ -4171,6 +4172,7 @@ class ItemsCheckInAPI(APIView):
 				item = inventoryitem,
 				quantity = item_quantities[count],
 				item_action='STOCK IN',
+				quantity_location=store,
 				item_remark=checkin_item.visit.order.order_no,
 				purchase_date= date.today(),
 				added_by = team_leader
@@ -4570,6 +4572,7 @@ class CheckOutStoreItemsUpdateAPI(APIView):
 				item = inventoryitem,
 				quantity = item_quantities[count],
 				item_action='STOCK IN',
+				quantity_location=store,
 				item_remark=checkin_item.visit.order.order_no,
 				purchase_date= date.today(),
 				added_by = team_leader
@@ -4586,6 +4589,7 @@ class CheckOutStoreItemsUpdateAPI(APIView):
 				item = inventoryitem,
 				quantity = item_quantities[count],
 				item_action='STOCK IN',
+				quantity_location=store,
 				item_remark=checkin_item.visit.order.order_no,
 				purchase_date= date.today(),
 				added_by = team_leader

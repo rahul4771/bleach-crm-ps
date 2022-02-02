@@ -70,7 +70,7 @@
                             
                             <div id="unit_div" hidden>
                             <div class="model-input-name required-field">Multiselect </div>
-                            <input type="hidden" name="multisel_val" v-model="multisel_val" />
+                            <input type="hidden" name="item_units" v-model="multisel_val" />
                             <div class="mt-10">
                                 <multiselect
                        
@@ -365,7 +365,39 @@ getProducts()
         document.getElementById("id_search3").style.display="none"
     }
 
-    
+    async function quantitychange(){
+      
+        var item_id = $('#id_pro_sel').val();
+        var quantity = $('#id_qty').val() ;
+        console.log(item_id,quantity,"po")
+      
+        var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+          if(result.status == 200){
+            console.log(result.data.item_available,result.data.item_count,"lop1")
+            $('#id_qty').val(result.data.item_quantity);
+            $('#id_item_count').text(result.data.item_count);
+          }
+      }
+
+    async function increment(){
+        console.log($('#item_id').val(),"prose")
+        
+        var item_id = $('#item_id').val();
+      
+        $('#id_item_count').val(parseInt($('#id_qty').val()) + 1 );
+      
+        var quantity = parseInt($('#id_item_count').val()) ;
+        console.log(item_id,quantity,"po")
+      
+        var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+          if(result.status == 200){
+            console.log(result.data.item_available,"lop2")
+      
+            $('#id_item_count').val(result.data.item_quantity);
+            $('#id_item_count').text(result.data.item_count);
+            
+          }
+      }
     
     function set_params_go(args)
     {
