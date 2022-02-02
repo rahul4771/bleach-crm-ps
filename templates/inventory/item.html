@@ -1044,7 +1044,7 @@
 
         <div class="inv-sidedrawer-inner">
             <div class="d-flex">
-                <div class="inv-drawer-head" id="supHead">
+                <div class="inv-drawer-head" id="supHeadUnit">
                     Add Unit
                 </div>
                 <div class="right-pos">
@@ -1114,7 +1114,7 @@
            
             <div id="id_itr">
                 <div class="row mt-20">
-                    <div class="col-md-12 ">
+                    <div class="col-md-12 " id="unit_store_id" >
                         <div class="model-input-name required-field">Store</div>
     
                         <div style="position: relative;">
@@ -2434,18 +2434,20 @@ function openNavAddBundle(d) {
         $('#id_unit_status').val('available');
         $("#id_selectText").text("Select PO");
             {% if inventory_item.item_add_type == 'unit' %}
-            $("#supHead").text("Add Unit");
+            $("#supHeadUnit").text("Add Unit");
             {% else %}
             $("#supHead").text("Add Quantity");
             {% endif %}
             $("#unit_action").val("add_unit");
+            $("#unit_store_id").show();
         }
         if(d == 'edit'){
-            $("#supHead").text("Edit Unit");
+            $("#supHeadUnit").text("Edit Unit");
             $('#update-unit-btn').show();
             $('#submit-btn').hide()
             $('#po-btn').hide()
             $("#unit_action").val("edit_unit");
+            $("#unit_store_id").hide();
             
         }
         if(screen.width<= 600){
