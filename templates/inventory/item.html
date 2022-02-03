@@ -267,7 +267,11 @@
                             <div class="inv-item-card " >
                              <div class="av-font text-center">
                                  Inventory
+                                 
+                                 {% if inventory_item.item_add_type == 'quantity' %}
                                  <i class="fas fa-arrow-circle-right" onclick="openNavInventoryPopup()" style="float:right;color: #2d4e85;cursor:pointer"></i>
+                                 {% endif %}
+
                                  <div style="text-align: center;" class=" av-font mt-10 mb-10">
                                      
                                      <br>
