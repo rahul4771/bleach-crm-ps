@@ -252,12 +252,15 @@ function showStores(){
         }
 
         function showStores2(){
+            var store1_id = $('#store_id').val();
             console.log("stores is "+JSON.stringify(stores))
+            
               $('#id_store_search2').empty();
               for (var j=0; j<stores.length; j++) {
-                  if (stores[j].store_name.toUpperCase().match($('#store-name2').val().toUpperCase())){
+                console.log(parseInt(store1_id),stores[j].id)
+                  if ( (stores[j].store_name.toUpperCase().match($('#store-name2').val().toUpperCase())) && (parseInt(store1_id) != stores[j].id ) && (parseInt(store1_id) > 0) ){
                      
-              $('#id_store_search2').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeStoreShow2(this)"  data-pro="'+stores[j].id+'" data-name="'+stores[j].store_name+'"><div class="inv-search-result">'+stores[j].store_name+'</div></div>');
+                        $('#id_store_search2').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeStoreShow2(this)"  data-pro="'+stores[j].id+'" data-name="'+stores[j].store_name+'"><div class="inv-search-result">'+stores[j].store_name+'</div></div>');
   
                   }
               }
@@ -275,6 +278,8 @@ function showStores(){
         function closeStoreShow(d){
             $('#store_id').val($(d).attr("data-pro"));
             $('#store-name').val($(d).attr("data-name"));
+            $('#store_id2').val('');
+            $('#store-name2').val('');
             var proId = $(d).attr("data-pro")
         //  set_params_go({'store':proId})
         
