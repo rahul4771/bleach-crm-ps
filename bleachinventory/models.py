@@ -301,10 +301,10 @@ class SupplierItems(models.Model):
     created             = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        return str(self.supplier.supplier_name)
+        return str(self.supplier.supplier_name+'-'+self.item.name)
 
     def __str__(self):
-        return self.supplier.supplier_name
+        return self.supplier.supplier_name+'-'+self.item.name
 
 # class SupplierItemUnits(models.Model):
 #     supplier_item         = models.ForeignKey(SupplierItems,blank=True,null=True,related_name='supplier_unit_supplier_item')
