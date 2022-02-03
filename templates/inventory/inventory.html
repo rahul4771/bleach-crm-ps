@@ -1088,7 +1088,7 @@
                                         <div class=" bold-text common-label"> <label>Segment</label></div>
                                       <label for="favcity">
                                       <select name="segment_filter" id="segment_filter_id">
-                                      <option value=''>------</option> 
+                                      <option value=''>---ALL---</option> 
                                                    
                                     </select>
                                       </label>
@@ -1100,7 +1100,7 @@
                                         <div class=" bold-text common-label"> <label>Line</label></div>
                                       <label for="favcity">
                                       <select name="line_filter" id="line_filter_id">
-                                      <option value=''>------</option>
+                                      <option value=''>---ALL---</option>
                                                    
                                     </select>
                                       </label>
@@ -1420,6 +1420,12 @@ function changeSelect(va){
          var result = await _get('api/inventory-segments/?category_id='+category_id);
          $('#id_segment').find('option').remove();
          $('#id_line').find('option').remove();
+
+         $('#segment_filter_id').empty();
+         $('#segment_filter_id').append('<option value="">---ALL---</option>');
+         $('#line_filter_id').empty();
+         $('#line_filter_id').append('<option value="">---ALL---</option>');
+         
          if(result.status == 200){
              console.log(result.data.inventory_segment,"stat")
             if (result.data.inventory_segment.length > 0){
@@ -1454,6 +1460,9 @@ function changeSelect(va){
 
     async function getlines(segment_id){
          var result = await _get('api/inventory-lines/?segment_id='+segment_id);
+         
+         $('#line_filter_id').empty();
+         $('#line_filter_id').append('<option value="">---ALL---</option>');
          
          if(result.status == 200){
              console.log(result.data.inventory_line,"stat")
