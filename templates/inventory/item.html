@@ -1850,10 +1850,11 @@
             })
         },
         getItems(){
-            
-            axios.get(this.url+'/api/rawmaterials/').then(response=>{
+            var item_id= $('#item_id').val()
+            axios.get(this.url+'/api/rawmaterials/'+item_id+'/').then(response=>{
                 this.raw_materials=response.data.inventoryitem_list
                 this.filtered_items=[...this.raw_materials]
+                console.log(response.data)
             })
         },
         addAccessory(){
