@@ -984,12 +984,12 @@ class InventoryTransfer(View):
 			quantity   = request.POST.get('item_count')
 			if float(item.total_quantity) >= float(quantity):
 				quantitystore1 = QuantityStoreDetails.objects.get(item_store=store1,quantity_item=item)
-				quantitystore1.quantity = float(quantitystore1.quantity) - float(quantity)
+				quantitystore1.quantity = round(float(quantitystore1.quantity) - float(quantity),2)
 				quantitystore1.save()
 
 				try:
 					quantitystore2 = QuantityStoreDetails.objects.get(item_store=store2,quantity_item = item)
-					quantitystore2.quantity = float(quantitystore2.quantity) + float(quantity)
+					quantitystore2.quantity = round(float(quantitystore2.quantity) + float(quantity),2)
 					quantitystore2.save()
 				except:
 					QuantityStoreDetails.objects.create(
@@ -1025,10 +1025,10 @@ class ItemDispose(View):
 
 			if float(item.total_quantity) >= float(quantity):
 				store_item = QuantityStoreDetails.objects.get(item_store=store,quantity_item=item)
-				store_item.quantity = float(store_item.quantity) - float(quantity)
+				store_item.quantity = round(float(store_item.quantity) - float(quantity),2)
 				store_item.save()
 
-				item.total_quantity = float(item.total_quantity) - float(quantity)
+				item.total_quantity = round(float(item.total_quantity) - float(quantity),2)
 				item.save()
 
 				ItemHistory.objects.create(item=item,item_action='DISPOSE',quantity=quantity,quantity_location = store,added_by=request.user,item_remark='Disposed')

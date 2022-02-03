@@ -4158,13 +4158,13 @@ class ItemsCheckInAPI(APIView):
 				inventoryitem.save()
 
 				try:
-					quantitystore = QuantityStoreDetails.objects.get(item_store=store,quantity_item = checkin_item.item)
+					quantitystore = QuantityStoreDetails.objects.get(item_store=store,quantity_item = checkin_item.service_item.item)
 					quantitystore.quantity = float(quantitystore.quantity) + float(item_quantities[count])
 					quantitystore.save()
 				except:
 					QuantityStoreDetails.objects.create(
 					item_store = store,
-					quantity_item = checkin_item.item,
+					quantity_item = checkin_item.service_item.item,
 					quantity = float(item_quantities[count])
 					)
 
