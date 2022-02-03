@@ -267,7 +267,11 @@
                             <div class="inv-item-card " >
                              <div class="av-font text-center">
                                  Inventory
+                                 
+                                 {% if inventory_item.item_add_type == 'quantity' %}
                                  <i class="fas fa-arrow-circle-right" onclick="openNavInventoryPopup()" style="float:right;color: #2d4e85;cursor:pointer"></i>
+                                 {% endif %}
+
                                  <div style="text-align: center;" class=" av-font mt-10 mb-10">
                                      
                                      <br>
@@ -729,6 +733,10 @@
                                             Details
                                         </th>
                                         <th data-hide="phone,tablet"  style="width: %; ">
+                                            Location
+                                        </th>
+
+                                        <th data-hide="phone,tablet"  style="width: %; ">
                                             Quantity
                                         </th>
                                       
@@ -741,8 +749,16 @@
                                         <td>{% if history.added_by %}{{history.added_by.name|default_if_none:'-'}}{% else %}{{history.external_user}}{% endif %}</td>
                                         <td>{{history.item_action}}</td>
                                         <td>{{history.item_remark|default_if_none:'-'}}</td>
+                                        <td >{{history.quantity_location|default_if_none:'-'}}</td>
                                         {% if history.item_action == 'PURCHASE ORDER' or history.item_action == 'STOCK IN' or history.item_action == 'ITEM RETURN' or history.item_action == 'MANUAL' %}
                                         <td style="color:green"><i class="fa fa-plus" aria-hidden="true"></i> {{history.quantity|floatformat:2}}</td>
+                                        
+                                        {% elif history.item_action == 'TRANSFER' %}
+                                        <td style="color:gray"><i class="fas fa-exchange-alt mr-10" aria-hidden="true"></i> {{history.quantity|floatformat:2}}</td>
+                                        {% elif history.item_action == 'DISPOSE' %}
+                                        <td style="color:red"><i class="fa fa-minus" aria-hidden="true"></i> {{history.quantity|floatformat:2}}</td>
+
+                                        
                                         {% else %}
                                         <td style="color:red"><i class="fa fa-minus" aria-hidden="true"></i> {{history.quantity|floatformat:2}}</td>
                                         {% endif %}
@@ -983,35 +999,23 @@
                             </tr>
                         </thead>
                         <tbody>
-                           
+                            {% if inventory_item.storequantity %}
+                            {% for inventory_store in inventory_item.storequantity %}
                             <tr>
                                 <td data-label="Unit ID">
-                                    00000000
+                                    {{inventory_store.item_store.store_name}}
                                 </td>
                                 <td data-label="serial No.">
-                                    232
+                                    {{inventory_store.quantity}}
                                 </td>
                                 
                             </tr>
-                            <tr>
-                                <td data-label="Unit ID">
-                                    00000000
-                                </td>
-                                <td data-label="serial No.">
-                                    232
-                                </td>
-                                
-                            </tr>
-                            <tr>
-                                <td data-label="Unit ID">
-                                    00000000
-                                </td>
-                                <td data-label="serial No.">
-                                    232
-                                </td>
+                            {% endfor %}
+                            {% endif %}
                                 
                             </tr>
                             </tbody>
+
                             </table>
 
                 </div>
