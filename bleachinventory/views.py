@@ -1930,7 +1930,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 
 				print(service_recipe_ingredients,"itt")
 		else:
-			store = Store.objects.get(id=1)
+			store = Store.objects.get(store_name='AL-RAI STORE')
 
 		return render(request,'inventory/createCheckout.html',{"store":store,"max_area":max_area,"cleaners":cleaners,"stock_out":stock_out,"price_ranges":price_ranges,"visit":checkout_visit,"visits":visits,"items":items,"check_out_items":check_out_items})
 
