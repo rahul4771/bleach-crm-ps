@@ -4207,15 +4207,25 @@ class InventoryRawMaterialsView(APIView):
 	permission_classes        = (AllowAny,)
 	authentication_classes    = ()
 
-	def get(self,request):
+	def get(self,request,inventory_id):
 		response_dict            = {'success':False}
 
 		response_dict['success'] = True
 
-		try:
-			inventory_items = InventoryItem.objects.filter(item_type='RAW MATERIALS',status=True)
-		except:
-			inventory_items = None
+		inventory_item     = InventoryItem.objects.get(id=inventory_id)
+
+		if inventory_item.item_type == 'FINISHED GOODS':
+			try:
+				inventory_items = InventoryItem.objects.filter(Q(Q(item_type='RAW MATERIALS')|Q(item_type='ASSETS'))).filter(status=True)
+			except:
+				inventory_items = None
+		else:
+			try:
+				inventory_items = InventoryItem.objects.filter(item_type='RAW MATERIALS',status=True)
+			except:
+				inventory_items = None
+
+		print(inventory_items,"inventory_items")
 
 		inventoryitem_list = []
 		if inventory_items:

@@ -751,16 +751,16 @@
                                         <td>{{history.item_remark|default_if_none:'-'}}</td>
                                         <td >{{history.quantity_location|default_if_none:'-'}}</td>
                                         {% if history.item_action == 'PURCHASE ORDER' or history.item_action == 'STOCK IN' or history.item_action == 'ITEM RETURN' or history.item_action == 'MANUAL' %}
-                                        <td style="color:green"><i class="fa fa-plus" aria-hidden="true"></i> {{history.quantity|floatformat:2}}</td>
+                                        <td style="color:green"><i class="fa fa-plus" aria-hidden="true"></i> {{history.quantity|floatformat:0}}</td>
                                         
                                         {% elif history.item_action == 'TRANSFER' %}
-                                        <td style="color:gray"><i class="fas fa-exchange-alt mr-10" aria-hidden="true"></i> {{history.quantity|floatformat:2}}</td>
+                                        <td style="color:gray"><i class="fas fa-exchange-alt mr-10" aria-hidden="true"></i> {{history.quantity|floatformat:0}}</td>
                                         {% elif history.item_action == 'DISPOSE' %}
-                                        <td style="color:red"><i class="fa fa-minus" aria-hidden="true"></i> {{history.quantity|floatformat:2}}</td>
+                                        <td style="color:red"><i class="fa fa-minus" aria-hidden="true"></i> {{history.quantity|floatformat:0}}</td>
 
                                         
                                         {% else %}
-                                        <td style="color:red"><i class="fa fa-minus" aria-hidden="true"></i> {{history.quantity|floatformat:2}}</td>
+                                        <td style="color:red"><i class="fa fa-minus" aria-hidden="true"></i> {{history.quantity|floatformat:0}}</td>
                                         {% endif %}
                                     </tr>
                                     {% endfor %}
@@ -1850,10 +1850,11 @@
             })
         },
         getItems(){
-            
-            axios.get(this.url+'/api/rawmaterials/').then(response=>{
+            var item_id= $('#item_id').val()
+            axios.get(this.url+'/api/rawmaterials/'+item_id+'/').then(response=>{
                 this.raw_materials=response.data.inventoryitem_list
                 this.filtered_items=[...this.raw_materials]
+                console.log(response.data)
             })
         },
         addAccessory(){
