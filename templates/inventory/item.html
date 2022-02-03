@@ -217,7 +217,7 @@
                                 <div class="inv-item-head-sub-2 mt-10" id="id_cat" >
                                     <span id="id_cat_val"  class="av-font">  {{inventory_item.item_category.name}}</span>
                                    
-                                    <select id="id_cat_select" name="item_category" class="minimal av-font inv-hide" >
+                                    <select id="id_cat_select" name="item_category" class="minimal av-font inv-hide" required>
                                         <option value="">--Select Category--</option>
                                         {% for category in categories %}
                                         <option value="{{category.id}}" {% if inventory_item.item_category.id == category.id %}selected{% endif %}>{{category.name}}</option>
@@ -231,7 +231,7 @@
                                 <div class="inv-item-head-sub-2 mt-10">
                                     <span id="id_seg_val"  class="av-font">  {{inventory_item.item_segment.name|default_if_none:'-'}}</span>
                                    
-                                    <select id="id_seg_select" name="item_segment" class="minimal av-font inv-hide">
+                                    <select id="id_seg_select" name="item_segment" class="minimal av-font inv-hide" required>
                                         <option value="">--Select Segment--</option>
                                         
                                                         
@@ -244,7 +244,7 @@
                                 <div class="inv-item-head-sub-2 mt-10">
                                     <span id="id_line_val" class="av-font">  {{inventory_item.item_line.name|default_if_none:'-'}}</span>
                                    
-                                    <select id="id_line_select" name="item_line" class="minimal av-font inv-hide">
+                                    <select id="id_line_select" name="item_line" class="minimal av-font inv-hide" required>
                                         <option value="">--Select Line--</option>
                                                         
                                     </select>
@@ -276,7 +276,7 @@
                                      
                                      <br>
                                      <div class="inv-item-amount2">
-                                         {% if inventory_item.item_add_type == 'unit' %}{{available_item_units}}{% else %}{{inventory_item.total_quantity|floatformat:3}}{% endif %} <span style="font-size: 16px;" id="unit_data"> {% if inventory_item.item_add_type == 'unit' %}Unit{% else %}{{inventory_item.measuring_unit}}{% endif %} </span>                    
+                                         {% if inventory_item.item_add_type == 'unit' %}{{available_item_units|floatformat:0}}{% else %}{{inventory_item.total_quantity|floatformat:0}}{% endif %} <span style="font-size: 16px;" id="unit_data"> {% if inventory_item.item_add_type == 'unit' %}Unit{% else %}{{inventory_item.measuring_unit}}{% endif %} </span>                    
                                      </div>
 
                                  </div>
@@ -2356,8 +2356,17 @@ function doneEdit(){
             document.getElementById('unit_select').style.display = 'none';
         }
     
-
-        document.getElementById("itemdetailsform").submit();
+        category = document.getElementById("itemdetailsform")["item_category"].value;
+        segment  = document.getElementById("itemdetailsform")["item_segment"].value;
+        line     = document.getElementById("itemdetailsform")["item_line"].value;
+        console.log(line,"line")
+        if(category != '' && segment != '' && line != '')
+        {
+            document.getElementById("itemdetailsform").submit();
+        }
+        else{
+            alert("Category,Segment,Line Cant be Null")
+        }
     }
     
     
