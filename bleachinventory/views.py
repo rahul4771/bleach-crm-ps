@@ -678,6 +678,7 @@ class InventoryItems(IsInventoryAdminUser,View):
 			category_id = request.POST.get('item_category')
 			segment_id = request.POST.get('item_segment')
 			line_id = request.POST.get('item_line')
+			is_reusable = request.POST.get('item_reusable')
 			print(category_id,segment_id,line_id,"ids")
 
 			item_unit_data = request.POST.get('item_unit_data')
@@ -698,6 +699,11 @@ class InventoryItems(IsInventoryAdminUser,View):
 				line = None
 
 			item = InventoryItem.objects.get(id=item_id)
+
+			if is_reusable == 'on':
+				item.is_reusable = True
+			else:
+				item.is_reusable = False
 
 			item.name = request.POST.get('item_name')
 			item.item_category = category
@@ -1709,6 +1715,14 @@ class InventoryCheckout(IsInventoryAdminUser,View):
 
 class InventoryCreateCheckout(IsInventoryAdminUser,View):
 	def get(self,request,visit_id):
+		store_id = request.GET.get('store_id')
+		
+		if store_id:
+			store = Store.objects.get(id=int(store_id))
+		else:
+			# store = Store.objects.get(id=1)
+			store = Store.objects.get(store_name='AL-RAI STORE')
+		
 		checkout_visit = OrderScheduler.objects.select_related('order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections')).get(id=int(visit_id))
 		
 		for team in checkout_visit.cleaning_team:
@@ -1718,7 +1732,24 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 		
 		print(visits,"vissts")
 
-		items = InventoryItem.objects.filter(Q(item_status='available')|Q(item_status='about_to_finish'))
+		# items = InventoryItem.objects.filter(Q(item_status='available')|Q(item_status='about_to_finish'))
+
+		itemslist = InventoryItem.objects.filter(Q(item_status='available')|Q(item_status='about_to_finish')).prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(is_available=True,store=store),to_attr='item_units'),Prefetch('quantity_store_item',queryset=QuantityStoreDetails.objects.filter(item_store=store),to_attr='quantity_items'))
+		
+		items = []
+		found = set()
+
+		for item in itemslist:
+			for unit in item.item_units:
+				if unit.item not in found:
+					items.append(unit.item)
+					found.add(unit.item)
+
+			for qty in item.quantity_items:
+				if qty.quantity_item not in found and qty.quantity > 0:
+					items.append(qty.quantity_item)
+					found.add(qty.quantity_item)
+
 		print(items,"its")
 		# service = visit.order_scheduler_book.service_type
 		price_ranges = None
@@ -1729,10 +1760,9 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 
 		check_out_items = CheckOutItems.objects.filter(visit=checkout_visit).prefetch_related(Prefetch('checkoutitem',queryset=CheckOutItemUnits.objects.all(),to_attr='checkoutitem_units'))
 
-		store_id = request.GET.get('store_id')
 		
-		if store_id:
-			store = Store.objects.get(id=int(store_id))
+		
+		if store:
 
 			CheckOutItems.objects.filter(visit=checkout_visit).delete()
 
@@ -1740,7 +1770,10 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 				visit.stock_out_items_saved = False
 				visit.save()
 
-			if checkout_visit.stock_out_items_saved == False:
+				if visit.id == checkout_visit.id:
+					checkoutvisit = visit
+
+			if checkoutvisit.stock_out_items_saved == False:
 				
 				cleaners_items_count_list = []
 				items_list = []
@@ -1929,8 +1962,8 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 				
 
 				print(service_recipe_ingredients,"itt")
-		else:
-			store = Store.objects.get(store_name='AL-RAI STORE')
+		# else:
+			# store = Store.objects.get(store_name='AL-RAI STORE')
 			# store = Store.objects.get(id=1)
 
 		return render(request,'inventory/createCheckout.html',{"store":store,"max_area":max_area,"cleaners":cleaners,"stock_out":stock_out,"price_ranges":price_ranges,"visit":checkout_visit,"visits":visits,"items":items,"check_out_items":check_out_items})

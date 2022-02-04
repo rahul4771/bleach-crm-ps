@@ -3594,12 +3594,13 @@ class ItemQuantityCheck(APIView):
 
 		item_id     = request.GET.get('item_id')
 		quantity 	= request.GET.get('quantity')
-
+		store_id	= request.GET.get('store_id')
+		store		= Store.objects.get(id=int(store_id))
 		print(item_id,quantity,"qty")
 
 		item = InventoryItem.objects.annotate(quantity_total=Sum('unit_item_history__quantity'),unit_count=Sum(Case(When(unit_item__is_available=True,then=1),default=0,output_field=IntegerField()))).get(id=int(item_id))
 		
-		unitcount = ItemUnit.objects.filter(item=item,is_available=True).count()
+		unitcount = ItemUnit.objects.filter(item=item,store=store,is_available=True).count()
 		
 		if item.item_add_type == 'unit':
 			item_count = unitcount
@@ -3613,12 +3614,10 @@ class ItemQuantityCheck(APIView):
 
 			response_dict['item_count'] = item_count
 		else:
-			if item.quantity_total:
-				item_count = item.total_quantity
-			else:
-				item_count = 0
+			quantity_store = QuantityStoreDetails.objects.get(quantity_item=item,item_store=store)
+			item_count = quantity_store.quantity
 			
-			print(item_count,quantity,"qtt")
+			print(item_count,"qtt")
 
 			if float(item_count) >= float(quantity) :
 				response_dict['item_available'] = True
@@ -3645,6 +3644,7 @@ class CheckOutItemAdd(APIView):
 		visit_id = request.GET.get('visit_id')
 		quantity = request.GET.get('quantity')
 		unit_id = request.GET.get('unit_id')
+		store_id = request.GET.get('store_id')
 
 		print(service_item,visit_id,"vis")
 		visit = OrderScheduler.objects.get(id=int(visit_id))
@@ -4409,11 +4409,14 @@ class ItemUnitsProduct(APIView):
 		
 		product_id  = request.GET.get('product_id')
 		visit_id = request.GET.get('visit_id')
+		store_id = request.GET.get('store_id')
+		
+		store= Store.objects.get(id=int(store_id))
 
 		item_units_array = []
 		checkout_item_units_array = []
 
-		item_units       = ItemUnit.objects.filter(item__id=product_id,is_available=True)
+		item_units       = ItemUnit.objects.filter(item__id=product_id,store=store,is_available=True)
 		for item in item_units:
 			item_units_array.append({'id':item.id,'unit_code':item.unit_code})
 
