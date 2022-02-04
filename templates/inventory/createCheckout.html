@@ -894,10 +894,11 @@ function hideselectedoptions(){
       var item_id = $('#id_pro_sel').val() ;
       var edit_item_id = $('#inventory_item_id').val();
       var visit_id = "{{visit.id}}" ;
+      var store_id = $('#store_id').val();
       var quantity = $('#id_qty').val();
       console.log(item_id,visit_id,"po")
     
-      var result = await _get('api/inventory-checkout-item-add/?item_id='+item_id+'&visit_id='+visit_id+'&quantity='+quantity+'&unit_id='+$('#id_pro_sel3').val()+'&edit_item_id='+edit_item_id);
+      var result = await _get('api/inventory-checkout-item-add/?item_id='+item_id+'&visit_id='+visit_id+'&quantity='+quantity+'&unit_id='+$('#id_pro_sel3').val()+'&edit_item_id='+edit_item_id+'&store_id='+store_id);
         if(result.status == 200){
           console.log(result.data.success,"resss")
           if (result.data.success == true){
@@ -1033,7 +1034,7 @@ function hideselectedoptions(){
       var checkout_item_id = parseInt($('#id_item_checkout').val()) ;
       var quantity = $('#id_qty2').val() ;
 
-      var result = await _get('api/inventory-checkout-item-swap/?service_item='+service_item+'&ingredient_id='+ingredient_id+'&checkout_item_id='+checkout_item_id+'&quantity='+quantity);
+      var result = await _get('api/inventory-checkout-item-swap/?service_item='+service_item+'&ingredient_id='+ingredient_id+'&checkout_item_id='+checkout_item_id+'&quantity='+quantity+'&store_id='+$('#store_id').val());
         if(result.status == 200){
           console.log(result.data.checkout_item_id,"resss")
 
@@ -1095,9 +1096,11 @@ function hideselectedoptions(){
       
       var item_id = $('#id_pro_sel').val();
       var quantity = $('#id_qty').val() ;
+      var store_id = $('#store_id').val();
+      
       console.log(item_id,quantity,"po")
     
-      var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+      var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity+'&store_id='+store_id);
         if(result.status == 200){
           console.log(result.data.item_available,result.data.item_count,"lop1")
           $('#id_qty').val(result.data.item_quantity);
@@ -1109,9 +1112,10 @@ function hideselectedoptions(){
       
       var item_id = $('#inventory_item_id').val();
       var quantity = $('#edit_id_qty').val() ;
+      var store_id = $('#store_id').val();
       
     
-      var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+      var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity+'&store_id='+store_id);
         if(result.status == 200){
           console.log(result.data.item_available,result.data.item_count,"lop1")
           $('#edit_id_qty').val(result.data.item_quantity);
@@ -1124,9 +1128,10 @@ function hideselectedoptions(){
       
       var item_id = $('#id_pro_sel2').val();
       var quantity = $('#id_qty2').val() ;
+      var store_id = $('#store_id').val();
       console.log(item_id,quantity,"po")
     
-      var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+      var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity+'&store_id='+store_id);
         if(result.status == 200){
           console.log(result.data.item_available,result.data.item_count,"lop1")
           $('#id_qty2').val(result.data.item_quantity);
@@ -1138,13 +1143,14 @@ async function increment(){
   console.log($('#id_pro_sel2').val(),"prose")
   
   var item_id = $('#id_pro_sel').val();
+  var store_id = $('#store_id').val();
 
   $('#id_qty').val(parseInt($('#id_qty').val()) + 1 );
 
   var quantity = parseInt($('#id_qty').val()) ;
   console.log(item_id,quantity,"po")
 
-  var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+  var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity+'&store_id='+store_id);
     if(result.status == 200){
       console.log(result.data.item_available,"lop2")
 
@@ -1158,13 +1164,14 @@ async function editincrement(){
   console.log($('#id_pro_sel2').val(),"prose")
   
   var item_id = $('#inventory_item_id').val();
+  var store_id = $('#store_id').val();
 
   $('#edit_id_qty').val(parseInt($('#edit_id_qty').val()) + 1 );
 
   var quantity = parseInt($('#edit_id_qty').val()) ;
   console.log(item_id,quantity,"po")
 
-  var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+  var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity+'&store_id='+store_id);
     if(result.status == 200){
       console.log(result.data.item_available,"lop2")
 
@@ -1177,13 +1184,14 @@ async function editincrement(){
 async function swapincrement(){
   
   var item_id = $('#id_pro_sel2').val();
+  var store_id = $('#store_id').val();
 
   $('#id_qty2').val(parseInt($('#id_qty2').val()) + 1 );
 
   var quantity = parseInt($('#id_qty2').val()) ;
   console.log(item_id,quantity,"po")
 
-  var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+  var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity+'&store_id='+store_id);
     if(result.status == 200){
       console.log(result.data.item_available,"lop2")
 
@@ -1195,6 +1203,7 @@ async function swapincrement(){
 
 async function decrement(){
   var item_id = $('#id_pro_sel').val();
+  var store_id = $('#store_id').val();
 
   if ($('#id_qty').val() > 0) {
   $('#id_qty').val(parseInt($('#id_qty').val()) - 1 );
@@ -1207,7 +1216,7 @@ async function decrement(){
 
   var quantity = parseInt($('#id_qty').val()) ;
 
-  var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+  var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity+'&store_id='+store_id);
     if(result.status == 200){
       console.log(result.data.item_available,"lop3")
       $('#id_qty').val(result.data.item_quantity);
@@ -1216,6 +1225,7 @@ async function decrement(){
 
 async function editdecrement(){
   var item_id = $('#inventory_item_id').val();
+  var store_id = $('#store_id').val();
 
   if ($('#edit_id_qty').val() > 0) {
   $('#edit_id_qty').val(parseInt($('#edit_id_qty').val()) - 1 );
@@ -1228,7 +1238,7 @@ async function editdecrement(){
 
   var quantity = parseInt($('#edit_id_qty').val()) ;
 
-  var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+  var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity+'&store_id='+store_id);
     if(result.status == 200){
       console.log(result.data.item_available,"lop3")
       $('#edit_id_qty').val(result.data.item_quantity);
@@ -1237,6 +1247,7 @@ async function editdecrement(){
 
 async function swapdecrement(){
   var item_id = $('#id_pro_sel').val();
+  var store_id = $('#store_id').val();
 
   if ($('#id_qty2').val() > 0) {
   $('#id_qty2').val(parseInt($('#id_qty2').val()) - 1 );
@@ -1249,7 +1260,7 @@ async function swapdecrement(){
 
   var quantity = parseInt($('#id_qty2').val()) ;
 
-  var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+  var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity+'&store_id='+store_id);
     if(result.status == 200){
       console.log(result.data.item_available,"lop3")
       $('#id_qty2').val(result.data.item_quantity);
@@ -1260,9 +1271,10 @@ async function quantitychangeupdate(id,item_id){
   console.log("mac",id,item_id)
 
   var quantity = $('#id_qty_'+id).val() ;
+  var store_id = $('#store_id').val();
   console.log(quantity,"po")
 
-  var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+  var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity+'&store_id='+store_id);
     if(result.status == 200){
       console.log(result.data.item_available,result.data.item_count,"lop1")
       if (result.data.item_available == true){
@@ -1284,9 +1296,10 @@ console.log(id,item_id)
 $('#id_qty_'+id).val(parseInt($('#id_qty_'+id).val()) + 1 );
 
 var quantity = parseInt($('#id_qty_'+id).val()) ;
+var store_id = $('#store_id').val();
 console.log(quantity,"po")
 
-var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity+'&store_id='+store_id);
 if(result.status == 200){
   console.log(result.data.item_available,result.data.item_count,"lop2")
   if (result.data.item_available == true){
@@ -1314,8 +1327,9 @@ $('#id_qty_'+id).val(0);
 }
 
 var quantity = parseInt($('#id_qty_'+id).val()) ;
+var store_id = $('#store_id').val();
 
-var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity+'&store_id='+store_id);
 if(result.status == 200){
   console.log(result.data.item_available,"lop3")
   if (result.data.item_available == true){
@@ -1529,7 +1543,7 @@ var products = [];
           $('#id_search3').empty()
           $('#pro-name3').val('')
 
-        var result = await _get('api/item_units/?product_id='+$(d).attr("data-pro"));
+        var result = await _get('api/item_units/?product_id='+$(d).attr("data-pro")+'&store_id='+$('#store_id').val());
         if(result.status == 200){
             //console.log(result.data.ingredient,"ing")
                         
@@ -1630,7 +1644,7 @@ async function openNavEditStore(item,item_name,qty,inventory_item_id,item_type) 
        $('.unit-container').show()
        $('.qty-container').hide()
        $('#id_search4').empty()
-        var result = await _get('api/item_units/?product_id='+inventory_item_id+'&visit_id='+'{{visit.id}}');
+        var result = await _get('api/item_units/?product_id='+inventory_item_id+'&visit_id='+'{{visit.id}}'+'&store_id='+$('#store_id').val());
             if(result.status == 200){
                 //console.log(result.data.ingredient,"ing")
                             
