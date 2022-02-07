@@ -1872,10 +1872,10 @@
             })
         },
         addAccessory(){
-            //if(!this.qty || !this.selected_item){
-            //    this.err_msg='Please fill all required fields'
-            //}
-            //else{
+            if(!this.qty || !this.selected_item){
+                this.err_msg='Please fill all required fields'
+            }
+            else{
                 this.err_msg=''
            var item_id= $('#item_id').val()
             axios.post(this.url+'/api/accessory/'+item_id+'/',{
@@ -1894,14 +1894,14 @@
             }).catch(err=>{
 
             })
-        //}
+        }
     },
     addSubparts(){
-        //if(!this.qty || !this.selected_item){
-        //    console.log(this.qty,this.selected_item,"erroar")
-        //        this.err_msg='Please fill all required fields'
-        //    }
-        //    else{
+        if(!this.qty || !this.selected_item){
+            console.log(this.qty,this.selected_item,"erroar")
+                this.err_msg='Please fill all required fields'
+            }
+            else{
                 this.err_msg=''
            var item_id= $('#item_id').val()
            console.log(this.item_id,this.qty,"testto")
@@ -1921,13 +1921,13 @@
             }).catch(err=>{
 
             })
-        //}
+        }
     },
     updateAccessory(){
-            //if(!this.qty || !this.selected_item){
-            //    this.err_msg='Please fill all required fields'
-            //}
-            //else{
+            if(!this.qty || !this.selected_item){
+                this.err_msg='Please fill all required fields'
+            }
+            else{
                 this.err_msg=''
            var item_id= $('#item_id').val()
             axios.post(this.url+'/api/accessory/'+item_id+'/',{
@@ -1947,7 +1947,7 @@
             }).catch(err=>{
 
             })
-        //}
+        }
     },
     updateSubparts(){
         if(!this.qty || !this.selected_item){
