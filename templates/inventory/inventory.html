@@ -49,7 +49,7 @@
                               {% if request.user.user_type != 'STOCKCONTROLLER' %}
                               <div class="dropdown-item inv-dropdown-item p-7" onclick="openNavAddStore('add')"><i class="fas fa-plus-circle mr-10"></i>Add</div>
                               {% endif %}
-                              {% comment %} <div class="dropdown-item  inv-dropdown-item p-7" onclick="window.location.href='/bleach-inventory/inventory-transfer/';"><i class="fas fa-exchange-alt mr-10"></i>Transfer</div> {% endcomment %}
+                              <div class="dropdown-item  inv-dropdown-item p-7" onclick="window.location.href='/bleach-inventory/inventory-transfer/';"><i class="fas fa-exchange-alt mr-10"></i>Transfer</div> 
                               {% if request.user.user_type == 'STOCKCONTROLLER' or request.user.user_type == 'INVENTORYADMIN' %}
                               {% comment %} <div class="dropdown-item  inv-dropdown-item p-7" onclick="window.location.href='/bleach-inventory/item-dispose/';" ><i class="far fa-trash-alt mr-10"></i>Dispose</div> {% endcomment %}
                               {% endif %}

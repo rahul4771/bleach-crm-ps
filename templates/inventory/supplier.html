@@ -756,6 +756,8 @@ function openNavAddBundle(d) {
         $("#itemHead").text("Edit Item");
         $(".item-form-btn").text("Update");
 
+        console.log($(d).data('itemname'),"itmnm")
+
         $('#supplier_item_action').val('edit_item');
         $('#id_edit_item').val($(d).data('itemid'));
         $('#id_supplier_item').val($(d).data('itemname'));
