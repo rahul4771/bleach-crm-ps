@@ -116,6 +116,7 @@
      qty_val:1,
      multisel_val:'',
      option_data:[],
+     data_array:[]
     
     },
     mounted(){
@@ -123,6 +124,42 @@
        
     },
     methods:{
+        addDataToArray(){
+            if(!this.multi_val.length){
+               
+                this.data_array.push(
+                    {
+                item_id:$('#item_id').val(),
+                item_name:$('#item-name').val(),
+                quantity:this.qty_val
+                    }
+                )
+                $('#item_id').val('')
+                $('#item-name').val('')
+                this.qty_val=1
+
+
+            }
+            else{
+               
+                this.data_array.push(
+                    {
+                item_id:$('#item_id').val(),
+                item_name:$('#item-name').val(),
+                unit_details:this.multi_val
+               
+                    }
+                )
+                this.multi_val=[]
+                $('#item_id').val('')
+                $('#item-name').val('')
+                    
+            }
+            closeNavAddStore()
+
+            //use app.data_array to get the added items list
+            
+        },
         addQty(){
             this.qty_val++
             increment()
