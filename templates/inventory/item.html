@@ -1886,7 +1886,7 @@
             }).then(response=>{
                 if(response.data.success)
                 {
-                this.selected_item=''
+                this.item_id=''
                 this.qty=''
                 this.getAccessories()
                 closeNavAddAccessories()
@@ -1897,7 +1897,7 @@
         }
     },
     addSubparts(){
-        if(!this.qty || !this.selected_item){
+        if(!this.qty || !this.item_id){
             console.log(this.qty,this.selected_item,"erroar")
                 this.err_msg='Please fill all required fields'
             }
@@ -1913,7 +1913,7 @@
             }).then(response=>{
                 if(response.data.success)
                 {
-                this.selected_item=''
+                this.item_id=''
                 this.qty=''
                 this.getSubparts()
                 closeNavAddSubparts()
@@ -1924,7 +1924,7 @@
         }
     },
     updateAccessory(){
-            if(!this.qty || !this.selected_item){
+            if(!this.qty || !this.item_id){
                 this.err_msg='Please fill all required fields'
             }
             else{
@@ -1939,7 +1939,7 @@
             }).then(response=>{
                 if(response.data.success)
                 {
-                this.selected_item=''
+                this.item_id=''
                 this.qty=''
                 this.getAccessories()
                 closeNavAddAccessories()
@@ -1950,7 +1950,7 @@
         }
     },
     updateSubparts(){
-        if(!this.qty || !this.selected_item){
+        if(!this.qty || !this.item_id){
                 this.err_msg='Please fill all required fields'
             }
             else{
@@ -1965,7 +1965,7 @@
             }).then(response=>{
                 if(response.data.success)
                 {
-                this.selected_item=''
+                this.item_id=''
                 this.qty=''
                 this.getSubparts()
                 closeNavAddSubparts()
