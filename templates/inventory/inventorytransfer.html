@@ -56,7 +56,8 @@
                                 </div>
                             </div>
                             <br><br>
-                            <div class="model-input-name required-field">Item</div>
+                            
+                            {% comment %} <div class="model-input-name required-field">Item</div>
                             <input autocomplete="off"  type="hidden" id="item_id" name="item_id" >
               
                             <div style="position: relative;">
@@ -66,9 +67,9 @@
                                 <div id="id_search3" class="row inv-result-box" style="display: none;height:auto;max-height:200px;z-index:2000;">
                                   
                                 </div>
-                            </div><br>
+                            </div><br> {% endcomment %}
                             
-                            <div id="unit_div" hidden>
+                            {% comment %} <div id="unit_div" hidden>
                             <div class="model-input-name required-field">Unit </div>
                             <input type="hidden" name="item_units" v-model="multisel_val" />
                             <div class="mt-10">
@@ -97,10 +98,72 @@
                                 <input  type="text" class="quantity__input" value="1" id="id_item_count" name="item_count" v-model="qty_val" oninput="quantitychange()" >
                                 <a  class="quantity__plus pointer" @click="addQty()"><span>+</span></a>
                               </div>
-                            </div>
+                            </div> {% endcomment %}
                     </div>
                     
                 </div>
+
+                <div class="row mt-30">
+                    <div class="col-md-12 ">
+                        <table class="inv-table footable" style="border-top: 1px solid #c4c4c4;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 15%;">
+                                        Product ID
+                                    </th>
+                                    <th style="width: %;" data-hide="phone,tablet" >
+                                        Product
+                                    </th>
+                                    <th data-hide="phone,tablet" style="text-align: center;">
+                                        Unit Price
+                                    </th>
+                                    <th data-hide="phone,tablet" style="text-align: center;">
+                                        Quantity
+                                    </th>
+                                    {% comment %} <th data-hide="phone,tablet" style="text-align: center;">
+                                        unit
+                                    </th> {% endcomment %}
+                                    <th data-hide="phone,tablet" style="text-align: center;">
+                                        Net Price
+                                    </th>
+
+                                    <th data-hide="phone,tablet" style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="item_table">
+                                {% for item in purchase_order_items %}
+                                <tr data-itemid="{{item.product.id}}">
+                                    <td>{{item.product.supplier_item_id}}</td>
+                                    <td>{{item.product.item}}</td>
+                                    <td style="text-align: center;">{% if item.unit_price %}{{item.unit_price|floatformat:3}}{% else %}{{item.product.item_price|floatformat:3}}{% endif %} KD</td>
+                                    <td style="text-align: center;">{{item.item_count|floatformat:0}} {% if item.product.item.measuring_unit %}{{item.product.item.measuring_unit}}(s){% else %}Unit(s){% endif %}</td>
+                                    {% comment %} <td style="text-align: center;">{% if item.product.item.measuring_unit %}{{item.product.item.measuring_unit}}(s){% else %}Unit(s){% endif %}</td> {% endcomment %}
+                                    <td style="text-align: center;">{{item.total_price|floatformat:3}} KD</td>
+                                    <td style="text-align: center;"> 
+                                        <button type="button" class="inv-plan-img-btn edit-item-btn" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.item}}" data-unitprice="{{item.product.item_price}}" data-itemcount="{{item.item_count}}" data-totalprice="{{item.total_price}}"> <img
+                                            src="{% static 'files/inventory/pencil.png' %}" alt="" onclick="openNavAddStore('edit')"> </button>
+                                        <button type="button" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"  class="inv-plan-img-btn delete-item-btn"> <img
+                                                src="{% static 'files/inventory/bin.png' %}" alt=""> </button>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <td></td><td></td><td>No Data</td><td></td><td></td><td></td>
+                                {% endfor %}
+                               
+                                
+                                <tr  id="id_addrow">
+                                    <td>
+                                        <button class="inv-plan-btn" onclick="openNavAddStore('add')" type="button"> <img
+                                                src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5"
+                                                alt=""> Add Item</button>
+                                    </td>
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <br>
                 <button type="submit" class="inv-blue-btn">Transfer</button>
             </form> 
@@ -108,7 +171,95 @@
             </div>
         </div>
     </section>
-      
+
+    <div id="addStore" class="inv-sidedrawer" >
+
+        <div class="inv-sidedrawer-inner">
+            <div class="d-flex">
+                <div class="inv-drawer-head" id="itemHead">
+                    Add Item
+                </div>
+                <div class="right-pos">
+    
+                    <button onclick="closeNavAddStore()" class="img-button">
+                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                    </button>
+                </div>
+            </div>
+            <hr>
+    
+            <form method="POST" action="" >{% csrf_token %}
+            <input type="hidden" name="action" id="purchase_order_action" value="add_item" />
+            <input type="hidden" name="item" id="id_pro_sel" value="" />
+            <input type="hidden" name="purchase_order_id" value="{{purchase_order.id}}" />
+            <input type="hidden" name="item_edit_id" id="id_edit_item" />
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Item</div>
+                    <input autocomplete="off"  type="hidden" id="item_id" name="item_id" >
+                    <div style="position: relative;">
+                        <div class="inv-input-container inv-border h-30">
+                            <input autocomplete="off" onclick="ProductListShow()" type="text" id="item-name" name="itemname" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" required>
+                        </div>
+                        <div id="id_search3" class="row inv-result-box" style="display: none;height:auto;max-height:200px;z-index:2000;">
+                          
+                        </div>
+                    </div>
+                </div>
+    
+            </div>
+    
+            <div class="row mt-20" id="unit_div">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Unit</div>
+                        <div style="position: relative;">
+                        <input type="hidden" name="item_units" v-model="multisel_val" />
+                        <div class="mt-10">
+                            <multiselect
+                   
+                            v-model="multi_val"
+                             placeholder="Select Unit"
+                             
+                             :options="option_data"
+                             :multiple="true"
+                             :taggable="false"
+                             :show-labels="false"
+                             label="unit_code"
+                             track-by="id"
+                            
+                             @input="selectItem()"
+                             
+                           ></multiselect>
+                        </div><br>
+                        </div>
+                </div>
+    
+            </div>
+    
+    
+            <div class="row mt-20" id="quantity_div" hidden>
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Quantity</div>
+    
+                    <div class="quantity">
+                        <a class="quantity__minus pointer" @click="subQty()"><span>-</span></a>
+                        <input  type="text" class="quantity__input" value="1" id="id_item_count" name="item_count" v-model="qty_val" oninput="quantitychange()" >
+                        <a  class="quantity__plus pointer" @click="addQty()"><span>+</span></a>
+                      </div>
+                    </div>
+                </div>
+    
+            </div>
+    
+    
+        </div>
+        <div class="inv-drawer-footer">
+            <button class="sent-button purchaseorder-form-btn" type="submit" >Submit</button>
+            </form>
+            <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
+        </div>
+    </div>
+
 </div>
 
 {% endblock %}
@@ -309,6 +460,94 @@ function dropSelectStore(id){
     $('#store_id').val(id);
     set_params_go();
 }
+
+function hideselectedoptions(){
+            
+
+    var tempItem = [];
+    var itemIn = [];
+    var div = true;
+
+    $('#id_search div').each(function(i) {
+        if (div == true){
+            console.log($(this),"pro")
+            tempItem.push($(this).data("pro"))
+            //console.log($(this).data("id"));
+            div = false;
+        }else{
+            div = true;
+        }
+        
+    })
+  
+    $('#item_table tr').each(function() {
+        itemIn.push($(this).data("itemid"))
+        //console.log('table',$(this).data("itemid"));
+    })
+
+    itemIn.pop();
+
+    console.log(tempItem,itemIn,"lopp")
+
+    for(var i =0;i<tempItem.length;i++){
+        document.getElementById("id_product"+tempItem[i]).style.display ="block";
+        for(var j = 0;j<itemIn.length;j++){
+            if(tempItem[i] == itemIn[j]){
+                console.log('to be hide',tempItem[i]);
+                document.getElementById("id_product"+tempItem[i]).style.display ="none";
+            }
+        }
+    }
+    console.log(tempItem,itemIn)
+}
+
+function openNavAddStore(d) {
+    $('#id_search').empty();
+    {% for item in items %}
+
+var tempId = '{{item.id}}';
+var tempName = '{{item.item.name}}';
+console.log(tempId,tempName)
+
+$('#id_search').append('<div class="col-md-12 inv-search-drop" id="id_product{{item.id}}" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-productprice="{{item.item_price}}" data-name="{{item.item}}"><div class="inv-search-result">{{item.item}}</div></div>');
+
+{% endfor %}
+
+   // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+    if(d == 'add'){
+        $('#itemHead').text('Add Item');
+        $('#purchase_order_action').val('add_item');
+        $('.purchaseorder-form-btn').text('Add');
+
+        $('#pro-name').val('');
+        $('#id_pro_sel').val('');
+        $('#id_unit_price').val('');
+        $('#id_item_count').val(1);
+        $('.count').val(1);
+        $('#id_total_price').val('');
+        hideselectedoptions();
+    }
+    if(d == 'edit'){
+        $('#itemHead').text('Edit Item');
+        $('#purchase_order_action').val('edit_item');
+        $('.purchaseorder-form-btn').text('Update');
+        hideselectedoptions();
+
+    }
+    document.body.style.backgroundColor = "rgba(0,0,0,0.4) !important";
+    if (screen.width <= 600) {
+        document.getElementById("addStore").style.width = "100%";
+    } else if (screen.width <= 720) {
+        document.getElementById("addStore").style.width = "50%";
+    }
+    else {
+        document.getElementById("addStore").style.width = "30%";
+    }
+}
+function closeNavAddStore() {
+    document.getElementById("addStore").style.width = "0";
+}
+
 
 var products=[]
 getProducts()
