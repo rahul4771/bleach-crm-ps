@@ -6,7 +6,7 @@
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
-<div class="wrapper">
+<div class="wrapper" id="app">
     <!--wrapper-->
     {% include "inventory/common/header.html" %}
     <section class="content">
@@ -18,7 +18,7 @@
             </div>
         </div>
 
-        <div class="main-content-holder" id="app">
+        <div class="main-content-holder" >
             <!--main-content-holder-->
             <div class="white-wrapper white-wrapper-padding2">
                 <div class="row">
@@ -95,7 +95,7 @@
                             <div class="model-input-name required-field">Quantity </div>
                             <div class="quantity">
                                 <a class="quantity__minus pointer" @click="subQty()"><span>-</span></a>
-                                <input  type="text" class="quantity__input" value="1" id="id_item_count" name="item_count" v-model="qty_val" oninput="quantitychange()" >
+                                <input  type="text" class="quantity__input" value="1" id="id_item_count" name="item_count" v-model="qty_val"  >
                                 <a  class="quantity__plus pointer" @click="addQty()"><span>+</span></a>
                               </div>
                             </div> {% endcomment %}
@@ -249,7 +249,7 @@
                     </div>
                 </div>
     
-            </div>
+           
     
     
         </div>
@@ -259,7 +259,7 @@
             <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
         </div>
     </div>
-
+</div>
 </div>
 
 {% endblock %}
@@ -290,6 +290,7 @@
             increment()
         },
         subQty(){
+            console.log("qty called")
             if(this.qty_val>1){
                 this.qty_val--
             }
