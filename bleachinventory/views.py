@@ -565,6 +565,7 @@ class InventoryItems(IsInventoryAdminUser,View):
 	def get(self,request,item_id):
 		
 		inventory_item = InventoryItem.objects.prefetch_related(Prefetch('quantity_store_item',queryset=QuantityStoreDetails.objects.select_related('item_store').all(),to_attr='storequantity'),Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images')).get(id=item_id)
+		supplier_item = SupplierItems.objects.filter(item=inventory_item).first()
 		categories = Category.objects.all()
 		item_units = ItemUnit.objects.filter(item=inventory_item).prefetch_related(Prefetch('product_request_unit',queryset=RequestOrderItems.objects.filter(is_received=True),to_attr='request_item_unit'),Prefetch('checkoutitem_unit',CheckOutItemUnits.objects.all().select_related('checkout_item__visit').prefetch_related(Prefetch('checkout_item__visit__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')),to_attr='checkout_unit'))
 		item_history = ItemHistory.objects.filter(item=inventory_item).order_by('-id')
@@ -669,7 +670,7 @@ class InventoryItems(IsInventoryAdminUser,View):
 			entry_per_page=(item_history.end_index())-(item_history.start_index())+1
 
 
-		return render(request,'inventory/item.html',{"available_item_units":available_item_units,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"stores":stores,"item_attributes":item_attributes,"inventory_item":inventory_item,"attributes":attributes,"categories":categories,"item_units":item_units,"item_history":item_history,"new_unit_code":new_unit_code,"purchase_orders":purchase_orders,"unavailable_units":unavailable_item_units})
+		return render(request,'inventory/item.html',{"supplier_item":supplier_item,"available_item_units":available_item_units,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"stores":stores,"item_attributes":item_attributes,"inventory_item":inventory_item,"attributes":attributes,"categories":categories,"item_units":item_units,"item_history":item_history,"new_unit_code":new_unit_code,"purchase_orders":purchase_orders,"unavailable_units":unavailable_item_units})
 
 	def post(self,request,item_id):
 		action = request.POST.get('action')
@@ -980,36 +981,43 @@ class InventoryTransfer(View):
 	def post(self,request):
 		from_store = request.POST.get('store_id')
 		to_store = request.POST.get('store_id2')
-		item_id    = request.POST.get('item_id')
+		item_ids    = request.POST.getlist('item_id')
+		quantities = request.POST.getlist('item_quantity')
+		item_units = request.POST.getlist('unit_id')
 
 		store1 = Store.objects.get(id=int(from_store))
 		store2 = Store.objects.get(id=int(to_store))
 
-		item       = InventoryItem.objects.get(id=item_id)
-		if item.item_add_type == 'quantity':
-			quantity   = request.POST.get('item_count')
-			if float(item.total_quantity) >= float(quantity):
-				quantitystore1 = QuantityStoreDetails.objects.get(item_store=store1,quantity_item=item)
-				quantitystore1.quantity = round(float(quantitystore1.quantity) - float(quantity),2)
-				quantitystore1.save()
+		print(item_units,"ituni")
 
-				try:
-					quantitystore2 = QuantityStoreDetails.objects.get(item_store=store2,quantity_item = item)
-					quantitystore2.quantity = round(float(quantitystore2.quantity) + float(quantity),2)
-					quantitystore2.save()
-				except:
-					QuantityStoreDetails.objects.create(
-					item_store = store2,
-					quantity_item = item,
-					quantity = quantity
-					)
+		for i in range(len(item_ids)):
+			print(item_ids[i],"aart")
 
-				ItemHistory.objects.create(item=item,item_action='TRANSFER',quantity=quantity,added_by=request.user,item_remark='Inventory Transfer')
+			item       = InventoryItem.objects.get(id=int(item_ids[i]))
+
+			if item.item_add_type == 'quantity':
+				quantity   = quantities[i] #request.POST.get('item_count')
+				print(quantity,"qtyy")
+				if float(item.total_quantity) >= float(quantity):
+					quantitystore1 = QuantityStoreDetails.objects.get(item_store=store1,quantity_item=item)
+					quantitystore1.quantity = round(float(quantitystore1.quantity) - float(quantity),2)
+					quantitystore1.save()
+
+					try:
+						quantitystore2 = QuantityStoreDetails.objects.get(item_store=store2,quantity_item = item)
+						quantitystore2.quantity = round(float(quantitystore2.quantity) + float(quantity),2)
+						quantitystore2.save()
+					except:
+						QuantityStoreDetails.objects.create(
+						item_store = store2,
+						quantity_item = item,
+						quantity = quantity
+						)
+
+					ItemHistory.objects.create(item=item,item_action='TRANSFER',quantity=quantity,added_by=request.user,item_remark='Inventory Transfer')
 		
-		if item.item_add_type == 'unit':
-			unit_item_ids = (request.POST.get('item_units')).split(",")
-			if unit_item_ids:
-				unit_items    = ItemUnit.objects.filter(id__in=unit_item_ids,is_available=True).update(store=store2)
+		if item_units:
+			unit_items    = ItemUnit.objects.filter(id__in=item_units,is_available=True).update(store=store2)
 
 		messages.success(request,"Inventory Items Transferred Succesfully")
 		

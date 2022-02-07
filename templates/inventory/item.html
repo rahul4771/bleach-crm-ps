@@ -205,19 +205,29 @@
                                     {% endif %}
                                 </div>
                                 <!-- reusable-->
+                                {% if inventory_item.is_reusable == True %}
                                 <div class="inv-item-head-sub mt-10">
-                                    <i class="fas fa-recycle primary-text mr-10"></i>  Lorem Ipsum 
+                                    <i class="fas fa-recycle primary-text mr-10"></i>  Re-usable
                                 </div>
+                                {% endif %}
                                 <!-- reusable ends -->
                                  <!-- supplier -->
+                                {% if supplier_item %}
                                  <div class="inv-item-head-sub mt-10">
-                                    <i class="fas fa-store-alt primary-text mr-10"></i>  Lorem Ipsum 
+                                    <i class="fas fa-store-alt primary-text mr-10"></i>  {{supplier_item.supplier.supplier_name}}
                                 </div>
+                                {% else %}
+                                <div class="inv-item-head-sub mt-10">
+                                    <i class="fas fa-store-alt primary-text mr-10"></i>  No Supplier
+                                </div>
+                                {% endif %}
                                 <!-- supplier ends -->
                                  <!-- unit price-->
+                                 {% if supplier_item.unit_price %}
                                  <div class="inv-item-head-sub mt-10">
-                                    <i class="fas fa-tags primary-text mr-10"></i>  Lorem Ipsum 
+                                    <i class="fas fa-tags primary-text mr-10"></i>  {{supplier_item.unit_price|floatformat:3}} KD / {{inventory_item.measuring_unit}}
                                 </div>
+                                {% endif %}
                                 <!-- unit price ends -->
                                 
 
@@ -315,7 +325,7 @@
                     
                     {% if inventory_item.item_add_type == 'quantity' %}
                     <div id="unit_edit_data" style="display: none;">
-                    <div class="model-input-name ">Select Unit</div>
+                    <div class="model-input-name ">Select Unit of Measurement</div>
                    
                     <select  name="item_unit_data" id="unit_select" class="minimal av-font inv-hide" >
                         <option value="L" {% if inventory_item.measuring_unit == 'L' %} selected {% endif %}>L</option>
