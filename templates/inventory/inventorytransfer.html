@@ -188,7 +188,7 @@
             </div>
             <hr>
     
-            <form method="POST" action="" >{% csrf_token %}
+            <!-- <form method="POST" action="" >{% csrf_token %} -->
             <input type="hidden" name="action" id="purchase_order_action" value="add_item" />
             <input type="hidden" name="item" id="id_pro_sel" value="" />
             <input type="hidden" name="purchase_order_id" value="{{purchase_order.id}}" />
@@ -254,8 +254,8 @@
     
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button purchaseorder-form-btn" type="submit" >Submit</button>
-            </form>
+            <button class="sent-button purchaseorder-form-btn" @click="addDataToArray()" >Submit</button>
+            <!-- </form> -->
             <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
         </div>
     </div>
@@ -278,6 +278,7 @@
      qty_val:1,
      multisel_val:'',
      option_data:[],
+     data_array:[]
     
     },
     mounted(){
@@ -285,6 +286,42 @@
        
     },
     methods:{
+        addDataToArray(){
+            if(!this.multi_val.length){
+               
+                this.data_array.push(
+                    {
+                item_id:$('#item_id').val(),
+                item_name:$('#item-name').val(),
+                quantity:this.qty_val
+                    }
+                )
+                $('#item_id').val('')
+                $('#item-name').val('')
+                this.qty_val=1
+
+
+            }
+            else{
+               
+                this.data_array.push(
+                    {
+                item_id:$('#item_id').val(),
+                item_name:$('#item-name').val(),
+                unit_details:this.multi_val
+               
+                    }
+                )
+                this.multi_val=[]
+                $('#item_id').val('')
+                $('#item-name').val('')
+                    
+            }
+            closeNavAddStore()
+
+            //use app.data_array to get the added items list
+            
+        },
         addQty(){
             this.qty_val++
             increment()
