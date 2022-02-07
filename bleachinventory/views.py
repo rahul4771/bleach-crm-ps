@@ -1787,20 +1787,21 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 
 					for section in visit.order_scheduler_book.sections:
 					
-						if section.size.isnumeric() == True:
-							max_area += float(section.size)
-							print(max_area,"mx")
-						else:
-							print("mok")
-							if visit.order_scheduler_book.service_type.name == 'Upholstery Cleaning':
-								
-								for price_range in price_ranges:
-									if price_range.name == section.size and price_range.service_type == section.evaluation_book.service_type and price_range.upholstery_type == section.upholstery_type:
-										max_area += float(price_range.maximum_area)
+						if section.size:
+							if section.size.isnumeric() == True:
+								max_area += float(section.size)
+								print(max_area,"mx")
 							else:
-								for price_range in price_ranges:
-									if price_range.name == section.size and price_range.service_type == section.evaluation_book.service_type and section.evaluation_book.service_type.name != 'Mattress Cleaning' and price_range.is_newkitchen == section.new_kitchen and price_range.is_cabinet == section.is_cabinet and price_range.is_highprice_facade == section.is_highprice_facade and price_range.is_highprice_window == section.is_highprice_window:
-										max_area += float(price_range.maximum_area)
+								print("mok")
+								if visit.order_scheduler_book.service_type.name == 'Upholstery Cleaning':
+									
+									for price_range in price_ranges:
+										if price_range.name == section.size and price_range.service_type == section.evaluation_book.service_type and price_range.upholstery_type == section.upholstery_type:
+											max_area += float(price_range.maximum_area)
+								else:
+									for price_range in price_ranges:
+										if price_range.name == section.size and price_range.service_type == section.evaluation_book.service_type and section.evaluation_book.service_type.name != 'Mattress Cleaning' and price_range.is_newkitchen == section.new_kitchen and price_range.is_cabinet == section.is_cabinet and price_range.is_highprice_facade == section.is_highprice_facade and price_range.is_highprice_window == section.is_highprice_window:
+											max_area += float(price_range.maximum_area)
 				
 					cleaners += visit.no_of_cleaners
 
