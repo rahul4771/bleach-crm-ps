@@ -67,21 +67,24 @@
                             <thead>
                                 <tr>
                                     <th style="width: %;" data-hide="phone,tablet" >
+                                        Product ID
+                                    </th>
+                                    <th style="width: %;" data-hide="phone,tablet" >
                                         Product
                                     </th>
                                     <th data-hide="phone,tablet" style="text-align: center;">
                                         Quantity
                                     </th>
                                     <th data-hide="phone,tablet" style="text-align: center;">
-                                        Unit
+                                        Unit(s)
                                     </th>
 
-                                    {% comment %} <th data-hide="phone,tablet" style="text-align: center;">Action</th> {% endcomment %}
+                                    <th data-hide="phone,tablet" style="text-align: center;">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="item_table">
                                 <tr v-for="(item,index) in data_array" v-bind:key="index">
-                                    
+                                    <td ><% item.item_code %> </td>
                                     <td ><% item.item_name %> <input type="hidden" name="item_id" :value="item.item_id || 0"  /></td>
                                     <td style="text-align: center;"><% item.quantity %> <input type="hidden" name="item_quantity" :value="item.quantity"  /></td>
                                     
@@ -93,8 +96,8 @@
                                         </div>
                                     </td>
 
-                                    {% comment %} <td style="text-align:center;"><img id="id_editButton" @click="deleteAccessory(item)" class="inv-edit-img" style="float:right;margin-left:10px"
-                                        src="{% static 'files/icons/delete.png' %}"></td> {% endcomment %}
+                                    <td style="text-align:center;"><img id="id_editButton" @click="deleteAccessory(index)" class="inv-edit-img" style="float:right;margin-left:10px"
+                                        src="{% static 'files/icons/delete.png' %}"></td> 
                                 </tr>
                                
                                 
@@ -146,6 +149,7 @@
                     <input autocomplete="off"  type="hidden" id="item_id" name="item_id" >
                     <div style="position: relative;">
                         <div class="inv-input-container inv-border h-30">
+                            <input type="hidden" name="item_code" id="item-code" />
                             <input autocomplete="off" onclick="ProductListShow()" type="text" id="item-name" name="itemname" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" required>
                         </div>
                         <div id="id_search3" class="row inv-result-box" style="display: none;height:auto;max-height:200px;z-index:2000;">
@@ -238,6 +242,7 @@
                
                 this.data_array.push(
                     {
+                item_code : $('#item-code').val(),
                 item_id:$('#item_id').val(),
                 item_name:$('#item-name').val(),
                 quantity:this.qty_val
@@ -253,6 +258,7 @@
                
                 this.data_array.push(
                     {
+                item_code : $('#item-code').val(),
                 item_id:$('#item_id').val(),
                 item_name:$('#item-name').val(),
                 quantity:this.multi_val.length,
@@ -263,6 +269,7 @@
                 this.multi_val=[]
                 $('#item_id').val('')
                 $('#item-name').val('')
+                $('#item-code').val('')
                     
             }
             closeNavAddStore()
@@ -270,16 +277,32 @@
             //use app.data_array to get the added items list
             
         },
-        addQty(){
-            this.qty_val++
-            increment()
+        deleteAccessory(id){
+            console.log("deletetest")
+            this.data_array.splice(id,1)
         },
-        subQty(){
+        async addQty(){
+            this.qty_val++
+            var result = await _get('api/inventory-item-quantity-check/?item_id='+$('#item_id').val()+'&quantity='+this.qty_val+'&store_id='+$('#store_id').val());
+            if(result.status == 200){
+                console.log(result.data.item_available,"lop2")
+        
+                this.qty_val = result.data.item_quantity
+                
+            }
+        },
+        async subQty(){
             console.log("qty called")
             if(this.qty_val>1){
                 this.qty_val--
             }
-            decrement()
+            var result = await _get('api/inventory-item-quantity-check/?item_id='+$('#item_id').val()+'&quantity='+this.qty_val+'&store_id='+$('#store_id').val());
+            if(result.status == 200){
+                console.log(result.data.item_available,"lop2")
+        
+                this.qty_val = result.data.item_quantity
+                
+            }
         },
         selectItem(){
             var id_array=[]
@@ -437,6 +460,7 @@ function showStores(){
 
             $('#item_id').val('')
             $('#item-name').val('')
+            $('#item-code').val('')
         }
 
     function closeStoreShow2(d){
@@ -570,7 +594,7 @@ getProducts()
               for (var j=0; j<products.length; j++) {
                   if (products[j].item_name.toUpperCase().match($('#item-name').val().toUpperCase())){
                      
-              $('#id_search3').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeProductShow(this)"  data-pro="'+products[j].item_id+'" data-itemtype='+products[j].item_type+' data-name="'+products[j].item_name+'"><div class="inv-search-result">'+products[j].item_name+'</div></div>');
+              $('#id_search3').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeProductShow(this)"  data-pro="'+products[j].item_id+'" data-itemtype='+products[j].item_type+' data-itemcode='+products[j].item_code+' data-name="'+products[j].item_name+'"><div class="inv-search-result">'+products[j].item_name+'</div></div>');
   
                   }
               }
@@ -590,6 +614,7 @@ getProducts()
         var proId = $(d).attr("data-pro")
         $('#item_id').val($(d).attr("data-pro"));
         $('#item-name').val($(d).attr("data-name"));
+        $('#item-code').val($(d).attr("data-itemcode"));
 
         if ($(d).attr("data-itemtype") == 'unit'){
             $('#unit_div').show();

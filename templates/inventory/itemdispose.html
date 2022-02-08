@@ -6,7 +6,7 @@
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
-<div class="wrapper">
+<div class="wrapper" id="app">
     <!--wrapper-->
     {% include "inventory/common/header.html" %}
     <section class="content">
@@ -18,7 +18,7 @@
             </div>
         </div>
 
-        <div class="main-content-holder" id="app">
+        <div class="main-content-holder" >
             <!--main-content-holder-->
             <div class="white-wrapper white-wrapper-padding2">
                 <div class="row">
@@ -45,48 +45,7 @@
                             </div>
                             <br><br>
                             
-                            {% comment %} <div class="model-input-name required-field">Item</div>
-                            <input autocomplete="off"  type="hidden" id="item_id" name="item_id" >
-              
-                            <div style="position: relative;">
-                                <div class="inv-input-container inv-border h-30">
-                                    <input autocomplete="off" onclick="ProductListShow()" type="text" id="item-name" name="itemname" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" required>
-                                </div>
-                                <div id="id_search3" class="row inv-result-box" style="display: none;height:auto;max-height:200px;z-index:2000;">
-                                  
-                                </div>
-                            </div><br>
                             
-                            <div id="unit_div" hidden>
-                            <div class="model-input-name required-field">Multiselect </div>
-                            <input type="hidden" name="item_units" v-model="multisel_val" />
-                            <div class="mt-10">
-                                <multiselect
-                       
-                                v-model="multi_val"
-                                 placeholder="Select Item"
-                                 
-                                 :options="option_data"
-                                 :multiple="true"
-                                 :taggable="false"
-                                 :show-labels="false"
-                                 label="unit_code"
-                                 track-by="id"
-                                
-                                 @input="selectItem()"
-                                 
-                               ></multiselect>
-                            </div><br>
-                            </div>
-
-                            <div id="quantity_div" hidden>
-                            <div class="model-input-name required-field">Quantity </div>
-                            <div class="quantity">
-                                <a class="quantity__minus pointer" @click="subQty()"><span>-</span></a>
-                                <input  type="text" class="quantity__input" value="1" id="id_item_count" name="item_count" v-model="qty_val" oninput="quantitychange()">
-                                <a  class="quantity__plus pointer" @click="addQty()"><span>+</span></a>
-                              </div>
-                            </div> {% endcomment %}
                     </div>
                     
                 </div>
@@ -97,6 +56,9 @@
                             <thead>
                                 <tr>
                                     <th style="width: %;" data-hide="phone,tablet" >
+                                        Product ID
+                                    </th>
+                                    <th style="width: %;" data-hide="phone,tablet" >
                                         Product
                                     </th>
                                     <th data-hide="phone,tablet" style="text-align: center;">
@@ -106,12 +68,12 @@
                                         Unit
                                     </th>
 
-                                    {% comment %} <th data-hide="phone,tablet" style="text-align: center;">Action</th> {% endcomment %}
+                                    <th data-hide="phone,tablet" style="text-align: center;">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="item_table">
                                 <tr v-for="(item,index) in data_array" v-bind:key="index">
-                                    
+                                    <td ><% item.item_code %> </td>
                                     <td ><% item.item_name %> <input type="hidden" name="item_id" :value="item.item_id || 0"  /></td>
                                     <td style="text-align: center;"><% item.quantity %> <input type="hidden" name="item_quantity" :value="item.quantity"  /></td>
                                     
@@ -123,8 +85,8 @@
                                         </div>
                                     </td>
 
-                                    {% comment %} <td style="text-align:center;"><img id="id_editButton" @click="deleteAccessory(item)" class="inv-edit-img" style="float:right;margin-left:10px"
-                                        src="{% static 'files/icons/delete.png' %}"></td> {% endcomment %}
+                                    <td style="text-align:center;"><img id="id_editButton" @click="deleteAccessory(index)" class="inv-edit-img" style="float:right;margin-left:10px"
+                                        src="{% static 'files/icons/delete.png' %}"></td>
                                 </tr>
                                
                                 
@@ -175,6 +137,7 @@
                     <input autocomplete="off"  type="hidden" id="item_id" name="item_id" >
                     <div style="position: relative;">
                         <div class="inv-input-container inv-border h-30">
+                            <input type="hidden" name="item_code" id="item-code" />
                             <input autocomplete="off" onclick="ProductListShow()" type="text" id="item-name" name="itemname" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" required>
                         </div>
                         <div id="id_search3" class="row inv-result-box" style="display: none;height:auto;max-height:200px;z-index:2000;">
@@ -267,6 +230,7 @@
                
                 this.data_array.push(
                     {
+                item_code : $('#item-code').val(),
                 item_id:$('#item_id').val(),
                 item_name:$('#item-name').val(),
                 quantity:this.qty_val
@@ -274,6 +238,7 @@
                 )
                 $('#item_id').val('')
                 $('#item-name').val('')
+                $('#item-code').val('')
                 this.qty_val=1
 
 
@@ -282,7 +247,9 @@
                
                 this.data_array.push(
                     {
+                item_code : $('#item-code').val(),
                 item_id:$('#item_id').val(),
+                quantity:this.multi_val.length,
                 item_name:$('#item-name').val(),
                 unit_details:this.multi_val
                
@@ -291,6 +258,7 @@
                 this.multi_val=[]
                 $('#item_id').val('')
                 $('#item-name').val('')
+                $('#item-code').val('')
                     
             }
             closeNavAddStore()
@@ -298,15 +266,31 @@
             //use app.data_array to get the added items list
             
         },
-        addQty(){
-            this.qty_val++
-            increment()
+        deleteAccessory(id){
+            console.log("deletetest")
+            this.data_array.splice(id,1)
         },
-        subQty(){
+        async addQty(){
+            this.qty_val++
+            var result = await _get('api/inventory-item-quantity-check/?item_id='+$('#item_id').val()+'&quantity='+this.qty_val+'&store_id='+$('#store_id').val());
+            if(result.status == 200){
+                console.log(result.data.item_available,"lop2")
+        
+                this.qty_val = result.data.item_quantity
+                
+            }
+        },
+        async subQty(){
             if(this.qty_val>1){
                 this.qty_val--
             }
-            decrement()
+            var result = await _get('api/inventory-item-quantity-check/?item_id='+$('#item_id').val()+'&quantity='+this.qty_val+'&store_id='+$('#store_id').val());
+            if(result.status == 200){
+                console.log(result.data.item_available,"lop2")
+        
+                this.qty_val = result.data.item_quantity
+                
+            }
         },
         selectItem(){
             var id_array=[]
@@ -448,6 +432,7 @@ function showStores(){
 
             $('#item_id').val('')
             $('#item-name').val('')
+            $('#item-code').val('')
         }
 
     function closeStoreShow2(d){
@@ -582,7 +567,7 @@ getProducts()
               for (var j=0; j<products.length; j++) {
                   if (products[j].item_name.toUpperCase().match($('#item-name').val().toUpperCase())){
                      
-              $('#id_search3').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeProductShow(this)"  data-pro="'+products[j].item_id+'" data-itemtype='+products[j].item_type+' data-name="'+products[j].item_name+'"><div class="inv-search-result">'+products[j].item_name+'</div></div>');
+              $('#id_search3').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeProductShow(this)"  data-pro="'+products[j].item_id+'" data-itemtype='+products[j].item_type+' data-itemcode='+products[j].item_code+' data-name="'+products[j].item_name+'"><div class="inv-search-result">'+products[j].item_name+'</div></div>');
   
                   }
               }
@@ -602,6 +587,7 @@ getProducts()
         var proId = $(d).attr("data-pro")
         $('#item_id').val($(d).attr("data-pro"));
         $('#item-name').val($(d).attr("data-name"));
+        $('#item-code').val($(d).attr("data-itemcode"));
 
         if ($(d).attr("data-itemtype") == 'unit'){
             $('#unit_div').show();

@@ -3019,6 +3019,7 @@ class InventoryItemsListAPI(APIView):
 				item_dict['item_id'] = unit.item.id
 				item_dict['item_name'] = unit.item.name
 				item_dict['item_type'] = unit.item.item_add_type
+				item_dict['item_code'] = unit.item.item_code
 				items.append(item_dict)
 
 			for qty in item.quantity_items:
@@ -3026,6 +3027,7 @@ class InventoryItemsListAPI(APIView):
 				item_dict['item_id'] = qty.quantity_item.id
 				item_dict['item_name'] = qty.quantity_item.name
 				item_dict['item_type'] = qty.quantity_item.item_add_type
+				item_dict['item_code'] = qty.quantity_item.item_code
 				items.append(item_dict)
 
 		
