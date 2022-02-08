@@ -96,7 +96,7 @@
                                         </div>
                                     </td>
 
-                                    <td style="text-align:center;"><img id="id_editButton" @click="deleteAccessory(index)" class="inv-edit-img" style="float:right;margin-left:10px"
+                                    <td style="text-align:center;"><img id="id_editButton" @click="deleteAccessory(index)" class="inv-edit-img" 
                                         src="{% static 'files/icons/delete.png' %}"></td> 
                                 </tr>
                                
@@ -115,7 +115,10 @@
                 </div>
 
                 <br>
-                <button type="submit" class="inv-blue-btn">Transfer</button>
+                <div class="text-center">
+                    <button type="submit" class="inv-blue-btn">Transfer</button>
+                </div>
+               
             </form> 
 
             </div>
