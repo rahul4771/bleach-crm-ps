@@ -4018,6 +4018,8 @@ class ItemsCheckInAPI(APIView):
 		
 
 		items_list = []
+		item_order_no = None
+		item_visit_id = None
 
 		for item in return_items:
 			item_order_no = item.visit.order.order_no
