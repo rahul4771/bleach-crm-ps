@@ -57,48 +57,6 @@
                             </div>
                             <br><br>
                             
-                            {% comment %} <div class="model-input-name required-field">Item</div>
-                            <input autocomplete="off"  type="hidden" id="item_id" name="item_id" >
-              
-                            <div style="position: relative;">
-                                <div class="inv-input-container inv-border h-30">
-                                    <input autocomplete="off" onclick="ProductListShow()" type="text" id="item-name" name="itemname" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" required>
-                                </div>
-                                <div id="id_search3" class="row inv-result-box" style="display: none;height:auto;max-height:200px;z-index:2000;">
-                                  
-                                </div>
-                            </div><br> {% endcomment %}
-                            
-                            {% comment %} <div id="unit_div" hidden>
-                            <div class="model-input-name required-field">Unit </div>
-                            <input type="hidden" name="item_units" v-model="multisel_val" />
-                            <div class="mt-10">
-                                <multiselect
-                       
-                                v-model="multi_val"
-                                 placeholder="Select Unit"
-                                 
-                                 :options="option_data"
-                                 :multiple="true"
-                                 :taggable="false"
-                                 :show-labels="false"
-                                 label="unit_code"
-                                 track-by="id"
-                                
-                                 @input="selectItem()"
-                                 
-                               ></multiselect>
-                            </div><br>
-                            </div>
-
-                            <div id="quantity_div" hidden>
-                            <div class="model-input-name required-field">Quantity </div>
-                            <div class="quantity">
-                                <a class="quantity__minus pointer" @click="subQty()"><span>-</span></a>
-                                <input  type="text" class="quantity__input" value="1" id="id_item_count" name="item_count" v-model="qty_val"  >
-                                <a  class="quantity__plus pointer" @click="addQty()"><span>+</span></a>
-                              </div>
-                            </div> {% endcomment %}
                     </div>
                     
                 </div>
@@ -108,47 +66,39 @@
                         <table class="inv-table footable" style="border-top: 1px solid #c4c4c4;">
                             <thead>
                                 <tr>
-                                    <th style="width: 15%;">
+                                    <th style="width: %;" data-hide="phone,tablet" >
                                         Product ID
                                     </th>
                                     <th style="width: %;" data-hide="phone,tablet" >
                                         Product
                                     </th>
                                     <th data-hide="phone,tablet" style="text-align: center;">
-                                        Unit Price
-                                    </th>
-                                    <th data-hide="phone,tablet" style="text-align: center;">
                                         Quantity
                                     </th>
-                                    {% comment %} <th data-hide="phone,tablet" style="text-align: center;">
-                                        unit
-                                    </th> {% endcomment %}
                                     <th data-hide="phone,tablet" style="text-align: center;">
-                                        Net Price
+                                        Unit(s)
                                     </th>
 
                                     <th data-hide="phone,tablet" style="text-align: center;">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="item_table">
-                                {% for item in purchase_order_items %}
-                                <tr data-itemid="{{item.product.id}}">
-                                    <td>{{item.product.supplier_item_id}}</td>
-                                    <td>{{item.product.item}}</td>
-                                    <td style="text-align: center;">{% if item.unit_price %}{{item.unit_price|floatformat:3}}{% else %}{{item.product.item_price|floatformat:3}}{% endif %} KD</td>
-                                    <td style="text-align: center;">{{item.item_count|floatformat:0}} {% if item.product.item.measuring_unit %}{{item.product.item.measuring_unit}}(s){% else %}Unit(s){% endif %}</td>
-                                    {% comment %} <td style="text-align: center;">{% if item.product.item.measuring_unit %}{{item.product.item.measuring_unit}}(s){% else %}Unit(s){% endif %}</td> {% endcomment %}
-                                    <td style="text-align: center;">{{item.total_price|floatformat:3}} KD</td>
-                                    <td style="text-align: center;"> 
-                                        <button type="button" class="inv-plan-img-btn edit-item-btn" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.item}}" data-unitprice="{{item.product.item_price}}" data-itemcount="{{item.item_count}}" data-totalprice="{{item.total_price}}"> <img
-                                            src="{% static 'files/inventory/pencil.png' %}" alt="" onclick="openNavAddStore('edit')"> </button>
-                                        <button type="button" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"  class="inv-plan-img-btn delete-item-btn"> <img
-                                                src="{% static 'files/inventory/bin.png' %}" alt=""> </button>
+                                <tr v-for="(item,index) in data_array" v-bind:key="index">
+                                    <td ><% item.item_code %> </td>
+                                    <td ><% item.item_name %> <input type="hidden" name="item_id" :value="item.item_id || 0"  /></td>
+                                    <td style="text-align: center;"><% item.quantity %> <input type="hidden" name="item_quantity" :value="item.quantity"  /></td>
+                                    
+                                   
+                                    <td style="text-align: center;">
+                                        <div v-for="(unit,uindex) in item.unit_details" v-bind:key="uindex">
+                                            <input type="hidden" name="unit_id" :value="unit.id" >
+                                        <% unit.unit_code %>
+                                        </div>
                                     </td>
+
+                                    <td style="text-align:center;"><img id="id_editButton" @click="deleteAccessory(index)" class="inv-edit-img" 
+                                        src="{% static 'files/icons/delete.png' %}"></td> 
                                 </tr>
-                                {% empty %}
-                                <td></td><td></td><td>No Data</td><td></td><td></td><td></td>
-                                {% endfor %}
                                
                                 
                                 <tr  id="id_addrow">
@@ -165,7 +115,10 @@
                 </div>
 
                 <br>
-                <button type="submit" class="inv-blue-btn">Transfer</button>
+                <div class="text-center">
+                    <button type="submit" class="inv-blue-btn">Transfer</button>
+                </div>
+               
             </form> 
 
             </div>
@@ -188,7 +141,7 @@
             </div>
             <hr>
     
-            <form method="POST" action="" >{% csrf_token %}
+            <!-- <form method="POST" action="" >{% csrf_token %} -->
             <input type="hidden" name="action" id="purchase_order_action" value="add_item" />
             <input type="hidden" name="item" id="id_pro_sel" value="" />
             <input type="hidden" name="purchase_order_id" value="{{purchase_order.id}}" />
@@ -199,6 +152,7 @@
                     <input autocomplete="off"  type="hidden" id="item_id" name="item_id" >
                     <div style="position: relative;">
                         <div class="inv-input-container inv-border h-30">
+                            <input type="hidden" name="item_code" id="item-code" />
                             <input autocomplete="off" onclick="ProductListShow()" type="text" id="item-name" name="itemname" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" required>
                         </div>
                         <div id="id_search3" class="row inv-result-box" style="display: none;height:auto;max-height:200px;z-index:2000;">
@@ -209,7 +163,7 @@
     
             </div>
     
-            <div class="row mt-20" id="unit_div">
+            <div class="row mt-20" id="unit_div" hidden>
                 <div class="col-md-12 ">
                     <div class="model-input-name">Unit</div>
                         <div style="position: relative;">
@@ -254,8 +208,8 @@
     
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button purchaseorder-form-btn" type="submit" >Submit</button>
-            </form>
+            <button class="sent-button purchaseorder-form-btn" @click="addDataToArray()" onclick="table_load()">Submit</button>
+            <!-- </form> -->
             <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
         </div>
     </div>
@@ -278,6 +232,7 @@
      qty_val:1,
      multisel_val:'',
      option_data:[],
+     data_array:[]
     
     },
     mounted(){
@@ -285,16 +240,72 @@
        
     },
     methods:{
-        addQty(){
-            this.qty_val++
-            increment()
+        addDataToArray(){
+            if(!this.multi_val.length){
+               
+                this.data_array.push(
+                    {
+                item_code : $('#item-code').val(),
+                item_id:$('#item_id').val(),
+                item_name:$('#item-name').val(),
+                quantity:this.qty_val
+                    }
+                )
+                $('#item_id').val('')
+                $('#item-name').val('')
+                this.qty_val=1
+
+
+            }
+            else{
+               
+                this.data_array.push(
+                    {
+                item_code : $('#item-code').val(),
+                item_id:$('#item_id').val(),
+                item_name:$('#item-name').val(),
+                quantity:this.multi_val.length,
+                unit_details:this.multi_val
+               
+                    }
+                )
+                this.multi_val=[]
+                $('#item_id').val('')
+                $('#item-name').val('')
+                $('#item-code').val('')
+                    
+            }
+            closeNavAddStore()
+
+            //use app.data_array to get the added items list
+            
         },
-        subQty(){
+        deleteAccessory(id){
+            console.log("deletetest")
+            this.data_array.splice(id,1)
+        },
+        async addQty(){
+            this.qty_val++
+            var result = await _get('api/inventory-item-quantity-check/?item_id='+$('#item_id').val()+'&quantity='+this.qty_val+'&store_id='+$('#store_id').val());
+            if(result.status == 200){
+                console.log(result.data.item_available,"lop2")
+        
+                this.qty_val = result.data.item_quantity
+                
+            }
+        },
+        async subQty(){
             console.log("qty called")
             if(this.qty_val>1){
                 this.qty_val--
             }
-            decrement()
+            var result = await _get('api/inventory-item-quantity-check/?item_id='+$('#item_id').val()+'&quantity='+this.qty_val+'&store_id='+$('#store_id').val());
+            if(result.status == 200){
+                console.log(result.data.item_available,"lop2")
+        
+                this.qty_val = result.data.item_quantity
+                
+            }
         },
         selectItem(){
             var id_array=[]
@@ -382,6 +393,15 @@ function storeListShow2(){
     showStores2()
 }
 
+{% comment %} function table_load(){
+    console.log(app.data_array.item_id,"iid")
+    
+    app.data_array.each(function(key,value){
+        console.log(key,value,"valv")
+        $('#item_table').prepend('<tr><td></td><td>deta</td><td></td></tr>')
+    })
+} {% endcomment %}
+
 function showStores(){
           console.log("stores is "+JSON.stringify(stores))
             $('#id_store_search').empty();
@@ -443,6 +463,7 @@ function showStores(){
 
             $('#item_id').val('')
             $('#item-name').val('')
+            $('#item-code').val('')
         }
 
     function closeStoreShow2(d){
@@ -547,6 +568,7 @@ $('#id_search').append('<div class="col-md-12 inv-search-drop" id="id_product{{i
 }
 function closeNavAddStore() {
     document.getElementById("addStore").style.width = "0";
+    console.log(app.data_array,"arrey")
 }
 
 
@@ -575,7 +597,7 @@ getProducts()
               for (var j=0; j<products.length; j++) {
                   if (products[j].item_name.toUpperCase().match($('#item-name').val().toUpperCase())){
                      
-              $('#id_search3').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeProductShow(this)"  data-pro="'+products[j].item_id+'" data-itemtype='+products[j].item_type+' data-name="'+products[j].item_name+'"><div class="inv-search-result">'+products[j].item_name+'</div></div>');
+              $('#id_search3').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeProductShow(this)"  data-pro="'+products[j].item_id+'" data-itemtype='+products[j].item_type+' data-itemcode='+products[j].item_code+' data-name="'+products[j].item_name+'"><div class="inv-search-result">'+products[j].item_name+'</div></div>');
   
                   }
               }
@@ -595,6 +617,7 @@ getProducts()
         var proId = $(d).attr("data-pro")
         $('#item_id').val($(d).attr("data-pro"));
         $('#item-name').val($(d).attr("data-name"));
+        $('#item-code').val($(d).attr("data-itemcode"));
 
         if ($(d).attr("data-itemtype") == 'unit'){
             $('#unit_div').show();
