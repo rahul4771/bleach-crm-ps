@@ -107,7 +107,7 @@
 
                                                     <a class="d-flex dropdown-orders" ><img src="{% static 'files/inventory/view.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">View</div></a>    
 
-                                                  <a class="d-flex dropdown-orders" onclick="openNavAddBundle('edit')" data-supplierid="{{supplier.id}}" data-suppliername="{{supplier.supplier_name}}" data-suppliercontact="{{supplier.contact}}" data-suppliercontactother="{{supplier.other_contact}}" data-suppliercode="{{supplier.supplier_id}}" data-supplieraddress="{{supplier.address}}" data-supplierterms="{{supplier.terms}}" data-supplierstatus="{{supplier.status}}"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit </div></a>    
+                                                  <a class="d-flex dropdown-orders edit_supplier" onclick="openNavAddBundle('edit')" data-supplierid="{{supplier.id}}" data-suppliername="{{supplier.supplier_name}}" data-suppliercontact="{{supplier.contact}}" data-suppliercontactother="{{supplier.other_contact}}" data-suppliercode="{{supplier.supplier_id}}" data-supplieraddress="{{supplier.address}}" data-supplierterms="{{supplier.terms}}" data-supplierstatus="{{supplier.status}}"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit </div></a>    
                                                   {% if request.user.user_type == 'INVENTORYADMIN' %}
                                                   <a class="d-flex dropdown-orders" data-supplierid="{{supplier.id}}" data-toggle="modal" data-target="#deleteModel" ><img src="{% static 'files/inventory/bin.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Delete </div></a>                                                                                                       
                                                   {% endif %}
@@ -624,7 +624,7 @@ function showProducts(){
         $('#id_search').empty();
         for (var j=0; j<products.length; j++) {
             if (products[j].name.toUpperCase().match($('#pro-name').val().toUpperCase())){
-                console.log(products[j],"lop");
+                console.log(products[j].name,"lop");
         $('#id_search').append('<div class="col-md-12 inv-search-drop" id="id_product'+products[j].id+'" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-productprice="'+products[j].price+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
 
             }
@@ -727,8 +727,8 @@ function openNavAddBundle(d) {
                 $("#item_table tr:not(:first)").remove(); 
                 
                 $.each(result.data.items,function(key,value){
-                    
-                        $('#item_table').append('<tr><td>'+value.product_name+'</td><td>'+value.item_price+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavEditItem(this)" data-itemid='+value.item_id+' data-productid='+value.product_id+' data-itemname='+value.product_name+' data-itemprice='+value.item_price+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn value_delete" onclick="deleteItem('+value.item_id+')" data-itemid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
+                    console.log(value.product_name,"pname")
+                        $('#item_table').append('<tr><td>'+value.product_name+'</td><td>'+value.item_price+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavEditItem(this)" data-itemid='+value.item_id+' data-productid='+value.product_id+' data-itemname="'+value.product_name+'" data-itemprice='+value.item_price+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn value_delete" onclick="deleteItem('+value.item_id+')" data-itemid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                 })
             }else{
                 $("#item_table tr:not(:first)").remove(); 
