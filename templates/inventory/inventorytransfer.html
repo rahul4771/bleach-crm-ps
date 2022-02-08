@@ -57,48 +57,6 @@
                             </div>
                             <br><br>
                             
-                            {% comment %} <div class="model-input-name required-field">Item</div>
-                            <input autocomplete="off"  type="hidden" id="item_id" name="item_id" >
-              
-                            <div style="position: relative;">
-                                <div class="inv-input-container inv-border h-30">
-                                    <input autocomplete="off" onclick="ProductListShow()" type="text" id="item-name" name="itemname" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" required>
-                                </div>
-                                <div id="id_search3" class="row inv-result-box" style="display: none;height:auto;max-height:200px;z-index:2000;">
-                                  
-                                </div>
-                            </div><br> {% endcomment %}
-                            
-                            {% comment %} <div id="unit_div" hidden>
-                            <div class="model-input-name required-field">Unit </div>
-                            <input type="hidden" name="item_units" v-model="multisel_val" />
-                            <div class="mt-10">
-                                <multiselect
-                       
-                                v-model="multi_val"
-                                 placeholder="Select Unit"
-                                 
-                                 :options="option_data"
-                                 :multiple="true"
-                                 :taggable="false"
-                                 :show-labels="false"
-                                 label="unit_code"
-                                 track-by="id"
-                                
-                                 @input="selectItem()"
-                                 
-                               ></multiselect>
-                            </div><br>
-                            </div>
-
-                            <div id="quantity_div" hidden>
-                            <div class="model-input-name required-field">Quantity </div>
-                            <div class="quantity">
-                                <a class="quantity__minus pointer" @click="subQty()"><span>-</span></a>
-                                <input  type="text" class="quantity__input" value="1" id="id_item_count" name="item_count" v-model="qty_val"  >
-                                <a  class="quantity__plus pointer" @click="addQty()"><span>+</span></a>
-                              </div>
-                            </div> {% endcomment %}
                     </div>
                     
                 </div>
@@ -198,7 +156,7 @@
     
             </div>
     
-            <div class="row mt-20" id="unit_div">
+            <div class="row mt-20" id="unit_div" hidden>
                 <div class="col-md-12 ">
                     <div class="model-input-name">Unit</div>
                         <div style="position: relative;">

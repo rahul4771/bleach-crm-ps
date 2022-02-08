@@ -1029,28 +1029,30 @@ class ItemDispose(View):
 		return render(request,'inventory/itemdispose.html',{})
 	def post(self,request):
 		from_store = request.POST.get('store_id')
-		item_id    = request.POST.get('item_id')
+
+		item_ids    = request.POST.getlist('item_id')
+		quantities = request.POST.getlist('item_quantity')
+		item_units = request.POST.getlist('unit_id')
 
 		store = Store.objects.get(id=int(from_store))
 
-		item       = InventoryItem.objects.get(id=item_id)
-		if item.item_add_type == 'quantity':
-			quantity   = request.POST.get('item_count')
+		for i in range(len(item_ids)):
+			item       = InventoryItem.objects.get(id=int(item_ids[i]))
+			if item.item_add_type == 'quantity':
+				quantity   = quantities[i] #request.POST.get('item_count')
 
-			if float(item.total_quantity) >= float(quantity):
-				store_item = QuantityStoreDetails.objects.get(item_store=store,quantity_item=item)
-				store_item.quantity = round(float(store_item.quantity) - float(quantity),2)
-				store_item.save()
+				if float(item.total_quantity) >= float(quantity):
+					store_item = QuantityStoreDetails.objects.get(item_store=store,quantity_item=item)
+					store_item.quantity = round(float(store_item.quantity) - float(quantity),2)
+					store_item.save()
 
-				item.total_quantity = round(float(item.total_quantity) - float(quantity),2)
-				item.save()
+					item.total_quantity = round(float(item.total_quantity) - float(quantity),2)
+					item.save()
 
-				ItemHistory.objects.create(item=item,item_action='DISPOSE',quantity=quantity,quantity_location = store,added_by=request.user,item_remark='Disposed')
+					ItemHistory.objects.create(item=item,item_action='DISPOSE',quantity=quantity,quantity_location = store,added_by=request.user,item_remark='Disposed')
 
-		if item.item_add_type == 'unit':
-			unit_item_ids = (request.POST.get('item_units')).split(",")
-			if unit_item_ids:
-				unit_items    = ItemUnit.objects.filter(id__in=unit_item_ids,is_available=True).update(status='disposed',is_available=False)
+		if item_units:
+			unit_items    = ItemUnit.objects.filter(id__in=item_units,is_available=True).update(status='disposed',is_available=False)
 
 		messages.success(request,"Inventory Items Disposed Succesfully")
 		

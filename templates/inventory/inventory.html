@@ -51,7 +51,7 @@
                               {% endif %}
                               <div class="dropdown-item  inv-dropdown-item p-7" onclick="window.location.href='/bleach-inventory/inventory-transfer/';"><i class="fas fa-exchange-alt mr-10"></i>Transfer</div> 
                               {% if request.user.user_type == 'STOCKCONTROLLER' or request.user.user_type == 'INVENTORYADMIN' %}
-                              {% comment %} <div class="dropdown-item  inv-dropdown-item p-7" onclick="window.location.href='/bleach-inventory/item-dispose/';" ><i class="far fa-trash-alt mr-10"></i>Dispose</div> {% endcomment %}
+                              <div class="dropdown-item  inv-dropdown-item p-7" onclick="window.location.href='/bleach-inventory/item-dispose/';" ><i class="far fa-trash-alt mr-10"></i>Dispose</div> 
                               {% endif %}
                             </div>
                           </div>
