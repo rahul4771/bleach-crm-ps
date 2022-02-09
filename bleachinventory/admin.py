@@ -2,9 +2,9 @@ from django.contrib import admin
 from bleachinventory.models import QuantityStoreDetails,CheckOutItems,CheckOutItemUnits,ItemHistory,PurchaseOrder,PurchaseOrderItems,Category,Line,Segment,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems,BundleItemUnits,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,InventoryAccessory,InventoryFinshedItem,RequestOrder,RequestOrderItems,ExternalCustomer,Store
 # Register your models here.
 
-# class ItemHistoryAdmin(admin.ModelAdmin):
-# 	search_fields=['item__name','item_action']
-# admin.site.register(Order,OrderAdmin)
+class ItemHistoryAdmin(admin.ModelAdmin):
+	search_fields=['item__name','item_action','created']
+admin.site.register(ItemHistory,ItemHistoryAdmin)
 
 admin.site.register(Category)
 admin.site.register(InventoryItem)
@@ -26,7 +26,6 @@ admin.site.register(SupplierItems)
 admin.site.register(ServiceRecipe)
 admin.site.register(ServiceRecipeItems)
 admin.site.register(ItemAttributes)
-admin.site.register(ItemHistory)
 admin.site.register(ServiceRecipeIngredients)
 admin.site.register(CheckOutItems)
 admin.site.register(CheckOutItemUnits)
