@@ -1185,9 +1185,15 @@ class InventorySupplier(IsInventoryAdminUser,View):
 
 			product = InventoryItem.objects.get(id=int(item))
 
-			SupplierItems.objects.create(supplier=supplier,item=product,item_price=item_price,supplier_item_id=new_supplier_item_id,item_count=item_count)
+			
+			item_count_check = SupplierItems.objects.filter(item=product).count()
 
-			messages.success(request,"Item Added Successfully !")
+			if item_count_check >= 1:
+				messages.error(request,"Item already exists for a supplier !")
+			else:
+				SupplierItems.objects.create(supplier=supplier,item=product,item_price=item_price,supplier_item_id=new_supplier_item_id,item_count=item_count)
+
+				messages.success(request,"Item Added Successfully !")
 
 		if action == 'edit_item':
 			print("ppp")
@@ -1202,12 +1208,18 @@ class InventorySupplier(IsInventoryAdminUser,View):
 
 			print(supplieritem,product,"kop")
 
-			supplieritem.item = product
-			supplieritem.item_price = item_price
-			supplieritem.item_count = item_count
-			supplieritem.save()
+			
+			item_check_count = SupplierItems.objects.filter(item=product).count()
 
-			messages.success(request,"Item Updated Successfully !")
+			if item_check_count >= 2:
+				messages.error(request,"Item already exists for another supplier !")
+			else:
+				supplieritem.item = product
+				supplieritem.item_price = item_price
+				supplieritem.item_count = item_count
+				supplieritem.save()
+
+				messages.success(request,"Item Updated Successfully !")
 
 		if action == 'delete_item':
 			supplier_item_id = request.POST.get('supplier_id_delete')
@@ -1321,12 +1333,18 @@ class InventoryInv(IsInventoryAdminUser,View):
 
 		try:
 			item_status = request.GET.get('item_status')
-			if item_status == None:
-				item_status = ''
 		except:
 			item_status = ''
 
+		try:
+			item_supplier = request.GET.get('item_supplier')
+			if not item_supplier == 'NOSUPPLIER':
+				item_supplier = int(item_supplier)
+		except:
+			item_supplier = ''
+
 		print(item_category,item_segment,item_line,item_status,"mkk")
+		suppliers = Supplier.objects.filter(status=True)
 
 		if search:
 			inventory_items                 = InventoryItem.objects.filter(Q(name__icontains=search)|Q(item_code__icontains=search)).annotate(unit_count=Sum(Case(When(unit_item__is_available=True,then=1),default=0,output_field=IntegerField())))
@@ -1393,7 +1411,14 @@ class InventoryInv(IsInventoryAdminUser,View):
 			case4 = Q(item_status=item_status)
 			filters.append(case4)
 
-		if item_category or item_segment or item_line or item_status:
+		if item_supplier:
+			if item_supplier == 'NOSUPPLIER':
+				case5 = Q(product_supplier__supplier__id=None)
+			else:
+				case5 = Q(product_supplier__supplier__id=item_supplier)
+			filters.append(case5)
+
+		if item_category or item_segment or item_line or item_status or item_supplier:
 			filters = functools.reduce(operator.and_,filters)
 
 			inventory_items = inventory_items.filter(filters)
@@ -1482,7 +1507,7 @@ class InventoryInv(IsInventoryAdminUser,View):
 		entry_per_page3 = (inventory_items_assets.end_index())-(inventory_items_assets.start_index())+1
 		entry_per_page4 = (inventory_items_finishedgoods.end_index())-(inventory_items_finishedgoods.start_index())+1
 
-		return render(request,'inventory/inventory.html',{"item_type":item_type,"categories":categories,"items":inventory_items,"inventory_items_rawmaterials":inventory_items_rawmaterials,"inventory_items_assets":inventory_items_assets,"inventory_items_finishedgoods":inventory_items_finishedgoods,"search_query":search,"page_range1":page_range1,"page_range2":page_range2,"page_range3":page_range3,"page_range4":page_range4,"entry_per_page1":entry_per_page1,"entry_per_page2":entry_per_page2,"entry_per_page3":entry_per_page3,"entry_per_page4":entry_per_page4,"no_of_entries":no_of_entries,"item_category":item_category,"item_segment":item_segment,"item_line":item_line,"item_status":item_status})
+		return render(request,'inventory/inventory.html',{"suppliers":suppliers,"item_type":item_type,"categories":categories,"items":inventory_items,"inventory_items_rawmaterials":inventory_items_rawmaterials,"inventory_items_assets":inventory_items_assets,"inventory_items_finishedgoods":inventory_items_finishedgoods,"search_query":search,"page_range1":page_range1,"page_range2":page_range2,"page_range3":page_range3,"page_range4":page_range4,"entry_per_page1":entry_per_page1,"entry_per_page2":entry_per_page2,"entry_per_page3":entry_per_page3,"entry_per_page4":entry_per_page4,"no_of_entries":no_of_entries,"item_category":item_category,"item_segment":item_segment,"item_line":item_line,"item_status":item_status,"item_supplier":item_supplier})
 
 	def post(self,request):
 		action =request.POST.get('action')

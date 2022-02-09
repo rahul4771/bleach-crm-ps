@@ -1119,6 +1119,24 @@
                                       </label>
                         </div><!--ticket-form-right-->
                       </div><!--ticket-wrapper-row ticket-forms-boxes--> 
+
+                      <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+                        <div class="ticket-form-left"><!--ticket-form-left-->
+                                        <div class=" bold-text common-label"> <label>Supplier</label></div>
+                                      <label for="favcity">
+                                      <select name="supplier_filter" id="supplier_filter_id">
+                                      <option value=''>---ALL---</option>
+                                      <option value='NOSUPPLIER' {% if item_supplier == 'NOSUPPLIER' %}selected{% endif %}>No Supplier</option>
+                                      {% for supplier in suppliers %}
+                                      <option value="{{supplier.id}}" {% if supplier.id == item_supplier %}selected{% endif %}>{{supplier.supplier_name}}</option>
+                                      {% endfor %}
+                                                   
+                                    </select>
+                                      </label>
+                        </div><!--ticket-form-left-->
+                        <div class="ticket-form-right">
+                        </div>
+                      </div><!--ticket-wrapper-row ticket-forms-boxes--> 
                     <div class="col-md-12 text-center">
                         
                         <div class="cancel-model-content">
@@ -1593,7 +1611,8 @@ function changeSelect(va){
     function set_params_go(args)
     {
     var url='{% url 'bleach-inventory:inventory-inv' %}';
-    var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),item_category:$('#category_filter_id').val(),item_segment:$('#segment_filter_id').val(),item_line:$('#line_filter_id').val(),item_status:$('#item_status_filter_id').val()
+    var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),item_category:$('#category_filter_id').val(),item_segment:$('#segment_filter_id').val(),item_line:$('#line_filter_id').val(),item_status:$('#item_status_filter_id').val(),
+    item_supplier:$('#supplier_filter_id').val()
     };
     for(key in args) 
         params[key]=args[key];
