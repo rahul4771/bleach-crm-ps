@@ -2531,6 +2531,8 @@ function openNavAddBundle(d) {
             $("#supHead").text("Edit Accessories");
             $('#update-unit-btn-accessories').show();
             $('#submit-btn-accessories').hide()
+            app.acc_name=app.selected_item.accessory_name
+          app.item_id=app.selected_item.accessory_id
             
             
         }
@@ -2566,6 +2568,9 @@ function openNavAddSubparts(d){
           $("#supHead").text("Edit Ingredients");
           $('#update-subparts-btn').show();
           $('#submit-btn-subparts').hide()
+          app.acc_name=app.selected_item.accessory_name
+          app.item_id=app.selected_item.accessory_id
+          
           
           
       }
