@@ -4018,12 +4018,10 @@ class ItemsCheckInAPI(APIView):
 		
 
 		items_list = []
-		item_order_no = None
-		item_visit_id = None
+		item_order_no = visit.order.order_no
+		item_visit_id = visit.id
 
 		for item in return_items:
-			item_order_no = item.visit.order.order_no
-			item_visit_id = item.visit.id
 
 			if item.service_item:
 				if item.service_item.item.item_add_type == 'unit':
@@ -4064,8 +4062,8 @@ class ItemsCheckInAPI(APIView):
 					items_list.append(item_dict)
 
 		response_dict['items_list'] = items_list
-		response_dict['order_no'] = item_order_no,
-		response_dict['visit_id'] = item_visit_id,
+		response_dict['order_no'] = item_order_no
+		response_dict['visit_id'] = item_visit_id
 
 		print(items_list,"ret")
 
