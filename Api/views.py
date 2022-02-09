@@ -4303,7 +4303,7 @@ class InventoryAccessoryView(APIView):
 
 			accessory           = InventoryItem.objects.get(id=accessory_id)
 
-			inventory_accessory               = InventoryAccessory.objects.get(id=id)
+			inventory_accessory               = InventoryAccessory.objects.get(id=accessory_id)
 			inventory_accessory.accessory     = accessory
 			inventory_accessory.count         = count
 			inventory_accessory.save()
@@ -4356,6 +4356,7 @@ class InventoryFinshedItemView(APIView):
 		if action_type == 'add_finished_item':
 			finished_item_id  =	request.data.get('finished_item_id')
 			count             =	request.data.get('count')
+			print(finished_item_id,count,"addsp")
 			
 			InventoryFinshedItem.objects.create(
 				inventory_item_id           = inventory_id,
@@ -4369,10 +4370,11 @@ class InventoryFinshedItemView(APIView):
 			id                  = request.data.get('id')
 			finished_item_id    = request.data.get('finished_item_id')
 			count               = request.data.get('count')
+			print(id,finished_item_id,count,"editsp")
 
-			finished_item           = InventoryItem.objects.get(id=finished_item_id)
+			finished_item           = InventoryItem.objects.get(id=id)
 
-			inventory_finished_item                           = InventoryFinshedItem.objects.get(id=id)
+			inventory_finished_item                           = InventoryFinshedItem.objects.get(id=finished_item_id)
 			inventory_finished_item.inventory_finished_item   = finished_item
 			inventory_finished_item.count                     = count
 			inventory_finished_item.save()

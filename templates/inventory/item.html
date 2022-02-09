@@ -1961,7 +1961,7 @@
             axios.post(this.url+'/api/accessory/'+item_id+'/',{
                 
                 action:'edit_accessory',
-                id:this.edit_item_id,
+                id:this.item_id,
                 accessory_id:this.selected_item.accessory_id,
                 count:parseInt(this.qty)
             }).then(response=>{
@@ -1987,7 +1987,7 @@
             axios.post(this.url+'/api/finished_item/'+item_id+'/',{
                 
                 action:'edit_finished_item',
-                id:this.edit_item_id,
+                id:this.item_id,
                 finished_item_id:this.selected_item.accessory_id,
                 count:parseInt(this.qty)
             }).then(response=>{

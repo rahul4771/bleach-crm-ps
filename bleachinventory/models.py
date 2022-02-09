@@ -137,10 +137,10 @@ class QuantityStoreDetails(models.Model):
     created              = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        return str(self.item_store.store_name)
+        return str(self.item_store.store_name+' - '+self.quantity_item.name)
 
     def __str__(self):
-        return self.item_store.store_name
+        return self.item_store.store_name+' - '+self.quantity_item.name
 
 class InventoryAccessory(models.Model):
     inventory_item       =  models.ForeignKey(InventoryItem,blank=False,null=False,related_name='accessory_inventory')
