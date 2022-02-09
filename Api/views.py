@@ -4222,12 +4222,14 @@ class InventoryRawMaterialsView(APIView):
 
 		if inventory_item.item_type == 'FINISHED GOODS':
 			try:
-				inventory_items = InventoryItem.objects.filter(Q(Q(item_type='RAW MATERIALS')|Q(item_type='ASSETS'))).filter(status=True)
+				# inventory_items = InventoryItem.objects.filter(Q(Q(item_type='RAW MATERIALS')|Q(item_type='ASSETS'))).filter(status=True)
+				inventory_items = InventoryItem.objects.filter(status=True)
 			except:
 				inventory_items = None
 		else:
 			try:
-				inventory_items = InventoryItem.objects.filter(item_type='RAW MATERIALS',status=True)
+				# inventory_items = InventoryItem.objects.filter(item_type='RAW MATERIALS',status=True)
+				inventory_items = InventoryItem.objects.filter(status=True)
 			except:
 				inventory_items = None
 

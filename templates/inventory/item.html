@@ -457,11 +457,13 @@
                                 </div>
                                 <div class="col-md-6" v-for="(item,index) in subparts" v-bind:key="index"> <!-- loop this tag-->
                                     <div class="inv-acc-card mt-10">
-                                        <% item.finished_item_name %> 
+                                        <% item.finished_item_name %>                   
+                                        
                                         <img id="id_editButton" @click="deleteSubpart(item)" class="inv-edit-img" style="float:right;margin-left:10px" data-toggle="modal" data-target="#subpartModalCenter"
                                        src="{% static 'files/icons/delete.png' %}">
                                        <img id="id_editButton" @click="editSubpart(item)" class="inv-edit-img" style="float:right;"
                                        src="{% static 'files/icons/edit.png' %}">
+                                       <div style="float:right;margin-right:20px"><% item.count %> </div>
                                       </div>
                                 </div>
                                
