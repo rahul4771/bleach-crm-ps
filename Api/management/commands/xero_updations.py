@@ -10,26 +10,41 @@ from django.db.models import Prefetch
 import requests
 import json
 
+from Api.models import XeroConnection
+
 
 class Command(BaseCommand):
     help = 'Automatic Updations'
 
-    def handle(self, *args, **kwargs):   
-        #Get access Token
+    def handle(self, *args, **kwargs): 
+        xero          = XeroConnection.objects.first()
+
+        #Update Access Token and Refresh Token
         header                      = {
-                                        'Authorization': 'Basic MTEwRDVGMzhFOTNCNEQ1NDgwOTU2MzVDNEU0MUJGOTM6dmZoN0VVQXVnZEF3LUhwRkZ2YVoxMVFkVDEzRmtqYmw0bUtrMU01RTdyeVYwN19n',
+                                        'Authorization': 'Basic '+xero.client_encoded,
                                         'Content-Type': 'application/x-www-form-urlencoded'
                                             }
-        body                        = {"grant_type":"client_credentials","scope":"accounting.settings accounting.contacts accounting.transactions"}
-        access_token                = requests.post('https://identity.xero.com/connect/token',
+        body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
+        token_response              = requests.post('https://identity.xero.com/connect/token',
                                                 data=body,
                                                 headers=header 
-                                            ).json()['access_token']
+                                            ).json()
+        access_token                = token_response['access_token']
+        refresh_token               = token_response['refresh_token']
+
+        xero.access_token  = access_token
+        xero.refresh_token = refresh_token
+        xero.save()
         print(access_token)
+        print(refresh_token)
+        print(xero)
+
         #Bank Transaction
         header                      = {
+                                        'xero-tenant-id': xero.tenant_id,
                                         'Authorization': 'Bearer '+access_token,
-                                        'Accept': 'application/json'
+                                        'Accept': 'application/json',
+                                        'Content-Type': 'application/json'
                                             }
         transaction_data            = {
                                         "Type": "RECEIVE",
