@@ -9,6 +9,7 @@ url(r'^attribute/$',views.InventoryAttribute.as_view(),name='inventory-attribute
 url(r'^value/$',views.InventoryValue.as_view(),name='inventory-value'),
 url(r'^bundle/$',views.InventoryBundle.as_view(),name='inventory-bundle'),
 url(r'^item/(?P<item_id>[-\w]+)/$',views.InventoryItems.as_view(),name='inventory-item'),
+url(r'^items-export/$',views.InventoryItemsListExport.as_view(),name='inventory-item-export'),
 url(r'^supplier/$',views.InventorySupplier.as_view(),name='inventory-supplier'),
 url(r'^store/$',views.InventoryStore.as_view(),name='inventory-store'),
 url(r'^inventory/$',views.InventoryInv.as_view(),name='inventory-inv'),
