@@ -1540,7 +1540,7 @@ class InventoryInv(IsInventoryAdminUser,View):
 				unit_measure    = request.POST.get('unit_measure')
 			else:
 				unit_measure    = None
-				
+
 			if category_id:
 				category = Category.objects.get(id=int(category_id))
 			else:
@@ -3168,26 +3168,39 @@ class InventoryItemsListExport(View):
 		#online
 		ws = wb.add_sheet('ITEMS',cell_overwrite_ok = True)
 	
-		columns = ['Item Type','Item Name','Item Code','Supplier','Category','Segment','Line','Available Qty','Reserve Qty']
+		columns = ['Item Type','Item Name','Item Code','Supplier','Item Price','Category','Segment','Line','Available Qty','Reserve Qty']
 		
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
 
-		inventory_items = InventoryItem.objects.all().annotate(unit_count=Sum(Case(When(unit_item__is_available=True,then=1),default=0,output_field=IntegerField()))).values_list('item_type','name','item_code','product_supplier__supplier__supplier_name','item_category__name','item_segment__name','item_line__name','total_quantity','reserve_count','unit_count')
+		inventory_items = InventoryItem.objects.all().annotate(unit_count=Sum(Case(When(unit_item__is_available=True,then=1),default=0,output_field=IntegerField()))).values_list('item_type','name','item_code','id','id','item_category__name','item_segment__name','item_line__name','total_quantity','reserve_count','unit_count')
 
 
 		rows = []
 
 		for item in inventory_items:
+			
 			item_list = list(item)
 			print(item_list[9],"uco")
 
-			if item_list[9] > 0 :
-				item_list[7] = item_list[9]
+			try:
+				supplieritem = SupplierItems.objects.filter(item__id=int(item[3])).first()
+				supplier_name = supplieritem.supplier.supplier_name
+				item_price = supplieritem.item_price
+				print(supplieritem,"splr")
+			except:
+				supplieritem = None
+				supplier_name = '-'
+				item_price = '-'
+
+			if item_list[10] > 0 :
+				item_list[8] = item_list[10]
 			
-			item_list[7] = math.ceil(float(item_list[7]))
 			item_list[8] = math.ceil(float(item_list[8]))
-			item_list[9] = '' #emptying unit count value row
+			item_list[9] = math.ceil(float(item_list[9]))
+			item_list[3] = supplier_name
+			item_list[4] = item_price
+			item_list[10] = '' #emptying unit count value row
 
 			item = tuple(item_list)
 			rows.append(item)
