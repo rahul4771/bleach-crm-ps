@@ -6,7 +6,9 @@ from user.models import UserProfile
 from django.contrib import messages
 import re
 import math
+import xlwt
 from datetime import date,datetime,timedelta
+from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,Max,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField,CharField,Prefetch
 from django.db.models.functions import Cast,TruncDate,ExtractMonth,ExtractYear,Concat
@@ -1523,6 +1525,8 @@ class InventoryInv(IsInventoryAdminUser,View):
 			reserve         = request.POST.get('item_reserve')
 			status          = request.POST.get('item_status')
 			reusable        = request.POST.get('item_reusable')
+			supplier_id		= request.POST.get('item_supplier')
+			item_price		= request.POST.get('item_price')
 			
 			# item_package     = request.POST.get('item_package')
 			# if item_package == 'on':
@@ -1531,7 +1535,11 @@ class InventoryInv(IsInventoryAdminUser,View):
 			#     is_package = False
 			
 			item_add_type   = request.POST.get('itemadd_type')
-			unit_measure    = request.POST.get('unit_measure')
+			
+			if item_add_type == 'quantity':
+				unit_measure    = request.POST.get('unit_measure')
+			else:
+				unit_measure    = None
 
 			if category_id:
 				category = Category.objects.get(id=int(category_id))
@@ -1561,6 +1569,19 @@ class InventoryInv(IsInventoryAdminUser,View):
 			print(new_item_code,"lop")
 
 			inv_item = InventoryItem.objects.create(item_type=item_type,item_category=category,item_segment=segment,item_line=line,name=name,item_code=new_item_code,description=description,reserve_count=reserve,is_reusable=reusable,item_add_type=item_add_type,measuring_unit=unit_measure)
+			
+			if supplier_id:
+				supplier_items_latest = SupplierItems.objects.all().last()
+
+				if supplier_items_latest:
+					code_number  =  int(re.findall(r'(\d+)', supplier_items_latest.supplier_item_id)[0]) + 1
+					new_supplier_item_id = 'SPITM'+str(code_number)
+				else:
+					new_supplier_item_id = 'SPITM9001'
+
+				supplier = Supplier.objects.get(id=int(supplier_id))
+				SupplierItems.objects.create(supplier=supplier,item=inv_item,item_price=item_price,supplier_item_id=new_supplier_item_id)
+			
 			messages.success(request,"Item Added Successfully !")
 			return redirect('bleach-inventory:inventory-item',inv_item.id)
 
@@ -3127,3 +3148,70 @@ class InventoryRequestOrderPage(View):
 	def get(self,request,request_order_id):
 		request_order = RequestOrder.objects.prefetch_related(Prefetch('items_request_order',queryset=RequestOrderItems.objects.all(),to_attr='request_order_items')).get(id=request_order_id)
 		return render(request,'inventory/requestorderpage.html',{"request_order":request_order})
+
+class InventoryItemsListExport(View):
+	def get(self,request):
+		# Sheet header, first row
+		row_num = 0
+
+		font_style = xlwt.XFStyle()
+		font_style.font.bold = True
+
+		# Sheet body, remaining rows
+		font_style = xlwt.XFStyle()
+
+		response = HttpResponse(content_type='application/ms-excel')
+		response['Content-Disposition'] = 'attachment; filename="Inventory_Items.xls"'
+
+		wb = xlwt.Workbook(encoding='utf-8')
+
+		#online
+		ws = wb.add_sheet('ITEMS',cell_overwrite_ok = True)
+	
+		columns = ['Item Type','Item Name','Item Code','Supplier','Item Price','Category','Segment','Line','Available Qty','Reserve Qty']
+		
+		for col_num in range(len(columns)):
+			ws.write(row_num, col_num, columns[col_num], font_style)
+
+		inventory_items = InventoryItem.objects.all().annotate(unit_count=Sum(Case(When(unit_item__is_available=True,then=1),default=0,output_field=IntegerField()))).values_list('item_type','name','item_code','id','id','item_category__name','item_segment__name','item_line__name','total_quantity','reserve_count','unit_count')
+
+
+		rows = []
+
+		for item in inventory_items:
+			
+			item_list = list(item)
+			print(item_list[9],"uco")
+
+			try:
+				supplieritem = SupplierItems.objects.filter(item__id=int(item[3])).first()
+				supplier_name = supplieritem.supplier.supplier_name
+				item_price = supplieritem.item_price
+				print(supplieritem,"splr")
+			except:
+				supplieritem = None
+				supplier_name = '-'
+				item_price = '-'
+
+			if item_list[10] > 0 :
+				item_list[8] = item_list[10]
+			
+			item_list[8] = math.ceil(float(item_list[8]))
+			item_list[9] = math.ceil(float(item_list[9]))
+			item_list[3] = supplier_name
+			item_list[4] = item_price
+			item_list[10] = '' #emptying unit count value row
+
+			item = tuple(item_list)
+			rows.append(item)
+
+		rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
+	
+		for row in rows:
+			row_num += 1
+			for col_num in range(len(row)):
+				ws.write(row_num, col_num, row[col_num], font_style)
+
+		wb.save(response)
+
+		return response

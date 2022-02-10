@@ -45,7 +45,7 @@
                             <button class="btn inv-blue-btn dropdown-toggle inv-dropdown" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                               More Actions <i class="fas fa-caret-down ml-10"></i>
                             </button>
-                            <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
+                            <div class="dropdown-menu " aria-labelledby="dropdownMenuButton" style="z-index:9999">
                               {% if request.user.user_type != 'STOCKCONTROLLER' %}
                               <div class="dropdown-item inv-dropdown-item p-7" onclick="openNavAddStore('add')"><i class="fas fa-plus-circle mr-10"></i>Add</div>
                               {% endif %}
@@ -53,6 +53,7 @@
                               {% if request.user.user_type == 'STOCKCONTROLLER' or request.user.user_type == 'INVENTORYADMIN' %}
                               <div class="dropdown-item  inv-dropdown-item p-7" onclick="window.location.href='/bleach-inventory/item-dispose/';" ><i class="far fa-trash-alt mr-10"></i>Dispose</div> 
                               {% endif %}
+                              <div class="dropdown-item  inv-dropdown-item p-7" onclick="window.location.href='/bleach-inventory/items-export/';" ><i class="fa fa-regular fa-file-export mr-10"></i>Export to Excel</div> 
                             </div>
                           </div>
                         </div>
@@ -831,6 +832,35 @@
                 </div>
 
             </div> {% endcomment %}
+            
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name required-field">Supplier</div>
+
+                    <input hidden  type="text" name="item_supplier" id="id_supplier" required>
+                    <div class="wrap-drop" id="noble-gases9"  >
+                        <span id="id_selectText9">--Select Supplier--</span>
+                        <ul class="drop">
+                            {% for supplier in suppliers %}
+                            <li id="supplier_id{{supplier.id}}" onclick="changeSelect9({{supplier.id}})"><a>{{supplier.supplier_name}}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Item Price</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="number" step="0.01" class="w-p-100 inv-in" name="item_price" value="0" id="id_item_price" required>
+                      </div>
+                </div>
+
+            </div>
+            
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name required-field">Category</div>
@@ -1283,6 +1313,7 @@ $(function () {
     var dd6 = new DropDown($('#noble-gases6'));
     var dd7 = new DropDown($('#noble-gases7'));
     var dd8 = new DropDown($('#noble-gases8'));
+    var dd9 = new DropDown($('#noble-gases9'));
 
 
 
@@ -1356,6 +1387,11 @@ function changeSelect(va){
         $('#id_line_text').text($('#line_id'+id).text());
        
     }
+    function changeSelect9(id){
+        $('#id_supplier').val(id);
+      
+   }
+
     $(document).ready(function(){
         $('.segment_dropdown').hide();
         $('.line_dropdown').hide();
@@ -1421,12 +1457,16 @@ function changeSelect(va){
 
         if ($('input[name=item_name]').val() == ''){
             $('input[name=item_name]').addClass('red-border-input');
+        }else if ($('input[name=item_type]').val() == ''){
+            $('#noble-gases8').addClass('red-border-input');
         }else if ($('input[name=item_category]').val() == ''){
             $('#noble-gases').addClass('red-border-input');
         }else if ($('input[name=item_segment]').val() == ''){
             $('#noble-gases2').addClass('red-border-input');
         }else if ($('input[name=item_line]').val() == ''){
             $('#noble-gases3').addClass('red-border-input');
+        }else if ($('input[name=item_supplier]').val() == ''){
+            $('#noble-gases9').addClass('red-border-input');
         }else{
             console.log("lolo")
             $('#myForm').submit();
