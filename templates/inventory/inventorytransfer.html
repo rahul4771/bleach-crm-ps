@@ -6,7 +6,7 @@
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
-<div class="wrapper">
+<div class="wrapper" id="app">
     <!--wrapper-->
     {% include "inventory/common/header.html" %}
     <section class="content">
@@ -18,7 +18,7 @@
             </div>
         </div>
 
-        <div class="main-content-holder" id="app">
+        <div class="main-content-holder" >
             <!--main-content-holder-->
             <div class="white-wrapper white-wrapper-padding2">
                 <div class="row">
@@ -56,59 +56,164 @@
                                 </div>
                             </div>
                             <br><br>
-                            <div class="model-input-name required-field">Item</div>
-                            <input autocomplete="off"  type="hidden" id="item_id" name="item_id" >
-              
-                            <div style="position: relative;">
-                                <div class="inv-input-container inv-border h-30">
-                                    <input autocomplete="off" onclick="ProductListShow()" type="text" id="item-name" name="itemname" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" required>
-                                </div>
-                                <div id="id_search3" class="row inv-result-box" style="display: none;height:auto;max-height:200px;z-index:2000;">
-                                  
-                                </div>
-                            </div><br>
                             
-                            <div id="unit_div" hidden>
-                            <div class="model-input-name required-field">Unit </div>
-                            <input type="hidden" name="item_units" v-model="multisel_val" />
-                            <div class="mt-10">
-                                <multiselect
-                       
-                                v-model="multi_val"
-                                 placeholder="Select Unit"
-                                 
-                                 :options="option_data"
-                                 :multiple="true"
-                                 :taggable="false"
-                                 :show-labels="false"
-                                 label="unit_code"
-                                 track-by="id"
-                                
-                                 @input="selectItem()"
-                                 
-                               ></multiselect>
-                            </div><br>
-                            </div>
-
-                            <div id="quantity_div" hidden>
-                            <div class="model-input-name required-field">Quantity </div>
-                            <div class="quantity">
-                                <a class="quantity__minus pointer" @click="subQty()"><span>-</span></a>
-                                <input  type="text" class="quantity__input" value="1" id="id_item_count" name="item_count" v-model="qty_val" oninput="quantitychange()" >
-                                <a  class="quantity__plus pointer" @click="addQty()"><span>+</span></a>
-                              </div>
-                            </div>
                     </div>
                     
                 </div>
+
+                <div class="row mt-30">
+                    <div class="col-md-12 ">
+                        <table class="inv-table footable" style="border-top: 1px solid #c4c4c4;">
+                            <thead>
+                                <tr>
+                                    <th style="width: %;" data-hide="phone,tablet" >
+                                        Product ID
+                                    </th>
+                                    <th style="width: %;" data-hide="phone,tablet" >
+                                        Product
+                                    </th>
+                                    <th data-hide="phone,tablet" style="text-align: center;">
+                                        Quantity
+                                    </th>
+                                    <th data-hide="phone,tablet" style="text-align: center;">
+                                        Unit(s)
+                                    </th>
+
+                                    <th data-hide="phone,tablet" style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="item_table">
+                                <tr v-for="(item,index) in data_array" v-bind:key="index">
+                                    <td ><% item.item_code %> </td>
+                                    <td ><% item.item_name %> <input type="hidden" name="item_id" :value="item.item_id || 0"  /></td>
+                                    <td style="text-align: center;"><% item.quantity %> <input type="hidden" name="item_quantity" :value="item.quantity"  /></td>
+                                    
+                                   
+                                    <td style="text-align: center;">
+                                        <div v-for="(unit,uindex) in item.unit_details" v-bind:key="uindex">
+                                            <input type="hidden" name="unit_id" :value="unit.id" >
+                                        <% unit.unit_code %>
+                                        </div>
+                                    </td>
+
+                                    <td style="text-align:center;"><img id="id_editButton" @click="deleteAccessory(index)" class="inv-edit-img" 
+                                        src="{% static 'files/icons/delete.png' %}"></td> 
+                                </tr>
+                               
+                                
+                                <tr  id="id_addrow">
+                                    <td>
+                                        <button class="inv-plan-btn" onclick="openNavAddStore('add')" type="button"> <img
+                                                src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5"
+                                                alt=""> Add Item</button>
+                                    </td>
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <br>
-                <button type="submit" class="inv-blue-btn">Transfer</button>
+                <div class="text-center">
+                    <button type="submit" class="inv-blue-btn">Transfer</button>
+                </div>
+               
             </form> 
 
             </div>
         </div>
     </section>
-      
+
+    <div id="addStore" class="inv-sidedrawer" >
+
+        <div class="inv-sidedrawer-inner">
+            <div class="d-flex">
+                <div class="inv-drawer-head" id="itemHead">
+                    Add Item
+                </div>
+                <div class="right-pos">
+    
+                    <button onclick="closeNavAddStore()" class="img-button">
+                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                    </button>
+                </div>
+            </div>
+            <hr>
+    
+            <!-- <form method="POST" action="" >{% csrf_token %} -->
+            <input type="hidden" name="action" id="purchase_order_action" value="add_item" />
+            <input type="hidden" name="item" id="id_pro_sel" value="" />
+            <input type="hidden" name="purchase_order_id" value="{{purchase_order.id}}" />
+            <input type="hidden" name="item_edit_id" id="id_edit_item" />
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Item</div>
+                    <input autocomplete="off"  type="hidden" id="item_id" name="item_id" >
+                    <div style="position: relative;">
+                        <div class="inv-input-container inv-border h-30">
+                            <input type="hidden" name="item_code" id="item-code" />
+                            <input autocomplete="off" onclick="ProductListShow()" type="text" id="item-name" name="itemname" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" required>
+                        </div>
+                        <div id="id_search3" class="row inv-result-box" style="display: none;height:auto;max-height:200px;z-index:2000;">
+                          
+                        </div>
+                    </div>
+                </div>
+    
+            </div>
+    
+            <div class="row mt-20" id="unit_div" hidden>
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Unit</div>
+                        <div style="position: relative;">
+                        <input type="hidden" name="item_units" v-model="multisel_val" />
+                        <div class="mt-10">
+                            <multiselect
+                   
+                            v-model="multi_val"
+                             placeholder="Select Unit"
+                             
+                             :options="option_data"
+                             :multiple="true"
+                             :taggable="false"
+                             :show-labels="false"
+                             label="unit_code"
+                             track-by="id"
+                            
+                             @input="selectItem()"
+                             
+                           ></multiselect>
+                        </div><br>
+                        </div>
+                </div>
+    
+            </div>
+    
+    
+            <div class="row mt-20" id="quantity_div" hidden>
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Quantity</div>
+    
+                    <div class="quantity">
+                        <a class="quantity__minus pointer" @click="subQty()"><span>-</span></a>
+                        <input  type="text" class="quantity__input" value="1" id="id_item_count" name="item_count" v-model="qty_val" oninput="quantitychange()" >
+                        <a  class="quantity__plus pointer" @click="addQty()"><span>+</span></a>
+                      </div>
+                    </div>
+                </div>
+    
+           
+    
+    
+        </div>
+        <div class="inv-drawer-footer">
+            <button class="sent-button purchaseorder-form-btn" @click="addDataToArray()" onclick="table_load()">Submit</button>
+            <!-- </form> -->
+            <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
+        </div>
+    </div>
+</div>
 </div>
 
 {% endblock %}
@@ -127,6 +232,7 @@
      qty_val:1,
      multisel_val:'',
      option_data:[],
+     data_array:[]
     
     },
     mounted(){
@@ -134,15 +240,72 @@
        
     },
     methods:{
-        addQty(){
-            this.qty_val++
-            increment()
+        addDataToArray(){
+            if(!this.multi_val.length){
+               
+                this.data_array.push(
+                    {
+                item_code : $('#item-code').val(),
+                item_id:$('#item_id').val(),
+                item_name:$('#item-name').val(),
+                quantity:this.qty_val
+                    }
+                )
+                $('#item_id').val('')
+                $('#item-name').val('')
+                this.qty_val=1
+
+
+            }
+            else{
+               
+                this.data_array.push(
+                    {
+                item_code : $('#item-code').val(),
+                item_id:$('#item_id').val(),
+                item_name:$('#item-name').val(),
+                quantity:this.multi_val.length,
+                unit_details:this.multi_val
+               
+                    }
+                )
+                this.multi_val=[]
+                $('#item_id').val('')
+                $('#item-name').val('')
+                $('#item-code').val('')
+                    
+            }
+            closeNavAddStore()
+
+            //use app.data_array to get the added items list
+            
         },
-        subQty(){
+        deleteAccessory(id){
+            console.log("deletetest")
+            this.data_array.splice(id,1)
+        },
+        async addQty(){
+            this.qty_val++
+            var result = await _get('api/inventory-item-quantity-check/?item_id='+$('#item_id').val()+'&quantity='+this.qty_val+'&store_id='+$('#store_id').val());
+            if(result.status == 200){
+                console.log(result.data.item_available,"lop2")
+        
+                this.qty_val = result.data.item_quantity
+                
+            }
+        },
+        async subQty(){
+            console.log("qty called")
             if(this.qty_val>1){
                 this.qty_val--
             }
-            decrement()
+            var result = await _get('api/inventory-item-quantity-check/?item_id='+$('#item_id').val()+'&quantity='+this.qty_val+'&store_id='+$('#store_id').val());
+            if(result.status == 200){
+                console.log(result.data.item_available,"lop2")
+        
+                this.qty_val = result.data.item_quantity
+                
+            }
         },
         selectItem(){
             var id_array=[]
@@ -230,6 +393,15 @@ function storeListShow2(){
     showStores2()
 }
 
+{% comment %} function table_load(){
+    console.log(app.data_array.item_id,"iid")
+    
+    app.data_array.each(function(key,value){
+        console.log(key,value,"valv")
+        $('#item_table').prepend('<tr><td></td><td>deta</td><td></td></tr>')
+    })
+} {% endcomment %}
+
 function showStores(){
           console.log("stores is "+JSON.stringify(stores))
             $('#id_store_search').empty();
@@ -252,12 +424,15 @@ function showStores(){
         }
 
         function showStores2(){
+            var store1_id = $('#store_id').val();
             console.log("stores is "+JSON.stringify(stores))
+            
               $('#id_store_search2').empty();
               for (var j=0; j<stores.length; j++) {
-                  if (stores[j].store_name.toUpperCase().match($('#store-name2').val().toUpperCase())){
+                console.log(parseInt(store1_id),stores[j].id)
+                  if ( (stores[j].store_name.toUpperCase().match($('#store-name2').val().toUpperCase())) && (parseInt(store1_id) != stores[j].id ) && (parseInt(store1_id) > 0) ){
                      
-              $('#id_store_search2').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeStoreShow2(this)"  data-pro="'+stores[j].id+'" data-name="'+stores[j].store_name+'"><div class="inv-search-result">'+stores[j].store_name+'</div></div>');
+                        $('#id_store_search2').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeStoreShow2(this)"  data-pro="'+stores[j].id+'" data-name="'+stores[j].store_name+'"><div class="inv-search-result">'+stores[j].store_name+'</div></div>');
   
                   }
               }
@@ -275,6 +450,10 @@ function showStores(){
         function closeStoreShow(d){
             $('#store_id').val($(d).attr("data-pro"));
             $('#store-name').val($(d).attr("data-name"));
+            $('#store_id2').val('');
+            $('#store-name2').val('');
+            $('#unit_div').hide();
+            $('#quantity_div').hide();
             var proId = $(d).attr("data-pro")
         //  set_params_go({'store':proId})
         
@@ -284,6 +463,7 @@ function showStores(){
 
             $('#item_id').val('')
             $('#item-name').val('')
+            $('#item-code').val('')
         }
 
     function closeStoreShow2(d){
@@ -302,6 +482,95 @@ function dropSelectStore(id){
     $('#store_id').val(id);
     set_params_go();
 }
+
+function hideselectedoptions(){
+            
+
+    var tempItem = [];
+    var itemIn = [];
+    var div = true;
+
+    $('#id_search div').each(function(i) {
+        if (div == true){
+            console.log($(this),"pro")
+            tempItem.push($(this).data("pro"))
+            //console.log($(this).data("id"));
+            div = false;
+        }else{
+            div = true;
+        }
+        
+    })
+  
+    $('#item_table tr').each(function() {
+        itemIn.push($(this).data("itemid"))
+        //console.log('table',$(this).data("itemid"));
+    })
+
+    itemIn.pop();
+
+    console.log(tempItem,itemIn,"lopp")
+
+    for(var i =0;i<tempItem.length;i++){
+        document.getElementById("id_product"+tempItem[i]).style.display ="block";
+        for(var j = 0;j<itemIn.length;j++){
+            if(tempItem[i] == itemIn[j]){
+                console.log('to be hide',tempItem[i]);
+                document.getElementById("id_product"+tempItem[i]).style.display ="none";
+            }
+        }
+    }
+    console.log(tempItem,itemIn)
+}
+
+function openNavAddStore(d) {
+    $('#id_search').empty();
+    {% for item in items %}
+
+var tempId = '{{item.id}}';
+var tempName = '{{item.item.name}}';
+console.log(tempId,tempName)
+
+$('#id_search').append('<div class="col-md-12 inv-search-drop" id="id_product{{item.id}}" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-productprice="{{item.item_price}}" data-name="{{item.item}}"><div class="inv-search-result">{{item.item}}</div></div>');
+
+{% endfor %}
+
+   // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+    if(d == 'add'){
+        $('#itemHead').text('Add Item');
+        $('#purchase_order_action').val('add_item');
+        $('.purchaseorder-form-btn').text('Add');
+
+        $('#pro-name').val('');
+        $('#id_pro_sel').val('');
+        $('#id_unit_price').val('');
+        $('#id_item_count').val(1);
+        $('.count').val(1);
+        $('#id_total_price').val('');
+        hideselectedoptions();
+    }
+    if(d == 'edit'){
+        $('#itemHead').text('Edit Item');
+        $('#purchase_order_action').val('edit_item');
+        $('.purchaseorder-form-btn').text('Update');
+        hideselectedoptions();
+
+    }
+    document.body.style.backgroundColor = "rgba(0,0,0,0.4) !important";
+    if (screen.width <= 600) {
+        document.getElementById("addStore").style.width = "100%";
+    } else if (screen.width <= 720) {
+        document.getElementById("addStore").style.width = "50%";
+    }
+    else {
+        document.getElementById("addStore").style.width = "30%";
+    }
+}
+function closeNavAddStore() {
+    document.getElementById("addStore").style.width = "0";
+    console.log(app.data_array,"arrey")
+}
+
 
 var products=[]
 getProducts()
@@ -328,7 +597,7 @@ getProducts()
               for (var j=0; j<products.length; j++) {
                   if (products[j].item_name.toUpperCase().match($('#item-name').val().toUpperCase())){
                      
-              $('#id_search3').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeProductShow(this)"  data-pro="'+products[j].item_id+'" data-itemtype='+products[j].item_type+' data-name="'+products[j].item_name+'"><div class="inv-search-result">'+products[j].item_name+'</div></div>');
+              $('#id_search3').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeProductShow(this)"  data-pro="'+products[j].item_id+'" data-itemtype='+products[j].item_type+' data-itemcode='+products[j].item_code+' data-name="'+products[j].item_name+'"><div class="inv-search-result">'+products[j].item_name+'</div></div>');
   
                   }
               }
@@ -348,6 +617,7 @@ getProducts()
         var proId = $(d).attr("data-pro")
         $('#item_id').val($(d).attr("data-pro"));
         $('#item-name').val($(d).attr("data-name"));
+        $('#item-code').val($(d).attr("data-itemcode"));
 
         if ($(d).attr("data-itemtype") == 'unit'){
             $('#unit_div').show();
@@ -371,13 +641,14 @@ getProducts()
       async function increment(){
   
         var item_id = $('#item_id').val();
+        var store_id = $('#store_id').val();
       
         $('#id_item_count').val(parseInt($('#id_item_count').val()) + 1 );
       
         var quantity = parseInt($('#id_item_count').val()) ;
         console.log(item_id,quantity,"po")
       
-        var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+        var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity+'&store_id='+store_id);
           if(result.status == 200){
             console.log(result.data.item_available,"lop2")
       
@@ -388,6 +659,7 @@ getProducts()
 
       async function decrement(){
         var item_id = $('#item_id').val();
+        var store_id = $('#store_id').val();
       
         if ($('#id_item_count').val() > 0) {
         $('#id_item_count').val(parseInt($('#id_item_count').val()) - 1 );
@@ -400,7 +672,7 @@ getProducts()
       
         var quantity = parseInt($('#id_item_count').val()) ;
       
-        var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+        var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity+'&store_id='+store_id);
           if(result.status == 200){
             console.log(result.data.item_available,"lop3")
             $('#id_item_count').val(result.data.item_quantity);
@@ -411,9 +683,11 @@ getProducts()
       
         var item_id = $('#item_id').val();
         var quantity = $('#id_item_count').val() ;
+        var store_id = $('#store_id').val();
+
         console.log(item_id,quantity,"poRK")
 
-          var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+          var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity+'&store_id='+store_id);
           if(result.status == 200){
             console.log(result.data.item_available,"lop2")
       

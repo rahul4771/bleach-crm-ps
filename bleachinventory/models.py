@@ -1,6 +1,7 @@
 from django.db import models
 from user.models import UserProfile
 from order.models import OrderScheduler
+from datetime import date,datetime,timedelta
 # Create your models here.
 
 UNIT_STATUS_CHOICES=(
@@ -136,10 +137,10 @@ class QuantityStoreDetails(models.Model):
     created              = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        return str(self.item_store.store_name)
+        return str(self.item_store.store_name+' - '+self.quantity_item.name)
 
     def __str__(self):
-        return self.item_store.store_name
+        return self.item_store.store_name+' - '+self.quantity_item.name
 
 class InventoryAccessory(models.Model):
     inventory_item       =  models.ForeignKey(InventoryItem,blank=False,null=False,related_name='accessory_inventory')
@@ -407,10 +408,10 @@ class ItemHistory(models.Model):
     created         =   models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        return str(self.item.name)
+        return str(self.item.name)+' - '+datetime.strftime(self.created,'%d-%m-%Y')
 
     def __str__(self):
-        return self.item.name
+        return self.item.name+' - '+datetime.strftime(self.created,'%d-%m-%Y')
 
 class CheckOutItems(models.Model):
     visit                = models.ForeignKey(OrderScheduler,blank=False,null=False,related_name='visit_checkout')

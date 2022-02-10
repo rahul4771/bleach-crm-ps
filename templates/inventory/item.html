@@ -166,6 +166,7 @@
                                         <input type="text"  class="w-p-100 inv-in" name="item_name" value="{{inventory_item.name}}">
                                       </div>
                                 </div>
+                                
                                 <div class="d-flex">
                                     <div class="inv-item-head-sub mt-20">
                                         {{inventory_item.item_code}}
@@ -188,6 +189,8 @@
                                       </div>
                                     {% endif %}
                                 </div>
+
+                                
                               
                                 <div class="inv-item-head-sub mt-20">
                                     {% if inventory_item.item_status == 'available' %}
@@ -201,9 +204,45 @@
                                     Out of Stock
                                     {% endif %}
                                 </div>
+                                <!-- reusable-->
+                                {% if inventory_item.is_reusable == True %}
+                                <div class="inv-item-head-sub mt-10">
+                                    <i class="fas fa-recycle primary-text mr-10"></i>  Re-usable
+                                </div>
+                                {% endif %}
+                                <!-- reusable ends -->
+                                 <!-- supplier -->
+                                {% if supplier_item %}
+                                 <div class="inv-item-head-sub mt-10">
+                                    <i class="fas fa-store-alt primary-text mr-10"></i>  {{supplier_item.supplier.supplier_name}}
+                                </div>
+                                {% else %}
+                                <div class="inv-item-head-sub mt-10">
+                                    <i class="fas fa-store-alt primary-text mr-10"></i>  No Supplier
+                                </div>
+                                {% endif %}
+                                <!-- supplier ends -->
+                                 <!-- unit price-->
+                                 {% if supplier_item.item_price %}
+                                 <div class="inv-item-head-sub mt-10">
+                                    <i class="fas fa-tags primary-text mr-10"></i>  {{supplier_item.item_price|floatformat:3}} KD / {{inventory_item.measuring_unit|default_if_none:'unit'}}
+                                </div>
+                                {% endif %}
+                                <!-- unit price ends -->
                                 
-                              
-                               <div  class="mt-10">
+
+                                <div class="inv-item-head-sub mt-20" id="item_reuse" hidden>
+                                    <label>Is Reusable</label>
+                                <input type="checkbox" name="item_reusable" {% if inventory_item.is_reusable == True %}checked{% endif %} />
+                                </div>
+                                
+                                {% comment %} <div  class="mt-10"> 
+                                    <i class="fa fa-recycle" aria-hidden="true" id="id_reusable" style="font-size: 18px; color:#0085C9;"></i>
+                                    <input type="checkbox" name="item_reusbale" id="id_check_reusable" hidden>
+                                </div> {% endcomment %}
+                               
+
+                                <div  class="mt-10">
                                 <textarea class="inv-hide mt-30" id="id_des_text" name="description" style="width: 100%; border-radius: 5px;" rows="4"> {{inventory_item.description|default_if_none:"-"}} </textarea>
                                 <span id="id_des_val" class="av-font "> {{inventory_item.description|default_if_none:"-"}} </span> 
                                     </div>
@@ -217,7 +256,7 @@
                                 <div class="inv-item-head-sub-2 mt-10" id="id_cat" >
                                     <span id="id_cat_val"  class="av-font">  {{inventory_item.item_category.name}}</span>
                                    
-                                    <select id="id_cat_select" name="item_category" class="minimal av-font inv-hide" required>
+                                    <select id="id_cat_select" name="item_category" class="minimal av-font inv-hide">
                                         <option value="">--Select Category--</option>
                                         {% for category in categories %}
                                         <option value="{{category.id}}" {% if inventory_item.item_category.id == category.id %}selected{% endif %}>{{category.name}}</option>
@@ -231,7 +270,7 @@
                                 <div class="inv-item-head-sub-2 mt-10">
                                     <span id="id_seg_val"  class="av-font">  {{inventory_item.item_segment.name|default_if_none:'-'}}</span>
                                    
-                                    <select id="id_seg_select" name="item_segment" class="minimal av-font inv-hide" required>
+                                    <select id="id_seg_select" name="item_segment" class="minimal av-font inv-hide" >
                                         <option value="">--Select Segment--</option>
                                         
                                                         
@@ -244,12 +283,13 @@
                                 <div class="inv-item-head-sub-2 mt-10">
                                     <span id="id_line_val" class="av-font">  {{inventory_item.item_line.name|default_if_none:'-'}}</span>
                                    
-                                    <select id="id_line_select" name="item_line" class="minimal av-font inv-hide" required>
+                                    <select id="id_line_select" name="item_line" class="minimal av-font inv-hide" >
                                         <option value="">--Select Line--</option>
                                                         
                                     </select>
                                 </div>
                             </div>
+                            
                             {% comment %} <div class="col-md-3 pl-0 m-mt-10" >
                                 <div class="inv-item-head-sub" style="color: #707070;">Price per unit</div>
                                 <div class="inv-item-head-sub-2 mt-10">
@@ -285,7 +325,7 @@
                     
                     {% if inventory_item.item_add_type == 'quantity' %}
                     <div id="unit_edit_data" style="display: none;">
-                    <div class="model-input-name ">Select Unit</div>
+                    <div class="model-input-name ">Select Unit of Measurement</div>
                    
                     <select  name="item_unit_data" id="unit_select" class="minimal av-font inv-hide" >
                         <option value="L" {% if inventory_item.measuring_unit == 'L' %} selected {% endif %}>L</option>
@@ -417,11 +457,13 @@
                                 </div>
                                 <div class="col-md-6" v-for="(item,index) in subparts" v-bind:key="index"> <!-- loop this tag-->
                                     <div class="inv-acc-card mt-10">
-                                        <% item.finished_item_name %> 
+                                        <% item.finished_item_name %>                   
+                                        
                                         <img id="id_editButton" @click="deleteSubpart(item)" class="inv-edit-img" style="float:right;margin-left:10px" data-toggle="modal" data-target="#subpartModalCenter"
                                        src="{% static 'files/icons/delete.png' %}">
                                        <img id="id_editButton" @click="editSubpart(item)" class="inv-edit-img" style="float:right;"
                                        src="{% static 'files/icons/edit.png' %}">
+                                       <div style="float:right;margin-right:20px"><% item.count %> </div>
                                       </div>
                                 </div>
                                
@@ -1858,7 +1900,7 @@
             })
         },
         addAccessory(){
-            if(!this.qty || !this.selected_item){
+            if(!this.qty || !this.item_id){
                 this.err_msg='Please fill all required fields'
             }
             else{
@@ -1867,12 +1909,12 @@
             axios.post(this.url+'/api/accessory/'+item_id+'/',{
                 
                 action:'add_accessory',
-                accessory_id:this.selected_item.accessory_id,
+                accessory_id:this.item_id,
                 count:parseInt(this.qty)
             }).then(response=>{
                 if(response.data.success)
                 {
-                this.selected_item=''
+                this.item_id=''
                 this.qty=''
                 this.getAccessories()
                 closeNavAddAccessories()
@@ -1883,21 +1925,23 @@
         }
     },
     addSubparts(){
-        if(!this.qty || !this.selected_item){
+        if(!this.qty || !this.item_id){
+            console.log(this.qty,this.selected_item,"erroar")
                 this.err_msg='Please fill all required fields'
             }
             else{
                 this.err_msg=''
            var item_id= $('#item_id').val()
+           console.log(this.item_id,this.qty,"testto")
             axios.post(this.url+'/api/finished_item/'+item_id+'/',{
                 
                 action:'add_finished_item',
-                finished_item_id:this.selected_item.accessory_id,
+                finished_item_id:this.item_id,
                 count:parseInt(this.qty)
             }).then(response=>{
                 if(response.data.success)
                 {
-                this.selected_item=''
+                this.item_id=''
                 this.qty=''
                 this.getSubparts()
                 closeNavAddSubparts()
@@ -1908,7 +1952,7 @@
         }
     },
     updateAccessory(){
-            if(!this.qty || !this.selected_item){
+            if(!this.qty || !this.item_id){
                 this.err_msg='Please fill all required fields'
             }
             else{
@@ -1917,13 +1961,13 @@
             axios.post(this.url+'/api/accessory/'+item_id+'/',{
                 
                 action:'edit_accessory',
-                id:this.edit_item_id,
+                id:this.item_id,
                 accessory_id:this.selected_item.accessory_id,
                 count:parseInt(this.qty)
             }).then(response=>{
                 if(response.data.success)
                 {
-                this.selected_item=''
+                this.item_id=''
                 this.qty=''
                 this.getAccessories()
                 closeNavAddAccessories()
@@ -1934,7 +1978,7 @@
         }
     },
     updateSubparts(){
-        if(!this.qty || !this.selected_item){
+        if(!this.qty || !this.item_id){
                 this.err_msg='Please fill all required fields'
             }
             else{
@@ -1943,13 +1987,13 @@
             axios.post(this.url+'/api/finished_item/'+item_id+'/',{
                 
                 action:'edit_finished_item',
-                id:this.edit_item_id,
+                id:this.item_id,
                 finished_item_id:this.selected_item.accessory_id,
                 count:parseInt(this.qty)
             }).then(response=>{
                 if(response.data.success)
                 {
-                this.selected_item=''
+                this.item_id=''
                 this.qty=''
                 this.getSubparts()
                 closeNavAddSubparts()
@@ -2315,6 +2359,7 @@ function editItemData(){
     document.getElementById('id_res_val').style.display = 'none';
     document.getElementById('id_res_text').style.display = 'block';
     document.getElementById('unit_data').style.display = 'none';
+    document.getElementById('item_reuse').style.display = 'block';
     if (document.getElementById('unit_edit_data')){
         console.log("lp2")
         document.getElementById('unit_edit_data').style.display = 'block';
@@ -2351,6 +2396,7 @@ function doneEdit(){
         document.getElementById('id_res_val').style.display = 'block';
         document.getElementById('id_res_text').style.display = 'none';
         document.getElementById('unit_data').style.display = 'block';
+        document.getElementById('item_reuse').style.display = 'none';
         if (document.getElementById('unit_edit_data')){
             console.log("lp1")
             document.getElementById('unit_edit_data').style.display = 'none';
@@ -2485,6 +2531,8 @@ function openNavAddBundle(d) {
             $("#supHead").text("Edit Accessories");
             $('#update-unit-btn-accessories').show();
             $('#submit-btn-accessories').hide()
+            app.acc_name=app.selected_item.accessory_name
+          app.item_id=app.selected_item.accessory_id
             
             
         }
@@ -2520,6 +2568,9 @@ function openNavAddSubparts(d){
           $("#supHead").text("Edit Ingredients");
           $('#update-subparts-btn').show();
           $('#submit-btn-subparts').hide()
+          app.acc_name=app.selected_item.accessory_name
+          app.item_id=app.selected_item.accessory_id
+          
           
           
       }

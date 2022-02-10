@@ -3019,6 +3019,7 @@ class InventoryItemsListAPI(APIView):
 				item_dict['item_id'] = unit.item.id
 				item_dict['item_name'] = unit.item.name
 				item_dict['item_type'] = unit.item.item_add_type
+				item_dict['item_code'] = unit.item.item_code
 				items.append(item_dict)
 
 			for qty in item.quantity_items:
@@ -3026,6 +3027,7 @@ class InventoryItemsListAPI(APIView):
 				item_dict['item_id'] = qty.quantity_item.id
 				item_dict['item_name'] = qty.quantity_item.name
 				item_dict['item_type'] = qty.quantity_item.item_add_type
+				item_dict['item_code'] = qty.quantity_item.item_code
 				items.append(item_dict)
 
 		
@@ -3594,12 +3596,13 @@ class ItemQuantityCheck(APIView):
 
 		item_id     = request.GET.get('item_id')
 		quantity 	= request.GET.get('quantity')
-
+		store_id	= request.GET.get('store_id')
+		store		= Store.objects.get(id=int(store_id))
 		print(item_id,quantity,"qty")
 
 		item = InventoryItem.objects.annotate(quantity_total=Sum('unit_item_history__quantity'),unit_count=Sum(Case(When(unit_item__is_available=True,then=1),default=0,output_field=IntegerField()))).get(id=int(item_id))
 		
-		unitcount = ItemUnit.objects.filter(item=item,is_available=True).count()
+		unitcount = ItemUnit.objects.filter(item=item,store=store,is_available=True).count()
 		
 		if item.item_add_type == 'unit':
 			item_count = unitcount
@@ -3613,12 +3616,10 @@ class ItemQuantityCheck(APIView):
 
 			response_dict['item_count'] = item_count
 		else:
-			if item.quantity_total:
-				item_count = item.total_quantity
-			else:
-				item_count = 0
+			quantity_store = QuantityStoreDetails.objects.get(quantity_item=item,item_store=store)
+			item_count = quantity_store.quantity
 			
-			print(item_count,quantity,"qtt")
+			print(item_count,"qtt")
 
 			if float(item_count) >= float(quantity) :
 				response_dict['item_available'] = True
@@ -3645,6 +3646,7 @@ class CheckOutItemAdd(APIView):
 		visit_id = request.GET.get('visit_id')
 		quantity = request.GET.get('quantity')
 		unit_id = request.GET.get('unit_id')
+		store_id = request.GET.get('store_id')
 
 		print(service_item,visit_id,"vis")
 		visit = OrderScheduler.objects.get(id=int(visit_id))
@@ -4016,6 +4018,8 @@ class ItemsCheckInAPI(APIView):
 		
 
 		items_list = []
+		item_order_no = visit.order.order_no
+		item_visit_id = visit.id
 
 		for item in return_items:
 
@@ -4058,8 +4062,8 @@ class ItemsCheckInAPI(APIView):
 					items_list.append(item_dict)
 
 		response_dict['items_list'] = items_list
-		response_dict['order_no'] = item.visit.order.order_no,
-		response_dict['visit_id'] = item.visit.id,
+		response_dict['order_no'] = item_order_no
+		response_dict['visit_id'] = item_visit_id
 
 		print(items_list,"ret")
 
@@ -4216,12 +4220,14 @@ class InventoryRawMaterialsView(APIView):
 
 		if inventory_item.item_type == 'FINISHED GOODS':
 			try:
-				inventory_items = InventoryItem.objects.filter(Q(Q(item_type='RAW MATERIALS')|Q(item_type='ASSETS'))).filter(status=True)
+				# inventory_items = InventoryItem.objects.filter(Q(Q(item_type='RAW MATERIALS')|Q(item_type='ASSETS'))).filter(status=True)
+				inventory_items = InventoryItem.objects.filter(status=True)
 			except:
 				inventory_items = None
 		else:
 			try:
-				inventory_items = InventoryItem.objects.filter(item_type='RAW MATERIALS',status=True)
+				# inventory_items = InventoryItem.objects.filter(item_type='RAW MATERIALS',status=True)
+				inventory_items = InventoryItem.objects.filter(status=True)
 			except:
 				inventory_items = None
 
@@ -4295,7 +4301,7 @@ class InventoryAccessoryView(APIView):
 
 			accessory           = InventoryItem.objects.get(id=accessory_id)
 
-			inventory_accessory               = InventoryAccessory.objects.get(id=id)
+			inventory_accessory               = InventoryAccessory.objects.get(id=accessory_id)
 			inventory_accessory.accessory     = accessory
 			inventory_accessory.count         = count
 			inventory_accessory.save()
@@ -4348,6 +4354,7 @@ class InventoryFinshedItemView(APIView):
 		if action_type == 'add_finished_item':
 			finished_item_id  =	request.data.get('finished_item_id')
 			count             =	request.data.get('count')
+			print(finished_item_id,count,"addsp")
 			
 			InventoryFinshedItem.objects.create(
 				inventory_item_id           = inventory_id,
@@ -4361,10 +4368,11 @@ class InventoryFinshedItemView(APIView):
 			id                  = request.data.get('id')
 			finished_item_id    = request.data.get('finished_item_id')
 			count               = request.data.get('count')
+			print(id,finished_item_id,count,"editsp")
 
-			finished_item           = InventoryItem.objects.get(id=finished_item_id)
+			finished_item           = InventoryItem.objects.get(id=id)
 
-			inventory_finished_item                           = InventoryFinshedItem.objects.get(id=id)
+			inventory_finished_item                           = InventoryFinshedItem.objects.get(id=finished_item_id)
 			inventory_finished_item.inventory_finished_item   = finished_item
 			inventory_finished_item.count                     = count
 			inventory_finished_item.save()
@@ -4409,11 +4417,14 @@ class ItemUnitsProduct(APIView):
 		
 		product_id  = request.GET.get('product_id')
 		visit_id = request.GET.get('visit_id')
+		store_id = request.GET.get('store_id')
+		
+		store= Store.objects.get(id=int(store_id))
 
 		item_units_array = []
 		checkout_item_units_array = []
 
-		item_units       = ItemUnit.objects.filter(item__id=product_id,is_available=True)
+		item_units       = ItemUnit.objects.filter(item__id=product_id,store=store,is_available=True)
 		for item in item_units:
 			item_units_array.append({'id':item.id,'unit_code':item.unit_code})
 
