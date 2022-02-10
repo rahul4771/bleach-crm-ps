@@ -1788,7 +1788,7 @@ class AgentHome(IsAgent,View):
 			print(contact_platform,"plo")
 
 			gender = evaluation.address.customer.gender
-			if gender == 'MALE':
+			if str(gender).upper() == 'MALE':
 				title = 'Mr.'
 			else:
 				title = 'Ms.'

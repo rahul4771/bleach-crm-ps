@@ -1587,8 +1587,6 @@ def export_users_xls(request):
 				order_list[3] = '-'
 				order_list[4] = '-'
 
-				
-
 			order = tuple(order_list)
 
 			if order_list[2] not in found:

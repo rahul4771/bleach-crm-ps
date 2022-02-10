@@ -1358,10 +1358,7 @@ class AssignEvaluator(IsEvaluator,View):
 		if action_mode == 'add':
 
 			evaluation = Evaluation.objects.filter(id=evaluation_id).first()
-			if evaluation.customer.gender == 'MALE':
-				title = 'Mr.'
-			else:
-				title = 'Ms.'
+			
 
 			#Save Evaluation Details
 			if evaluation_form.is_valid():
@@ -1378,6 +1375,11 @@ class AssignEvaluator(IsEvaluator,View):
 
 				messages.success(request,"Evaluation Details Succesfully Completed")
 
+				if evaluation_form_save.evaluator.gender == 'MALE':
+					title = 'Mr.'
+				else:
+					title = 'Ms.'
+				
 				#address check for floor,avenue None
 				if evaluation_form_save.address.floor == None and evaluation_form_save.address.avenue == None:
 					address_list = [evaluation_form_save.address.apartment, evaluation_form_save.address.street, evaluation_form_save.address.building, evaluation_form_save.address.block, evaluation_form_save.address.area.name, evaluation_form_save.address.governorate.name]
