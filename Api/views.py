@@ -4619,3 +4619,13 @@ class CheckOutStoreItemsUpdateAPI(APIView):
 
 
 
+class XeroInfoSaveAPI(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request):
+		response_dict = {'success':False}
+		code          = request.GET.get('code')
+		xero = XeroConnection.objects.first().update(code=code)
+		response_dict = {'success':True}
+		return Response(response_dict, HTTP_200_OK)
