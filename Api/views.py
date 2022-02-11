@@ -4645,7 +4645,7 @@ class XeroInfoSaveAPI(APIView):
 											'Authorization': 'Basic '+xero.client_encoded,
 											'Content-Type': 'application/x-www-form-urlencoded'
 									  }
-		body                        = {"grant_type":"authorization_code","code":code,"redirect_uri":"https://my.bleachkw.com/"}
+		body                        = {"grant_type":"authorization_code","code":code,"redirect_uri":"https://my.bleachkw.com/api/xero/save/"}
 		token_response              = requests.post('https://identity.xero.com/connect/token',
 												data=body,
 												headers=header 
