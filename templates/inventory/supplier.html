@@ -700,6 +700,8 @@ function openNavAddBundle(d) {
             $("#itemHead").text("Add Item");
             $('#pro-name').val('');
             $('#id_pro_sel').val('');
+            $('#supplier_item_action').val('add_item');
+            $(".item-form-btn").text("Submit");
         }
         if(d == 'edit'){
             $("#itemHead").text("Edit Item");
@@ -764,8 +766,9 @@ function openNavAddBundle(d) {
         $('#id_supplier_item').val($(d).data('itemname'));
         $('#id_supplier_item_price').val($(d).data('itemprice'));
         $('#id_pro_sel').val($(d).data('productid'));
-        $("#pro-name").val($(d).data('itemname'));
-        
+        $("#pro-name").val($(d).data('itemname'));       
+
+        $('#id_search').empty();
 
         {% for item in items %}
 
@@ -838,7 +841,7 @@ function openNavAddBundle(d) {
         }
     }
 
-    function itemformvalidation(){
+    function itemformvalidation(action){
         console.log($('input[name=product]').val(),"lolo")
 
         if ($('input[name=product]').val() == ''){
@@ -846,8 +849,33 @@ function openNavAddBundle(d) {
         }else if ($('input[name=supplier_item_price]').val() == ''){
             $('input[name=supplier_item_price]').addClass('red-border-input');
         }else{
-            console.log("lolo")
-            $('#itemform').submit();
+            console.log($('#supplier_item_action').val(),"lolo")
+            //$('#itemform').submit();
+            var formdata = {
+                'item_supplier_id' : $('input[name=item_supplier_id]').val(),
+                'item' : $('input[name=item]').val(),
+                'supplier_item_price' : $('input[name=supplier_item_price]').val(),
+                'supplier_item_count' : $('input[name=supplier_item_count]').val(),
+                'action' : $('#supplier_item_action').val(),
+                'item_edit_id' : $('input[name=item_edit_id]').val()
+            }
+
+            axios.post(url+'/api/inventory-supplier-items/',formdata)
+              .then(function (response) {
+                  console.log($('input[name=item_edit_id]').val(),response.data,"respdata")
+                  if (response.data.success == true){
+                    console.log(response.data.message,"msg")
+                    showNotification(response.data.message,'success')
+                    getitems($('input[name=item_supplier_id]').val())
+                    closeNavAddItem()
+
+                  }else{
+                        
+                      showNotification(response.data.message,'error')
+                      closeNavAddItem()
+                  }
+                
+              })
         }
     }
 
