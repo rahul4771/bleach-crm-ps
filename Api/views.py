@@ -4629,4 +4629,48 @@ class CheckOutStoreItemsUpdateAPI(APIView):
 		return Response(response_dict, HTTP_200_OK)
 
 
+from Api.models import XeroConnection
 
+class XeroInfoSaveAPI(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request):
+		response_dict = {'success':False}
+		code          = request.GET.get('code')
+		xero          = XeroConnection.objects.first()
+		
+		#Get access Token and Refresh Token
+		header                      = {
+											'Authorization': 'Basic '+xero.client_encoded,
+											'Content-Type': 'application/x-www-form-urlencoded'
+									  }
+		body                        = {"grant_type":"authorization_code","code":code,"redirect_uri":"https://my.bleachkw.com/"}
+		token_response              = requests.post('https://identity.xero.com/connect/token',
+												data=body,
+												headers=header 
+											).json()
+									
+		access_token                = token_response['access_token']
+		refresh_token               = token_response['refresh_token']
+
+		#Get Tenant Id
+		header                      = {
+										'Authorization': 'Bearer '+access_token,
+										'Content-Type': 'application/json'
+											}
+		body                        = {}
+		response                    = requests.get('https://api.xero.com/connections',
+												data=body,
+												headers=header 
+											)	
+		tenant_response             = json.loads(response.text)[0]	
+		tenantid                    = tenant_response['tenantId']
+		
+		xero.access_token  = access_token
+		xero.refresh_token = refresh_token
+		xero.tenant_id     = tenantid
+		xero.save()
+
+		response_dict = {'success':True}
+		return Response(response_dict, HTTP_200_OK)
