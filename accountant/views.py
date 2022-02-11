@@ -27,6 +27,7 @@ from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,Evaluat
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia,CancellOrderAmountHistory
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
+from Api.models import XeroConnection
 
 import requests
 from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
@@ -390,7 +391,9 @@ class AccountantHome(IsAccountant,View):
 					cleaning_price += scheduler.order_scheduler_book.total_cost/len(order_cancell_cashback.order.order_scheduler_order.all())			
 			order_cancell_cashback.job_completed_amount = cleaning_price
 
-		return render(request,'accountant/home/home.html',{"this_week_sales":this_week_sales,"last_week_sales":last_week_sales,"this_month_sales":this_month_sales,"last_month_sales":last_month_sales,"this_quarter_sales":this_quarter_sales,"last_quarter_sales":last_quarter_sales,"pending_payments":pending_payments,'total_due_amount':total_due_amount,"total_due_orders":total_due_orders,"approved_paybackdiscounts":approved_paybackdiscounts,"subscriptions":subscriptions,"ticket_count":ticket_count,"order_cancell_cashbacks":order_cancell_cashbacks})
+		xero          = XeroConnection.objects.first()
+
+		return render(request,'accountant/home/home.html',{"this_week_sales":this_week_sales,"last_week_sales":last_week_sales,"this_month_sales":this_month_sales,"last_month_sales":last_month_sales,"this_quarter_sales":this_quarter_sales,"last_quarter_sales":last_quarter_sales,"pending_payments":pending_payments,'total_due_amount':total_due_amount,"total_due_orders":total_due_orders,"approved_paybackdiscounts":approved_paybackdiscounts,"subscriptions":subscriptions,"ticket_count":ticket_count,"order_cancell_cashbacks":order_cancell_cashbacks,"xero":xero})
 
 	
 
