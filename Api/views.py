@@ -12,7 +12,7 @@ from bleachadmin.models import ServicePriceRange,Settings
 from django.core.mail import send_mail,EmailMultiAlternatives
 from Api.serializers import DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
-from bleachinventory.models import QuantityStoreDetails,ExternalCustomer,Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,CheckOutItemUnits,ItemHistory,InventoryAccessory,InventoryFinshedItem,Store
+from bleachinventory.models import QuantityStoreDetails,ExternalCustomer,Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,CheckOutItemUnits,ItemHistory,InventoryAccessory,InventoryFinshedItem,Store
 import re
 import random
 import string
@@ -2986,6 +2986,82 @@ class InventorySupplierItemsAPI(APIView):
 			item_dict['item_price'] = item.item_price
 			items.append(item_dict)
 		response_dict['items']=items
+		return Response(response_dict,HTTP_200_OK)
+
+	def post(self,request):
+		response_dict = {}
+
+		action =request.data.get('action')
+		if action == 'add_item':
+			print("pop")
+			supplier_id = request.data.get('item_supplier_id')
+			item = request.data.get('item')
+			item_price = request.data.get('supplier_item_price')
+			item_count = request.data.get('supplier_item_count')
+			print(supplier_id,item,item_price,item_count,"itmtest")
+			supplier_items_latest = SupplierItems.objects.all().last()
+
+			if supplier_items_latest:
+				code_number  =  int(re.findall(r'(\d+)', supplier_items_latest.supplier_item_id)[0]) + 1
+				new_supplier_item_id = 'SPITM'+str(code_number)
+			else:
+				new_supplier_item_id = 'SPITM9001'
+
+			supplier = Supplier.objects.get(id=int(supplier_id))
+
+			product = InventoryItem.objects.get(id=int(item))
+
+			
+			item_count_check = SupplierItems.objects.filter(item=product).count()
+
+			if item_count_check >= 1:
+				response_dict['message'] = 'Item already exists for a supplier !'
+				response_dict['success'] = False
+				# messages.error(request,"Item already exists for a supplier !")
+			else:
+				SupplierItems.objects.create(supplier=supplier,item=product,item_price=item_price,supplier_item_id=new_supplier_item_id,item_count=item_count)
+				response_dict['message'] = 'Item Added Successfully !'
+				response_dict['success'] = True
+				# messages.success(request,"Item Added Successfully !")
+
+		if action == 'edit_item':
+			print("ppp")
+			supplier_item_id = request.data.get('item_edit_id')
+			item = request.data.get('item')
+			item_price = request.data.get('supplier_item_price')
+			item_count = request.data.get('supplier_item_count')
+
+			supplieritem = SupplierItems.objects.get(id=int(supplier_item_id))
+
+			product = InventoryItem.objects.get(id=int(item))
+
+			print(supplieritem,product,"kop")
+
+			
+			item_check = SupplierItems.objects.filter(item=product).exclude(id=int(supplier_item_id))
+			print(item_check,"icheckk")
+			item_check_count = item_check.count()
+			print(item_check,item_check_count,"icheckk")
+
+			if item_check_count >= 1:
+				response_dict['message'] = 'Item already exists for a supplier !'
+				response_dict['success'] = False
+			else:
+				supplieritem.item = product
+				supplieritem.item_price = item_price
+				supplieritem.item_count = item_count
+				supplieritem.save()
+				
+				response_dict['message'] = 'Item Updated !'
+				response_dict['success'] = True
+
+		# if action == 'delete_item':
+		# 	supplier_item_id = request.data.get('supplier_id_delete')
+
+		# 	supplieritem = SupplierItems.objects.get(id=int(supplier_item_id)).delete()
+
+		# 	response_dict['message'] = 'Item Deleted !'
+		# 	response_dict['success'] = True
 		return Response(response_dict,HTTP_200_OK)
 
 class InventoryItemsListAPI(APIView):
