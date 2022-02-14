@@ -95,4 +95,5 @@ urlpatterns = [
 	url(r'^team/swap/$',views.TeamSwapAPI.as_view(),name='api-swap'),
 
 	url(r'^xero/save/$',views.XeroInfoSaveAPI.as_view(),name='xero-save'),
+	url(r'^transactions/daily/$',views.DailyTransactionsAPI.as_view(),name='daily-transactions'),
 ]

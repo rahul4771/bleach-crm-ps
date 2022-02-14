@@ -4674,3 +4674,28 @@ class XeroInfoSaveAPI(APIView):
 
 		response_dict = {'success':True}
 		return Response(response_dict, HTTP_200_OK)
+
+
+
+class DailyTransactionsAPI(APIView):
+	def get(self,request):
+		response_dict = {'success':False}
+
+		date         = datetime.strptime(request.GET.get('date'),'%d-%m-%Y')
+		payments     = PaymentHistory.objects.filter(paid_date__date=date)
+		
+		response_dict['date']         = datetime.strftime(date,'%Y-%m-%d')
+		if payments:
+			response_dict['total_debit']  = payments.filter(payment_mode='ONLINECREDIT',payment_gateway='DEBITCARD').aggregate(Sum('amount_paid'))['amount_paid__sum']
+			response_dict['total_credit'] = payments.filter(payment_mode='ONLINECREDIT',payment_gateway='CREDITCARD').aggregate(Sum('amount_paid'))['amount_paid__sum']
+			response_dict['total_cheque'] = payments.filter(payment_mode='CHEQUE').aggregate(Sum('amount_paid'))['amount_paid__sum']
+			response_dict['total_cash']   = payments.filter(payment_mode='CASH').aggregate(Sum('amount_paid'))['amount_paid__sum']
+			response_dict['total_bank']   = payments.filter(payment_mode='BANK').aggregate(Sum('amount_paid'))['amount_paid__sum']
+		else:
+			response_dict['total_debit']  = 0
+			response_dict['total_credit'] = 0
+			response_dict['total_cheque'] = 0
+			response_dict['total_cash']   = 0
+			response_dict['total_bank']   = 0
+
+		return Response(response_dict, HTTP_200_OK)
