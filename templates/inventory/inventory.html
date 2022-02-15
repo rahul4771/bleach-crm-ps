@@ -833,7 +833,7 @@
 
             </div> {% endcomment %}
             
-            <div class="row mt-20">
+            <div class="row mt-20 itemsupplier">
                 <div class="col-md-12 ">
                     <div class="model-input-name required-field">Supplier</div>
 
@@ -850,7 +850,7 @@
 
             </div>
 
-            <div class="row mt-20">
+            <div class="row mt-20 itemsupplier_price">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Item Price</div>
 
@@ -1343,6 +1343,14 @@ function makeActive(item,tab){
 }
 function changeSelect8(va){
         $('#id_item_type').val(va)
+
+        if (va == 'FINISHED GOODS'){
+            $('.itemsupplier').hide()
+            $('.itemsupplier_price').hide()
+        }else{
+            $('.itemsupplier').show()
+            $('.itemsupplier_price').show()
+        }
     }
 
 function changeSelect4(va){
@@ -1455,17 +1463,17 @@ function changeSelect(va){
     //form validation
     function formvalidation(){
 
-        if ($('input[name=item_name]').val() == ''){
-            $('input[name=item_name]').addClass('red-border-input');
-        }else if ($('input[name=item_type]').val() == ''){
+        if ($('input[name=item_type]').val() == ''){
             $('#noble-gases8').addClass('red-border-input');
+        }else if ($('input[name=item_name]').val() == ''){
+            $('input[name=item_name]').addClass('red-border-input');
         }else if ($('input[name=item_category]').val() == ''){
             $('#noble-gases').addClass('red-border-input');
         }else if ($('input[name=item_segment]').val() == ''){
             $('#noble-gases2').addClass('red-border-input');
         }else if ($('input[name=item_line]').val() == ''){
             $('#noble-gases3').addClass('red-border-input');
-        }else if ($('input[name=item_supplier]').val() == ''){
+        }else if ( ($('input[name=item_type]').val() != 'FINISHED GOODS') && ($('input[name=item_supplier]').val() == '') ){
             $('#noble-gases9').addClass('red-border-input');
         }else{
             console.log("lolo")

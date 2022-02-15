@@ -211,7 +211,9 @@
                                 </div>
                                 {% endif %}
                                 <!-- reusable ends -->
-                                 <!-- supplier -->
+                                
+                                {% if inventory_item.item_type != 'FINISHED GOODS' %}
+                                <!-- supplier -->
                                 {% if supplier_item %}
                                  <div class="inv-item-head-sub mt-10">
                                     <i class="fas fa-store-alt primary-text mr-10"></i>  {{supplier_item.supplier.supplier_name}}
@@ -229,7 +231,7 @@
                                 </div>
                                 {% endif %}
                                 <!-- unit price ends -->
-                                
+                                {% endif %}
 
                                 <div class="inv-item-head-sub mt-20" id="item_reuse" hidden>
                                     <label>Is Reusable</label>
