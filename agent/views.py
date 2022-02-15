@@ -1787,7 +1787,7 @@ class AgentHome(IsAgent,View):
 
 			print(contact_platform,"plo")
 
-			gender = evaluation.address.customer.gender
+			gender = evaluation.evaluator.gender
 			if str(gender).upper() == 'MALE':
 				title = 'Mr.'
 			else:
@@ -3918,10 +3918,6 @@ class AssignEvaluator(IsAgent,View):
 		if action_mode == 'add':
 
 			evaluation = Evaluation.objects.filter(id=evaluation_id).first()
-			if evaluation.customer.gender == 'MALE':
-				title = 'Mr.'
-			else:
-				title = 'Ms.'
 
 			mobile = evaluation.customer.mobile_number
 
@@ -3939,6 +3935,11 @@ class AssignEvaluator(IsAgent,View):
 				evaluation_form_save.save()
 
 				messages.success(request,"Evaluation Details Succesfully Completed")
+
+				if evaluation_form_save.evaluator.gender == 'MALE':
+					title = 'Mr.'
+				else:
+					title = 'Ms.'
 
 				#address check for floor,avenue None
 				if evaluation_form_save.address.floor == None and evaluation_form_save.address.avenue == None:
