@@ -35,9 +35,6 @@ class Command(BaseCommand):
         xero.access_token  = access_token
         xero.refresh_token = refresh_token
         xero.save()
-        print(access_token)
-        print(refresh_token)
-        print(xero)
 
         #Bank Transaction
         header                      = {
@@ -63,6 +60,7 @@ class Command(BaseCommand):
                                             "Code": "090"
                                         }
                                         }
+                                        
         update_transaction          = requests.post('https://api.xero.com/api.xro/2.0/BankTransactions',
                                                 json=transaction_data,
                                                 headers=header 
