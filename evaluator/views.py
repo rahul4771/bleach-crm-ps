@@ -1375,10 +1375,10 @@ class AssignEvaluator(IsEvaluator,View):
 
 				messages.success(request,"Evaluation Details Succesfully Completed")
 
-				if evaluation_form_save.evaluator.gender == 'MALE':
-					title = 'Mr.'
-				else:
-					title = 'Ms.'
+				# if evaluation_form_save.evaluator.gender == 'MALE':
+				title = 'Mr.'
+				# else:
+				# 	title = 'Ms.'
 				
 				#address check for floor,avenue None
 				if evaluation_form_save.address.floor == None and evaluation_form_save.address.avenue == None:
