@@ -196,8 +196,8 @@ class Quatation(View):
 				#Save Individual cleaning price
 				if order.orderschedules:
 					for scheduler in order.orderschedules:
-						scheduler.cleaning_amount = scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
-				
+						scheduler.cleaning_cost = scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
+						scheduler.save()
 
 				#sms and email
 				print("checkp1")
@@ -361,6 +361,12 @@ class SubscriptionQuatation(View):
 				order.evaluation.customer.save()
 				order.evaluation.save()
 				order.save()
+
+		#Save Individual cleaning price
+		if order.orderschedules:
+			for scheduler in order.orderschedules:
+				scheduler.cleaning_cost = scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
+				scheduler.save()
 
 		#service details
 		try:
