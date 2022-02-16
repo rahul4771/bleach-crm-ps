@@ -1787,11 +1787,11 @@ class AgentHome(IsAgent,View):
 
 			print(contact_platform,"plo")
 
-			gender = evaluation.evaluator.gender
-			if str(gender).upper() == 'MALE':
-				title = 'Mr.'
-			else:
-				title = 'Ms.'
+			# gender = evaluation.evaluator.gender
+			# if str(gender).upper() == 'MALE':
+			title = 'Mr.'
+			# else:
+			# 	title = 'Ms.'
 			address = evaluation.address
 
 
@@ -3936,10 +3936,10 @@ class AssignEvaluator(IsAgent,View):
 
 				messages.success(request,"Evaluation Details Succesfully Completed")
 
-				if evaluation_form_save.evaluator.gender == 'MALE':
-					title = 'Mr.'
-				else:
-					title = 'Ms.'
+				# if evaluation_form_save.evaluator.gender == 'MALE':
+				title = 'Mr.'
+				# else:
+				# 	title = 'Ms.'
 
 				#address check for floor,avenue None
 				if evaluation_form_save.address.floor == None and evaluation_form_save.address.avenue == None:
