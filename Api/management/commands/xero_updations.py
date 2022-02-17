@@ -65,4 +65,4 @@ class Command(BaseCommand):
                                                 json=transaction_data,
                                                 headers=header 
                                             )
-        print(update_transaction.json())
+        

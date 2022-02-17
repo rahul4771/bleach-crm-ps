@@ -136,12 +136,14 @@ class UserProfile(AbstractUser):
     is_outdoor_skill            = models.BooleanField(null=False,blank=True,default=False)
     is_window_skill             = models.BooleanField(null=False,blank=True,default=False)
 
-    universal_shift_start                 = models.TimeField(blank=True,null=True)
-    universal_shift_end                   = models.TimeField(blank=True,null=True)
+    universal_shift_start       = models.TimeField(blank=True,null=True)
+    universal_shift_end         = models.TimeField(blank=True,null=True)
 
-    is_onlineevaluator     = models.BooleanField(null=False,blank=True,default=True)
+    is_onlineevaluator          = models.BooleanField(null=False,blank=True,default=True)
 
-    address_otp            = models.CharField(max_length=100,blank=True,null=True)
+    address_otp                 = models.CharField(max_length=100,blank=True,null=True)
+
+    xero_account_id             = models.CharField(max_length=100,blank=True,null=True)
 
 
     created_by      = models.ForeignKey('self',blank=True,null=True)
