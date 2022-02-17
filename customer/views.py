@@ -197,8 +197,9 @@ class Quatation(View):
 				if order.orderschedules:
 					total_cleanings = len(order.orderschedules)
 					for scheduler in order.orderschedules:
-						scheduler.cleaning_cost = scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
-						scheduler.discount_cost = scheduler.order_scheduler_book.total_cost/total_cleanings
+						scheduler.cleaning_cost          = scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
+						scheduler.discount_cost          = scheduler.order_scheduler_book.evaluation.discount/total_cleanings
+						scheduler.additional_charge_cost = scheduler.order_scheduler_book.evaluation.additional_charge/total_cleanings
 						scheduler.save()
 
 				#sms and email
@@ -409,8 +410,9 @@ class SubscriptionQuatation(View):
 				if order.orderschedules:
 					total_cleanings = len(order.orderschedules)
 					for scheduler in order.orderschedules:
-						scheduler.cleaning_cost = scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)
-						scheduler.discount_cost = scheduler.order.evaluation.discount/total_cleanings
+						scheduler.cleaning_cost          = scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
+						scheduler.discount_cost          = scheduler.order_scheduler_book.evaluation.discount/total_cleanings
+						scheduler.additional_charge_cost = scheduler.order_scheduler_book.evaluation.additional_charge/total_cleanings
 						scheduler.save()
 
 				return redirect('customer:subscriptioninvoice',evaluation_id_encrypted)
