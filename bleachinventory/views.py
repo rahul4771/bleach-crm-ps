@@ -1428,10 +1428,10 @@ class InventoryInv(IsInventoryAdminUser,View):
 			filters.append(case5)
 
 		if item_store:
-			case6 = Q(Q(unit_item__store__id=item_store)&Q(unit_item__status='available'))
-			case7 = Q( Q(Q(unit_item__store__id=item_store)&Q(unit_item__status='available')) | Q(quantity_store_item__item_store__id=item_store)&Q(quantity_store_item__quantity__gt=0))
+			
+			case6 = Q( Q(Q(unit_item__store__id=item_store)&Q(unit_item__is_available=True)) | Q(quantity_store_item__item_store__id=item_store)&Q(quantity_store_item__quantity__gt=0))
+			
 			filters.append(case6)
-			filters.append(case7)
 
 		if item_category or item_segment or item_line or item_status or item_supplier or item_store:
 			filters = functools.reduce(operator.and_,filters)
