@@ -195,11 +195,26 @@ class Quatation(View):
 
 				#Save Individual cleaning price
 				if order.orderschedules:
-					total_cleanings = len(order.orderschedules)
+					total_cleanings   = len(order.orderschedules)
+					cleaning_cost_sum          = 0
+					discount_cost_sum          = 0
+					additional_charge_cost_sum = 0
+					count                      = 0
 					for scheduler in order.orderschedules:
-						scheduler.cleaning_cost          = scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
-						scheduler.discount_cost          = scheduler.order_scheduler_book.evaluation.discount/total_cleanings
-						scheduler.additional_charge_cost = scheduler.order_scheduler_book.evaluation.additional_charge/total_cleanings
+						count                                += 1
+						if total_cleanings != count:
+							scheduler.cleaning_cost           = scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
+							scheduler.discount_cost           = order.evaluation.discount/total_cleanings
+							scheduler.additional_charge_cost  = order.evaluation.additional_charge/total_cleanings
+							
+							cleaning_cost_sum                += scheduler.cleaning_cost
+							discount_cost_sum                += scheduler.discount_cost
+							additional_charge_cost_sum       += scheduler.discount_cost
+						else:
+							scheduler.cleaning_cost           = scheduler.order_scheduler_book.total_cost-cleaning_cost_sum	
+							scheduler.discount_cost           = order.evaluation.discount-discount_cost_sum
+							scheduler.additional_charge_cost  = order.evaluation.additional_charge-additional_charge_cost_sum
+
 						scheduler.save()
 
 				#sms and email
@@ -411,8 +426,8 @@ class SubscriptionQuatation(View):
 					total_cleanings = len(order.orderschedules)
 					for scheduler in order.orderschedules:
 						scheduler.cleaning_cost          = scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
-						scheduler.discount_cost          = scheduler.order_scheduler_book.evaluation.discount/total_cleanings
-						scheduler.additional_charge_cost = scheduler.order_scheduler_book.evaluation.additional_charge/total_cleanings
+						scheduler.discount_cost          = order.evaluation.discount/total_cleanings
+						scheduler.additional_charge_cost = order.evaluation.additional_charge/total_cleanings
 						scheduler.save()
 
 				return redirect('customer:subscriptioninvoice',evaluation_id_encrypted)
