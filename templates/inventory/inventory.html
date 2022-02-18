@@ -1165,6 +1165,16 @@
                                       </label>
                         </div><!--ticket-form-left-->
                         <div class="ticket-form-right">
+                            <div class=" bold-text common-label"> <label>Store</label></div>
+                            <label for="favcity">
+                            <select name="store_filter" id="store_filter_id">
+                            <option value=''>---ALL---</option>
+                            {% for store in stores %}
+                            <option value="{{store.id}}" {% if store.id == item_store %}selected{% endif %}>{{store.store_name}}</option>
+                            {% endfor %}
+                                         
+                          </select>
+                            </label>
                         </div>
                       </div><!--ticket-wrapper-row ticket-forms-boxes--> 
                     <div class="col-md-12 text-center">
@@ -1660,7 +1670,7 @@ function changeSelect(va){
     {
     var url='{% url 'bleach-inventory:inventory-inv' %}';
     var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),item_category:$('#category_filter_id').val(),item_segment:$('#segment_filter_id').val(),item_line:$('#line_filter_id').val(),item_status:$('#item_status_filter_id').val(),
-    item_supplier:$('#supplier_filter_id').val()
+    item_supplier:$('#supplier_filter_id').val(),item_store:$('#store_filter_id').val()
     };
     for(key in args) 
         params[key]=args[key];
