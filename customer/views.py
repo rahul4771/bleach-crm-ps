@@ -195,9 +195,27 @@ class Quatation(View):
 
 				#Save Individual cleaning price
 				if order.orderschedules:
+					total_cleanings   = len(order.orderschedules)
+					cleaning_cost_sum          = 0
+					discount_cost_sum          = 0
+					additional_charge_cost_sum = 0
+					count                      = 0
 					for scheduler in order.orderschedules:
-						scheduler.cleaning_amount = scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
-				
+						count                                += 1
+						if total_cleanings != count:
+							scheduler.cleaning_cost           = scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
+							scheduler.discount_cost           = order.evaluation.discount/total_cleanings
+							scheduler.additional_charge_cost  = order.evaluation.additional_charge/total_cleanings
+							
+							cleaning_cost_sum                += scheduler.cleaning_cost
+							discount_cost_sum                += scheduler.discount_cost
+							additional_charge_cost_sum       += scheduler.discount_cost
+						else:
+							scheduler.cleaning_cost           = scheduler.order_scheduler_book.total_cost-cleaning_cost_sum	
+							scheduler.discount_cost           = order.evaluation.discount-discount_cost_sum
+							scheduler.additional_charge_cost  = order.evaluation.additional_charge-additional_charge_cost_sum
+
+						scheduler.save()
 
 				#sms and email
 				print("checkp1")
@@ -402,6 +420,16 @@ class SubscriptionQuatation(View):
 					new_invoice_no 		 = str(timezone.now().year)+'00001'
 				order_update      = Order.objects.filter(order_no=evaluation_id,evaluation__customer__username=user_name).update(order_status='APPROVED_BY_CLIENT',invoice_no=new_invoice_no)
 				
+				order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')).annotate(customerbooking=Sum(Case(When(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING',then=1),default=0,output_field=IntegerField()))).get(order_no=evaluation_id)
+				#Save Individual cleaning price
+				if order.orderschedules:
+					total_cleanings = len(order.orderschedules)
+					for scheduler in order.orderschedules:
+						scheduler.cleaning_cost          = scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
+						scheduler.discount_cost          = order.evaluation.discount/total_cleanings
+						scheduler.additional_charge_cost = order.evaluation.additional_charge/total_cleanings
+						scheduler.save()
+
 				return redirect('customer:subscriptioninvoice',evaluation_id_encrypted)
 			
 			else:

@@ -2017,7 +2017,7 @@ class CheckOutAPI(APIView):
 		check_out_notes = request.data.get('check_out_notes')
 	
 		try:
-			cleaning_team_detail = CleaningTeam.objects.select_related('order_scheduler__order').get(is_active=True,id=team_id)
+			cleaning_team_detail = CleaningTeam.objects.select_related('order_scheduler__order__evaluation','order_scheduler__order_scheduler_book__service_type','order_scheduler__customer_address__customer').get(is_active=True,id=team_id)
 		except:	
 			cleaning_team_detail = None
 
@@ -2046,7 +2046,104 @@ class CheckOutAPI(APIView):
 						taken_status='AFTER_CLEANING'
 						)
 
+		# #Xero Integration
+		# xero                        = XeroConnection.objects.first()
+		# ##xero Update Access Token and Refresh Token
+		# header                      = {
+		# 								'Authorization': 'Basic '+xero.client_encoded,
+		# 								'Content-Type': 'application/x-www-form-urlencoded'
+		# 									}
+		# body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
+		# token_response              = requests.post('https://identity.xero.com/connect/token',
+		# 										data=body,
+		# 										headers=header 
+		# 									).json()
+		# access_token                = token_response['access_token']
+		# refresh_token               = token_response['refresh_token']
 
+		# xero.access_token  = access_token
+		# xero.refresh_token = refresh_token
+		# xero.save()
+
+		# ##Xero invoice data 
+		# if cleaning_team_detail.order_scheduler.customer_address.customer.xero_account_id:
+		# 	ContactID = cleaning_team_detail.order_scheduler.customer_address.customer.xero_account_id
+		# else:
+		# 	##Xero Create Customer ID and Save
+		# 	contact_data                = {
+		# 									"Name":cleaning_team_detail.order_scheduler.customer_address.customer.name,
+		# 									"ContactNumber":cleaning_team_detail.order_scheduler.customer_address.customer.mobile_number,
+		# 									"EmailAddress":cleaning_team_detail.order_scheduler.customer_address.customer.email,
+		# 									"ContactStatus":"ACTIVE",
+		# 									"IsCustomer":True,
+		# 									"DefaultCurrency":"KWD"
+		# 												}
+											
+		# 	header                      = {
+		# 								'xero-tenant-id': xero.tenant_id,
+		# 								'Authorization': 'Bearer '+access_token,
+		# 								'Accept': 'application/json',
+		# 								'Content-Type': 'application/json'
+		# 									}
+
+		# 	create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
+		# 											json=contact_data,
+		# 											headers=header 
+		# 										).json()
+
+		# 	cleaning_team_detail.order_scheduler.customer_address.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
+		# 	cleaning_team_detail.order_scheduler.customer_address.customer.save()
+
+		# ##Invoice Data
+		# order_evaluation_books    = EvaluationBook.objects.filter(evaluation_details__evaluation=cleaning_team_detail.order_scheduler.order.evaluation)
+		# evaluation_book_schedules = OrderScheduler.objects.filter(order_scheduler_book=cleaning_team_detail.order_scheduler.order_scheduler_book)
+		# book_no                   = 0
+		# cleaning_no               = 0
+		# for order_evaluation_book in order_evaluation_books:
+		# 	book_no     += 1
+		# 	if order_evaluation_book == cleaning_team_detail.order_scheduler.order_scheduler_book:
+		# 		break
+		# for evaluation_book_schedule in evaluation_book_schedules:
+		# 	cleaning_no += 1
+		# 	if evaluation_book_schedule == cleaning_team_detail.order_scheduler:
+		# 		break
+		# InvoiceNumber               = str(cleaning_team_detail.order_scheduler.order.evaluation.tracking_no)+'-'+str(book_no)+'V'+str(cleaning_no)
+				
+		# invoice_data                = 	{
+		# 								"Type":"ACCREC",
+		# 								"Contact":{
+		# 									"ContactID":ContactID
+		# 								},
+		# 								"Date":cleaning_team_detail.order_scheduler.start_at.strftime('%Y-%m-%d'),
+		# 								"DueDate":cleaning_team_detail.order_scheduler.start_at.strftime('%Y-%m-%d'),
+		# 								"LineAmountTypes":"NoTax",
+		# 								"InvoiceNumber":InvoiceNumber,
+		# 								"Reference":cleaning_team_detail.order_scheduler.order.order_no,
+		# 								"CurrencyCode":"KWD",
+		# 								"Status":"SUBMITTED",
+		# 								"LineItems":[
+		# 									{
+		# 										"Description":cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.name,
+		# 										"Quantity":"1",
+		# 										"UnitAmount":cleaning_team_detail.order_scheduler.cleaning_cost,
+		# 										"AccountCode":cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.xero_account,
+		# 										"TaxType":"NONE"
+		# 									}
+		# 								]
+		# 								}
+
+		# ##xero Create Invoice
+		# header                      = {
+        #                                 'xero-tenant-id': xero.tenant_id,
+        #                                 'Authorization': 'Bearer '+access_token,
+        #                                 'Accept': 'application/json',
+        #                                 'Content-Type': 'application/json'
+        #                                     }
+
+		# create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+		# 										json=invoice_data,
+		# 										headers=header 
+		# 									)
 
 		language = cleaning_team_detail.order_scheduler.order.evaluation.customer.sms_preference
 

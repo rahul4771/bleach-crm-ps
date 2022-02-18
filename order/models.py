@@ -183,7 +183,10 @@ class OrderScheduler(models.Model):
 	stock_out_items_submitted = models.BooleanField(null=False,blank=True,default=False)
 	items_collected       	= models.BooleanField(null=False,blank=True,default=False)
 	stock_in_initiated      = models.BooleanField(null=False,blank=True,default=False)
+
 	cleaning_cost           = models.FloatField(null=True,blank=True)
+	discount_cost           = models.FloatField(null=True,blank=True)
+	additional_charge_cost  = models.FloatField(null=True,blank=True)
 
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)
