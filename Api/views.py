@@ -2047,6 +2047,7 @@ class CheckOutAPI(APIView):
 						)
 
 		#Xero Integration
+		xero                        = XeroConnection.objects.first()
 		##xero Update Access Token and Refresh Token
 		header                      = {
 										'Authorization': 'Basic '+xero.client_encoded,
@@ -2094,7 +2095,7 @@ class CheckOutAPI(APIView):
 			cleaning_team_detail.order_scheduler.customer_address.customer.save()
 
 		##Invoice Data
-		order_evaluation_books    = EvaluationBook.objects.filter(evaluation=cleaning_team_detail.order_scheduler.order.evaluation)
+		order_evaluation_books    = EvaluationBook.objects.filter(evaluation_details__evaluation=cleaning_team_detail.order_scheduler.order.evaluation)
 		evaluation_book_schedules = OrderScheduler.objects.filter(order_scheduler_book=cleaning_team_detail.order_scheduler.order_scheduler_book)
 		book_no                   = 0
 		cleaning_no               = 0
@@ -2106,7 +2107,7 @@ class CheckOutAPI(APIView):
 			cleaning_no += 1
 			if evaluation_book_schedule == cleaning_team_detail.order_scheduler:
 				break
-		InvoiceNumber               = str(cleaning_team_detail.order_scheduler.order)+str(book_no)+str(cleaning_no)
+		InvoiceNumber               = str(cleaning_team_detail.order_scheduler.order.evaluation.tracking_no)+'-'+str(book_no)+'V'+str(cleaning_no)
 				
 		invoice_data                = 	{
 										"Type":"ACCREC",
