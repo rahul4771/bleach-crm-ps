@@ -1068,7 +1068,7 @@ class CashCollect(IsAccountant,View):
 					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=0,order_status='ORDER_CANCELLED') 
 					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CHEQUE',received_by=request.user,paid_date=payment_date,check_no=check_no,check_date=check_date,receipt_no=new_receipt_no)
 					
-					messages.success(request,"Payment Received thruogh Cheque")
+					messages.success(request,"Payment Received through Cheque")
 
 				if payment_method == 'BANK':
 					bank_name   = request.POST.get('bank_name')
@@ -1078,6 +1078,85 @@ class CashCollect(IsAccountant,View):
 					PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='BANK',received_by=request.user,paid_date=payment_date,bank_name=bank_name,bank_no=bank_no,receipt_no=new_receipt_no)
 
 					messages.success(request,"Payment Received through Bank")
+				
+				# xero          = XeroConnection.objects.first()
+				# order         = Order.objects.select_related('evaluation__customer').get(id=order_id)
+				# #Update Access Token and Refresh Token
+				# header                      = {
+				# 								'Authorization': 'Basic '+xero.client_encoded,
+				# 								'Content-Type': 'application/x-www-form-urlencoded'
+				# 									}
+				# body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
+				# token_response              = requests.post('https://identity.xero.com/connect/token',
+				# 										data=body,
+				# 										headers=header 
+				# 									).json()
+				# access_token                = token_response['access_token']
+				# refresh_token               = token_response['refresh_token']
+
+				# xero.access_token  = access_token
+				# xero.refresh_token = refresh_token
+				# xero.save()
+
+				# ##Xero Contact
+				# if not cleaning_team_detail.order_scheduler.customer_address.customer.xero_account_id:
+
+				# 	##Xero Create Customer ID and Save
+				# 	contact_data                = {
+				# 									"Name":cleaning_team_detail.order_scheduler.customer_address.customer.name,
+				# 									"ContactNumber":cleaning_team_detail.order_scheduler.customer_address.customer.mobile_number,
+				# 									"EmailAddress":cleaning_team_detail.order_scheduler.customer_address.customer.email,
+				# 									"ContactStatus":"ACTIVE",
+				# 									"IsCustomer":True,
+				# 									"DefaultCurrency":"KWD"
+				# 												}
+													
+				# 	header                      = {
+				# 								'xero-tenant-id': xero.tenant_id,
+				# 								'Authorization': 'Bearer '+access_token,
+				# 								'Accept': 'application/json',
+				# 								'Content-Type': 'application/json'
+				# 									}
+
+				# 	create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
+				# 											json=contact_data,
+				# 											headers=header 
+				# 										).json()
+
+				# 	order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
+				# 	order.evaluation.customer.save() 
+
+				# #Xero Transaction
+				# header                      = {
+				# 							'xero-tenant-id': xero.tenant_id,
+				# 							'Authorization': 'Bearer '+access_token,
+				# 							'Accept': 'application/json',
+				# 							'Content-Type': 'application/json'
+				# 								}
+				# transaction_data            = {
+				# 								"Type": "RECEIVE",
+				# 								"Reference": order.evaluation.evaluation_id,
+				# 								"Date":datetime.strftime(payment_date,'%Y-%m-%d'),
+				# 								"CurrencyCode":"KWD",
+				# 								"Contact": {
+				# 									"ContactID": order.evaluation.customer.xero_account_id,
+				# 								},
+				# 								"LineItems": [{
+				# 									"Description": payment_method,
+				# 									"UnitAmount": amount,
+				# 									"AccountCode": "200",
+				# 									"TaxType":"NONE"
+				# 								}],
+				# 								"BankAccount": {
+				# 									"Code": "200"
+				# 								}
+				# 								}
+												
+				# update_transaction          = requests.post('https://api.xero.com/api.xro/2.0/BankTransactions',
+				# 										json=transaction_data,
+				# 										headers=header 
+				# 									)
+
 			else:
 				payment_method = request.POST.get('payment_method')
 				amount       = request.POST.get('amount')
@@ -1161,6 +1240,85 @@ class CashCollect(IsAccountant,View):
 					closing_order	= Order.objects.get(is_active=True,id=order_id)
 					closing_order.order_status = 'ORDER_CLOSED'
 					closing_order.save()
+
+
+				# xero          = XeroConnection.objects.first()
+				# order         = Order.objects.select_related('evaluation__customer').get(id=order_id)
+				# #Update Access Token and Refresh Token
+				# header                      = {
+				# 								'Authorization': 'Basic '+xero.client_encoded,
+				# 								'Content-Type': 'application/x-www-form-urlencoded'
+				# 									}
+				# body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
+				# token_response              = requests.post('https://identity.xero.com/connect/token',
+				# 										data=body,
+				# 										headers=header 
+				# 									).json()
+				# access_token                = token_response['access_token']
+				# refresh_token               = token_response['refresh_token']
+
+				# xero.access_token  = access_token
+				# xero.refresh_token = refresh_token
+				# xero.save()
+
+				# ##Xero Contact
+				# if not order.evaluation.customer.xero_account_id:
+
+				# 	##Xero Create Customer ID and Save
+				# 	contact_data                = {
+				# 									"Name":order.evaluation.customer.name,
+				# 									"ContactNumber":order.evaluation.customer.mobile_number,
+				# 									"EmailAddress":order.evaluation.customer.email,
+				# 									"ContactStatus":"ACTIVE",
+				# 									"IsCustomer":True,
+				# 									"DefaultCurrency":"KWD"
+				# 												}
+													
+				# 	header                      = {
+				# 								'xero-tenant-id': xero.tenant_id,
+				# 								'Authorization': 'Bearer '+access_token,
+				# 								'Accept': 'application/json',
+				# 								'Content-Type': 'application/json'
+				# 									}
+
+				# 	create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
+				# 											json=contact_data,
+				# 											headers=header 
+				# 										).json()
+
+				# 	order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
+				# 	order.evaluation.customer.save() 
+
+				# #Xero Transaction
+				# header                      = {
+				# 							'xero-tenant-id': xero.tenant_id,
+				# 							'Authorization': 'Bearer '+access_token,
+				# 							'Accept': 'application/json',
+				# 							'Content-Type': 'application/json'
+				# 								}
+				# transaction_data            = {
+				# 								"Type": "RECEIVE",
+				# 								"Reference": order.evaluation.evaluation_id,
+				# 								"Date":datetime.strftime(payment_date,'%Y-%m-%d'),
+				# 								"CurrencyCode":"KWD",
+				# 								"Contact": {
+				# 									"ContactID": order.evaluation.customer.xero_account_id,
+				# 								},
+				# 								"LineItems": [{
+				# 									"Description": payment_method,
+				# 									"UnitAmount": amount,
+				# 									"AccountCode": "200",
+				# 									"TaxType":"NONE"
+				# 								}],
+				# 								"BankAccount": {
+				# 									"Code": "091"
+				# 								}
+				# 								}
+												
+				# update_transaction          = requests.post('https://api.xero.com/api.xro/2.0/BankTransactions',
+				# 										json=transaction_data,
+				# 										headers=header 
+				# 									)
 		else:
 			messages.suucess(request,"Something Went Wrong")
 

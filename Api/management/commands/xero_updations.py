@@ -10,6 +10,7 @@ from django.db.models import Prefetch
 import requests
 import json
 
+from accountant.models import PaymentHistory
 from Api.models import XeroConnection
 
 
@@ -37,32 +38,68 @@ class Command(BaseCommand):
         xero.save()
 
         #Bank Transaction
-        header                      = {
-                                        'xero-tenant-id': xero.tenant_id,
-                                        'Authorization': 'Bearer '+access_token,
-                                        'Accept': 'application/json',
-                                        'Content-Type': 'application/json'
+        transaction_start_date      = datetime.strptime("01-01-2022","%d-%m-%Y").date()
+        transactions                = PaymentHistory.objects.select_related('order__evaluation__customer').filter(paid_date__date__gte=transaction_start_date)
+        for transaction in transactions:
+            if transaction.payment_mode == 'ONLINECREDIT':
+                Description = transaction.payment_gateway
+            else:
+                Description = transaction.payment_mode
+
+            ##Xero Contact
+            if not transaction.order.evaluation.customer.xero_account_id:
+                ##Xero Create Customer ID and Save
+                contact_data                = {
+                                                "Name":transaction.order.evaluation.customer.name,
+                                                "ContactNumber":transaction.order.evaluation.customer.mobile_number,
+                                                "EmailAddress":transaction.order.evaluation.customer.email,
+                                                "ContactStatus":"ACTIVE",
+                                                "IsCustomer":True,
+                                                "DefaultCurrency":"KWD"
+                                                            }
+                                                
+                header                      = {
+                                            'xero-tenant-id': xero.tenant_id,
+                                            'Authorization': 'Bearer '+access_token,
+                                            'Accept': 'application/json',
+                                            'Content-Type': 'application/json'
+                                                }
+
+                create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
+                                                        json=contact_data,
+                                                        headers=header 
+                                                    ).json()
+
+                transaction.order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
+                transaction.order.evaluation.customer.save()
+
+            header                      = {
+                                            'xero-tenant-id': xero.tenant_id,
+                                            'Authorization': 'Bearer '+access_token,
+                                            'Accept': 'application/json',
+                                            'Content-Type': 'application/json'
+                                                }
+
+            transaction_data            = {
+                                            "Type": "RECEIVE",
+                                            "Reference": transaction.order.evaluation.evaluation_id,
+                                            "Date":datetime.strftime(transaction.paid_date,"%Y-%m-%d"),
+                                            "Contact": {
+                                                "ContactID": transaction.order.evaluation.customer.xero_account_id,
+                                            },
+                                            "LineItems": [{
+                                                "Description": Description,
+                                                "UnitAmount": transaction.amount_paid,
+                                                "AccountCode": "200",
+                                                "TaxType":"NONE"
+                                            }],
+                                            "BankAccount": {
+                                                "Code": "091"
                                             }
-        transaction_data            = {
-                                        "Type": "RECEIVE",
-                                        "Reference": "Test",
-                                        "Date":"2022-02-09",
-                                        "Contact": {
-                                            "ContactID": "3b954d80-bfbf-4c98-825c-2b7f22803147"
-                                        },
-                                        "LineItems": [{
-                                            "Description": "Test2",
-                                            "UnitAmount": "1.00",
-                                            "AccountCode": "200",
-                                            "TaxType":"NONE"
-                                        }],
-                                        "BankAccount": {
-                                            "Code": "090"
-                                        }
-                                        }
-                                        
-        update_transaction          = requests.post('https://api.xero.com/api.xro/2.0/BankTransactions',
-                                                json=transaction_data,
-                                                headers=header 
-                                            )
+                                            }
+                                            
+            update_transaction          = requests.post('https://api.xero.com/api.xro/2.0/BankTransactions',
+                                                    json=transaction_data,
+                                                    headers=header 
+                                                )
         
