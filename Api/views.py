@@ -2128,6 +2128,20 @@ class CheckOutAPI(APIView):
 		# 										"UnitAmount":cleaning_team_detail.order_scheduler.cleaning_cost,
 		# 										"AccountCode":cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.xero_account,
 		# 										"TaxType":"NONE"
+		# 									},
+		# 									{
+		# 										"Description":"Additional Charge",
+		# 										"Quantity":"1",
+		# 										"UnitAmount":cleaning_team_detail.order_scheduler.additional_charge_cost,
+		# 										"AccountCode":cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.xero_account,
+		# 										"TaxType":"NONE"
+		# 									},
+		# 									{
+		# 										"Description":"Discount",
+		# 										"Quantity":"1",
+		# 										"UnitAmount":-cleaning_team_detail.order_scheduler.discount_cost,
+		# 										"AccountCode":cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.xero_account,
+		# 										"TaxType":"NONE"
 		# 									}
 		# 								]
 		# 								}
