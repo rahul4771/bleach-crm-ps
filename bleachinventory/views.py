@@ -3126,8 +3126,8 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 					for request_order_item in request_order_items:
 						
 						if request_order_item.product.item_add_type == 'quantity':
-							request_order_item.product.total_quantity = float(request_order_item.product.total_quantity)-float(request_order_item.item_count)
-							store_item.quantity                       = float(store_item.quantity)-float(request_order_item.item_count)
+							request_order_item.product.total_quantity = round(float(request_order_item.product.total_quantity)-float(request_order_item.item_count),2)
+							store_item.quantity                       = round(float(store_item.quantity)-float(request_order_item.item_count),2)
 						
 						request_order_item.product.save()
 						request_order_item.is_received             = True
