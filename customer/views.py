@@ -195,25 +195,31 @@ class Quatation(View):
 
 				#Save Individual cleaning price
 				if order.orderschedules:
-					total_cleanings   = len(order.orderschedules)
+					total_cleanings            = len(order.orderschedules)
+					
 					cleaning_cost_sum          = 0
 					discount_cost_sum          = 0
 					additional_charge_cost_sum = 0
 					count                      = 0
 					for scheduler in order.orderschedules:
 						count                                += 1
-						if total_cleanings != count:
-							scheduler.cleaning_cost           = scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
-							scheduler.discount_cost           = order.evaluation.discount/total_cleanings
-							scheduler.additional_charge_cost  = order.evaluation.additional_charge/total_cleanings
-							
-							cleaning_cost_sum                += scheduler.cleaning_cost
-							discount_cost_sum                += scheduler.discount_cost
-							additional_charge_cost_sum       += scheduler.discount_cost
+		
+						#service cost update
+						if count == len(scheduler.order_scheduler_book.bookschedules):
+							scheduler.cleaning_cost           = round(scheduler.order_scheduler_book.total_cost-cleaning_cost_sum,2)
+							cleaning_cost_sum                 = 0
 						else:
-							scheduler.cleaning_cost           = scheduler.order_scheduler_book.total_cost-cleaning_cost_sum	
-							scheduler.discount_cost           = order.evaluation.discount-discount_cost_sum
-							scheduler.additional_charge_cost  = order.evaluation.additional_charge-additional_charge_cost_sum
+							scheduler.cleaning_cost           = round(scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules),2)
+							cleaning_cost_sum                += scheduler.cleaning_cost
+						#discount and additional cost update	
+						if total_cleanings != count:
+							scheduler.discount_cost           = round(order.evaluation.discount/total_cleanings,2)
+							scheduler.additional_charge_cost  = round(order.evaluation.additional_charge/total_cleanings,2)
+							discount_cost_sum                += scheduler.discount_cost
+							additional_charge_cost_sum       += scheduler.additional_charge_cost
+						else:	
+							scheduler.discount_cost           = round(order.evaluation.discount-discount_cost_sum,2)
+							scheduler.additional_charge_cost  = round(order.evaluation.additional_charge-additional_charge_cost_sum,2)
 
 						scheduler.save()
 
