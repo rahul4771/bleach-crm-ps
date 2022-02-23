@@ -264,7 +264,7 @@
                         <option value="">--Select Segment--</option>
                     
                     </select> -->
-                    <input hidden type="text" name="attribute_segment" id="id_segment" required>
+                    <input hidden type="text" name="attribute_segment" id="id_segment" >
 
                     <div class="wrap-drop" id="noble-gases2" style="z-index: 5 !important;" >
                         <span id="id_seg_text">--Select Segment--</span>
@@ -284,7 +284,7 @@
                         <option value="">--Select Line--</option>
                     
                     </select> -->
-                    <input  hidden type="text" name="attribute_line" id="id_line" required>
+                    <input  hidden type="text" name="attribute_line" id="id_line" >
 
                     <div class="wrap-drop" id="noble-gases3" style="z-index: 3 !important;" >
                         <span id="id_line_text">--Select Line--</span>
@@ -940,11 +940,11 @@ $(function () {
 
             if ($('#name_attribute').val() == ''){
                 $('#name_attribute').addClass('red-border-input');
-            }else if ($('input[name=attribute_category]').val() == '' && $('#id_selectText').text() !== 'All'){
+            }else if ($('input[name=attribute_category]').val() == '' ){
                 $('#noble-gases').addClass('red-border-input');
             }else if ($('input[name=attribute_segment]').val() == '' && $('#id_selectText').text() !== 'All'){
                 $('#noble-gases2').addClass('red-border-input');
-            }else if ($('input[name=attribute_line]').val() == '' && $('#id_selectText').text() !== 'All'){
+            }else if ($('input[name=attribute_line]').val() == '' && $('#id_seg_text').text() !== 'All'){
                 $('#noble-gases3').addClass('red-border-input');
             }else{
                 console.log("lolo")

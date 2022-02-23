@@ -12,7 +12,7 @@ from bleachadmin.models import ServicePriceRange,Settings
 from django.core.mail import send_mail,EmailMultiAlternatives
 from Api.serializers import DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
-from bleachinventory.models import QuantityStoreDetails,ExternalCustomer,Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,CheckOutItemUnits,ItemHistory,InventoryAccessory,InventoryFinshedItem,Store
+from bleachinventory.models import QuantityStoreDetails,ExternalCustomer,Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,CheckOutItemUnits,ItemHistory,InventoryAccessory,InventoryFinshedItem,Store
 import re
 import random
 import string
@@ -337,6 +337,83 @@ class PaymentResponseCredit(APIView):
 				order.payment_status         = 'COMPLETED'
 				order.payment_completed_date = timezone.now()
 			order.save()
+
+			# xero          = XeroConnection.objects.first()
+			# #Update Access Token and Refresh Token
+			# header                      = {
+			# 								'Authorization': 'Basic '+xero.client_encoded,
+			# 								'Content-Type': 'application/x-www-form-urlencoded'
+			# 									}
+			# body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
+			# token_response              = requests.post('https://identity.xero.com/connect/token',
+			# 										data=body,
+			# 										headers=header 
+			# 									).json()
+			# access_token                = token_response['access_token']
+			# refresh_token               = token_response['refresh_token']
+
+			# xero.access_token  = access_token
+			# xero.refresh_token = refresh_token
+			# xero.save()
+
+			# ##Xero Contact
+			# if not order.evaluation.customer.xero_account_id:
+
+			# 	##Xero Create Customer ID and Save
+			# 	contact_data                = {
+			# 									"Name":order.evaluation.customer.name,
+			# 									"ContactNumber":order.evaluation.customer.mobile_number,
+			# 									"EmailAddress":order.evaluation.customer.email,
+			# 									"ContactStatus":"ACTIVE",
+			# 									"IsCustomer":True,
+			# 									"DefaultCurrency":"KWD"
+			# 												}
+												
+			# 	header                      = {
+			# 								'xero-tenant-id': xero.tenant_id,
+			# 								'Authorization': 'Bearer '+access_token,
+			# 								'Accept': 'application/json',
+			# 								'Content-Type': 'application/json'
+			# 									}
+
+			# 	create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
+			# 											json=contact_data,
+			# 											headers=header 
+			# 										).json()
+
+			# 	order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
+			# 	order.evaluation.customer.save() 
+
+			# #Xero Transaction
+			# header                      = {
+			# 							'xero-tenant-id': xero.tenant_id,
+			# 							'Authorization': 'Bearer '+access_token,
+			# 							'Accept': 'application/json',
+			# 							'Content-Type': 'application/json'
+			# 								}
+			# transaction_data            = {
+			# 								"Type": "RECEIVE",
+			# 								"Reference": order.evaluation.evaluation_id,
+			# 								"Date":datetime.strftime(timezone.now(),'%Y-%m-%d'),
+			# 								"CurrencyCode":"KWD",
+			# 								"Contact": {
+			# 									"ContactID": order.evaluation.customer.xero_account_id,
+			# 								},
+			# 								"LineItems": [{
+			# 									"Description": "CREDITCARD",
+			# 									"UnitAmount": amount_paid,
+			# 									"AccountCode": "200",
+			# 									"TaxType":"NONE"
+			# 								}],
+			# 								"BankAccount": {
+			# 									"Code": "091"
+			# 								}
+			# 								}
+											
+			# update_transaction          = requests.post('https://api.xero.com/api.xro/2.0/BankTransactions',
+			# 										json=transaction_data,
+			# 										headers=header 
+			# 									)
 
 			#payment receipt sms
 			url = "https://smsapi.future-club.com/fccsms.aspx"
@@ -2017,7 +2094,7 @@ class CheckOutAPI(APIView):
 		check_out_notes = request.data.get('check_out_notes')
 	
 		try:
-			cleaning_team_detail = CleaningTeam.objects.select_related('order_scheduler__order').get(is_active=True,id=team_id)
+			cleaning_team_detail = CleaningTeam.objects.select_related('order_scheduler__order__evaluation','order_scheduler__order_scheduler_book__service_type','order_scheduler__customer_address__customer').get(is_active=True,id=team_id)
 		except:	
 			cleaning_team_detail = None
 
@@ -2046,7 +2123,118 @@ class CheckOutAPI(APIView):
 						taken_status='AFTER_CLEANING'
 						)
 
+		# #Xero Integration
+		# xero                        = XeroConnection.objects.first()
+		# ##xero Update Access Token and Refresh Token
+		# header                      = {
+		# 								'Authorization': 'Basic '+xero.client_encoded,
+		# 								'Content-Type': 'application/x-www-form-urlencoded'
+		# 									}
+		# body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
+		# token_response              = requests.post('https://identity.xero.com/connect/token',
+		# 										data=body,
+		# 										headers=header 
+		# 									).json()
+		# access_token                = token_response['access_token']
+		# refresh_token               = token_response['refresh_token']
 
+		# xero.access_token  = access_token
+		# xero.refresh_token = refresh_token
+		# xero.save()
+
+		# ##Xero Contact
+		# if cleaning_team_detail.order_scheduler.customer_address.customer.xero_account_id:
+		# 	ContactID = cleaning_team_detail.order_scheduler.customer_address.customer.xero_account_id
+		# else:
+		# 	##Xero Create Customer ID and Save
+		# 	contact_data                = {
+		# 									"Name":cleaning_team_detail.order_scheduler.customer_address.customer.name,
+		# 									"ContactNumber":cleaning_team_detail.order_scheduler.customer_address.customer.mobile_number,
+		# 									"EmailAddress":cleaning_team_detail.order_scheduler.customer_address.customer.email,
+		# 									"ContactStatus":"ACTIVE",
+		# 									"IsCustomer":True,
+		# 									"DefaultCurrency":"KWD"
+		# 												}
+											
+		# 	header                      = {
+		# 								'xero-tenant-id': xero.tenant_id,
+		# 								'Authorization': 'Bearer '+access_token,
+		# 								'Accept': 'application/json',
+		# 								'Content-Type': 'application/json'
+		# 									}
+
+		# 	create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
+		# 											json=contact_data,
+		# 											headers=header 
+		# 										).json()
+
+		# 	cleaning_team_detail.order_scheduler.customer_address.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
+		# 	cleaning_team_detail.order_scheduler.customer_address.customer.save()
+
+		# ##Invoice Data
+		# order_evaluation_books    = EvaluationBook.objects.filter(evaluation_details__evaluation=cleaning_team_detail.order_scheduler.order.evaluation)
+		# evaluation_book_schedules = OrderScheduler.objects.filter(order_scheduler_book=cleaning_team_detail.order_scheduler.order_scheduler_book)
+		# book_no                   = 0
+		# cleaning_no               = 0
+		# for order_evaluation_book in order_evaluation_books:
+		# 	book_no     += 1
+		# 	if order_evaluation_book == cleaning_team_detail.order_scheduler.order_scheduler_book:
+		# 		break
+		# for evaluation_book_schedule in evaluation_book_schedules:
+		# 	cleaning_no += 1
+		# 	if evaluation_book_schedule == cleaning_team_detail.order_scheduler:
+		# 		break
+		# InvoiceNumber               = str(cleaning_team_detail.order_scheduler.order.evaluation.tracking_no)+'-'+str(book_no)+'V'+str(cleaning_no)
+				
+		# invoice_data                = 	{
+		# 								"Type":"ACCREC",
+		# 								"Contact":{
+		# 									"ContactID":ContactID
+		# 								},
+		# 								"Date":cleaning_team_detail.order_scheduler.start_at.strftime('%Y-%m-%d'),
+		# 								"DueDate":cleaning_team_detail.order_scheduler.start_at.strftime('%Y-%m-%d'),
+		# 								"LineAmountTypes":"NoTax",
+		# 								"InvoiceNumber":InvoiceNumber,
+		# 								"Reference":cleaning_team_detail.order_scheduler.order.order_no,
+		# 								"CurrencyCode":"KWD",
+		# 								"Status":"SUBMITTED",
+		# 								"LineItems":[
+		# 									{
+		# 										"Description":cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.name,
+		# 										"Quantity":"1",
+		# 										"UnitAmount":cleaning_team_detail.order_scheduler.cleaning_cost,
+		# 										"AccountCode":cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.xero_account,
+		# 										"TaxType":"NONE"
+		# 									},
+		# 									{
+		# 										"Description":"Additional Charge",
+		# 										"Quantity":"1",
+		# 										"UnitAmount":cleaning_team_detail.order_scheduler.additional_charge_cost,
+		# 										"AccountCode":cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.xero_account,
+		# 										"TaxType":"NONE"
+		# 									},
+		# 									{
+		# 										"Description":"Discount",
+		# 										"Quantity":"1",
+		# 										"UnitAmount":-cleaning_team_detail.order_scheduler.discount_cost,
+		# 										"AccountCode":cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.xero_account,
+		# 										"TaxType":"NONE"
+		# 									}
+		# 								]
+		# 								}
+
+		# ##xero Create Invoice
+		# header                      = {
+        #                                 'xero-tenant-id': xero.tenant_id,
+        #                                 'Authorization': 'Bearer '+access_token,
+        #                                 'Accept': 'application/json',
+        #                                 'Content-Type': 'application/json'
+        #                                     }
+
+		# create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+		# 										json=invoice_data,
+		# 										headers=header 
+		# 									)
 
 		language = cleaning_team_detail.order_scheduler.order.evaluation.customer.sms_preference
 
@@ -2986,6 +3174,82 @@ class InventorySupplierItemsAPI(APIView):
 			item_dict['item_price'] = item.item_price
 			items.append(item_dict)
 		response_dict['items']=items
+		return Response(response_dict,HTTP_200_OK)
+
+	def post(self,request):
+		response_dict = {}
+
+		action =request.data.get('action')
+		if action == 'add_item':
+			print("pop")
+			supplier_id = request.data.get('item_supplier_id')
+			item = request.data.get('item')
+			item_price = request.data.get('supplier_item_price')
+			item_count = request.data.get('supplier_item_count')
+			print(supplier_id,item,item_price,item_count,"itmtest")
+			supplier_items_latest = SupplierItems.objects.all().last()
+
+			if supplier_items_latest:
+				code_number  =  int(re.findall(r'(\d+)', supplier_items_latest.supplier_item_id)[0]) + 1
+				new_supplier_item_id = 'SPITM'+str(code_number)
+			else:
+				new_supplier_item_id = 'SPITM9001'
+
+			supplier = Supplier.objects.get(id=int(supplier_id))
+
+			product = InventoryItem.objects.get(id=int(item))
+
+			
+			item_count_check = SupplierItems.objects.filter(item=product).count()
+
+			if item_count_check >= 1:
+				response_dict['message'] = 'Item already exists for a supplier !'
+				response_dict['success'] = False
+				# messages.error(request,"Item already exists for a supplier !")
+			else:
+				SupplierItems.objects.create(supplier=supplier,item=product,item_price=item_price,supplier_item_id=new_supplier_item_id,item_count=item_count)
+				response_dict['message'] = 'Item Added Successfully !'
+				response_dict['success'] = True
+				# messages.success(request,"Item Added Successfully !")
+
+		if action == 'edit_item':
+			print("ppp")
+			supplier_item_id = request.data.get('item_edit_id')
+			item = request.data.get('item')
+			item_price = request.data.get('supplier_item_price')
+			item_count = request.data.get('supplier_item_count')
+
+			supplieritem = SupplierItems.objects.get(id=int(supplier_item_id))
+
+			product = InventoryItem.objects.get(id=int(item))
+
+			print(supplieritem,product,"kop")
+
+			
+			item_check = SupplierItems.objects.filter(item=product).exclude(id=int(supplier_item_id))
+			print(item_check,"icheckk")
+			item_check_count = item_check.count()
+			print(item_check,item_check_count,"icheckk")
+
+			if item_check_count >= 1:
+				response_dict['message'] = 'Item already exists for a supplier !'
+				response_dict['success'] = False
+			else:
+				supplieritem.item = product
+				supplieritem.item_price = item_price
+				supplieritem.item_count = item_count
+				supplieritem.save()
+				
+				response_dict['message'] = 'Item Updated !'
+				response_dict['success'] = True
+
+		# if action == 'delete_item':
+		# 	supplier_item_id = request.data.get('supplier_id_delete')
+
+		# 	supplieritem = SupplierItems.objects.get(id=int(supplier_item_id)).delete()
+
+		# 	response_dict['message'] = 'Item Deleted !'
+		# 	response_dict['success'] = True
 		return Response(response_dict,HTTP_200_OK)
 
 class InventoryItemsListAPI(APIView):
@@ -4629,4 +4893,73 @@ class CheckOutStoreItemsUpdateAPI(APIView):
 		return Response(response_dict, HTTP_200_OK)
 
 
+from Api.models import XeroConnection
 
+class XeroInfoSaveAPI(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request):
+		response_dict = {'success':False}
+		code          = request.GET.get('code')
+		xero          = XeroConnection.objects.first()
+		
+		#Get access Token and Refresh Token
+		header                      = {
+											'Authorization': 'Basic '+xero.client_encoded,
+											'Content-Type': 'application/x-www-form-urlencoded'
+									  }
+		body                        = {"grant_type":"authorization_code","code":code,"redirect_uri":"https://my.bleachkw.com/api/xero/save/"}
+		token_response              = requests.post('https://identity.xero.com/connect/token',
+												data=body,
+												headers=header 
+											).json()
+									
+		access_token                = token_response['access_token']
+		refresh_token               = token_response['refresh_token']
+
+		#Get Tenant Id
+		header                      = {
+										'Authorization': 'Bearer '+access_token,
+										'Content-Type': 'application/json'
+											}
+		body                        = {}
+		response                    = requests.get('https://api.xero.com/connections',
+												data=body,
+												headers=header 
+											)	
+		tenant_response             = json.loads(response.text)[0]	
+		tenantid                    = tenant_response['tenantId']
+		
+		xero.access_token  = access_token
+		xero.refresh_token = refresh_token
+		xero.tenant_id     = tenantid
+		xero.save()
+
+		response_dict = {'success':True}
+		return Response(response_dict, HTTP_200_OK)
+
+
+
+class DailyTransactionsAPI(APIView):
+	def get(self,request):
+		response_dict = {'success':False}
+
+		date         = datetime.strptime(request.GET.get('date'),'%d-%m-%Y')
+		payments     = PaymentHistory.objects.filter(paid_date__date=date)
+		
+		response_dict['date']         = datetime.strftime(date,'%Y-%m-%d')
+		if payments:
+			response_dict['total_debit']  = payments.filter(payment_mode='ONLINECREDIT',payment_gateway='DEBITCARD').aggregate(Sum('amount_paid'))['amount_paid__sum']
+			response_dict['total_credit'] = payments.filter(payment_mode='ONLINECREDIT',payment_gateway='CREDITCARD').aggregate(Sum('amount_paid'))['amount_paid__sum']
+			response_dict['total_cheque'] = payments.filter(payment_mode='CHEQUE').aggregate(Sum('amount_paid'))['amount_paid__sum']
+			response_dict['total_cash']   = payments.filter(payment_mode='CASH').aggregate(Sum('amount_paid'))['amount_paid__sum']
+			response_dict['total_bank']   = payments.filter(payment_mode='BANK').aggregate(Sum('amount_paid'))['amount_paid__sum']
+		else:
+			response_dict['total_debit']  = 0
+			response_dict['total_credit'] = 0
+			response_dict['total_cheque'] = 0
+			response_dict['total_cash']   = 0
+			response_dict['total_bank']   = 0
+
+		return Response(response_dict, HTTP_200_OK)

@@ -1345,8 +1345,15 @@ class InventoryInv(IsInventoryAdminUser,View):
 		except:
 			item_supplier = ''
 
+		try:
+			item_store = request.GET.get('item_store')
+			item_store = int(item_store)
+		except:
+			item_store = ''
+
 		print(item_category,item_segment,item_line,item_status,"mkk")
 		suppliers = Supplier.objects.filter(status=True)
+		stores = Store.objects.all()
 
 		if search:
 			inventory_items                 = InventoryItem.objects.filter(Q(name__icontains=search)|Q(item_code__icontains=search)).annotate(unit_count=Sum(Case(When(unit_item__is_available=True,then=1),default=0,output_field=IntegerField())))
@@ -1413,14 +1420,20 @@ class InventoryInv(IsInventoryAdminUser,View):
 			case4 = Q(item_status=item_status)
 			filters.append(case4)
 
-		if item_supplier:
+		if item_supplier :
 			if item_supplier == 'NOSUPPLIER':
 				case5 = Q(product_supplier__supplier__id=None)
 			else:
 				case5 = Q(product_supplier__supplier__id=item_supplier)
 			filters.append(case5)
 
-		if item_category or item_segment or item_line or item_status or item_supplier:
+		if item_store:
+			
+			case6 = Q( Q(Q(unit_item__store__id=item_store)&Q(unit_item__is_available=True)) | Q(quantity_store_item__item_store__id=item_store)&Q(quantity_store_item__quantity__gt=0))
+			
+			filters.append(case6)
+
+		if item_category or item_segment or item_line or item_status or item_supplier or item_store:
 			filters = functools.reduce(operator.and_,filters)
 
 			inventory_items = inventory_items.filter(filters)
@@ -1509,7 +1522,7 @@ class InventoryInv(IsInventoryAdminUser,View):
 		entry_per_page3 = (inventory_items_assets.end_index())-(inventory_items_assets.start_index())+1
 		entry_per_page4 = (inventory_items_finishedgoods.end_index())-(inventory_items_finishedgoods.start_index())+1
 
-		return render(request,'inventory/inventory.html',{"suppliers":suppliers,"item_type":item_type,"categories":categories,"items":inventory_items,"inventory_items_rawmaterials":inventory_items_rawmaterials,"inventory_items_assets":inventory_items_assets,"inventory_items_finishedgoods":inventory_items_finishedgoods,"search_query":search,"page_range1":page_range1,"page_range2":page_range2,"page_range3":page_range3,"page_range4":page_range4,"entry_per_page1":entry_per_page1,"entry_per_page2":entry_per_page2,"entry_per_page3":entry_per_page3,"entry_per_page4":entry_per_page4,"no_of_entries":no_of_entries,"item_category":item_category,"item_segment":item_segment,"item_line":item_line,"item_status":item_status,"item_supplier":item_supplier})
+		return render(request,'inventory/inventory.html',{"stores":stores,"item_store":item_store,"suppliers":suppliers,"item_type":item_type,"categories":categories,"items":inventory_items,"inventory_items_rawmaterials":inventory_items_rawmaterials,"inventory_items_assets":inventory_items_assets,"inventory_items_finishedgoods":inventory_items_finishedgoods,"search_query":search,"page_range1":page_range1,"page_range2":page_range2,"page_range3":page_range3,"page_range4":page_range4,"entry_per_page1":entry_per_page1,"entry_per_page2":entry_per_page2,"entry_per_page3":entry_per_page3,"entry_per_page4":entry_per_page4,"no_of_entries":no_of_entries,"item_category":item_category,"item_segment":item_segment,"item_line":item_line,"item_status":item_status,"item_supplier":item_supplier})
 
 	def post(self,request):
 		action =request.POST.get('action')
@@ -3113,8 +3126,8 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 					for request_order_item in request_order_items:
 						
 						if request_order_item.product.item_add_type == 'quantity':
-							request_order_item.product.total_quantity = float(request_order_item.product.total_quantity)-float(request_order_item.item_count)
-							store_item.quantity                       = float(store_item.quantity)-float(request_order_item.item_count)
+							request_order_item.product.total_quantity = round(float(request_order_item.product.total_quantity)-float(request_order_item.item_count),2)
+							store_item.quantity                       = round(float(store_item.quantity)-float(request_order_item.item_count),2)
 						
 						request_order_item.product.save()
 						request_order_item.is_received             = True

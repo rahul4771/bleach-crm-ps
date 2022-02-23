@@ -184,6 +184,11 @@ class OrderScheduler(models.Model):
 	items_collected       	= models.BooleanField(null=False,blank=True,default=False)
 	stock_in_initiated      = models.BooleanField(null=False,blank=True,default=False)
 
+	cleaning_cost           = models.FloatField(null=True,blank=True)
+	discount_cost           = models.FloatField(null=True,blank=True)
+	additional_charge_cost  = models.FloatField(null=True,blank=True)
+	is_xero_marked          = models.BooleanField(null=False,blank=True,default=False)
+
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)
 	updated         = models.DateTimeField(auto_now=True)

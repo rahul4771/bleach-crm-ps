@@ -38,12 +38,45 @@ class PaymentHistory(models.Model):
 	transaction_id               = models.CharField(max_length=100,blank=True,null=True)
 	payment_gateway              = models.CharField(max_length=100,blank=True,null=True,choices=PAYMENT_GATEWAY_CHOICES)
 
+	is_xero_marked               = models.BooleanField(null=False,blank=True,default=False)
+
 	is_active      				 = models.BooleanField(null=False,blank=True,default=True)
 	created       			     = models.DateTimeField(auto_now_add=True)
 	updated    				     = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
 		return str(self.order.id)
+
+	def __str__(self):
+		return str(self.order.order_no)
+
+class DailySales(models.Model):
+	sales_date                   = models.DateField(blank=True,null=True)
+	sales_amount 				 = models.FloatField(blank=True,null=True)
+	discount         		     = models.FloatField(blank=True,null=True)
+	additional_amount            = models.FloatField(blank=True,null=True)
+
+	is_active      				 = models.BooleanField(null=False,blank=True,default=True)
+	created       			     = models.DateTimeField(auto_now_add=True)
+	updated    				     = models.DateTimeField(auto_now=True)
+
+	def __unicode__(self):
+		return str(self.sales_date)
+
+	def __str__(self):
+		return str(self.sales_date)
+
+class AdditionalChargeHistory(models.Model):
+	order 						 = models.ForeignKey(Order,blank=False,null=False,related_name='additionalcharges')
+	additional_charge_date       = models.DateField(blank=True,null=True)
+	additional_charge            = models.FloatField(blank=True,null=True)
+
+	is_active      				 = models.BooleanField(null=False,blank=True,default=True)
+	created       			     = models.DateTimeField(auto_now_add=True)
+	updated    				     = models.DateTimeField(auto_now=True)
+
+	def __unicode__(self):
+		return str(self.order.order_no)
 
 	def __str__(self):
 		return str(self.order.order_no)

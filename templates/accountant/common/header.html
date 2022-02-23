@@ -18,6 +18,7 @@
             <ul class="dropdown-menu">
             <li><a href="#" class="gray-text">Profile</a></li>
             <li><a href="#" class="gray-text">My Activity</a></li>
+            <li><a href="https://login.xero.com/identity/connect/authorize?response_type=code&client_id={{xero.client_id}}&redirect_uri=https://my.bleachkw.com/api/xero/save/&scope=accounting.transactions accounting.settings offline_access&state=123" class="gray-text">Xero Login</a></li>
             <li><a href="#" class="gray-text">Edit/Delete</a></li>
             <li role="separator" class="divider"></li>
             <li><a href="{% url 'logout' %}">Sign out</a></li>
