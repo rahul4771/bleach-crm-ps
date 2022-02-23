@@ -355,6 +355,29 @@
                 </div>
 
             </div>
+
+            {% comment %} <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Currency</div>
+
+                    <!-- <select id="status_supplier" class="minimal" name="status">
+                        <option value="True" selected>Active</option>
+                        <option value="False">Inactive</option>
+
+                    </select> -->
+                    <input hidden  type="text" id="currency_supplier" name="currency" value="KWD">
+                    <div class="wrap-drop" id="noble-gases2"  >
+                        <span id="id_selectText2">KWD</span>
+                        <ul class="drop">
+                            <li onclick="changeSelect2('KWD')"><a>KWD</a></li>
+                            <li onclick="changeSelect2('AED')"><a>AED</a></li> 
+                            <li onclick="changeSelect2('USD')"><a>USD</a></li> 
+                        </ul>
+                    </div>
+                </div>
+
+            </div> {% endcomment %}
+
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Status</div>
@@ -575,6 +598,7 @@ DropDown.prototype = {
 $(function () {
     // create new variable for each menu
     var dd1 = new DropDown($('#noble-gases'));
+    var dd1 = new DropDown($('#noble-gases2'));
     // var dd2 = new DropDown($('#other-gases'));
     $(document).click(function () {
         // close menu on document click
@@ -588,6 +612,10 @@ $(function () {
  function changeSelect(va){
         $('#status_supplier').val(va)
     }
+
+function changeSelect2(va){
+    $('#currency_supplier').val(va)
+}
 
     var products = [];
     {% for item in items %}
@@ -815,6 +843,8 @@ function openNavAddBundle(d) {
             $('#id_selectText').text('Inactive');
 
         }
+
+        //$('#currency_supplier').val($(this).data('suppliercurrency'));
         console.log("lop")
 
     })

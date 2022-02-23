@@ -1147,7 +1147,7 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
   width: 100%;
 }
 #soa_amount_calculation{
-  margin-left: 60%;
+  margin-left: auto;
   margin-top: 20px;
  
   color: #4A4A4B;

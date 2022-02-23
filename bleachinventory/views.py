@@ -1119,6 +1119,7 @@ class InventorySupplier(IsInventoryAdminUser,View):
 			address = request.POST.get('address')
 			terms = request.POST.get('terms')
 			status     = request.POST.get('status')
+			# currency     = request.POST.get('currency')
 
 			suppliers    = Supplier.objects.all()
 		
@@ -1145,6 +1146,7 @@ class InventorySupplier(IsInventoryAdminUser,View):
 			address = request.POST.get('address')
 			terms = request.POST.get('terms')
 			status     = request.POST.get('status')
+			# currency     = request.POST.get('currency')
 
 			supplier = Supplier.objects.get(id=int(supplier_id))
 
@@ -2413,12 +2415,14 @@ class InventoryCreatePurchaseOrder(View):
 			tax = request.POST.get('tax')
 			shipping_charges = request.POST.get('shipping_charges')
 			other_charges = request.POST.get('other_charges')
+			purchase_order_notes = request.POST.get('purchase_order_notes')
 
 			purchase_order = PurchaseOrder.objects.get(id=int(purchase_order_id))
 			purchase_order.discount = discount
 			purchase_order.tax = tax
 			purchase_order.shipping_charge = shipping_charges
 			purchase_order.other_charge = other_charges
+			purchase_order.purchase_order_notes = purchase_order_notes
 
 			purchase_order.is_order_completed = True
 			purchase_order.save()
@@ -2545,12 +2549,14 @@ class InventoryEditPurchaseOrder(IsInventoryAdminUser,View):
 				tax = request.POST.get('tax')
 				shipping_charges = request.POST.get('shipping_charges')
 				other_charges = request.POST.get('other_charges')
+				purchase_order_notes = request.POST.get('purchase_order_notes')
 
 				purchase_order = PurchaseOrder.objects.get(id=int(purchase_order_id))
 				purchase_order.discount = discount
 				purchase_order.tax = tax
 				purchase_order.shipping_charge = shipping_charges
 				purchase_order.other_charge = other_charges
+				purchase_order.purchase_order_notes = purchase_order_notes
 
 				purchase_order.is_order_completed = True
 				purchase_order.save()
