@@ -2421,6 +2421,8 @@ class InventoryCreatePurchaseOrder(View):
 			purchase_order.tax = tax
 			purchase_order.shipping_charge = shipping_charges
 			purchase_order.other_charge = other_charges
+			purchase_order.currency = currency
+			purchase_order.purchase_order_notes = purchase_order_notes
 
 			purchase_order.is_order_completed = True
 			purchase_order.save()
