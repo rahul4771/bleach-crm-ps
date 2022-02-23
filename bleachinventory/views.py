@@ -2413,6 +2413,8 @@ class InventoryCreatePurchaseOrder(View):
 			tax = request.POST.get('tax')
 			shipping_charges = request.POST.get('shipping_charges')
 			other_charges = request.POST.get('other_charges')
+			currency = request.POST.get('currency')
+			purchase_order_notes = request.POST.get('purchase_order_notes')
 
 			purchase_order = PurchaseOrder.objects.get(id=int(purchase_order_id))
 			purchase_order.discount = discount

@@ -366,6 +366,8 @@ class PurchaseOrder(models.Model):
     tax                 = models.CharField(max_length=10,blank=True,null=True)
     shipping_charge     = models.CharField(max_length=10,blank=True,null=True)
     other_charge        = models.CharField(max_length=10,blank=True,null=True)
+    # currency            = models.CharField(max_length=10,blank=True,null=True)
+    # purchase_order_notes= models.TextField(max_length=1000,blank=True,null=True)
     is_order_completed  = models.BooleanField(default=False,blank=False,null=False)
     is_received         = models.BooleanField(default=False,blank=False,null=False)
     is_admin_approved   = models.BooleanField(default=False,blank=False,null=False)
