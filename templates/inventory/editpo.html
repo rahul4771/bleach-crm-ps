@@ -129,6 +129,32 @@
                         </div>
     
                     </div>
+
+                    <div class="row mt-20">
+                        <div class="col-md-12 ">
+                            <div class="model-input-name">Currency</div>
+    
+                            <div class="inv-input-container h-30"> 
+                                <select name="currency" class="w-p-100 inv-in">
+                                    <option value="KWD" {% if purchase_order.currency == 'KWD' %}selected{% endif %}>KWD</option>
+                                    <option value="KWD" {% if purchase_order.currency == 'AED' %}selected{% endif %}>AED</option>
+                                    <option value="KWD" {% if purchase_order.currency == 'USD' %}selected{% endif %}>USD</option>
+                                </select>
+                            </div>
+                        </div>
+    
+                    </div>
+
+                    <div class="row mt-20">
+                        <div class="col-md-12 ">
+                            <div class="model-input-name">Notes</div>
+    
+                            <div class="inv-input-container h-30"> 
+                                <textarea name="purchase_order_notes" class="w-p-100 inv-in">{{purchase_order.purchase_order_notes|default_if_none:''}}</textarea>
+                            </div>
+                        </div>
+    
+                    </div>
                 </div>
                 
 

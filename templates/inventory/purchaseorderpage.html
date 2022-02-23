@@ -200,7 +200,7 @@ border-radius: 2px;
           <td style="text-align: right;" class="item_total"> {{item.total_price|floatformat:3}}</td>
         </tr>
         {% empty %}
-        <td></td><td></td><td></td><td>No Data</td><td></td><td></td><td></td><td></td>
+        <tr><td></td><td>No Data</td><td></td><td></td><td></td></tr>
         {% endfor %}
           <td colspan="4" class="av-font">
             Sub Total
@@ -221,10 +221,14 @@ border-radius: 2px;
 
       <div class="soa_section3 av-font ">
         <div class="d-flex">
-        <div class="w-50 mt-4">
+
+        {% if purchase_order.purchase_order_notes %}
+          <div class="w-50 mt-4">
           <div><b>Notes</b></div>
-          <div class="mt-2"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+          <div class="mt-2"> {{purchase_order.purchase_order_notes}}</div>
           </div>
+        {% endif %}
+
         <div id="soa_amount_calculation" >
             <div class="d-flex av-font">
              
@@ -267,7 +271,7 @@ border-radius: 2px;
           <div id="soa_balance">
            Total
           </div>
-          <h1 id="totalamount">KD 000.000</h1>
+          <h1 id="totalamount">000.000 KD</h1>
         </div>
       </div>
     </div>
@@ -530,6 +534,9 @@ function printDiv() {
             }
             
             var totalamount = parseFloat(sum1) + parseFloat(tax) + parseFloat(shipping_charge) + parseFloat(other_charge) - parseFloat(discount);
+            if (isNaN(totalamount) == true){
+              totalamount = 0.000
+            }
             document.getElementById('totalamount').innerHTML =  parseFloat(totalamount).toFixed(3) + ' KD'; ;
             document.getElementById('total_order_amount').innerHTML =  parseFloat(sum1).toFixed(3) ;
             

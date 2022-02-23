@@ -180,6 +180,12 @@
       <div class="soa_section3 d-flex">
         <div id="soa_amount_calculation_pdf">
             <div class="d-flex">
+              {% if purchase_order.purchase_order_notes %}
+                <div class="w-50 mt-4">
+                <div><b>Notes</b></div>
+                <div class="mt-2"> {{purchase_order.purchase_order_notes}}</div>
+                </div>
+              {% endif %}
                 <div class="w-50 ">
                     Discount %
                 </div>:
