@@ -187,6 +187,7 @@ class OrderScheduler(models.Model):
 	cleaning_cost           = models.FloatField(null=True,blank=True)
 	discount_cost           = models.FloatField(null=True,blank=True)
 	additional_charge_cost  = models.FloatField(null=True,blank=True)
+	is_xero_marked          = models.BooleanField(null=False,blank=True,default=False)
 
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)

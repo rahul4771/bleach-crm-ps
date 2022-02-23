@@ -185,6 +185,11 @@
                                     Supplier Contact : {{purchase_order.supplier.contact}}
                                 </div>
                             </div>
+                            {% comment %} <div class="row mt-20" >
+                                <div class="col-md-12 inv-text-normal2">
+                                    Currency : {{purchase_order.supplier.currency}}
+                                </div>
+                            </div> {% endcomment %}
                         </div>
                        
                          <div class="row mt-20">
@@ -243,6 +248,8 @@
                             </div>
         
                         </div>
+
+
                     </div>
                     
                     <!-- <div class="col-md-9 text-right">
@@ -313,8 +320,21 @@
                                 {% endif %}
                             </tbody>
                         </table>
-                    </div>
+                        
+                        <div class="row mt-20">
+                            <div class="col-md-6 ">
+                                <div class="model-input-name">Notes</div>
+        
+                                <div class="inv-input-container h-30"> 
+                                    <textarea name="purchase_order_notes" class="w-p-100 inv-in"></textarea>
+                                </div>
+                            </div>
+        
+                        </div>
+                    </div>                  
                 </div>
+
+                
                 
                 {% if purchase_order_items %}
                 <input type="hidden" name="purchase_order_id" value="{{purchase_order.id}}" />

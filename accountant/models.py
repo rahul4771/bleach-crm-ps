@@ -38,6 +38,8 @@ class PaymentHistory(models.Model):
 	transaction_id               = models.CharField(max_length=100,blank=True,null=True)
 	payment_gateway              = models.CharField(max_length=100,blank=True,null=True,choices=PAYMENT_GATEWAY_CHOICES)
 
+	is_xero_marked               = models.BooleanField(null=False,blank=True,default=False)
+
 	is_active      				 = models.BooleanField(null=False,blank=True,default=True)
 	created       			     = models.DateTimeField(auto_now_add=True)
 	updated    				     = models.DateTimeField(auto_now=True)

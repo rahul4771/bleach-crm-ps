@@ -79,6 +79,11 @@
                         Supplier Terms : {{purchase_order.supplier.terms}}
                     </div>
                 </div>
+                {% comment %} <div class="row mt-20" >
+                                <div class="col-md-12 inv-text-normal2">
+                                    Currency : {{purchase_order.supplier.currency}}
+                                </div>
+                            </div> {% endcomment %}
                 {% endif %}
                        
                 </div>
@@ -129,6 +134,7 @@
                         </div>
     
                     </div>
+
                 </div>
                 
 
@@ -197,6 +203,16 @@
                                 {% endif %}
                             </tbody>
                         </table>
+                        <div class="row mt-20">
+                            <div class="col-md-6 ">
+                                <div class="model-input-name">Notes</div>
+        
+                                <div class="inv-input-container h-30"> 
+                                    <textarea name="purchase_order_notes" class="w-p-100 inv-in">{{purchase_order.purchase_order_notes|default_if_none:''}}</textarea>
+                                </div>
+                            </div>
+        
+                        </div>
                     </div>
                 </div>
 

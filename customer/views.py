@@ -193,35 +193,35 @@ class Quatation(View):
 					order.payment_status         = 'COMPLETED'
 					order.save() 	
 
-				#Save Individual cleaning price
-				if order.orderschedules:
-					total_cleanings            = len(order.orderschedules)
+				# #Save Individual cleaning price
+				# if order.orderschedules:
+				# 	total_cleanings            = len(order.orderschedules)
 					
-					cleaning_cost_sum          = 0
-					discount_cost_sum          = 0
-					additional_charge_cost_sum = 0
-					count                      = 0
-					for scheduler in order.orderschedules:
-						count                                += 1
+				# 	cleaning_cost_sum          = 0
+				# 	discount_cost_sum          = 0
+				# 	additional_charge_cost_sum = 0
+				# 	count                      = 0
+				# 	for scheduler in order.orderschedules:
+				# 		count                                += 1
 		
-						#service cost update
-						if count == len(scheduler.order_scheduler_book.bookschedules):
-							scheduler.cleaning_cost           = round(scheduler.order_scheduler_book.total_cost-cleaning_cost_sum,2)
-							cleaning_cost_sum                 = 0
-						else:
-							scheduler.cleaning_cost           = round(scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules),2)
-							cleaning_cost_sum                += scheduler.cleaning_cost
-						#discount and additional cost update	
-						if total_cleanings != count:
-							scheduler.discount_cost           = round(order.evaluation.discount/total_cleanings,2)
-							scheduler.additional_charge_cost  = round(order.evaluation.additional_charge/total_cleanings,2)
-							discount_cost_sum                += scheduler.discount_cost
-							additional_charge_cost_sum       += scheduler.additional_charge_cost
-						else:	
-							scheduler.discount_cost           = round(order.evaluation.discount-discount_cost_sum,2)
-							scheduler.additional_charge_cost  = round(order.evaluation.additional_charge-additional_charge_cost_sum,2)
+				# 		#service cost update
+				# 		if count == len(scheduler.order_scheduler_book.bookschedules):
+				# 			scheduler.cleaning_cost           = round(scheduler.order_scheduler_book.total_cost-cleaning_cost_sum,2)
+				# 			cleaning_cost_sum                 = 0
+				# 		else:
+				# 			scheduler.cleaning_cost           = round(scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules),2)
+				# 			cleaning_cost_sum                += scheduler.cleaning_cost
+				# 		#discount and additional cost update	
+				# 		if total_cleanings != count:
+				# 			scheduler.discount_cost           = round(order.evaluation.discount/total_cleanings,2)
+				# 			scheduler.additional_charge_cost  = round(order.evaluation.additional_charge/total_cleanings,2)
+				# 			discount_cost_sum                += scheduler.discount_cost
+				# 			additional_charge_cost_sum       += scheduler.additional_charge_cost
+				# 		else:	
+				# 			scheduler.discount_cost           = round(order.evaluation.discount-discount_cost_sum,2)
+				# 			scheduler.additional_charge_cost  = round(order.evaluation.additional_charge-additional_charge_cost_sum,2)
 
-						scheduler.save()
+				# 		scheduler.save()
 
 				#sms and email
 				print("checkp1")
@@ -427,14 +427,35 @@ class SubscriptionQuatation(View):
 				order_update      = Order.objects.filter(order_no=evaluation_id,evaluation__customer__username=user_name).update(order_status='APPROVED_BY_CLIENT',invoice_no=new_invoice_no)
 				
 				order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')).annotate(customerbooking=Sum(Case(When(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING',then=1),default=0,output_field=IntegerField()))).get(order_no=evaluation_id)
-				#Save Individual cleaning price
-				if order.orderschedules:
-					total_cleanings = len(order.orderschedules)
-					for scheduler in order.orderschedules:
-						scheduler.cleaning_cost          = scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
-						scheduler.discount_cost          = order.evaluation.discount/total_cleanings
-						scheduler.additional_charge_cost = order.evaluation.additional_charge/total_cleanings
-						scheduler.save()
+				# #Save Individual cleaning price
+				# if order.orderschedules:
+				# 	total_cleanings            = len(order.orderschedules)
+					
+				# 	cleaning_cost_sum          = 0
+				# 	discount_cost_sum          = 0
+				# 	additional_charge_cost_sum = 0
+				# 	count                      = 0
+				# 	for scheduler in order.orderschedules:
+				# 		count                                += 1
+		
+				# 		#service cost update
+				# 		if count == len(scheduler.order_scheduler_book.bookschedules):
+				# 			scheduler.cleaning_cost           = round(scheduler.order_scheduler_book.total_cost-cleaning_cost_sum,2)
+				# 			cleaning_cost_sum                 = 0
+				# 		else:
+				# 			scheduler.cleaning_cost           = round(scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules),2)
+				# 			cleaning_cost_sum                += scheduler.cleaning_cost
+				# 		#discount and additional cost update	
+				# 		if total_cleanings != count:
+				# 			scheduler.discount_cost           = round(order.evaluation.discount/total_cleanings,2)
+				# 			scheduler.additional_charge_cost  = round(order.evaluation.additional_charge/total_cleanings,2)
+				# 			discount_cost_sum                += scheduler.discount_cost
+				# 			additional_charge_cost_sum       += scheduler.additional_charge_cost
+				# 		else:	
+				# 			scheduler.discount_cost           = round(order.evaluation.discount-discount_cost_sum,2)
+				# 			scheduler.additional_charge_cost  = round(order.evaluation.additional_charge-additional_charge_cost_sum,2)
+
+				# 		scheduler.save()
 
 				return redirect('customer:subscriptioninvoice',evaluation_id_encrypted)
 			
@@ -670,6 +691,86 @@ class PaymentResponseDebit(View):
 				order.payment_status         = 'COMPLETED'
 				order.payment_completed_date = timezone.now()
 			order.save()
+
+			# xero          = XeroConnection.objects.first()
+			# #Update Access Token and Refresh Token
+			# header                      = {
+			# 								'Authorization': 'Basic '+xero.client_encoded,
+			# 								'Content-Type': 'application/x-www-form-urlencoded'
+			# 									}
+			# body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
+			# token_response              = requests.post('https://identity.xero.com/connect/token',
+			# 										data=body,
+			# 										headers=header 
+			# 									).json()
+			# access_token                = token_response['access_token']
+			# refresh_token               = token_response['refresh_token']
+
+			# xero.access_token  = access_token
+			# xero.refresh_token = refresh_token
+			# xero.save()
+
+			# ##Xero Contact
+			# if not order.evaluation.customer.xero_account_id:
+
+			# 	##Xero Create Customer ID and Save
+			# 	contact_data                = {
+			# 									"Name":order.evaluation.customer.name,
+			# 									"ContactNumber":order.evaluation.customer.mobile_number,
+			# 									"EmailAddress":order.evaluation.customer.email,
+			# 									"ContactStatus":"ACTIVE",
+			# 									"IsCustomer":True,
+			# 									"DefaultCurrency":"KWD"
+			# 												}
+												
+			# 	header                      = {
+			# 								'xero-tenant-id': xero.tenant_id,
+			# 								'Authorization': 'Bearer '+access_token,
+			# 								'Accept': 'application/json',
+			# 								'Content-Type': 'application/json'
+			# 									}
+
+			# 	create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
+			# 											json=contact_data,
+			# 											headers=header 
+			# 										).json()
+
+			# 	order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
+			# 	order.evaluation.customer.save() 
+
+			# #Xero Transaction
+			# header                      = {
+			# 							'xero-tenant-id': xero.tenant_id,
+			# 							'Authorization': 'Bearer '+access_token,
+			# 							'Accept': 'application/json',
+			# 							'Content-Type': 'application/json'
+			# 								}
+			# transaction_data            = {
+			# 								"Type": "RECEIVE",
+			# 								"Reference": order.evaluation.evaluation_id,
+			# 								"Date":datetime.strftime(timezone.now(),'%Y-%m-%d'),
+			# 								"CurrencyCode":"KWD",
+			# 								"Contact": {
+			# 									"ContactID": order.evaluation.customer.xero_account_id,
+			# 								},
+			# 								"LineItems": [{
+			# 									"Description": "DEBITCARD",
+			# 									"UnitAmount": amount_paid,
+			# 									"AccountCode": "200",
+			# 									"TaxType":"NONE"
+			# 								}],
+			# 								"BankAccount": {
+			# 									"Code": "091"
+			# 								}
+			# 								}
+											
+			# update_transaction          = requests.post('https://api.xero.com/api.xro/2.0/BankTransactions',
+			# 										json=transaction_data,
+			# 										headers=header 
+			# 									)
+
+			# payment_history.is_xero_marked = True
+			# payment_history.save()
 
 			#payment receipt sms
 			if order.evaluation.customer.is_sms == True:
