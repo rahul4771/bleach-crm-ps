@@ -106,4 +106,4 @@ class Command(BaseCommand):
                                                 )
 
             transaction.is_xero_marked = True
-            transaction.is_xero_marked.save()
+            transaction.save()
