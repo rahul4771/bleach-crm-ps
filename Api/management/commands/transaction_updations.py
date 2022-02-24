@@ -70,6 +70,7 @@ class Command(BaseCommand):
                                                         headers=header 
                                                     )
                 print(create_contact)
+                print(contact_data)
                 create_contact = create_contact.json()
                 transaction.order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
                 transaction.order.evaluation.customer.save()
