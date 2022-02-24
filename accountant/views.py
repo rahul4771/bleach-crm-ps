@@ -1157,8 +1157,8 @@ class CashCollect(IsAccountant,View):
 														headers=header 
 													)
 
-				# payment_history.is_xero_marked = True
-				# payment_history.save()
+				payment_history.is_xero_marked = True
+				payment_history.save()
 
 			else:
 				payment_method = request.POST.get('payment_method')
@@ -1323,8 +1323,8 @@ class CashCollect(IsAccountant,View):
 														headers=header 
 													)
 
-				# payment_history.is_xero_marked = True
-				# payment_history.save()
+				payment_history.is_xero_marked = True
+				payment_history.save()
 		else:
 			messages.suucess(request,"Something Went Wrong")
 
