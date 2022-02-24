@@ -68,12 +68,9 @@ class Command(BaseCommand):
                 create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
                                                         json=contact_data,
                                                         headers=header 
-                                                    ).json()
-                print(contact_data)
+                                                    )
                 print(create_contact)
-                
-                create_contact             = create_contact.json()
-
+                create_contact = create_contact.json()
                 transaction.order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
                 transaction.order.evaluation.customer.save()
 
