@@ -105,5 +105,5 @@ class Command(BaseCommand):
                                                     headers=header 
                                                 )
 
-            # transaction.is_xero_marked = True
-            # transaction.is_xero_marked.save()
+            transaction.is_xero_marked = True
+            transaction.is_xero_marked.save()
