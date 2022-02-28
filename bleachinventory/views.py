@@ -1119,7 +1119,7 @@ class InventorySupplier(IsInventoryAdminUser,View):
 			address = request.POST.get('address')
 			terms = request.POST.get('terms')
 			status     = request.POST.get('status')
-			# currency     = request.POST.get('currency')
+			currency     = request.POST.get('currency')
 
 			suppliers    = Supplier.objects.all()
 		
@@ -1135,7 +1135,7 @@ class InventorySupplier(IsInventoryAdminUser,View):
 			if supplier_name_check:
 				messages.error(request,"Supplier Name Exists !")
 			else:
-				Supplier.objects.create(supplier_name=name,supplier_id=new_supplier_id,contact=contact,address=address,terms=terms,status=status)
+				Supplier.objects.create(supplier_name=name,supplier_id=new_supplier_id,contact=contact,currency=currency,address=address,terms=terms,status=status)
 				messages.success(request,"Supplier Added Successfully !")
 
 		if action == 'edit_supplier':
@@ -1146,7 +1146,7 @@ class InventorySupplier(IsInventoryAdminUser,View):
 			address = request.POST.get('address')
 			terms = request.POST.get('terms')
 			status     = request.POST.get('status')
-			# currency     = request.POST.get('currency')
+			currency     = request.POST.get('currency')
 
 			supplier = Supplier.objects.get(id=int(supplier_id))
 
@@ -1160,6 +1160,7 @@ class InventorySupplier(IsInventoryAdminUser,View):
 				supplier.other_contact = other_contact
 				supplier.address = address
 				supplier.terms = terms
+				supplier.currency = currency
 				supplier.status = status
 
 				supplier.save()
@@ -2422,6 +2423,7 @@ class InventoryCreatePurchaseOrder(View):
 			purchase_order.tax = tax
 			purchase_order.shipping_charge = shipping_charges
 			purchase_order.other_charge = other_charges
+			purchase_order.currency = purchase_order.supplier.currency
 			purchase_order.purchase_order_notes = purchase_order_notes
 
 			purchase_order.is_order_completed = True

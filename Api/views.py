@@ -9,6 +9,7 @@ from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMemb
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
 from bleachadmin.models import ServicePriceRange,Settings
+from Api.models import XeroConnection
 from django.core.mail import send_mail,EmailMultiAlternatives
 from Api.serializers import DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
@@ -2189,7 +2190,7 @@ class CheckOutAPI(APIView):
 		# 	cleaning_no += 1
 		# 	if evaluation_book_schedule == cleaning_team_detail.order_scheduler:
 		# 		break
-		# InvoiceNumber               = str(cleaning_team_detail.order_scheduler.order.evaluation.tracking_no)+'-'+str(book_no)+'V'+str(cleaning_no)
+		# InvoiceNumber               = str(cleaning_team_detail.order_scheduler.order.invoice_no)+'-'+str(book_no)+'V'+str(cleaning_no)
 				
 		# invoice_data                = 	{
 		# 								"Type":"ACCREC",
@@ -3180,6 +3181,7 @@ class InventorySupplierItemsAPI(APIView):
 			item_dict['product_id'] = item.item.id
 			item_dict['product_name'] = item.item.name
 			item_dict['item_price'] = item.item_price
+			item_dict['currency'] = item.supplier.currency
 			items.append(item_dict)
 		response_dict['items']=items
 		return Response(response_dict,HTTP_200_OK)
@@ -4899,9 +4901,6 @@ class CheckOutStoreItemsUpdateAPI(APIView):
 		response_dict = {'success':True}
 
 		return Response(response_dict, HTTP_200_OK)
-
-
-from Api.models import XeroConnection
 
 class XeroInfoSaveAPI(APIView):
 	permission_classes        = (AllowAny,)
