@@ -114,7 +114,7 @@ class Command(BaseCommand):
                             cleaning_no += 1
                             if evaluation_book_schedule == scheduler:
                                 break
-                        InvoiceNumber               = str(order.evaluation.tracking_no)+'-'+str(book_no)+'V'+str(cleaning_no)
+                        InvoiceNumber               = str(order.invoice_no)+'-'+str(book_no)+'V'+str(cleaning_no)
                                 
                         invoice_data                = 	{
                                                         "Type":"ACCREC",
