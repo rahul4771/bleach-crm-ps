@@ -3181,6 +3181,7 @@ class InventorySupplierItemsAPI(APIView):
 			item_dict['product_id'] = item.item.id
 			item_dict['product_name'] = item.item.name
 			item_dict['item_price'] = item.item_price
+			item_dict['currency'] = item.supplier.currency
 			items.append(item_dict)
 		response_dict['items']=items
 		return Response(response_dict,HTTP_200_OK)
