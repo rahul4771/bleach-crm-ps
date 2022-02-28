@@ -138,10 +138,10 @@
           <!-- <th style="text-align: center;">Details</th> -->
           {% comment %} <th style="text-align: center;">Description</th> {% endcomment %}
           <th style="text-align: center;">Quantity</th>
-          <th style="text-align: center;">Unit Price (KWD)</th>
+          <th style="text-align: center;">Unit Price ({{purchase_order.currency|default_if_none:'KWD'}})</th>
           {% comment %} <th style="text-align: center;">Pack</th> {% endcomment %}
           {% comment %} <th style="text-align: center;">Price(KWD)</th> {% endcomment %}
-          <th style="text-align: center; width: auto;">Net Price (KWD)</th>
+          <th style="text-align: center; width: auto;">Net Price ({{purchase_order.currency|default_if_none:'KWD'}})</th>
         </tr>
        
         {% for item in purchase_order.purchase_order_items %}
@@ -223,7 +223,7 @@
           <div id="soa_balance">
            Total
           </div>
-          <h1 id="totalamount">{{items_final_price|floatformat:3|default_if_none:"0"}} KD</h1>
+          <h1 id="totalamount">{{items_final_price|floatformat:3|default_if_none:"0"}} {{purchase_order.currency|default_if_none:'KWD'}}</h1>
         </div>
       </div>
     </div>

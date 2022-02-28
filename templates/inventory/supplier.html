@@ -69,6 +69,9 @@
                                         <th data-hide="phone,tablet"  style="width: %; text-align: center;">
                                             Contact
                                         </th>
+                                        <th data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                            Currency
+                                        </th>
                                         <th style="width: %;" >
                                             Status
                                         </th>
@@ -89,6 +92,9 @@
                                         <td class="text-center">
                                             {{supplier.contact}}
                                         </td>
+                                        <td class="text-center">
+                                            {{supplier.currency}}
+                                        </td>
                                         <td>
                                             {% if supplier.status == True %}
                                             <span class="inv-dot c-active ml-5"></span>Active
@@ -107,7 +113,7 @@
 
                                                     <a class="d-flex dropdown-orders" ><img src="{% static 'files/inventory/view.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">View</div></a>    
 
-                                                  <a class="d-flex dropdown-orders edit_supplier" onclick="openNavAddBundle('edit')" data-supplierid="{{supplier.id}}" data-suppliername="{{supplier.supplier_name}}" data-suppliercontact="{{supplier.contact}}" data-suppliercontactother="{{supplier.other_contact}}" data-suppliercode="{{supplier.supplier_id}}" data-supplieraddress="{{supplier.address}}" data-supplierterms="{{supplier.terms}}" data-supplierstatus="{{supplier.status}}"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit </div></a>    
+                                                  <a class="d-flex dropdown-orders edit_supplier" onclick="openNavAddBundle('edit')" data-supplierid="{{supplier.id}}" data-suppliername="{{supplier.supplier_name}}" data-suppliercontact="{{supplier.contact}}" data-suppliercontactother="{{supplier.other_contact}}" data-suppliercode="{{supplier.supplier_id}}" data-supplieraddress="{{supplier.address}}" data-suppliercurrency="{{supplier.currency}}" data-supplierterms="{{supplier.terms}}" data-supplierstatus="{{supplier.status}}"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit </div></a>    
                                                   {% if request.user.user_type == 'INVENTORYADMIN' %}
                                                   {% comment %} <a class="d-flex dropdown-orders" data-supplierid="{{supplier.id}}" data-toggle="modal" data-target="#deleteModel" ><img src="{% static 'files/inventory/bin.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Delete </div></a> {% endcomment %}
                                                   {% endif %}
@@ -356,7 +362,7 @@
 
             </div>
 
-            {% comment %} <div class="row mt-20">
+            <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Currency</div>
 
@@ -372,11 +378,16 @@
                             <li onclick="changeSelect2('KWD')"><a>KWD</a></li>
                             <li onclick="changeSelect2('AED')"><a>AED</a></li> 
                             <li onclick="changeSelect2('USD')"><a>USD</a></li> 
+                            <li onclick="changeSelect2('EUR')"><a>EUR</a></li>
+                            <li onclick="changeSelect2('INR')"><a>INR</a></li> 
+                            <li onclick="changeSelect2('SAR')"><a>SAR</a></li> 
+                            <li onclick="changeSelect2('GBP')"><a>GBP</a></li>
+                            <li onclick="changeSelect2('CNY')"><a>CNY</a></li>  
                         </ul>
                     </div>
                 </div>
 
-            </div> {% endcomment %}
+            </div>
 
             <div class="row mt-20">
                 <div class="col-md-12 ">
@@ -758,7 +769,7 @@ function openNavAddBundle(d) {
                 
                 $.each(result.data.items,function(key,value){
                     console.log(value.product_name,"pname")
-                        $('#item_table').append('<tr><td>'+value.product_name+'</td><td>'+value.item_price+'</td><td><a href="/bleach-inventory/item/'+value.product_id+'"><button class="inv-plan-img-btn"> <img class="view-img" src="{% static 'files/inventory/view.png' %}"  alt=""> </button></a> <button class="value_edit inv-plan-img-btn mr-5" onclick="openNavEditItem(this)" data-itemid='+value.item_id+' data-productid='+value.product_id+' data-itemname="'+value.product_name+'" data-itemprice='+value.item_price+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button></td></tr>')
+                        $('#item_table').append('<tr><td>'+value.product_name+'</td><td>'+value.item_price+' '+value.currency+'</td><td><a href="/bleach-inventory/item/'+value.product_id+'"><button class="inv-plan-img-btn"> <img class="view-img" src="{% static 'files/inventory/view.png' %}"  alt=""> </button></a> <button class="value_edit inv-plan-img-btn mr-5" onclick="openNavEditItem(this)" data-itemid='+value.item_id+' data-productid='+value.product_id+' data-itemname="'+value.product_name+'" data-itemprice='+value.item_price+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button></td></tr>')
                         //<button class="inv-plan-img-btn value_delete" onclick="deleteItem('+value.item_id+')" data-itemid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
                     })
             }else{
@@ -843,8 +854,9 @@ function openNavAddBundle(d) {
             $('#id_selectText').text('Inactive');
 
         }
-
-        //$('#currency_supplier').val($(this).data('suppliercurrency'));
+        console.log($(this).data('suppliercurrency'),"curr")
+        $('#currency_supplier').val($(this).data('suppliercurrency'));
+        $('#id_selectText2').text($(this).data('suppliercurrency'));
         console.log("lop")
 
     })
