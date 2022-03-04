@@ -453,6 +453,91 @@ width="1000"
   class="mt-4 ml-2 not-required"
   ></v-switch>
   </div>
+  <!--- Hourly Cleaning Begins Here-->
+  <div v-if="serviceType=='Hourly Cleaning'">
+    <div class="row m-0 justify-center">
+    <div class="col-md-4">
+      <h6>Enter Number of cleaners</h6>
+      <v-text-field
+              label="Number of Cleaners"
+             
+              type="number"
+              v-model="hourly_cleaning.cleaners"
+              @input="hourlyCleaningChange()"
+            ></v-text-field>
+    </div>
+    <div class="col-md-4">
+      <h6>Select Duration</h6>
+      <v-select :items="hourly_options" v-model="hourly_cleaning.hourly_duration" @change="hourlyCleaningChange()" item-text="text" item-value="value"></v-select>
+    
+    </div>
+  </div>
+  <div class="row m-0" v-if="hourly_cleaning.hourly_duration && hourly_cleaning.cleaners" style="margin:0 !important">
+    <div class="col-md-4">
+      <div >
+        Choose Visit Dates
+      </div>
+      <v-date-picker  v-model="customDateSelected" full-width elevation="5" color="primary"
+      v-on:change="calcSlots()" class="mt-2" :min="today" multiple></v-date-picker>
+    </div>
+    <div class="col-md-8 "  >
+      <div class="mt-4">
+        Select  Slots
+      </div>
+  <div class="row mt-2" style="margin:0 !important">
+    <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex"  v-if="outofshiftCheck(sindex)">
+      <div class="time-slot duration text-center p-2" 
+      @click="addDoubleSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!selected_double_slots.includes((sindex+1)) && checkSlotStat((sindex+1))' >
+       <% slot.start_time+' - '+ slot.end_time %>
+      </div>
+  
+      <div class="time-slot duration-active text-center p-2"  v-if='selected_double_slots.includes((sindex+1))' @click="removeDoubleSlot((sindex+1))">
+        <% slot.start_time+' - '+ slot.end_time %>
+      </div>
+      <div class="time-slot duration-inactive text-center p-2"  v-if='!checkSlotStat((sindex+1)) && !selected_double_slots.includes((sindex+1))' >
+        <% slot.start_time+' - '+ slot.end_time %>
+      </div>
+    </div>
+    <div class="col-md-12 ">
+      <div v-if="selected_double_slots.length<1 || customDateSelected.length<1">
+      <v-alert
+      dense
+      outlined
+      type="error"
+      v-if="schedule_err_msg"
+    >
+      Please fill the required fields
+    </v-alert>
+  </div>
+  <div  v-if="slot_msg">
+    <v-alert
+       
+    dense
+    outlined
+    type="error"
+        type="error"
+      >
+        Please Select the required number of slots
+      </v-alert>
+  </div>
+  
+      <div class="d-flex justify-center">
+      <v-btn color="primary" @click="findCustomVisits()">
+        Proceed
+      </v-btn>
+      <v-btn color="primary" outlined class="ml-2" @click="customDialog=false">
+        Cancel
+      </v-btn>
+      </div>
+    </div>
+    </div>
+  
+    </div>
+  </div>
+  </div>
+  <!--- Hourly Cleaning Ends Here-->
+
+  <div v-if="serviceType!='Hourly Cleaning'">
  
   <div class="row m-0" v-if="selectedDuration.hours" style="margin:0 !important">
     <div class="col-md-4">
@@ -504,6 +589,7 @@ width="1000"
   
     </div>
   </div>
+  </div>
 </v-card>
 </v-dialog>
 
@@ -524,6 +610,122 @@ width="1000"
   class="mt-4 ml-2 not-required"
   ></v-switch>
   </div>
+  <!--- Hourly Cleaning Begins Here-->
+<div v-if="serviceType=='Hourly Cleaning'">
+  <div class="row m-0 justify-center">
+    <div class="col-md-4">
+      <h6>Enter Number of cleaners</h6>
+      <v-text-field
+              label="Number of Cleaners"
+             
+              type="number"
+              v-model="hourly_cleaning.cleaners"
+              @input="hourlyCleaningChange()"
+            ></v-text-field>
+    </div>
+    <div class="col-md-4">
+      <h6>Select Duration</h6>
+      <v-select :items="hourly_options" v-model="hourly_cleaning.hourly_duration" @change="hourlyCleaningChange()" item-text="text" item-value="value"></v-select>
+    
+    </div>
+</div>
+<div class="row m-0" v-if="hourly_cleaning.cleaners && hourly_cleaning.hourly_duration" style="margin:0 !important">
+  <div class="col-md-4 text-center">
+    <div class="mt-4">
+      Select Visit Date
+    </div>
+    <div class="custom_cal justify-center mt-2">
+      <div class="d-flex">
+        <div v-for="(day,dindex) in week1" class="cal-column"  @click="selectMonthlyDate(day)">
+          <div v-if="!selected_monthly_date.includes(day)" class="monthly-day"><% day %></div>
+          <div v-else class="monthly-day-active"><% day %></div>
+        </div>
+      </div>
+      <div class="d-flex">
+        <div v-for="(day,dindex) in week2" class="cal-column"  @click="selectMonthlyDate(day)">
+          <div v-if="!selected_monthly_date.includes(day)" class="monthly-day"><% day %></div>
+          <div v-else class="monthly-day-active"><% day %></div>
+        </div>
+      </div>
+      <div class="d-flex">
+        <div v-for="(day,dindex) in week3" class="cal-column"  @click="selectMonthlyDate(day)">
+          <div v-if="!selected_monthly_date.includes(day)" class="monthly-day"><% day %></div>
+          <div v-else class="monthly-day-active"><% day %></div>
+        </div>
+      </div>
+      <div class="d-flex">
+        <div v-for="(day,dindex) in week4" class="cal-column"  @click="selectMonthlyDate(day)">
+          <div v-if="!selected_monthly_date.includes(day)" class="monthly-day"><% day %></div>
+          <div v-else class="monthly-day-active"><% day %></div>
+        </div>
+      </div>
+      <div class="d-flex">
+        <div v-for="(day,dindex) in week5" class="cal-column"  @click="selectMonthlyDate(day)">
+          <div v-if="!selected_monthly_date.includes(day)" class="monthly-day"><% day %></div>
+          <div v-else class="monthly-day-active"><% day %></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-8 "  v-if="hourly_slots" >
+    <div class="mt-4">
+      Select Slots
+    </div>
+<div class="row mt-2" style="margin:0 !important" v-if="hourly_slots">
+  <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex" v-if="outofshiftCheck(sindex)">
+    <div class="time-slot duration text-center p-2" 
+   @click="addDoubleSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!selected_double_slots.includes((sindex+1)) && checkSlotStat((sindex+1))'>
+     <% slot.start_time+' - '+ slot.end_time %>
+    </div>
+
+    <div class="time-slot duration-active text-center p-2"  v-if='selected_double_slots.includes((sindex+1))' @click="removeDoubleSlot((sindex+1))">
+      <% slot.start_time+' - '+ slot.end_time %>
+    </div>
+    <div class="time-slot duration-inactive text-center p-2"  v-if='!checkSlotStat((sindex+1)) && !selected_double_slots.includes((sindex+1))' >
+      <% slot.start_time+' - '+ slot.end_time %>
+    </div>
+  </div>
+  <div class="col-md-12 ">
+    <div v-if="selected_double_slots.length<1 || selected_monthly_date.length<1">
+      <v-alert
+      dense
+      outlined
+      type="error"
+      v-if="schedule_err_msg && !slot_msg"
+    >
+      Please fill the required fields
+    </v-alert>
+  </div>
+  <div  v-if="slot_msg">
+    <v-alert
+       
+    dense
+    outlined
+    type="error"
+        type="error"
+      >
+        Please Select the required number of slots
+      </v-alert>
+  </div>
+    <div class="d-flex justify-center">
+    <v-btn color="primary" @click="findMonthlyVisits()">
+      Proceed
+    </v-btn>
+    <v-btn color="primary" outlined class="ml-2" @click="monthlyDialog=false">
+      Cancel
+    </v-btn>
+    </div>
+  </div>
+  </div>
+
+  </div>
+</div>
+  <!-- <div class="col-md-4 text-center">
+   <v-btn class="mt-4" color="primary">Proceed</v-btn>
+  </div> -->
+</div>
+<!--- Hourly Cleaning Ends Here-->
+<div v-if="serviceType!='Hourly Cleaning'">
   
   <div class="row m-0" v-if="selectedDuration.hours" style="margin:0 !important">
     <div class="col-md-4 text-center">
@@ -605,6 +807,7 @@ width="1000"
   
     </div>
   </div>
+  </div>
 </v-card>
 </v-dialog>
 
@@ -626,6 +829,90 @@ width="1000"
   class="mt-4 ml-2 not-required"
   ></v-switch>
   </div>
+   <!--- Hourly Cleaning Begins Here-->
+   <div v-if="serviceType=='Hourly Cleaning'">
+    <div class="row m-0 justify-center">
+      <div class="col-md-4">
+        <h6>Enter Number of cleaners</h6>
+        <v-text-field
+                label="Number of Cleaners"
+               
+                type="number"
+                v-model="hourly_cleaning.cleaners"
+                @input="hourlyCleaningChange()"
+              ></v-text-field>
+      </div>
+      <div class="col-md-4">
+        <h6>Select Duration</h6>
+        <v-select :items="hourly_options" v-model="hourly_cleaning.hourly_duration" @change="hourlyCleaningChange()" item-text="text" item-value="value"></v-select>
+      
+      </div>
+  </div>
+  <div class="row " style="margin:0 !important" v-if="hourly_cleaning.hourly_duration && hourly_cleaning.cleaners">
+    <div class="col-md-4">
+      <div >
+        Choose starting Date
+      </div>
+      <v-date-picker  v-model="dateSelected" full-width elevation="5" color="primary"
+      v-on:change="calcSlots()" class="mt-2" :min="today"></v-date-picker>
+    </div>
+  
+    <div class="col-md-8"  >
+      <div>
+        Select  Slots
+      </div>
+  <div class="row mt-4">
+    <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex" v-if="outofshiftCheck(sindex)">
+      <div class="time-slot duration text-center p-2" 
+     @click="addDoubleSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!selected_double_slots.includes((sindex+1)) && checkSlotStat((sindex+1))'>
+       <% slot.start_time+' - '+ slot.end_time %>
+      </div>
+  
+      <div class="time-slot duration-active text-center p-2"  v-if='selected_double_slots.includes((sindex+1))' @click="removeDoubleSlot((sindex+1))">
+        <% slot.start_time+' - '+ slot.end_time %>
+      </div>
+      <div class="time-slot duration-inactive text-center p-2"  v-if='!checkSlotStat((sindex+1)) && !selected_double_slots.includes((sindex+1))' >
+        <% slot.start_time+' - '+ slot.end_time %>
+      </div>
+    </div>
+    <div class="col-md-12 ">
+      <div v-if="selected_double_slots.length<1 || !dateSelected">
+        <v-alert
+        dense
+        outlined
+        type="error"
+        v-if="schedule_err_msg && !slot_msg"
+      >
+        Please fill the required fields
+      </v-alert>
+    </div>
+    <div  v-if="slot_msg">
+      <v-alert
+         
+      dense
+      outlined
+      type="error"
+          type="error"
+        >
+          Please Select the required number of slots
+        </v-alert>
+    </div>
+      <div class="d-flex justify-center">
+      <v-btn color="primary" @click="findVisits()">
+        Proceed
+      </v-btn>
+      <v-btn color="primary" outlined class="ml-2" @click="scheduleDialog=false">
+        Cancel
+      </v-btn>
+      </div>
+    </div>
+    </div>
+  
+    </div>
+  </div>
+  </div>
+   <!--- Hourly Cleaning Ends Here-->
+   <div v-if="serviceType!='Hourly Cleaning'">
 
   <div class="row " style="margin:0 !important" v-if="selectedDuration.hours">
   <div class="col-md-4">
@@ -677,6 +964,7 @@ width="1000"
   </div>
 
   </div>
+</div>
 </div>
 </div>
 </v-card>
@@ -1012,14 +1300,23 @@ width="1000"
                     <div class="row m-0 mt-4 w-100" v-if="!this.scheduleDateSat && !editScheduleStat">
                       <div class="col-md-3">
                       
-                          <v-select
-          :items="['Subscription','One Time']"
-          label="Cleaning Policy"
-          dense
-          v-model="cleaningPolicy"
-          @change="newdurationcalculation()"
-         
-        ></v-select>
+                        <v-select
+                        :items="['Subscription','One Time']"
+                        label="Cleaning Policy"
+                        dense
+                        v-model="cleaningPolicy"
+                        v-if="serviceType!='Hourly Cleaning'"
+                      @change="newdurationcalculation()"
+                       
+                      ></v-select>
+                      <v-select
+                      :items="['Subscription']"
+                      label="Cleaning Policy"
+                      dense
+                      v-model="cleaningPolicy"
+                      v-if="serviceType=='Hourly Cleaning'"
+                     
+                    ></v-select>
                        
                       </div>
                       <div class="col-md-3" v-if="cleaningPolicy=='Subscription'">
