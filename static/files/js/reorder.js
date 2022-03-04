@@ -4873,7 +4873,10 @@ function openNav() {
   
   },
   getDuplicate(){
+<<<<<<< HEAD
     /*reorder */
+=======
+>>>>>>> 883cff1f (reorder bug fix)
     axios.get(this.url+'/customer/duplicatebookingphase2/'+this.custId,{params:{
       user_id:this.user_id
     }}).then(response=>{
@@ -4886,7 +4889,7 @@ function openNav() {
     axios.get(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+id).then(response=>{
       this.bookedServiceDetails=response.data.evaluation_details
       if(this.bookedServiceDetails[0].evaluation_book_evaluation_details[0].service_type.name=='Hourly Cleaning'){
-        console.log("i m inside hourly")
+        
         this.serviceType='Hourly Cleaning'
       }
       this.main_eval_id=response.data.evaluation_id
