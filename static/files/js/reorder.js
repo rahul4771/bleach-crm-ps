@@ -4917,7 +4917,7 @@ function openNav() {
         }
      //   console.log("estimated cost is "+scheduleDetails.estimated_cost)
         for(var j=0;j<serviceBookedDetails[i].evaluationsection_book.length;j++) {
-          if(this.serviceType='Hourly Cleaning'){
+          if(this.serviceType=='Hourly Cleaning'){
             serviceBookedDetails[i].evaluationsection_book[j].section_net_cost=serviceBookedDetails[i].evaluationsection_book[j].section_cost
             serviceBookedDetails[i].evaluationsection_book[j].sectiononly_cost=serviceBookedDetails[i].evaluationsection_book[j].section_cost
             serviceBookedDetails[i].evaluationsection_book[j].sectiononly_net_cost=serviceBookedDetails[i].evaluationsection_book[j].section_cost
