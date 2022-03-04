@@ -2317,7 +2317,7 @@ def SalesTargetDaily(request):
 	data = []
 	data2 = []
 	target_dict = dict()
-	evaluators_sales_target = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR')
+	evaluators_sales_target = UserProfile.objects.filter(is_active=True).filter(Q(user_type='EVALUATOR')|Q(user_type='AGENT')|Q(user_type='BOOKINGOFFICER')).exclude(Q( Q(username='agent001') | Q(username='ahmadn') | Q(username='samih') ))
 	target_date = request.GET.get('target_date')
 	date_or_month = request.GET.get('date_or_month')
 	print(date_or_month,"dom")
@@ -2338,11 +2338,11 @@ def SalesTargetDaily(request):
 		# total_sales = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,order_status='ORDER_CLOSED',created__range=(target_date_start,target_date_end)).aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
 		
 		if date_or_month == 'Month':
-			total_sales_approved = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,created__range=(monthdate1,monthdate2),evaluation__quatation_status='APPROVED')
-			total_sales_submitted = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,created__range=(monthdate1,monthdate2))
+			total_sales_approved = Order.objects.filter( Q(evaluation__evaluation_details__evaluator=evaluator) | Q(Q(evaluation__evaluation_details__evaluator=None)&Q(evaluation__call_attender=evaluator)) ).filter(created__range=(monthdate1,monthdate2),evaluation__quatation_status='APPROVED')
+			total_sales_submitted = Order.objects.filter( Q(evaluation__evaluation_details__evaluator=evaluator) | Q(Q(evaluation__evaluation_details__evaluator=None)&Q(evaluation__call_attender=evaluator)) ).filter(created__range=(monthdate1,monthdate2))
 		else:
-			total_sales_approved = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,created__range=(target_date_start,target_date_end),evaluation__quatation_status='APPROVED')
-			total_sales_submitted = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,created__range=(target_date_start,target_date_end))
+			total_sales_approved = Order.objects.filter( Q(evaluation__evaluation_details__evaluator=evaluator) | Q(Q(evaluation__evaluation_details__evaluator=None)&Q(evaluation__call_attender=evaluator)) ).filter(created__range=(target_date_start,target_date_end),evaluation__quatation_status='APPROVED')
+			total_sales_submitted = Order.objects.filter( Q(evaluation__evaluation_details__evaluator=evaluator) | Q(Q(evaluation__evaluation_details__evaluator=None)&Q(evaluation__call_attender=evaluator)) ).filter(created__range=(target_date_start,target_date_end))
 
 		total_sales_approved_amount = total_sales_approved.aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
 		total_sales_approved_count = total_sales_approved.count()
@@ -2367,34 +2367,34 @@ def SalesTargetDaily(request):
 		data.append(evaluator_target_dict)
 	print(data,"here")
 
-	if date_or_month == 'Month':
-		agent_total_sales_approved = Order.objects.filter(evaluation__evaluation_details__evaluator=None,created__range=(monthdate1,monthdate2),evaluation__quatation_status='APPROVED')
-		agent_total_sales_submitted = Order.objects.filter(evaluation__evaluation_details__evaluator=None,created__range=(monthdate1,monthdate2))
-	else:
-		agent_total_sales_approved = Order.objects.filter(evaluation__evaluation_details__evaluator=None,created__range=(target_date_start,target_date_end),evaluation__quatation_status='APPROVED')
-		agent_total_sales_submitted = Order.objects.filter(evaluation__evaluation_details__evaluator=None,created__range=(target_date_start,target_date_end))
+	# if date_or_month == 'Month':
+	# 	agent_total_sales_approved = Order.objects.filter(evaluation__evaluation_details__evaluator=None,created__range=(monthdate1,monthdate2),evaluation__quatation_status='APPROVED')
+	# 	agent_total_sales_submitted = Order.objects.filter(evaluation__evaluation_details__evaluator=None,created__range=(monthdate1,monthdate2))
+	# else:
+	# 	agent_total_sales_approved = Order.objects.filter(evaluation__evaluation_details__evaluator=None,created__range=(target_date_start,target_date_end),evaluation__quatation_status='APPROVED')
+	# 	agent_total_sales_submitted = Order.objects.filter(evaluation__evaluation_details__evaluator=None,created__range=(target_date_start,target_date_end))
 	
-	agent_sales_approved_amount = agent_total_sales_approved.aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
-	agent_sales_approved_count = agent_total_sales_approved.count()
+	# agent_sales_approved_amount = agent_total_sales_approved.aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+	# agent_sales_approved_count = agent_total_sales_approved.count()
 	
-	agent_sales_submitted_amount = agent_total_sales_submitted.aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
-	agent_sales_submitted_count = agent_total_sales_submitted.count()
+	# agent_sales_submitted_amount = agent_total_sales_submitted.aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
+	# agent_sales_submitted_count = agent_total_sales_submitted.count()
 
-	if not agent_sales_approved_amount:
-		agent_sales_approved_amount = 0.0
-	if not agent_sales_submitted_amount:
-		agent_sales_submitted_amount = 0.0
+	# if not agent_sales_approved_amount:
+	# 	agent_sales_approved_amount = 0.0
+	# if not agent_sales_submitted_amount:
+	# 	agent_sales_submitted_amount = 0.0
 
-	print(agent_sales_approved_amount,agent_sales_submitted_amount,"aget")
+	# print(agent_sales_approved_amount,agent_sales_submitted_amount,"aget")
 		
-	agent_target_dict = {
-		"evaluator_id" : 0,
-		"amount" : agent_sales_approved_amount,
-		"submitted":agent_sales_submitted_amount,
-		"approved_count":agent_sales_approved_count,
-		"submitted_count":agent_sales_submitted_count
-		}
-	data.append(agent_target_dict)
+	# agent_target_dict = {
+	# 	"evaluator_id" : 0,
+	# 	"amount" : agent_sales_approved_amount,
+	# 	"submitted":agent_sales_submitted_amount,
+	# 	"approved_count":agent_sales_approved_count,
+	# 	"submitted_count":agent_sales_submitted_count
+	# 	}
+	# data.append(agent_target_dict)
 	return JsonResponse(data,safe=False)
 
 def evaluationcalendardate(request):
