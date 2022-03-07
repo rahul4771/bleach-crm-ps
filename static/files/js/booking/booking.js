@@ -105,6 +105,7 @@ const app=new Vue({
         value:4
       }
     ],
+    is_hourly:false,
       currentSlotDay:1,
       cleaning_set:[],
       max_cleaners:[],
@@ -612,7 +613,7 @@ hourly_cleaning:{
   cleaners:null
 },
 hourly_slots:true,
-
+current_service:''
 
       },
       methods: {
@@ -696,8 +697,8 @@ hourly_slots:true,
           this.dialog=false
         },
         findAddedCost(){
-          if(this.serviceType!='Hourly Cleaning')
-          {
+          // if(this.serviceType!='Hourly Cleaning')
+          // {
           var totalcost=0
          
           for(var i=0;i<this.billingData.length;i++){
@@ -714,10 +715,10 @@ hourly_slots:true,
             console.log("added amount is "+totalcost)
             return 0
           }
-        }
-        else{
-          return 0
-        }
+        //}
+        // else{
+        //   return 0
+        // }
         },
         checkHourly(){
           for(var i=0;i<this.multiServicesBill.length;i++){
@@ -800,6 +801,8 @@ hourly_slots:true,
         removeService(){
             this.multiServicesBill.splice(this.service_index,1)
             this.del_confirmation_dialog=false
+            this.checkIsHourly()
+            this.schedule_serviceTypes_selected=[]
         },
         oneTimeDateChange(){
           if(!this.one_time_slots[this.oneTimeDateSelected]){
@@ -837,7 +840,7 @@ hourly_slots:true,
         },
         scheduleTogether()
         {
-          if(this.serviceType=='Hourly Cleaning'){
+          if(this.current_service=='Hourly Cleaning'){
             this.cleaningPolicy='Subscription'
           }
           if(this.checkScheduleAvail()){
@@ -1408,7 +1411,7 @@ hourly_slots:true,
           return combined
         },
         findCustomVisits(){
-          if(this.serviceType=='Hourly Cleaning'){
+          if(this.current_service=='Hourly Cleaning'){
             this.findHourlyCost()
           }
           if(this.selected_double_slots.length==Math.ceil(this.selectedDuration.hours/2)){
@@ -1447,7 +1450,7 @@ hourly_slots:true,
           
         },
         findVisits(){
-          if(this.serviceType=='Hourly Cleaning'){
+          if(this.current_service=='Hourly Cleaning'){
             this.findHourlyCost()
           }
           if(this.selected_double_slots.length==Math.ceil(this.selectedDuration.hours/2)){
@@ -1547,17 +1550,21 @@ hourly_slots:true,
           else{
             var total_cost=25*parseInt(this.hourly_cleaning.cleaners)
           }
+          var section_length=this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill.length
+          for(var i=0;i<section_length;i++){
+            this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill[i].section_net_cost=total_cost/section_length
+          this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill[i].section_cost=total_cost/section_length
+          this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill[i].section.section_net_cost=total_cost/section_length
+          this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill[i].section.section_cost=total_cost/section_length
+          this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill[i].sectiononly_cost=total_cost/section_length
+          this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill[i].sectiononly_net_cost=total_cost/section_length
+          this.multiServicesBill[this.schedule_serviceTypes_selected[0]].total_cost=total_cost
+          }
 
-          this.multiServicesBill[0].bill[0].section_net_cost=total_cost
-          this.multiServicesBill[0].bill[0].section_cost=total_cost
-          this.multiServicesBill[0].bill[0].section.section_net_cost=total_cost
-          this.multiServicesBill[0].bill[0].section.section_cost=total_cost
-          this.multiServicesBill[0].bill[0].sectiononly_cost=total_cost
-          this.multiServicesBill[0].bill[0].sectiononly_net_cost=total_cost
-          this.multiServicesBill[0].total_cost=total_cost
+          
         },
         findMonthlyVisits(){
-          if(this.serviceType=='Hourly Cleaning'){
+          if(this.current_service=='Hourly Cleaning'){
             this.findHourlyCost()
           }
           if(this.selected_double_slots.length==Math.ceil(this.selectedDuration.hours/2)){
@@ -1618,7 +1625,7 @@ hourly_slots:true,
         },
         checkAvailablility(){
           var schedule_serviceTypes=this.schedule_serviceTypes
-          if(this.serviceType=='Hourly Cleaning'){
+          if(this.current_service=='Hourly Cleaning'){
             schedule_serviceTypes=[]
             schedule_serviceTypes.push('General Cleaning')
           }
@@ -3326,8 +3333,8 @@ checkSelectedDate(){
    
   },
   getHourly(){
-    if(this.multiServicesBill.length==0)
-    {
+    // if(this.multiServicesBill.length==0)
+    // {
     return(
    ` <div class="sr-service-card m-2 p-2 "   onclick="selectService('Hourly Cleaning',this)">
   <i class="far fa-circle inactive-icon"></i>
@@ -3335,10 +3342,10 @@ checkSelectedDate(){
   <div class="text-center pt-2 service-title">
  Hourly Cleaning
 </div></div>`)
-    }
-    else{
-      return ''
-    }
+    //}
+    // else{
+    //   return ''
+    // }
   },
   selectCategory(item){
     var carousel = $("#service-carousel");
@@ -3901,6 +3908,7 @@ setTimeout(function() {
   getMultipleSlots(){
     this.slot_loader=true
     var schedule_services=this.schedule_serviceTypes
+    console.log("schedule types is "+schedule_services)
     if(this.checkKitchen()){
       schedule_services.push('Kitchen Cleaning')
     }
@@ -4606,6 +4614,12 @@ try {
   }).trigger('refresh.owl.carousel');
   },
   goToSchedule(){
+    if(this.is_hourly){
+      this.current_service=this.multiServicesBill[this.schedule_serviceTypes_selected[0]].service
+    }
+    else{
+      this.current_service=''
+    }
     
     if(!this.editScheduleStat){
       this.resetScheduler()
@@ -4619,7 +4633,7 @@ try {
       this.findSelectedTotalSize()
       this.calcSelectedServices()
       this.newdurationcalculation();
-      if(this.serviceType=='Hourly Cleaning'){
+      if(this.current_service=='Hourly Cleaning'){
         this.cleaningPolicy='Subscription'
       }
 
@@ -4692,10 +4706,13 @@ try {
       this.parseAddons()
     }
     if(this.serviceType=='Hourly Cleaning'){
-      this.billingData[0].section_net_cost=0
-      this.billingData[0].section_cost=0
-      this.billingData[0].sectiononly_net_cost=0
-      this.billingData[0].sectiononly_cost=0
+      for(var b=0;b<this.billingData.length;b++){
+        this.billingData[b].section_net_cost=0
+        this.billingData[b].section_cost=0
+        this.billingData[b].sectiononly_net_cost=0
+        this.billingData[b].sectiononly_cost=0
+      }
+      
     }
      var sampleServicesBill={
        service:'',
@@ -4772,8 +4789,23 @@ try {
       this.schedule_serviceTypes_selected=[]
       this.schedule_serviceTypes=[]
     //  this.durationcalculation();
+    if(this.checkIsHourly()){
+      this.scheduleStat=false
+    }
+    else{
+      this.scheduleStat=true
+    }
      
       
+  },
+  hourlySelection(){
+    if(this.is_hourly){
+      var latest_cleaning=this.schedule_serviceTypes_selected[this.schedule_serviceTypes_selected.length-1]
+     
+      this.schedule_serviceTypes_selected=[]
+      this.schedule_serviceTypes_selected.push(latest_cleaning)
+      
+    }
   },
   selectServ(elem) {
     this.billingData = [];
@@ -5501,10 +5533,25 @@ try {
     this.old_kitchen_nocabinet_productivity=  response.data.oldkitchenwithoutcabinet_perhour_cleaning
   })
  },
+ checkIsHourly(){
+  var hourly_services=this.multiServicesBill.filter(a=>a.service=='Hourly Cleaning')
+  if(hourly_services.length>0){
+   
+    this.is_hourly=true
+    return true
+  }
+  else{
+    this.is_hourly=false
+    return false
+  }
+ },
   doSomethingAsync(k) {
    return new Promise((resolve) => {
      if(this.schedule_serviceTypes[k]=='Kitchen Appliances'){
       var service_to_select='Kitchen Cleaning'
+     }
+     else if(this.schedule_serviceTypes[k]=='Hourly Cleaning'){
+      var service_to_select='General Cleaning'
      }
      else{
      var service_to_select=this.schedule_serviceTypes[k]
