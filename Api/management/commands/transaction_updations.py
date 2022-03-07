@@ -19,6 +19,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs): 
         xero          = XeroConnection.objects.first()
+        PaymentHistory.objects.select_related('order__evaluation__customer').filter(paid_date__date__gte=transaction_start_date,is_xero_marked=False).update(is_xero_marked=False)
 
         #Update Access Token and Refresh Token
         header                      = {
