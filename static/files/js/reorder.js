@@ -5165,9 +5165,10 @@ function openNav() {
       }
     }
     this.completedAddress.push(this.currentAddressIndex)
-    this.currentAddressIndex=this.currentAddressIndex+1
     
+    this.currentAddressIndex=this.currentAddressIndex+1
     this.selectedAddress=this.bookedServiceDetails[this.currentAddressIndex]
+    
    console.log("service details length is"+this.bookedServiceDetails.length+"address index is"+this.currentAddressIndex)
   
       
