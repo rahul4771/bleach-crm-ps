@@ -14,6 +14,7 @@ from order.models import OrderScheduler,Order
 from Api.models import XeroConnection
 from evaluator.models import EvaluationDetails,EvaluationBook
 from accountant.models import PaymentHistory
+from user.models import UserProfile
 
 class Command(BaseCommand):
     help = 'Automatic Updations'
@@ -21,7 +22,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs): 
         transaction_start_date      = datetime.strptime("01-01-2022","%d-%m-%Y").date()
         PaymentHistory.objects.select_related('order__evaluation__customer').filter(paid_date__date__gte=transaction_start_date).update(is_xero_marked=False)
-
+        UserProfile.objects.all().update(xero_account_id='')
         # schedule_start_date     = datetime.strptime("01-01-2022","%d-%m-%Y").date()
         # orders_ids              = list(OrderScheduler.objects.select_related('order').filter(Q(Q(start_at__date__gte=schedule_start_date)|Q(end_at__date__gte=schedule_start_date))).values_list('order__id',flat=True))
         # orders                  = Order.objects.filter(id__in=orders_ids).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(Q(Q(start_at__date__gte=schedule_start_date)|Q(end_at__date__gte=schedule_start_date))&Q(is_xero_marked=False)).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')).annotate(customerbooking=Sum(Case(When(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING',then=1),default=0,output_field=IntegerField())))
