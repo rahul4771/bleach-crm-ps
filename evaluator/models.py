@@ -301,7 +301,6 @@ class EvaluationBook(models.Model):
 	cancell_requester   = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cancell_requester')
 	cancelled_by        = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cancell_by')
 	
-
 	is_active           = models.BooleanField(null=False,blank=True,default=True)
 	created             = models.DateTimeField(auto_now_add=True)
 	updated             = models.DateTimeField(auto_now=True)
