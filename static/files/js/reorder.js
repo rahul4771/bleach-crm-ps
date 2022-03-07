@@ -4873,10 +4873,7 @@ function openNav() {
   
   },
   getDuplicate(){
-<<<<<<< HEAD
     /*reorder */
-=======
->>>>>>> 883cff1f (reorder bug fix)
     axios.get(this.url+'/customer/duplicatebookingphase2/'+this.custId,{params:{
       user_id:this.user_id
     }}).then(response=>{
