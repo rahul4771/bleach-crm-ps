@@ -454,7 +454,7 @@ width="1000"
   ></v-switch>
   </div>
   <!--- Hourly Cleaning Begins Here-->
-  <div v-if="serviceType=='Hourly Cleaning'">
+  <div v-if="current_service=='Hourly Cleaning'">
     <div class="row m-0 justify-center">
     <div class="col-md-4">
       <h6>Enter Number of cleaners</h6>
@@ -537,7 +537,7 @@ width="1000"
   </div>
   <!--- Hourly Cleaning Ends Here-->
 
-  <div v-if="serviceType!='Hourly Cleaning'">
+  <div v-if="current_service!='Hourly Cleaning'">
  
   <div class="row m-0" v-if="selectedDuration.hours" style="margin:0 !important">
     <div class="col-md-4">
@@ -611,7 +611,7 @@ width="1000"
   ></v-switch>
   </div>
   <!--- Hourly Cleaning Begins Here-->
-<div v-if="serviceType=='Hourly Cleaning'">
+<div v-if="current_service=='Hourly Cleaning'">
   <div class="row m-0 justify-center">
     <div class="col-md-4">
       <h6>Enter Number of cleaners</h6>
@@ -725,7 +725,7 @@ width="1000"
   </div> -->
 </div>
 <!--- Hourly Cleaning Ends Here-->
-<div v-if="serviceType!='Hourly Cleaning'">
+<div v-if="current_service!='Hourly Cleaning'">
   
   <div class="row m-0" v-if="selectedDuration.hours" style="margin:0 !important">
     <div class="col-md-4 text-center">
@@ -830,7 +830,7 @@ width="1000"
   ></v-switch>
   </div>
    <!--- Hourly Cleaning Begins Here-->
-   <div v-if="serviceType=='Hourly Cleaning'">
+   <div v-if="current_service=='Hourly Cleaning'">
     <div class="row m-0 justify-center">
       <div class="col-md-4">
         <h6>Enter Number of cleaners</h6>
@@ -912,7 +912,7 @@ width="1000"
   </div>
   </div>
    <!--- Hourly Cleaning Ends Here-->
-   <div v-if="serviceType!='Hourly Cleaning'">
+   <div v-if="current_service!='Hourly Cleaning'">
 
   <div class="row " style="margin:0 !important" v-if="selectedDuration.hours">
   <div class="col-md-4">
@@ -1086,17 +1086,17 @@ width="1000"
                      
                       </div>
                       </div>
-                     
-                      <div>
+                      <div v-if="!custBookStat && !is_hourly">
+                        
                         <v-switch
                            v-model="scheduleStat"
                            inset
                            class="book-stat"
                           label="Schedule Together"
                           @change="addAllServiceTypes()"
-                          color="primary"
                            ></v-switch>
                       </div>
+                     
                     </div>
                     <div class="row mt-4">
                       <div class="col-md-3" v-for="(service,sindex) in multiServicesBill" v-bind:key="sindex">
@@ -1105,6 +1105,7 @@ width="1000"
                               <div class="text-left">
                                 <v-checkbox
                                 v-model="schedule_serviceTypes_selected"
+                                @change="hourlySelection()"
                                 :value='sindex'
                                 class="mt-0 pt-0 "
                                 v-if="!scheduleStat && Object.keys(service.schedule_details).length<1"
@@ -1305,7 +1306,7 @@ width="1000"
                         label="Cleaning Policy"
                         dense
                         v-model="cleaningPolicy"
-                        v-if="serviceType!='Hourly Cleaning'"
+                        v-if="current_service!='Hourly Cleaning'"
                       @change="newdurationcalculation()"
                        
                       ></v-select>
@@ -1314,7 +1315,7 @@ width="1000"
                       label="Cleaning Policy"
                       dense
                       v-model="cleaningPolicy"
-                      v-if="serviceType=='Hourly Cleaning'"
+                      v-if="current_service=='Hourly Cleaning'"
                      
                     ></v-select>
                        
