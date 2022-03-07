@@ -174,8 +174,12 @@ class Command(BaseCommand):
                         print(scheduler)
                         print(scheduler.start_at.strftime('%Y-%m-%d'))
                         print(create_invoice)
-                    
-                        if create_invoice['Status'] == 'OK':
+                        
+                        try:
+                            created_invoice = create_invoice['Status']
+                        except:
+                            created_invoice = None
+                        if created_invoice == 'OK':
                             scheduler.is_xero_marked = True
                             scheduler.save()
 
