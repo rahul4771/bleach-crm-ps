@@ -39,7 +39,6 @@ class Command(BaseCommand):
 
         #Bank Transaction
         transaction_start_date      = datetime.strptime("01-01-2022","%d-%m-%Y").date()
-        PaymentHistory.objects.select_related('order__evaluation__customer').filter(paid_date__date__gte=transaction_start_date,is_xero_marked=False).update(is_xero_marked=False)
         transactions                = PaymentHistory.objects.select_related('order__evaluation__customer').filter(paid_date__date__gte=transaction_start_date,is_xero_marked=False)
         for transaction in transactions:
             if transaction.payment_mode == 'ONLINECREDIT':
