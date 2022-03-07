@@ -227,7 +227,7 @@
                                  <!-- unit price-->
                                  {% if supplier_item.item_price %}
                                  <div class="inv-item-head-sub mt-10">
-                                    <i class="fas fa-tags primary-text mr-10"></i>  {{supplier_item.item_price|floatformat:3}} KD / {{inventory_item.measuring_unit|default_if_none:'unit'}}
+                                    <i class="fas fa-tags primary-text mr-10"></i>  {{supplier_item.item_price|floatformat:3}} {{supplier_item.supplier.currency|default_if_none:'KD'}} / {{inventory_item.measuring_unit|default_if_none:'unit'}}
                                 </div>
                                 {% endif %}
                                 <!-- unit price ends -->

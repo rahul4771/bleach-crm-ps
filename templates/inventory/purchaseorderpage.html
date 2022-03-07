@@ -180,10 +180,10 @@ border-radius: 2px;
           <!-- <th style="text-align: center;">Details</th> -->
           {% comment %} <th style="text-align: center;">Description </th> {% endcomment %}
           <th style="text-align: center;" class="av-font">QUANITITY</th>
-          <th style="text-align: center;" class="av-font">UNIT PRICE (KD)</th>
+          <th style="text-align: center;" class="av-font">UNIT PRICE ({{purchase_order.currency|default_if_none:'KWD'}})</th>
           {% comment %} <th style="text-align: center;">Pack</th> {% endcomment %}
           {% comment %} <th style="text-align: center;">Price(KWD)</th> {% endcomment %}
-          <th style="text-align: center; width: auto;" class="av-font">NET PRICE (KD)</th>
+          <th style="text-align: center; width: auto;" class="av-font">NET PRICE ({{purchase_order.currency|default_if_none:'KWD'}})</th>
         </tr>
        
         {% for item in purchase_order.purchase_order_items %}
@@ -537,7 +537,7 @@ function printDiv() {
             if (isNaN(totalamount) == true){
               totalamount = 0.000
             }
-            document.getElementById('totalamount').innerHTML =  parseFloat(totalamount).toFixed(3) + ' KD'; ;
+            document.getElementById('totalamount').innerHTML =  parseFloat(totalamount).toFixed(3) + ' {{purchase_order.currency|default_if_none:'KWD'}}'; ;
             document.getElementById('total_order_amount').innerHTML =  parseFloat(sum1).toFixed(3) ;
             
           }
