@@ -2243,9 +2243,9 @@ class CheckOutAPI(APIView):
 											)
 
 		try:
-            created_invoice = create_invoice['Status']
-        except:
-            created_invoice = None
+			created_invoice = create_invoice['Status']
+		except:
+			created_invoice = None
         
 		if created_invoice == 'OK':
 			cleaning_team_detail.order_scheduler.is_xero_marked = True
