@@ -1120,7 +1120,7 @@ current_service:''
           //   }
           // }
           }
-          for(var k=0;k<this.schedule_serviceTypes_selected;k++)
+          for(var k=0;k<this.schedule_serviceTypes_selected.length;k++)
           {
             for(var sch in this.scheduleGroup){
               // if(Array.isArray(this.scheduleGroup[sch])){
@@ -1277,7 +1277,7 @@ current_service:''
             }
             this.multiServicesBill[this.schedule_serviceTypes_selected[j]].shift_availability_check=!this.out_of_shift
           }
-          for(var k=0;k<this.schedule_serviceTypes_selected;k++)
+          for(var k=0;k<this.schedule_serviceTypes_selected.length;k++)
           {
             for(var sch in this.scheduleGroup){
               // if(Array.isArray(this.scheduleGroup[sch])){
@@ -1558,6 +1558,7 @@ current_service:''
           this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill[i].section.section_cost=total_cost/section_length
           this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill[i].sectiononly_cost=total_cost/section_length
           this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill[i].sectiononly_net_cost=total_cost/section_length
+          
           this.multiServicesBill[this.schedule_serviceTypes_selected[0]].total_cost=total_cost
           }
 
@@ -3733,7 +3734,7 @@ responsive:{
          console.log(error);
        });
   },
-  uploadImages(){
+  async uploadImages(){
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
    for(var i=0;i<this.multiServiceImages.length;i++){
@@ -3743,7 +3744,7 @@ responsive:{
       for(var j=0;j<this.multiServiceImages[i].images.length;j++){
         image.append('media',this.multiServiceImages[i].images[j].file)
       }
-       axios
+     await axios
       .post(
          this.url+"/customer/bookingmediasave",image
        
