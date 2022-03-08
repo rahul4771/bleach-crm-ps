@@ -1137,7 +1137,6 @@ class CashCollect(IsAccountant,View):
 												"Type": "RECEIVE-OVERPAYMENT",
 												"Reference": order.evaluation.evaluation_id,
 												"Date":datetime.strftime(payment_date,'%Y-%m-%d'),
-												"CurrencyCode":"KWD",
 												"IsReconciled":True,
 												"Contact": {
 													"ContactID": order.evaluation.customer.xero_account_id,
@@ -1304,7 +1303,6 @@ class CashCollect(IsAccountant,View):
 												"Type": "RECEIVE-OVERPAYMENT",
 												"Reference": order.evaluation.evaluation_id,
 												"Date":datetime.strftime(payment_date,'%Y-%m-%d'),
-												"CurrencyCode":"KWD",
 												"IsReconciled":True,
 												"Contact": {
 													"ContactID": order.evaluation.customer.xero_account_id,
