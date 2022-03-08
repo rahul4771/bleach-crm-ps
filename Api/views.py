@@ -2202,7 +2202,6 @@ class CheckOutAPI(APIView):
 										"LineAmountTypes":"NoTax",
 										"InvoiceNumber":InvoiceNumber,
 										"Reference":cleaning_team_detail.order_scheduler.order.order_no,
-										"CurrencyCode":"KWD",
 										"Status":"AUTHORISED",
 										"LineItems":[
 											{
