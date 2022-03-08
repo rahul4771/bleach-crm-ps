@@ -4929,7 +4929,10 @@ function openNav() {
       var latest_cleaning=this.schedule_serviceTypes_selected[this.schedule_serviceTypes_selected.length-1]
      
       this.schedule_serviceTypes_selected=[]
+      if(latest_cleaning!=undefined)
+      {
       this.schedule_serviceTypes_selected.push(latest_cleaning)
+      }
       
     }
   },

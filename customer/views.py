@@ -747,17 +747,18 @@ class PaymentResponseDebit(View):
 										'Content-Type': 'application/json'
 											}
 			transaction_data            = {
-											"Type": "RECEIVE",
+											"Type": "RECEIVE-OVERPAYMENT",
 											"Reference": order.evaluation.evaluation_id,
 											"Date":datetime.strftime(timezone.now(),'%Y-%m-%d'),
 											"CurrencyCode":"KWD",
+											"IsReconciled":True,
 											"Contact": {
 												"ContactID": order.evaluation.customer.xero_account_id,
 											},
 											"LineItems": [{
 												"Description": "DEBITCARD",
 												"UnitAmount": amount_paid,
-												"AccountCode": "200",
+												"AccountCode": "610",
 												"TaxType":"NONE"
 											}],
 											"BankAccount": {
