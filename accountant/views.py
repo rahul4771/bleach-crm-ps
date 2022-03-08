@@ -1323,10 +1323,11 @@ class CashCollect(IsAccountant,View):
 														headers=header 
 													)
 
+				print(update_transaction)
 				payment_history.is_xero_marked = True
 				payment_history.save()
 		else:
-			messages.suucess(request,"Something Went Wrong")
+			messages.success(request,"Something Went Wrong")
 
 		return redirect('accountant:accountant-cashcollect')
 

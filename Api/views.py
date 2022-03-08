@@ -396,7 +396,6 @@ class PaymentResponseCredit(APIView):
 											"Type": "RECEIVE-OVERPAYMENT",
 											"Reference": order.evaluation.evaluation_id,
 											"Date":datetime.strftime(timezone.now(),'%Y-%m-%d'),
-											"CurrencyCode":"KWD",
 											"IsReconciled":True,
 											"Contact": {
 												"ContactID": order.evaluation.customer.xero_account_id,
