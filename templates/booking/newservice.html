@@ -3555,6 +3555,7 @@ Fill all the details of the Buildings  to proceed
       class="ma-2"
       outlined
       color="primary"
+      :disabled="schedule_serviceTypes_selected.length>0?false:true"
       @click.once="goToSchedule()"
       v-if="!scheduleStat"
     >

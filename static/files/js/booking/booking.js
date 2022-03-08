@@ -3334,8 +3334,7 @@ checkSelectedDate(){
    
   },
   getHourly(){
-    // if(this.multiServicesBill.length==0)
-    // {
+   
     return(
    ` <div class="sr-service-card m-2 p-2 "   onclick="selectService('Hourly Cleaning',this)">
   <i class="far fa-circle inactive-icon"></i>
@@ -3343,10 +3342,7 @@ checkSelectedDate(){
   <div class="text-center pt-2 service-title">
  Hourly Cleaning
 </div></div>`)
-    //}
-    // else{
-    //   return ''
-    // }
+   
   },
   selectCategory(item){
     var carousel = $("#service-carousel");
@@ -4804,8 +4800,10 @@ try {
       var latest_cleaning=this.schedule_serviceTypes_selected[this.schedule_serviceTypes_selected.length-1]
      
       this.schedule_serviceTypes_selected=[]
+      if(latest_cleaning!=undefined)
+      {
       this.schedule_serviceTypes_selected.push(latest_cleaning)
-      
+      }
     }
   },
   selectServ(elem) {
