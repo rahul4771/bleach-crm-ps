@@ -95,6 +95,7 @@ $(document).ready(function(){
           
         },
       data: {
+        is_hourly:false,
         hourly_options:[{
           text:'1 - 2 Hours',
           value:2
@@ -612,10 +613,34 @@ $(document).ready(function(){
   },
   hourly_slots:true,
   bookedServiceDetails:{},
-  order_details_id:''
+  order_details_id:'',
+  current_service:''
   
         },
         methods: {
+          
+          checkHourly(){
+            for(var i=0;i<this.multiServicesBill.length;i++){
+              if(this.multiServicesBill[i].service=='Hourly Cleaning'){
+                return false
+              }
+             
+            }
+            return true
+           
+          },
+          checkIsHourly(){
+            var hourly_services=this.multiServicesBill.filter(a=>a.service=='Hourly Cleaning')
+            if(hourly_services.length>0){
+             
+              this.is_hourly=true
+              return true
+            }
+            else{
+              this.is_hourly=false
+              return false
+            }
+           },
           isSlotsSelected(){
             if(this.currentSlotDay>this.cleaning_set.length){
               return true
@@ -695,7 +720,7 @@ $(document).ready(function(){
             this.dialog=false
           },
           findAddedCost(){
-            if(this.serviceType!='Hourly Cleaning')
+            if(this.current_service!='Hourly Cleaning')
             {
             var totalcost=0
            
@@ -799,6 +824,7 @@ $(document).ready(function(){
           removeService(){
               this.multiServicesBill.splice(this.service_index,1)
               this.del_confirmation_dialog=false
+              this.checkIsHourly()
           },
           oneTimeDateChange(){
             if(!this.one_time_slots[this.oneTimeDateSelected]){
@@ -836,7 +862,7 @@ $(document).ready(function(){
           },
           scheduleTogether()
           {
-            if(this.serviceType=='Hourly Cleaning'){
+            if(this.current_service=='Hourly Cleaning'){
               this.cleaningPolicy='Subscription'
             }
             if(this.checkScheduleAvail()){
@@ -1407,7 +1433,7 @@ $(document).ready(function(){
             return combined
           },
           findCustomVisits(){
-            if(this.serviceType=='Hourly Cleaning'){
+            if(this.current_service=='Hourly Cleaning'){
               this.findHourlyCost()
             }
             if(this.selected_double_slots.length==Math.ceil(this.selectedDuration.hours/2)){
@@ -1446,7 +1472,7 @@ $(document).ready(function(){
             
           },
           findVisits(){
-            if(this.serviceType=='Hourly Cleaning'){
+            if(this.current_service=='Hourly Cleaning'){
               this.findHourlyCost()
             }
             if(this.selected_double_slots.length==Math.ceil(this.selectedDuration.hours/2)){
@@ -1546,17 +1572,21 @@ $(document).ready(function(){
             else{
               var total_cost=25*parseInt(this.hourly_cleaning.cleaners)
             }
-  
-            this.multiServicesBill[0].bill[0].section_net_cost=total_cost
-            this.multiServicesBill[0].bill[0].section_cost=total_cost
-            this.multiServicesBill[0].bill[0].section.section_net_cost=total_cost
-            this.multiServicesBill[0].bill[0].section.section_cost=total_cost
-            this.multiServicesBill[0].bill[0].sectiononly_cost=total_cost
-            this.multiServicesBill[0].bill[0].sectiononly_net_cost=total_cost
-            this.multiServicesBill[0].total_cost=total_cost
+            var section_length=this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill.length
+            for(var i=0;i<section_length;i++){
+            this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill[i].section_net_cost=total_cost/section_length
+            this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill[i].section_cost=total_cost/section_length
+         
+            this.multiServicesBill[this.schedule_serviceTypes_selected[0]].estimated_cost=total_cost
+            this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill[i].sectiononly_cost=total_cost/section_length
+            this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill[i].sectiononly_net_cost=total_cost/section_length
+            this.multiServicesBill[this.schedule_serviceTypes_selected[0]].total_cost=total_cost
+
+         
+            }
           },
           findMonthlyVisits(){
-            if(this.serviceType=='Hourly Cleaning'){
+            if(this.current_service=='Hourly Cleaning'){
               this.findHourlyCost()
             }
             if(this.selected_double_slots.length==Math.ceil(this.selectedDuration.hours/2)){
@@ -1617,7 +1647,7 @@ $(document).ready(function(){
           },
           checkAvailablility(){
             var schedule_serviceTypes=this.schedule_serviceTypes
-            if(this.serviceType=='Hourly Cleaning'){
+            if(this.current_service=='Hourly Cleaning'){
               schedule_serviceTypes=[]
               schedule_serviceTypes.push('General Cleaning')
             }
@@ -3352,8 +3382,7 @@ $(document).ready(function(){
      
     },
     getHourly(){
-      if(this.multiServicesBill.length==0)
-      {
+   
       return(
      ` <div class="sr-service-card m-2 p-2 "   onclick="selectService('Hourly Cleaning',this)">
     <i class="far fa-circle inactive-icon"></i>
@@ -3361,10 +3390,7 @@ $(document).ready(function(){
     <div class="text-center pt-2 service-title">
    Hourly Cleaning
   </div></div>`)
-      }
-      else{
-        return ''
-      }
+     
     },
     selectCategory(item){
       var carousel = $("#service-carousel");
@@ -4642,6 +4668,12 @@ $(document).ready(function(){
     }).trigger('refresh.owl.carousel');
     },
     goToSchedule(){
+      if(this.is_hourly){
+        this.current_service=this.multiServicesBill[this.schedule_serviceTypes_selected[0]].service
+      }
+      else{
+        this.current_service=''
+      }
       
       if(!this.editScheduleStat){
         this.resetScheduler()
@@ -4655,7 +4687,7 @@ $(document).ready(function(){
         this.findSelectedTotalSize()
         this.calcSelectedServices()
         this.newdurationcalculation();
-        if(this.serviceType=='Hourly Cleaning'){
+        if(this.current_service=='Hourly Cleaning'){
           this.cleaningPolicy='Subscription'
         }
   
@@ -4727,7 +4759,7 @@ $(document).ready(function(){
         this.billingData.push(serviceData)
         this.parseAddons()
       }
-      if(this.serviceType=='Hourly Cleaning'){
+      if(this.current_service=='Hourly Cleaning'){
         this.billingData[0].section_net_cost=0
         this.billingData[0].section_cost=0
         this.billingData[0].sectiononly_net_cost=0
@@ -4944,6 +4976,18 @@ $(document).ready(function(){
           kitchens: [],
           keynotes: {},
         });
+      }
+    },
+    hourlySelection(){
+      if(this.is_hourly){
+        var latest_cleaning=this.schedule_serviceTypes_selected[this.schedule_serviceTypes_selected.length-1]
+       
+        this.schedule_serviceTypes_selected=[]
+        if(latest_cleaning!=undefined)
+       {
+        this.schedule_serviceTypes_selected.push(latest_cleaning)
+       }
+        
       }
     },
     hourlyCleaningChange(){
@@ -6284,6 +6328,9 @@ $(document).ready(function(){
      this.rearrangeSize()
      this.rearrangeKitchenAddons()
      this.selectCategory('Detailed Cleaning')
+     if(this.checkIsHourly()){
+      this.scheduleStat=false
+    }
     
    })
 
