@@ -13,12 +13,19 @@ import json
 from order.models import OrderScheduler,Order
 from Api.models import XeroConnection
 from evaluator.models import EvaluationDetails,EvaluationBook
-
+from accountant.models import PaymentHistory
+from user.models import UserProfile
 
 class Command(BaseCommand):
     help = 'Automatic Updations'
 
     def handle(self, *args, **kwargs): 
+        # transaction_start_date      = datetime.strptime("01-01-2022","%d-%m-%Y").date()
+        # PaymentHistory.objects.select_related('order__evaluation__customer').filter(paid_date__date__gte=transaction_start_date).update(is_xero_marked=False)
+        # UserProfile.objects.all().update(xero_account_id='')
+        # schedule_start_date     = datetime.strptime("01-01-2022","%d-%m-%Y").date()
+        # OrderScheduler.objects.select_related('order').filter(Q(Q(start_at__date__gte=schedule_start_date)|Q(end_at__date__gte=schedule_start_date))).update(is_xero_marked=False)
+
         schedule_start_date     = datetime.strptime("01-01-2022","%d-%m-%Y").date()
         orders_ids              = list(OrderScheduler.objects.select_related('order').filter(Q(Q(start_at__date__gte=schedule_start_date)|Q(end_at__date__gte=schedule_start_date))).values_list('order__id',flat=True))
         orders                  = Order.objects.filter(id__in=orders_ids).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(Q(Q(start_at__date__gte=schedule_start_date)|Q(end_at__date__gte=schedule_start_date))&Q(is_xero_marked=False)).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')).annotate(customerbooking=Sum(Case(When(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING',then=1),default=0,output_field=IntegerField())))
@@ -114,7 +121,7 @@ class Command(BaseCommand):
                             cleaning_no += 1
                             if evaluation_book_schedule == scheduler:
                                 break
-                        InvoiceNumber               = str(order.invoice_no)+'-'+str(book_no)+'V'+str(cleaning_no)
+                        InvoiceNumber               = str(order.invoice_no)+'-'+str(book_no)+'-'+'V'+str(cleaning_no)
                                 
                         invoice_data                = 	{
                                                         "Type":"ACCREC",
@@ -126,7 +133,6 @@ class Command(BaseCommand):
                                                         "LineAmountTypes":"NoTax",
                                                         "InvoiceNumber":InvoiceNumber,
                                                         "Reference":order.order_no,
-                                                        "CurrencyCode":"KWD",
                                                         "Status":"AUTHORISED",
                                                         "LineItems":[
                                                             {
@@ -164,12 +170,17 @@ class Command(BaseCommand):
                         create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
                                                                 json=invoice_data,
                                                                 headers=header 
-                                                            )
+                                                            ).json()
                         print(scheduler)
                         print(scheduler.start_at.strftime('%Y-%m-%d'))
-                        print(create_invoice.json())
-                    
-                    # scheduler.is_xero_marked = True
-                    # scheduler.save()
+                        print(create_invoice)
+                        
+                        try:
+                            created_invoice = create_invoice['Status']
+                        except:
+                            created_invoice = None
+                        if created_invoice == 'OK':
+                            scheduler.is_xero_marked = True
+                            scheduler.save()
 
         

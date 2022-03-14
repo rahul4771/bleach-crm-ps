@@ -37,9 +37,8 @@ class Command(BaseCommand):
         xero.refresh_token = refresh_token
         xero.save()
 
-        #Bank Transaction
+        # #Bank Transaction
         transaction_start_date      = datetime.strptime("01-01-2022","%d-%m-%Y").date()
-        PaymentHistory.objects.select_related('order__evaluation__customer').filter(paid_date__date__gte=transaction_start_date,is_xero_marked=False).update(is_xero_marked=False)
         transactions                = PaymentHistory.objects.select_related('order__evaluation__customer').filter(paid_date__date__gte=transaction_start_date,is_xero_marked=False)
         for transaction in transactions:
             if transaction.payment_mode == 'ONLINECREDIT':
@@ -84,7 +83,7 @@ class Command(BaseCommand):
                                                 }
 
             transaction_data            = {
-                                            "Type": "RECEIVE",
+                                            "Type": "RECEIVE-OVERPAYMENT",
                                             "Reference": transaction.order.evaluation.evaluation_id,
                                             "Date":datetime.strftime(transaction.paid_date,"%Y-%m-%d"),
                                             "Contact": {
@@ -93,7 +92,7 @@ class Command(BaseCommand):
                                             "LineItems": [{
                                                 "Description": Description,
                                                 "UnitAmount": transaction.amount_paid,
-                                                "AccountCode": "200",
+                                                "AccountCode": "610",
                                                 "TaxType":"NONE"
                                             }],
                                             "BankAccount": {
@@ -105,6 +104,6 @@ class Command(BaseCommand):
                                                     json=transaction_data,
                                                     headers=header 
                                                 )
-
+            print(update_transaction)
             transaction.is_xero_marked = True
             transaction.save()

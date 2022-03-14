@@ -95,6 +95,8 @@ function openNav() {
             
           },
         data: {
+          current_service:'',
+          is_hourly:false,
           hourly_options:[{
             text:'1 - 2 Hours',
             value:2
@@ -951,7 +953,7 @@ function openNav() {
                 }
 
               }
-              for(var k=0;k<this.schedule_serviceTypes_selected;k++)
+              for(var k=0;k<this.schedule_serviceTypes_selected.length;k++)
               {
                 for(var sch in this.scheduleGroup){
                   
@@ -1029,6 +1031,20 @@ function openNav() {
                 this.multiServicesBill[this.schedule_serviceTypes_selected[j]].shift_availability_check=!this.out_of_shift
                
               }
+              for(var k=0;k<this.schedule_serviceTypes_selected.length;k++)
+          {
+            for(var sch in this.scheduleGroup){
+              // if(Array.isArray(this.scheduleGroup[sch])){
+             if(this.scheduleGroup[sch].includes(this.schedule_serviceTypes_selected[k])){
+               var index=this.scheduleGroup[sch].indexOf(this.schedule_serviceTypes_selected[k])
+               console.log("index is"+index)
+               this.scheduleGroup[sch].splice(1,index)
+             }
+            // }
+             }
+            }
+          var groundid=Object.keys(this.scheduleGroup).length
+          this.scheduleGroup[groundid]=[ ...this.schedule_serviceTypes_selected ]
     
               this.visits=[]
               this.selected_double_slots=[]
@@ -1144,17 +1160,22 @@ function openNav() {
               else{
                 var total_cost=25*parseInt(this.hourly_cleaning.cleaners)
               }
+              var section_length=this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill.length
+              for(var i=0;i<section_length;i++){
+                this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill[i].section_net_cost=total_cost/section_length
+              this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill[i].section_cost=total_cost/section_length
+            //  this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill[i].section.section_net_cost=total_cost/section_length
+              //this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill[i].section.section_cost=total_cost/section_length
+              this.multiServicesBill[this.schedule_serviceTypes_selected[0]].estimated_cost=total_cost
+              this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill[i].sectiononly_cost=total_cost/section_length
+              this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill[i].sectiononly_net_cost=total_cost/section_length
+              this.multiServicesBill[this.schedule_serviceTypes_selected[0]].total_cost=total_cost
+              }
     
-              this.multiServicesBill[0].bill[0].section_net_cost=total_cost
-              this.multiServicesBill[0].bill[0].section_cost=total_cost
-             // this.multiServicesBill[0].bill[0].section.section_net_cost=total_cost
-              //this.multiServicesBill[0].bill[0].section.section_cost=total_cost
-              this.multiServicesBill[0].bill[0].sectiononly_cost=total_cost
-              this.multiServicesBill[0].bill[0].sectiononly_net_cost=total_cost
-              this.multiServicesBill[0].total_cost=total_cost
+              
             },
             findCustomVisits(){
-              if(this.serviceType=='Hourly Cleaning'){
+              if(this.current_service=='Hourly Cleaning'){
                 this.findHourlyCost()
               }
               if(this.customDateSelected.length>0 && this.selected_double_slots.length>0 )
@@ -1184,7 +1205,7 @@ function openNav() {
               
             },
             findVisits(){
-              if(this.serviceType=='Hourly Cleaning'){
+              if(this.current_service=='Hourly Cleaning'){
                 this.findHourlyCost()
               }
             if(this.selected_double_slots.length>0 && this.dateSelected)
@@ -1271,7 +1292,7 @@ function openNav() {
             }
             },
             findMonthlyVisits(){
-              if(this.serviceType=='Hourly Cleaning'){
+              if(this.current_service=='Hourly Cleaning'){
                 this.findHourlyCost()
               }
               if(this.selected_monthly_date.length>0 && this.selected_double_slots.length>0 )
@@ -1326,10 +1347,10 @@ function openNav() {
             },
             checkAvailablility(){
               var schedule_serviceTypes=this.schedule_serviceTypes
-          if(this.serviceType=='Hourly Cleaning'){
-            schedule_serviceTypes=[]
-            schedule_serviceTypes.push('General Cleaning')
-          }
+              if(this.current_service=='Hourly Cleaning'){
+                schedule_serviceTypes=[]
+                schedule_serviceTypes.push('General Cleaning')
+              }
              axios.post(this.url+'/customer/ajax/multipleservice/multipledates/cleaningslotes/',{number_of_cleaners:this.selectedDuration.cleaners,
               cleaning_hours:this.selectedDuration.hours,
               service_types:schedule_serviceTypes,
@@ -3138,6 +3159,15 @@ function openNav() {
       }).trigger('refresh.owl.carousel');
       },
       goToSchedule(){
+        if(this.is_hourly){
+          this.current_service=this.multiServicesBill[this.schedule_serviceTypes_selected[0]].service
+        }
+        else{
+          this.current_service=''
+        }
+        if(!this.editScheduleStat){
+          this.resetScheduler()
+        }
           this.schedule_confirmation_dialog=false
           this.onetime_dialog=false
           this.schedule_warning=false
@@ -3163,7 +3193,7 @@ function openNav() {
           }
           this.calcSelectedServices()
           this.newdurationcalculation();
-          if(this.serviceType=='Hourly Cleaning'){
+          if(this.current_service=='Hourly Cleaning'){
             this.cleaningPolicy='Subscription'
           }
       },
@@ -4872,11 +4902,42 @@ function openNav() {
   prevService(){
   
   },
+  checkHourly(){
+    for(var i=0;i<this.multiServicesBill.length;i++){
+      if(this.multiServicesBill[i].service=='Hourly Cleaning'){
+        return false
+      }
+     
+    }
+    return true
+   
+  },
+  checkIsHourly(){
+    var hourly_services=this.multiServicesBill.filter(a=>a.service=='Hourly Cleaning')
+    if(hourly_services.length>0){
+     
+      this.is_hourly=true
+      return true
+    }
+    else{
+      this.is_hourly=false
+      return false
+    }
+   },
+   hourlySelection(){
+    if(this.is_hourly){
+      var latest_cleaning=this.schedule_serviceTypes_selected[this.schedule_serviceTypes_selected.length-1]
+     
+      this.schedule_serviceTypes_selected=[]
+      if(latest_cleaning!=undefined)
+      {
+      this.schedule_serviceTypes_selected.push(latest_cleaning)
+      }
+      
+    }
+  },
   getDuplicate(){
-<<<<<<< HEAD
     /*reorder */
-=======
->>>>>>> 883cff1f (reorder bug fix)
     axios.get(this.url+'/customer/duplicatebookingphase2/'+this.custId,{params:{
       user_id:this.user_id
     }}).then(response=>{
@@ -4888,10 +4949,7 @@ function openNav() {
     this.multiServicesBill=[]
     axios.get(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+id).then(response=>{
       this.bookedServiceDetails=response.data.evaluation_details
-      if(this.bookedServiceDetails[0].evaluation_book_evaluation_details[0].service_type.name=='Hourly Cleaning'){
-        
-        this.serviceType='Hourly Cleaning'
-      }
+     
       this.main_eval_id=response.data.evaluation_id
       if(this.bookedServiceDetails.length>0){
         this.multiAddress=true
@@ -4931,6 +4989,10 @@ function openNav() {
       }
       this.gotData=true
       this.rearrangeSize()
+      if(this.checkIsHourly()){
+        this.scheduleStat=false
+      }
+      
     }).catch(e=>{
       console.log(e)
     })
@@ -5183,7 +5245,7 @@ function openNav() {
     
     
   },
-  sendLetCustScheduled(){
+  async sendLetCustScheduled(){
     if(!this.scheduleStat){
       var ch_count=0
       for(var ch in this.scheduleGroup){
@@ -5202,7 +5264,7 @@ function openNav() {
               "shift_availability_check":this.multiServicesBill[service[j]].shift_availability_check
             }
           }
-          axios.post(this.url+'/customer/duplicatebookingphase2/'+this.duplicate_id+'/',serviceDetails).then(response=>{
+          await axios.post(this.url+'/customer/duplicatebookingphase2/'+this.duplicate_id+'/',serviceDetails).then(response=>{
             if(response.data.success){
             this.success_msg=true
             this.error_msg_stat=false
@@ -5311,7 +5373,7 @@ function openNav() {
   },
   scheduleTogether()
         {
-          if(this.serviceType=='Hourly Cleaning'){
+          if(this.current_service=='Hourly Cleaning'){
             this.cleaningPolicy='Subscription'
           }
           if(this.checkScheduleAvail()){

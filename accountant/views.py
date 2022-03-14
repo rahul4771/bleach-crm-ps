@@ -1134,21 +1134,20 @@ class CashCollect(IsAccountant,View):
 											'Content-Type': 'application/json'
 												}
 				transaction_data            = {
-												"Type": "RECEIVE",
+												"Type": "RECEIVE-OVERPAYMENT",
 												"Reference": order.evaluation.evaluation_id,
 												"Date":datetime.strftime(payment_date,'%Y-%m-%d'),
-												"CurrencyCode":"KWD",
 												"Contact": {
 													"ContactID": order.evaluation.customer.xero_account_id,
 												},
 												"LineItems": [{
 													"Description": payment_method,
 													"UnitAmount": amount,
-													"AccountCode": "200",
+													"AccountCode": "610",
 													"TaxType":"NONE"
 												}],
 												"BankAccount": {
-													"Code": "200"
+													"Code": "091"
 												}
 												}
 												
@@ -1300,17 +1299,16 @@ class CashCollect(IsAccountant,View):
 											'Content-Type': 'application/json'
 												}
 				transaction_data            = {
-												"Type": "RECEIVE",
+												"Type": "RECEIVE-OVERPAYMENT",
 												"Reference": order.evaluation.evaluation_id,
 												"Date":datetime.strftime(payment_date,'%Y-%m-%d'),
-												"CurrencyCode":"KWD",
 												"Contact": {
 													"ContactID": order.evaluation.customer.xero_account_id,
 												},
 												"LineItems": [{
 													"Description": payment_method,
 													"UnitAmount": amount,
-													"AccountCode": "200",
+													"AccountCode": "610",
 													"TaxType":"NONE"
 												}],
 												"BankAccount": {
@@ -1323,10 +1321,11 @@ class CashCollect(IsAccountant,View):
 														headers=header 
 													)
 
+				print(update_transaction)
 				payment_history.is_xero_marked = True
 				payment_history.save()
 		else:
-			messages.suucess(request,"Something Went Wrong")
+			messages.success(request,"Something Went Wrong")
 
 		return redirect('accountant:accountant-cashcollect')
 

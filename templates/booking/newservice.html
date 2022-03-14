@@ -428,7 +428,7 @@ width="1000"
   ></v-switch>
   </div>
    <!--- Hourly Cleaning Begins Here-->
-   <div v-if="serviceType=='Hourly Cleaning'">
+   <div v-if="current_service=='Hourly Cleaning'">
     <div class="row m-0 justify-center">
     <div class="col-md-4">
       <h6>Enter Number of cleaners</h6>
@@ -510,7 +510,7 @@ width="1000"
   </div>
   </div>
   <!--- Hourly Cleaning Ends Here-->
-  <div v-if="serviceType!='Hourly Cleaning'">
+  <div v-if="current_service!='Hourly Cleaning'">
 
   <div class="row m-0" v-if="selectedDuration.hours" style="margin:0 !important">
     <div class="col-md-4">
@@ -598,7 +598,7 @@ class="mt-4 ml-2 not-required"
 ></v-switch>
 </div>
 <!--- Hourly Cleaning Begins Here-->
-<div v-if="serviceType=='Hourly Cleaning'">
+<div v-if="current_service=='Hourly Cleaning'">
   <div class="row m-0 justify-center">
     <div class="col-md-4">
       <h6>Enter Number of cleaners</h6>
@@ -713,7 +713,7 @@ class="mt-4 ml-2 not-required"
 </div>
 <!--- Hourly Cleaning Ends Here-->
 
-<div v-if="serviceType!='Hourly Cleaning'">
+<div v-if="current_service!='Hourly Cleaning'">
  
 
 
@@ -831,7 +831,7 @@ width="1000"
   ></v-switch>
   </div>
   <!--- Hourly Cleaning Begins Here-->
-  <div v-if="serviceType=='Hourly Cleaning'">
+  <div v-if="current_service=='Hourly Cleaning'">
     <div class="row m-0 justify-center">
       <div class="col-md-4">
         <h6>Enter Number of cleaners</h6>
@@ -913,7 +913,7 @@ width="1000"
   </div>
   </div>
    <!--- Hourly Cleaning Ends Here-->
-   <div v-if="serviceType!='Hourly Cleaning'">
+   <div v-if="current_service!='Hourly Cleaning'">
 
   <div class="row " style="margin:0 !important" v-if="selectedDuration.hours">
   <div class="col-md-4">
@@ -3401,7 +3401,7 @@ Fill all the details of the Buildings  to proceed
       Customer can book only one time services
     </v-alert>
                       </div> -->
-                      <div v-if="!custBookStat && serviceType!='Hourly Cleaning'">
+                      <div v-if="!custBookStat && !is_hourly">
                         <v-switch
                            v-model="scheduleStat"
                            inset
@@ -3418,6 +3418,7 @@ Fill all the details of the Buildings  to proceed
                               <div class="text-left mr-auto">
                                 <v-checkbox
                                 v-model="schedule_serviceTypes_selected"
+                                @change="hourlySelection()"
                                 :value='sindex'
                                 class="mt-0 pt-0 "
                                 v-if="!scheduleStat && Object.keys(service.schedule_details).length<1 && !custBookStat"
@@ -3528,7 +3529,7 @@ Fill all the details of the Buildings  to proceed
                       </div>
                      
                     
-                      <div class="col-md-3" @click="goToServices()" v-if="checkHourly()">
+                      <div class="col-md-3" @click="goToServices()">
                         <div class="cart-item-card justify-center h-100">
                           <div class="cart-item-add h-100">
                             <div class="text-center ">
@@ -3554,6 +3555,7 @@ Fill all the details of the Buildings  to proceed
       class="ma-2"
       outlined
       color="primary"
+      :disabled="schedule_serviceTypes_selected.length>0?false:true"
       @click.once="goToSchedule()"
       v-if="!scheduleStat"
     >
@@ -3635,7 +3637,7 @@ Fill all the details of the Buildings  to proceed
           label="Cleaning Policy"
           dense
           v-model="cleaningPolicy"
-          v-if="serviceType!='Hourly Cleaning'"
+          v-if="current_service!='Hourly Cleaning'"
         @change="newdurationcalculation()"
          
         ></v-select>
@@ -3644,7 +3646,7 @@ Fill all the details of the Buildings  to proceed
         label="Cleaning Policy"
         dense
         v-model="cleaningPolicy"
-        v-if="serviceType=='Hourly Cleaning'"
+        v-if="current_service=='Hourly Cleaning'"
        
       ></v-select>
                         </div>
