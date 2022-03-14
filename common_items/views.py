@@ -3611,6 +3611,7 @@ class MakeQuatationPhase2(IsAuthenticated,View):
 		return render(request,'common/enquiry/phase2quatation.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,})
 
 	def post(self,request,evaluation_detail_id):
+		print(request.POST,"DATERS")
 
 		service_formset       = self.service_formset_define(request.POST)
 		evaluation_details    = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=evaluation_detail_id)
@@ -3645,6 +3646,7 @@ class MakeQuatationPhase2(IsAuthenticated,View):
 					cost     = float(request.POST.get('form-'+str(form_count)+'-estimated_cost')) 
 					discount = float(request.POST.get('form-'+str(form_count)+'-discount'))
 					total    = float(request.POST.get('form-'+str(form_count)+'-total_cost'))
+					print(cost,total,"cst")
 
 					#for creating cleaning schedules and corresponding cleanings
 
