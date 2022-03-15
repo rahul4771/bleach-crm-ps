@@ -3916,7 +3916,7 @@ class ItemQuantityCheck(APIView):
 
 class CheckOutItemAdd(APIView):
 	permission_classes        = (AllowAny,)
-	authentication_classes    = ()
+	authentication_classes    = (TokenAuthentication,)
 	def get(self,request):
 		response_dict            = {'success':False}
 
@@ -3924,7 +3924,10 @@ class CheckOutItemAdd(APIView):
 		visit_id = request.GET.get('visit_id')
 		quantity = request.GET.get('quantity')
 		unit_id = request.GET.get('unit_id')
+		user_id = request.GET.get('user_id')
+		
 		store_id = request.GET.get('store_id')
+		store = Store.objects.get(id=store_id)
 
 		print(service_item,visit_id,"vis")
 		visit = OrderScheduler.objects.get(id=int(visit_id))
@@ -3953,6 +3956,35 @@ class CheckOutItemAdd(APIView):
 					checkout_item = CheckOutItems.objects.create(visit=visit,item=item,units=1,item_unit=itemunit)
 				else:
 					checkout_item = CheckOutItems.objects.create(visit=visit,item=item,units=quantity)
+
+					#updating itemhistory and store quantity in case of submitted check-out
+					if visit.stock_out_items_submitted == True:
+						try:
+							quantitystore = QuantityStoreDetails.objects.get(item_store=store,quantity_item = checkout_item.item)
+							quantitystore.quantity = float(quantitystore.quantity) - float(quantity)
+							quantitystore.save()
+						except:
+							QuantityStoreDetails.objects.create(
+							item_store = store,
+							quantity_item = checkout_item.item,
+							quantity = float(quantity)
+							)
+
+						inventory_item = checkout_item.item
+						inventory_item.total_quantity = float(inventory_item.total_quantity) - float(quantity)
+						inventory_item.save()
+
+						ItemHistory.objects.create(
+						item = checkout_item.item,
+						quantity = quantity,
+						item_action='STOCK OUT',
+						quantity_location=store,
+						item_remark=checkout_item.visit.order.order_no,
+						purchase_date= date.today(),
+						added_by = UserProfile.objects.get(id=user_id)
+						
+						)
+
 				response_dict['checkout_item_id'] = checkout_item.id
 				response_dict['item_id'] = checkout_item.item.id
 				response_dict['item_name'] = checkout_item.item.name
@@ -3992,6 +4024,7 @@ class CheckOutItemEdit(APIView):
 		visit_id = request.GET.get('visit_id')
 		quantity = request.GET.get('quantity')
 		unit_id = request.GET.get('unit_id')
+		user_id = request.GET.get('user_id')
 
 		print(visit_id,quantity,"vis")
 		visit = OrderScheduler.objects.get(id=int(visit_id))
@@ -4006,8 +4039,39 @@ class CheckOutItemEdit(APIView):
 				checkout_item.save()
 			else:
 				checkout_item = CheckOutItems.objects.get(id=int(checkout_item_id),visit=visit)
+				current_quantity = checkout_item.units
 				checkout_item.units = quantity
 				checkout_item.save()
+
+				#updating itemhistory and store quantity in case of submitted check-out
+				# if visit.stock_out_items_submitted == True:
+				# 	quantity_difference = abs(float(current_quantity)-float(quantity))
+				# 	try:
+				# 		quantitystore = QuantityStoreDetails.objects.get(item_store=store,quantity_item = checkout_item.item)
+				# 		quantitystore.quantity = float(quantitystore.quantity) - float(quantity_difference)
+				# 		quantitystore.save()
+				# 	except:
+				# 		QuantityStoreDetails.objects.create(
+				# 		item_store = store,
+				# 		quantity_item = checkout_item.item,
+				# 		quantity = float(quantity_difference)
+				# 		)
+
+				# 	inventory_item = checkout_item.item
+				# 	inventory_item.total_quantity = float(inventory_item.total_quantity) - float(quantity_difference)
+				# 	inventory_item.save()
+
+				# 	ItemHistory.objects.create(
+				# 	item = checkout_item.item,
+				# 	quantity = quantity_difference,
+				# 	item_action='STOCK OUT',
+				# 	quantity_location=store,
+				# 	item_remark=checkout_item.visit.order.order_no,
+				# 	purchase_date= date.today(),
+				# 	added_by = UserProfile.objects.get(id=user_id)
+					
+				# 	)
+
 			response_dict['message'] = 'Item Updated'
 		
 			

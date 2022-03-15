@@ -422,6 +422,7 @@ class CheckOutItems(models.Model):
     item                 = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='item_checkout')
     item_unit            = models.ForeignKey(ItemUnit,blank=True,null=True,related_name='item_checkout_unit')
     units                = models.CharField(default=0,max_length=10,blank=False,null=False)
+    recommended_quantity = models.CharField(default=0,max_length=10,blank=True,null=True)
     is_swapped_item      = models.BooleanField(default=False,blank=False,null=False)
     is_checked_out       = models.BooleanField(default=False,blank=False,null=False)
     checked_out_date     = models.DateField(blank=True,null=True)
