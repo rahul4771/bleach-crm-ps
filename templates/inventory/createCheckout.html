@@ -358,14 +358,15 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <button type="button" class="inv-plan-img-btn2-disabled" disabled> <img class="btn-img2" src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
                     {% endif %}
                    -->
-                    {% if item.service_item.item.item_add_type == 'quantity' %}
+                    {% if item.service_item.item.item_add_type == 'quantity' and item.visit.stock_out_items_submitted == False %}
                     <button type="button" class="inv-plan-img-btn" onclick="swapModal({{item.service_item.ingredient.id}},{{item.id}})" > <img src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>
                     {% else %}
                     <button type="button" class="inv-plan-img-btn2-disabled" disabled > <img class="btn-img2" src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>
                     {% endif %}
 
+                    {% if item.visit.stock_out_items_submitted == False %}
                     <button class="inv-plan-img-btn" type="button" {% if item.service_item %}onclick="openNavEditStore('{{item.id}}','{{item.service_item.item.name}}','{{item.units}}','{{item.service_item.item.id}}','{{item.service_item.item.item_add_type}}')"{% else %}onclick="openNavEditStore('{{item.id}}','{{item.item.name}}','{{item.units}}','{{item.item.id}}','{{item.item.item_add_type}}')"{% endif %}> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>  
-
+                   {% endif %}
               
                 </td>
                 </tr>
