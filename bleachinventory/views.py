@@ -1792,8 +1792,8 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 		if store_id:
 			store = Store.objects.get(id=int(store_id))
 		else:
-			# store = Store.objects.get(id=1)
-			store = Store.objects.get(store_name='AL-RAI STORE')
+			store = Store.objects.get(id=1)
+			# store = Store.objects.get(store_name='AL-RAI STORE')
 		
 		checkout_visit = OrderScheduler.objects.select_related('order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections')).get(id=int(visit_id))
 		
