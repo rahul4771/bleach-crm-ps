@@ -42,9 +42,11 @@
                         <div class="d-flex">
                         <button class="inv-blue-btn-outline filter_btn"  data-toggle="modal" data-target="#filterModel" ><i class="fas fa-filter mr-10"></i> Filter </button>
                         <div class="dropdown ml-10">
+                            {% if request.user.user_type != 'INVUSER' %}
                             <button class="btn inv-blue-btn dropdown-toggle inv-dropdown" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                               More Actions <i class="fas fa-caret-down ml-10"></i>
                             </button>
+                            {% endif %}
                             <div class="dropdown-menu " aria-labelledby="dropdownMenuButton" style="z-index:9999">
                               {% if request.user.user_type != 'STOCKCONTROLLER' %}
                               <div class="dropdown-item inv-dropdown-item p-7" onclick="openNavAddStore('add')"><i class="fas fa-plus-circle mr-10"></i>Add</div>

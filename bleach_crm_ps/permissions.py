@@ -94,6 +94,8 @@ class IsInventoryAdminUser(UserPassesTestMixin):
             return True
         if self.request.user.is_authenticated and self.request.user.user_type=='PURCHASINGOFFICER' and self.request.user.is_active==True:
             return True
+        if self.request.user.is_authenticated and self.request.user.user_type=='INVUSER' and self.request.user.is_active==True:
+            return True
         else:
             return False
 

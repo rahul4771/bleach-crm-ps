@@ -322,7 +322,7 @@
                     {% endif %}
                     
 
-                    {% if request.user.user_type != 'STOCKCONTROLLER' %}
+                    {% if request.user.user_type != 'STOCKCONTROLLER' and request.user.user_type != 'INVUSER' %}
                     <div class="row mt-10">
                         <div class="col-md-12">
                             <div class="white-wrapper white-wrapper-padding m-0">
