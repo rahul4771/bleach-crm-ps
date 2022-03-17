@@ -57,7 +57,7 @@ PUPOSES_REQUEST_ORDER=(
 class Category(models.Model):
     name            =   models.CharField(max_length=100,blank=False,null=False)
     category_code   =   models.CharField(max_length=50,blank=False,null=False)
-    category_id     =   models.CharField(max_length=50,blank=False,null=False)
+    category_id     =   models.CharField(max_length=50,blank=True,null=True)
     status          =   models.BooleanField(default=True,blank=False,null=False)
     created         =   models.DateTimeField(auto_now_add=True)
     def __unicode__(self):
@@ -68,7 +68,7 @@ class Category(models.Model):
 
 class Segment(models.Model):
     category        =   models.ForeignKey(Category,blank=False,null=False,related_name='segment_category')
-    segment_id      =   models.CharField(max_length=50,blank=False,null=False)
+    segment_id      =   models.CharField(max_length=50,blank=True,null=True)
     name            =   models.CharField(max_length=100,blank=False,null=False)
     status          =   models.BooleanField(default=True,blank=False,null=False)
     created         =   models.DateTimeField(auto_now_add=True)
@@ -82,7 +82,7 @@ class Line(models.Model):
     category        =   models.ForeignKey(Category,blank=False,null=False,related_name='line_category')
     segment         =   models.ForeignKey(Segment,blank=False,null=False,related_name='line_segment')
     name            =   models.CharField(max_length=100,blank=False,null=False)
-    line_id         =   models.CharField(max_length=50,blank=False,null=False)
+    line_id         =   models.CharField(max_length=50,blank=True,null=True)
     status          =   models.BooleanField(default=True,blank=False,null=False)
     created         =   models.DateTimeField(auto_now_add=True)
     def __unicode__(self):
