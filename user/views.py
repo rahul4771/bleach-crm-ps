@@ -90,7 +90,7 @@ class Signin(View):
 			if request.user.user_type == 'QUALITYCONTROLL':	
 				return redirect('qc:qcdash-board')
 
-			if request.user.user_type == 'INVENTORYADMIN' or request.user.user_type == 'INVENTORYUSER' or request.user.user_type == 'STOCKCONTROLLER' or request.user.user_type == 'PURCHASINGOFFICER':
+			if request.user.user_type == 'INVENTORYADMIN' or request.user.user_type == 'INVENTORYUSER' or request.user.user_type == 'STOCKCONTROLLER' or request.user.user_type == 'PURCHASINGOFFICER' or request.user.user_type == 'INVUSER':
 				print("helllooooooooooooooooo")
 				return redirect('bleach-inventory:inventorydash-board')
 		else:

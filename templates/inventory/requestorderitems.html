@@ -166,7 +166,7 @@
                      </tbody>
     
                     </table>
-                    {% if is_all_items_available and request_order.is_admin_approved and not request_order.is_received %}
+                    {% if is_all_items_available and request_order.is_admin_approved and not request_order.is_received and request.user.user_type != 'INVUSER' %}
                     <div class="mt-20 text-center">
                         <button class="inv-plan-btn" onclick="openNavAddStore('add')" data-toggle="modal" data-target="#stockoutModal">  Stock Out</button>
 

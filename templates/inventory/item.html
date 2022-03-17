@@ -110,7 +110,8 @@
               
                 <form method="POST" id="itemdetailsform" action="">{% csrf_token %}
                 <input type="hidden" name="action" value="edit_item_details" />
-              <div class="row">
+                {% if request.user.user_type != 'INVUSER' %}
+                <div class="row">
                   <div class="col-md-12" style="position: relative;">
                     <div class="d-flex">
                     <div class="d-flex d-grid " style="margin-left:auto">
@@ -128,7 +129,9 @@
                     </div>
                 </div>
                   </div>
-              </div>
+                </div>
+                {% endif %}
+
                 <div class="row mt-40">
                     <div class="col-md-12" style="padding-right: 0px !important;">
                         
@@ -382,8 +385,10 @@
                         <div class="d-flex">
                             <div class="mb-10 inv-item-head-sub-2" >Attributes</div>
                             <div class="edit-div" style="position: relative;margin-left: 20px;">
+                                {% if request.user.user_type != 'INVUSER' %}
                                 <img id="id_editButton" onclick="editItemDetials()" class="inv-edit-img"
                                 src="{% static 'files/icons/edit.png' %}">
+                                {% endif %}
                               
                             </div>
                         </div>
@@ -407,10 +412,6 @@
                                {% endfor %}
                            </div>
                             
-                           
-                           
-                          
-    
                         </div>
                   
                      </div>
@@ -418,7 +419,7 @@
                        
                        
                             <div class="row m-0">
-                                {% if inventory_item.item_type == 'ASSETS' %}
+                                {% if inventory_item.item_type == 'ASSETS' and request.user.user_type != 'INVUSER' %}
                                 <div class="col-md-12">
                                     <div class="mb-10 inv-item-head-sub-2 d-flex" >
                                         Accessories
@@ -442,7 +443,7 @@
 
                                 </div>
                                
-                                {% elif inventory_item.item_type == 'FINISHED GOODS' %}
+                                {% elif inventory_item.item_type == 'FINISHED GOODS' and request.user.user_type != 'INVUSER' %}
                                 <div class="col-md-12">
                                     <div class="mb-10 inv-item-head-sub-2 d-flex" >
                                         Ingredients
