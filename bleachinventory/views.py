@@ -1340,7 +1340,7 @@ class InventoryInv(IsInventoryAdminUser,View):
 
 		for index, row in df1.iterrows():
 			x = list(row)
-			print (x,"xalg")
+			print (x[0],"xalg")
 
 			category = Category.objects.get(name=x[0],status=True)
 			category.category_id = x[1]
