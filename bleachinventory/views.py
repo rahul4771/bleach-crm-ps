@@ -1351,11 +1351,11 @@ class InventoryInv(IsInventoryAdminUser,View):
 		Segment.objects.filter(status=True).update(segment_id='XX')
 		Line.objects.filter(status=True).update(line_id='XX')
 
-		df1 = pd.read_excel('CODE.xls',sheet_name=0)
+		df1 = pd.read_excel('CODE.xls',sheet_name=0,header=None)
 
 		for index, row in df1.iterrows():
 			x = list(row)
-			print (x[0],"xalg")
+			print (x[0],x[1],"xalg22")
 
 			try:
 				category = Category.objects.get(name=x[0],status=True)
@@ -1364,7 +1364,7 @@ class InventoryInv(IsInventoryAdminUser,View):
 			except:
 				category = None
 
-		df2 = pd.read_excel('CODE.xls',sheet_name=1)
+		df2 = pd.read_excel('CODE.xls',sheet_name=1,header=None)
 
 		for index, row in df2.iterrows():
 			x = list(row)
@@ -1377,7 +1377,7 @@ class InventoryInv(IsInventoryAdminUser,View):
 			except:
 				segment = None
 
-		df3 = pd.read_excel('CODE.xls',sheet_name=2)
+		df3 = pd.read_excel('CODE.xls',sheet_name=2,header=None)
 
 		for index, row in df3.iterrows():
 			x = list(row)
