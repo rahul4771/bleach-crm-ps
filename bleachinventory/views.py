@@ -1300,36 +1300,36 @@ class InventoryStore(IsInventoryAdminUser,View):
 class InventoryInv(IsInventoryAdminUser,View):
 	def get(self,request):
 		
-		# df = pd.read_excel('items.xls')
+		df = pd.read_excel('Book1.xls')
 
-		# for index, row in df.iterrows():
-		# 	x = list(row)
-		# 	print (x,"xalg")
+		for index, row in df.iterrows():
+			x = list(row)
+			print (x,"xalg")
 
-		# 	categories       = Category.objects.all()
-		# 	category_latest  = categories.last()
-		# 	if category_latest:
-		# 		code_number  =  int(re.findall(r'(\d+)', category_latest.category_code)[0]) + 1
-		# 		new_category_code = 'CAT'+str(code_number)
-		# 	else:
-		# 		new_category_code = 'CAT9001'
+			categories       = Category.objects.all()
+			category_latest  = categories.last()
+			if category_latest:
+				code_number  =  int(re.findall(r'(\d+)', category_latest.category_code)[0]) + 1
+				new_category_code = 'CAT'+str(code_number)
+			else:
+				new_category_code = 'CAT9001'
 
-		# 	try:
-		# 		category = Category.objects.get(name=x[1],status=True)
-		# 	except:
-		# 		category = Category.objects.create(name=x[1],category_code=new_category_code,status=True)
+			try:
+				category = Category.objects.get(name=x[1],status=True)
+			except:
+				category = Category.objects.create(name=x[1],category_code=new_category_code,status=True)
 
-		# 	try:
-		# 		segment = Segment.objects.get(name=x[2],category=category,status=True)
-		# 	except:
-		# 		segment = Segment.objects.create(name=x[2],category=category,status=True)
+			try:
+				segment = Segment.objects.get(name=x[2],category=category,status=True)
+			except:
+				segment = Segment.objects.create(name=x[2],category=category,status=True)
 
-		# 	try:
-		# 		line = Line.objects.get(name=x[3],category=category,segment=segment,status=True)
-		# 	except:
-		# 		line = Line.objects.create(name=x[3],category=category,segment=segment,status=True)
+			try:
+				line = Line.objects.get(name=x[3],category=category,segment=segment,status=True)
+			except:
+				line = Line.objects.create(name=x[3],category=category,segment=segment,status=True)
 
-			# InventoryItem.objects.filter(name__iexact=x[0]).update(item_category=category,item_segment=segment,item_line=line)
+			InventoryItem.objects.filter(name__iexact=x[0]).update(item_category=category,item_segment=segment,item_line=line)
 
 			# item_code_series = str(category.category_id)+str(segment.segment_id)+str(line.line_id)
 
@@ -1346,11 +1346,11 @@ class InventoryInv(IsInventoryAdminUser,View):
 
 
 		
-		category = Category.objects.get(name='X')
-		segment = Segment.objects.get(name='X')
-		line = Line.objects.get(name='X')
+		# category = Category.objects.get(name='X')
+		# segment = Segment.objects.get(name='X')
+		# line = Line.objects.get(name='X')
 		
-		InventoryItem.objects.filter(status=True).update(item_category=category,item_segment=segment,item_line=line)
+		# InventoryItem.objects.filter(status=True).update(item_category=category,item_segment=segment,item_line=line)
 
 
 
