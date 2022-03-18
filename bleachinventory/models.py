@@ -61,10 +61,10 @@ class Category(models.Model):
     status          =   models.BooleanField(default=True,blank=False,null=False)
     created         =   models.DateTimeField(auto_now_add=True)
     def __unicode__(self):
-        return str(self.category_id)
+        return str(self.name)
 
     def __str__(self):
-        return self.category_id
+        return self.name
 
 class Segment(models.Model):
     category        =   models.ForeignKey(Category,blank=False,null=False,related_name='segment_category')
