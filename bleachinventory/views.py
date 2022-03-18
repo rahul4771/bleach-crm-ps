@@ -1300,47 +1300,83 @@ class InventoryStore(IsInventoryAdminUser,View):
 class InventoryInv(IsInventoryAdminUser,View):
 	def get(self,request):
 		
-		df = pd.read_excel('Book2.xls')
+		# df = pd.read_excel('Book2.xls')
 
-		for index, row in df.iterrows():
+		# for index, row in df.iterrows():
+		# 	x = list(row)
+		# 	print (x,"xalg")
+
+		# 	categories       = Category.objects.all()
+		# 	category_latest  = categories.last()
+		# 	if category_latest:
+		# 		code_number  =  int(re.findall(r'(\d+)', category_latest.category_code)[0]) + 1
+		# 		new_category_code = 'CAT'+str(code_number)
+		# 	else:
+		# 		new_category_code = 'CAT9001'
+
+		# 	try:
+		# 		category = Category.objects.get(name=x[1],status=True)
+		# 	except:
+		# 		category = Category.objects.create(name=x[1],category_code=new_category_code,status=True)
+
+		# 	try:
+		# 		segment = Segment.objects.get(name=x[2],category=category,status=True)
+		# 	except:
+		# 		segment = Segment.objects.create(name=x[2],category=category,status=True)
+
+		# 	try:
+		# 		line = Line.objects.get(name=x[3],category=category,segment=segment,status=True)
+		# 	except:
+		# 		line = Line.objects.create(name=x[3],category=category,segment=segment,status=True)
+
+		# 	InventoryItem.objects.filter(name__iexact=x[0]).update(item_category=category,item_segment=segment,item_line=line)
+
+		
+		Category.objects.filter(status=True).update(category_id='XX')
+		Segment.objects.filter(status=True).update(segment_id='XX')
+		Line.objects.filter(status=True).update(line_id='XX')
+
+		df1 = pd.read_excel('CODE.xls',sheet_name=0)
+
+		for index, row in df1.iterrows():
 			x = list(row)
 			print (x,"xalg")
 
-			categories       = Category.objects.all()
-			category_latest  = categories.last()
-			if category_latest:
-				code_number  =  int(re.findall(r'(\d+)', category_latest.category_code)[0]) + 1
-				new_category_code = 'CAT'+str(code_number)
-			else:
-				new_category_code = 'CAT9001'
+			category = Category.objects.get(name=x[0],status=True)
+			category.category_id = x[1]
+			category.save()
 
-			try:
-				category = Category.objects.get(name=x[1],status=True)
-			except:
-				category = Category.objects.create(name=x[1],category_code=new_category_code,status=True)
+		df2 = pd.read_excel('CODE.xls',sheet_name=1)
 
-			try:
-				segment = Segment.objects.get(name=x[2],category=category,status=True)
-			except:
-				segment = Segment.objects.create(name=x[2],category=category,status=True)
+		for index, row in df2.iterrows():
+			x = list(row)
+			print (x,"xalg")
 
-			try:
-				line = Line.objects.get(name=x[3],category=category,segment=segment,status=True)
-			except:
-				line = Line.objects.create(name=x[3],category=category,segment=segment,status=True)
+			segment = Segment.objects.get(name=x[0],status=True)
+			segment.segment_id = x[1]
+			segment.save()
 
-			InventoryItem.objects.filter(name__iexact=x[0]).update(item_category=category,item_segment=segment,item_line=line)
+		df3 = pd.read_excel('CODE.xls',sheet_name=2)
 
-			# item_code_series = str(category.category_id)+str(segment.segment_id)+str(line.line_id)
+		for index, row in df3.iterrows():
+			x = list(row)
+			print (x,"xalg")
 
-			# latest_item_code = InventoryItem.objects.filter(item_code__contains=item_code_series).last()
+			line = Line.objects.get(name=x[0],status=True)
+			line.line_id = x[1]
+			line.save()
+		
+		
+		# item_code_series = str(category.category_id)+str(segment.segment_id)+str(line.line_id)
 
-			# if latest_item_code:
-			# 	new_item_code = item_code_series + str(int(latest_item_code.item_code[6:])+1)
-			# else:
-			# 	new_item_code = item_code_series + '101'
+		# latest_item_code = InventoryItem.objects.filter(item_code__contains=item_code_series).last()
 
-			# InventoryItem.objects.filter(name__iexact=x[0],item_category=category,item_segment=segment,item_line=line).update(item_code=new_item_code)
+		# if latest_item_code:
+		# 	new_item_code = item_code_series + str(int(latest_item_code.item_code[6:])+1)
+		# else:
+		# 	new_item_code = item_code_series + '101'
+
+		# InventoryItem.objects.filter(name__iexact=x[0],item_category=category,item_segment=segment,item_line=line).update(item_code=new_item_code)
 
 
 
