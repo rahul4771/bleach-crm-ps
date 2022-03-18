@@ -1330,9 +1330,31 @@ class InventoryInv(IsInventoryAdminUser,View):
 		# 		line = Line.objects.create(name=x[3],category=category,segment=segment,status=True)
 
 		# InventoryItem.objects.filter(status=True).update(item_code='000000000')
-		# items = InventoryItem.objects.filter(status=True)
+		items = InventoryItem.objects.filter(status=True,item_add_type='unit')
+		ItemUnit.objects.all().update(unit_code='000000000-0')
 
-		# for item in items:
+		for item in items:
+
+			item_code = item.item_code
+			print(item_code,"itc")
+
+			itemunits = ItemUnit.objects.filter(item=item)
+
+			for unit in itemunits:
+				latest_unit_code = ItemUnit.objects.filter(unit_code__contains=item_code).last()
+				print(latest_unit_code,"ltst")
+
+				if latest_unit_code:
+					code = latest_unit_code.unit_code.split("-")[1]
+					new_unit_code = item_code + '-' + str(int(code)+1)
+				else:
+					print("newc")
+					new_unit_code = item_code + '-1'
+
+				unit.unit_code = new_unit_code
+				unit.save()
+
+
 		# 	item_code_series = str(item.item_category.category_id)+str(item.item_segment.segment_id)+str(item.item_line.line_id)
 		# 	print(item_code_series,"itcs")
 
