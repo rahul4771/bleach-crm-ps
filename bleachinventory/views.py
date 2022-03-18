@@ -1332,39 +1332,39 @@ class InventoryInv(IsInventoryAdminUser,View):
 		# 	InventoryItem.objects.filter(name__iexact=x[0]).update(item_category=category,item_segment=segment,item_line=line)
 
 		
-		Category.objects.filter(status=True).update(category_id='XX')
-		Segment.objects.filter(status=True).update(segment_id='XX')
-		Line.objects.filter(status=True).update(line_id='XX')
+		# Category.objects.filter(status=True).update(category_id='XX')
+		# Segment.objects.filter(status=True).update(segment_id='XX')
+		# Line.objects.filter(status=True).update(line_id='XX')
 
-		df1 = pd.read_excel('CODE.xls',sheet_name=0)
+		# df1 = pd.read_excel('CODE.xls',sheet_name=0)
 
-		for index, row in df1.iterrows():
-			x = list(row)
-			print (x[0],"xalg")
+		# for index, row in df1.iterrows():
+		# 	x = list(row)
+		# 	print (x[0],"xalg")
 
-			category = Category.objects.get(name=x[0],status=True)
-			category.category_id = x[1]
-			category.save()
+		# 	category = Category.objects.get(name=x[0],status=True)
+		# 	category.category_id = x[1]
+		# 	category.save()
 
-		df2 = pd.read_excel('CODE.xls',sheet_name=1)
+		# df2 = pd.read_excel('CODE.xls',sheet_name=1)
 
-		for index, row in df2.iterrows():
-			x = list(row)
-			print (x,"xalg")
+		# for index, row in df2.iterrows():
+		# 	x = list(row)
+		# 	print (x,"xalg")
 
-			segment = Segment.objects.get(name=x[0],status=True)
-			segment.segment_id = x[1]
-			segment.save()
+		# 	segment = Segment.objects.get(name=x[0],status=True)
+		# 	segment.segment_id = x[1]
+		# 	segment.save()
 
-		df3 = pd.read_excel('CODE.xls',sheet_name=2)
+		# df3 = pd.read_excel('CODE.xls',sheet_name=2)
 
-		for index, row in df3.iterrows():
-			x = list(row)
-			print (x,"xalg")
+		# for index, row in df3.iterrows():
+		# 	x = list(row)
+		# 	print (x,"xalg")
 
-			line = Line.objects.get(name=x[0],status=True)
-			line.line_id = x[1]
-			line.save()
+		# 	line = Line.objects.get(name=x[0],status=True)
+		# 	line.line_id = x[1]
+		# 	line.save()
 		
 		
 		# item_code_series = str(category.category_id)+str(segment.segment_id)+str(line.line_id)
@@ -1382,11 +1382,11 @@ class InventoryInv(IsInventoryAdminUser,View):
 
 
 		
-		# category = Category.objects.get(name='X')
-		# segment = Segment.objects.get(name='X')
-		# line = Line.objects.get(name='X')
+		category = Category.objects.get(name='X')
+		segment = Segment.objects.get(name='X')
+		line = Line.objects.get(name='X')
 		
-		# InventoryItem.objects.filter(status=True).update(item_category=category,item_segment=segment,item_line=line)
+		InventoryItem.objects.filter(status=True).update(item_category=category,item_segment=segment,item_line=line)
 
 
 
