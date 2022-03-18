@@ -1300,7 +1300,7 @@ class InventoryStore(IsInventoryAdminUser,View):
 class InventoryInv(IsInventoryAdminUser,View):
 	def get(self,request):
 		
-		df = pd.read_excel('NewCategories.xls')
+		df = pd.read_excel('Book2.xls')
 
 		for index, row in df.iterrows():
 			x = list(row)
