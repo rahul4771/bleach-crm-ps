@@ -1329,66 +1329,66 @@ class InventoryInv(IsInventoryAdminUser,View):
 		# 	except:
 		# 		line = Line.objects.create(name=x[3],category=category,segment=segment,status=True)
 
-		# items = InventoryItem.objects.filter(status=True)
+		items = InventoryItem.objects.filter(status=True)
 
-		# for item in items:
-		# 	item_code_series = str(item.item_category.category_id)+str(item.item_segment.segment_id)+str(item.item_line.line_id)
+		for item in items:
+			item_code_series = str(item.item_category.category_id)+str(item.item_segment.segment_id)+str(item.item_line.line_id)
 
-		# 	latest_item_code = InventoryItem.objects.filter(item_code__contains=item_code_series).last()
+			latest_item_code = InventoryItem.objects.filter(item_code__contains=item_code_series).last()
 
-		# 	if latest_item_code:
-		# 		new_item_code = item_code_series + str(int(latest_item_code.item_code[6:])+1)
-		# 	else:
-		# 		new_item_code = item_code_series + '101'
+			if latest_item_code:
+				new_item_code = item_code_series + str(int(latest_item_code.item_code[6:])+1)
+			else:
+				new_item_code = item_code_series + '101'
 
-		# 	InventoryItem.objects.filter(name__iexact=x[0],item_category=item.item_category,item_segment=item.item_segment,item_line=item.item_line).update(item_code=new_item_code)
+			InventoryItem.objects.filter(id=item.id,item_category=item.item_category,item_segment=item.item_segment,item_line=item.item_line).update(item_code=new_item_code)
 		
 		
 		# 	InventoryItem.objects.filter(name__iexact=x[0]).update(item_category=category,item_segment=segment,item_line=line)
 
 		
-		Category.objects.filter(status=True).update(category_id='XX')
-		Segment.objects.filter(status=True).update(segment_id='XX')
-		Line.objects.filter(status=True).update(line_id='XX')
+		# Category.objects.filter(status=True).update(category_id='XX')
+		# Segment.objects.filter(status=True).update(segment_id='XX')
+		# Line.objects.filter(status=True).update(line_id='XX')
 
-		df1 = pd.read_excel('CODE.xls',sheet_name=0,header=None)
+		# df1 = pd.read_excel('CODE.xls',sheet_name=0,header=None)
 
-		for index, row in df1.iterrows():
-			x = list(row)
-			print (x[0],x[1],"xalg22")
+		# for index, row in df1.iterrows():
+		# 	x = list(row)
+		# 	print (x[0],x[1],"xalg22")
 
-			try:
-				category = Category.objects.get(name=x[0],status=True)
-				category.category_id = x[1]
-				category.save()
-			except:
-				category = None
+		# 	try:
+		# 		category = Category.objects.get(name=x[0],status=True)
+		# 		category.category_id = x[1]
+		# 		category.save()
+		# 	except:
+		# 		category = None
 
-		df2 = pd.read_excel('CODE.xls',sheet_name=1,header=None)
+		# df2 = pd.read_excel('CODE.xls',sheet_name=1,header=None)
 
-		for index, row in df2.iterrows():
-			x = list(row)
-			print (x,"xalg")
+		# for index, row in df2.iterrows():
+		# 	x = list(row)
+		# 	print (x,"xalg")
 
-			try:
-				segment = Segment.objects.get(name=x[0],status=True)
-				segment.segment_id = x[1]
-				segment.save()
-			except:
-				segment = None
+		# 	try:
+		# 		segment = Segment.objects.get(name=x[0],status=True)
+		# 		segment.segment_id = x[1]
+		# 		segment.save()
+		# 	except:
+		# 		segment = None
 
-		df3 = pd.read_excel('CODE.xls',sheet_name=2,header=None)
+		# df3 = pd.read_excel('CODE.xls',sheet_name=2,header=None)
 
-		for index, row in df3.iterrows():
-			x = list(row)
-			print (x,"xalg")
+		# for index, row in df3.iterrows():
+		# 	x = list(row)
+		# 	print (x,"xalg")
 
-			try:
-				line = Line.objects.get(name=x[0],status=True)
-				line.line_id = x[1]
-				line.save()
-			except:
-				line = None
+		# 	try:
+		# 		line = Line.objects.get(name=x[0],status=True)
+		# 		line.line_id = x[1]
+		# 		line.save()
+		# 	except:
+		# 		line = None
 		
 		
 		
