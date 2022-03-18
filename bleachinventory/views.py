@@ -1346,11 +1346,11 @@ class InventoryInv(IsInventoryAdminUser,View):
 
 
 		
-		# category = Category.objects.get(name='X')
-		# segment = Segment.objects.get(name='X')
-		# line = Line.objects.get(name='X')
+		category = Category.objects.get(name='X')
+		segment = Segment.objects.get(name='X')
+		line = Line.objects.get(name='X')
 		
-		# InventoryItem.objects.filter(status=True).update(item_category=category,item_segment=segment,item_line=line)
+		InventoryItem.objects.filter(status=True).update(item_category=category,item_segment=segment,item_line=line)
 
 
 
