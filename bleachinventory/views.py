@@ -1342,9 +1342,12 @@ class InventoryInv(IsInventoryAdminUser,View):
 			x = list(row)
 			print (x[0],"xalg")
 
-			category = Category.objects.get(name=x[0],status=True)
-			category.category_id = x[1]
-			category.save()
+			try:
+				category = Category.objects.get(name=x[0],status=True)
+				category.category_id = x[1]
+				category.save()
+			except:
+				category = None
 
 		df2 = pd.read_excel('CODE.xls',sheet_name=1)
 
@@ -1352,9 +1355,12 @@ class InventoryInv(IsInventoryAdminUser,View):
 			x = list(row)
 			print (x,"xalg")
 
-			segment = Segment.objects.get(name=x[0],status=True)
-			segment.segment_id = x[1]
-			segment.save()
+			try:
+				segment = Segment.objects.get(name=x[0],status=True)
+				segment.segment_id = x[1]
+				segment.save()
+			except:
+				segment = None
 
 		df3 = pd.read_excel('CODE.xls',sheet_name=2)
 
@@ -1362,9 +1368,12 @@ class InventoryInv(IsInventoryAdminUser,View):
 			x = list(row)
 			print (x,"xalg")
 
-			line = Line.objects.get(name=x[0],status=True)
-			line.line_id = x[1]
-			line.save()
+			try:
+				line = Line.objects.get(name=x[0],status=True)
+				line.line_id = x[1]
+				line.save()
+			except:
+				line = None
 		
 		
 		# item_code_series = str(category.category_id)+str(segment.segment_id)+str(line.line_id)
