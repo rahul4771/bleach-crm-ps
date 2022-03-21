@@ -132,6 +132,7 @@ $('.month_pick').datetimepicker({
 
 $('.month_pick_resource').datetimepicker({
   pickTime: false,
+  minDate: new Date(2021, 12, 01),
   format: "MM/YYYY",
   startView: "year", 
   minViewMode: "months",
@@ -218,8 +219,14 @@ $('.prev-month-resource').on('click', function () {
   $selectedDay            = $(this).parent('#working_calendar2').children('.month_pick_resource').data("DateTimePicker").getDate();
   var $tmpSelectedDay     = new Date($selectedDay) 
   $tmpSelectedDay.setMonth($tmpSelectedDay.getMonth() - 1);
-  $(this).parent('#working_calendar2').children('.month_pick_resource').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('MM/YYYY'));
+  var $tmptoday           = new Date()
 
+  if ( ($tmpSelectedDay.getFullYear()) >= ($tmptoday.getFullYear()) ) {
+    console.log($tmpSelectedDay.getFullYear(),$tmptoday.getFullYear(),"datay")
+    $(this).parent('#working_calendar2').children('.month_pick_resource').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('MM/YYYY'));
+  }else{
+    $(this).parent('#working_calendar2').children('.month_pick_resource').data("DateTimePicker").setDate(moment($tmptoday).format('MM/YYYY'));
+  }
 });
 
 $('.this-month-resource').on('click', function () {
