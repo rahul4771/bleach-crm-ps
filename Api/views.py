@@ -1670,8 +1670,10 @@ class DailySalesBreakDownAPI(APIView):
 			schedule_count = OrderScheduler.objects.filter(order__order_no=schedule.order.order_no,order_scheduler_book__id=schedule.order_scheduler_book.id).count()
 
 			# order_amount     = schedule.cleaning_cost
-			cleaning_amount  = float(schedule.cleaning_cost)
-			
+			if schedule.cleaning_cost:
+				cleaning_amount  = float(schedule.cleaning_cost)
+			else:
+				cleaning_amount  = 0
 			#fine,promocode, write off calc
 			# if schedule.order.evaluation.promocode_amount > 0:
 			# 	cleaning_amount -= float(schedule.order.evaluation.promocode_amount/order_schedule_count)
@@ -1684,7 +1686,7 @@ class DailySalesBreakDownAPI(APIView):
 			# if schedule.order.evaluation.additional_charge > 0:
 			# 	cleaning_amount += float(schedule.order.evaluation.additional_charge/order_schedule_count)
 
-			total_day_sales += float(schedule.cleaning_cost)			
+			total_day_sales += float(cleaning_amount)			
 
 			schedule_dict = {
 				'order_no' : schedule.order.order_no,
