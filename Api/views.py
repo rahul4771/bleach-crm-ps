@@ -1669,22 +1669,22 @@ class DailySalesBreakDownAPI(APIView):
 			#schedule count of evaluation book
 			schedule_count = OrderScheduler.objects.filter(order__order_no=schedule.order.order_no,order_scheduler_book__id=schedule.order_scheduler_book.id).count()
 
-			order_amount     = schedule.order_scheduler_book.estimated_cost
-			cleaning_amount  = float(order_amount/schedule_count)
+			# order_amount     = schedule.cleaning_cost
+			cleaning_amount  = float(schedule.cleaning_cost)
 			
 			#fine,promocode, write off calc
-			if schedule.order.evaluation.promocode_amount > 0:
-				cleaning_amount -= float(schedule.order.evaluation.promocode_amount/order_schedule_count)
-			if schedule.order.evaluation.writeback_amount > 0:
-				cleaning_amount -= float(schedule.order.evaluation.writeback_amount/order_schedule_count)
-			if schedule.order.evaluation.fine_amount > 0:
-				cleaning_amount += float(schedule.order.evaluation.fine_amount/order_schedule_count)
-			if schedule.order.evaluation.discount > 0:
-				cleaning_amount -= float(schedule.order.evaluation.discount/order_schedule_count)
-			if schedule.order.evaluation.additional_charge > 0:
-				cleaning_amount += float(schedule.order.evaluation.additional_charge/order_schedule_count)
+			# if schedule.order.evaluation.promocode_amount > 0:
+			# 	cleaning_amount -= float(schedule.order.evaluation.promocode_amount/order_schedule_count)
+			# if schedule.order.evaluation.writeback_amount > 0:
+			# 	cleaning_amount -= float(schedule.order.evaluation.writeback_amount/order_schedule_count)
+			# if schedule.order.evaluation.fine_amount > 0:
+			# 	cleaning_amount += float(schedule.order.evaluation.fine_amount/order_schedule_count)
+			# if schedule.order.evaluation.discount > 0:
+			# 	cleaning_amount -= float(schedule.order.evaluation.discount/order_schedule_count)
+			# if schedule.order.evaluation.additional_charge > 0:
+			# 	cleaning_amount += float(schedule.order.evaluation.additional_charge/order_schedule_count)
 
-			total_day_sales += float(cleaning_amount)			
+			total_day_sales += float(schedule.cleaning_cost)			
 
 			schedule_dict = {
 				'order_no' : schedule.order.order_no,
