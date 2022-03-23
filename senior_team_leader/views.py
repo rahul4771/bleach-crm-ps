@@ -5,8 +5,9 @@ from django.conf import settings
 from bleach_crm_ps.permissions import IsSeniorTeamLeader
 from bleach_crm_ps.utils import get_error
 from django.http import HttpResponse,JsonResponse
-
+import requests
 import functools
+import pandas as pd
 import operator
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils import timezone 
@@ -17,7 +18,7 @@ from django.db.models import Prefetch
 from django.contrib import messages
 
 from evaluator.forms import EvaluationDetailsForm,QuatationServiceForm
-
+import json
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationBookSection,EvaluationSectionKeynote,EvaluationMedia,ServiceType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp,Investigation,InvestigationMedia,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia
@@ -511,6 +512,24 @@ class ClientOrders(IsSeniorTeamLeader,View):
 
 class StlHome(IsSeniorTeamLeader,View):
 	def get(self,request):
+		
+		# url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/employees/directory"
+
+		# headers = {
+		# 	"Accept": "application/json",
+		# 	"Authorization": "Basic NDNhMjE5Y2ZlNmYyZGJlMjUwYTllYjdiNWUyNzc0MzM1YzE0Njg1ODo="
+		# }
+
+		# response = requests.request("GET", url, headers=headers)
+		# data = response.json()
+
+		# df = pd.DataFrame(data['employees']).to_excel("excel.xlsx")
+
+		# for employee in data['employees']:
+		# 	print(employee['preferredName'],"prefernm")
+		# 	user = UserProfile.objects.get(name__iexact=employee['preferredName'])
+		# 	user.bamboo_employee_id = employee['id']
+		# 	user.save()
 
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)

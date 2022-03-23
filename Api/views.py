@@ -484,6 +484,7 @@ class UsersList(APIView):
 		
 		staff_serializer = UsersListSerializer(staffs,many=True).data
 		response_dict["staffs"]=staff_serializer
+
 		return Response(response_dict,HTTP_200_OK)
 
 #get existing leave schedules and add new leaveschedules
@@ -514,6 +515,7 @@ class LeaveScheduleAPI(APIView):
 		response_dict = {'success':False}
 
 		for schedule in request.data:
+			print(schedule,"schedl")
 			serializer = LeaveScheduleSerializer(data=schedule)
 			
 			if serializer.is_valid(): 
