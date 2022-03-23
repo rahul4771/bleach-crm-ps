@@ -32,8 +32,7 @@ var selectedDates=[];
 var resourceLeave=[];
 
 
-function getInitDatas(){
-   
+function getInitDatas(){ 
  
     $('.day-head').remove();
     $('.lv-rows').remove();
@@ -85,15 +84,15 @@ for (var j=0;j<resourceList.length;j++){
                                    $('#row-'+rsid).append('<td class="noBorder text-center lv-date"  onclick="selectDay(this)" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-weekly" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
                
                                   }
-                                  else if(resourceList[j].leave[rs].type=='NOT PAID'||resourceList[j].leave[rs].type=='MATERNITY/PATERNITY'){
-                                    $('#row-'+rsid).append('<td class="noBorder text-center lv-date"  onclick="selectDay(this)" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-maternity" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
+                                  else if(resourceList[j].leave[rs].type=='UNPAID LEAVE'){
+                                    $('#row-'+rsid).append('<td class="noBorder text-center lv-date"  onclick="selectDay(this)" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-unpaid" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
                                    }
                                       else  if(resourceList[j].leave[rs].type=='SICK LEAVE'){
                                         $('#row-'+rsid).append('<td class="noBorder text-center lv-date" onclick="selectDay(this)" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-sick" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
                     
                                        }
-                                       else  if(resourceList[j].leave[rs].type=='COVID LEAVE'){
-                                        $('#row-'+rsid).append('<td class="noBorder text-center lv-date" onclick="selectDay(this)" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-covid" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
+                                       else  if(resourceList[j].leave[rs].type=='COMPASSIONATE LEAVE'){
+                                        $('#row-'+rsid).append('<td class="noBorder text-center lv-date" onclick="selectDay(this)" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-compassionate" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
                     
                                        }
                                        else  if(resourceList[j].leave[rs].type=='ABSENT'){
@@ -227,18 +226,18 @@ for (var j=0;j<resourceList.length;j++){
                     $('#row-'+rsid).append('<td class="noBorder text-center lv-date"  onclick="selectDay(this)" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-weekly" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
 
                    }
-                   else if(resourceList[j].leave[rs].type=='NOT PAID'||resourceList[j].leave[rs].type=='MATERNITY/PATERNITY'){
+                   else if(resourceList[j].leave[rs].type=='UNPAID LEAVE'){
                     
-                        $('#row-'+rsid).append('<td class="noBorder text-center lv-date"  onclick="selectDay(this)" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-maternity" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
+                        $('#row-'+rsid).append('<td class="noBorder text-center lv-date"  onclick="selectDay(this)" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-unpaid" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
                        }
                        else if(resourceList[j].leave[rs].type=='SICK LEAVE'){
                       
                             $('#row-'+rsid).append('<td class="noBorder text-center lv-date"  onclick="selectDay(this)" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-sick" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
         
                            }
-                           else if(resourceList[j].leave[rs].type=='COVID LEAVE'){
+                           else if(resourceList[j].leave[rs].type=='COMPASSIONATE LEAVE'){
                       
-                            $('#row-'+rsid).append('<td class="noBorder text-center lv-date"  onclick="selectDay(this)" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-covid" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
+                            $('#row-'+rsid).append('<td class="noBorder text-center lv-date"  onclick="selectDay(this)" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-compassionate" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
         
                            }
                            else if(resourceList[j].leave[rs].type=='ABSENT'){
@@ -326,8 +325,8 @@ function selectDay(el){
     $('.modal-dialog').removeClass("lv-annual-popup")
     $('.modal-dialog').removeClass("lv-weekly-popup")
     $('.modal-dialog').removeClass("lv-sick-popup")
-    $('.modal-dialog').removeClass("lv-covid-popup")
-    $('.modal-dialog').removeClass("lv-maternity-popup")
+    $('.modal-dialog').removeClass("lv-compassionate-popup")
+    $('.modal-dialog').removeClass("lv-unpaid-popup")
     $('.modal-dialog').removeClass("lv-absent-popup")
     if($('#'+dayId).find('.lv-date').hasClass('lv-weekend')){
         $('#'+dayId).find('.lv-date').removeClass('lv-weekend');
@@ -336,9 +335,9 @@ function selectDay(el){
      
         $('.modal-title').text('Annual Leave');
         $('.modal-title').removeClass('lv-sick-text');
-        $('.modal-title').removeClass('lv-maternity-text');
+        $('.modal-title').removeClass('lv-unpaid-text');
         $('.modal-title').removeClass('lv-weekly-text');
-        $('.modal-title').removeClass('lv-covid-text');
+        $('.modal-title').removeClass('lv-compassionate-text');
         $('.modal-title').removeClass('lv-absent-text');
         $('.modal-title').addClass('lv-annual-text');
         $('.modal-date').text($('#'+dayId).find('.lv-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString());
@@ -352,10 +351,10 @@ function selectDay(el){
    else if($('#'+dayId).find('.lv-date').hasClass('lv-sick')){
      
         $('.modal-title').text('Sick Leave');
-        $('.modal-title').removeClass('lv-maternity-text');
+        $('.modal-title').removeClass('lv-unpaid-text');
         $('.modal-title').removeClass('lv-annual-text');
         $('.modal-title').removeClass('lv-weekly-text');
-        $('.modal-title').removeClass('lv-covid-text');
+        $('.modal-title').removeClass('lv-compassionate-text');
         $('.modal-title').removeClass('lv-absent-text');
         $('.modal-title').addClass('lv-sick-text');
         $('.modal-date').text($('#'+dayId).find('.lv-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString());
@@ -364,18 +363,18 @@ function selectDay(el){
         $('#leaveModal').show();
         dateCounter=dateCounter-1;
     }
-    else if($('#'+dayId).find('.lv-date').hasClass('lv-maternity')){
+    else if($('#'+dayId).find('.lv-date').hasClass('lv-unpaid')){
        
         $('.modal-title').text('Not Paid Leave');
         $('.modal-title').removeClass('lv-sick-text');
         $('.modal-title').removeClass('lv-annual-text');
         $('.modal-title').removeClass('lv-weekly-text');
-        $('.modal-title').removeClass('lv-covid-text');
+        $('.modal-title').removeClass('lv-compassionate-text');
         $('.modal-title').removeClass('lv-absent-text');
-        $('.modal-title').addClass('lv-maternity-text');
+        $('.modal-title').addClass('lv-unpaid-text');
         $('.modal-date').text($('#'+dayId).find('.lv-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString());
         $('.modal-resource').text(user);
-        $('.modal-dialog').addClass("lv-maternity-popup")
+        $('.modal-dialog').addClass("lv-unpaid-popup")
        
         $('#leaveModal').show();
         dateCounter=dateCounter-1;
@@ -386,8 +385,8 @@ function selectDay(el){
         $('.modal-title').text('Weekly Off');
         $('.modal-title').removeClass('lv-sick-text');
         $('.modal-title').removeClass('lv-annual-text');
-        $('.modal-title').removeClass('lv-maternity-text');
-        $('.modal-title').removeClass('lv-covid-text');
+        $('.modal-title').removeClass('lv-unpaid-text');
+        $('.modal-title').removeClass('lv-compassionate-text');
         $('.modal-title').removeClass('lv-absent-text');
         $('.modal-title').addClass('lv-weekly-text');
         
@@ -405,8 +404,8 @@ function selectDay(el){
         $('.modal-title').text('Absent');
         $('.modal-title').removeClass('lv-sick-text');
         $('.modal-title').removeClass('lv-annual-text');
-        $('.modal-title').removeClass('lv-maternity-text');
-        $('.modal-title').removeClass('lv-covid-text');
+        $('.modal-title').removeClass('lv-unpaid-text');
+        $('.modal-title').removeClass('lv-compassionate-text');
         $('.modal-title').addClass('lv-absent-text');
         $('.modal-date').text($('#'+dayId).find('.lv-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString());
         $('.modal-resource').text(user);
@@ -415,24 +414,24 @@ function selectDay(el){
        
         dateCounter=dateCounter-1;
     }
-    else if($('#'+dayId).find('.lv-date').hasClass('lv-covid')){
+    else if($('#'+dayId).find('.lv-date').hasClass('lv-compassionate')){
        
        
         $('.modal-title').text('Covid Leave');
         $('.modal-title').removeClass('lv-sick-text');
         $('.modal-title').removeClass('lv-annual-text');
-        $('.modal-title').removeClass('lv-maternity-text');
+        $('.modal-title').removeClass('lv-unpaid-text');
         $('.modal-title').removeClass('lv-absent-text');
-        $('.modal-title').addClass('lv-covid-text');
+        $('.modal-title').addClass('lv-compassionate-text');
         $('.modal-date').text($('#'+dayId).find('.lv-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString());
         $('.modal-resource').text(user);
-        $('.modal-dialog').addClass("lv-covid-popup")
+        $('.modal-dialog').addClass("lv-compassionate-popup")
         $('#leaveModal').show();
        
         dateCounter=dateCounter-1;
     }
     else{
-    if(($('#'+dayId).find('.lv-date').hasClass('lv-selected-date'))||($('#'+dayId).find('.lv-date').hasClass('lv-maternity'))||($('#'+dayId).find('.lv-date').hasClass('lv-sick'))||($('#'+dayId).find('.lv-date').hasClass('lv-annual'))||($('#'+dayId).find('.lv-date').hasClass('lv-covid'))||($('#'+dayId).find('.lv-date').hasClass('lv-absent'))){
+    if(($('#'+dayId).find('.lv-date').hasClass('lv-selected-date'))||($('#'+dayId).find('.lv-date').hasClass('lv-unpaid'))||($('#'+dayId).find('.lv-date').hasClass('lv-sick'))||($('#'+dayId).find('.lv-date').hasClass('lv-annual'))||($('#'+dayId).find('.lv-date').hasClass('lv-compassionate'))||($('#'+dayId).find('.lv-date').hasClass('lv-absent'))){
         $('#'+dayId).find('.lv-date').removeClass('lv-selected-date');
         var index = selectedId.indexOf(dayId);
         var selectedIndex=selectedDates[userId].dates.indexOf($('#'+dayId).find('.lv-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString());
@@ -836,6 +835,7 @@ function cancelLeave(){
       })
       closeConf();
   }
+
   function getLeaveId(ldate,staffid){
       for(var i=0;i<resourceList[staffid].leave.length;i++){
           if(resourceList[staffid].leave[i].date==ldate){
@@ -843,4 +843,21 @@ function cancelLeave(){
           }
       }
   }
+
+//   function tester(){
+    
+//     console.log("logan")
+
+//     axios.get('https://api.bamboohr.com/api/gateway.php/bleachkw/v1/meta/time_off/types/',{
+//         headers: {
+//         'Content-Type': 'application/json',
+//           Authorization: 'Basic 43a219cfe6f2dbe250a9eb7b5e2774335c146858'
+//         }
+//        })
+//     .then(function (response) {
+//         console.log(response,"resp")
+
+//     }
+  
+//   }
 

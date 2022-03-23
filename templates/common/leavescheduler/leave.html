@@ -301,9 +301,9 @@
             <div class="d-flex"><div class="lv-item-label lv-weekly"></div>Weekly Off </div> 
             <div class="d-flex ml-20"><div class="lv-item-label lv-annual"></div>Annual Leave </div> 
             <div class="d-flex ml-20"><div class="lv-item-label lv-sick"></div>Sick Leave</div> 
-            <div class="d-flex ml-20"><div class="lv-item-label lv-maternity"></div>Non Paid Leave </div> 
-            <div class="d-flex ml-20"><div class="lv-item-label lv-covid"></div>Covid Leave </div> 
-            <div class="d-flex ml-20"><div class="lv-item-label lv-absent"></div>Absent</div> 
+            <div class="d-flex ml-20"><div class="lv-item-label lv-unpaid"></div>Unpaid Leave </div> 
+            <div class="d-flex ml-20"><div class="lv-item-label lv-compassionate"></div>Compassionate Leave </div> 
+            {% comment %} <div class="d-flex ml-20"><div class="lv-item-label lv-absent"></div>Absent</div>  {% endcomment %}
             <div class="d-flex ml-20"><div class="lv-item-label lv-occupied"></div>Occupied </div> 
 
            </div>
@@ -365,9 +365,10 @@
                     <li>Annual Leave</li>
                     <li>Weekly Off</li>
                     <li>Sick Leave</li>
-                    <li>Not Paid</li>
-                    <li>Absent</li>
-                    <li>Covid Leave</li>
+                    <li>Unpaid Leave</li>
+                    <li>Compassionate Leave</li>
+                    {% comment %} <li>Absent</li> {% endcomment %}
+                    {% comment %} <li>Covid Leave</li> {% endcomment %}
                   </ul>
                 </div>
 
@@ -553,9 +554,9 @@
     <div class="d-flex"><div class="lv-item-label lv-weekly"></div>Weekly  </div> 
             <div class="d-flex ml-20"><div class="lv-item-label lv-annual"></div>Annual </div> 
             <div class="d-flex ml-20"><div class="lv-item-label lv-sick"></div>Sick </div> 
-            <div class="d-flex ml-20"><div class="lv-item-label lv-maternity"></div>Not Paid </div> 
-            <div class="d-flex ml-20"><div class="lv-item-label lv-covid"></div>Covid </div> 
-            <div class="d-flex ml-20"><div class="lv-item-label lv-absent"></div>Absent</div> 
+            <div class="d-flex ml-20"><div class="lv-item-label lv-unpaid"></div>Unpaid </div> 
+            <div class="d-flex ml-20"><div class="lv-item-label lv-compassionate"></div>Compassionate </div> 
+            
     `)
     $('.lv-loader').show()
     document.getElementById("leave_id").style.display = "block";
