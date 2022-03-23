@@ -426,6 +426,7 @@ class CheckOutItems(models.Model):
     is_swapped_item      = models.BooleanField(default=False,blank=False,null=False)
     is_checked_out       = models.BooleanField(default=False,blank=False,null=False)
     checked_out_date     = models.DateField(blank=True,null=True)
+    is_checked_out_by    = models.ForeignKey(UserProfile,blank=True,null=True,related_name='item_checked_out_by')
     is_collected         = models.BooleanField(default=False,blank=False,null=False)
     is_collected_by      = models.ForeignKey(UserProfile,blank=True,null=True,related_name='item_collected_by')
     is_returned          = models.BooleanField(default=False,blank=False,null=False)

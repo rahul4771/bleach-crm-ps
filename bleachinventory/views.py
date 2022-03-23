@@ -2293,6 +2293,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 
 					item.is_checked_out = True
 					item.checked_out_date = date.today()
+					item.is_checked_out_by = request.user
 					item.save()
 
 			if count > 0 :
