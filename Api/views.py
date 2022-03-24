@@ -514,12 +514,21 @@ class LeaveScheduleAPI(APIView):
 	def post(self,request):
 		response_dict = {'success':False}
 
+		leave_dates_list = []
+		bamboo_employee_id = None
+
 		for schedule in request.data:
-			print(schedule,"schedl")
+
 			serializer = LeaveScheduleSerializer(data=schedule)
 			
 			if serializer.is_valid(): 
 				serializer.save()
+
+				staff_details = UserProfile.objects.get(id=int(schedule['staff']))
+
+				leave_dates_list.append(schedule['leave_date'])
+				bamboo_employee_id = staff_details.bamboo_employee_id
+				leave_type = schedule['leave_type']
    
 			else: 
 				errors= serializer.errors   
@@ -527,6 +536,43 @@ class LeaveScheduleAPI(APIView):
 				error=errors[key]
 				response_dict['Error']=key +':'+ error[0]
 				response_dict['Error_List'] = serializer.errors
+
+		#saving leave to bamboo hr
+		# if leave_dates_list != [''] and bamboo_employee_id != None:
+
+		# 	if len(leave_dates_list) > 1:
+		# 		first_last = leave_dates_list[::len(leave_dates_list)-1]
+		# 		start_date = first_last[0]
+		# 		end_date = first_last[1]
+		# 	else:
+		# 		start_date = leave_dates_list[0]
+		# 		end_date = leave_dates_list[0]
+			
+		# 	url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/employees/"+bamboo_employee_id+"/time_off/request"
+
+		# 	if leave_type == 'ANNUAL LEAVE':
+		# 		timeOffTypeId = '84'
+		# 	elif leave_type == 'UNPAID LEAVE':
+		# 		timeOffTypeId = '86'
+		# 	elif leave_type == 'COMPASSIONATE LEAVE':
+		# 		timeOffTypeId = '87'
+		# 	elif leave_type == 'SICK LEAVE':
+		# 		timeOffTypeId = '83'
+
+		# 	payload = {
+		# 		"status": "requested",
+		# 		"start": start_date,
+		# 		"end": end_date,
+		# 		"timeOffTypeId": timeOffTypeId
+		# 	}
+		# 	headers = {
+		# 		"Content-Type": "application/json",
+		# 		"Authorization": "Basic NDNhMjE5Y2ZlNmYyZGJlMjUwYTllYjdiNWUyNzc0MzM1YzE0Njg1ODo="
+		# 	}
+
+		# 	print(url,payload,"loadss")
+
+		# 	response = requests.request("PUT", url, json=payload, headers=headers)
 
 		response_dict['success']  = True  
 
