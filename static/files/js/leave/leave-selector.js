@@ -640,15 +640,8 @@ function getUsers(){
     staffData['photo_url']=response.data.staffs[i].photo_url;
     staffData['leave']=[];
     staffData['occupied']=[]
-  
     
-     
         resourceList.push(staffData);
-   
-    
-   
-    
-
     
 }
 

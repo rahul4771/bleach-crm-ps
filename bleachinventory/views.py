@@ -1446,6 +1446,16 @@ class InventoryInv(IsInventoryAdminUser,View):
 		# ItemHistory.objects.all().update(quantity_location=store)
 			
 
+		items = InventoryItem.objects.filter(status=True,item_add_type='quantity')
+		store = Store.objects.get(store_name='AL-RAI STORE')
+
+		for item in items:
+			
+			quantitystore = QuantityStoreDetails.objects.get(quantity_item=item,item_store=store)
+			quantitystore.quantity = item.total_quantity
+			quantitystore.save()
+		
+		
 		search = request.GET.get('search')
 		item_type = request.GET.get('item_type',None)
 
@@ -1974,8 +1984,8 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 				items_list = []
 
 				for visit in visits: 
-					visit.stock_out_items_saved = True
-					visit.save()
+					# visit.stock_out_items_saved = True
+					# visit.save()
 
 					service = visit.order_scheduler_book.service_type
 					price_ranges = ServicePriceRange.objects.filter(is_active=True,service_type=service)
