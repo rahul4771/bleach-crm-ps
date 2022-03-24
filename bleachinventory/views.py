@@ -1451,10 +1451,12 @@ class InventoryInv(IsInventoryAdminUser,View):
 
 		for item in items:
 			
-			quantitystore = QuantityStoreDetails.objects.get(quantity_item=item,item_store=store)
-			quantitystore.quantity = item.total_quantity
-			quantitystore.save()
-		
+			try:
+				quantitystore = QuantityStoreDetails.objects.get(quantity_item=item,item_store=store)
+				quantitystore.quantity = item.total_quantity
+				quantitystore.save()
+			except:
+				quantitystore = None
 		
 		search = request.GET.get('search')
 		item_type = request.GET.get('item_type',None)
