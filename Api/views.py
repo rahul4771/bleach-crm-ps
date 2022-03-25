@@ -3996,6 +3996,7 @@ class CheckOutItemAdd(APIView):
 				if unit_id:
 					itemunit = ItemUnit.objects.get(id=int(unit_id),is_available=True)
 					checkout_item = CheckOutItems.objects.create(visit=visit,item=item,units=1,item_unit=itemunit)
+					response_dict['message'] = 'Item Added'
 				else:
 					checkout_item = CheckOutItems.objects.create(visit=visit,item=item,units=quantity)
 
@@ -4003,29 +4004,35 @@ class CheckOutItemAdd(APIView):
 					if visit.stock_out_items_submitted == True:
 						try:
 							quantitystore = QuantityStoreDetails.objects.get(item_store=store,quantity_item = checkout_item.item)
-							quantitystore.quantity = float(quantitystore.quantity) - float(quantity)
-							quantitystore.save()
+							if float(quantitystore.quantity) >= float(quantity):
+								quantitystore.quantity = float(quantitystore.quantity) - float(quantity)
+								quantitystore.save()
 						except:
-							QuantityStoreDetails.objects.create(
+							quantitystore = QuantityStoreDetails.objects.create(
 							item_store = store,
 							quantity_item = checkout_item.item,
 							quantity = float(quantity)
 							)
 
-						inventory_item = checkout_item.item
-						inventory_item.total_quantity = float(inventory_item.total_quantity) - float(quantity)
-						inventory_item.save()
+						if float(quantitystore.quantity) >= float(quantity):
+							inventory_item = checkout_item.item
+							inventory_item.total_quantity = float(inventory_item.total_quantity) - float(quantity)
+							inventory_item.save()
 
-						ItemHistory.objects.create(
-						item = checkout_item.item,
-						quantity = quantity,
-						item_action='STOCK OUT',
-						quantity_location=store,
-						item_remark=checkout_item.visit.order.order_no,
-						purchase_date= date.today(),
-						added_by = UserProfile.objects.get(id=user_id)
-						
-						)
+							ItemHistory.objects.create(
+							item = checkout_item.item,
+							quantity = quantity,
+							item_action='STOCK OUT',
+							quantity_location=store,
+							item_remark=checkout_item.visit.order.order_no,
+							purchase_date= date.today(),
+							added_by = UserProfile.objects.get(id=user_id)
+							
+							)
+
+							response_dict['message'] = 'Item Added'
+						else:
+							response_dict['message'] = 'Store quantity low'
 
 				response_dict['checkout_item_id'] = checkout_item.id
 				response_dict['item_id'] = checkout_item.item.id
@@ -4046,8 +4053,6 @@ class CheckOutItemAdd(APIView):
 				else:
 					response_dict['item_unit'] = checkout_item.item.measuring_unit
 					response_dict['item_type'] = 'quantity'
-
-				response_dict['message'] = 'Item Added'
 			else:
 				response_dict['message'] = 'Out of stock'
 
