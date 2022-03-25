@@ -346,8 +346,8 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
                 
                 <td id="unit_code_{{item.id}}" >{% if item.item_unit %}{{item.item_unit.unit_code}}{% else %}-{% endif %}</td>
                 
-                <td id="item_qty_{{item.id}}" {% if item.units < item.recommended_quantity %}style="color:red;"{% endif %}>
-                  {{item.units|floatformat:0}} {% if item.units < item.recommended_quantity %}({{item.recommended_quantity|floatformat:0}}){% endif %} {% if item.service_item %}  {% if item.service_item.item.item_add_type == 'quantity' %}{{item.service_item.item.measuring_unit}}{% else %}unit{% endif %} {% else %}  {% if item.item.item_add_type == 'quantity' %}{{item.item.measuring_unit}}{% else %}unit{% endif %}  {% endif %}
+                <td id="item_qty_{{item.id}}" {% if item.service_item.item.item_add_type == 'quantity' and item.units < item.recommended_quantity %}style="color:red;"{% elif item.service_item.item.item_add_type == 'unit' and item.units == '0' %}style="color:red;"{% endif %}>
+                  {{item.units|floatformat:0}} {% if item.service_item.item.item_add_type == 'quantity' and item.units < item.recommended_quantity %}({{item.recommended_quantity|floatformat:0}}){% elif item.service_item.item.item_add_type == 'unit' and item.units == '0' %}(1){% endif %} {% if item.service_item %}  {% if item.service_item.item.item_add_type == 'quantity' %}{{item.service_item.item.measuring_unit}}{% else %}unit{% endif %} {% else %}  {% if item.item.item_add_type == 'quantity' %}{{item.item.measuring_unit}}{% else %}unit{% endif %}  {% endif %}
                 </td>
 
                 <td>
@@ -1392,7 +1392,8 @@ var products = [];
             var result = await _get('api/inventory-checkout-item-delete/?visit_id='+visit_id);
               if(result.status == 200){
                 
-                window.location.reload();
+                window.location='/bleach-inventory/createcheckout/'+visit_id+'/?stockout=stockout';
+                
                 showNotification('List Reset !','success')
                 
               }

@@ -196,10 +196,10 @@ class ItemUnit(models.Model):
     created         =   models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        return str(self.item.name)
+        return str(self.item.name+'-'+self.unit_code)
 
     def __str__(self):
-        return self.item.name
+        return self.item.name+'-'+self.unit_code
 
 class Attribute(models.Model):
     # attribute_type      =   models.CharField(max_length=100,blank=False,null=False,choices=ATTRIBUTE_TYPE_CHOICES)
