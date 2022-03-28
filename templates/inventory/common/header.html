@@ -57,7 +57,7 @@
             {% if request.user.user_type != 'PURCHASINGOFFICER' and request.user.user_type != 'INVUSER' %}
             <li class="inv-pending"><a href="/bleach-inventory/pendingitems/" title="Pending"><span>Pending Items</span></a></li>
             {% endif %}
-            {% if request.user.user_type != 'STOCKCONTROLLER' and request.user.user_type != 'INVUSER' %}
+            {% if request.user.user_type != 'INVUSER' %}
             <li class="inv-purchase-order"><a href="/bleach-inventory/purchaseOrder/" title="Purchase Order"><span>Purchase Orders</span></a></li>
             {% endif %}
             {% if request.user.user_type != 'PURCHASINGOFFICER' %}

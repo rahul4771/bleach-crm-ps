@@ -32,7 +32,10 @@
                             <i class="fa fa-filter mr-5" aria-hidden="true"></i>
                             Filter
                         </button> {% endcomment %}
+                        
+                        {% if request.user.user_type != 'STOCKCONTROLLER' %}
                         <a href="/bleach-inventory/createpo/"><button class="inv-blue-btn" onclick="showDrawer('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Create PO</button></a>
+                        {% endif %}
 
                         <!-- <button class="inv-blue-btn" data-toggle="modal" data-target="#addModel" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Store </button> -->
                     </div>
@@ -120,13 +123,15 @@
                                             <a class="inv-plan-img-btn2-disabled d-flex dropdown-orders" disabled> <img class="btn-img2 dropdown-icon2 pr-2" src="{% static 'files/inventory/invoice.png' %}" alt=""><div class="ml-2 dropdown-text">Invoice</div></a>
                                         {% endif %}
 
-                                        {% if order.is_rejected == True or order.is_received == False %}                
-                                        <a class="d-flex dropdown-orders" href="/bleach-inventory/editpo/{{order.id}}"><img class="dropdown-icon2 pr-2" src="{% static 'files/inventory/pencil.png' %}"  alt=""><div class="ml-2 dropdown-text">Edit</div></a>
-                                        {% endif %}
+                                        {% if request.user.user_type != 'STOCKCONTROLLER' %}
+                                            {% if order.is_rejected == True or order.is_received == False %}                
+                                            <a class="d-flex dropdown-orders" href="/bleach-inventory/editpo/{{order.id}}"><img class="dropdown-icon2 pr-2" src="{% static 'files/inventory/pencil.png' %}"  alt=""><div class="ml-2 dropdown-text">Edit</div></a>
+                                            {% endif %}
 
-                                      
-                                        {% if request.user.user_type == 'INVENTORYADMIN' %}
-                                        <a class="d-flex dropdown-orders delete-order" data-id="{{order.id}}"  data-toggle="modal" data-target="#deleteModel"> <img class="dropdown-icon2" src="{% static 'files/inventory/bin.png' %}"  alt=""> <div class="ml-2 dropdown-text">Delete</div> </button>
+                                        
+                                            {% if request.user.user_type == 'INVENTORYADMIN' %}
+                                            <a class="d-flex dropdown-orders delete-order" data-id="{{order.id}}"  data-toggle="modal" data-target="#deleteModel"> <img class="dropdown-icon2" src="{% static 'files/inventory/bin.png' %}"  alt=""> <div class="ml-2 dropdown-text">Delete</div> </button>
+                                            {% endif %}
                                         {% endif %}
                                       
                                     </div>

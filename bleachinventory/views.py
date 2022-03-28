@@ -577,7 +577,7 @@ class InventoryItems(IsInventoryAdminUser,View):
 		available_item_units = item_units.filter(is_available=True).count()
 		unavailable_item_units = item_units.filter(is_available=False)
 
-		available_quantity = item_history.aggregate(total_quantity=Sum('quantity'))['total_quantity']
+		available_quantity = inventory_item.total_quantity
 		if not available_quantity:
 			available_quantity = 0
 		
@@ -1546,7 +1546,7 @@ class InventoryInv(IsInventoryAdminUser,View):
 					item.item_status = 'available'
 				item.save()
 			else:
-				available_item_units = ItemHistory.objects.filter(item=item).aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
+				available_item_units = item.total_quantity
 
 				if float(available_item_units) < float(reserve_units) and float(available_item_units) > 0:
 					item.item_status = 'about_to_finish'
