@@ -50,16 +50,18 @@
                    </div>
                 </div>
                 
-                {% if purchase_order.is_admin_approved == True %}
+                {% if purchase_order.is_admin_approved == True and purchase_order.is_received == False %}
                 <div class="row mt-20">
                     <div class="col-md-3">
                         <input type="hidden" name="status" id="id_shipment_status" >
                         <div class="wrap-drop" id="noble-gases" style="z-index: 9999 !important;"  >
                             <span id="id_selectText">{% if purchase_order.is_received == True %}Shipment completed{% else %}Shipment not completed{% endif %}</span>
+                            
                             <ul class="drop">
                                 <li onclick="changeSelect('complete')"><a>Shipment completed</a></li>
                                 <li onclick="changeSelect('incomplete')"><a>Shipment not completed</a></li> 
                             </ul>
+                            
                         </div>
                     </div>
                 </div>
@@ -70,7 +72,11 @@
                         {% if purchase_order.is_received == True %}
                         <div class="inv-tab av-font inv-tab-active" onclick="selectTab('pen')" id="id_pen">By quantity</div>
                         <div class="inv-tab av-font" onclick="selectTab('rec')" id="id_rec">By unit</div>
-                        <button style="margin-left: auto; margin-bottom: 5px;" class="inv-blue-btn" onclick="openNavAddStore()" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add to inventory</button>
+
+                        {% if purchase_order.total_items_count != purchase_order.total_added_items_count %}
+                        <button style="margin-left: auto; margin-bottom: 5px;" class="inv-blue-btn" onclick="openNavAddStore()" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add to inventory {{purchase_order.total_items_count}} {{purchase_order.total_added_items_count}}</button>
+                        {% endif %}
+
                         {% endif %}
 
                     </div>
