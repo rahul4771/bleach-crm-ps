@@ -158,6 +158,6 @@ class Command(BaseCommand):
                                                         headers=header 
                                                     )
 
-
+            print(transaction,"Transaction")
             transaction.is_xero_marked = True
             transaction.save()
