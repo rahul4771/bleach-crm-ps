@@ -302,7 +302,7 @@
                                             {% endif %}
 
                                             {% if followup_details.follow_up_schedules %}
-                                                <div class="tk-mt-30 tk-secondary-text action_item"> <i class="fa fa-lg fa-check-circle green-text" aria-hidden="true"></i> <b>FollowUp cleaning</b> - {% for schedule in followup_details.follow_up_schedules %}{% if forloop.first %}<span class="blue-text">{{schedule.created}}</span>{% endif %}{% endfor %}</div>
+                                                <div class="tk-mt-30 tk-secondary-text action_item"> <i class="fa fa-lg fa-check-circle green-text" aria-hidden="true"></i> <b>FollowUp cleaning</b></div>
                                             {% endif %}
 
                                             {% if followup_details.investigation.reports %}
@@ -422,6 +422,14 @@
                                         </div>
                                         
                                         {% for follow_up_scheduler in followup_details.follow_up_schedules %}
+                                        <div class="col-md-12">
+                                            <b>Cleaning Date</b>  <span class="tk-ml-10 blue-text">{{follow_up_scheduler.start_at|date:'d-m-Y'}}</span>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <b>Slot</b>  <span class="tk-ml-10 blue-text">{{follow_up_scheduler.start_at|date:'H:i A'}} - {{follow_up_scheduler.end_at|date:'H:i A'}}</span>
+                                        </div>
+                                        
                                             {% for team in follow_up_scheduler.followupteams %}
 
                                             {% if team.followupmembers %}
@@ -501,7 +509,11 @@
                                                 </div>
                                             </div>
                                         {% endif %}
-
+                                        {% empty %}
+                                        <div class="col-md-12">
+                                        <b>Team Members</b> - <span class="tk-ml-10 red-text">Not assigned</span>
+                                        </div>
+                                        
                                          {% endfor %}
                                          {% endfor %}
 
