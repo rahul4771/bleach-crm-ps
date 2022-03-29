@@ -26,7 +26,8 @@ USER_TYPE_CHOICES=(
     ('INVENTORYADMIN','INVENTORYADMIN'),
     ('INVENTORYUSER','INVENTORYUSER'),
     ('STOCKCONTROLLER','STOCKCONTROLLER'),
-    ('PURCHASINGOFFICER','PURCHASINGOFFICER')
+    ('PURCHASINGOFFICER','PURCHASINGOFFICER'),
+    ('INVUSER','INVUSER')
 )
 
 
@@ -51,8 +52,8 @@ LEAVE_TYPES = (
     ('ANNUAL LEAVE','ANNUAL_LEAVE'),
     ('WEEKLY OFF','WEEKLY_OFF'),
     ('SICK LEAVE','SICK_LEAVE'),
-    ('NOT PAID','NOT_PAID'),
-    ('COVID LEAVE','COVID_LEAVE'),
+    ('UNPAID LEAVE','UNPAID_LEAVE'),
+    ('COMPASSIONATE LEAVE','COMPASSIONATE_LEAVE'),
     ('ABSENT','ABSENT')
 )
 
@@ -144,6 +145,8 @@ class UserProfile(AbstractUser):
     address_otp                 = models.CharField(max_length=100,blank=True,null=True)
 
     xero_account_id             = models.CharField(max_length=100,blank=True,null=True)
+
+    bamboo_employee_id          = models.CharField(max_length=20,blank=True,null=True)
 
 
     created_by      = models.ForeignKey('self',blank=True,null=True)

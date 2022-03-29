@@ -299,7 +299,14 @@ $('.footable').footable({
 
 $('document').ready(function(){
 
-  
+//monthpicker month setup
+var date1 = new Date();
+
+var month = ("0" + (date1.getMonth()+1)).slice(-2);
+console.log(month,"lp")
+
+var datestring = month + "/" + date1.getFullYear();
+$('#calendar_month').val(datestring);
 
 //target value calc for sales daily and monthly cards with up down arrows
 var dailysalevalue = "{{dailysales|sub:2000|default_if_none:'0.000'}}"
@@ -327,15 +334,6 @@ if (monthlysalevalue < 0){
 }else{
   console.log("zero")
 }
-
-//monthpicker month setup
-var date1 = new Date();
-
-var month = ("0" + (date1.getMonth()+1)).slice(-2);
-console.log(month,"lp")
-
-var datestring = month + "/" + date1.getFullYear();
-$('#calendar_month').val(datestring);
 
 monthlysales();
 

@@ -110,7 +110,8 @@
               
                 <form method="POST" id="itemdetailsform" action="">{% csrf_token %}
                 <input type="hidden" name="action" value="edit_item_details" />
-              <div class="row">
+                {% if request.user.user_type != 'INVUSER' %}
+                <div class="row">
                   <div class="col-md-12" style="position: relative;">
                     <div class="d-flex">
                     <div class="d-flex d-grid " style="margin-left:auto">
@@ -128,7 +129,9 @@
                     </div>
                 </div>
                   </div>
-              </div>
+                </div>
+                {% endif %}
+
                 <div class="row mt-40">
                     <div class="col-md-12" style="padding-right: 0px !important;">
                         
@@ -382,8 +385,10 @@
                         <div class="d-flex">
                             <div class="mb-10 inv-item-head-sub-2" >Attributes</div>
                             <div class="edit-div" style="position: relative;margin-left: 20px;">
+                                {% if request.user.user_type != 'INVUSER' %}
                                 <img id="id_editButton" onclick="editItemDetials()" class="inv-edit-img"
                                 src="{% static 'files/icons/edit.png' %}">
+                                {% endif %}
                               
                             </div>
                         </div>
@@ -407,10 +412,6 @@
                                {% endfor %}
                            </div>
                             
-                           
-                           
-                          
-    
                         </div>
                   
                      </div>
@@ -418,7 +419,7 @@
                        
                        
                             <div class="row m-0">
-                                {% if inventory_item.item_type == 'ASSETS' %}
+                                {% if inventory_item.item_type == 'ASSETS' and request.user.user_type != 'INVUSER' %}
                                 <div class="col-md-12">
                                     <div class="mb-10 inv-item-head-sub-2 d-flex" >
                                         Accessories
@@ -442,7 +443,7 @@
 
                                 </div>
                                
-                                {% elif inventory_item.item_type == 'FINISHED GOODS' %}
+                                {% elif inventory_item.item_type == 'FINISHED GOODS' and request.user.user_type != 'INVUSER' %}
                                 <div class="col-md-12">
                                     <div class="mb-10 inv-item-head-sub-2 d-flex" >
                                         Ingredients
@@ -1201,6 +1202,22 @@
 
                 </div>
                 {% endif %}
+
+                <div class="row mt-20" id="store_data2">
+                    <div class="col-md-12 ">
+                        <div class="model-input-name required-field">Store</div>
+    
+                        <div style="position: relative;">
+                            <div class="inv-input-container inv-border h-30">
+                                <input autocomplete="off" onclick="ProductListShow2()" type="text" id="pro-name2" name="storename2" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts2()" required>
+                            </div>
+                            <div id="id_search3" class="row inv-result-box" style="display: none;">
+                              
+                            </div>
+                        </div>
+                    </div>
+    
+                </div>
     
                 <hr> 
             </div>
@@ -2450,6 +2467,7 @@ $('#id_no_expiry').click(function(){
 
 function openNavAddBundle(d) {
     $('#id_search').empty();
+    
     var products = [];
         {% for store in stores %}
         console.log("{{store.store_name}}","kkk")
@@ -2476,6 +2494,7 @@ function openNavAddBundle(d) {
         $('#id_unit_status').val('available');
         $("#id_selectText").text("Select PO");
         $("#store_data").show()
+        $("#store_data2").show()
             {% if inventory_item.item_add_type == 'unit' %}
             $("#supHead").text("Add Unit");
             {% else %}
@@ -2490,6 +2509,7 @@ function openNavAddBundle(d) {
             $('#po-btn').hide()
             $("#unit_action").val("edit_unit");
             $("#store_data").hide()
+            $("#store_data2").hide()
             
         }
         if(screen.width<= 600){
@@ -2654,6 +2674,10 @@ function openNavAddSubparts(d){
         document.getElementById("id_search").style.display="block"
     }
 
+    function ProductListShow2(){
+        document.getElementById("id_search3").style.display="block"
+    }
+
     async function ExternalUserListShow(){
         $('#id_search2').empty();
         var result = await _get('api/external_customers/');
@@ -2691,6 +2715,28 @@ function openNavAddSubparts(d){
             
         }
 
+        function showProducts2(){
+            $('#id_search3').empty();
+            console.log(products,"prd")
+            for (var j=0; j<products.length; j++) {
+                if (products[j].name.toUpperCase().match($('#pro-name2').val().toUpperCase())){
+                    console.log(products[j]);
+            $('#id_search3').append('<div class="col-md-12 inv-search-drop" id="id_product'+products[j].id+'" style="padding:0px !important;" onclick="closeProductShow2(this)" data-pro="'+products[j].id+'" data-productprice="'+products[j].price+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
+    
+                }
+            }
+                console.log( $('#pro-name2').val());
+                if($('#pro-name2').val() !=""){
+                document.getElementById("id_search3").style.display="block"
+    
+                }else{
+                document.getElementById("id_search3").style.display="none"
+    
+                }
+                //hideselectedoptions();
+                
+            }
+
         function closeProductShow(d){
         console.log(d);
         var proId = $(d).attr("data-pro")
@@ -2701,6 +2747,19 @@ function openNavAddSubparts(d){
 
 
         document.getElementById("id_search").style.display="none"
+    }
+
+    function closeProductShow2(d){
+        console.log(d);
+        var proId = $(d).attr("data-pro")
+        $('#id_pro_sel').val($(d).attr("data-pro"));
+        //$('#unit_price_id').val($(d).attr("data-productprice"));
+        //$('#id_total_price').val($(d).attr("data-productprice"));
+
+        $('#pro-name2').val($(d).attr("data-name"));
+
+
+        document.getElementById("id_search3").style.display="none"
     }
 
 
@@ -2791,6 +2850,8 @@ function openNavAddSubparts(d){
                         $('input[name=user_name]').addClass('red-border-input');
                     }else if ($('input[name=return_unit]').val() == ''){
                         $('input[name=return_unit]').addClass('red-border-input');
+                    }else if ($('input[name=storename2]').val() == ''){
+                        $('input[name=storename2]').addClass('red-border-input');
                     }else{
                         $('#myform').submit();
                     }

@@ -236,12 +236,12 @@
     color:#ffffff;
     
 }
-.lv-covid{
+.lv-covid, .lv-compassionate{
     background-color:#919191;
     color:#ffffff;
     
 }
-.lv-covid-text{
+.lv-covid-text, .lv-compassionate-text{
     color:#919191 !important;
 }
 #occupied-modal-dialog{
@@ -272,11 +272,11 @@
 .lv-annual-text{
     color:#10a82f !important;
 }
-.lv-maternity{
+.lv-maternity, .lv-unpaid{
     background-color:#dba03a;
     color:#ffffff;
 }
-.lv-maternity-text{
+.lv-maternity-text, .lv-unpaid-text{
     color:#db9f3a !important;
   
 }
@@ -423,10 +423,10 @@
   .lv-absent-popup{ 
     border-bottom:6px solid #c91212 !important;
   }
-  .lv-covid-popup{ 
+  .lv-covid-popup, .lv-compassionate-popup{ 
     border-bottom:6px solid #919191 !important;
   }
-  .lv-maternity-popup{
+  .lv-maternity-popup, .lv-unpaid-popup{
     border-bottom:6px solid #dba03a !important;
   }
   .modal-dialog{

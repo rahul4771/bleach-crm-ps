@@ -368,8 +368,8 @@ class AccountantHome(IsAccountant,View):
 					invoice.balance       = cleaning_price-invoice.amount_paid
 
 		#buybackgiftpromos		
-		approved_paybackdiscounts = Investigation.objects.filter(is_paybackdiscount_approved=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.select_related('investigation').filter(is_active=True,investigation__is_paybackdiscount_approved=True,is_completed=False),to_attr='paybackdiscounts')).annotate(paybackdiscount_count=Case(When(Q( Q(paybackdiscount_investigation__is_active=True) & Q(paybackdiscount_investigation__investigation__is_paybackdiscount_approved=True) & Q(paybackdiscount_investigation__is_completed=False) ),then=1),default=0,output_field=IntegerField()))
-		
+		# approved_paybackdiscounts = Investigation.objects.filter(is_paybackdiscount_approved=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.select_related('investigation').filter(is_active=True,investigation__is_paybackdiscount_approved=True,is_completed=False),to_attr='paybackdiscounts')).annotate(paybackdiscount_count=Case(When(Q( Q(paybackdiscount_investigation__is_active=True) & Q(paybackdiscount_investigation__investigation__is_paybackdiscount_approved=True) & Q(paybackdiscount_investigation__is_completed=False) ),then=1),default=0,output_field=IntegerField()))
+		approved_paybackdiscounts = Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.select_related('investigation').filter(is_active=True,is_completed=False),to_attr='paybackdiscounts')).annotate(paybackdiscount_count=Case(When(Q( Q(paybackdiscount_investigation__is_active=True) & Q(paybackdiscount_investigation__is_completed=False) ),then=1),default=0,output_field=IntegerField()))
 		ticket_count = 0
 		#add days left
 		if approved_paybackdiscounts:
@@ -1454,15 +1454,21 @@ class PaybackDiscountProcessing(View):
 	def post(self,request,paybackdiscount_id):
 		option = request.POST.get('approved_option')
 
+		paybackdiscount = PaybackDiscount.objects.get(id=paybackdiscount_id)
+		investigation = Investigation.objects.get(id=paybackdiscount.investigation.id)
+
 		if option == 'PAYBACK':
 			
-			PaybackDiscount.objects.filter(id=paybackdiscount_id).update(approved_option=option,accountant_approval=request.user,is_completed=True,accountant_notes=request.POST.get('accountant_notes'))
+			PaybackDiscount.objects.filter(id=paybackdiscount_id).update(approved_option=option,approved_by=request.user,accountant_approval=request.user,is_completed=True,accountant_notes=request.POST.get('accountant_notes'))
+			
+			investigation.is_paybackdiscount_approved = True
+			investigation.save()
 
 			messages.success(request,"Payback Succesfully Added")
 
 		if option == 'DISCOUNT':
 			
-			PaybackDiscount.objects.filter(id=paybackdiscount_id).update(approved_option=option,accountant_approval=request.user,is_completed=True,accountant_notes=request.POST.get('accountant_notes'))
+			PaybackDiscount.objects.filter(id=paybackdiscount_id).update(approved_option=option,approved_by=request.user,accountant_approval=request.user,is_completed=True,accountant_notes=request.POST.get('accountant_notes'))
 			
 			#update order and evaluation
 			order_id      =  request.POST.get('order_id')
@@ -1477,6 +1483,9 @@ class PaybackDiscountProcessing(View):
 			if evaluation.payment_method == 'BREAKDOWN':
 				evaluation.after_cleaning_amount = evaluation.after_cleaning_amount-float(request.POST.get('approved_total_cost'))
 			evaluation.save()
+
+			investigation.is_paybackdiscount_approved = True
+			investigation.save()
 
 			messages.success(request,"Discount Succesfully Added")
 

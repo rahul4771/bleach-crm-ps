@@ -230,10 +230,10 @@
                                     <div class="dropdown-menu" id="dropdown-menu-orders">   
                                     {% if visit.stock_out_items_saved == True %}
                                         {% if visit.work_status != 'CLEANING_FULFILLED' %}
-                                        <a class="d-flex dropdown-orders" href="/bleach-inventory/createcheckout/{{visit.id}}"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit Check-out list</div></a>    
+                                        <a class="d-flex dropdown-orders" href="/bleach-inventory/createcheckout/{{visit.id}}?stockout=order"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit Stock-out list</div></a>    
                                         {% endif %}
                                     {% else %}    
-                                      <a class="d-flex dropdown-orders"  href="/bleach-inventory/createcheckout/{{visit.id}}" ><img src="{% static 'files/inventory/icons/checklist.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Create Check-out list </div></a>    
+                                      <a class="d-flex dropdown-orders"  href="/bleach-inventory/createcheckout/{{visit.id}}?stockout=order" ><img src="{% static 'files/inventory/icons/checklist.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Create Stock-out list </div></a>    
                                       {% endif %}
                                       {% if visit.stock_out_items_saved == True %}
                                       <a class="d-flex dropdown-orders"  href="{% url 'customer:stockout-download' visit.id %}"><img src="{% static 'files/inventory/icons/checklist.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Download </div></a>    

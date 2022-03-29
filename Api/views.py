@@ -510,6 +510,7 @@ class UsersList(APIView):
 		
 		staff_serializer = UsersListSerializer(staffs,many=True).data
 		response_dict["staffs"]=staff_serializer
+
 		return Response(response_dict,HTTP_200_OK)
 
 #get existing leave schedules and add new leaveschedules
@@ -539,11 +540,21 @@ class LeaveScheduleAPI(APIView):
 	def post(self,request):
 		response_dict = {'success':False}
 
+		leave_dates_list = []
+		bamboo_employee_id = None
+
 		for schedule in request.data:
+
 			serializer = LeaveScheduleSerializer(data=schedule)
 			
 			if serializer.is_valid(): 
 				serializer.save()
+
+				staff_details = UserProfile.objects.get(id=int(schedule['staff']))
+
+				leave_dates_list.append(schedule['leave_date'])
+				bamboo_employee_id = staff_details.bamboo_employee_id
+				leave_type = schedule['leave_type']
    
 			else: 
 				errors= serializer.errors   
@@ -551,6 +562,43 @@ class LeaveScheduleAPI(APIView):
 				error=errors[key]
 				response_dict['Error']=key +':'+ error[0]
 				response_dict['Error_List'] = serializer.errors
+
+		#saving leave to bamboo hr
+		# if leave_dates_list != [''] and bamboo_employee_id != None:
+
+		# 	if len(leave_dates_list) > 1:
+		# 		first_last = leave_dates_list[::len(leave_dates_list)-1]
+		# 		start_date = first_last[0]
+		# 		end_date = first_last[1]
+		# 	else:
+		# 		start_date = leave_dates_list[0]
+		# 		end_date = leave_dates_list[0]
+			
+		# 	url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/employees/"+bamboo_employee_id+"/time_off/request"
+
+		# 	if leave_type == 'ANNUAL LEAVE':
+		# 		timeOffTypeId = '84'
+		# 	elif leave_type == 'UNPAID LEAVE':
+		# 		timeOffTypeId = '86'
+		# 	elif leave_type == 'COMPASSIONATE LEAVE':
+		# 		timeOffTypeId = '87'
+		# 	elif leave_type == 'SICK LEAVE':
+		# 		timeOffTypeId = '83'
+
+		# 	payload = {
+		# 		"status": "requested",
+		# 		"start": start_date,
+		# 		"end": end_date,
+		# 		"timeOffTypeId": timeOffTypeId
+		# 	}
+		# 	headers = {
+		# 		"Content-Type": "application/json",
+		# 		"Authorization": "Basic NDNhMjE5Y2ZlNmYyZGJlMjUwYTllYjdiNWUyNzc0MzM1YzE0Njg1ODo="
+		# 	}
+
+		# 	print(url,payload,"loadss")
+
+		# 	response = requests.request("PUT", url, json=payload, headers=headers)
 
 		response_dict['success']  = True  
 
@@ -1281,7 +1329,7 @@ class TicketDetailsAPI(APIView):
 		return Response(response_dict,HTTP_200_OK)
 
 class DailySalesAPI(APIView):
-	permission_classes  	=   (AllowAny,)
+	permission_classes  	= (AllowAny,)
 	authentication_classes  = ()
 
 	def get(self,request):
@@ -1331,12 +1379,7 @@ class DailySalesAPI(APIView):
 			end_date_day   = date+timedelta(1)-timedelta(minutes=1)
 
 			print(date.strftime("%A"),"dt")
-			# generalcleaning = 0
-			# upholsterycleaning = 0
-			# deepcleaning = 0
-			# carpetcleaning = 0
-			# kitchencleaning = 0
-			# sterilization = 0
+			
 			cleaning_amount = 0
 			evaluator_amount = 0
 			others = 0
@@ -1354,10 +1397,10 @@ class DailySalesAPI(APIView):
 
 			print(list_item,"elist")
 			
-			# if date < todate:
-			orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q(Q(work_status = 'CLEANING_TEAM_ASSIGNED') | Q(work_status = 'CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_FULFILLED'))).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).values_list('order__order_no','order_scheduler_book__estimated_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluator__id','order_scheduler_book__evaluation_details__evaluation__discount','order_scheduler_book__evaluation_details__evaluation__additional_charge').order_by('end_at')
-			# else:
-			# 	orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).values_list('order__order_no','order_scheduler_book__estimated_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluator__id','order_scheduler_book__evaluation_details__evaluation__discount').order_by('end_at')
+			if date < todate:
+				orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q( Q(work_status = 'CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_FULFILLED'))).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).values_list('order__order_no','cleaning_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluator__id').order_by('end_at')
+			else:
+			 	orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).values_list('order__order_no','cleaning_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluator__id').order_by('end_at')
 
 			print(orderschedules.count(),"countt")
 			
@@ -1371,201 +1414,201 @@ class DailySalesAPI(APIView):
 				#found.add(schedule[4])
 
 			for schedule in schedules_list:
+				if schedule[1] == None:
+					order_amount = 0
+				else:
+					order_amount = schedule[1]
 
 				#schedule count of order
 				order_schedule_count = OrderScheduler.objects.filter(order__order_no=schedule[0]).count()
 
 				#schedule count of evaluation book
 				schedule_count = OrderScheduler.objects.filter(order__order_no=schedule[0],order_scheduler_book__id=schedule[4]).count()
-
-				order_amount     = schedule[1]
-				cleaning_amount += float(order_amount/schedule_count)
+				
+				cleaning_amount += float(order_amount)
 				
 				#fine,promocode, write off calc
-				if schedule[6] > 0:
-					cleaning_amount -= float(schedule[6]/order_schedule_count)
-				if schedule[7] > 0:
-					cleaning_amount -= float(schedule[7]/order_schedule_count)
-				if schedule[8] > 0:
-					cleaning_amount += float(schedule[8]/order_schedule_count)
-				if schedule[10] > 0:
-					cleaning_amount -= float(schedule[10]/order_schedule_count)
-				if schedule[11] > 0:
-					cleaning_amount += float(schedule[11]/order_schedule_count)
+				# if schedule[6] > 0:
+				# 	cleaning_amount -= float(schedule[6]/order_schedule_count)
+				# if schedule[7] > 0:
+				# 	cleaning_amount -= float(schedule[7]/order_schedule_count)
+				# if schedule[8] > 0:
+				# 	cleaning_amount += float(schedule[8]/order_schedule_count)
+				# if schedule[10] > 0:
+				# 	cleaning_amount -= float(schedule[10]/order_schedule_count)
+				# if schedule[11] > 0:
+				# 	cleaning_amount += float(schedule[11]/order_schedule_count)
 
 				#adding amount to evaluators dict
-				if schedule[9] != None:
+				if schedule[6] != None:
 					for x, y in list_item.items():
 						evaluator_id = int(re.search(r'\d+', x).group(0))
 						print(evaluator_id,"loll")
-						if int(evaluator_id) == int(schedule[9]):
+						if int(evaluator_id) == int(schedule[6]):
 							print("evade",evaluator_id)
-							evaluator_amount += float(order_amount/schedule_count)
+							evaluator_amount += float(order_amount)
 
 							#fine,promocode, write off calc
-							if schedule[6] > 0:
-								evaluator_amount -= float(schedule[6]/order_schedule_count)
-							if schedule[7] > 0:
-								evaluator_amount -= float(schedule[7]/order_schedule_count)
-							if schedule[8] > 0:
-								evaluator_amount += float(schedule[8]/order_schedule_count)
-							if schedule[10] > 0:
-								evaluator_amount -= float(schedule[10]/order_schedule_count)
-							if schedule[11] > 0:
-								evaluator_amount += float(schedule[11]/order_schedule_count)
+							# if schedule[6] > 0:
+							# 	evaluator_amount -= float(schedule[6]/order_schedule_count)
+							# if schedule[7] > 0:
+							# 	evaluator_amount -= float(schedule[7]/order_schedule_count)
+							# if schedule[8] > 0:
+							# 	evaluator_amount += float(schedule[8]/order_schedule_count)
+							# if schedule[10] > 0:
+							# 	evaluator_amount -= float(schedule[10]/order_schedule_count)
+							# if schedule[11] > 0:
+							# 	evaluator_amount += float(schedule[11]/order_schedule_count)
 							
 
 							eval_dict = {""+x+"":evaluator_amount}
 							print(date,eval_dict,"evdict")
 					list_item.update(eval_dict)
 				else:
-					others += float(order_amount/schedule_count)
+					others += float(order_amount)
 
 					#fine,promocode, write off calc
-					if schedule[6] > 0:
-						others -= float(schedule[6]/order_schedule_count)
-					if schedule[7] > 0:
-						others -= float(schedule[7]/order_schedule_count)
-					if schedule[8] > 0:
-						others += float(schedule[8]/order_schedule_count)	
-					if schedule[10] > 0:
-						others -= float(schedule[10]/order_schedule_count)
-					if schedule[11] > 0:
-						others += float(schedule[11]/order_schedule_count)
+					# if schedule[6] > 0:
+					# 	others -= float(schedule[6]/order_schedule_count)
+					# if schedule[7] > 0:
+					# 	others -= float(schedule[7]/order_schedule_count)
+					# if schedule[8] > 0:
+					# 	others += float(schedule[8]/order_schedule_count)	
+					# if schedule[10] > 0:
+					# 	others -= float(schedule[10]/order_schedule_count)
+					# if schedule[11] > 0:
+					# 	others += float(schedule[11]/order_schedule_count)
 					
-
-				if date == '05-07-2021' and schedule[0] == 'BLC20210610161':
-					print(schedule[2],schedule[0], float(order_amount/schedule_count)-float(schedule[6]/order_schedule_count)-float(schedule[7]/order_schedule_count)+float(schedule[8]/order_schedule_count)-float(schedule[10]/order_schedule_count),"service")
 				
 				#cleaning type wise amount addition
 				if schedule[2] == 'General Cleaning':
-					detailed_cleaning += float(order_amount/schedule_count)
+					detailed_cleaning += float(order_amount)
 
-					if schedule[6] > 0:
-						detailed_cleaning -= float(schedule[6]/order_schedule_count)
-					if schedule[7] > 0:
-						detailed_cleaning -= float(schedule[7]/order_schedule_count)
-					if schedule[8] > 0:
-						detailed_cleaning += float(schedule[8]/order_schedule_count)
-					if schedule[10] > 0:
-						detailed_cleaning -= float(schedule[10]/order_schedule_count)
+					# if schedule[6] > 0:
+					# 	detailed_cleaning -= float(schedule[6]/order_schedule_count)
+					# if schedule[7] > 0:
+					# 	detailed_cleaning -= float(schedule[7]/order_schedule_count)
+					# if schedule[8] > 0:
+					# 	detailed_cleaning += float(schedule[8]/order_schedule_count)
+					# if schedule[10] > 0:
+					# 	detailed_cleaning -= float(schedule[10]/order_schedule_count)
 					
 
 				if schedule[2] == 'Deep Cleaning':
-					detailed_cleaning += float(order_amount/schedule_count)
+					detailed_cleaning += float(order_amount)
 
-					if schedule[6] > 0:
-						detailed_cleaning -= float(schedule[6]/order_schedule_count)
-					if schedule[7] > 0:
-						detailed_cleaning -= float(schedule[7]/order_schedule_count)
-					if schedule[8] > 0:
-						detailed_cleaning += float(schedule[8]/order_schedule_count)
-					if schedule[10] > 0:
-						detailed_cleaning -= float(schedule[10]/order_schedule_count)
+					# if schedule[6] > 0:
+					# 	detailed_cleaning -= float(schedule[6]/order_schedule_count)
+					# if schedule[7] > 0:
+					# 	detailed_cleaning -= float(schedule[7]/order_schedule_count)
+					# if schedule[8] > 0:
+					# 	detailed_cleaning += float(schedule[8]/order_schedule_count)
+					# if schedule[10] > 0:
+					# 	detailed_cleaning -= float(schedule[10]/order_schedule_count)
 					
 
 				if schedule[2] == 'Facade Cleaning':
-					detailed_cleaning += float(order_amount/schedule_count)
+					detailed_cleaning += float(order_amount)
 
-					if schedule[6] > 0:
-						detailed_cleaning -= float(schedule[6]/order_schedule_count)
-					if schedule[7] > 0:
-						detailed_cleaning -= float(schedule[7]/order_schedule_count)
-					if schedule[8] > 0:
-						detailed_cleaning += float(schedule[8]/order_schedule_count)
-					if schedule[10] > 0:
-						detailed_cleaning -= float(schedule[10]/order_schedule_count)
+					# if schedule[6] > 0:
+					# 	detailed_cleaning -= float(schedule[6]/order_schedule_count)
+					# if schedule[7] > 0:
+					# 	detailed_cleaning -= float(schedule[7]/order_schedule_count)
+					# if schedule[8] > 0:
+					# 	detailed_cleaning += float(schedule[8]/order_schedule_count)
+					# if schedule[10] > 0:
+					# 	detailed_cleaning -= float(schedule[10]/order_schedule_count)
 					
 
 				if schedule[2] == 'Storage Area':
-					detailed_cleaning += float(order_amount/schedule_count)
+					detailed_cleaning += float(order_amount)
 
-					if schedule[6] > 0:
-						detailed_cleaning -= float(schedule[6]/order_schedule_count)
-					if schedule[7] > 0:
-						detailed_cleaning -= float(schedule[7]/order_schedule_count)
-					if schedule[8] > 0:
-						detailed_cleaning += float(schedule[8]/order_schedule_count)
-					if schedule[10] > 0:
-						detailed_cleaning -= float(schedule[10]/order_schedule_count)
+					# if schedule[6] > 0:
+					# 	detailed_cleaning -= float(schedule[6]/order_schedule_count)
+					# if schedule[7] > 0:
+					# 	detailed_cleaning -= float(schedule[7]/order_schedule_count)
+					# if schedule[8] > 0:
+					# 	detailed_cleaning += float(schedule[8]/order_schedule_count)
+					# if schedule[10] > 0:
+					# 	detailed_cleaning -= float(schedule[10]/order_schedule_count)
 					
 
 				if schedule[2] == 'Car Parking Umbrella':
-					detailed_cleaning += float(order_amount/schedule_count)
+					detailed_cleaning += float(order_amount)
 
-					if schedule[6] > 0:
-						detailed_cleaning -= float(schedule[6]/order_schedule_count)
-					if schedule[7] > 0:
-						detailed_cleaning -= float(schedule[7]/order_schedule_count)
-					if schedule[8] > 0:
-						detailed_cleaning += float(schedule[8]/order_schedule_count)
-					if schedule[10] > 0:
-						detailed_cleaning -= float(schedule[10]/order_schedule_count)
+					# if schedule[6] > 0:
+					# 	detailed_cleaning -= float(schedule[6]/order_schedule_count)
+					# if schedule[7] > 0:
+					# 	detailed_cleaning -= float(schedule[7]/order_schedule_count)
+					# if schedule[8] > 0:
+					# 	detailed_cleaning += float(schedule[8]/order_schedule_count)
+					# if schedule[10] > 0:
+					# 	detailed_cleaning -= float(schedule[10]/order_schedule_count)
 					
 
 				if schedule[2] == 'Window Cleaning':
-					detailed_cleaning += float(order_amount/schedule_count)
+					detailed_cleaning += float(order_amount)
 
-					if schedule[6] > 0:
-						detailed_cleaning -= float(schedule[6]/order_schedule_count)
-					if schedule[7] > 0:
-						detailed_cleaning -= float(schedule[7]/order_schedule_count)
-					if schedule[8] > 0:
-						detailed_cleaning += float(schedule[8]/order_schedule_count)
-					if schedule[10] > 0:
-						detailed_cleaning -= float(schedule[10]/order_schedule_count)
+					# if schedule[6] > 0:
+					# 	detailed_cleaning -= float(schedule[6]/order_schedule_count)
+					# if schedule[7] > 0:
+					# 	detailed_cleaning -= float(schedule[7]/order_schedule_count)
+					# if schedule[8] > 0:
+					# 	detailed_cleaning += float(schedule[8]/order_schedule_count)
+					# if schedule[10] > 0:
+					# 	detailed_cleaning -= float(schedule[10]/order_schedule_count)
 					
 
 				if schedule[2] == 'Outdoor Cleaning':
-					detailed_cleaning += float(order_amount/schedule_count)
+					detailed_cleaning += float(order_amount)
 
-					if schedule[6] > 0:
-						detailed_cleaning -= float(schedule[6]/order_schedule_count)
-					if schedule[7] > 0:
-						detailed_cleaning -= float(schedule[7]/order_schedule_count)
-					if schedule[8] > 0:
-						detailed_cleaning += float(schedule[8]/order_schedule_count)
-					if schedule[10] > 0:
-						detailed_cleaning -= float(schedule[10]/order_schedule_count)
+					# if schedule[6] > 0:
+					# 	detailed_cleaning -= float(schedule[6]/order_schedule_count)
+					# if schedule[7] > 0:
+					# 	detailed_cleaning -= float(schedule[7]/order_schedule_count)
+					# if schedule[8] > 0:
+					# 	detailed_cleaning += float(schedule[8]/order_schedule_count)
+					# if schedule[10] > 0:
+					# 	detailed_cleaning -= float(schedule[10]/order_schedule_count)
 					
 
 				if schedule[2] == 'Upholstery Cleaning':
-					special_care += float(order_amount/schedule_count)
+					special_care += float(order_amount)
 
-					if schedule[6] > 0:
-						special_care -= float(schedule[6]/order_schedule_count)
-					if schedule[7] > 0:
-						special_care -= float(schedule[7]/order_schedule_count)
-					if schedule[8] > 0:
-						special_care += float(schedule[8]/order_schedule_count)
-					if schedule[10] > 0:
-						special_care -= float(schedule[10]/order_schedule_count)
+					# if schedule[6] > 0:
+					# 	special_care -= float(schedule[6]/order_schedule_count)
+					# if schedule[7] > 0:
+					# 	special_care -= float(schedule[7]/order_schedule_count)
+					# if schedule[8] > 0:
+					# 	special_care += float(schedule[8]/order_schedule_count)
+					# if schedule[10] > 0:
+					# 	special_care -= float(schedule[10]/order_schedule_count)
 					
 
 				if schedule[2] == 'Mattress Cleaning':
-					special_care += float(order_amount/schedule_count)
+					special_care += float(order_amount)
 
-					if schedule[6] > 0:
-						special_care -= float(schedule[6]/order_schedule_count)
-					if schedule[7] > 0:
-						special_care -= float(schedule[7]/order_schedule_count)
-					if schedule[8] > 0:
-						special_care += float(schedule[8]/order_schedule_count)
-					if schedule[10] > 0:
-						special_care -= float(schedule[10]/order_schedule_count)
+					# if schedule[6] > 0:
+					# 	special_care -= float(schedule[6]/order_schedule_count)
+					# if schedule[7] > 0:
+					# 	special_care -= float(schedule[7]/order_schedule_count)
+					# if schedule[8] > 0:
+					# 	special_care += float(schedule[8]/order_schedule_count)
+					# if schedule[10] > 0:
+					# 	special_care -= float(schedule[10]/order_schedule_count)
 					
 
 				if schedule[2] == 'Carpet Cleaning':
-					special_care += float(order_amount/schedule_count)
+					special_care += float(order_amount)
 
-					if schedule[6] > 0:
-						special_care -= float(schedule[6]/order_schedule_count)
-					if schedule[7] > 0:
-						special_care -= float(schedule[7]/order_schedule_count)
-					if schedule[8] > 0:
-						special_care += float(schedule[8]/order_schedule_count)
-					if schedule[10] > 0:
-						special_care -= float(schedule[10]/order_schedule_count)
+					# if schedule[6] > 0:
+					# 	special_care -= float(schedule[6]/order_schedule_count)
+					# if schedule[7] > 0:
+					# 	special_care -= float(schedule[7]/order_schedule_count)
+					# if schedule[8] > 0:
+					# 	special_care += float(schedule[8]/order_schedule_count)
+					# if schedule[10] > 0:
+					# 	special_care -= float(schedule[10]/order_schedule_count)
 					
 
 				
@@ -1591,16 +1634,16 @@ class DailySalesAPI(APIView):
 				# 		deepcleaning += float(schedule[8]/schedule_count)
 
 				if schedule[2] == 'Kitchen Cleaning':
-					kitchen_cleaning += float(order_amount/schedule_count)
+					kitchen_cleaning += float(order_amount)
 
-					if schedule[6] > 0:
-						kitchen_cleaning -= float(schedule[6]/order_schedule_count)
-					if schedule[7] > 0:
-						kitchen_cleaning -= float(schedule[7]/order_schedule_count)
-					if schedule[8] > 0:
-						kitchen_cleaning += float(schedule[8]/order_schedule_count)
-					if schedule[10] > 0:
-						kitchen_cleaning -= float(schedule[10]/order_schedule_count)
+					# if schedule[6] > 0:
+					# 	kitchen_cleaning -= float(schedule[6]/order_schedule_count)
+					# if schedule[7] > 0:
+					# 	kitchen_cleaning -= float(schedule[7]/order_schedule_count)
+					# if schedule[8] > 0:
+					# 	kitchen_cleaning += float(schedule[8]/order_schedule_count)
+					# if schedule[10] > 0:
+					# 	kitchen_cleaning -= float(schedule[10]/order_schedule_count)
 					
 
 				# if schedule[2] == 'Carpet Cleaning':
@@ -1614,16 +1657,16 @@ class DailySalesAPI(APIView):
 				# 		carpetcleaning += float(schedule[8]/schedule_count)
 				
 				if schedule[2] == 'Sterilization':
-					infection_control += float(order_amount/schedule_count)
+					infection_control += float(order_amount)
 
-					if schedule[6] > 0:
-						infection_control -= float(schedule[6]/order_schedule_count)
-					if schedule[7] > 0:
-						infection_control -= float(schedule[7]/order_schedule_count)
-					if schedule[8] > 0:
-						infection_control += float(schedule[8]/order_schedule_count)
-					if schedule[10] > 0:
-						infection_control -= float(schedule[10]/order_schedule_count)
+					# if schedule[6] > 0:
+					# 	infection_control -= float(schedule[6]/order_schedule_count)
+					# if schedule[7] > 0:
+					# 	infection_control -= float(schedule[7]/order_schedule_count)
+					# if schedule[8] > 0:
+					# 	infection_control += float(schedule[8]/order_schedule_count)
+					# if schedule[10] > 0:
+					# 	infection_control -= float(schedule[10]/order_schedule_count)
 					
 			
 			
@@ -1635,12 +1678,6 @@ class DailySalesAPI(APIView):
 					'SpecialCare':special_care,
 					'KitchenCleaning':kitchen_cleaning,
 					'InfectionControl':infection_control,
-					# 'GeneralCleaning':generalcleaning,
-					# 'UpholsteryCleaning':upholsterycleaning,
-					# 'KitchenCleaning':kitchencleaning,
-					# 'CarpetCleaning':carpetcleaning,
-					# 'DeepCleaning':deepcleaning,
-					# 'Sterilization':sterilization,
 					'Total':cleaning_amount
 				}
 			else:
@@ -1676,7 +1713,7 @@ class DailySalesBreakDownAPI(APIView):
 		print("heers")
 		response_dict = {'success':False}
 
-		today = datetime.now()
+		todate = datetime.now().replace(hour=0,minute=0,second=0,microsecond=0)
 
 		sales_date = request.GET.get('sales_date')
 		sales_date = datetime.strptime(sales_date,'%d-%m-%Y')
@@ -1688,10 +1725,10 @@ class DailySalesBreakDownAPI(APIView):
 		
 		print(start_date_day,end_date_day,"smonthlist")
 	
-		# if date < todate:
-		orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q(Q(work_status = 'CLEANING_TEAM_ASSIGNED') | Q(work_status = 'CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_FULFILLED'))).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).order_by('end_at')
-		# else:
-		# 	orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).values_list('order__order_no','order_scheduler_book__estimated_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluator__id','order_scheduler_book__evaluation_details__evaluation__discount').order_by('end_at')
+		if start_date_day < todate:
+			orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q( Q(work_status = 'CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_FULFILLED'))).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).order_by('end_at')
+		else:
+			orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).order_by('end_at')
 
 		print(orderschedules,"countt")
 		
@@ -1706,20 +1743,22 @@ class DailySalesBreakDownAPI(APIView):
 			#schedule count of evaluation book
 			schedule_count = OrderScheduler.objects.filter(order__order_no=schedule.order.order_no,order_scheduler_book__id=schedule.order_scheduler_book.id).count()
 
-			order_amount     = schedule.order_scheduler_book.estimated_cost
-			cleaning_amount  = float(order_amount/schedule_count)
-			
+			# order_amount     = schedule.cleaning_cost
+			if schedule.cleaning_cost:
+				cleaning_amount  = float(schedule.cleaning_cost)
+			else:
+				cleaning_amount  = 0
 			#fine,promocode, write off calc
-			if schedule.order.evaluation.promocode_amount > 0:
-				cleaning_amount -= float(schedule.order.evaluation.promocode_amount/order_schedule_count)
-			if schedule.order.evaluation.writeback_amount > 0:
-				cleaning_amount -= float(schedule.order.evaluation.writeback_amount/order_schedule_count)
-			if schedule.order.evaluation.fine_amount > 0:
-				cleaning_amount += float(schedule.order.evaluation.fine_amount/order_schedule_count)
-			if schedule.order.evaluation.discount > 0:
-				cleaning_amount -= float(schedule.order.evaluation.discount/order_schedule_count)
-			if schedule.order.evaluation.additional_charge > 0:
-				cleaning_amount += float(schedule.order.evaluation.additional_charge/order_schedule_count)
+			# if schedule.order.evaluation.promocode_amount > 0:
+			# 	cleaning_amount -= float(schedule.order.evaluation.promocode_amount/order_schedule_count)
+			# if schedule.order.evaluation.writeback_amount > 0:
+			# 	cleaning_amount -= float(schedule.order.evaluation.writeback_amount/order_schedule_count)
+			# if schedule.order.evaluation.fine_amount > 0:
+			# 	cleaning_amount += float(schedule.order.evaluation.fine_amount/order_schedule_count)
+			# if schedule.order.evaluation.discount > 0:
+			# 	cleaning_amount -= float(schedule.order.evaluation.discount/order_schedule_count)
+			# if schedule.order.evaluation.additional_charge > 0:
+			# 	cleaning_amount += float(schedule.order.evaluation.additional_charge/order_schedule_count)
 
 			total_day_sales += float(cleaning_amount)			
 
@@ -1769,11 +1808,11 @@ class DailySalesChartAPI(APIView):
 
 			cleaning_amount = 0
 
-			# if date < todate:
+			if date < todate:
 			# 	print(date,"dtER")
-			orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',start_at__range=(start_date_day,end_date_day)).filter(Q(Q(work_status = 'CLEANING_TEAM_ASSIGNED') | Q(work_status = 'CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_FULFILLED'))).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).values_list('order__order_no','order_scheduler_book__estimated_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluation__discount').order_by('end_at')
-			# else:
-			# 	orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',start_at__range=(start_date_day,end_date_day)).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).values_list('order__order_no','order_scheduler_book__estimated_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluation__discount').order_by('end_at')
+				orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q( Q(work_status = 'CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_FULFILLED'))).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).values_list('order__order_no','cleaning_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id').order_by('end_at')
+			else:
+			 	orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).values_list('order__order_no','cleaning_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id').order_by('end_at')
 			
 			found = set()
 			schedules_list = []
@@ -1786,22 +1825,25 @@ class DailySalesChartAPI(APIView):
 			# print(found,schedules_list,"kio")
 
 			for schedule in schedules_list:
+				if schedule[1] == None:
+					order_amount = 0
+				else:
+					order_amount = schedule[1]
 
 				order_schedule_count = OrderScheduler.objects.filter(order__order_no=schedule[0]).count()
 
 				schedule_count = OrderScheduler.objects.filter(order__order_no=schedule[0],order_scheduler_book__id=schedule[4]).count()
 
-				order_amount = schedule[1]
-				cleaning_amount += float(order_amount/schedule_count)
+				cleaning_amount += float(order_amount)
 
-				if schedule[5] > 0:
-					cleaning_amount -= float(schedule[5]/order_schedule_count)
-				if schedule[6] > 0:
-					cleaning_amount -= float(schedule[6]/order_schedule_count)
-				if schedule[7] > 0:
-					cleaning_amount += float(schedule[7]/order_schedule_count)
-				if schedule[8] > 0:
-					cleaning_amount -= float(schedule[8]/order_schedule_count)
+				# if schedule[5] > 0:
+				# 	cleaning_amount -= float(schedule[5]/order_schedule_count)
+				# if schedule[6] > 0:
+				# 	cleaning_amount -= float(schedule[6]/order_schedule_count)
+				# if schedule[7] > 0:
+				# 	cleaning_amount += float(schedule[7]/order_schedule_count)
+				# if schedule[8] > 0:
+				# 	cleaning_amount -= float(schedule[8]/order_schedule_count)
 			
 			list_item = {
 				'date': str(date.date()),
@@ -3942,7 +3984,7 @@ class ItemQuantityCheck(APIView):
 
 class CheckOutItemAdd(APIView):
 	permission_classes        = (AllowAny,)
-	authentication_classes    = ()
+	authentication_classes    = (TokenAuthentication,)
 	def get(self,request):
 		response_dict            = {'success':False}
 
@@ -3950,7 +3992,10 @@ class CheckOutItemAdd(APIView):
 		visit_id = request.GET.get('visit_id')
 		quantity = request.GET.get('quantity')
 		unit_id = request.GET.get('unit_id')
+		user_id = request.GET.get('user_id')
+		
 		store_id = request.GET.get('store_id')
+		store = Store.objects.get(id=store_id)
 
 		print(service_item,visit_id,"vis")
 		visit = OrderScheduler.objects.get(id=int(visit_id))
@@ -3977,8 +4022,44 @@ class CheckOutItemAdd(APIView):
 				if unit_id:
 					itemunit = ItemUnit.objects.get(id=int(unit_id),is_available=True)
 					checkout_item = CheckOutItems.objects.create(visit=visit,item=item,units=1,item_unit=itemunit)
+					response_dict['message'] = 'Item Added'
 				else:
 					checkout_item = CheckOutItems.objects.create(visit=visit,item=item,units=quantity)
+
+					#updating itemhistory and store quantity in case of submitted check-out
+					if visit.stock_out_items_submitted == True:
+						try:
+							quantitystore = QuantityStoreDetails.objects.get(item_store=store,quantity_item = checkout_item.item)
+							if float(quantitystore.quantity) >= float(quantity):
+								quantitystore.quantity = float(quantitystore.quantity) - float(quantity)
+								quantitystore.save()
+						except:
+							quantitystore = QuantityStoreDetails.objects.create(
+							item_store = store,
+							quantity_item = checkout_item.item,
+							quantity = float(quantity)
+							)
+
+						if float(quantitystore.quantity) >= float(quantity):
+							inventory_item = checkout_item.item
+							inventory_item.total_quantity = float(inventory_item.total_quantity) - float(quantity)
+							inventory_item.save()
+
+							ItemHistory.objects.create(
+							item = checkout_item.item,
+							quantity = quantity,
+							item_action='STOCK OUT',
+							quantity_location=store,
+							item_remark=checkout_item.visit.order.order_no,
+							purchase_date= date.today(),
+							added_by = UserProfile.objects.get(id=user_id)
+							
+							)
+
+							response_dict['message'] = 'Item Added'
+						else:
+							response_dict['message'] = 'Store quantity low'
+
 				response_dict['checkout_item_id'] = checkout_item.id
 				response_dict['item_id'] = checkout_item.item.id
 				response_dict['item_name'] = checkout_item.item.name
@@ -3998,8 +4079,6 @@ class CheckOutItemAdd(APIView):
 				else:
 					response_dict['item_unit'] = checkout_item.item.measuring_unit
 					response_dict['item_type'] = 'quantity'
-
-				response_dict['message'] = 'Item Added'
 			else:
 				response_dict['message'] = 'Out of stock'
 
@@ -4018,6 +4097,7 @@ class CheckOutItemEdit(APIView):
 		visit_id = request.GET.get('visit_id')
 		quantity = request.GET.get('quantity')
 		unit_id = request.GET.get('unit_id')
+		user_id = request.GET.get('user_id')
 
 		print(visit_id,quantity,"vis")
 		visit = OrderScheduler.objects.get(id=int(visit_id))
@@ -4032,8 +4112,39 @@ class CheckOutItemEdit(APIView):
 				checkout_item.save()
 			else:
 				checkout_item = CheckOutItems.objects.get(id=int(checkout_item_id),visit=visit)
+				current_quantity = checkout_item.units
 				checkout_item.units = quantity
 				checkout_item.save()
+
+				#updating itemhistory and store quantity in case of submitted check-out
+				# if visit.stock_out_items_submitted == True:
+				# 	quantity_difference = abs(float(current_quantity)-float(quantity))
+				# 	try:
+				# 		quantitystore = QuantityStoreDetails.objects.get(item_store=store,quantity_item = checkout_item.item)
+				# 		quantitystore.quantity = float(quantitystore.quantity) - float(quantity_difference)
+				# 		quantitystore.save()
+				# 	except:
+				# 		QuantityStoreDetails.objects.create(
+				# 		item_store = store,
+				# 		quantity_item = checkout_item.item,
+				# 		quantity = float(quantity_difference)
+				# 		)
+
+				# 	inventory_item = checkout_item.item
+				# 	inventory_item.total_quantity = float(inventory_item.total_quantity) - float(quantity_difference)
+				# 	inventory_item.save()
+
+				# 	ItemHistory.objects.create(
+				# 	item = checkout_item.item,
+				# 	quantity = quantity_difference,
+				# 	item_action='STOCK OUT',
+				# 	quantity_location=store,
+				# 	item_remark=checkout_item.visit.order.order_no,
+				# 	purchase_date= date.today(),
+				# 	added_by = UserProfile.objects.get(id=user_id)
+					
+				# 	)
+
 			response_dict['message'] = 'Item Updated'
 		
 			

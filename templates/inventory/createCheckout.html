@@ -11,7 +11,7 @@
     <div class="container-fluid space topspace">
       <div class="welcome-wrapper">
         <!--welcome-wrapper-->
-        <h1 class="dashboard-head">Create Check-Out List</h1>
+        <h1 class="dashboard-head">Create Stock-Out List</h1>
         <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
       </div>
     </div>
@@ -335,7 +335,7 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <tbody id="id_table">
 
                 {% for item in check_out_items %}
-                <tr data-itemid="{{item.item.id}}" id="id_tr_{{item.id}}">
+                <tr data-itemid="{{item.item.id}}" id="id_tr_{{item.id}}" >
                   <td><input type="checkbox" name="selected_items" value="{{item.id}}"  class="inv-item-checkbox items_selected" id="id_check_{{item.id}}" onchange="getItems()">
                   </td>
                 <td>{% if item.service_item %}{{item.service_item.ingredient.ingredient}}{% else %}-{% endif %}</td>
@@ -346,8 +346,8 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
                 
                 <td id="unit_code_{{item.id}}" >{% if item.item_unit %}{{item.item_unit.unit_code}}{% else %}-{% endif %}</td>
                 
-                <td id="item_qty_{{item.id}}">
-                  {{item.units|floatformat:0}} {% if item.service_item %}  {% if item.service_item.item.item_add_type == 'quantity' %}{{item.service_item.item.measuring_unit}}{% else %}unit{% endif %} {% else %}  {% if item.item.item_add_type == 'quantity' %}{{item.item.measuring_unit}}{% else %}unit{% endif %}  {% endif %}
+                <td id="item_qty_{{item.id}}" {% if item.service_item.item.item_add_type == 'quantity' and item.units < item.recommended_quantity %}style="color:red;"{% elif item.service_item.item.item_add_type == 'unit' and item.units == '0' %}style="color:red;"{% endif %}>
+                  {{item.units|floatformat:0}} {% if item.service_item.item.item_add_type == 'quantity' and item.units < item.recommended_quantity %}({{item.recommended_quantity|floatformat:0}}){% elif item.service_item.item.item_add_type == 'unit' and item.units == '0' %}(1){% endif %} {% if item.service_item %}  {% if item.service_item.item.item_add_type == 'quantity' %}{{item.service_item.item.measuring_unit}}{% else %}unit{% endif %} {% else %}  {% if item.item.item_add_type == 'quantity' %}{{item.item.measuring_unit}}{% else %}unit{% endif %}  {% endif %}
                 </td>
 
                 <td>
@@ -358,36 +358,22 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <button type="button" class="inv-plan-img-btn2-disabled" disabled> <img class="btn-img2" src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
                     {% endif %}
                    -->
-                    {% if item.service_item.item.item_add_type == 'quantity' %}
+                    {% if item.service_item.item.item_add_type == 'quantity' and item.visit.stock_out_items_submitted == False %}
                     <button type="button" class="inv-plan-img-btn" onclick="swapModal({{item.service_item.ingredient.id}},{{item.id}})" > <img src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>
                     {% else %}
                     <button type="button" class="inv-plan-img-btn2-disabled" disabled > <img class="btn-img2" src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>
                     {% endif %}
 
+                    {% if item.visit.stock_out_items_submitted == False %}
                     <button class="inv-plan-img-btn" type="button" {% if item.service_item %}onclick="openNavEditStore('{{item.id}}','{{item.service_item.item.name}}','{{item.units}}','{{item.service_item.item.id}}','{{item.service_item.item.item_add_type}}')"{% else %}onclick="openNavEditStore('{{item.id}}','{{item.item.name}}','{{item.units}}','{{item.item.id}}','{{item.item.item_add_type}}')"{% endif %}> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>  
-
-                    {% comment %} <button class="inv-plan-img-btn" type="button" data-toggle="modal" data-target="#deleteModel" onclick="delete_checkout_item(this)" data-checkoutid="{{item.id}}" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button> {% endcomment %}
+                   {% endif %}
+              
                 </td>
                 </tr>
 
-                {% comment %} {% for itemunit in item.checkoutitem_units %}
-                {% if itemunit.checkout_item.service_item == item.service_item %}
-                <tr>
-                <td></td>
-                <td></td>
-                <td>{{itemunit.item_unit.unit_code}}</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                </tr>
-                {% endif %}
-                {% endfor %} {% endcomment %}
 
                 {% endfor %}
 
-                {% comment %} <tr>
-                  <td>  <button type="button" class="inv-plan-btn" onclick="openNavAddStore()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Add Item</button></td>
-                </tr> {% endcomment %}
               </tbody>
               
               </table> 
@@ -898,7 +884,7 @@ function hideselectedoptions(){
       var quantity = $('#id_qty').val();
       console.log(item_id,visit_id,"po")
     
-      var result = await _get('api/inventory-checkout-item-add/?item_id='+item_id+'&visit_id='+visit_id+'&quantity='+quantity+'&unit_id='+$('#id_pro_sel3').val()+'&edit_item_id='+edit_item_id+'&store_id='+store_id);
+      var result = await _get('api/inventory-checkout-item-add/?user_id='+{{request.user.id}}+'&item_id='+item_id+'&visit_id='+visit_id+'&quantity='+quantity+'&unit_id='+$('#id_pro_sel3').val()+'&edit_item_id='+edit_item_id+'&store_id='+store_id);
         if(result.status == 200){
           console.log(result.data.success,"resss")
           if (result.data.success == true){
@@ -978,7 +964,7 @@ function hideselectedoptions(){
       var quantity = $('#edit_id_qty').val();
       console.log(visit_id,quantity,"po")
     
-      var result = await _get('api/inventory-checkout-item-edit/?checkout_item_id='+checkout_item_id+'&visit_id='+visit_id+'&quantity='+quantity+'&unit_id='+$('#inventory_item_unit_id').val()+'&edit_item_id='+edit_item_id);
+      var result = await _get('api/inventory-checkout-item-edit/??user_id='+{{request.user.id}}+'&checkout_item_id='+checkout_item_id+'&visit_id='+visit_id+'&quantity='+quantity+'&unit_id='+$('#inventory_item_unit_id').val()+'&edit_item_id='+edit_item_id);
         if(result.status == 200){
           console.log(result.data.success,"resss")
           if (result.data.success == true){
@@ -1406,7 +1392,8 @@ var products = [];
             var result = await _get('api/inventory-checkout-item-delete/?visit_id='+visit_id);
               if(result.status == 200){
                 
-                window.location.reload();
+                window.location='/bleach-inventory/createcheckout/'+visit_id+'/?stockout=stockout';
+                
                 showNotification('List Reset !','success')
                 
               }

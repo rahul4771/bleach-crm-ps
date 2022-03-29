@@ -42,9 +42,11 @@
                         <div class="d-flex">
                         <button class="inv-blue-btn-outline filter_btn"  data-toggle="modal" data-target="#filterModel" ><i class="fas fa-filter mr-10"></i> Filter </button>
                         <div class="dropdown ml-10">
+                            {% if request.user.user_type != 'INVUSER' %}
                             <button class="btn inv-blue-btn dropdown-toggle inv-dropdown" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                               More Actions <i class="fas fa-caret-down ml-10"></i>
                             </button>
+                            {% endif %}
                             <div class="dropdown-menu " aria-labelledby="dropdownMenuButton" style="z-index:9999">
                               {% if request.user.user_type != 'STOCKCONTROLLER' %}
                               <div class="dropdown-item inv-dropdown-item p-7" onclick="openNavAddStore('add')"><i class="fas fa-plus-circle mr-10"></i>Add</div>
@@ -117,18 +119,10 @@
                                 <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                     Category
                                 </th>
-                                {% comment %} <th data-hide="phone,tablet"  style="width: %;" class="text-center">
-                                    Segment
-                                </th>
-                               <th data-hide="phone,tablet"  style="width: %;" class="text-center">
-                                    Line
-                                </th> {% endcomment %}
                                 <th data-hide="phone,tablet"  class="text-center">
                                     Available Qty
                                 </th>
-                                <th data-hide="phone,tablet"  class="text-center">
-                                    Reserve
-                                </th>
+                                
                                 <th data-hide="phone,tablet" class="text-left table-w-12">
                                     Item Status
                                 </th>
@@ -163,17 +157,6 @@
                                 {{item.unit_count|floatformat:0}} unit
                                 {% endif %}
                             </td>
-                            <td class="text-center">
-                                {{item.reserve_count|floatformat:0}} {% if item.item_add_type == 'quantity' %}{{item.measuring_unit}}{% else %}unit{% endif %}
-                            </td>
-                            {% comment %} <td>
-                                {% if item.status == True %}
-                                <span class="inv-dot c-active ml-5"></span>Active
-                                {% else %}
-                                <span class="inv-dot c-inactive ml-5"></span>Not Active
-                                {% endif %}
-                              
-                            </td> {% endcomment %}
                             <td class="text-left">
                                 {% if item.item_status == 'available' %}
                                 <span class="inv-dot  c-active"></span>

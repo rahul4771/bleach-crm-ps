@@ -57,7 +57,7 @@ PUPOSES_REQUEST_ORDER=(
 class Category(models.Model):
     name            =   models.CharField(max_length=100,blank=False,null=False)
     category_code   =   models.CharField(max_length=50,blank=False,null=False)
-    category_id     =   models.CharField(max_length=50,blank=False,null=False)
+    category_id     =   models.CharField(max_length=50,blank=True,null=True)
     status          =   models.BooleanField(default=True,blank=False,null=False)
     created         =   models.DateTimeField(auto_now_add=True)
     def __unicode__(self):
@@ -68,7 +68,7 @@ class Category(models.Model):
 
 class Segment(models.Model):
     category        =   models.ForeignKey(Category,blank=False,null=False,related_name='segment_category')
-    segment_id      =   models.CharField(max_length=50,blank=False,null=False)
+    segment_id      =   models.CharField(max_length=50,blank=True,null=True)
     name            =   models.CharField(max_length=100,blank=False,null=False)
     status          =   models.BooleanField(default=True,blank=False,null=False)
     created         =   models.DateTimeField(auto_now_add=True)
@@ -82,7 +82,7 @@ class Line(models.Model):
     category        =   models.ForeignKey(Category,blank=False,null=False,related_name='line_category')
     segment         =   models.ForeignKey(Segment,blank=False,null=False,related_name='line_segment')
     name            =   models.CharField(max_length=100,blank=False,null=False)
-    line_id         =   models.CharField(max_length=50,blank=False,null=False)
+    line_id         =   models.CharField(max_length=50,blank=True,null=True)
     status          =   models.BooleanField(default=True,blank=False,null=False)
     created         =   models.DateTimeField(auto_now_add=True)
     def __unicode__(self):
@@ -127,7 +127,7 @@ class InventoryItem(models.Model):
         return str(self.name)
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
 
 class QuantityStoreDetails(models.Model):
@@ -196,10 +196,10 @@ class ItemUnit(models.Model):
     created         =   models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        return str(self.item.name)
+        return str(self.item.name+'-'+self.unit_code)
 
     def __str__(self):
-        return self.item.name
+        return self.item.name+'-'+self.unit_code
 
 class Attribute(models.Model):
     # attribute_type      =   models.CharField(max_length=100,blank=False,null=False,choices=ATTRIBUTE_TYPE_CHOICES)
@@ -422,9 +422,11 @@ class CheckOutItems(models.Model):
     item                 = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='item_checkout')
     item_unit            = models.ForeignKey(ItemUnit,blank=True,null=True,related_name='item_checkout_unit')
     units                = models.CharField(default=0,max_length=10,blank=False,null=False)
+    recommended_quantity = models.CharField(default=0,max_length=10,blank=True,null=True)
     is_swapped_item      = models.BooleanField(default=False,blank=False,null=False)
     is_checked_out       = models.BooleanField(default=False,blank=False,null=False)
     checked_out_date     = models.DateField(blank=True,null=True)
+    is_checked_out_by    = models.ForeignKey(UserProfile,blank=True,null=True,related_name='item_checked_out_by')
     is_collected         = models.BooleanField(default=False,blank=False,null=False)
     is_collected_by      = models.ForeignKey(UserProfile,blank=True,null=True,related_name='item_collected_by')
     is_returned          = models.BooleanField(default=False,blank=False,null=False)
