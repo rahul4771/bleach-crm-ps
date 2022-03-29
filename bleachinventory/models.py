@@ -124,10 +124,10 @@ class InventoryItem(models.Model):
     status          =   models.BooleanField(default=True,blank=False,null=False)
     created         =   models.DateTimeField(auto_now_add=True)
     def __unicode__(self):
-        return str(self.item_code)
+        return str(self.name)
 
     def __str__(self):
-        return str(self.item_code)
+        return str(self.name)
 
 
 class QuantityStoreDetails(models.Model):
