@@ -1364,24 +1364,26 @@ class InventoryInv(IsInventoryAdminUser,View):
 		# 		unit.unit_code = new_unit_code
 		# 		unit.save()
 
+		items = InventoryItem.objects.filter(status=True)
 
-		# 	item_code_series = str(item.item_category.category_id)+str(item.item_segment.segment_id)+str(item.item_line.line_id)
-		# 	print(item_code_series,"itcs")
+		for item in items:
+			item_code_series = str(item.item_category.category_id)+str(item.item_segment.segment_id)+str(item.item_line.line_id)
+			print(item_code_series,"itcs")
 
-		# 	latest_item_code = InventoryItem.objects.filter(item_code__contains=item_code_series).last()
-		# 	print(latest_item_code,"lic")
+			latest_item_code = InventoryItem.objects.filter(item_code__contains=item_code_series).last()
+			print(latest_item_code,"lic")
 
-		# 	if latest_item_code and str(item_code_series) in str(latest_item_code.item_code):
-		# 		print("exist")
-		# 		new_item_code = item_code_series + str(int(latest_item_code.item_code[6:])+1)
-		# 		print(new_item_code,"newit")
-		# 	else:
-		# 		print("not exist")
+			if latest_item_code and str(item_code_series) in str(latest_item_code.item_code):
+				print("exist")
+				new_item_code = item_code_series + str(int(latest_item_code.item_code[6:])+1)
+				print(new_item_code,"newit")
+			else:
+				print("not exist")
 			
-		# 		new_item_code = item_code_series + '101'
-		# 		print(new_item_code,"newit")
+				new_item_code = item_code_series + '101'
+				print(new_item_code,"newit")
 
-		# 	InventoryItem.objects.filter(id=item.id,item_category=item.item_category,item_segment=item.item_segment,item_line=item.item_line).update(item_code=new_item_code)
+			InventoryItem.objects.filter(id=item.id,item_category=item.item_category,item_segment=item.item_segment,item_line=item.item_line).update(item_code=new_item_code)
 		
 		
 		# 	InventoryItem.objects.filter(name__iexact=x[0]).update(item_category=category,item_segment=segment,item_line=line)

@@ -513,7 +513,13 @@ class ClientOrders(IsSeniorTeamLeader,View):
 class StlHome(IsSeniorTeamLeader,View):
 	def get(self,request):
 		
-		# url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/employees/directory"
+		#load bamboo timeoffs to bleach code
+		
+		# todate = date.today()
+		# end_date = todate+timedelta(30)
+		# print(todate,end_date,"datess")
+
+		# url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/time_off/requests/?start="+str(todate)+"&end="+str(end_date)+""
 
 		# headers = {
 		# 	"Accept": "application/json",
@@ -523,13 +529,38 @@ class StlHome(IsSeniorTeamLeader,View):
 		# response = requests.request("GET", url, headers=headers)
 		# data = response.json()
 
-		# df = pd.DataFrame(data['employees']).to_excel("excel.xlsx")
+		
+		# for timeoff in data:
+		# 	print(timeoff['type'],timeoff['end'],timeoff['employeeId'],"runtime")
+		# 	timeoff_start = datetime.strptime(timeoff['start'],"%Y-%m-%d")
+		# 	timeoff_end = datetime.strptime(timeoff['end'],"%Y-%m-%d")
 
-		# for employee in data['employees']:
-		# 	print(employee['preferredName'],"prefernm")
-		# 	user = UserProfile.objects.get(name__iexact=employee['preferredName'])
-		# 	user.bamboo_employee_id = employee['id']
-		# 	user.save()
+		# 	print(timeoff['type']['name'],"ltt")
+
+		# 	try:
+		# 		leaveschedules = LeaveSchedule.objects.filter(is_active=True,staff__bamboo_employee_id=int(timeoff['employeeId']),leave_date__range=(timeoff_start,timeoff_end))
+			
+				
+		# 	except:
+		# 		leaveschedules = None
+				
+		# 		bleach_employee = UserProfile.objects.get(bamboo_employee_id=int(timeoff['employeeId']),is_active=True)
+		# 		datelist = pd.date_range(timeoff_start, timeoff_end)
+				
+		# 		schedule=[]
+		# 		for timeoffdate in datelist:
+		# 			schedule_dict = {
+		# 				"leave_type" : timeoff['type']['name'],
+		# 				"leave_date" : timeoffdate.date(),
+		# 				"staff"      : bleach_employee.id
+		# 			}
+		# 			schedule.append(schedule_dict)
+		# 		print(schedule,"sched")
+		# 		serializer = LeaveScheduleSerializer(data=schedule)
+			
+		# 		if serializer.is_valid(): 
+		# 			serializer.save()
+
 
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
