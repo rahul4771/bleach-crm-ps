@@ -1364,6 +1364,7 @@ class InventoryInv(IsInventoryAdminUser,View):
 		# 		unit.unit_code = new_unit_code
 		# 		unit.save()
 
+		InventoryItem.objects.filter(status=True).update(item_code='000000000')
 		items = InventoryItem.objects.filter(status=True)
 
 		for item in items:
