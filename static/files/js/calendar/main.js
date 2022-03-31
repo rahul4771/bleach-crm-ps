@@ -794,11 +794,10 @@ const app=  new Vue({
                   this.combineSlots.push({type:'not approved',class:'subscription-cleaning-bg',slots:this.slots.notapproved_cleanings[i]})
 
                 }
-                
-                 
-               
+
                  this.parseSlots()
                 // $(".cl-slot-card").css('min-height',600);
+
                 setTimeout(function(){ 
                   var a = [];
                   console.log("here", $("#div_8").height()) 
@@ -824,8 +823,6 @@ const app=  new Vue({
                   
                   $('.owl-item').height(m+200)
                   $('.cl-slot-card').css('height','100%')
-                 
-                
               
                 }, 500);
                 this.cal_loader=false
