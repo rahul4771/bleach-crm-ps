@@ -99,7 +99,13 @@ class Command(BaseCommand):
                                                 "UnitAmount": (transaction.amount_paid-.250),
                                                 "AccountCode": "610",
                                                 "TaxType":"NONE"
-                                            }],
+                                            },
+                                            {
+                                                "Description": "Bank Charge",
+                                                "UnitAmount": .250,
+                                                "AccountCode": "3202014",
+                                                "TaxType":"NONE"
+                                                }],
                                             "BankAccount": {
                                                 "Code": "1201023"
                                             }
@@ -107,30 +113,6 @@ class Command(BaseCommand):
                                         
             update_transaction          = requests.post('https://api.xero.com/api.xro/2.0/BankTransactions',
                                                     json=transaction_data,
-                                                    headers=header 
-                                                )
-
-            ##Transaction Bank Charge Data
-            transaction_bankcharge_data     = {
-                                                "Type": "RECEIVE-OVERPAYMENT",
-                                                "Reference": transaction.order.evaluation.evaluation_id,
-                                                "Date":datetime.strftime(transaction.paid_date,"%Y-%m-%d"),
-                                                "Contact": {
-                                                    "ContactID": transaction.order.evaluation.customer.xero_account_id,
-                                                },
-                                                "LineItems": [{
-                                                    "Description": "Bank Charge",
-                                                    "UnitAmount": .250,
-                                                    "AccountCode": "610",
-                                                    "TaxType":"NONE"
-                                                }],
-                                                "BankAccount": {
-                                                    "Code": "3202014"
-                                                }
-                                                }
-
-            update_transaction_bankcharge   = requests.post('https://api.xero.com/api.xro/2.0/BankTransactions',
-                                                    json=transaction_bankcharge_data,
                                                     headers=header 
                                                 )
 
@@ -164,9 +146,7 @@ class Command(BaseCommand):
         print(update_transaction)
         print(update_transaction.json())
 
-        print(transaction_bankcharge_data)
-        print(update_transaction_bankcharge)
-        print(update_transaction_bankcharge.json())
+        if update_transaction.json()['Status'] == 'OK': 
+            transaction.is_xero_marked = True
+            transaction.save()
         
-        transaction.is_xero_marked = True
-        transaction.save()
