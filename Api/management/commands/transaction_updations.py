@@ -159,8 +159,14 @@ class Command(BaseCommand):
                                                 )
 
         print(transaction,"Transaction")
+
         print(transaction_data)
         print(update_transaction)
         print(update_transaction.json())
+
+        print(transaction_bankcharge_data)
+        print(update_transaction_bankcharge)
+        print(update_transaction_bankcharge.json())
+        
         transaction.is_xero_marked = True
         transaction.save()
