@@ -140,12 +140,13 @@ class Command(BaseCommand):
 
         else:
             transaction_data            = {
-                                            "Type": "RECEIVE-OVERPAYMENT",
+                                            "Type": "SPEND",
                                             "Reference": transaction.order.evaluation.evaluation_id,
                                             "Date":datetime.strftime(transaction.paid_date,"%Y-%m-%d"),
                                             "Contact": {
                                                 "ContactID": transaction.order.evaluation.customer.xero_account_id,
                                             },
+                                            "IsReconciled":True,
                                             "LineItems": [{
                                                 "Description": Description,
                                                 "UnitAmount": transaction.amount_paid,
