@@ -96,7 +96,7 @@ class Command(BaseCommand):
                                             },
                                             "LineItems": [{
                                                 "Description": Description,
-                                                "UnitAmount": (transaction.amount_paid-.250),
+                                                "UnitAmount": transaction.amount_paid,
                                                 "AccountCode": "610",
                                                 "TaxType":"NONE"
                                             }],
@@ -112,7 +112,7 @@ class Command(BaseCommand):
 
             ##Transaction Bank Charge Data
             transaction_bankcharge_data     = {
-                                                "Type": "RECEIVE-OVERPAYMENT",
+                                                "Type": "SPEND-OVERPAYMENT",
                                                 "Reference": transaction.order.evaluation.evaluation_id,
                                                 "Date":datetime.strftime(transaction.paid_date,"%Y-%m-%d"),
                                                 "Contact": {
