@@ -134,9 +134,9 @@ class Command(BaseCommand):
                                                     headers=header 
                                                 ).json()
             
-            if update_transaction['Status'] == 'OK' and update_transaction_bankcharge['Status'] == 'OK':
-                transaction.is_xero_marked = True
-                transaction.save()
+            # if update_transaction['Status'] == 'OK' and update_transaction_bankcharge['Status'] == 'OK':
+            #     transaction.is_xero_marked = True
+            #     transaction.save()
 
         else:
             transaction_data            = {
@@ -162,9 +162,9 @@ class Command(BaseCommand):
                                                     headers=header 
                                                 ).json()
 
-            if update_transaction['Status'] == 'OK':
-                transaction.is_xero_marked = True
-                transaction.save()
+            # if update_transaction['Status'] == 'OK':
+            #     transaction.is_xero_marked = True
+            #     transaction.save()
 
         print(transaction,"Transaction")
 
