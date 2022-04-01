@@ -159,7 +159,8 @@ class Command(BaseCommand):
                                                 )
 
         print(transaction,"Transaction")
+        print(transaction_data)
         print(update_transaction)
-        print(update_transaction.json)
+        print(update_transaction.json())
         # transaction.is_xero_marked = True
         # transaction.save()
