@@ -130,7 +130,7 @@ class Command(BaseCommand):
                                                 }
 
             update_transaction_bankcharge   = requests.post('https://api.xero.com/api.xro/2.0/BankTransactions',
-                                                    json=transaction_data,
+                                                    json=transaction_bankcharge_data,
                                                     headers=header 
                                                 )
 
