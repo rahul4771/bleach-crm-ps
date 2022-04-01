@@ -112,7 +112,7 @@ class Command(BaseCommand):
 
             ##Transaction Bank Charge Data
             transaction_bankcharge_data     = {
-                                                "Type": "SPEND-OVERPAYMENT",
+                                                "Type": "SPEND-TRANSFER",
                                                 "Reference": transaction.order.evaluation.evaluation_id,
                                                 "Date":datetime.strftime(transaction.paid_date,"%Y-%m-%d"),
                                                 "Contact": {
@@ -170,7 +170,7 @@ class Command(BaseCommand):
 
         print(transaction_data)
         print(update_transaction)
-        
+
         print(transaction_bankcharge_data)
         print(update_transaction_bankcharge)
         
