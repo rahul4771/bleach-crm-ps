@@ -17,6 +17,8 @@ from django.db.models.functions import Cast,TruncDate,ExtractMonth,ExtractYear,C
 from django.db.models import Prefetch
 from django.contrib import messages
 
+from Api.serializers import LeaveScheduleSerializer
+
 from evaluator.forms import EvaluationDetailsForm,QuatationServiceForm
 import json
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
@@ -535,32 +537,46 @@ class StlHome(IsSeniorTeamLeader,View):
 		# 	timeoff_start = datetime.strptime(timeoff['start'],"%Y-%m-%d")
 		# 	timeoff_end = datetime.strptime(timeoff['end'],"%Y-%m-%d")
 
-		# 	print(timeoff['type']['name'],"ltt")
+		# 	datelist = pd.date_range(timeoff_start, timeoff_end)
 
-		# 	try:
-		# 		leaveschedules = LeaveSchedule.objects.filter(is_active=True,staff__bamboo_employee_id=int(timeoff['employeeId']),leave_date__range=(timeoff_start,timeoff_end))
-			
-				
-		# 	except:
-		# 		leaveschedules = None
-				
-		# 		bleach_employee = UserProfile.objects.get(bamboo_employee_id=int(timeoff['employeeId']),is_active=True)
-		# 		datelist = pd.date_range(timeoff_start, timeoff_end)
-				
-		# 		schedule=[]
-		# 		for timeoffdate in datelist:
-		# 			schedule_dict = {
-		# 				"leave_type" : timeoff['type']['name'],
-		# 				"leave_date" : timeoffdate.date(),
-		# 				"staff"      : bleach_employee.id
-		# 			}
-		# 			schedule.append(schedule_dict)
-		# 		print(schedule,"sched")
-		# 		serializer = LeaveScheduleSerializer(data=schedule)
-			
-		# 		if serializer.is_valid(): 
-		# 			serializer.save()
+		# 	if timeoff['type']['name'] == 'Sick Leave 100%' :
+		# 		leave_type = 'SICK LEAVE'
+		# 	else:
+		# 		leave_type = timeoff['type']['name']
+		# 		leave_type = leave_type.upper()
 
+		# 	print(leave_type,"ltt")
+
+		# 	for timeoffdate in datelist:
+		# 		try:
+		# 			leaveschedule = LeaveSchedule.objects.get(is_active=True,staff__bamboo_employee_id=int(timeoff['employeeId']),leave_date=timeoffdate)
+		# 			print(leaveschedule,"lvshes")
+					
+		# 		except:
+		# 			leaveschedule = None
+					
+		# 			try:
+		# 				bleach_employee = UserProfile.objects.get(bamboo_employee_id=int(timeoff['employeeId']),is_active=True)
+		# 				datelist = pd.date_range(timeoff_start, timeoff_end)
+						
+		# 				schedules=[]
+						
+		# 				schedule_dict = {
+		# 					"leave_type" : leave_type,
+		# 					"leave_date" : timeoffdate.date(),
+		# 					"staff"      : bleach_employee.id
+		# 				}
+		# 				schedules.append(schedule_dict)
+		# 				print(schedules,"sched")
+						
+		# 				for schedule in schedules:
+		# 					serializer = LeaveScheduleSerializer(data=schedule)
+					
+		# 					if serializer.is_valid(): 
+		# 						print("serialval")
+		# 						serializer.save()
+		# 			except:
+		# 				bleach_employee = None
 
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
