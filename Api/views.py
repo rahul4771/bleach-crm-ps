@@ -4036,8 +4036,7 @@ class CheckOutItemAdd(APIView):
 						except:
 							quantitystore = QuantityStoreDetails.objects.create(
 							item_store = store,
-							quantity_item = checkout_item.item,
-							quantity = float(quantity)
+							quantity_item = checkout_item.item
 							)
 
 						if float(quantitystore.quantity) >= float(quantity):
