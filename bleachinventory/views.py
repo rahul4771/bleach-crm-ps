@@ -3338,27 +3338,33 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 					for request_order_item in request_order_items:
 						
 						if request_order_item.product.item_add_type == 'quantity':
-							request_order_item.product.total_quantity = round(float(request_order_item.product.total_quantity)-float(request_order_item.item_count),2)
-							store_item.quantity                       = round(float(store_item.quantity)-float(request_order_item.item_count),2)
-						
-						request_order_item.product.save()
-						request_order_item.is_received             = True
-						request_order_item.save()
-						store_item.save()
-						
-						ItemHistory.objects.create(
-						item = request_order_item.product,
-						item_action = 'ITEM REQUEST',
-						quantity_location=store,
-						item_remark = request_order_item.request_order.request_order_id,
-						quantity = request_order_item.item_count,
-						external_user = request_order_item.request_order.requested_by.name
-						)
+							print(store_item.quantity,"storqty")
+							if float(store_item.quantity) >= float(request_order_item.item_count):
+								request_order_item.product.total_quantity = round(float(request_order_item.product.total_quantity)-float(request_order_item.item_count),2)
+								store_item.quantity                       = round(float(store_item.quantity)-float(request_order_item.item_count),2)
+							
+								request_order_item.product.save()
+								request_order_item.is_received             = True
+								request_order_item.save()
+								store_item.save()
+								
+								ItemHistory.objects.create(
+								item = request_order_item.product,
+								item_action = 'ITEM REQUEST',
+								quantity_location=store,
+								item_remark = request_order_item.request_order.request_order_id,
+								quantity = request_order_item.item_count,
+								external_user = request_order_item.request_order.requested_by.name
+								)
+						else:
+							request_order_item.product.save()
+							request_order_item.is_received             = True
+							request_order_item.save()
 
-						if request_order_item.product_unit:
-							request_order_item.product_unit.status = 'working'
-							request_order_item.product_unit.is_available=False
-							request_order_item.product_unit.save()
+							if request_order_item.product_unit:
+								request_order_item.product_unit.status = 'working'
+								request_order_item.product_unit.is_available=False
+								request_order_item.product_unit.save()
 
 				request_order.is_received  = True
 				request_order.received_by  = request.user

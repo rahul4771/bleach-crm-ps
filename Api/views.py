@@ -4036,8 +4036,7 @@ class CheckOutItemAdd(APIView):
 						except:
 							quantitystore = QuantityStoreDetails.objects.create(
 							item_store = store,
-							quantity_item = checkout_item.item,
-							quantity = float(quantity)
+							quantity_item = checkout_item.item
 							)
 
 						if float(quantitystore.quantity) >= float(quantity):
@@ -4834,12 +4833,19 @@ class ItemUnitsProduct(APIView):
 		visit_id = request.GET.get('visit_id')
 		store_id = request.GET.get('store_id')
 		
-		store= Store.objects.get(id=int(store_id))
+		try:
+			store= Store.objects.get(id=int(store_id))
+		except:
+			store=None
 
 		item_units_array = []
 		checkout_item_units_array = []
 
-		item_units       = ItemUnit.objects.filter(item__id=product_id,store=store,is_available=True)
+		if store:
+			item_units       = ItemUnit.objects.filter(item__id=product_id,store=store,is_available=True)
+		else:
+			item_units       = ItemUnit.objects.filter(item__id=product_id,is_available=True)
+
 		for item in item_units:
 			item_units_array.append({'id':item.id,'unit_code':item.unit_code})
 
