@@ -26,6 +26,20 @@ import pandas as pd
 class InventoryHome(IsInventoryAdminUser,View):
 	def get(self,request):
 		
+		#Automatic Allignment
+		items = InventoryItem.objects.filter(status=True,item_add_type='quantity')
+		store = Store.objects.get(store_name='AL-RAI STORE')
+
+		for item in items:
+			
+			try:
+				quantitystore = QuantityStoreDetails.objects.get(quantity_item=item,item_store=store)
+				quantitystore.quantity = item.total_quantity
+				quantitystore.save()
+			except:
+				quantitystore = None
+		##########################################################
+
 		items = InventoryItem.objects.filter(status=True)
 		items_count = items.count()
 
@@ -1608,9 +1622,9 @@ class InventoryInv(IsInventoryAdminUser,View):
 		page1 = request.GET.get('page1',1)
 		paginator1=Paginator(inventory_items,no_of_entries)
 		try:
-			inventory_items=paginator1.page(page1)
+			inventory_items = paginator1.page(page1)
 		except PageNotAnInteger:
-			inventory_items=paginator1.page(1)
+			inventory_items = paginator1.page(1)
 		except EmptyPage:
 			inventory_items = paginator1.page(paginator1.num_pages)
 
