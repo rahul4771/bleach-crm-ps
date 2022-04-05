@@ -26,20 +26,6 @@ import pandas as pd
 class InventoryHome(IsInventoryAdminUser,View):
 	def get(self,request):
 		
-		#Automatic Allignment
-		items = InventoryItem.objects.filter(status=True,item_add_type='quantity')
-		store = Store.objects.get(store_name='AL-RAI STORE')
-
-		for item in items:
-			
-			try:
-				quantitystore = QuantityStoreDetails.objects.get(quantity_item=item,item_store=store)
-				quantitystore.quantity = item.total_quantity
-				quantitystore.save()
-			except:
-				quantitystore = None
-		##########################################################
-
 		items = InventoryItem.objects.filter(status=True)
 		items_count = items.count()
 
