@@ -133,14 +133,7 @@ class Command(BaseCommand):
                                                             {
                                                                 "Description":scheduler.order_scheduler_book.service_type.name,
                                                                 "Quantity":"1",
-                                                                "UnitAmount":scheduler.cleaning_cost,
-                                                                "AccountCode":scheduler.order_scheduler_book.service_type.xero_account,
-                                                                "TaxType":"NONE"
-                                                            },
-                                                            {
-                                                                "Description":"Additional Charge",
-                                                                "Quantity":"1",
-                                                                "UnitAmount":scheduler.additional_charge_cost,
+                                                                "UnitAmount":scheduler.cleaning_cost+scheduler.additional_charge_cost,
                                                                 "AccountCode":scheduler.order_scheduler_book.service_type.xero_account,
                                                                 "TaxType":"NONE"
                                                             },
