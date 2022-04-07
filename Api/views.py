@@ -2263,7 +2263,7 @@ class CheckOutAPI(APIView):
 		# 	cleaning_no += 1
 		# 	if evaluation_book_schedule == cleaning_team_detail.order_scheduler:
 		# 		break
-		# InvoiceNumber               = str(cleaning_team_detail.order_scheduler.order.invoice_no)+'-'+str(book_no)+'-V'+str(cleaning_no)
+		# InvoiceNumber               = str(cleaning_team_detail.order_scheduler.order.invoice_no)+'-'+str(book_no)+'V'+str(cleaning_no)
 				
 		# invoice_data                = 	{
 		# 								"Type":"ACCREC",
@@ -2280,14 +2280,7 @@ class CheckOutAPI(APIView):
 		# 									{
 		# 										"Description":cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.name,
 		# 										"Quantity":"1",
-		# 										"UnitAmount":cleaning_team_detail.order_scheduler.cleaning_cost,
-		# 										"AccountCode":cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.xero_account,
-		# 										"TaxType":"NONE"
-		# 									},
-		# 									{
-		# 										"Description":"Additional Charge",
-		# 										"Quantity":"1",
-		# 										"UnitAmount":cleaning_team_detail.order_scheduler.additional_charge_cost,
+		# 										"UnitAmount":(cleaning_team_detail.order_scheduler.cleaning_cost+cleaning_team_detail.order_scheduler.additional_charge_cost),
 		# 										"AccountCode":cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.xero_account,
 		# 										"TaxType":"NONE"
 		# 									},
@@ -2295,7 +2288,7 @@ class CheckOutAPI(APIView):
 		# 										"Description":"Discount",
 		# 										"Quantity":"1",
 		# 										"UnitAmount":-cleaning_team_detail.order_scheduler.discount_cost,
-		# 										"AccountCode":cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.xero_account,
+		# 										"AccountCode":4101017,
 		# 										"TaxType":"NONE"
 		# 									}
 		# 								]
@@ -2319,9 +2312,9 @@ class CheckOutAPI(APIView):
 		# except:
 		# 	created_invoice = None
         
-		# if created_invoice == 'OK':
-		# 	cleaning_team_detail.order_scheduler.is_xero_marked = True
-		# 	cleaning_team_detail.order_scheduler.save()
+		if created_invoice == 'OK':
+			cleaning_team_detail.order_scheduler.is_xero_marked = True
+			cleaning_team_detail.order_scheduler.save()
 
 		language = cleaning_team_detail.order_scheduler.order.evaluation.customer.sms_preference
 
