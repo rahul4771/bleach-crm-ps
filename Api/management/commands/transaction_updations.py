@@ -192,10 +192,6 @@ class Command(BaseCommand):
                     transaction.save()
 
             print(transaction,"Transaction")
-
             print(transaction_data)
             print(update_transaction)
-
-            print(transaction_bankcharge_data)
-            print(update_transaction_bankcharge)
         
