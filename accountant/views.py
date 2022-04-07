@@ -1184,7 +1184,12 @@ class CashCollect(IsAccountant,View):
 															headers=header 
 														)
 
-				if update_transaction['Status'] == 'OK':
+				try:
+					created_transaction = update_transaction['Status']
+				except:
+					created_transaction = None
+
+				if created_transaction == 'OK':
 					payment_history.is_xero_marked = True
 					payment_history.save()
 
@@ -1376,7 +1381,12 @@ class CashCollect(IsAccountant,View):
 															json=transaction_data,
 															headers=header 
 														)
-				if update_transaction['Status'] == 'OK':
+				try:
+					created_transaction = update_transaction['Status']
+				except:
+					created_transaction = None
+
+				if created_transaction == 'OK':
 					payment_history.is_xero_marked = True
 					payment_history.save()
 		else:
