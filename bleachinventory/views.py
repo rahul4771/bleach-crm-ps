@@ -1463,17 +1463,17 @@ class InventoryInv(IsInventoryAdminUser,View):
 			
 
 		#item and store quantity match
-		items = InventoryItem.objects.filter(status=True,item_add_type='quantity')
-		store = Store.objects.get(store_name='AL-RAI STORE')
+		# items = InventoryItem.objects.filter(status=True,item_add_type='quantity')
+		# store = Store.objects.get(store_name='AL-RAI STORE')
 
-		for item in items:
+		# for item in items:
 			
-			try:
-				quantitystore = QuantityStoreDetails.objects.get(quantity_item=item,item_store=store)
-				quantitystore.quantity = item.total_quantity
-				quantitystore.save()
-			except:
-				quantitystore = None
+		# 	try:
+		# 		quantitystore = QuantityStoreDetails.objects.get(quantity_item=item,item_store=store)
+		# 		quantitystore.quantity = item.total_quantity
+		# 		quantitystore.save()
+		# 	except:
+		# 		quantitystore = None
 		########################################
 		
 		search = request.GET.get('search')
