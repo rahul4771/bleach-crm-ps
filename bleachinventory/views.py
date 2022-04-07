@@ -1462,17 +1462,19 @@ class InventoryInv(IsInventoryAdminUser,View):
 		# ItemHistory.objects.all().update(quantity_location=store)
 			
 
-		# items = InventoryItem.objects.filter(status=True,item_add_type='quantity')
-		# store = Store.objects.get(store_name='AL-RAI STORE')
+		#item and store quantity match
+		items = InventoryItem.objects.filter(status=True,item_add_type='quantity')
+		store = Store.objects.get(store_name='AL-RAI STORE')
 
-		# for item in items:
+		for item in items:
 			
-		# 	try:
-		# 		quantitystore = QuantityStoreDetails.objects.get(quantity_item=item,item_store=store)
-		# 		quantitystore.quantity = item.total_quantity
-		# 		quantitystore.save()
-		# 	except:
-		# 		quantitystore = None
+			try:
+				quantitystore = QuantityStoreDetails.objects.get(quantity_item=item,item_store=store)
+				quantitystore.quantity = item.total_quantity
+				quantitystore.save()
+			except:
+				quantitystore = None
+		########################################
 		
 		search = request.GET.get('search')
 		item_type = request.GET.get('item_type',None)
@@ -2440,7 +2442,7 @@ class PurchaseOrderItemsPage(IsInventoryAdminUser,View):
 				item = InventoryItem.objects.get(id=int(product))
 				purchase_order_item = PurchaseOrderItems.objects.get(purchase_order=purchase_order,product__item__id=int(product))
 				print(item,item_counts[loopcount], "itm")
-				ItemHistory.objects.create(purchase_order=purchase_order,quantity_location=store,item=item,quantity=item_counts[loopcount],item_action='PURCHASE ORDER',item_remark=purchase_order.purchase_order_id,added_by=purchase_order_item.purchase_order.initiated_by)
+				
 				
 				try:
 					quantitystore = QuantityStoreDetails.objects.get(item_store=store,quantity_item = item)
@@ -2455,6 +2457,8 @@ class PurchaseOrderItemsPage(IsInventoryAdminUser,View):
 
 				item.total_quantity = float(item.total_quantity) + float(item_counts[loopcount])
 				item.save()
+
+				ItemHistory.objects.create(purchase_order=purchase_order,quantity_location=store,item=item,quantity=item_counts[loopcount],item_action='PURCHASE ORDER',item_remark=purchase_order.purchase_order_id,added_by=purchase_order_item.purchase_order.initiated_by)
 
 				purchase_order_item.is_received = True
 				purchase_order_item.added_item_count = float(item_counts[loopcount])

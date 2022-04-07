@@ -344,7 +344,7 @@ function selectDay(el){
         $('.modal-resource').text(user);
         $('.modal-dialog').addClass("lv-annual-popup")
        
-        $('#leaveModal').show();
+        // $('#leaveModal').show();
         
         dateCounter=dateCounter-1;
     }
@@ -360,7 +360,7 @@ function selectDay(el){
         $('.modal-date').text($('#'+dayId).find('.lv-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString());
         $('.modal-resource').text(user);
         $('.modal-dialog').addClass("lv-sick-popup")
-        $('#leaveModal').show();
+        // $('#leaveModal').show();
         dateCounter=dateCounter-1;
     }
     else if($('#'+dayId).find('.lv-date').hasClass('lv-unpaid')){
@@ -376,7 +376,7 @@ function selectDay(el){
         $('.modal-resource').text(user);
         $('.modal-dialog').addClass("lv-unpaid-popup")
        
-        $('#leaveModal').show();
+        // $('#leaveModal').show();
         dateCounter=dateCounter-1;
     }
     else if($('#'+dayId).find('.lv-date').hasClass('lv-weekly')){
@@ -410,7 +410,7 @@ function selectDay(el){
         $('.modal-date').text($('#'+dayId).find('.lv-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString());
         $('.modal-resource').text(user);
         $('.modal-dialog').addClass("lv-absent-popup")
-        $('#leaveModal').show();
+        // $('#leaveModal').show();
        
         dateCounter=dateCounter-1;
     }
@@ -426,7 +426,7 @@ function selectDay(el){
         $('.modal-date').text($('#'+dayId).find('.lv-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString());
         $('.modal-resource').text(user);
         $('.modal-dialog').addClass("lv-compassionate-popup")
-        $('#leaveModal').show();
+        // $('#leaveModal').show();
        
         dateCounter=dateCounter-1;
     }
