@@ -56,6 +56,7 @@ class Command(BaseCommand):
                     scheduler.save()
 
                     if scheduler.work_status == 'CLEANING_FULFILLED':
+                        print(total_cleanings)
                         #Xero Integration
                         xero                        = XeroConnection.objects.first()
                         ##xero Update Access Token and Refresh Token
@@ -167,6 +168,7 @@ class Command(BaseCommand):
                             created_invoice = create_invoice['Status']
                         except:
                             created_invoice = None
+
                         if created_invoice == 'OK':
                             scheduler.is_xero_marked = True
                             scheduler.save()
