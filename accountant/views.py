@@ -1079,137 +1079,119 @@ class CashCollect(IsAccountant,View):
 
 					messages.success(request,"Payment Received through Bank")
 				
-				# xero          = XeroConnection.objects.first()
-				# order         = Order.objects.select_related('evaluation__customer').get(id=order_id)
-				# #Update Access Token and Refresh Token
-				# header                      = {
-				# 								'Authorization': 'Basic '+xero.client_encoded,
-				# 								'Content-Type': 'application/x-www-form-urlencoded'
-				# 									}
-				# body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
-				# token_response              = requests.post('https://identity.xero.com/connect/token',
-				# 										data=body,
-				# 										headers=header 
-				# 									).json()
-				# access_token                = token_response['access_token']
-				# refresh_token               = token_response['refresh_token']
+				xero          = XeroConnection.objects.first()
+				order         = Order.objects.select_related('evaluation__customer').get(id=order_id)
+				#Update Access Token and Refresh Token
+				header                      = {
+												'Authorization': 'Basic '+xero.client_encoded,
+												'Content-Type': 'application/x-www-form-urlencoded'
+													}
+				body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
+				token_response              = requests.post('https://identity.xero.com/connect/token',
+														data=body,
+														headers=header 
+													).json()
+				access_token                = token_response['access_token']
+				refresh_token               = token_response['refresh_token']
 
-				# xero.access_token  = access_token
-				# xero.refresh_token = refresh_token
-				# xero.save()
+				xero.access_token  = access_token
+				xero.refresh_token = refresh_token
+				xero.save()
 
-				# ##Xero Contact
-				# if not cleaning_team_detail.order_scheduler.customer_address.customer.xero_account_id:
+				##Xero Contact
+				if not cleaning_team_detail.order_scheduler.customer_address.customer.xero_account_id:
 
-				# 	##Xero Create Customer ID and Save
-				# 	contact_data                = {
-				# 									"Name":cleaning_team_detail.order_scheduler.customer_address.customer.name,
-				# 									"ContactNumber":cleaning_team_detail.order_scheduler.customer_address.customer.mobile_number,
-				# 									"EmailAddress":cleaning_team_detail.order_scheduler.customer_address.customer.email,
-				# 									"ContactStatus":"ACTIVE",
-				# 									"IsCustomer":True,
-				# 									"DefaultCurrency":"KWD"
-				# 												}
+					##Xero Create Customer ID and Save
+					contact_data                = {
+													"Name":cleaning_team_detail.order_scheduler.customer_address.customer.name,
+													"ContactNumber":cleaning_team_detail.order_scheduler.customer_address.customer.mobile_number,
+													"EmailAddress":cleaning_team_detail.order_scheduler.customer_address.customer.email,
+													"ContactStatus":"ACTIVE",
+													"IsCustomer":True,
+													"DefaultCurrency":"KWD"
+																}
 													
-				# 	header                      = {
-				# 								'xero-tenant-id': xero.tenant_id,
-				# 								'Authorization': 'Bearer '+access_token,
-				# 								'Accept': 'application/json',
-				# 								'Content-Type': 'application/json'
-				# 									}
+					header                      = {
+												'xero-tenant-id': xero.tenant_id,
+												'Authorization': 'Bearer '+access_token,
+												'Accept': 'application/json',
+												'Content-Type': 'application/json'
+													}
 
-				# 	create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
-				# 											json=contact_data,
-				# 											headers=header 
-				# 										).json()
+					create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
+															json=contact_data,
+															headers=header 
+														).json()
 
-				# 	order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
-				# 	order.evaluation.customer.save() 
+					order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
+					order.evaluation.customer.save() 
 
-				# #Xero Transaction
-				# header                      = {
-				# 							'xero-tenant-id': xero.tenant_id,
-				# 							'Authorization': 'Bearer '+access_token,
-				# 							'Accept': 'application/json',
-				# 							'Content-Type': 'application/json'
-				# 								}
+				#Xero Transaction
+				header                      = {
+											'xero-tenant-id': xero.tenant_id,
+											'Authorization': 'Bearer '+access_token,
+											'Accept': 'application/json',
+											'Content-Type': 'application/json'
+												}
 
-				# #Seperate Code For Bank Transactions and Other Transactions
-				# if payment_method == 'BANK':
-				# 	##Transaction Data
-				# 	transaction_data            = {
-				# 									"Type": "RECEIVE-OVERPAYMENT",
-				# 									"Reference": order.evaluation.evaluation_id,
-				# 									"Date":datetime.strftime(payment_date,'%Y-%m-%d'),
-				# 									"Contact": {
-				# 										"ContactID": order.evaluation.customer.xero_account_id,
-				# 									},
-				# 									"LineItems": [{
-				# 										"Description": payment_method,
-				# 										"UnitAmount": amount-.250,
-				# 										"AccountCode": "610",
-				# 										"TaxType":"NONE"
-				# 									}],
-				# 									"BankAccount": {
-				# 										"Code": "1201023"
-				# 									}
-				# 									}
+				#Seperate Code For Bank Transactions and Other Transactions
+				if payment_method == 'BANK':
+					##Transaction Data
+					transaction_data            = {
+													"Type": "RECEIVE-OVERPAYMENT",
+													"Reference": order.evaluation.evaluation_id,
+													"Date":datetime.strftime(payment_date,'%Y-%m-%d'),
+													"Contact": {
+														"ContactID": order.evaluation.customer.xero_account_id,
+													},
+													"LineItems": [{
+														"Description": payment_method,
+														"UnitAmount": amount,
+														"AccountCode": "610",
+														"TaxType":"NONE"
+													}],
+													"BankAccount": {
+														"Code": "1201023"
+													}
+													}
 													
-				# 	update_transaction          = requests.post('https://api.xero.com/api.xro/2.0/BankTransactions',
-				# 											json=transaction_data,
-				# 											headers=header 
-				# 										)
-					
-				# 	##Transaction Bank Charge Data
-				# 	transaction_bankcharge_data             = {
-				# 												"Type": "RECEIVE-OVERPAYMENT",
-				# 												"Reference": order.evaluation.evaluation_id,
-				# 												"Date":datetime.strftime(payment_date,'%Y-%m-%d'),
-				# 												"Contact": {
-				# 													"ContactID": order.evaluation.customer.xero_account_id,
-				# 												},
-				# 												"LineItems": [{
-				# 													"Description": "Bank Charge",
-				# 													"UnitAmount": .250,
-				# 													"AccountCode": "610",
-				# 													"TaxType":"NONE"
-				# 												}],
-				# 												"BankAccount": {
-				# 													"Code": "3202014"
-				# 												}
-				# 												}
+					update_transaction          = requests.post('https://api.xero.com/api.xro/2.0/BankTransactions',
+															json=transaction_data,
+															headers=header 
+														)
+									
+				else:
+					transaction_data            = {
+													"Type": "RECEIVE-OVERPAYMENT",
+													"Reference": order.evaluation.evaluation_id,
+													"Date":datetime.strftime(payment_date,'%Y-%m-%d'),
+													"Contact": {
+														"ContactID": order.evaluation.customer.xero_account_id,
+													},
+													"LineItems": [{
+														"Description": payment_method,
+														"UnitAmount": amount,
+														"AccountCode": "610",
+														"TaxType":"NONE"
+													}],
+													"BankAccount": {
+														"Code": "1201010"
+													}
+													}
 													
-				# 	update_transaction_bankcharge          	= requests.post('https://api.xero.com/api.xro/2.0/BankTransactions',
-				# 													json=transaction_bankcharge_data,
-				# 													headers=header 
-				# 												)
-				
-				# else:
-				# 	transaction_data            = {
-				# 									"Type": "RECEIVE-OVERPAYMENT",
-				# 									"Reference": order.evaluation.evaluation_id,
-				# 									"Date":datetime.strftime(payment_date,'%Y-%m-%d'),
-				# 									"Contact": {
-				# 										"ContactID": order.evaluation.customer.xero_account_id,
-				# 									},
-				# 									"LineItems": [{
-				# 										"Description": payment_method,
-				# 										"UnitAmount": amount,
-				# 										"AccountCode": "610",
-				# 										"TaxType":"NONE"
-				# 									}],
-				# 									"BankAccount": {
-				# 										"Code": "1201010"
-				# 									}
-				# 									}
-													
-				# 	update_transaction          = requests.post('https://api.xero.com/api.xro/2.0/BankTransactions',
-				# 											json=transaction_data,
-				# 											headers=header 
-				# 										)
+					update_transaction          = requests.post('https://api.xero.com/api.xro/2.0/BankTransactions',
+															json=transaction_data,
+															headers=header 
+														)
 
-				# payment_history.is_xero_marked = True
-				# payment_history.save()
+				try:
+					created_transaction = update_transaction['Status']
+				except:
+					created_transaction = None
+
+				if created_transaction == 'OK':
+					payment_history.is_xero_marked = True
+					payment_history.save()
 
 			else:
 				payment_method = request.POST.get('payment_method')
@@ -1296,136 +1278,117 @@ class CashCollect(IsAccountant,View):
 					closing_order.save()
 
 
-				# xero          = XeroConnection.objects.first()
-				# order         = Order.objects.select_related('evaluation__customer').get(id=order_id)
-				# #Update Access Token and Refresh Token
-				# header                      = {
-				# 								'Authorization': 'Basic '+xero.client_encoded,
-				# 								'Content-Type': 'application/x-www-form-urlencoded'
-				# 									}
-				# body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
-				# token_response              = requests.post('https://identity.xero.com/connect/token',
-				# 										data=body,
-				# 										headers=header 
-				# 									).json()
-				# access_token                = token_response['access_token']
-				# refresh_token               = token_response['refresh_token']
+				xero          = XeroConnection.objects.first()
+				order         = Order.objects.select_related('evaluation__customer').get(id=order_id)
+				#Update Access Token and Refresh Token
+				header                      = {
+												'Authorization': 'Basic '+xero.client_encoded,
+												'Content-Type': 'application/x-www-form-urlencoded'
+													}
+				body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
+				token_response              = requests.post('https://identity.xero.com/connect/token',
+														data=body,
+														headers=header 
+													).json()
+				access_token                = token_response['access_token']
+				refresh_token               = token_response['refresh_token']
 
-				# xero.access_token  = access_token
-				# xero.refresh_token = refresh_token
-				# xero.save()
+				xero.access_token  = access_token
+				xero.refresh_token = refresh_token
+				xero.save()
 
-				# ##Xero Contact
-				# if not order.evaluation.customer.xero_account_id:
+				##Xero Contact
+				if not order.evaluation.customer.xero_account_id:
 
-				# 	##Xero Create Customer ID and Save
-				# 	contact_data                = {
-				# 									"Name":order.evaluation.customer.name,
-				# 									"ContactNumber":order.evaluation.customer.mobile_number,
-				# 									"EmailAddress":order.evaluation.customer.email,
-				# 									"ContactStatus":"ACTIVE",
-				# 									"IsCustomer":True,
-				# 									"DefaultCurrency":"KWD"
-				# 												}
+					##Xero Create Customer ID and Save
+					contact_data                = {
+													"Name":order.evaluation.customer.name,
+													"ContactNumber":order.evaluation.customer.mobile_number,
+													"EmailAddress":order.evaluation.customer.email,
+													"ContactStatus":"ACTIVE",
+													"IsCustomer":True,
+													"DefaultCurrency":"KWD"
+																}
 													
-				# 	header                      = {
-				# 								'xero-tenant-id': xero.tenant_id,
-				# 								'Authorization': 'Bearer '+access_token,
-				# 								'Accept': 'application/json',
-				# 								'Content-Type': 'application/json'
-				# 									}
+					header                      = {
+												'xero-tenant-id': xero.tenant_id,
+												'Authorization': 'Bearer '+access_token,
+												'Accept': 'application/json',
+												'Content-Type': 'application/json'
+													}
 
-				# 	create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
-				# 											json=contact_data,
-				# 											headers=header 
-				# 										).json()
+					create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
+															json=contact_data,
+															headers=header 
+														).json()
 
-				# 	order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
-				# 	order.evaluation.customer.save() 
+					order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
+					order.evaluation.customer.save() 
 
-				# #Xero Transaction
-				# header                      = {
-				# 							'xero-tenant-id': xero.tenant_id,
-				# 							'Authorization': 'Bearer '+access_token,
-				# 							'Accept': 'application/json',
-				# 							'Content-Type': 'application/json'
-				# 								}
-				# #Seperate Code For Bank Transactions and Other Transactions
-				# if payment_method == 'BANK':
-				# 	##Transaction Data
-				# 	transaction_data            = {
-				# 									"Type": "RECEIVE-OVERPAYMENT",
-				# 									"Reference": order.evaluation.evaluation_id,
-				# 									"Date":datetime.strftime(payment_date,'%Y-%m-%d'),
-				# 									"Contact": {
-				# 										"ContactID": order.evaluation.customer.xero_account_id,
-				# 									},
-				# 									"LineItems": [{
-				# 										"Description": payment_method,
-				# 										"UnitAmount": amount-.250,
-				# 										"AccountCode": "610",
-				# 										"TaxType":"NONE"
-				# 									}],
-				# 									"BankAccount": {
-				# 										"Code": "1201023"
-				# 									}
-				# 									}
+				#Xero Transaction
+				header                      = {
+											'xero-tenant-id': xero.tenant_id,
+											'Authorization': 'Bearer '+access_token,
+											'Accept': 'application/json',
+											'Content-Type': 'application/json'
+												}
+				#Seperate Code For Bank Transactions and Other Transactions
+				if payment_method == 'BANK':
+					##Transaction Data
+					transaction_data            = {
+													"Type": "RECEIVE-OVERPAYMENT",
+													"Reference": order.evaluation.evaluation_id,
+													"Date":datetime.strftime(payment_date,'%Y-%m-%d'),
+													"Contact": {
+														"ContactID": order.evaluation.customer.xero_account_id,
+													},
+													"LineItems": [{
+														"Description": payment_method,
+														"UnitAmount": amount,
+														"AccountCode": "610",
+														"TaxType":"NONE"
+													}],
+													"BankAccount": {
+														"Code": "1201023"
+													}
+													}
 													
-				# 	update_transaction          = requests.post('https://api.xero.com/api.xro/2.0/BankTransactions',
-				# 											json=transaction_data,
-				# 											headers=header 
-				# 										)
-					
-				# 	##Transaction Bank Charge Data
-				# 	transaction_bankcharge_data             = {
-				# 												"Type": "RECEIVE-OVERPAYMENT",
-				# 												"Reference": order.evaluation.evaluation_id,
-				# 												"Date":datetime.strftime(payment_date,'%Y-%m-%d'),
-				# 												"Contact": {
-				# 													"ContactID": order.evaluation.customer.xero_account_id,
-				# 												},
-				# 												"LineItems": [{
-				# 													"Description": "Bank Charge",
-				# 													"UnitAmount": .250,
-				# 													"AccountCode": "610",
-				# 													"TaxType":"NONE"
-				# 												}],
-				# 												"BankAccount": {
-				# 													"Code": "3202014"
-				# 												}
-				# 												}
-													
-				# 	update_transaction_bankcharge          	= requests.post('https://api.xero.com/api.xro/2.0/BankTransactions',
-				# 													json=transaction_bankcharge_data,
-				# 													headers=header 
-				# 												)
+					update_transaction          = requests.post('https://api.xero.com/api.xro/2.0/BankTransactions',
+															json=transaction_data,
+															headers=header 
+														)
 				
-				# else:
-				# 	transaction_data            = {
-				# 									"Type": "RECEIVE-OVERPAYMENT",
-				# 									"Reference": order.evaluation.evaluation_id,
-				# 									"Date":datetime.strftime(payment_date,'%Y-%m-%d'),
-				# 									"Contact": {
-				# 										"ContactID": order.evaluation.customer.xero_account_id,
-				# 									},
-				# 									"LineItems": [{
-				# 										"Description": payment_method,
-				# 										"UnitAmount": amount,
-				# 										"AccountCode": "610",
-				# 										"TaxType":"NONE"
-				# 									}],
-				# 									"BankAccount": {
-				# 										"Code": "1201010"
-				# 									}
-				# 									}
+				else:
+					transaction_data            = {
+													"Type": "RECEIVE-OVERPAYMENT",
+													"Reference": order.evaluation.evaluation_id,
+													"Date":datetime.strftime(payment_date,'%Y-%m-%d'),
+													"Contact": {
+														"ContactID": order.evaluation.customer.xero_account_id,
+													},
+													"LineItems": [{
+														"Description": payment_method,
+														"UnitAmount": amount,
+														"AccountCode": "610",
+														"TaxType":"NONE"
+													}],
+													"BankAccount": {
+														"Code": "1201010"
+													}
+													}
 													
-				# 	update_transaction          = requests.post('https://api.xero.com/api.xro/2.0/BankTransactions',
-				# 											json=transaction_data,
-				# 											headers=header 
-				# 										)
+					update_transaction          = requests.post('https://api.xero.com/api.xro/2.0/BankTransactions',
+															json=transaction_data,
+															headers=header 
+														)
+				try:
+					created_transaction = update_transaction['Status']
+				except:
+					created_transaction = None
 
-				# payment_history.is_xero_marked = True
-				# payment_history.save()
+				if created_transaction == 'OK':
+					payment_history.is_xero_marked = True
+					payment_history.save()
 		else:
 			messages.success(request,"Something Went Wrong")
 

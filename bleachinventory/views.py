@@ -1610,9 +1610,9 @@ class InventoryInv(IsInventoryAdminUser,View):
 		page1 = request.GET.get('page1',1)
 		paginator1=Paginator(inventory_items,no_of_entries)
 		try:
-			inventory_items=paginator1.page(page1)
+			inventory_items = paginator1.page(page1)
 		except PageNotAnInteger:
-			inventory_items=paginator1.page(1)
+			inventory_items = paginator1.page(1)
 		except EmptyPage:
 			inventory_items = paginator1.page(paginator1.num_pages)
 

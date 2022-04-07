@@ -165,7 +165,7 @@ class Quatation(View):
 				order_update      = Order.objects.filter(order_no=evaluation_id,evaluation__customer__username=user_name).update(order_status='APPROVED_BY_CLIENT',invoice_no=new_invoice_no)
 				
 				 
-				order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')).annotate(customerbooking=Sum(Case(When(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING',then=1),default=0,output_field=IntegerField()))).get(order_no=evaluation_id)
+				order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(Q(is_active=True)&~Q(work_status='CLEANING_CANCELLED')),to_attr='bookschedules')),to_attr='orderschedules')).annotate(customerbooking=Sum(Case(When(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING',then=1),default=0,output_field=IntegerField()))).get(order_no=evaluation_id)
 				#check credit
 				if order.evaluation.customer.credit_amount != 0:
 					if order.evaluation.total_cost-order.evaluation.customer.credit_amount >= 0:
@@ -427,7 +427,7 @@ class SubscriptionQuatation(View):
 					new_invoice_no 		 = str(timezone.now().year)+'00001'
 				order_update      = Order.objects.filter(order_no=evaluation_id,evaluation__customer__username=user_name).update(order_status='APPROVED_BY_CLIENT',invoice_no=new_invoice_no)
 				
-				order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')).annotate(customerbooking=Sum(Case(When(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING',then=1),default=0,output_field=IntegerField()))).get(order_no=evaluation_id)
+				order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(Q(is_active=True)&~Q(work_status='CLEANING_CANCELLED')),to_attr='bookschedules')),to_attr='orderschedules')).annotate(customerbooking=Sum(Case(When(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING',then=1),default=0,output_field=IntegerField()))).get(order_no=evaluation_id)
 				#Save Individual cleaning price
 				if order.orderschedules:
 					total_cleanings            = len(order.orderschedules)
@@ -693,110 +693,116 @@ class PaymentResponseDebit(View):
 				order.payment_completed_date = timezone.now()
 			order.save()
 
-			# xero          = XeroConnection.objects.first()
-			# #Update Access Token and Refresh Token
-			# header                      = {
-			# 								'Authorization': 'Basic '+xero.client_encoded,
-			# 								'Content-Type': 'application/x-www-form-urlencoded'
-			# 									}
-			# body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
-			# token_response              = requests.post('https://identity.xero.com/connect/token',
-			# 										data=body,
-			# 										headers=header 
-			# 									).json()
-			# access_token                = token_response['access_token']
-			# refresh_token               = token_response['refresh_token']
+			xero          = XeroConnection.objects.first()
+			#Update Access Token and Refresh Token
+			header                      = {
+											'Authorization': 'Basic '+xero.client_encoded,
+											'Content-Type': 'application/x-www-form-urlencoded'
+												}
+			body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
+			token_response              = requests.post('https://identity.xero.com/connect/token',
+													data=body,
+													headers=header 
+												).json()
+			access_token                = token_response['access_token']
+			refresh_token               = token_response['refresh_token']
 
-			# xero.access_token  = access_token
-			# xero.refresh_token = refresh_token
-			# xero.save()
+			xero.access_token  = access_token
+			xero.refresh_token = refresh_token
+			xero.save()
 
-			# ##Xero Contact
-			# if not order.evaluation.customer.xero_account_id:
+			##Xero Contact
+			if not order.evaluation.customer.xero_account_id:
 
-			# 	##Xero Create Customer ID and Save
-			# 	contact_data                = {
-			# 									"Name":order.evaluation.customer.name,
-			# 									"ContactNumber":order.evaluation.customer.mobile_number,
-			# 									"EmailAddress":order.evaluation.customer.email,
-			# 									"ContactStatus":"ACTIVE",
-			# 									"IsCustomer":True,
-			# 									"DefaultCurrency":"KWD"
-			# 												}
+				##Xero Create Customer ID and Save
+				contact_data                = {
+												"Name":order.evaluation.customer.name,
+												"ContactNumber":order.evaluation.customer.mobile_number,
+												"EmailAddress":order.evaluation.customer.email,
+												"ContactStatus":"ACTIVE",
+												"IsCustomer":True,
+												"DefaultCurrency":"KWD"
+															}
 												
-			# 	header                      = {
-			# 								'xero-tenant-id': xero.tenant_id,
-			# 								'Authorization': 'Bearer '+access_token,
-			# 								'Accept': 'application/json',
-			# 								'Content-Type': 'application/json'
-			# 									}
+				header                      = {
+											'xero-tenant-id': xero.tenant_id,
+											'Authorization': 'Bearer '+access_token,
+											'Accept': 'application/json',
+											'Content-Type': 'application/json'
+												}
 
-			# 	create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
-			# 											json=contact_data,
-			# 											headers=header 
-			# 										).json()
+				create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
+														json=contact_data,
+														headers=header 
+													).json()
 
-			# 	order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
-			# 	order.evaluation.customer.save() 
+				order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
+				order.evaluation.customer.save() 
 
-			# #Xero Transaction
-			# header                      = {
-			# 							'xero-tenant-id': xero.tenant_id,
-			# 							'Authorization': 'Bearer '+access_token,
-			# 							'Accept': 'application/json',
-			# 							'Content-Type': 'application/json'
-			# 								}
+			#Xero Transaction
+			header                      = {
+										'xero-tenant-id': xero.tenant_id,
+										'Authorization': 'Bearer '+access_token,
+										'Accept': 'application/json',
+										'Content-Type': 'application/json'
+											}
 
-			# ##Transaction Data
-			# transaction_data            = {
-			# 								"Type": "RECEIVE-OVERPAYMENT",
-			# 								"Reference": order.evaluation.evaluation_id,
-			# 								"Date":datetime.strftime(timezone.now(),'%Y-%m-%d'),
-			# 								"Contact": {
-			# 									"ContactID": order.evaluation.customer.xero_account_id,
-			# 								},
-			# 								"LineItems": [{
-			# 									"Description": "DEBITCARD",
-			# 									"UnitAmount": amount_paid-.250,
-			# 									"AccountCode": "610",
-			# 									"TaxType":"NONE"
-			# 								}],
-			# 								"BankAccount": {
-			# 									"Code": "1201023"
-			# 								}
-			# 								}
+			##Transaction Data
+			transaction_data            = {
+											"Type": "RECEIVE-OVERPAYMENT",
+											"Reference": order.evaluation.evaluation_id,
+											"Date":datetime.strftime(timezone.now(),'%Y-%m-%d'),
+											"Contact": {
+												"ContactID": order.evaluation.customer.xero_account_id,
+											},
+											"LineItems": [{
+												"Description": "DEBITCARD",
+												"UnitAmount": amount_paid,
+												"AccountCode": "610",
+												"TaxType":"NONE"
+											}],
+											"BankAccount": {
+												"Code": "1201023"
+											}
+											}
 											
-			# update_transaction          = requests.post('https://api.xero.com/api.xro/2.0/BankTransactions',
-			# 										json=transaction_data,
-			# 										headers=header 
-			# 									)
+			update_transaction          = requests.post('https://api.xero.com/api.xro/2.0/BankTransactions',
+													json=transaction_data,
+													headers=header 
+												)
 			
-			# ##Transaction Bank Charge Data
-			# transaction_bankcharge_data = {
-			# 								"Type": "RECEIVE-OVERPAYMENT",
-			# 								"Reference": order.evaluation.evaluation_id,
-			# 								"Date":datetime.strftime(timezone.now(),'%Y-%m-%d'),
-			# 								"Contact": {
-			# 									"ContactID": order.evaluation.customer.xero_account_id,
-			# 								},
-			# 								"LineItems": [{
-			# 									"Description": "Bank Charge",
-			# 									"UnitAmount": .250,
-			# 									"AccountCode": "610",
-			# 									"TaxType":"NONE"
-			# 								}],
-			# 								"BankAccount": {
-			# 									"Code": "3202014"
-			# 								}
-			# 								}
+			##Transaction Bank Charge Data
+			transaction_bankcharge_data = {
+											"Type": "SPEND",
+											"Reference": order.evaluation.evaluation_id,
+											"Date":datetime.strftime(timezone.now(),'%Y-%m-%d'),
+											"Contact": {
+												"ContactID": order.evaluation.customer.xero_account_id,
+											},
+											"LineItems": [{
+												"Description": "Bank Charge",
+												"UnitAmount": .250,
+												"AccountCode": "3202014",
+												"TaxType":"NONE"
+											}],
+											"BankAccount": {
+												"Code": "1201023"
+											}
+											}
 											
-			# update_transaction_bankcharge_data  = requests.post('https://api.xero.com/api.xro/2.0/BankTransactions',
-			# 										json=transaction_bankcharge_data,
-			# 										headers=header 
-			# 									)
+			update_transaction_bankcharge_data  = requests.post('https://api.xero.com/api.xro/2.0/BankTransactions',
+													json=transaction_bankcharge_data,
+													headers=header 
+												)
 
-			# payment_history.is_xero_marked = True
-			# payment_history.save()
+			try:
+				created_transaction = update_transaction['Status']
+			except:
+				created_transaction = None
+
+			if created_transaction == 'OK':
+				payment_history.is_xero_marked = True
+				payment_history.save()
 
 			#payment receipt sms
 			if order.evaluation.customer.is_sms == True:
