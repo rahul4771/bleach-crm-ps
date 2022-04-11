@@ -333,7 +333,16 @@
         {% endfor %}
 
         {% elif evaluation.quatation_status == 'REJECTED' %}<div  class="d-flex "><div class="round-marker rejected-status-bg"></div><span>Rejected</span></div>
-        {% elif evaluation.quatation_status == 'PENDING' %}<div  class="d-flex "><div class="round-marker pending-status-bg"></div><span>Pending</span></div>
+        {% elif evaluation.quatation_status == 'PENDING' %}
+        {% for order in evaluation.evaluationorder %}
+          {% if order.order_status == 'CANCEL_IN_PROGRESS' %}
+          <div  class="d-flex "><div class="round-marker cancel-in-progress-status-bg"></div><span>Cancel in Progress</span></div>
+          {% elif order.order_status == 'ORDER_CANCELLED' %}
+          <div  class="d-flex "><div class="round-marker cancelled-status-bg"></div><span>Order Cancelled</span></div>
+          {% else %}
+          <div  class="d-flex "><div class="round-marker pending-status-bg"></div><span>Pending</span></div>
+          {% endif %}
+        {% endfor %}
         {% elif evaluation.quatation_status == 'EXPIRED' %}<div  class="d-flex "><div class="round-marker expired-status-bg"></div><span>Expired</span></div>
         {% else %}
         <div data-href="#" class="d-flex "><div class="round-marker clickable-row evaluating-status-bg"></div><span>Evaluating</span></div>

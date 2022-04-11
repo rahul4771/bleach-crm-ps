@@ -592,7 +592,7 @@ class LeaveScheduleAPI(APIView):
 		# 		timeOffTypeId = '83'
 
 		# 	payload = {
-		# 		"status": "requested",
+		# 		"status": "approved",
 		# 		"start": start_date,
 		# 		"end": end_date,
 		# 		"timeOffTypeId": timeOffTypeId

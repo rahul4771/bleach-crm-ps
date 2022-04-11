@@ -1519,6 +1519,7 @@ const app = new Vue({
       service_books:service_books,
       requester_id:requester_id
     }).then(response=>{
+      console.log(response,"ress")
 
       this.$notify({
         group: 'message',
@@ -1527,10 +1528,11 @@ const app = new Vue({
         type:'success'
         
       });
+      window.location.href="/common/cancell-book/"+response.data.evaluation_id+"/"
       var delayInMilliseconds = 2000; //1 second
 
 setTimeout(function() {
-  location.reload()
+  // location.reload()
 }, delayInMilliseconds);
      
       
@@ -1563,7 +1565,9 @@ setTimeout(function() {
      service_books:service_books,
      requester_id:requester_id
    }).then(response=>{
-    $('#bookingofficer-redirect').click()
+     console.log(response,"evid")
+    //$('#bookingofficer-redirect').click()
+    //window.location.href="/common/cancell-book/"+response.data.evaluation_id+"/"
      
      
    })

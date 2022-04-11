@@ -6548,6 +6548,10 @@ class ServiceCancellationRequest(APIView):
 		for book in service_books:
 			EvaluationBook.objects.filter(id=book).update(status='CANCELL_IN_PROGRESS',cancell_requester_id=requester_id)
 		
+		evaluationbook = EvaluationBook.objects.get(id=service_books[0])
+		response_dict['evaluation_id'] = evaluationbook.evaluation_details.evaluation.id
+		print(response_dict,"resdict")
+
 		response_dict['success'] = True
 		
 		return Response(response_dict,HTTP_200_OK)
@@ -6560,12 +6564,12 @@ class ServiceCancellation(APIView):
 	def post(self,request):
 		response_dict={}
 		response_dict['success'] = False
-
-		print(request.data)
 		
 		cancelled_by             = request.data.get('cancelled_by')
 		order_id                 = request.data.get('order_id')
 		order                    = Order.objects.select_related('evaluation__customer').get(id=order_id)
+
+		
 		
 		service_books            = request.data.get('service_books')
 
@@ -6630,7 +6634,7 @@ class ServiceCancellation(APIView):
 					scheduler.save()
 
 			service_book.save()
-
+		
 		response_dict['success'] = True
 		
 		return Response(response_dict,HTTP_200_OK)
