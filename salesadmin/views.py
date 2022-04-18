@@ -42,6 +42,7 @@ from django.template.loader import render_to_string
 
 class AdminHome(IsSalesAdmin,View):
 	def get(self,request):
+		print("hello222")
 		
 		#evaluators
 		staff_sales_target = UserProfile.objects.filter(is_active=True).filter(Q(user_type='EVALUATOR')|Q(user_type='AGENT')|Q(user_type='BOOKINGOFFICER')).exclude(Q( Q(username='agent001') | Q(username='ahmadn') | Q(username='samih') ))
@@ -195,6 +196,7 @@ class AdminHome(IsSalesAdmin,View):
 		return render(request,'salesadmin/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'staff_sales_targets':staff_sales_target,'approve_tickets':approve_tickets,"calendar_notapprovedorder_schedules":calendar_notapprovedorder_schedules,"sp_calendar_notapprovedorder_schedules":sp_calendar_notapprovedorder_schedules,"spp_calendar_notapprovedorder_schedules":spp_calendar_notapprovedorder_schedules,"cancell_in_progress_orders":cancell_in_progress_orders,"ticket_count":ticket_count,"book_cancell_requests":book_cancell_requests,"book_cancells":book_cancells})
 
 	def post(self,request):
+		print("hi222")
 		action = request.POST.get('action_type')
 
 		if action == 'notapprovededit_cleaning':

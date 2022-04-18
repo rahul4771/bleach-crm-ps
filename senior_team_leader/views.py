@@ -521,7 +521,7 @@ class StlHome(IsSeniorTeamLeader,View):
 		# end_date = todate+timedelta(30)
 		# print(todate,end_date,"datess")
 
-		# url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/time_off/requests/?start="+str(todate)+"&end="+str(end_date)+""
+		# url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/time_off/requests/?start="+str(todate)+"&end="+str(end_date)+"&status=approved"
 
 		# headers = {
 		# 	"Accept": "application/json",

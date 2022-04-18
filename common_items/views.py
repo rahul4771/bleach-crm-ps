@@ -30,7 +30,7 @@ from django.contrib import messages
 
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons,CleaningMethod,CleaningSection,ServiceType,AreaType
-from order.models import Promocode,OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia
+from order.models import Promocode,OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia,CancellOrderAmountHistory
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
@@ -1516,7 +1516,9 @@ class ClientOrderDetails(IsAuthenticated,View):
 			msg.attach_alternative(msg_html, "text/html")
 			msg.send(fail_silently=False)
 			
-			messages.success(request,"Cancel Request Proceeded to Admin successfully !")
+			# messages.success(request,"Cancel Request Processing !")
+
+			return redirect('common_items:cancell-order',order_id)
 		
 		
 		if action == 'send_invoice':
@@ -4680,3 +4682,139 @@ class EditTicket(IsAuthenticated,View):
 		ticket = FollowUp.objects.get(id=int(ticket_id))
 		investigators = UserProfile.objects.filter(is_investigator=True,is_active=True)
 		return render(request,'common/ticket/editticket.html',{"ticket_id":ticket_id,"visit_id":ticket.investigation.order_schedule.id,"investigators":investigators})
+
+class OrderCancellation(IsAuthenticated,View):
+	def get(self,request,order_id):
+
+		#cancell in progress orders
+		cancell_in_progress_order = Order.objects.select_related('evaluation__customer').prefetch_related('order_scheduler_order__order_scheduler_book').annotate(total_cleaners=Sum('order_scheduler_order__order_scheduler_book__number_of_cleaners')).get(id=order_id)
+		
+		cleaning_price = 0
+		for scheduler in cancell_in_progress_order.order_scheduler_order.all():
+			if scheduler.work_status=='CLEANING_FULFILLED':
+				cleaning_price += scheduler.order_scheduler_book.total_cost/len(cancell_in_progress_order.order_scheduler_order.all())			
+		cancell_in_progress_order.job_completed_amount = cleaning_price
+
+		return render(request,"common/cancel-order/cancel-order.html",{'order_id':order_id,"cancell_in_progress_order":cancell_in_progress_order})
+
+	def post(self,request,order_id):
+		cancell_option = request.POST.get('cancel_method')
+		print("checkkkk22")
+		
+		if cancell_option == 'CASHBACK':
+			amount = float(request.POST.get('amount'))			
+			cancell_order_history = CancellOrderAmountHistory.objects.create(order_id=order_id,return_amount=amount,amount_return_method='CASHBACK')
+		
+			order              = Order.objects.select_related('evaluation__customer','cancelled_by').get(id=order_id)
+			order.cancelled_by = request.user
+			order.cancell_note = request.POST.get('notes')
+			order.order_status = 'CANCEL_IN_PROGRESS' 
+			order.save()
+
+			#Email Send
+			accountant_list = UserProfile.objects.filter(is_active=True,user_type='ACCOUNTANT').values_list('email',flat=True)
+			msg_html = render_to_string('email/cancelled_refund_confirm.html',{'order':order,'cancell_order_history':cancell_order_history})
+			msg      = EmailMultiAlternatives('Refund Confirmation', '', 'notification@bleach-kw.com', accountant_list)
+			msg.attach_alternative(msg_html, "text/html")
+			msg.send(fail_silently=False)
+
+			messages.success(request,'Order Successfully Cancelled and CashBack Request Send to Customer')
+
+		elif cancell_option == 'CREDIT':
+			amount = float(request.POST.get('amount'))			
+			CancellOrderAmountHistory.objects.create(order_id=order_id,return_amount=amount,amount_return_method='CREDIT',is_completed=True)
+			
+			order                 = Order.objects.get(id=order_id)
+			order.evaluation.customer.credit_amount += amount
+			order.amount_paid                       -= amount
+			order.remining_amount                    = 0
+			order.cancelled_by    = request.user
+			order.cancell_note    = request.POST.get('notes')
+			order.order_status    = 'ORDER_CANCELLED' 
+			order.evaluation.customer.save()
+			order.save()
+
+			messages.success(request,'Order Successfully Cancelled and Remining Amount Credited')
+
+		elif cancell_option == 'SENDINVOICE':
+			amount = float(request.POST.get('amount'))
+
+			order                 = Order.objects.select_related('evaluation__customer').get(id=order_id)
+			order.remining_amount = amount
+			order.cancelled_by    = request.user 
+			order.cancell_note    = request.POST.get('notes')
+			order.order_status    = 'CANCEL_IN_PROGRESS'
+			order.save()
+
+			language = order.evaluation.customer.sms_preference
+
+			evaluation = order.evaluation
+
+			if evaluation.customer.is_sms == True:
+
+				url = "https://smsapi.future-club.com/fccsms.aspx"
+
+				if language == 'ENGLISH':
+
+					if evaluation.payment_method == 'SUBSCRIPTION':
+
+						message = "Dear Customer, Please find the Invoice against the order number "+str(evaluation.evaluation_id)+"  here https://my.bleachkw.com/customer/subscription/invoice/prw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". For any assistance please contact us on [Customer Service Number]. Thank you for choosing Bleach Kuwait."
+
+					else:
+
+						message = "Dear Customer, Please find the Invoice against the order number "+str(evaluation.evaluation_id)+"  here https://my.bleachkw.com/customer/invoice/prw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". For any assistance please contact us on [Customer Service Number]. Thank you for choosing Bleach Kuwait."
+
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+				
+				else:
+					if evaluation.payment_method == 'SUBSCRIPTION':
+
+						message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط https://my.bleachkw.com/customer/subscription/invoice/prw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على (Customer Service Number).  شكراً لاختياركم بليتش لخدمات التنظيف"
+
+					else:
+
+						message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط https://my.bleachkw.com/customer/invoice/prw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على (Customer Service Number).  شكراً لاختياركم بليتش لخدمات التنظيف"
+
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+				
+				headers = {
+					'cache-control': "no-cache"
+				}
+
+				response = requests.request("GET", url, headers=headers, params=querystring)
+
+				print(message,response.text,"respo")
+		elif cancell_option == 'REJECT':
+			order                 = Order.objects.select_related('evaluation__customer').get(id=order_id)
+			order.order_status    = 'ORDER_IN_PROGRESS'
+			order.cancelled_by    = request.user
+			order.cancell_note    = request.POST.get('notes')
+			order.save()
+		else:
+			print("canceltesttt22")
+			order                 = Order.objects.get(id=order_id)
+			order.remining_amount = 0
+			order.cancelled_by    = request.user
+			order.cancell_note    = request.POST.get('notes')
+			order.order_status    = 'ORDER_CANCELLED' 
+			order.save()
+
+			messages.success(request,'Order Successfully Cancelled')
+
+		if request.user.user_type == 'AGENT':
+			return redirect('agent:agentdash-board')
+		elif request.user.user_type == 'BOOKINGOFFICER':
+			return redirect('booking-officer:bookingofficerdash-board')
+		else:
+			return redirect('bleach_salesadmin:salesadmindash-board')
+
+class EvaluationBookCancellation(IsAuthenticated,View):
+	def get(self,request,evaluation_id):
+
+		#cancell in progress books
+		cancell_books = EvaluationBook.objects.select_related('evaluation_details__evaluation','evaluation_details__address').filter(evaluation_details__evaluation__id=evaluation_id,status='CANCELL_IN_PROGRESS')
+
+		#cancell in progress orders
+		cancell_in_progress_order = Order.objects.select_related('evaluation__customer').get(evaluation__id=evaluation_id)
+
+		return render(request,"common/cancel-book/cancel-book.html",{"cancell_in_progress_order":cancell_in_progress_order,"cancell_books":cancell_books,})

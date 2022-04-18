@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+  {% if request.user.user_type == 'SALESADMIN' %}
+  {% include "salesadmin/common/header.html" %}
+{% elif request.user.user_type == 'AGENT' %}
+  {% include "agent/common/header.html" %}
+{% elif request.user.user_type == 'ADMIN' %}
+  {% include "admin/common/header.html" %}
+{% elif request.user.user_type == 'BOOKINGOFFICER' %}
+  {% include "bookingofficer/common/header.html" %} 
+{% elif request.user.user_type == 'EVALUATOR' %}
+  {% include "evaluator/common/header.html" %}
+{% elif request.user.user_type == 'SENIORTEAMLEADER' %}
+  {% include "stl/common/header.html" %}
+{% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
+  {% include "operationsupervisor/common/header.html" %}
+{% elif request.user.user_type == 'TECHNICALSUPERVISOR' %}
+  {% include "technicalsupervisor/common/header.html" %}
+{% elif request.user.user_type == 'ACCOUNTANT' %}
+  {% include "accountant/common/header.html" %}
+{% endif %}
+
+<div class="wrapper"><!--wrapper-->
+   
+<section class="content"><!--content-->
+	<div class="container-fluid space topspace"><!--container-fluid space-->
+		<div class="welcome-wrapper"><!--welcome-wrapper-->
+	<h1 class="dashboard-head">Cancel Order</h1>
+	<p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p>  
+		</div><!--welcome-wrapper-->
+	
+		
+		
+	<div class="main-content-holder"><!--main-content-holder-->            
+	
+  <div class="white-wrapper"><!--white-wrapper-->
+  <div class="center-formDiv"><!--center-formDiv-->
+		
+			<div class="common-sub-head align-left order-details-head">Order Details</div> 
+			
+				<div class="cleaning-column-wrapper ltyellow-border order-details"><!--cleaning-column-wrapper-->
+				<div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column1-->
+        <div class="details-head align-left order_blc_no clickable-row" data-href="{% url 'bleach_salesadmin:salesadmin-client-orderdetails' cancell_in_progress_order.id%}">{{cancell_in_progress_order.order_no}}</div>
+				<div class="inside-head align-left order_customer_name">{{cancell_in_progress_order.evaluation.customer.name}}</div>
+				<p class="paragraph order_customer_mobile">{{cancell_in_progress_order.evaluation.customer.mobile_number}}</p>
+				
+				<div class="order_payment_status">
+        <div class="{% if cancell_in_progress_order.order_status == 'APPROVED_BY_CLIENT' %}blue-bg-lg{% elif cancell_in_progress_order.order_status == 'ORDER_IN_PROGRESS'%}yellow-bg-lg{% elif cancell_in_progress_order.order_status == 'ORDER_CANCELLED'%}red-bg-lg{% elif cancell_in_progress_order.order_status == 'ORDER_CLOSED'%}green-bg-lg{% elif cancell_in_progress_order.order_status == 'CANCEL_IN_PROGRESS' %}skyblue-bg-lg{% else %}skyblue-bg-lg{% endif %}">{{cancell_in_progress_order.order_status}}</div>
+				</div>
+
+				<div class="order_addresses">
+        {% for scheduler in cancell_in_progress_order.order_scheduler_order.all %}
+          <div class="area-bold">{{scheduler.customer_address.area.name}}</div><div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle {% if scheduler.work_status == 'CLEANING_FULFILLED' %}green-text{% else %}yellow-text{% endif %}" aria-hidden="true"></i> {{scheduler.order_scheduler_book.service_type.name}} - {{scheduler.order_scheduler_book.cleaning_policy}}</div>
+        {% endfor %}
+				</div>
+			</div><!--cleaning-column-widget cleaning-column-widget-column1-->
+			
+			<div class="cleaning-column-widget cleaning-column-widget-column2 order-details"><!--cleaning-column-widget cleaning-column-widget-column2-->
+				<div class="common-gray-text align-left">{{cancell_in_progress_order.evaluation.created|date:'d-m-Y g:i A'}}</div>
+				<br>
+        <div class="common-gray-text align-left yellow-text lg-text">Total Amount :{{cancell_in_progress_order.evaluation.total_cost|floatformat:"3"}} KD</div>
+        <br>
+        <div class="common-gray-text align-left yellow-text lg-text">Paid Amount :{{cancell_in_progress_order.amount_paid|floatformat:"3"}} KD</div>
+        <br>
+        <div class="common-gray-text align-left yellow-text lg-text">Job Completed :{{cancell_in_progress_order.job_completed_amount|floatformat:"3"}} KD</div>
+        <br>
+				<div class="common-gray-text align-left sm-text gray-text">{{cancell_in_progress_order.total_cleaners}} cleaners</div>
+				{% if cancell_in_progress_order.evaluation.call_attender.profile_image %}
+          <div class="profile-pic-line"><img class="agent_image" src="{{cancell_in_progress_order.evaluation.call_attender.profile_image.url}}"></div>
+        {% else %}
+					<div class="profile-pic-line"><img class="agent_image" src="{% static 'files/images/profile-pic.png' %}"></div>
+        {% endif %}
+      </div><!--cleaning-column-widget cleaning-column-widget-column2-->
+		</div><!--cleaning-column-wrapper-->
+		
+		<br><br>
+  <div class="common-sub-head align-left ticket-form-head">Order Cancel Form</div> 
+  <form method="post" action="{% url 'common_items:cancell-order' cancell_in_progress_order.id %}" enctype="multipart/form-data">{% csrf_token %}
+	<input type="hidden" name="order_id" id="order_id_hidden">
+
+<div class="ticket-wrapper-full ltyellow-border ticket-form"><!--ticket-wrapper-full-->
+
+<br><br>
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label"> <label>Cancel Options</label></div>
+                <label for="favcity">
+                <select name="cancel_method" id="cancel_method_id" required>
+                    <option value="">--Select option--</option>           
+                    
+                    {% if cancell_in_progress_order.amount_paid > cancell_in_progress_order.job_completed_amount %}
+                    <option value="CASHBACK">Give Cash Back</option>
+                    <option value="CREDIT">Add to Credit</option>
+                    {% elif cancell_in_progress_order.amount_paid < cancell_in_progress_order.job_completed_amount %}
+                    <option value="SENDINVOICE">Send Invoice</option>
+                    {% else %}
+                    {% endif %}
+                    <option value="CANCELL">Direct Cancellation</option>
+                    <option value="REJECT">Reject Cancellation</option>
+                </select>
+                </label>
+  </div><!--ticket-form-left-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->  
+
+<hr class="hr-dashedpad amount_div" hidden>
+
+<div class="ticket-wrapper-row ticket-forms-boxes amount_div" hidden><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  	<div class=" bold-text common-label"> <label id="amount_label">Amount</label></div>
+        <input type="number" class="textBox OnlyNumber" id="cancel_amount" name="amount" required/>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad">
+				<div class="bold-text common-label"> <label>Notes</label></div>
+                 <textarea name="notes" cols="" rows="4" class="textArea"></textarea>
+
+</div><!--ticket-wrapper-full--> 
+
+<div align="center" class="ticket-form-button"><input class="assignButton" name="submit" type="submit" value="Submit" onclick='SubmitNewTicket(this);'></div>   	
+</form>
+<br> <br>
+	</div><!--center-formDiv-->
+
+	</div><!--white-wrapper-->      
+			
+		
+		
+	</div><!--main-content-holder-->
+	</div><!--container-fluid space-->
+</section><!--content-->
+</div><!--wrapper-->
+
+{% include 'salesadmin/common/footer.html' %}
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %}
+<script>
+$('#cancel_method_id').change(function(){
+  if ($(this).val() == 'CREDIT') {
+    $('.amount_div').attr("hidden",false);
+    $('#amount_label').text('Credit Amount');
+
+    //adding amount to credit amount field
+    var credit_amount = "{{cancell_in_progress_order.amount_paid}}" - "{{cancell_in_progress_order.job_completed_amount}}" ;
+    $('#cancel_amount').val(parseFloat(credit_amount).toFixed(3));
+    $('#cancel_amount').attr('max',credit_amount);
+  }
+
+  if ($(this).val() == 'SENDINVOICE') {
+    $('.amount_div').attr("hidden",false);
+    $('#amount_label').text('Invoice Amount');
+
+    //adding amount to invoice amount field
+    var invoice_amount = "{{cancell_in_progress_order.job_completed_amount}}" - "{{cancell_in_progress_order.amount_paid}}" ;
+    $('#cancel_amount').val(parseFloat(invoice_amount).toFixed(3));
+    $('#cancel_amount').attr('max',invoice_amount);
+  }
+
+  if ($(this).val() == 'CASHBACK') {
+    $('.amount_div').attr("hidden",false);
+    $('#amount_label').text('PayBack Amount');
+
+    //adding amount to payback amount field
+    var payback_amount = "{{cancell_in_progress_order.amount_paid}}" - "{{cancell_in_progress_order.job_completed_amount}}" ;
+    $('#cancel_amount').val(parseFloat(payback_amount).toFixed(3));
+    $('#cancel_amount').attr('max',payback_amount);
+  }
+
+  if ( ($(this).val() == 'CANCELL') || ($(this).val() == '') ) {
+    $('.amount_div').attr("hidden",true);
+    $('input[name="amount"]').attr("required",false);
+  }
+
+
+})
+</script>
+{% endblock %}	
