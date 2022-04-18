@@ -8,7 +8,8 @@ from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investi
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
-from bleachadmin.models import ServicePriceRange,Settings
+from bleachadmin.models import ServicePriceRange,Settings,ServiceProductivity
+from bleachadmin.serializers import ServiceProductivitySerializer
 from Api.models import XeroConnection
 from django.core.mail import send_mail,EmailMultiAlternatives
 from Api.serializers import DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
@@ -556,57 +557,41 @@ class LeaveScheduleAPI(APIView):
 			if serializer.is_valid(): 
 				serializer.save()
 
+				#save leave to bamboo
 				staff_details = UserProfile.objects.get(id=int(schedule['staff']))
 
-				leave_dates_list.append(schedule['leave_date'])
 				bamboo_employee_id = staff_details.bamboo_employee_id
-				leave_type = schedule['leave_type']
-   
+
+				if bamboo_employee_id:
+
+					url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/employees/"+bamboo_employee_id+"/time_off/request"
+
+					timeOffTypeId = '92'
+
+					payload = {
+						"status": "approved",
+						"start": schedule['leave_date'],
+						"end": schedule['leave_date'],
+						"timeOffTypeId": timeOffTypeId,
+						"amount" : 1
+					}
+
+					headers = {
+						"Content-Type": "application/json",
+						"Authorization": "Basic NDNhMjE5Y2ZlNmYyZGJlMjUwYTllYjdiNWUyNzc0MzM1YzE0Njg1ODo="
+					}
+
+					print(url,payload,"loadss")
+
+					response = requests.request("PUT", url, json=payload, headers=headers)
+
+				response_dict['success']  = True  
 			else: 
 				errors= serializer.errors   
 				key=tuple(errors.keys())[0] 
 				error=errors[key]
 				response_dict['Error']=key +':'+ error[0]
 				response_dict['Error_List'] = serializer.errors
-
-		#saving leave to bamboo hr
-		# if leave_dates_list != [''] and bamboo_employee_id != None:
-
-		# 	if len(leave_dates_list) > 1:
-		# 		first_last = leave_dates_list[::len(leave_dates_list)-1]
-		# 		start_date = first_last[0]
-		# 		end_date = first_last[1]
-		# 	else:
-		# 		start_date = leave_dates_list[0]
-		# 		end_date = leave_dates_list[0]
-			
-		# 	url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/employees/"+bamboo_employee_id+"/time_off/request"
-
-		# 	if leave_type == 'ANNUAL LEAVE':
-		# 		timeOffTypeId = '84'
-		# 	elif leave_type == 'UNPAID LEAVE':
-		# 		timeOffTypeId = '86'
-		# 	elif leave_type == 'COMPASSIONATE LEAVE':
-		# 		timeOffTypeId = '87'
-		# 	elif leave_type == 'SICK LEAVE':
-		# 		timeOffTypeId = '83'
-
-		# 	payload = {
-		# 		"status": "approved",
-		# 		"start": start_date,
-		# 		"end": end_date,
-		# 		"timeOffTypeId": timeOffTypeId
-		# 	}
-		# 	headers = {
-		# 		"Content-Type": "application/json",
-		# 		"Authorization": "Basic NDNhMjE5Y2ZlNmYyZGJlMjUwYTllYjdiNWUyNzc0MzM1YzE0Njg1ODo="
-		# 	}
-
-		# 	print(url,payload,"loadss")
-
-		# 	response = requests.request("PUT", url, json=payload, headers=headers)
-
-		response_dict['success']  = True  
 
 		return Response(response_dict,HTTP_200_OK)
 
@@ -743,13 +728,51 @@ class DeleteLeaveSchedule(APIView):
 		response_dict = {'success':False}
 
 		try:
-			leavescehdule = LeaveSchedule.objects.get(is_active=True,id=int(leave_id))
+			leaveschedule = LeaveSchedule.objects.get(is_active=True,id=int(leave_id))
 		except:
 			leaveschedule = None
 
-		if leavescehdule:
-			leavescehdule.delete()
-			response_dict = {'success':True}  
+		if leaveschedule:
+			bamboo_employee_id = leaveschedule.staff.bamboo_employee_id
+			start_date = leaveschedule.leave_date
+			end_date = leaveschedule.leave_date
+			print(bamboo_employee_id,start_date,end_date,"datprint")
+
+			leaveschedule.delete()  
+
+			#updating leave status on bamboo hr
+				
+			headers = {
+				"Accept": "application/json",
+				"Authorization": "Basic NDNhMjE5Y2ZlNmYyZGJlMjUwYTllYjdiNWUyNzc0MzM1YzE0Njg1ODo="
+			}
+
+			#get time off request id
+			timeoff_url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/time_off/requests/?employeeId="+bamboo_employee_id+"&start="+str(start_date)+"&end="+str(end_date)+""
+
+			timeoffid_response = requests.request("GET", timeoff_url, headers=headers)
+
+			data = timeoffid_response.json()
+
+			print(data[0]['id'],"datar")
+
+			#cancel timeoff status
+			url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/time_off/requests/"+data[0]['id']+"/status"
+			payload = {
+				"status": "cancelled",
+			}
+
+			headers = {
+				"Content-Type": "application/json",
+				"Authorization": "Basic NDNhMjE5Y2ZlNmYyZGJlMjUwYTllYjdiNWUyNzc0MzM1YzE0Njg1ODo="
+			}
+
+			print(url,payload,"loadss")
+
+			response = requests.request("PUT", url, json=payload, headers=headers)
+
+			response_dict['success'] = True
+
 			return Response(response_dict, HTTP_200_OK)
 		else:
 			response_dict['reason'] = 'Invalid Id' 
@@ -5116,3 +5139,19 @@ class DailyTransactionsAPI(APIView):
 			response_dict['total_bank']   = 0
 
 		return Response(response_dict, HTTP_200_OK)
+
+class ServiceProductivityAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		response_dict = {"success":False}
+
+		try:
+			service_productivities = ServiceProductivity.objects.filter(is_active=True)
+		except:
+			service_productivities = None
+
+		service_productivity_serializer = ServiceProductivitySerializer(service_productivities,many=True).data
+		response_dict["service_productivities"]=service_productivity_serializer
+		return Response(response_dict,HTTP_200_OK)

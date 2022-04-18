@@ -34,6 +34,8 @@ def loadtimeoffsbamboo():
 
     	if timeoff['type']['name'] == 'Sick Leave 100%' :
     		leave_type = 'SICK LEAVE'
+		elif timeoff['type']['name'] == 'Off Day' :
+    		leave_type = 'WEEKLY OFF'
     	else:
     		leave_type = timeoff['type']['name']
     		leave_type = leave_type.upper()
