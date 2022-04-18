@@ -4349,7 +4349,7 @@ function view_page(){
     if (view_item == 'receipt'){
         {% for payment in order.paymenthistory %}
         {% if forloop.last %}
-        window.open("/customer/payment/receipt/pvw{{payment.id}}", "_blank");
+        window.open("/customer/payment/receipt/pvw{{order.evaluation.evaluation_id|slice:'3:'}}{{payment.id}}", "_blank");
         {% endif %}
         {% endfor %}
     }
