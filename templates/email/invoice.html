@@ -386,6 +386,7 @@
             {% for book in evaluationbooks %}
             {% if book.sections %}
             {% for section in book.sections %}
+            {% if section.book.service_type.name != 'Kitchen Appliances' %}
             <!-- item-->
             <div class="order-items">
                 <div class="order-item-in">
@@ -416,6 +417,7 @@
                 </div>
             </div>
             <!-- item-->
+            {% endif %}
 
             {% if section.sectionaddons %}
             {% for addon in section.sectionaddons %}
