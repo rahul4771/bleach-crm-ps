@@ -2935,7 +2935,7 @@ def export_users_xls(request):
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
 
-		users = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True),to_attr='customer_addresses')).filter(is_active=True,user_type='CUSTOMER').distinct().values_list('name','mobile_number','email','address_customer__governorate__name','address_customer__area__name')
+		users = UserProfile.objects.filter(is_active=True,user_type='CUSTOMER').values('name','email','mobile_number').distinct().prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True),to_attr='customer_addresses')).values_list('name','mobile_number','email','address_customer__governorate__name','address_customer__area__name')
 		rows = users
 
 		for row in rows:
