@@ -2921,6 +2921,34 @@ def export_users_xls(request):
 			for col_num in range(len(row)):
 				ws.write(row_num, col_num, str(row[col_num]), font_style)
 
+	if report_type == 'Customer_Details':
+		response = HttpResponse(content_type='application/ms-excel')
+		response['Content-Disposition'] = 'attachment; filename="CUSTOMER_DETAILS.xls"'
+
+		wb = xlwt.Workbook(encoding='utf-8')
+		
+		#Sheet 1 Customers
+		ws = wb.add_sheet('CUSTOMERS',cell_overwrite_ok = True)
+	
+		columns = ['Name','Mobile No','Email','Governorate','Area']
+		
+		for col_num in range(len(columns)):
+			ws.write(row_num, col_num, columns[col_num], font_style)
+
+		users = UserProfile.objects.filter(is_active=True,user_type='CUSTOMER').prefetch_related(Prefetch('',queryset=Address.objects.filter(is_active=True).select_related('governorate','area').first(),to_attr='firstaddress')).values('name','email','mobile_number','firstaddress')
+		print(users)
+		rows = []
+
+		for user in users:
+			rows.append(tuple(list(user)))
+	    
+		print(rows)
+
+		# for row in rows:
+		# 	row_num += 1
+		# 	for col_num in range(len(row)):
+		# 		ws.write(row_num, col_num, row[col_num], font_style)
+
 	wb.save(response)
 
 	# print(response.status_code,"resp")
