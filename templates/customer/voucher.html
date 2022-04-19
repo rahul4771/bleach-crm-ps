@@ -261,6 +261,7 @@
             <i class="fa fa-download" ></i>
             Download
           </div> 
+          <a href="/customer/payment/receipt/download/{{payment_history.id}}">Download</a>
           <div class="inv-white-btn text-center  mt-4 mb-4 inv-receipt-print  " onclick="printDiv()">
             <i class="fa fa-print"></i>
             Print
@@ -327,7 +328,7 @@
     <script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
 
     <script src="{% static 'files/js/convertToPdf.js' %}"></script>
-   
+
     <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" type="text/javascript"></script>
         <script src="{% static 'files/js/customer/main.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>

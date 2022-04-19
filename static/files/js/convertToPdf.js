@@ -18,10 +18,11 @@ $('#download').click(async function () {
                 var doc = new jsPDF();
     var vp = document.getElementById("viewportMeta").getAttribute("content");
 
-    document.getElementById("viewportMeta").setAttribute("content", "width=1280");
+    document.getElementById("viewportMeta").setAttribute("content","width=2000");
     html2canvas($('.inv-card'),{
         useCORS : true,
-        logging: true, letterRendering: 1,
+        logging: true,
+        letterRendering: 1,
         allowTaint:false,
         onrendered:function(canvas){
      
@@ -29,6 +30,7 @@ $('#download').click(async function () {
        
        
         doc.addImage(img, 'PNG',10,10,190,180);
+        //doc.addImage(img, 'PNG',10,10,190,180);
         
         doc.save(''+$('.filename').val()+'.pdf');
         document.getElementById("viewportMeta").setAttribute("content", vp);
