@@ -39,16 +39,16 @@
           <span id="contact-text">Customer</span>
           <span id="customer-name">{{orderschedule.customer_address.customer.name}} </span>
         </div>
-        {% if orderschedule.customer_address.customer.customer_type == 'CORPORATE' %}
+        <!-- {% if orderschedule.customer_address.customer.customer_type == 'CORPORATE' %}
         <div>
-          <span id="contact-text"></span>
+          <span id="contact-text">Company </span>
           <span id="contact-number">{{orderschedule.customer_address.customer.company}}</span>
         </div>
         <div>
-          <span id="contact-text"></span>
+          <span id="contact-text"> Job Titile </span>
           <span id="contact-number">{{orderschedule.customer_address.customer.job_title}}</span>
         </div>
-        {% endif %}
+        {% endif %} -->
         <div>
           <span id="contact-text">Contact No</span>
           <span id="contact-number">{{orderschedule.customer_address.customer.mobile_number}}</span>
