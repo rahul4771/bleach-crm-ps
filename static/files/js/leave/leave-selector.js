@@ -711,10 +711,11 @@ function getLeave(current_date){
     axios.get(url+'/api/leave-scheduler/?month='+month+'&year='+year)
 .then(function (response) {
   // handle success
-  
+    console.log(response.data,"leevdate")
+    
     for(var i=0;i<response.data.staffs.length;i++){
        
-       var userIndex=userSearch(response.data.staffs[i].staff)
+       var userIndex=userSearch(response.data.staffs[i].staff__id)
      
        // resourceList[userIndex].leave.push({date:'2-2-2021',type:'Annual Leave'});
       leaveSheet=response.data.staffs;
