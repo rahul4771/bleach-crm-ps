@@ -2942,9 +2942,6 @@ def export_users_xls(request):
 			row_num += 1
 			for col_num in range(len(row)):
 				ws.write(row_num, col_num, row[col_num], font_style)
-		
-		# map(lambda row:map(lambda col_num:ws.write(),row),rows)
-		
 
 	wb.save(response)
 

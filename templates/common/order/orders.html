@@ -740,7 +740,9 @@
     <div class=" bold-text common-label"> <label>Report Type</label></div>
       <select class="textBox" name="report_type" id="report_type" required>
       <option value="orderhistory">ORDER HISTORY</option>
+      {% if request.user.user_type == 'ADMIN' %}
       <option value="Customer_Details">CUSTOMER DETAILS</option>
+      {% endif %}
       </select>
       </div>
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
