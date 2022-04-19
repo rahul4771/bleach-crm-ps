@@ -2935,19 +2935,16 @@ def export_users_xls(request):
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
 
-		users = UserProfile.objects.filter(is_active=True,user_type='CUSTOMER').prefetch_related(Prefetch('',queryset=Address.objects.filter(is_active=True).select_related('governorate','area').first(),to_attr='firstaddress')).values('name','email','mobile_number','firstaddress')
-		print(users)
-		rows = []
+		users = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True),to_attr='customer_addresses')).filter(is_active=True,user_type='CUSTOMER').distinct().values_list('name','mobile_number','email','address_customer__governorate__name','address_customer__area__name')
+		rows = users
 
-		for user in users:
-			rows.append(tuple(list(user)))
-	    
-		print(rows)
-
-		# for row in rows:
-		# 	row_num += 1
-		# 	for col_num in range(len(row)):
-		# 		ws.write(row_num, col_num, row[col_num], font_style)
+		for row in rows:
+			row_num += 1
+			for col_num in range(len(row)):
+				ws.write(row_num, col_num, row[col_num], font_style)
+		
+		# map(lambda row:map(lambda col_num:ws.write(),row),rows)
+		
 
 	wb.save(response)
 
