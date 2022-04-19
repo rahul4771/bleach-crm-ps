@@ -2935,18 +2935,19 @@ def export_users_xls(request):
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
 
-		users = UserProfile.objects.filter(is_active=True,user_type='CUSTOMER').values('name','email','mobile_number').distinct().prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True),to_attr='customer_addresses')).values_list('name','mobile_number','email','address_customer__governorate__name','address_customer__area__name')
+		users = UserProfile.objects.filter(is_active=True,user_type='CUSTOMER').prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True),to_attr='customer_addresses')).values_list('name','mobile_number','email','address_customer__governorate__name','address_customer__area__name').distinct()
 		rows = users
 
+		mobile_numbers_duplicate = []
 		for row in rows:
-			row_num += 1
-			for col_num in range(len(row)):
-				ws.write(row_num, col_num, row[col_num], font_style)
+			if not row[1] in mobile_numbers_duplicate:
+				row_num += 1
+				mobile_numbers_duplicate.append(row[1])
+				for col_num in range(len(row)):
+					ws.write(row_num, col_num, row[col_num], font_style)
 
 	wb.save(response)
 
-	# print(response.status_code,"resp")
-	
 	return response
 
 
