@@ -522,7 +522,7 @@ class UsersList(APIView):
 
 #get existing leave schedules and add new leaveschedules
 class LeaveScheduleAPI(APIView):
-	permission_classes  	=   (AllowAny,)
+	permission_classes  	= (AllowAny,)
 	authentication_classes  = ()
 
 	def get(self,request):
@@ -531,15 +531,23 @@ class LeaveScheduleAPI(APIView):
 		year  = int(request.GET.get('year'))
 
 		try:
-			leaveschedules = LeaveSchedule.objects.filter(is_active=True,leave_date__month=month,leave_date__year=year)
+			leaveschedules = LeaveSchedule.objects.filter(is_active=True,leave_date__month=month,leave_date__year=year).order_by('leave_type')
+
+			leaveschedules = leaveschedules.values('id','staff__id','leave_type','leave_date')
+			leaveschedules_df = pd.DataFrame(list(leaveschedules))
+
+			newdf1 = leaveschedules_df.drop_duplicates(
+				subset = ['staff__id', 'leave_date'],
+				keep = 'first').reset_index(drop = True)
+			newdf1 = newdf1.to_dict(orient='records')
 		except:
 			leaveschedules = None
-		leaveschedule_serializer = LeaveScheduleSerializer(leaveschedules,many=True).data
+			newdf1 = []
 
 		occupied_members           = CleaningTeamMember.objects.select_related('team__order_scheduler').filter( Q(Q(is_active=True) & Q(Q(Q(start_at__month=month)&Q(start_at__year=year)) | Q(Q(end_at__month=month)&Q(end_at__year=year))) ) )
 		occupied_member_serializer = OccupiedMembersSerializer(occupied_members,many=True).data
 
-		response_dict["staffs"]    = leaveschedule_serializer
+		response_dict["staffs"]    = newdf1
 		response_dict["occupied"]  = occupied_member_serializer
 
 		return Response(response_dict,HTTP_200_OK)
