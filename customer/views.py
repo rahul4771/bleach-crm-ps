@@ -1172,7 +1172,6 @@ def receipt_html_to_pdf_view(request,payment_id):
 
 		duplicate_schedules.append(orderschedule.order_scheduler_book)
 	
-
 	html_string = render_to_string('customer/receipt-voucher.html', {'payment_history':payment_history,'nonduplicate_schedules':nonduplicate_schedules,})
 
 	html = HTML(string=html_string,base_url=request.build_absolute_uri())
