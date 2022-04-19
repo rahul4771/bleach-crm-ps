@@ -103,6 +103,7 @@
       {% for evaluation_detail in order.evaluation.evaluationdetails %}            
       {% for evaluation_book in evaluation_detail.evaluationbooks %}
       {% for book_section in evaluation_book.booksections %}
+      {% if book_section.evaluation_book.service_type.name != 'Kitchen Appliances' %}
       <tr>
         <td>
           {{evaluation_book.service_type}} - {{book_section.section_name}}
@@ -135,7 +136,7 @@
           {% if book_section.sectiononly_net_cost %}{{book_section.sectiononly_net_cost|floatformat:'3'}}{% else %}{{book_section.section_net_cost|floatformat:'3'}}{% endif %}
         </td>
       </tr>
-
+      {% endif %}
 
       {% if book_section.sectionaddons %}
       {% for addon in book_section.sectionaddons %}

@@ -269,6 +269,7 @@
             {% for evaluation_detail in order.evaluation.evaluationdetails %}            
             {% for evaluation_book in evaluation_detail.evaluationbooks %}
             {% for book_section in evaluation_book.booksections %}
+            {% if book_section.evaluation_book.service_type.name != 'Kitchen Appliances' %}
             <div class="col-md-12 col-print-12 order-4">
               <div class="inv-price-card mt-4 row">
                 <div class="col-md-8 col-print-8">
@@ -540,6 +541,7 @@
                 
               </div>
             </div>
+            {% endif %}
             
             {% if book_section.sectionaddons %}
             {% for addon in book_section.sectionaddons %}
