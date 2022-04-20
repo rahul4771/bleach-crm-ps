@@ -624,7 +624,7 @@ function closeConf(){
     $("#lv-cancel-btn").show();
 }
 
-function getUsers(){
+function getUsers(selecteddate){
     
     $('.lv-loader').show()
       resourceList=[];
