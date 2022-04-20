@@ -1,6 +1,7 @@
 */local_settings.py
 .DS_Store
 */__pycache__/
+*/log/
 *.pyc
 db.sqlite3
 */migrations/*

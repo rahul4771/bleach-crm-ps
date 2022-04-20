@@ -238,6 +238,7 @@ class LeaveSchedule(models.Model):
     staff           = models.ForeignKey('UserProfile',blank=False,null=False,related_name='leave_staff')
     leave_date      = models.DateField(blank=False,null=False)
     leave_type      = models.CharField(max_length=50,blank=False,null=False,choices=LEAVE_TYPES)
+    bamboo_leave_id = models.CharField(max_length=10,blank=True,null=True)
     is_active       = models.BooleanField(null=False,blank=True,default=True)
     created         = models.DateTimeField(auto_now_add=True)
 

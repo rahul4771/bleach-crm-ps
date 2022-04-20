@@ -45,7 +45,7 @@ class UsersListSerializer(serializers.ModelSerializer):
 class LeaveScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = LeaveSchedule
-        fields = ('id','staff','leave_date','leave_type')
+        fields = ('id','staff','leave_date','leave_type','bamboo_leave_id')
 
 class OccupiedMembersSerializer(serializers.ModelSerializer):
     class Meta:
