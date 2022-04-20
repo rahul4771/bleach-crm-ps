@@ -32,83 +32,117 @@
        <h1 id="qu-text2">RECEIPT VOUCHER</h1>
     </section>
     <section id="customer_container">
-         
+      {% for orderschedule in payment_history.order.orderschedules %}
+      {% if forloop.first %}
       <div id="left_id">
         <div>
           <span id="contact-text">Customer</span>
-          <span id="customer-name">John Lennon </span>
+          <span id="customer-name">{{orderschedule.customer_address.customer.name}} </span>
         </div>
-        
+        <!-- {% if orderschedule.customer_address.customer.customer_type == 'CORPORATE' %}
+        <div>
+          <span id="contact-text">Company </span>
+          <span id="contact-number">{{orderschedule.customer_address.customer.company}}</span>
+        </div>
+        <div>
+          <span id="contact-text"> Job Titile </span>
+          <span id="contact-number">{{orderschedule.customer_address.customer.job_title}}</span>
+        </div>
+        {% endif %} -->
         <div>
           <span id="contact-text">Contact No</span>
-          <span id="contact-number">1560</span>
+          <span id="contact-number">{{orderschedule.customer_address.customer.mobile_number}}</span>
         </div>
         <div>
           <span id="contact-text">Email</span>
-          <span id="contact-number">email</span>
+          <span id="contact-number">{{orderschedule.customer_address.customer.email}}</span>
         </div>
         <div>
           <span id="address-text">Address </span>
-          <span id="customer-address"> Appartment, Floor Building,Block,
-            Street,Avenue
-            Industrial Ardiya, Farwaniya</span>
+          <span id="customer-address"> {{orderschedule.customer_address.apartment}}, {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}}, {% else %}{% endif %} {{orderschedule.customer_address.building}},<br>
+            {{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}}, {% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}}, {% else %}{% endif %}<br>
+            {{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}</span>
         </div><br>
       </div>
+      {% endif %}
+      {% endfor %}
 
 
       <div id="right_id">
         
           <div>
             <span id="contact-text">Invoice Number</span>
-            <span id="contact-number"> <b>INV</b> </span>
+            <span id="contact-number"> <b>{{payment_history.order.invoice_no}}</b> </span>
           </div>
           <div>
             <span id="contact-text">Invoice Date</span>
-            <span id="contact-number">14-07-2021 </span>
+            <span id="contact-number">{{payment_history.order.evaluation.created|date:'d-m-Y'}} </span>
           </div>
           <div>
             <span id="contact-text">Payment Policy</span>
-            <span id="contact-number">BREAKDOWN</span>
+            <span id="contact-number">{{payment_history.order.evaluation.payment_method}}</span>
           </div>
           <div>
             <span id="contact-text">Order Number</span>
-            <span id="contact-number">BLC20210710446 </span>
+            <span id="contact-number">{{payment_history.order.order_no}} </span>
           </div>
       </div>
 
     </section>
+
     <section id="table_section2">
       <div id="left_id">
         <div>
           <span id="contact-text">Received Date</span>
-          <span id="contact-number">14-07-2021</span>
+          <span id="contact-number">{{payment_history.paid_date|date:'d-m-Y'}}</span>
 
         </div>
         
         <div>
           <span id="contact-text">Mode of Payment</span>
-          <span id="contact-number">Debit Card </span>
+          <span id="contact-number">{% if payment_history.payment_mode == 'ONLINECREDIT' %}
+            {{payment_history.payment_gateway}}
+            {% else %}
+            {{payment_history.payment_mode}}
+            {% endif %} </span>
         </div>  
         <div>
           <span id="contact-text">Received Amount</span>
-          <span id="contact-number_2"><b>2500.00 KD</b> </span>
+          <span id="contact-number_2"><b>{{payment_history.amount_paid|floatformat:'3'}} KD</b> </span>
         </div>  
       </div>
       <div id="right_id">
         
         <div>
           <span id="contact-text">Payment ID </span>
-          <span id="contact-number"> 200000</span>
+          <span id="contact-number"> {{payment_history.payment_id|default_if_none:'-'}}</span>
         </div>
         <div>
           <span id="contact-text">Reference ID</span>
-          <span id="contact-number">20202020202 </span>
+          <span id="contact-number">{{payment_history.ref|default_if_none:'-'}} </span>
         </div>
         <div>
           <span id="contact-text">Transaction ID</span>
-          <span id="contact-number">2020202 </span>
+          <span id="contact-number">{{payment_history.transaction_id|default_if_none:'-'}} </span>
         </div>
-        
+        {% if payment_history.check_no %}
+        <div>
+          <span id="contact-text">Cheque No</span>
+          <span id="contact-number">{{payment_history.check_no}} </span>
+        </div>
+        {% endif %}
+        {% if payment_history.check_date %}
+        <div>
+          <span id="contact-text">Cheque Date</span>
+          <span id="contact-number">{{payment_history.check_date}} </span>
+        </div>
+        {% endif %}
+        {% if payment_history.bank_name %}
+        <div>
+          <span id="contact-text">Bank Name</span>
+          <span id="contact-number">{{payment_history.bank_name}} </span>
+        </div>
+        {% endif %}
 
     </div>
     </section>

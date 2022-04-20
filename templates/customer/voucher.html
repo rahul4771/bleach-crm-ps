@@ -189,7 +189,7 @@
                          Cheque Date
                         </div>
                         <div class="inv-text-right w-50">
-                          <span class="inv-text-bold">{{payment_history.cheack_date}}</span>  
+                          <span class="inv-text-bold">{{payment_history.check_date}}</span>  
                         </div>
                       </div>
                       {% endif %}
@@ -256,12 +256,12 @@
          
           </div>
           <div class="d-flex text-center">
-          <div class="inv-white-btn text-center  mt-4 mb-4 inv-receipt-download" id="download">
+          <div class="inv-white-btn text-center  mt-4 mb-4 inv-receipt-download" onclick="window.location ='/customer/payment/receipt/download/{{payment_history.id}}'">
             <input type="hidden" class="filename" value="Payment_INV{{order.invoice_no}}" />
             <i class="fa fa-download" ></i>
             Download
           </div> 
-          <a href="/customer/payment/receipt/download/{{payment_history.id}}">Download</a>
+
           <div class="inv-white-btn text-center  mt-4 mb-4 inv-receipt-print  " onclick="printDiv()">
             <i class="fa fa-print"></i>
             Print
