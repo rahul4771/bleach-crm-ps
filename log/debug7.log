@@ -1,0 +1,560 @@
+Traceback (most recent call last):
+  File "/home/rgn/bleach_projects/bleach-crm-ps/manage.py", line 22, in <module>
+    execute_from_command_line(sys.argv)
+  File "/home/rgn/bleach_projects/bleachenv/lib/python3.9/site-packages/django/core/management/__init__.py", line 364, in execute_from_command_line
+    utility.execute()
+  File "/home/rgn/bleach_projects/bleachenv/lib/python3.9/site-packages/django/core/management/__init__.py", line 356, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/home/rgn/bleach_projects/bleachenv/lib/python3.9/site-packages/django/core/management/base.py", line 283, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "/home/rgn/bleach_projects/bleachenv/lib/python3.9/site-packages/django/core/management/base.py", line 330, in execute
+    output = self.handle(*args, **options)
+  File "/home/rgn/bleach_projects/bleachenv/lib/python3.9/site-packages/django_crontab/management/commands/crontab.py", line 29, in handle
+    Crontab().run_job(options['jobhash'])
+  File "/home/rgn/bleach_projects/bleachenv/lib/python3.9/site-packages/django_crontab/crontab.py", line 143, in run_job
+    func = getattr(module, function_name)
+AttributeError: module 'customer.cron' has no attribute 'testgov'
+2022-04-20 2022-05-20 datess
+[] deta
+2022-04-20 2022-05-20 datess
+{'id': '83', 'name': 'Sick Leave 100%', 'icon': 'first-aid-kit'} 2022-04-20 125 runtime
+SICK LEAVE ltt
+{'id': '83', 'name': 'Sick Leave 100%', 'icon': 'first-aid-kit'} 2022-05-07 182 runtime
+SICK LEAVE ltt
+testusera2022-05-07 lvshes
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-06-24 128 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-30 140 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-30 168 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-12 147 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-30 157 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-04-21 141 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-02 180 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-06 182 runtime
+ANNUAL LEAVE ltt
+testusera2022-05-04 lvshes
+testusera2022-05-05 lvshes
+testusera2022-05-06 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-23 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-24 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-24 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-20 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-26 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-24 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-14 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 166 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 142 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 133 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 137 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 118 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 141 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-21 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-20 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-23 146 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-18 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-08 182 runtime
+WEEKLY OFF ltt
+testusera2022-05-08 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 141 runtime
+WEEKLY OFF ltt
+Traceback (most recent call last):
+  File "/home/rgn/bleach_projects/bleach-crm-ps/manage.py", line 22, in <module>
+    execute_from_command_line(sys.argv)
+  File "/home/rgn/bleach_projects/bleachenv/lib/python3.9/site-packages/django/core/management/__init__.py", line 364, in execute_from_command_line
+    utility.execute()
+  File "/home/rgn/bleach_projects/bleachenv/lib/python3.9/site-packages/django/core/management/__init__.py", line 356, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/home/rgn/bleach_projects/bleachenv/lib/python3.9/site-packages/django/core/management/base.py", line 283, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "/home/rgn/bleach_projects/bleachenv/lib/python3.9/site-packages/django/core/management/base.py", line 330, in execute
+    output = self.handle(*args, **options)
+  File "/home/rgn/bleach_projects/bleachenv/lib/python3.9/site-packages/django_crontab/management/commands/crontab.py", line 29, in handle
+    Crontab().run_job(options['jobhash'])
+  File "/home/rgn/bleach_projects/bleachenv/lib/python3.9/site-packages/django_crontab/crontab.py", line 143, in run_job
+    func = getattr(module, function_name)
+AttributeError: module 'customer.cron' has no attribute 'testgov'
+2022-04-20 2022-05-20 datess
+[] deta
+2022-04-20 2022-05-20 datess
+{'id': '83', 'name': 'Sick Leave 100%', 'icon': 'first-aid-kit'} 2022-04-20 125 runtime
+SICK LEAVE ltt
+{'id': '83', 'name': 'Sick Leave 100%', 'icon': 'first-aid-kit'} 2022-05-07 182 runtime
+SICK LEAVE ltt
+testusera2022-05-07 lvshes
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-06-24 128 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-30 140 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-30 168 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-12 147 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-30 157 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-04-21 141 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-02 180 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-06 182 runtime
+ANNUAL LEAVE ltt
+testusera2022-05-04 lvshes
+testusera2022-05-05 lvshes
+testusera2022-05-06 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-23 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-24 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-24 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-20 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-26 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-24 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-14 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 166 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 142 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 133 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 137 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 118 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 141 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-21 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-20 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-23 146 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-18 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-08 182 runtime
+WEEKLY OFF ltt
+testusera2022-05-08 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 141 runtime
+WEEKLY OFF ltt
+Traceback (most recent call last):
+  File "/home/rgn/bleach_projects/bleach-crm-ps/manage.py", line 22, in <module>
+    execute_from_command_line(sys.argv)
+  File "/home/rgn/bleach_projects/bleachenv/lib/python3.9/site-packages/django/core/management/__init__.py", line 364, in execute_from_command_line
+    utility.execute()
+  File "/home/rgn/bleach_projects/bleachenv/lib/python3.9/site-packages/django/core/management/__init__.py", line 356, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/home/rgn/bleach_projects/bleachenv/lib/python3.9/site-packages/django/core/management/base.py", line 283, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "/home/rgn/bleach_projects/bleachenv/lib/python3.9/site-packages/django/core/management/base.py", line 330, in execute
+    output = self.handle(*args, **options)
+  File "/home/rgn/bleach_projects/bleachenv/lib/python3.9/site-packages/django_crontab/management/commands/crontab.py", line 29, in handle
+    Crontab().run_job(options['jobhash'])
+  File "/home/rgn/bleach_projects/bleachenv/lib/python3.9/site-packages/django_crontab/crontab.py", line 126, in run_job
+    job = self.__get_job_by_hash(job_hash)
+  File "/home/rgn/bleach_projects/bleachenv/lib/python3.9/site-packages/django_crontab/crontab.py", line 171, in __get_job_by_hash
+    raise RuntimeError(
+RuntimeError: No job with hash 0591c2c14d2c764912e49851daee7db3 found. It seems the crontab is out of sync with your settings.CRONJOBS. Run "python manage.py crontab add" again to resolve this issue!
+2022-04-20 2022-05-20 datess
+[] deta
+2022-04-20 2022-05-20 datess
+{'id': '83', 'name': 'Sick Leave 100%', 'icon': 'first-aid-kit'} 2022-04-20 125 runtime
+SICK LEAVE ltt
+{'id': '83', 'name': 'Sick Leave 100%', 'icon': 'first-aid-kit'} 2022-05-07 182 runtime
+SICK LEAVE ltt
+testusera2022-05-07 lvshes
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-06-24 128 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-30 140 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-30 168 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-12 147 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-30 157 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-04-21 141 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-02 180 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-06 182 runtime
+ANNUAL LEAVE ltt
+testusera2022-05-04 lvshes
+testusera2022-05-05 lvshes
+testusera2022-05-06 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-23 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-24 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-24 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-20 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-26 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-24 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-14 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 166 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 142 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 133 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 137 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 118 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 141 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-21 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-20 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-23 146 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-18 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-08 182 runtime
+WEEKLY OFF ltt
+testusera2022-05-08 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 141 runtime
+WEEKLY OFF ltt
+2022-04-20 2022-05-20 datess
+{'id': '83', 'name': 'Sick Leave 100%', 'icon': 'first-aid-kit'} 2022-04-20 125 runtime
+SICK LEAVE ltt
+{'id': '83', 'name': 'Sick Leave 100%', 'icon': 'first-aid-kit'} 2022-05-07 182 runtime
+SICK LEAVE ltt
+testusera2022-05-07 lvshes
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-06-24 128 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-30 140 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-30 168 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-12 147 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-30 157 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-04-21 141 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-02 180 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-06 182 runtime
+ANNUAL LEAVE ltt
+testusera2022-05-04 lvshes
+testusera2022-05-05 lvshes
+testusera2022-05-06 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-23 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-24 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-24 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-20 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-26 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-24 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-14 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 166 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 142 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 133 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 137 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 118 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 141 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-21 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-20 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-23 146 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-18 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-08 182 runtime
+WEEKLY OFF ltt
+testusera2022-05-08 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 141 runtime
+WEEKLY OFF ltt
+2022-04-20 2022-05-20 datess
+{'id': '83', 'name': 'Sick Leave 100%', 'icon': 'first-aid-kit'} 2022-04-20 125 runtime
+SICK LEAVE ltt
+{'id': '83', 'name': 'Sick Leave 100%', 'icon': 'first-aid-kit'} 2022-05-07 182 runtime
+SICK LEAVE ltt
+testusera2022-05-07 lvshes
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-06-24 128 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-30 140 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-30 168 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-12 147 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-30 157 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-04-21 141 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-02 180 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-06 182 runtime
+ANNUAL LEAVE ltt
+testusera2022-05-04 lvshes
+testusera2022-05-05 lvshes
+testusera2022-05-06 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-23 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-24 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-24 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-20 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-26 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-24 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-14 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 166 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 142 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 133 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 137 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 118 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 141 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-21 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-20 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-23 146 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-18 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-08 182 runtime
+WEEKLY OFF ltt
+testusera2022-05-08 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 141 runtime
+WEEKLY OFF ltt
+2022-04-20 2022-05-20 datess
+{'id': '83', 'name': 'Sick Leave 100%', 'icon': 'first-aid-kit'} 2022-04-20 125 runtime
+SICK LEAVE ltt
+{'id': '83', 'name': 'Sick Leave 100%', 'icon': 'first-aid-kit'} 2022-05-07 182 runtime
+SICK LEAVE ltt
+testusera2022-05-07 lvshes
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-06-24 128 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-30 140 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-30 168 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-12 147 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-30 157 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-04-21 141 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-02 180 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-06 182 runtime
+ANNUAL LEAVE ltt
+testusera2022-05-04 lvshes
+testusera2022-05-05 lvshes
+testusera2022-05-06 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-23 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-24 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-24 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-20 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-26 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-24 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-14 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 166 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 142 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 133 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 137 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 118 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 141 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-21 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-20 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-23 146 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-18 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-08 182 runtime
+WEEKLY OFF ltt
+testusera2022-05-08 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 141 runtime
+WEEKLY OFF ltt
+2022-04-20 2022-05-20 datess
+{'id': '83', 'name': 'Sick Leave 100%', 'icon': 'first-aid-kit'} 2022-04-20 125 runtime
+SICK LEAVE ltt
+{'id': '83', 'name': 'Sick Leave 100%', 'icon': 'first-aid-kit'} 2022-05-07 182 runtime
+SICK LEAVE ltt
+testusera2022-05-07 lvshes
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-06-24 128 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-30 140 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-30 168 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-12 147 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-30 157 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-04-21 141 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-02 180 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-06 182 runtime
+ANNUAL LEAVE ltt
+testusera2022-05-04 lvshes
+testusera2022-05-05 lvshes
+testusera2022-05-06 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-23 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-24 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-24 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-20 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-26 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-24 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-14 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 166 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 142 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 133 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 137 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 118 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 141 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-21 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-21 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-20 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-23 146 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-18 180 runtime
+WEEKLY OFF ltt
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-08 182 runtime
+WEEKLY OFF ltt
+testusera2022-05-08 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-20 141 runtime
+WEEKLY OFF ltt

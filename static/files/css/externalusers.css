@@ -868,12 +868,25 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
 #quotation_data div{
   margin-bottom: 10px;
 }
+#rec-sec{
+  margin-top: 10px;
+}
 #qu-text{
   font-family: AvenirLTStd !important;
   margin-top: -10px;
   margin-left: auto;
   font-weight: 100;
   font-size: 48px;
+  color: #289BAC !important;
+  text-align: center;
+  margin-bottom: 40px;
+}
+#qu-text2{
+  font-family: AvenirLTStd !important;
+  margin-top: -10px;
+  margin-left: auto;
+  font-weight: 100;
+  font-size: 38px;
   color: #289BAC !important;
   text-align: center;
   margin-bottom: 40px;
@@ -970,6 +983,22 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
   font-size: 40px;
   text-align: center;
 }
+#total_amount_2{
+  font-family: AvenirLTStd !important;
+  color: #289BAC;
+  font-size: 30px;
+  text-align: right !important;
+  
+}
+#contact-number_2{
+  color: #289BAC;
+  text-align: right;
+  font-size: 30px;
+  float: right;
+  right: 0;
+  font-family: AvenirLTStd !important;
+}
+
 #kd-font{
   font-weight: 100;
 }
@@ -1297,6 +1326,11 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
 #table_section{
   width: 100%;
   margin-top: 30px !important;
+  float: left;
+}
+#table_section2{
+  width: 100%;
+  margin-top: 20px !important;
   float: left;
 }
 
