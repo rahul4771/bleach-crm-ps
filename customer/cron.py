@@ -124,7 +124,6 @@ def deletetimeoffsbamboo():
 		
 	todate = date.today()
 	end_date = todate+timedelta(30)
-	print(todate,end_date,"datess")
 
 	url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/time_off/requests/?start="+str(todate)+"&end="+str(end_date)+"&status=canceled"
 
@@ -136,17 +135,15 @@ def deletetimeoffsbamboo():
 	response = requests.request("GET", url, headers=headers)
 	data = response.json()
 
-	print(data,"deta")
+	print(data,"datess")
 
 	for timeoff in data:
-		print(timeoff['id'],"runtime22")
+		print(timeoff['id'],timeoff['start'],"runtime22")
 		
 		timeoff_id = timeoff['id']
 		
 		try:
 			leaveschedules = LeaveSchedule.objects.filter(is_active=True,bamboo_leave_id=timeoff_id).delete()
-			print(leaveschedule,"lvshes44")
-			
 		except:
 			leaveschedules = None
 

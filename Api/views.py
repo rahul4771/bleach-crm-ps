@@ -553,6 +553,7 @@ class LeaveScheduleAPI(APIView):
 		return Response(response_dict,HTTP_200_OK)
 	
 	def post(self,request):
+		print("yahhoo")
 		response_dict = {'success':False}
 
 		leave_dates_list = []
@@ -570,9 +571,14 @@ class LeaveScheduleAPI(APIView):
 
 				bamboo_employee_id = staff_details.bamboo_employee_id
 
+				headers = {
+						"Content-Type": "application/json",
+						"Authorization": "Basic NDNhMjE5Y2ZlNmYyZGJlMjUwYTllYjdiNWUyNzc0MzM1YzE0Njg1ODo="
+					}
+
 				if bamboo_employee_id:
 
-					url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/employees/"+bamboo_employee_id+"/time_off/request"
+					add_leave_url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/employees/"+bamboo_employee_id+"/time_off/request"
 
 					timeOffTypeId = '92'
 
@@ -584,14 +590,21 @@ class LeaveScheduleAPI(APIView):
 						"amount" : 1
 					}
 
-					headers = {
-						"Content-Type": "application/json",
-						"Authorization": "Basic NDNhMjE5Y2ZlNmYyZGJlMjUwYTllYjdiNWUyNzc0MzM1YzE0Njg1ODo="
-					}
+					print(add_leave_url,payload,"loadss")
 
-					print(url,payload,"loadss")
+					leave_response = requests.request("PUT", add_leave_url, json=payload, headers=headers)
 
-					response = requests.request("PUT", url, json=payload, headers=headers)
+					# if leave_response:
+
+					# 	url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/time_off/requests/?start="+leave_date+"&end="+leave_date+"&employeeId="+bamboo_employee_id+"&type="+timeOffTypeId+"&status=approved"
+
+					# 	response = requests.request("GET", url, headers=headers)
+					# 	print(response.json(),"jesso")
+
+						
+
+					# 		# leaveschedules = LeaveSchedule.objects.filter(is_active=True,bamboo_leave_id=item['id'])
+					# 		# serializer.save()
 
 				response_dict['success']  = True  
 			else: 
@@ -602,6 +615,7 @@ class LeaveScheduleAPI(APIView):
 				response_dict['Error_List'] = serializer.errors
 
 		return Response(response_dict,HTTP_200_OK)
+
 
 class LeaveSchedulePopupAPI(APIView):
 	permission_classes  	=   (AllowAny,)
