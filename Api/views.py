@@ -12,7 +12,7 @@ from bleachadmin.models import ServicePriceRange,Settings,ServiceProductivity
 from bleachadmin.serializers import ServiceProductivitySerializer
 from Api.models import XeroConnection
 from django.core.mail import send_mail,EmailMultiAlternatives
-from Api.serializers import ServicePriceRangeSerializer,DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
+from Api.serializers import ServiceAddOnsSerializer,ServicePriceRangeSerializer,DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
 from bleachinventory.models import QuantityStoreDetails,ExternalCustomer,Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,CheckOutItemUnits,ItemHistory,InventoryAccessory,InventoryFinshedItem,Store
 import re
@@ -5192,4 +5192,20 @@ class ServicePriceRangeAPI(APIView):
 
 		service_price_range_serializer = ServicePriceRangeSerializer(service_price_ranges,many=True).data
 		response_dict["service_price_ranges"]=service_price_range_serializer
+		return Response(response_dict,HTTP_200_OK)
+
+class ServiceAddOnsAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request,cleaning_type):
+		response_dict = {}
+
+		try:
+			service_add_ons = ServiceAddOns.objects.filter(is_active=True,service_type__name__icontains=cleaning_type)
+		except:
+			service_add_ons = None
+
+		service_add_ons_serializer = ServiceAddOnsSerializer(service_add_ons,many=True).data
+		response_dict["service_add_ons"]=service_add_ons_serializer
 		return Response(response_dict,HTTP_200_OK)

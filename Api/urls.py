@@ -48,6 +48,7 @@ urlpatterns = [
 	url(r'^cleaning-team-data/$',views.CleaningTeamAPI.as_view(),name='api-cleaning-team-data'),
 	url(r'^service-productivity/$',views.ServiceProductivityAPI.as_view(),name='api-service-productivity'),
 	url(r'^service-price-ranges/(?P<cleaning_type>\D+)/$',views.ServicePriceRangeAPI.as_view(),name='api-service-price-ranges'),
+	url(r'^service-add-ons/(?P<cleaning_type>\D+)/$',views.ServiceAddOnsAPI.as_view(),name='api-service-add-ons'),
 
 	#inventory
 	url(r'^inventory-lines/$',views.InventoryLinesAPI.as_view(),name='api-inventory-lines'),

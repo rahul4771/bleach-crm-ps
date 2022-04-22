@@ -296,3 +296,9 @@ class ServicePriceRangeSerializer(serializers.ModelSerializer):
     class Meta:
         model   = ServicePriceRange
         fields  = ('__all__')
+
+class ServiceAddOnsSerializer(serializers.ModelSerializer):
+    service_type = ServiceTypeShowSerializer(read_only=True)
+    class Meta:
+        model   = ServiceAddOns
+        fields  = ('__all__')
