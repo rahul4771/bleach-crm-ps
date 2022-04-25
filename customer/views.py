@@ -391,6 +391,8 @@ class Quatation(View):
 																headers=header 
 															).json()
 						
+						print(create_invoice)
+						
 						try:
 							created_invoice = create_invoice['Status']
 						except:
