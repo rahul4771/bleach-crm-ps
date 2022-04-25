@@ -1278,24 +1278,24 @@ class CashCollect(IsAccountant,View):
 					closing_order.save()
 
 
-				# xero          = XeroConnection.objects.first()
-				# order         = Order.objects.select_related('evaluation__customer').get(id=order_id)
-				# #Update Access Token and Refresh Token
-				# header                      = {
-				# 								'Authorization': 'Basic '+xero.client_encoded,
-				# 								'Content-Type': 'application/x-www-form-urlencoded'
-				# 									}
-				# body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
-				# token_response              = requests.post('https://identity.xero.com/connect/token',
-				# 										data=body,
-				# 										headers=header 
-				# 									).json()
-				# access_token                = token_response['access_token']
-				# refresh_token               = token_response['refresh_token']
+				xero          = XeroConnection.objects.first()
+				order         = Order.objects.select_related('evaluation__customer').get(id=order_id)
+				#Update Access Token and Refresh Token
+				header                      = {
+												'Authorization': 'Basic '+xero.client_encoded,
+												'Content-Type': 'application/x-www-form-urlencoded'
+													}
+				body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
+				token_response              = requests.post('https://identity.xero.com/connect/token',
+														data=body,
+														headers=header 
+													).json()
+				access_token                = token_response['access_token']
+				refresh_token               = token_response['refresh_token']
 
-				# xero.access_token  = access_token
-				# xero.refresh_token = refresh_token
-				# xero.save()
+				xero.access_token  = access_token
+				xero.refresh_token = refresh_token
+				xero.save()
 
 				# ##Xero Contact
 				# if not order.evaluation.customer.xero_account_id:
@@ -1310,12 +1310,12 @@ class CashCollect(IsAccountant,View):
 				# 									"DefaultCurrency":"KWD"
 				# 												}
 													
-				# 	header                      = {
-				# 								'xero-tenant-id': xero.tenant_id,
-				# 								'Authorization': 'Bearer '+access_token,
-				# 								'Accept': 'application/json',
-				# 								'Content-Type': 'application/json'
-				# 									}
+					# header                      = {
+					# 							'xero-tenant-id': xero.tenant_id,
+					# 							'Authorization': 'Bearer '+access_token,
+					# 							'Accept': 'application/json',
+					# 							'Content-Type': 'application/json'
+					# 								}
 
 				# 	create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
 				# 											json=contact_data,
@@ -1389,6 +1389,29 @@ class CashCollect(IsAccountant,View):
 				# if created_transaction == 'OK':
 				# 	payment_history.is_xero_marked = True
 				# 	payment_history.save()
+
+				#Payment Test
+				header                      = {
+												'xero-tenant-id': xero.tenant_id,
+												'Authorization': 'Bearer '+access_token,
+												'Accept': 'application/json',
+												'Content-Type': 'application/json'
+													}
+
+				if payment_policy == 'PREPAID':
+					
+					payment_data = {
+						"Invoice": { "InvoiceID": order.invoice_no },
+						"Account": { "Code": "090" },
+						"Date": "2009-09-08",
+						"Amount": amount
+					}
+
+					update_payment          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
+														json=payment_data,
+														headers=header 
+													)
+
 		else:
 			messages.success(request,"Something Went Wrong")
 
