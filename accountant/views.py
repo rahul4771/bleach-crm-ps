@@ -1402,7 +1402,7 @@ class CashCollect(IsAccountant,View):
 					
 					payment_data = {
 								"Invoice":{
-									"InvoiceID":"order.invoice_no"
+									"InvoiceID":order.invoice_no
 								},
 								"Account":{
 									"Code":"090"
