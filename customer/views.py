@@ -338,7 +338,7 @@ class Quatation(View):
 						order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
 						order.evaluation.customer.save()
 
-	
+					#Xero Test Code
 					order_evaluation_books         = EvaluationBook.objects.filter(evaluation_details__evaluation__evaluation_id=evaluation_id)				
 					if evaluaation.payment_method == 'PREPAID':
 						##Invoice Data
@@ -358,7 +358,7 @@ class Quatation(View):
 						LineItems.append({
 										"Description":"Discount",
 										"Quantity":"1",
-										"UnitAmount":order.evaluation.discount,
+										"UnitAmount":-order.evaluation.discount,
 										"AccountCode":1001,
 										"TaxType":"NONE"
 												}
