@@ -8,11 +8,11 @@ from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investi
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
-from bleachadmin.models import ServicePriceRange,Settings,ServiceProductivity
+from bleachadmin.models import ServicePriceRange,Settings,ServiceProductivity,ServiceAddOns
 from bleachadmin.serializers import ServiceProductivitySerializer
 from Api.models import XeroConnection
 from django.core.mail import send_mail,EmailMultiAlternatives
-from Api.serializers import DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
+from Api.serializers import ServiceAddOnsSerializer,ServicePriceRangeSerializer,DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
 from bleachinventory.models import QuantityStoreDetails,ExternalCustomer,Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,CheckOutItemUnits,ItemHistory,InventoryAccessory,InventoryFinshedItem,Store
 import re
@@ -553,6 +553,7 @@ class LeaveScheduleAPI(APIView):
 		return Response(response_dict,HTTP_200_OK)
 	
 	def post(self,request):
+		print("yahhoo")
 		response_dict = {'success':False}
 
 		leave_dates_list = []
@@ -570,9 +571,14 @@ class LeaveScheduleAPI(APIView):
 
 				bamboo_employee_id = staff_details.bamboo_employee_id
 
+				headers = {
+						"Content-Type": "application/json",
+						"Authorization": "Basic NDNhMjE5Y2ZlNmYyZGJlMjUwYTllYjdiNWUyNzc0MzM1YzE0Njg1ODo="
+					}
+
 				if bamboo_employee_id:
 
-					url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/employees/"+bamboo_employee_id+"/time_off/request"
+					add_leave_url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/employees/"+bamboo_employee_id+"/time_off/request"
 
 					timeOffTypeId = '92'
 
@@ -584,14 +590,21 @@ class LeaveScheduleAPI(APIView):
 						"amount" : 1
 					}
 
-					headers = {
-						"Content-Type": "application/json",
-						"Authorization": "Basic NDNhMjE5Y2ZlNmYyZGJlMjUwYTllYjdiNWUyNzc0MzM1YzE0Njg1ODo="
-					}
+					print(add_leave_url,payload,"loadss")
 
-					print(url,payload,"loadss")
+					leave_response = requests.request("PUT", add_leave_url, json=payload, headers=headers)
 
-					response = requests.request("PUT", url, json=payload, headers=headers)
+					# if leave_response:
+
+					# 	url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/time_off/requests/?start="+leave_date+"&end="+leave_date+"&employeeId="+bamboo_employee_id+"&type="+timeOffTypeId+"&status=approved"
+
+					# 	response = requests.request("GET", url, headers=headers)
+					# 	print(response.json(),"jesso")
+
+						
+
+					# 		# leaveschedules = LeaveSchedule.objects.filter(is_active=True,bamboo_leave_id=item['id'])
+					# 		# serializer.save()
 
 				response_dict['success']  = True  
 			else: 
@@ -602,6 +615,7 @@ class LeaveScheduleAPI(APIView):
 				response_dict['Error_List'] = serializer.errors
 
 		return Response(response_dict,HTTP_200_OK)
+
 
 class LeaveSchedulePopupAPI(APIView):
 	permission_classes  	=   (AllowAny,)
@@ -5162,4 +5176,36 @@ class ServiceProductivityAPI(APIView):
 
 		service_productivity_serializer = ServiceProductivitySerializer(service_productivities,many=True).data
 		response_dict["service_productivities"]=service_productivity_serializer
+		return Response(response_dict,HTTP_200_OK)
+
+class ServicePriceRangeAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request,cleaning_type):
+		response_dict = {}
+
+		try:
+			service_price_ranges = ServicePriceRange.objects.filter(is_active=True,service_type__name__icontains=cleaning_type)
+		except:
+			service_price_ranges = None
+
+		service_price_range_serializer = ServicePriceRangeSerializer(service_price_ranges,many=True).data
+		response_dict["service_price_ranges"]=service_price_range_serializer
+		return Response(response_dict,HTTP_200_OK)
+
+class ServiceAddOnsAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request,cleaning_type):
+		response_dict = {}
+
+		try:
+			service_add_ons = ServiceAddOns.objects.filter(is_active=True,service_type__name__icontains=cleaning_type)
+		except:
+			service_add_ons = None
+
+		service_add_ons_serializer = ServiceAddOnsSerializer(service_add_ons,many=True).data
+		response_dict["service_add_ons"]=service_add_ons_serializer
 		return Response(response_dict,HTTP_200_OK)
