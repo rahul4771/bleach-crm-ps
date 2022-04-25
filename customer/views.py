@@ -26,7 +26,7 @@ from django.contrib import messages
 from bleachinventory.models import PurchaseOrder,PurchaseOrderItems,CheckOutItems,RequestOrder,RequestOrderItems
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType,EvaluationSectionAddons
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,Promocode,CancellOrderAmountHistory
+from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,Promocode,CancellOrderAmountHistory,XeroInvoice
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
@@ -341,12 +341,13 @@ class Quatation(View):
 
 					#Xero Invoice
 					if order.evaluation.payment_method == 'PREPAID':
+						Amount = order.evaluation.total_cost 
 						##Invoice Line Item 
 						LineItems                 = []
 						LineItems.append({
 							"Description":"ONE TIME SERVICE",
 							"Quantity":"1",
-							"UnitAmount":order.evaluation.total_cost,
+							"UnitAmount":Amount,
 							"AccountCode":1002,
 							"TaxType":"NONE"
 										}
@@ -354,12 +355,13 @@ class Quatation(View):
 						InvoiceNumber = order.invoice_no
 
 					elif order.evaluation.payment_method == 'BREAKDOWN':
+						Amount = order.evaluation.before_cleaning_amount 
 						##Invoice Line Item 
 						LineItems                 = []
 						LineItems.append({
 							"Description":"ONE TIME SERVICE",
 							"Quantity":"1",
-							"UnitAmount":order.evaluation.before_cleaning_amount,
+							"UnitAmount":Amount,
 							"AccountCode":1002,
 							"TaxType":"NONE"
 										}
@@ -395,6 +397,14 @@ class Quatation(View):
 															json=invoice_data,
 															headers=header 
 														).json()
+					try:
+						created_invoice = create_invoice['Status']
+					except:
+						created_invoice = None
+					
+					if created_invoice == 'OK':
+						XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date())
+
 					###################################################################
 
 					#Redirect to Invoice

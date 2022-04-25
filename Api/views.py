@@ -4,7 +4,7 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule,Shift
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons,CleaningMethod,CleaningSection,ServiceType,AreaType
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,Reporting,PaybackDiscount,PaybackDiscountDetails
+from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,Reporting,PaybackDiscount,PaybackDiscountDetails,XeroInvoice
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
@@ -2366,25 +2366,27 @@ class CheckOutAPI(APIView):
 
 				#Xero Invoice
 				if order.evaluation.payment_method == 'POSTPAID':
+					Amount = order.evaluation.total_cost
 					##Invoice Line Item 
 					LineItems                 = []
 					LineItems.append({
 						"Description":"ONE TIME SERVICE",
 						"Quantity":"1",
-						"UnitAmount":order.evaluation.total_cost,
+						"UnitAmount":Amount,
 						"AccountCode":1002,
 						"TaxType":"NONE"
 									}
 						)
 					InvoiceNumber = order.invoice_no
-					
+
 				elif order.evaluation.payment_method == 'BREAKDOWN':
+					Amount = order.evaluation.after_cleaning_amount
 					##Invoice Line Item 
 					LineItems                 = []
 					LineItems.append({
 						"Description":"ONE TIME SERVICE",
 						"Quantity":"1",
-						"UnitAmount":order.evaluation.after_cleaning_amount,
+						"UnitAmount":Amount,
 						"AccountCode":1002,
 						"TaxType":"NONE"
 									}
@@ -2419,6 +2421,15 @@ class CheckOutAPI(APIView):
 														json=invoice_data,
 														headers=header 
 													).json()
+				
+				try:
+					created_invoice = create_invoice['Status']
+				except:
+					created_invoice = None
+
+				if created_invoice == 'OK':
+					XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date())
+					
 			###################################################################
 
 		response_dict['success'] = True
