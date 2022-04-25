@@ -3308,6 +3308,7 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 			store               = Store.objects.first()
 
 		action              = request.POST.get('action')
+
 		if action == 'stock_out':
 			#item availability check
 			is_all_items_available = True
@@ -3342,8 +3343,18 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 			
 			#save delivery details
 			if is_all_items_available == True:
+
 				if request_order_items:
 					for request_order_item in request_order_items:
+
+						try:
+							store_item     = QuantityStoreDetails.objects.get(item_store=store,quantity_item=request_order_item.product)
+						except:
+							store_item     = QuantityStoreDetails.objects.create(
+									item_store = store,
+									quantity_item = request_order_item.product,
+									quantity = 0
+									)
 						
 						if request_order_item.product.item_add_type == 'quantity':
 							print(store_item.quantity,"storqty")
