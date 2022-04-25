@@ -1408,6 +1408,7 @@ class CashCollect(IsAccountant,View):
 									"Code":"090"
 								},
 								"Date":"2009-09-08",
+								"IsReconciled":True,
 								"Amount":amount
 								}
 
