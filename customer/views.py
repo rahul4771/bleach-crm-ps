@@ -369,8 +369,8 @@ class Quatation(View):
 														"Contact":{
 															"ContactID":order.evaluation.customer.xero_account_id
 														},
-														"Date":(timezone.now()).strftime('%Y-%m-%d'),
-														"DueDate":(timezone.now()).strftime('%Y-%m-%d'),
+														"Date":evaluaation.quatation_approved_date.strftime('%Y-%m-%d'),
+														"DueDate":evaluaation.quatation_expiry_date.strftime('%Y-%m-%d'),
 														"LineAmountTypes":"NoTax",
 														"InvoiceNumber":InvoiceNumber,
 														"Reference":order.order_no,
