@@ -47,10 +47,10 @@ class ServicePriceRange(models.Model):
 	created      = models.DateTimeField(auto_now_add=True)
 	updated      = models.DateTimeField(auto_now=True)
 	def __unicode__(self):
-		return str(self.name)
+		return str(self.service_type.name+'-'+self.name)
 
 	def __str__(self):
-		return self.name
+		return self.service_type.name+'-'+self.name
 
 
 

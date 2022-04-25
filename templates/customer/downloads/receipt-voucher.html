@@ -125,7 +125,13 @@
           <span id="contact-text">Transaction ID</span>
           <span id="contact-number">{{payment_history.transaction_id|default_if_none:'-'}} </span>
         </div>
-        {% if payment_history.cheack_date %}
+        {% if payment_history.check_no %}
+        <div>
+          <span id="contact-text">Cheque No</span>
+          <span id="contact-number">{{payment_history.check_no}} </span>
+        </div>
+        {% endif %}
+        {% if payment_history.check_date %}
         <div>
           <span id="contact-text">Cheque Date</span>
           <span id="contact-number">{{payment_history.check_date}} </span>

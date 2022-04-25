@@ -4,7 +4,7 @@ from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,Shift
 from evaluator.models import Evaluation,EvaluationDetails
 from order.models import Promocode
 from bleachinventory.models import Line,Segment,Category,Attribute,AttributeValue,BundleItems,InventoryItem,ItemUnit,SupplierItems
-from bleachadmin.models import Settings
+from bleachadmin.models import Settings,ServiceProductivity,ServicePriceRange,Settings,ServiceAddOns
 from senior_team_leader.models import CleaningTeamMember
 
 class DiscountSettingSerializer(serializers.ModelSerializer):
@@ -45,7 +45,7 @@ class UsersListSerializer(serializers.ModelSerializer):
 class LeaveScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = LeaveSchedule
-        fields = ('id','staff','leave_date','leave_type')
+        fields = ('id','staff','leave_date','leave_type','bamboo_leave_id')
 
 class OccupiedMembersSerializer(serializers.ModelSerializer):
     class Meta:
@@ -281,9 +281,6 @@ class FollowupScheduleAPISerializer(serializers.ModelSerializer):
 		td['end_at'] 	= ((obj.end_at)+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
 		return(td)
 
-
-
-
 class FollowUpTeamAPISerializer(serializers.ModelSerializer):
     team_leader            = UserProfileShowSerializer(read_only=True)
     created_by             = UserProfileShowSerializer(read_only=True)
@@ -293,3 +290,15 @@ class FollowUpTeamAPISerializer(serializers.ModelSerializer):
     class Meta:
         model   = FollowUpTeam
         fields  = ('id','team_leader','created_by','followup_scheduler','followup_member_team')
+
+class ServicePriceRangeSerializer(serializers.ModelSerializer):
+    service_type = ServiceTypeShowSerializer(read_only=True)
+    class Meta:
+        model   = ServicePriceRange
+        fields  = ('__all__')
+
+class ServiceAddOnsSerializer(serializers.ModelSerializer):
+    service_type = ServiceTypeShowSerializer(read_only=True)
+    class Meta:
+        model   = ServiceAddOns
+        fields  = ('__all__')
