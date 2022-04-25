@@ -1402,13 +1402,13 @@ class CashCollect(IsAccountant,View):
 					
 					payment_data = {
 								"Invoice":{
-									"InvoiceID":order.invoice_no
+									"InvoiceNumber":order.invoice_no
 								},
 								"Account":{
 									"Code":"090"
 								},
 								"Date":"2009-09-08",
-								"Amount":"amount"
+								"Amount":amount
 								}
 
 					update_payment          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
