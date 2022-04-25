@@ -339,7 +339,7 @@ class Quatation(View):
 						order.evaluation.customer.save()
 
 	
-					order_evaluation_books         = EvaluationBook.objects.filter(evaluation_details__evaluation_id=evaluation_id)				
+					order_evaluation_books         = EvaluationBook.objects.filter(evaluation_details__evaluation__evaluation_id=evaluation_id)				
 					if evaluaation.payment_method == 'PREPAID':
 						##Invoice Data
 						InvoiceNumber             = str(order.invoice_no)
