@@ -1411,6 +1411,7 @@ class CashCollect(IsAccountant,View):
 														json=payment_data,
 														headers=header 
 													)
+					print(update_payment.json())
 
 		else:
 			messages.success(request,"Something Went Wrong")
