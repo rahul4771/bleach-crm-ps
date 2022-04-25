@@ -3318,7 +3318,11 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 						try:
 							store_item     = QuantityStoreDetails.objects.get(item_store=store,quantity_item=request_order_item.product)
 						except:
-							store_item     = None
+							store_item     = QuantityStoreDetails.objects.create(
+									item_store = store,
+									quantity_item = request_order_item.product,
+									quantity = 0
+									)
 						
 						if float(store_item.quantity) <= 0 or float(store_item.quantity) < float(request_order_item.item_count):
 							request_order_item.status    = 'Out Of Stock'
@@ -3351,7 +3355,7 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 								request_order_item.is_received             = True
 								request_order_item.save()
 								store_item.save()
-								
+																
 								ItemHistory.objects.create(
 								item = request_order_item.product,
 								item_action = 'ITEM REQUEST',
