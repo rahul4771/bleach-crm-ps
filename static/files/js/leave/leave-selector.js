@@ -647,7 +647,7 @@ function getUsers(){
 
 
 
-getLeave(moment().format('M-YYYY'));
+getLeave(currentMonth+'-'+currentYear);
 const urlSearchParams = new URLSearchParams(window.location.search);
 const params = Object.fromEntries(urlSearchParams.entries());
 if(Object.keys(params).length>0){
@@ -705,6 +705,7 @@ function resetLeaves(){
     }
 }
 function getLeave(current_date){
+    console.log(current_date,'curre')
     $('.lv-loader').show()
     var month=current_date.split('-')[0]
     var year=current_date.split('-')[1]
