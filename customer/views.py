@@ -292,6 +292,7 @@ class Quatation(View):
 						msg.attach_alternative(msg_html, "text/html")
 						msg.send(fail_silently=False)
 
+					###############################################################
 					#Xero Integration
 					xero                        = XeroConnection.objects.first()
 					##xero Update Access Token and Refresh Token
@@ -338,68 +339,63 @@ class Quatation(View):
 						order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
 						order.evaluation.customer.save()
 
-					#Xero Test Code
-					order_evaluation_books         = EvaluationBook.objects.filter(evaluation_details__evaluation__evaluation_id=evaluation_id)				
-					if evaluaation.payment_method == 'PREPAID':
-						##Invoice Data
-						InvoiceNumber             = str(order.invoice_no)
-
+					#Xero Invoice
+					if order.evaluation.payment_method == 'PREPAID':
+						##Invoice Line Item 
 						LineItems                 = []
-						for order_evaluation_book in order_evaluation_books:
-							LineItems.append({
-								"Description":order_evaluation_book.service_type.name,
-								"Quantity":"1",
-								"UnitAmount":order_evaluation_book.total_cost,
-								"AccountCode":1002,
-								"TaxType":"NONE"
-											}
-								)
-
 						LineItems.append({
-										"Description":"Discount",
-										"Quantity":"1",
-										"UnitAmount":-order.evaluation.discount,
-										"AccountCode":1001,
-										"TaxType":"NONE"
-												}
-								)
+							"Description":"ONE TIME SERVICE",
+							"Quantity":"1",
+							"UnitAmount":order.evaluation.total_cost,
+							"AccountCode":1002,
+							"TaxType":"NONE"
+										}
+							)
+						InvoiceNumber = order.invoice_no
 
-						invoice_data              = 	{
-														"Type":"ACCREC",
-														"Contact":{
-															"ContactID":order.evaluation.customer.xero_account_id
-														},
-														"Date":evaluaation.quatation_approved_date.strftime('%Y-%m-%d'),
-														"DueDate":evaluaation.quatation_approved_date.strftime('%Y-%m-%d'),
-														"LineAmountTypes":"NoTax",
-														"InvoiceNumber":InvoiceNumber,
-														"Reference":order.order_no,
-														"Status":"AUTHORISED",
-														"LineItems":LineItems
+					elif order.evaluation.payment_method == 'BREAKDOWN':
+						##Invoice Line Item 
+						LineItems                 = []
+						LineItems.append({
+							"Description":"ONE TIME SERVICE",
+							"Quantity":"1",
+							"UnitAmount":order.evaluation.before_cleaning_amount,
+							"AccountCode":1002,
+							"TaxType":"NONE"
+										}
+							)
+						InvoiceNumber = order.invoice_no+'A'
+
+					else:
+						pass
+
+					invoice_data              = 	{
+													"Type":"ACCREC",
+													"Contact":{
+														"ContactID":order.evaluation.customer.xero_account_id
+													},
+													"Date":evaluaation.quatation_approved_date.strftime('%Y-%m-%d'),
+													"DueDate":evaluaation.quatation_approved_date.strftime('%Y-%m-%d'),
+													"LineAmountTypes":"NoTax",
+													"InvoiceNumber":InvoiceNumber,
+													"Reference":order.order_no,
+													"Status":"AUTHORISED",
+													"LineItems":LineItems
+													}
+
+					##xero Create Invoice
+					header                      = {
+													'xero-tenant-id': xero.tenant_id,
+													'Authorization': 'Bearer '+access_token,
+													'Accept': 'application/json',
+													'Content-Type': 'application/json'
 														}
 
-						##xero Create Invoice
-						header                      = {
-														'xero-tenant-id': xero.tenant_id,
-														'Authorization': 'Bearer '+access_token,
-														'Accept': 'application/json',
-														'Content-Type': 'application/json'
-															}
-
-						create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
-																json=invoice_data,
-																headers=header 
-															).json()
-						
-						print(create_invoice)
-						
-						try:
-							created_invoice = create_invoice['Status']
-						except:
-							created_invoice = None
-
-						if created_invoice == 'OK':
-							print("success")
+					create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+															json=invoice_data,
+															headers=header 
+														).json()
+					###################################################################
 
 					#Redirect to Invoice
 					new_evaluation_id_encrypted = 'prw'+evaluation_id_encrypted[3:]
