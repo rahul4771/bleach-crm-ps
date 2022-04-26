@@ -516,8 +516,8 @@
 <script src="{% static 'files/js/order/main.js' %}"></script>
 <script id="rendered-js">
 
-var url = "https://my.bleachkw.com"
-
+{% comment %} var url = "https://my.bleachkw.com" {% endcomment %}
+var url = "http://127.0.0.1:8000"
 $('.footable').footable({
   calculateWidthOverride: function () {
     return { width: $(window).width() };
@@ -680,12 +680,14 @@ function send_items(){
     }).get();
     //alert(checkedVals.join(","));
     var selectedoptions = checkedVals.join(",");
-    console.log($('#subscription_topay_id').val(),$('#order_id').val(),"ops");
+    console.log(selectedoptions,$('#subscription_topay_id').val(),$('#order_id').val(),"ops");
 
-    var form_items = new FormData()
-    form_items.append('orderid',$('#order_id').val())
-    form_items.append('selectedoptions',selectedoptions)
-    form_items.append('subscription_topay',$('#subscription_topay_id').val())
+    var form_items = {
+      'orderid' : $('#order_id').val(),
+      'selectedoptions' : selectedoptions,
+      'subscription_topay' : $('#subscription_topay_id').val()
+    }
+
     axios.post(url+'/api/invoice-mail-sms/', form_items)
                 .then(function (response) {
                   if (response.data == true){

@@ -2865,10 +2865,8 @@ class InvoiceSMSMailAPI(APIView):
 		order_id = request.data.get('orderid')
 		subscription_topay = request.data.get('subscription_topay',None)
 		selected_options = request.data.get('selectedoptions')
-		print(order_id,selected_options,subscription_topay,"opr")
+		
 		options = selected_options.split(",")
-
-		print(options,"oid")
 
 		if subscription_topay:
 			Order.objects.filter(id=int(order_id)).update(subscription_topay=float(subscription_topay),subscription_topay_date=timezone.now())
