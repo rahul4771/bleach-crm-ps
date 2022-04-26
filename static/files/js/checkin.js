@@ -98,32 +98,22 @@ const app = new Vue({
     },
     submitform(cleaningteam_id,cleaningtype,cleaningpolicy,teamcount,remainingteamcount){
      
+     
+      var form_items = new FormData()
+      form_items.append('team_id',cleaningteam_id)
 
-      var cleaning_images = []
-      for(var i=0;i<this.imageData.length;i++){
-        cleaning_images.append('media',this.imageData[i].file);
-        }
-
-      
+    for(var i=0;i<this.imageData.length;i++){
+      form_items.append('media',this.imageData[i].file);
+      }
 
     if (cleaningtype == 'check-in'){
-
-      var form_items = {
-        'team_id':cleaningteam_id,
-        'media' : cleaning_images,
-        'check_in_notes' : $('#check_in_notes').val(),
-        'absent_list': this.absent_list,
-      }
+      form_items.append('check_in_notes',$('#check_in_notes').val())
+      form_items.append('absent_list',this.absent_list)
       var form_url = url+'/api/check-in/' ;
     }else{
-      var form_items = {
-        'team_id':cleaningteam_id,
-        'media' : cleaning_images,
-        'check_out_notes':$('#check_out_notes').val()
-      }
       var keynote_count = $('.keynote:checkbox').length;
       var checked_keynotes = $('.keynote:checkbox:checked').length;
-      
+      form_items.append('check_out_notes',$('#check_out_notes').val())
       console.log(keynote_count,checked_keynotes,"keyns")
 
       if (cleaningpolicy == 'SUBSCRIPTION'){
@@ -160,6 +150,8 @@ const app = new Vue({
       }
       
     };
+
+    console.log(form_items,"formitms")
      
     if (this.imageData.length > 0){
         axios.post(
@@ -193,31 +185,21 @@ const app = new Vue({
       var teamcount=this.cleaningData.teamcount
       var remainingteamcount=this.cleaningData.remainingteamcount
      
-      var cleaning_images = []
+      var form_items = new FormData()
+      form_items.append('team_id',cleaningteam_id)
+
     for(var i=0;i<this.imageData.length;i++){
-      cleaning_images.append('media',this.imageData[i].file);
+      form_items.append('media',this.imageData[i].file);
       }
 
     if (cleaningtype == 'check-in'){
-
-      var form_items = {
-        'team_id' : cleaningteam_id,
-        'media':cleaning_images,
-        'check_in_notes':$('#check_in_notes').val(),
-        'absent_list':this.absent_list
-      }
-
+      form_items.append('check_in_notes',$('#check_in_notes').val())
+      form_items.append('absent_list',this.absent_list)
       var form_url = url+'/api/check-in/' ;
     }else{
-      var form_items = {
-        'team_id' : cleaningteam_id,
-        'media':cleaning_images,
-        'check_out_notes':$('#check_out_notes').val()
-      }
-
       var keynote_count = $('.keynote:checkbox').length;
       var checked_keynotes = $('.keynote:checkbox:checked').length;
-      
+      form_items.append('check_out_notes',$('#check_out_notes').val())
       console.log(keynote_count,checked_keynotes,"keyns")
 
       if (cleaningpolicy == 'SUBSCRIPTION'){
