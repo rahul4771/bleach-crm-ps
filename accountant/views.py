@@ -1078,121 +1078,6 @@ class CashCollect(IsAccountant,View):
 					payment_history = PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='BANK',received_by=request.user,paid_date=payment_date,bank_name=bank_name,bank_no=bank_no,receipt_no=new_receipt_no)
 
 					messages.success(request,"Payment Received through Bank")
-				
-				# xero          = XeroConnection.objects.first()
-				# order         = Order.objects.select_related('evaluation__customer').get(id=order_id)
-				# #Update Access Token and Refresh Token
-				# header                      = {
-				# 								'Authorization': 'Basic '+xero.client_encoded,
-				# 								'Content-Type': 'application/x-www-form-urlencoded'
-				# 									}
-				# body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
-				# token_response              = requests.post('https://identity.xero.com/connect/token',
-				# 										data=body,
-				# 										headers=header 
-				# 									).json()
-				# access_token                = token_response['access_token']
-				# refresh_token               = token_response['refresh_token']
-
-				# xero.access_token  = access_token
-				# xero.refresh_token = refresh_token
-				# xero.save()
-
-				# ##Xero Contact
-				# if not cleaning_team_detail.order_scheduler.customer_address.customer.xero_account_id:
-
-				# 	##Xero Create Customer ID and Save
-				# 	contact_data                = {
-				# 									"Name":cleaning_team_detail.order_scheduler.customer_address.customer.name,
-				# 									"ContactNumber":cleaning_team_detail.order_scheduler.customer_address.customer.mobile_number,
-				# 									"EmailAddress":cleaning_team_detail.order_scheduler.customer_address.customer.email,
-				# 									"ContactStatus":"ACTIVE",
-				# 									"IsCustomer":True,
-				# 									"DefaultCurrency":"KWD"
-				# 												}
-													
-				# 	header                      = {
-				# 								'xero-tenant-id': xero.tenant_id,
-				# 								'Authorization': 'Bearer '+access_token,
-				# 								'Accept': 'application/json',
-				# 								'Content-Type': 'application/json'
-				# 									}
-
-				# 	create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
-				# 											json=contact_data,
-				# 											headers=header 
-				# 										).json()
-
-				# 	order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
-				# 	order.evaluation.customer.save() 
-
-				# #Xero Transaction
-				# header                      = {
-				# 							'xero-tenant-id': xero.tenant_id,
-				# 							'Authorization': 'Bearer '+access_token,
-				# 							'Accept': 'application/json',
-				# 							'Content-Type': 'application/json'
-				# 								}
-
-				# #Seperate Code For Bank Transactions and Other Transactions
-				# if payment_method == 'BANK':
-				# 	##Transaction Data
-				# 	transaction_data            = {
-				# 									"Type": "RECEIVE-OVERPAYMENT",
-				# 									"Reference": order.evaluation.evaluation_id,
-				# 									"Date":datetime.strftime(payment_date,'%Y-%m-%d'),
-				# 									"Contact": {
-				# 										"ContactID": order.evaluation.customer.xero_account_id,
-				# 									},
-				# 									"LineItems": [{
-				# 										"Description": payment_method,
-				# 										"UnitAmount": amount,
-				# 										"AccountCode": "610",
-				# 										"TaxType":"NONE"
-				# 									}],
-				# 									"BankAccount": {
-				# 										"Code": "1201023"
-				# 									}
-				# 									}
-													
-				# 	update_transaction          = requests.post('https://api.xero.com/api.xro/2.0/BankTransactions',
-				# 											json=transaction_data,
-				# 											headers=header 
-				# 										)
-									
-				# else:
-				# 	transaction_data            = {
-				# 									"Type": "RECEIVE-OVERPAYMENT",
-				# 									"Reference": order.evaluation.evaluation_id,
-				# 									"Date":datetime.strftime(payment_date,'%Y-%m-%d'),
-				# 									"Contact": {
-				# 										"ContactID": order.evaluation.customer.xero_account_id,
-				# 									},
-				# 									"LineItems": [{
-				# 										"Description": payment_method,
-				# 										"UnitAmount": amount,
-				# 										"AccountCode": "610",
-				# 										"TaxType":"NONE"
-				# 									}],
-				# 									"BankAccount": {
-				# 										"Code": "1201010"
-				# 									}
-				# 									}
-													
-				# 	update_transaction          = requests.post('https://api.xero.com/api.xro/2.0/BankTransactions',
-				# 											json=transaction_data,
-				# 											headers=header 
-				# 										)
-
-				# try:
-				# 	created_transaction = update_transaction['Status']
-				# except:
-				# 	created_transaction = None
-
-				# if created_transaction == 'OK':
-				# 	payment_history.is_xero_marked = True
-				# 	payment_history.save()
-
 			else:
 				payment_method = request.POST.get('payment_method')
 				amount       = request.POST.get('amount')
@@ -1343,6 +1228,40 @@ class CashCollect(IsAccountant,View):
 							xero_invoice.paid_date = payment_date
 							xero_invoice.save()
 
+				if payment_policy == 'SUBSCRIPTION':
+					try:
+						xero_invoice = XeroInvoice.objects.filter(order=order,payment_policy=payment_policy,is_paid=False).last()
+					except:
+						xero_invoice = None
+
+					if xero_invoice:
+						payment_data = {
+									"Invoice":{
+										"InvoiceNumber":xero_invoice.invoice_no
+									},
+									"Account":{
+										"Code":"090"
+									},
+									"Date":payment_date_string,
+									"Amount":amount
+									}
+
+						update_payment          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
+															json=payment_data,
+															headers=header 
+														).json()
+
+
+						try:
+							created_payment = update_payment['Status']
+						except:
+							created_payment = None
+
+						if created_payment == 'OK':
+							xero_invoice.is_paid   = True
+							xero_invoice.paid_date = payment_date
+							xero_invoice.save()
+					
 					
 				########################################################################################
 
