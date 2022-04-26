@@ -2862,7 +2862,7 @@ class InvoiceSMSMailAPI(APIView):
 
 	def post(self,request):
 		data = False
-		print(request.POST.get('subscription_topay'),"subscription to pay")
+		print(request.data,"Data")
 		subscription_topay = request.data.get('subscription_topay',None)
 		selected_options   = request.data.get('selectedoptions')
 		try:
