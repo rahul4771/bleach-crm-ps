@@ -1306,7 +1306,7 @@ class CashCollect(IsAccountant,View):
 													}
 
 				payment_date        = payment_date.date()
-				payment_date_string = datetime.strptime(payment_date,'%Y-%m-%d')
+				payment_date_string = datetime.strftime(payment_date,'%Y-%m-%d')
 
 				if payment_policy == 'PREPAID' or payment_policy == 'POSTPAID' or payment_policy == 'BEFORE CLEANING' or payment_policy == 'AFTER CLEANING':
 					
