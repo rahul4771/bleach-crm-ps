@@ -565,7 +565,7 @@ class SubscriptionQuatation(View):
 			##Invoice Line Item 
 			LineItems        = []
 			LineItems.append({
-				"Description":"ONE TIME SERVICE",
+				"Description":"SUBSCRIPTION",
 				"Quantity":"1",
 				"UnitAmount":Amount,
 				"AccountCode":1002,

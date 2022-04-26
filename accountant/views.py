@@ -547,11 +547,11 @@ class ActiveSubscriptions(IsAccountant,View):
 			order.evaluation.customer.save()
 
 		#Xero Invoice
-		Amount = order.subscription_topay 
+		Amount = subscription_topay
 		##Invoice Line Item 
 		LineItems        = []
 		LineItems.append({
-			"Description":"ONE TIME SERVICE",
+			"Description":"SUBSCRIPTION",
 			"Quantity":"1",
 			"UnitAmount":Amount,
 			"AccountCode":1002,
