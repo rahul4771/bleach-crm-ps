@@ -2982,7 +2982,7 @@ class InvoiceSMSMailAPI(APIView):
 			
 			print(created_invoice)
 			if created_invoice == 'OK':
-				XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
+				XeroInvoice.objects.get_or_create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 			###################################################################################################################################
 		
 		if selected_options:
