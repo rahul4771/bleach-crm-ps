@@ -99,27 +99,31 @@ const app = new Vue({
     submitform(cleaningteam_id,cleaningtype,cleaningpolicy,teamcount,remainingteamcount){
      
 
-      var cleaning_images = []
-      for(var i=0;i<this.imageData.length;i++){
-        cleaning_images.push(this.imageData[i].file);
-        }
-
-
     if (cleaningtype == 'check-in'){
 
       var form_items = {
         'team_id':cleaningteam_id,
-        'media' : cleaning_images,
         'check_in_notes' : $('#check_in_notes').val(),
         'absent_list': this.absent_list,
+      }
+
+      for(var i=0;i<this.imageData.length;i++){
+
+        form_items.append('media',this.imageData[i].file)
+        
       }
       var form_url = url+'/api/check-in/' ;
     }else{
 
       var form_items = {
         'team_id':cleaningteam_id,
-        'media' : cleaning_images,
         'check_out_notes':$('#check_out_notes').val()
+      }
+
+      for(var i=0;i<this.imageData.length;i++){
+
+        form_items.append('media',this.imageData[i].file)
+        
       }
 
       var keynote_count = $('.keynote:checkbox').length;
@@ -200,25 +204,32 @@ const app = new Vue({
       var teamcount=this.cleaningData.teamcount
       var remainingteamcount=this.cleaningData.remainingteamcount
 
-      var cleaning_images = []
-      for(var i=0;i<this.imageData.length;i++){
-        cleaning_images.push(this.imageData[i].file);
-        }
+      
 
     if (cleaningtype == 'check-in'){
       var form_items = {
         'team_id' : cleaningteam_id,
-        'media':cleaning_images,
         'check_in_notes':$('#check_in_notes').val(),
         'absent_list':this.absent_list
+      }
+
+      for(var i=0;i<this.imageData.length;i++){
+
+        form_items.append('media',this.imageData[i].file)
+        
       }
 
       var form_url = url+'/api/check-in/' ;
     }else{
       var form_items = {
         'team_id' : cleaningteam_id,
-        'media':cleaning_images,
         'check_out_notes':$('#check_out_notes').val()
+      }
+
+      for(var i=0;i<this.imageData.length;i++){
+
+        form_items.append('media',this.imageData[i].file)
+        
       }
 
       var keynote_count = $('.keynote:checkbox').length;
