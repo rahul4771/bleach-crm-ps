@@ -598,5 +598,5 @@ class XeroInvoice(models.Model):
 		return str(self.order)
 
 	def __str__(self):
-		return self.order
+		return self.order.order_no
 
