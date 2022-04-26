@@ -2144,7 +2144,7 @@ class CheckInAPI(APIView):
 		cleaning_team_detail.order_scheduler.save()
 
 		#To Save Media
-		medias = request.FILES.getlist('media')
+		medias = request.FILES.get('media')
 		if not medias==['']:
 			for media in medias:
 				CleaningTeamMedia.objects.create(
@@ -2236,7 +2236,7 @@ class CheckOutAPI(APIView):
 		cleaning_team_detail.order_scheduler.order.save()	
 
 		#To Save Media
-		medias = request.FILES.getlist('media')
+		medias = request.FILES.get('media')
 		if not medias==['']:
 			for media in medias:
 				CleaningTeamMedia.objects.create(
