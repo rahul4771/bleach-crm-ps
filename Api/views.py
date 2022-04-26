@@ -2404,8 +2404,8 @@ class CheckOutAPI(APIView):
 												"Contact":{
 													"ContactID":order_data.evaluation.customer.xero_account_id
 												},
-												"Date":evaluaation.quatation_approved_date.strftime('%Y-%m-%d'),
-												"DueDate":evaluaation.quatation_approved_date.strftime('%Y-%m-%d'),
+												"Date":order_data.evaluation.quatation_approved_date.strftime('%Y-%m-%d'),
+												"DueDate":order_data.evaluation.quatation_approved_date.strftime('%Y-%m-%d'),
 												"LineAmountTypes":"NoTax",
 												"InvoiceNumber":InvoiceNumber,
 												"Reference":order_data.order_no,
