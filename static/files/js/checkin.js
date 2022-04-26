@@ -165,23 +165,27 @@ const app = new Vue({
     console.log(form_items,"formitms")
      
     if (this.imageData.length > 0){
-        axios.post(
-          form_url, form_items
+
+      console.log(cleaning_images,"testdata")
+      console.log(form_items,"form itesmss")
+
+      //   axios.post(
+      //     form_url, form_items
         
-       )
-       .then((response) => {
+      //  )
+      //  .then((response) => {
          
-         console.log(response)
-         if (response.data.success == true){
-          window.location.href='/tl/dashboard/?my_cleaning_calendar_date='+response.data.cleaning_date+'';
-         }
+      //    console.log(response)
+      //    if (response.data.success == true){
+      //     window.location.href='/tl/dashboard/?my_cleaning_calendar_date='+response.data.cleaning_date+'';
+      //    }
        
         
-       })
-        .catch((error) => {
-         console.log(error,"rok");
+      //  })
+      //   .catch((error) => {
+      //    console.log(error,"rok");
        
-       });
+      //  });
 
       }else{
         alert("Please add before cleaning images !")
@@ -258,23 +262,26 @@ const app = new Vue({
     };
      
     if (this.imageData.length > 0){
-        axios.post(
-          form_url, form_items
+      console.log(cleaning_images,"testdata")
+      console.log(form_items,"form itesmss")
+
+      //   axios.post(
+      //     form_url, form_items
         
-       )
-       .then((response) => {
+      //  )
+      //  .then((response) => {
          
-         console.log(response)
-         if (response.data.success == true){
-          window.location.href='/tl/dashboard/?my_cleaning_calendar_date='+response.data.cleaning_date+'';
-         }
+      //    console.log(response)
+      //    if (response.data.success == true){
+      //     window.location.href='/tl/dashboard/?my_cleaning_calendar_date='+response.data.cleaning_date+'';
+      //    }
        
         
-       })
-        .catch((error) => {
-         console.log(error,"rok");
+      //  })
+      //   .catch((error) => {
+      //    console.log(error,"rok");
        
-       });
+      //  });
 
       }else{
         alert("Please add before cleaning images !")
