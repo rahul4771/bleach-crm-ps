@@ -1318,7 +1318,7 @@ class CashCollect(IsAccountant,View):
 					if xero_invoice:
 						payment_data = {
 									"Invoice":{
-										"InvoiceNumber":order.invoice_no
+										"InvoiceNumber":xero_invoice.invoice_no
 									},
 									"Account":{
 										"Code":"090"
@@ -1331,6 +1331,8 @@ class CashCollect(IsAccountant,View):
 															json=payment_data,
 															headers=header 
 														).json()
+
+						print(update_payment)
 
 						try:
 							created_payment = update_payment['Status']
