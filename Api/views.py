@@ -2862,14 +2862,14 @@ class InvoiceSMSMailAPI(APIView):
 
 	def post(self,request):
 		data = False
-		
+		print(request.POST.get('subscription_topay'),"subscription to pay")
 		subscription_topay = request.data.get('subscription_topay',None)
 		selected_options   = request.data.get('selectedoptions')
 		try:
 			options        = selected_options.split(",")
 		except:
 			options        = None
-		print(options,"options")
+
 		order_id           = request.data.get('orderid')
 		order              = Order.objects.filter(id=int(order_id)).first()
 
