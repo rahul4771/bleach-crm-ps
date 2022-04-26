@@ -406,7 +406,14 @@ class Quatation(View):
 						created_invoice = None
 					
 					if created_invoice == 'OK':
-						XeroInvoice.objects.get_or_create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
+						try:
+							update_xero_invoice                  = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
+							update_xero_invoice.amount           = Amount
+							update_xero_invoice.xero_marked_date = timezone.now().date()
+							update_xero_invoice.payment_policy   = payment_policy
+							update_xero_invoice.save()
+						except:
+							XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 
 					###################################################################
 
@@ -671,7 +678,14 @@ class SubscriptionQuatation(View):
 						created_invoice = None
 					
 					if created_invoice == 'OK':
-						XeroInvoice.objects.get_or_create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
+						try:
+							update_xero_invoice                  = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
+							update_xero_invoice.amount           = Amount
+							update_xero_invoice.xero_marked_date = timezone.now().date()
+							update_xero_invoice.payment_policy   = payment_policy
+							update_xero_invoice.save()
+						except:
+							XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 
 				###################################################################
 				return redirect('customer:subscriptioninvoice',evaluation_id_encrypted)
