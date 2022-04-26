@@ -1305,7 +1305,7 @@ class CashCollect(IsAccountant,View):
 												'Content-Type': 'application/json'
 													}
 
-				payment_date        = datetime.strptime(request.POST.get('collection_date'),'%d/%m/%Y')
+				payment_date        = payment_date.date()
 				payment_date_string = datetime.strptime(payment_date,'%Y-%m-%d')
 
 				if payment_policy == 'PREPAID' or payment_policy == 'POSTPAID' or payment_policy == 'BEFORE CLEANING' or payment_policy == 'AFTER CLEANING':
