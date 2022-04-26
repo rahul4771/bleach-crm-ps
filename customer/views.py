@@ -26,7 +26,7 @@ from django.contrib import messages
 from bleachinventory.models import PurchaseOrder,PurchaseOrderItems,CheckOutItems,RequestOrder,RequestOrderItems
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType,EvaluationSectionAddons
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,Promocode,CancellOrderAmountHistory
+from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,Promocode,CancellOrderAmountHistory,XeroInvoice
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
@@ -292,6 +292,7 @@ class Quatation(View):
 						msg.attach_alternative(msg_html, "text/html")
 						msg.send(fail_silently=False)
 
+					###############################################################
 					#Xero Integration
 					xero                        = XeroConnection.objects.first()
 					##xero Update Access Token and Refresh Token
@@ -338,68 +339,83 @@ class Quatation(View):
 						order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
 						order.evaluation.customer.save()
 
-					#Xero Test Code
-					order_evaluation_books         = EvaluationBook.objects.filter(evaluation_details__evaluation__evaluation_id=evaluation_id)				
-					if evaluaation.payment_method == 'PREPAID':
-						##Invoice Data
-						InvoiceNumber             = str(order.invoice_no)
-
+					#Xero Invoice
+					if order.evaluation.payment_method == 'PREPAID':
+						Amount = order.evaluation.total_cost 
+						##Invoice Line Item 
 						LineItems                 = []
-						for order_evaluation_book in order_evaluation_books:
-							LineItems.append({
-								"Description":order_evaluation_book.service_type.name,
-								"Quantity":"1",
-								"UnitAmount":order_evaluation_book.total_cost,
-								"AccountCode":1002,
-								"TaxType":"NONE"
-											}
-								)
-
 						LineItems.append({
-										"Description":"Discount",
-										"Quantity":"1",
-										"UnitAmount":-order.evaluation.discount,
-										"AccountCode":1001,
-										"TaxType":"NONE"
-												}
-								)
+							"Description":"ONE TIME SERVICE",
+							"Quantity":"1",
+							"UnitAmount":Amount,
+							"AccountCode":1002,
+							"TaxType":"NONE"
+										}
+							)
+						InvoiceNumber  = order.invoice_no
 
-						invoice_data              = 	{
-														"Type":"ACCREC",
-														"Contact":{
-															"ContactID":order.evaluation.customer.xero_account_id
-														},
-														"Date":evaluaation.quatation_approved_date.strftime('%Y-%m-%d'),
-														"DueDate":evaluaation.quatation_approved_date.strftime('%Y-%m-%d'),
-														"LineAmountTypes":"NoTax",
-														"InvoiceNumber":InvoiceNumber,
-														"Reference":order.order_no,
-														"Status":"AUTHORISED",
-														"LineItems":LineItems
+						payment_policy = 'PREPAID'
+					elif order.evaluation.payment_method == 'BREAKDOWN':
+						
+						Amount = order.evaluation.before_cleaning_amount 
+						##Invoice Line Item 
+						LineItems                 = []
+						LineItems.append({
+							"Description":"ONE TIME SERVICE",
+							"Quantity":"1",
+							"UnitAmount":Amount,
+							"AccountCode":1002,
+							"TaxType":"NONE"
+										}
+							)
+						InvoiceNumber  = order.invoice_no+'A'
+						
+						payment_policy = 'BEFORE CLEANING'
+					else:
+						pass
+
+					invoice_data              = 	{
+													"Type":"ACCREC",
+													"Contact":{
+														"ContactID":order.evaluation.customer.xero_account_id
+													},
+													"Date":evaluaation.quatation_approved_date.strftime('%Y-%m-%d'),
+													"DueDate":evaluaation.quatation_approved_date.strftime('%Y-%m-%d'),
+													"LineAmountTypes":"NoTax",
+													"InvoiceNumber":InvoiceNumber,
+													"Reference":order.order_no,
+													"Status":"AUTHORISED",
+													"LineItems":LineItems
+													}
+
+					##xero Create Invoice
+					header                      = {
+													'xero-tenant-id': xero.tenant_id,
+													'Authorization': 'Bearer '+access_token,
+													'Accept': 'application/json',
+													'Content-Type': 'application/json'
 														}
 
-						##xero Create Invoice
-						header                      = {
-														'xero-tenant-id': xero.tenant_id,
-														'Authorization': 'Bearer '+access_token,
-														'Accept': 'application/json',
-														'Content-Type': 'application/json'
-															}
-
-						create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
-																json=invoice_data,
-																headers=header 
-															).json()
-						
-						print(create_invoice)
-						
+					create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+															json=invoice_data,
+															headers=header 
+														).json()
+					try:
+						created_invoice = create_invoice['Status']
+					except:
+						created_invoice = None
+					
+					if created_invoice == 'OK':
 						try:
-							created_invoice = create_invoice['Status']
+							update_xero_invoice                  = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
+							update_xero_invoice.amount           = Amount
+							update_xero_invoice.xero_marked_date = timezone.now().date()
+							update_xero_invoice.payment_policy   = payment_policy
+							update_xero_invoice.save()
 						except:
-							created_invoice = None
+							XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 
-						if created_invoice == 'OK':
-							print("success")
+					###################################################################
 
 					#Redirect to Invoice
 					new_evaluation_id_encrypted = 'prw'+evaluation_id_encrypted[3:]
@@ -565,6 +581,113 @@ class SubscriptionQuatation(View):
 
 						scheduler.save()
 
+				###############################################################
+				#If Advance Amount Integrate with Xero
+				if order.subscription_topay > 0:
+					#Xero Integration
+					xero                        = XeroConnection.objects.first()
+					##xero Update Access Token and Refresh Token
+					header                      = {
+													'Authorization': 'Basic '+xero.client_encoded,
+													'Content-Type': 'application/x-www-form-urlencoded'
+														}
+					body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
+					token_response              = requests.post('https://identity.xero.com/connect/token',
+															data=body,
+															headers=header 
+														).json()
+					access_token                = token_response['access_token']
+					refresh_token               = token_response['refresh_token']
+
+					xero.access_token  = access_token
+					xero.refresh_token = refresh_token
+					xero.save()
+
+					##Xero Contact
+					if not order.evaluation.customer.xero_account_id:
+						##Xero Create Customer ID and Save
+						contact_data                = {
+														"Name":order.evaluation.customer.name,
+														"ContactNumber":order.evaluation.customer.mobile_number,
+														"EmailAddress":order.evaluation.customer.email,
+														"ContactStatus":"ACTIVE",
+														"IsCustomer":True,
+														"DefaultCurrency":"KWD"
+																	}
+														
+						header                      = {
+													'xero-tenant-id': xero.tenant_id,
+													'Authorization': 'Bearer '+access_token,
+													'Accept': 'application/json',
+													'Content-Type': 'application/json'
+														}
+
+						create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
+																json=contact_data,
+																headers=header 
+															).json()
+
+						order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
+						order.evaluation.customer.save()
+
+					#Xero Invoice
+					Amount = order.subscription_topay 
+					##Invoice Line Item 
+					LineItems        = []
+					LineItems.append({
+						"Description":"SUBSCRIPTION",
+						"Quantity":"1",
+						"UnitAmount":Amount,
+						"AccountCode":1002,
+						"TaxType":"NONE"
+									}
+						)
+					InvoiceNumber  = order.invoice_no+'A'
+
+					payment_policy = 'SUBSCRIPTION'
+
+					invoice_data        = 	{
+												"Type":"ACCREC",
+												"Contact":{
+													"ContactID":order.evaluation.customer.xero_account_id
+												},
+												"Date":order.evaluation.quatation_approved_date.strftime('%Y-%m-%d'),
+												"DueDate":order.evaluation.quatation_approved_date.strftime('%Y-%m-%d'),
+												"LineAmountTypes":"NoTax",
+												"InvoiceNumber":InvoiceNumber,
+												"Reference":order.order_no,
+												"Status":"AUTHORISED",
+												"LineItems":LineItems
+											}
+
+					##xero Create Invoice
+					header                      = {
+													'xero-tenant-id': xero.tenant_id,
+													'Authorization': 'Bearer '+access_token,
+													'Accept': 'application/json',
+													'Content-Type': 'application/json'
+														}
+
+					create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+															json=invoice_data,
+															headers=header 
+														).json()
+					try:
+						created_invoice = create_invoice['Status']
+					except:
+						created_invoice = None
+					
+					if created_invoice == 'OK':
+						try:
+							update_xero_invoice                  = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
+							update_xero_invoice.amount           = Amount
+							update_xero_invoice.xero_marked_date = timezone.now().date()
+							update_xero_invoice.payment_policy   = payment_policy
+							update_xero_invoice.save()
+						except:
+							XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
+
+				###################################################################
 				return redirect('customer:subscriptioninvoice',evaluation_id_encrypted)
 			
 			else:
