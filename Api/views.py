@@ -2379,6 +2379,8 @@ class CheckOutAPI(APIView):
 						)
 					InvoiceNumber = order.invoice_no
 
+					payment_policy = 'POSTPAID'
+
 				elif order.evaluation.payment_method == 'BREAKDOWN':
 					Amount = order.evaluation.after_cleaning_amount
 					##Invoice Line Item 
@@ -2391,7 +2393,9 @@ class CheckOutAPI(APIView):
 						"TaxType":"NONE"
 									}
 						)
-					InvoiceNumber = order.invoice_no+'B'
+					InvoiceNumber  = order.invoice_no+'B'
+
+					payment_policy = 'AFTER CLEANING'
 				else:
 					pass
 
@@ -2428,7 +2432,7 @@ class CheckOutAPI(APIView):
 					created_invoice = None
 
 				if created_invoice == 'OK':
-					XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date())
+					XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 					
 			###################################################################
 

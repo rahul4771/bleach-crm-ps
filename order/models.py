@@ -573,11 +573,20 @@ class Promocode(models.Model):
 	def __str__(self):
 		return self.promocode
 
+PAYMENT_POLICIES = (
+	('PREPAID','PREPAID'),
+	('POSTPAID','POSTPAID'),
+	('BEFORE CLEANING','BEFORE CLEANING'),
+	('ORDER_CANCELLED','AFTER CLEANING'),
+	('SUBSCRIPTION','SUBSCRIPTION')
+	)
+
 class XeroInvoice(models.Model):
 	order               = models.ForeignKey('Order',blank=False,null=False,related_name='xero_invoices_order')
 	invoice_no          = models.CharField(max_length=500,blank=False,null=False)
 	amount              = models.FloatField(blank=True,null=True)
 	xero_marked_date    = models.DateField(blank=True,null=True)
+	payment_policy      = models.CharField(max_length=100,blank=True,null=True,choices=PAYMENT_POLICIES)
 	is_paid             = models.BooleanField(null=False,blank=True,default=False)
 	paid_date  	        = models.DateField(blank=True,null=True)
 

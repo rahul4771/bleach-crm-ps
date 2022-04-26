@@ -352,9 +352,11 @@ class Quatation(View):
 							"TaxType":"NONE"
 										}
 							)
-						InvoiceNumber = order.invoice_no
+						InvoiceNumber  = order.invoice_no
 
+						payment_policy = 'PREPAID'
 					elif order.evaluation.payment_method == 'BREAKDOWN':
+						
 						Amount = order.evaluation.before_cleaning_amount 
 						##Invoice Line Item 
 						LineItems                 = []
@@ -366,8 +368,9 @@ class Quatation(View):
 							"TaxType":"NONE"
 										}
 							)
-						InvoiceNumber = order.invoice_no+'A'
-
+						InvoiceNumber  = order.invoice_no+'A'
+						
+						payment_policy = 'BEFORE CLEANING'
 					else:
 						pass
 
@@ -403,7 +406,7 @@ class Quatation(View):
 						created_invoice = None
 					
 					if created_invoice == 'OK':
-						XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date())
+						XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 
 					###################################################################
 
