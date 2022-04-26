@@ -600,15 +600,15 @@
  </div><!--commnDiv-border--> 
 <br>
 <div>
-  {% if cleaning_team_detail.order_scheduler.items_collected == False %}
+  {% comment %} {% if cleaning_team_detail.order_scheduler.items_collected == False %}
   <button class="sent-button collect_item" type="button"  onclick="openNavAddStore()">Collect Items</button>
   {% else %}
   <button class="sent-button item_collected" type="button" >Items Collected</button>
   {% endif %}
 
   <button class="sent-button item_collected" type="button" hidden>Items Collected</button>
-</div>
-    <br><br>
+</div>{% endcomment %}
+    <br><br> 
 
 
     <div class="checklist">
