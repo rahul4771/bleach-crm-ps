@@ -453,6 +453,7 @@ class ActiveSubscriptions(IsAccountant,View):
 		return render(request,'accountant/subscription/active_subscriptions.html',{"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"subscriptions":subscriptions})
 
 	def post(self,request):
+		print("hiiiiiiiiiii")
 		order_id            = request.POST.get('order')
 		subscription_topay  = float(request.POST.get('subscription_topay'))
 
@@ -498,7 +499,7 @@ class ActiveSubscriptions(IsAccountant,View):
 			last_invoice_no[-1]= chr(ord(last_invoice_no[-1])+1)
 			InvoiceNumber      = last_invoice_no
 		else:
-			InvoiceNumber = order.invoice_no+'A'
+			InvoiceNumber      = order.invoice_no+'A'
 		
 		#Xero Integration
 		xero                        = XeroConnection.objects.first()
@@ -592,6 +593,7 @@ class ActiveSubscriptions(IsAccountant,View):
 		except:
 			created_invoice = None
 		
+		print(created_invoice)
 		if created_invoice == 'OK':
 			XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 		###################################################################################################################################
