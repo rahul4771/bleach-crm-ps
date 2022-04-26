@@ -2432,7 +2432,7 @@ class CheckOutAPI(APIView):
 					created_invoice = None
 
 				if created_invoice == 'OK':
-					XeroInvoice.objects.create(order=order_data,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
+					XeroInvoice.objects.get_or_create(order=order_data,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 					
 			###################################################################
 
