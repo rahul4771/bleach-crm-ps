@@ -2104,7 +2104,7 @@ class SectionVerificationUpdationAPI(APIView):
 		return Response(response_dict,HTTP_200_OK)	
 
 class CheckInAPI(APIView):
-	permission_classes  	=   (AllowAny,)
+	permission_classes  	= (AllowAny,)
 	authentication_classes  = ()
 
 	def post(self,request):
@@ -2113,6 +2113,9 @@ class CheckInAPI(APIView):
 
 		team_id        = request.data.get('team_id')
 		check_in_notes = request.data.get('check_in_notes')
+
+		
+		print(request,"reqdata2")
 
 		try:
 			cleaning_team_detail = CleaningTeam.objects.select_related('order_scheduler__order').get(is_active=True,id=team_id)
@@ -2144,9 +2147,12 @@ class CheckInAPI(APIView):
 		cleaning_team_detail.order_scheduler.save()
 
 		#To Save Media
-		medias = request.FILES.get('media')
+		medias = request.FILES.getlist('media')
+		print(medias,"ilist")
+		
 		if not medias==['']:
 			for media in medias:
+				print(media,"ilist")
 				CleaningTeamMedia.objects.create(
 						team_id=team_id,
 						media=media,
@@ -2236,7 +2242,8 @@ class CheckOutAPI(APIView):
 		cleaning_team_detail.order_scheduler.order.save()	
 
 		#To Save Media
-		medias = request.FILES.get('media')
+		medias = request.FILES.getlist('media')
+		print(medias,"medis")
 		if not medias==['']:
 			for media in medias:
 				CleaningTeamMedia.objects.create(

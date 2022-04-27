@@ -153,6 +153,7 @@ MEDIA_URL   = '/media/'
 MEDIA_ROOT  = local_settings.media_root
 STATIC_URL = '/static/'
 
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
