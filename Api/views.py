@@ -2895,18 +2895,24 @@ class InvoiceSMSMailAPI(APIView):
 			data=True
 
 			######################################################################################
-			#Advance Amount Integrate with Xero
+			#Invoice Send Amount Integrate with Xero
 			try:
-				last_invoice = XeroInvoice.objects.filter(is_paid=False,order=order).last()
+				last_unpaid_invoice = XeroInvoice.objects.filter(is_paid=False,order=order).last()
 			except:
-				last_invoice = None
+				last_unpaid_invoice = None
 
-			if last_invoice:
-				last_invoice_no    = last_invoice.invoice_no
-				last_invoice_no[-1]= chr(ord(last_invoice_no[-1])+1)
-				InvoiceNumber      = last_invoice_no
+			if last_unpaid_invoice:
+				InvoiceNumber      = last_unpaid_invoice.invoice_no
 			else:
-				InvoiceNumber      = order.invoice_no+'A'
+				try:
+					last_paid_invoice = XeroInvoice.objects.filter(is_paid=True,order=order).last()
+				except:
+					last_paid_invoice = None
+				
+				if last_paid_invoice:
+					last_paid_invoice_no    = last_paid_invoice.invoice_no
+					last_paid_invoice[-1]   = chr(last_paid_invoice[-1]+1)
+					InvoiceNumber           = last_paid_invoice
 			
 			#Xero Integration
 			xero                        = XeroConnection.objects.first()
