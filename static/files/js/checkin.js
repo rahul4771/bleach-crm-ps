@@ -245,8 +245,7 @@ const app = new Vue({
       axios({
         method: "post",
         url: form_url,
-        data: form_items,
-        headers: { "Content-Type": "multipart/form-data" },
+        data: form_items
       }).then((response) => {
          
          console.log(response)
