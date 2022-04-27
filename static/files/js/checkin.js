@@ -151,7 +151,7 @@ const app = new Vue({
       
     };
      
-    if (this.imageData.length > 0){
+    // if (this.imageData.length > 0){
       for (var value of form_items.values()) {
         console.log(value,"value22");
      }
@@ -173,9 +173,9 @@ const app = new Vue({
        
        });
 
-      }else{
-        alert("Please add before cleaning images !")
-      }
+      // }else{
+      //   alert("Please add before cleaning images !")
+      // }
 
   },
 
