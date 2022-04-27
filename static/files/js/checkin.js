@@ -236,6 +236,9 @@ const app = new Vue({
     };
      
     if (this.imageData.length > 0){
+      for (var value of form_items.values()) {
+        console.log(value,"value22");
+     }
       axios({
         method: "post",
         url: form_url,
