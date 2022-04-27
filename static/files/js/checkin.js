@@ -102,9 +102,9 @@ const app = new Vue({
       var form_items = new FormData()
       form_items.append('team_id',cleaningteam_id)
 
-    // for(var i=0;i<this.imageData.length;i++){
-    //   form_items.append('media',this.imageData[i].file);
-    //   }
+    for(var i=0;i<this.imageData.length;i++){
+      form_items.append('media',this.imageData[i].file);
+      }
 
     if (cleaningtype == 'check-in'){
       form_items.append('check_in_notes',$('#check_in_notes').val())
@@ -151,7 +151,7 @@ const app = new Vue({
       
     };
      
-    // if (this.imageData.length > 0){
+    if (this.imageData.length > 0){
       for (var value of form_items.values()) {
         console.log(value,"value22");
      }
@@ -173,9 +173,9 @@ const app = new Vue({
        
        });
 
-      // }else{
-      //   alert("Please add before cleaning images !")
-      // }
+      }else{
+        alert("Please add before cleaning images !")
+      }
 
   },
 
