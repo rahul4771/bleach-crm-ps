@@ -155,10 +155,12 @@ const app = new Vue({
       for (var value of form_items.values()) {
         console.log(value,"value22");
      }
-        axios.post(
-          form_url, form_items
-        
-       )
+     axios({
+      method: "post",
+      url: form_url,
+      data: form_items,
+      headers: {'content-type': 'multipart/form-data'}
+    }) 
        .then((response) => {
          
          console.log(response)
@@ -245,7 +247,8 @@ const app = new Vue({
       axios({
         method: "post",
         url: form_url,
-        data: form_items
+        data: form_items,
+        headers: {'content-type': 'multipart/form-data'}
       }).then((response) => {
          
          console.log(response)
