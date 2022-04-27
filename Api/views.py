@@ -2911,8 +2911,8 @@ class InvoiceSMSMailAPI(APIView):
 				
 				if last_paid_invoice:
 					last_paid_invoice_no    = last_paid_invoice.invoice_no
-					last_paid_invoice_no[-1]   = chr(last_paid_invoice[-1]+1)
-					InvoiceNumber           = last_paid_invoice
+					last_paid_invoice_no[-1]= chr(last_paid_invoice_no[-1]+1)
+					InvoiceNumber           = last_paid_invoice_no
 			
 			#Xero Integration
 			xero                        = XeroConnection.objects.first()
