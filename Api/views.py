@@ -3006,7 +3006,8 @@ class InvoiceSMSMailAPI(APIView):
 			except:
 				created_invoice = None
 			
-			print(created_invoice)
+			print(invoice_data,"Invoice Data")
+			print(created_invoice,"Invoice")
 			if created_invoice == 'OK':
 				try:
 					update_xero_invoice                  = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
