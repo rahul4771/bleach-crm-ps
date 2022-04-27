@@ -15943,3 +15943,283 @@ serialval
 WEEKLY OFF ltt
 [{'leave_type': 'WEEKLY OFF', 'leave_date': datetime.date(2022, 4, 26), 'staff': 31, 'bamboo_leave_id': '1890'}] sched
 serialval
+2022-04-27 2022-05-27 datess
+{'id': '83', 'name': 'Sick Leave 100%', 'icon': 'first-aid-kit'} 2022-05-07 182 runtime
+SICK LEAVE ltt
+testusera2022-05-07 lvshes
+{'id': '83', 'name': 'Sick Leave 100%', 'icon': 'first-aid-kit'} 2022-05-11 182 runtime
+SICK LEAVE ltt
+testusera2022-05-11 lvshes
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-06-24 128 runtime
+ANNUAL LEAVE ltt
+mlalaine2022-04-24 lvshes
+mlalaine2022-04-25 lvshes
+mlalaine2022-04-26 lvshes
+mlalaine2022-04-27 lvshes
+mlalaine2022-04-28 lvshes
+mlalaine2022-04-29 lvshes
+mlalaine2022-04-30 lvshes
+mlalaine2022-05-01 lvshes
+mlalaine2022-05-02 lvshes
+mlalaine2022-05-03 lvshes
+mlalaine2022-05-04 lvshes
+mlalaine2022-05-05 lvshes
+mlalaine2022-05-06 lvshes
+mlalaine2022-05-07 lvshes
+mlalaine2022-05-08 lvshes
+mlalaine2022-05-09 lvshes
+mlalaine2022-05-10 lvshes
+mlalaine2022-05-11 lvshes
+mlalaine2022-05-12 lvshes
+mlalaine2022-05-13 lvshes
+mlalaine2022-05-14 lvshes
+mlalaine2022-05-15 lvshes
+mlalaine2022-05-16 lvshes
+mlalaine2022-05-17 lvshes
+mlalaine2022-05-18 lvshes
+mlalaine2022-05-19 lvshes
+mlalaine2022-05-20 lvshes
+mlalaine2022-05-21 lvshes
+mlalaine2022-05-22 lvshes
+mlalaine2022-05-23 lvshes
+mlalaine2022-05-24 lvshes
+mlalaine2022-05-25 lvshes
+mlalaine2022-05-26 lvshes
+mlalaine2022-05-27 lvshes
+mlalaine2022-05-28 lvshes
+mlalaine2022-05-29 lvshes
+mlalaine2022-05-30 lvshes
+mlalaine2022-05-31 lvshes
+mlalaine2022-06-01 lvshes
+mlalaine2022-06-02 lvshes
+mlalaine2022-06-03 lvshes
+mlalaine2022-06-04 lvshes
+mlalaine2022-06-05 lvshes
+mlalaine2022-06-06 lvshes
+mlalaine2022-06-07 lvshes
+mlalaine2022-06-08 lvshes
+mlalaine2022-06-09 lvshes
+mlalaine2022-06-10 lvshes
+mlalaine2022-06-11 lvshes
+mlalaine2022-06-12 lvshes
+mlalaine2022-06-13 lvshes
+mlalaine2022-06-14 lvshes
+mlalaine2022-06-15 lvshes
+mlalaine2022-06-16 lvshes
+mlalaine2022-06-17 lvshes
+mlalaine2022-06-18 lvshes
+mlalaine2022-06-19 lvshes
+mlalaine2022-06-20 lvshes
+mlalaine2022-06-21 lvshes
+mlalaine2022-06-22 lvshes
+mlalaine2022-06-23 lvshes
+mlalaine2022-06-24 lvshes
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-30 140 runtime
+ANNUAL LEAVE ltt
+arunl2022-04-05 lvshes
+arunl2022-04-06 lvshes
+arunl2022-04-07 lvshes
+arunl2022-04-08 lvshes
+arunl2022-04-09 lvshes
+arunl2022-04-10 lvshes
+arunl2022-04-11 lvshes
+arunl2022-04-12 lvshes
+arunl2022-04-13 lvshes
+arunl2022-04-14 lvshes
+arunl2022-04-15 lvshes
+arunl2022-04-16 lvshes
+arunl2022-04-17 lvshes
+arunl2022-04-18 lvshes
+arunl2022-04-19 lvshes
+arunl2022-04-20 lvshes
+arunl2022-04-21 lvshes
+arunl2022-04-22 lvshes
+arunl2022-04-23 lvshes
+arunl2022-04-24 lvshes
+arunl2022-04-25 lvshes
+arunl2022-04-26 lvshes
+arunl2022-04-27 lvshes
+arunl2022-04-28 lvshes
+arunl2022-04-29 lvshes
+arunl2022-04-30 lvshes
+arunl2022-05-01 lvshes
+arunl2022-05-02 lvshes
+arunl2022-05-03 lvshes
+arunl2022-05-04 lvshes
+arunl2022-05-05 lvshes
+arunl2022-05-06 lvshes
+arunl2022-05-07 lvshes
+arunl2022-05-08 lvshes
+arunl2022-05-09 lvshes
+arunl2022-05-10 lvshes
+arunl2022-05-11 lvshes
+arunl2022-05-12 lvshes
+arunl2022-05-13 lvshes
+arunl2022-05-14 lvshes
+arunl2022-05-15 lvshes
+arunl2022-05-16 lvshes
+arunl2022-05-17 lvshes
+arunl2022-05-18 lvshes
+arunl2022-05-19 lvshes
+arunl2022-05-20 lvshes
+arunl2022-05-21 lvshes
+arunl2022-05-22 lvshes
+arunl2022-05-23 lvshes
+arunl2022-05-24 lvshes
+arunl2022-05-25 lvshes
+arunl2022-05-26 lvshes
+arunl2022-05-27 lvshes
+arunl2022-05-28 lvshes
+arunl2022-05-29 lvshes
+arunl2022-05-30 lvshes
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-30 168 runtime
+ANNUAL LEAVE ltt
+sitaramd2022-03-30 lvshes
+sitaramd2022-03-31 lvshes
+sitaramd2022-04-01 lvshes
+sitaramd2022-04-02 lvshes
+sitaramd2022-04-03 lvshes
+sitaramd2022-04-04 lvshes
+sitaramd2022-04-05 lvshes
+sitaramd2022-04-06 lvshes
+sitaramd2022-04-07 lvshes
+sitaramd2022-04-08 lvshes
+sitaramd2022-04-09 lvshes
+sitaramd2022-04-10 lvshes
+sitaramd2022-04-11 lvshes
+sitaramd2022-04-12 lvshes
+sitaramd2022-04-13 lvshes
+sitaramd2022-04-14 lvshes
+sitaramd2022-04-15 lvshes
+sitaramd2022-04-16 lvshes
+sitaramd2022-04-17 lvshes
+sitaramd2022-04-18 lvshes
+sitaramd2022-04-19 lvshes
+sitaramd2022-04-20 lvshes
+sitaramd2022-04-21 lvshes
+sitaramd2022-04-22 lvshes
+sitaramd2022-04-23 lvshes
+sitaramd2022-04-24 lvshes
+sitaramd2022-04-25 lvshes
+sitaramd2022-04-26 lvshes
+sitaramd2022-04-27 lvshes
+sitaramd2022-04-28 lvshes
+sitaramd2022-04-29 lvshes
+sitaramd2022-04-30 lvshes
+sitaramd2022-05-01 lvshes
+sitaramd2022-05-02 lvshes
+sitaramd2022-05-03 lvshes
+sitaramd2022-05-04 lvshes
+sitaramd2022-05-05 lvshes
+sitaramd2022-05-06 lvshes
+sitaramd2022-05-07 lvshes
+sitaramd2022-05-08 lvshes
+sitaramd2022-05-09 lvshes
+sitaramd2022-05-10 lvshes
+sitaramd2022-05-11 lvshes
+sitaramd2022-05-12 lvshes
+sitaramd2022-05-13 lvshes
+sitaramd2022-05-14 lvshes
+sitaramd2022-05-15 lvshes
+sitaramd2022-05-16 lvshes
+sitaramd2022-05-17 lvshes
+sitaramd2022-05-18 lvshes
+sitaramd2022-05-19 lvshes
+sitaramd2022-05-20 lvshes
+sitaramd2022-05-21 lvshes
+sitaramd2022-05-22 lvshes
+sitaramd2022-05-23 lvshes
+sitaramd2022-05-24 lvshes
+sitaramd2022-05-25 lvshes
+sitaramd2022-05-26 lvshes
+sitaramd2022-05-27 lvshes
+sitaramd2022-05-28 lvshes
+sitaramd2022-05-29 lvshes
+sitaramd2022-05-30 lvshes
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-12 147 runtime
+ANNUAL LEAVE ltt
+jsupriya2022-04-16 lvshes
+jsupriya2022-04-17 lvshes
+jsupriya2022-04-18 lvshes
+jsupriya2022-04-19 lvshes
+jsupriya2022-04-20 lvshes
+jsupriya2022-04-21 lvshes
+jsupriya2022-04-22 lvshes
+jsupriya2022-04-23 lvshes
+jsupriya2022-04-24 lvshes
+jsupriya2022-04-25 lvshes
+jsupriya2022-04-26 lvshes
+jsupriya2022-04-27 lvshes
+jsupriya2022-04-28 lvshes
+jsupriya2022-04-29 lvshes
+jsupriya2022-04-30 lvshes
+jsupriya2022-05-01 lvshes
+jsupriya2022-05-02 lvshes
+jsupriya2022-05-03 lvshes
+jsupriya2022-05-04 lvshes
+jsupriya2022-05-05 lvshes
+jsupriya2022-05-06 lvshes
+jsupriya2022-05-07 lvshes
+jsupriya2022-05-08 lvshes
+jsupriya2022-05-09 lvshes
+jsupriya2022-05-10 lvshes
+jsupriya2022-05-11 lvshes
+jsupriya2022-05-12 lvshes
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-30 157 runtime
+ANNUAL LEAVE ltt
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-02 180 runtime
+ANNUAL LEAVE ltt
+testuserh2022-05-02 lvshes
+{'id': '84', 'name': 'Annual Leave', 'icon': 'palm-trees'} 2022-05-06 182 runtime
+ANNUAL LEAVE ltt
+testusera2022-05-04 lvshes
+testusera2022-05-05 lvshes
+testusera2022-05-06 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-14 180 runtime
+WEEKLY OFF ltt
+testuserh2022-05-14 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-21 180 runtime
+WEEKLY OFF ltt
+testuserh2022-05-21 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-23 182 runtime
+WEEKLY OFF ltt
+testusera2022-05-23 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-18 180 runtime
+WEEKLY OFF ltt
+testuserh2022-05-18 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-24 180 runtime
+WEEKLY OFF ltt
+testuserh2022-05-24 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-08 182 runtime
+WEEKLY OFF ltt
+testusera2022-05-08 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-21 182 runtime
+WEEKLY OFF ltt
+testusera2022-05-21 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-22 182 runtime
+WEEKLY OFF ltt
+testusera2022-05-22 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-23 182 runtime
+WEEKLY OFF ltt
+testusera2022-05-23 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-24 182 runtime
+WEEKLY OFF ltt
+testusera2022-05-24 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-25 182 runtime
+WEEKLY OFF ltt
+testusera2022-05-25 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-01 180 runtime
+WEEKLY OFF ltt
+testuserh2022-05-01 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-27 182 runtime
+WEEKLY OFF ltt
+testusera2022-04-27 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-05-01 123 runtime
+WEEKLY OFF ltt
+joysonr2022-05-01 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-27 113 runtime
+WEEKLY OFF ltt
+rowenaj2022-04-27 lvshes
+{'id': '92', 'name': 'Off Day', 'icon': 'time-off-luggage'} 2022-04-28 113 runtime
+WEEKLY OFF ltt
+rowenaj2022-04-28 lvshes
