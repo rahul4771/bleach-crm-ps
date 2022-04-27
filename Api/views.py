@@ -2220,6 +2220,8 @@ class CheckOutAPI(APIView):
 
 		team_id         = request.data.get('team_id')
 		check_out_notes = request.data.get('check_out_notes')
+		print(team_id,"Team ID")
+		print(check_out_notes,"Checkout Notes")
 	
 		try:
 			cleaning_team_detail = CleaningTeam.objects.select_related('order_scheduler__order__evaluation','order_scheduler__order_scheduler_book__service_type','order_scheduler__customer_address__customer').get(is_active=True,id=team_id)
