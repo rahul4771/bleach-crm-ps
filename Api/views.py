@@ -2220,7 +2220,6 @@ class CheckOutAPI(APIView):
 
 		print(request.POST,"POSTT")
 		print(request.data,"dataa")
-		print(request.data.get('team_id'),"dataateem")
 
 		team_id         = request.data.get('team_id')
 		check_out_notes = request.data.get('check_out_notes')
