@@ -2440,13 +2440,13 @@ class CheckOutAPI(APIView):
 
 				if created_invoice == 'OK':
 					try:
-						update_xero_invoice                  = XeroInvoice.objects.get(order_id=order_data.id,invoice_no=InvoiceNumber)
+						update_xero_invoice                  = XeroInvoice.objects.get(order=order_data,invoice_no=InvoiceNumber)
 						update_xero_invoice.amount           = Amount
 						update_xero_invoice.xero_marked_date = timezone.now().date()
 						update_xero_invoice.payment_policy   = payment_policy
 						update_xero_invoice.save()
 					except:
-						XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
+						XeroInvoice.objects.create(order=order_data,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 			###################################################################
 
 		response_dict['success'] = True
