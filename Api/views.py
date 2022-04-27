@@ -2440,7 +2440,7 @@ class CheckOutAPI(APIView):
 
 				if created_invoice == 'OK':
 					try:
-						update_xero_invoice                  = XeroInvoice.objects.get(order_id=order_data.id,invoice_no=InvoiceNumber)
+						update_xero_invoice                  = XeroInvoice.objects.get(invoice_no=InvoiceNumber)
 						update_xero_invoice.amount           = Amount
 						update_xero_invoice.xero_marked_date = timezone.now().date()
 						update_xero_invoice.payment_policy   = payment_policy
