@@ -2217,10 +2217,10 @@ class CheckOutAPI(APIView):
 	def post(self,request):
 		response_dict = {}
 		response_dict['success'] = False
-
-		print(request.POST,"POSTT")
+		
 		print(request.data,"dataa")
 		print(request.data.get('team_id'),request.data.get('check_out_notes'),"dataa222")
+		print(request.POST,"POSTT")
 
 		team_id         = request.data.get('team_id')
 		check_out_notes = request.data.get('check_out_notes')
