@@ -2218,6 +2218,9 @@ class CheckOutAPI(APIView):
 		response_dict = {}
 		response_dict['success'] = False
 
+		print(request.POST,"POSTT")
+		print(request.data,"dataa")
+
 		team_id         = request.data.get('team_id')
 		check_out_notes = request.data.get('check_out_notes')
 	

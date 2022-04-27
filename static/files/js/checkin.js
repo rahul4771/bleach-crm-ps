@@ -102,9 +102,9 @@ const app = new Vue({
       var form_items = new FormData()
       form_items.append('team_id',cleaningteam_id)
 
-    for(var i=0;i<this.imageData.length;i++){
-      form_items.append('media',this.imageData[i].file);
-      }
+    // for(var i=0;i<this.imageData.length;i++){
+    //   form_items.append('media',this.imageData[i].file);
+    //   }
 
     if (cleaningtype == 'check-in'){
       form_items.append('check_in_notes',$('#check_in_notes').val())
