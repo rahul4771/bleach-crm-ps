@@ -90,7 +90,11 @@
           
                         <div style="position: relative;">
                             <div class="inv-input-container inv-border h-30">
+                                {% if is_all_items_available and request_order.is_admin_approved and not request_order.is_received %}
                                 <input autocomplete="off" onclick="storeListShow()" type="text" id="store-name" name="storename" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showStores()" required>
+                                {% else %}
+                                <input autocomplete="off" type="text" id="store-name" name="storename" style="border: none !important; width: 90%;" class=" inv-in" disabled>
+                                {% endif %}
                             </div>
                             <div id="id_store_search" class="row inv-result-box" style="display: none;height:auto;max-height:200px;z-index:2000;">
                               
@@ -115,15 +119,11 @@
                                 <th data-hide="phone,tablet"  style="width: %; text-align: center;">
                                     Category
                                 </th>
-                                <th data-hide="phone,tablet"  style="width: %;" class="text-left">
+                                <th data-hide="phone,tablet"  style="width: %; text-align: center;">
                                     Product Type
                                 </th>
                                 <th  data-hide="phone,tablet"  style="width: %; text-align: center;">
                                     Quantity
-                                </th>
-                               
-                                <th>
-                                    Status
                                 </th>
     
                             </tr>
@@ -142,23 +142,13 @@
                             <td class="text-center">
                                 {{item.product.item_category.name}}
                             </td>
-                            <td class="text-left">
+                            <td class="text-center">
                                 {{item.product.item_type}}
                             </td>
                             <td class="text-center">
                                 {{item.item_count|floatformat:0}} {{item.product.measuring_unit}}
                               </td>                          
-                            <td>
-                                {% if item.status   == 'Out Of Stock' %}
-                                <span class="inv-dot c-out-of-order ml-5"></span>Out Of Stock
-                                {% elif item.status == 'Available' %}
-                                <span class="inv-dot c-active ml-5"></span>Available
-                                {% elif item.status == 'About to Finish' %}
-                                <span class="inv-dot c-about-finish ml-5"></span>About to Finish
-                                {% elif item.status   == 'Not Available' %}
-                                <span class="inv-dot c-out-of-order ml-5"></span>Not Available
-                                {% endif %}
-                            </td>
+                            
                         </tr>
                         {% endfor %}
         
@@ -186,6 +176,7 @@
 
 {% block javascript %}
 <script>
+
 {% if store %}
 
 
