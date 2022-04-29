@@ -33,12 +33,41 @@
                     </div> -->
                     </div>
 
-                <div class="mt-20">
-                    <div class="d-flex" >
-                        <div class="inv-tab av-font inv-tab-active" onclick="selectTab('pen')" id="id_pen">Pending</div>
-                        <div class="inv-tab av-font" onclick="selectTab('rec')" id="id_rec">Delivered</div>
+                
+                <!-- tab begins here-->
+                <ul class="nav nav-tabs mt-20 inv-tabs">
+                    <li class="nav-item">
+                      <a class="nav-link" href="#pending_table" data-toggle="tab" id="pending-tab" role="tab" aria-controls="pending_table" aria-selected="true" >
+                        
+                       <span class="tab-text"> Pending</span> </a>
+                    </li>
+                    <li class="nav-item" >
+                      <a class="nav-link" href="#delivered_table" id="delivered-tab" data-toggle="tab" role="tab" aria-controls="delivered_table" aria-selected="false">
+                        
+                        <span class="tab-text">Delivered</span> </a>
+                    </li>
+                    
+                  </ul>
+                <!-- tab ends here-->
+                
+                <div class="d-flex mt-20">
+                    <div>
+                        <label for="favcity" style="width:100%;"> 
+                            <select style="padding: 5px 50px 5px 7px !important; " name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
+                            <option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
+                            <option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
+                            <option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
+                            </select>
+                            </label>
                     </div>
-                    <table id="id_table_pen" class="inv-table footable" style="border-top:1px solid #c4c4c4; margin-top: -2px;"> 
+                    <div class="right-pos">
+                        <p>{{no_of_entries}} Entries</p>
+                    </div>
+                </div>
+                <div class="tab-content">
+                <!-- ALL ITEMS BEGINS HERE-->
+                <div class="tab-pane mt-20" id="pending_table"  role="tabpanel" aria-labelledby="pending-tab">
+                    <table id="id_table_pen" class="inv-table footable" style="border-top:1px solid #c4c4c4;"> 
                         <thead>
                             <tr>
                                 <th style="width: %;">
@@ -67,8 +96,8 @@
                             </tr>
                         </thead>
                      <tbody>
-                        {% for order in request_orders %}
-                        {% if order.is_received == False %}
+                        {% for order in request_orders_pending %}
+                        
                         <tr>
                             <td>
                                 {{order.request_order_id}}
@@ -127,17 +156,71 @@
                         
                         </td>
                         </tr>
-                        {% endif %}
+                        
                         {% endfor %}
         
                       
                      </tbody>
-                       
-                      
-                     
                         
                     </table>
-                    <table id="id_table_rec" class="inv-table footable inv-hide" style="border-top:1px solid #c4c4c4; margin-top: -2px;"> 
+                
+                <div class="text-right">
+                    <ul class="pagination">
+
+                        {% if request_orders_pending.has_previous %}
+                        <li class="page-item">
+                          <a class="page-link" href="?page={{ request_orders_pending.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{no_of_entries}}&request_order_type='PENDING'" aria-label="Previous">
+                            <span aria-hidden="true">«</span>
+                            <span class="sr-only">Previous</span>
+                          </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                          <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">«</span>
+                            <span class="sr-only">Previous</span>
+                          </a>
+                        </li>
+                        {% endif %}
+
+                        {% for pg in page_range %}
+                            {% if vus.number == pg %}
+                                <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&no_of_entries={{no_of_entries}}&request_order_type='PENDING'" >{{pg}}</a></li> 
+                            {% else %}
+                                <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&no_of_entries={{no_of_entries}}&request_order_type='PENDING'" >{{pg}}</a></li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if items.has_next %}
+                        <li class="page-item">
+                          <a class="page-link" href="?page={{ request_orders_pending.next_page_number }}&search={{request.GET.search}}&no_of_entries={{no_of_entries}}&request_order_type='PENDING'" aria-label="Next">
+                            <span aria-hidden="true">»</span>
+                            <span class="sr-only">Next</span>
+                          </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                          <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">»</span>
+                            <span class="sr-only">Next</span>
+                          </a>
+                        </li>
+                        {% endif %}
+                        
+                      </ul>
+                </div>
+
+                <div style="color: #928F8F;">
+                    Showing {{request_orders_pending.start_index}} to {{request_orders_pending.end_index}} of {{request_orders_pending.paginator.count}} entries
+                </div>
+
+                </div>
+                  <!-- ALL ITEMS ENDS HERE-->
+
+                  <!-- Receieved tab begins here -->
+                <div class="mt-20 tab-pane fade common-table"  id="delivered_table" role="tabpanel" aria-labelledby="delivered-tab">
+                    
+                    <table id="id_table_rec" class="inv-table footable" style="border-top:1px solid #c4c4c4;"> 
                         <thead>
                             <tr>
                                 <th style="width: %;">
@@ -163,8 +246,8 @@
                             </tr>
                         </thead>
                      <tbody>
-                        {% for order in request_orders %}
-                        {% if order.is_received == True %}
+                        {% for order in request_orders_delivered %}
+                        
                         <tr>
                             <td>
                                 {{order.request_order_id}}
@@ -205,17 +288,67 @@
                                
                             </td>
                         </tr>
-                        {% endif %}
+                        
                         {% endfor %}
         
                       
                      </tbody>
-                       
-                      
-                     
                         
                     </table>
-                </div>
+                
+            
+            <div class="text-right">
+                <ul class="pagination">
+
+                    {% if request_orders_delivered.has_previous %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page2={{ request_orders_delivered.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{no_of_entries}}&request_order_type=DELIVERED" aria-label="Previous">
+                        <span aria-hidden="true">«</span>
+                        <span class="sr-only">Previous</span>
+                      </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item">
+                      <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">«</span>
+                        <span class="sr-only">Previous</span>
+                      </a>
+                    </li>
+                    {% endif %}
+
+                    {% for pg in page_range2 %}
+                        {% if vus.number == pg %}
+                            <li class="page-item"><a class="page-link active" href="?page2={{pg}}&search={{request.GET.search}}&no_of_entries={{no_of_entries}}&request_order_type=DELIVERED" >{{pg}}</a></li> 
+                        {% else %}
+                            <li class="page-item"><a class="page-link" href="?page2={{pg}}&search={{request.GET.search}}&no_of_entries={{no_of_entries}}&request_order_type=DELIVERED" >{{pg}}</a></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if request_orders_delivered.has_next %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page2={{ request_orders_delivered.next_page_number }}&search={{request.GET.search}}&no_of_entries={{no_of_entries}}&request_order_type=DELIVERED" aria-label="Next">
+                        <span aria-hidden="true">»</span>
+                        <span class="sr-only">Next</span>
+                      </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item">
+                      <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">»</span>
+                        <span class="sr-only">Next</span>
+                      </a>
+                    </li>
+                    {% endif %}
+                    
+                  </ul>
+            </div>
+            <div style="color: #928F8F;">
+                Showing {{request_orders_delivered.start_index}} to {{request_orders_delivered.end_index}} of {{request_orders_delivered.paginator.count}} entries
+            </div>
+
+            </div>
+            <!-- Received tab ends here -->
+
             </div>
         </div>
     </section>
@@ -267,27 +400,23 @@
 {% block javascript %}
 
 <script>
-function selectTab(d){
-    console.log(d)
-    if(d =='rec'){
-        setTimeout(function(){ $('.footable').trigger('footable_resize'); }, 100);
-        $('#id_pen').removeClass('inv-tab-active')
-        $('#id_rec').addClass('inv-tab-active')
 
-        $("#id_table_pen").hide()
-        $("#id_table_rec").show()
-
-    }else{
-        setTimeout(function(){ $('.footable').trigger('footable_resize'); }, 100);
-        $('#id_pen').addClass('inv-tab-active')
-        $('#id_rec').removeClass('inv-tab-active')
-
-        $("#id_table_pen").show()
-        $("#id_table_rec").hide()
-
-    }
-}
-
+    $(document).ready(function(){
+        $('#pending-tab').click()
+    
+        console.log("{{request_order_type}}","teip")
+    
+        if("{{request_order_type}}" == 'DELIVERED'){
+            console.log("logo")
+            setTimeout(function(){ $('.footable').trigger('footable_resize'); }, 100);
+            $('#delivered-tab').click()
+    
+        }else{
+            setTimeout(function(){ $('.footable').trigger('footable_resize'); }, 100);
+            $('#pending-tab').click()
+    
+        }
+    })
 
     function openNavAddStore(d) {
     if(d == 'add'){
