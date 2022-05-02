@@ -125,6 +125,12 @@
                                 <th  data-hide="phone,tablet"  style="width: %; text-align: center;">
                                     Quantity
                                 </th>
+
+                                {% if request_order.is_admin_approved and not request_order.is_received %}
+                                <th>
+                                    Status
+                                </th>
+                                {% endif %}
     
                             </tr>
                         </thead>
@@ -147,7 +153,21 @@
                             </td>
                             <td class="text-center">
                                 {{item.item_count|floatformat:0}} {{item.product.measuring_unit}}
-                              </td>                          
+                              </td>  
+                              
+                            {% if request_order.is_admin_approved and not request_order.is_received %}
+                              <td>
+                                {% if item.status   == 'Out Of Stock' %}
+                                <span class="inv-dot c-out-of-order ml-5"></span>Out Of Stock
+                                {% elif item.status == 'Available' %}
+                                <span class="inv-dot c-active ml-5"></span>Available
+                                {% elif item.status == 'About to Finish' %}
+                                <span class="inv-dot c-about-finish ml-5"></span>About to Finish
+                                {% elif item.status   == 'Not Available' %}
+                                <span class="inv-dot c-out-of-order ml-5"></span>Not Available
+                                {% endif %}
+                            </td>
+                            {% endif %}
                             
                         </tr>
                         {% endfor %}
