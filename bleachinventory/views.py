@@ -1310,6 +1310,20 @@ class InventoryStore(IsInventoryAdminUser,View):
 class InventoryInv(IsInventoryAdminUser,View):
 	def get(self,request):
 		
+		
+		inv_items = InventoryItem.objects.filter(status=True,item_add_type='quantity')
+
+		for item in inv_items:
+			item_stores_count = QuantityStoreDetails.objects.filter(quantity_item=item).count()
+
+			if item_stores_count == 1 :
+				
+				item_store = QuantityStoreDetails.objects.get(quantity_item=item)
+				item_store.quantity = item.total_quantity
+				item_store.save()
+
+		
+		
 		# df = pd.read_excel('Book2.xls')
 
 		# for index, row in df.iterrows():
