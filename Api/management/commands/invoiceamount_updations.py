@@ -80,7 +80,7 @@ class Command(BaseCommand):
 
 
             payment_method    = payment_history.order.evaluation.payment_method
-            
+            print(payment_method,"Payment Method")
             if payment_method == 'PREPAID':
                 Amount = payment_history.order.evaluation.total_cost 
                 ##Invoice Line Item 
