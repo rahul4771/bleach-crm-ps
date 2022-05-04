@@ -13,7 +13,7 @@ from django.db.models import Prefetch
 
 
 class Command(BaseCommand):
-	help = 'Automatic Invoice Generations'
+    help = 'Automatic Invoice Generations'
 
     def handle(self, *args, **kwargs):
 
@@ -96,18 +96,18 @@ class Command(BaseCommand):
                 payment_policy = 'PREPAID'
 
                 invoice_data              = 	{
-													"Type":"ACCREC",
-													"Contact":{
-														"ContactID":payment_history.order.evaluation.customer.xero_account_id
-													},
-													"Date":payment_history.paid_date.strftime('%Y-%m-%d'),
-													"DueDate":payment_history.paid_date.strftime('%Y-%m-%d'),
-													"LineAmountTypes":"NoTax",
-													"InvoiceNumber":InvoiceNumber,
-													"Reference":payment_history.order.order_no,
-													"Status":"AUTHORISED",
-													"LineItems":LineItems
-													}
+                                                    "Type":"ACCREC",
+                                                    "Contact":{
+                                                        "ContactID":payment_history.order.evaluation.customer.xero_account_id
+                                                    },
+                                                    "Date":payment_history.paid_date.strftime('%Y-%m-%d'),
+                                                    "DueDate":payment_history.paid_date.strftime('%Y-%m-%d'),
+                                                    "LineAmountTypes":"NoTax",
+                                                    "InvoiceNumber":InvoiceNumber,
+                                                    "Reference":payment_history.order.order_no,
+                                                    "Status":"AUTHORISED",
+                                                    "LineItems":LineItems
+                                                    }
                 
                 ##xero Create Invoice
                 header                      = {
@@ -153,18 +153,18 @@ class Command(BaseCommand):
                 payment_policy = 'POSTPAID'
 
                 invoice_data              = 	{
-													"Type":"ACCREC",
-													"Contact":{
-														"ContactID":payment_history.order.evaluation.customer.xero_account_id
-													},
-													"Date":payment_history.paid_date.strftime('%Y-%m-%d'),
-													"DueDate":payment_history.paid_date.strftime('%Y-%m-%d'),
-													"LineAmountTypes":"NoTax",
-													"InvoiceNumber":InvoiceNumber,
-													"Reference":payment_history.order.order_no,
-													"Status":"AUTHORISED",
-													"LineItems":LineItems
-													}
+                                                    "Type":"ACCREC",
+                                                    "Contact":{
+                                                        "ContactID":payment_history.order.evaluation.customer.xero_account_id
+                                                    },
+                                                    "Date":payment_history.paid_date.strftime('%Y-%m-%d'),
+                                                    "DueDate":payment_history.paid_date.strftime('%Y-%m-%d'),
+                                                    "LineAmountTypes":"NoTax",
+                                                    "InvoiceNumber":InvoiceNumber,
+                                                    "Reference":payment_history.order.order_no,
+                                                    "Status":"AUTHORISED",
+                                                    "LineItems":LineItems
+                                                    }
 
                 ##xero Create Invoice
                 header                      = {
@@ -233,18 +233,18 @@ class Command(BaseCommand):
                             payment_policy = 'AFTER CLEANING'
 
                         invoice_data              = 	{
-													"Type":"ACCREC",
-													"Contact":{
-														"ContactID":payment_history.order.evaluation.customer.xero_account_id
-													},
-													"Date":payment_history.paid_date.strftime('%Y-%m-%d'),
-													"DueDate":payment_history.paid_date.strftime('%Y-%m-%d'),
-													"LineAmountTypes":"NoTax",
-													"InvoiceNumber":InvoiceNumber,
-													"Reference":payment_history.order.order_no,
-													"Status":"AUTHORISED",
-													"LineItems":LineItems
-													}
+                                                    "Type":"ACCREC",
+                                                    "Contact":{
+                                                        "ContactID":payment_history.order.evaluation.customer.xero_account_id
+                                                    },
+                                                    "Date":payment_history.paid_date.strftime('%Y-%m-%d'),
+                                                    "DueDate":payment_history.paid_date.strftime('%Y-%m-%d'),
+                                                    "LineAmountTypes":"NoTax",
+                                                    "InvoiceNumber":InvoiceNumber,
+                                                    "Reference":payment_history.order.order_no,
+                                                    "Status":"AUTHORISED",
+                                                    "LineItems":LineItems
+                                                    }
 
                         ##xero Create Invoice
                         header                      = {
@@ -292,23 +292,23 @@ class Command(BaseCommand):
                             "TaxType":"NONE"
                                         }
                             )
-                        InvoiceNumber  = payment_history.order.invoice_no+chr(ord('A')+subscription_counter))
+                        InvoiceNumber  = payment_history.order.invoice_no+chr(ord('A')+subscription_counter)
                         
                         payment_policy = 'SUBSCRIPTION'
 
                         invoice_data              = 	{
-													"Type":"ACCREC",
-													"Contact":{
-														"ContactID":payment_history.order.evaluation.customer.xero_account_id
-													},
-													"Date":payment_history.paid_date.strftime('%Y-%m-%d'),
-													"DueDate":payment_history.paid_date.strftime('%Y-%m-%d'),
-													"LineAmountTypes":"NoTax",
-													"InvoiceNumber":InvoiceNumber,
-													"Reference":payment_history.order.order_no,
-													"Status":"AUTHORISED",
-													"LineItems":LineItems
-													}
+                                                    "Type":"ACCREC",
+                                                    "Contact":{
+                                                        "ContactID":payment_history.order.evaluation.customer.xero_account_id
+                                                    },
+                                                    "Date":payment_history.paid_date.strftime('%Y-%m-%d'),
+                                                    "DueDate":payment_history.paid_date.strftime('%Y-%m-%d'),
+                                                    "LineAmountTypes":"NoTax",
+                                                    "InvoiceNumber":InvoiceNumber,
+                                                    "Reference":payment_history.order.order_no,
+                                                    "Status":"AUTHORISED",
+                                                    "LineItems":LineItems
+                                                    }
 
                         ##xero Create Invoice
                         header                      = {
@@ -346,8 +346,7 @@ class Command(BaseCommand):
             payment_date_string = datetime.strftime(payment_date,'%Y-%m-%d')
             amount_paid         = payment_history.amount_paid
             
-            if xero_invoice:
-                payment_date_string = 
+            if xero_invoice: 
                 payment_data = {
                             "Invoice":{
                                 "InvoiceNumber":xero_invoice.invoice_no
