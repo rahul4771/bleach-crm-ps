@@ -204,7 +204,7 @@ class Command(BaseCommand):
                     #Before Cleaning
                     if breakdown_history == payment_history:
                         if breakdown_counter == 1:
-                            Amount = order.evaluation.before_cleaning_amount 
+                            Amount = payment_history.order.evaluation.before_cleaning_amount 
                             ##Invoice Line Item 
                             LineItems                 = []
                             LineItems.append({
@@ -221,7 +221,7 @@ class Command(BaseCommand):
                     
                         #After Cleaning
                         if breakdown_counter == 2:
-                            Amount = order.evaluation.after_cleaning_amount
+                            Amount = payment_history.order.evaluation.after_cleaning_amount
                             ##Invoice Line Item 
                             LineItems                 = []
                             LineItems.append({
