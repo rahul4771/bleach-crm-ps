@@ -61,7 +61,7 @@
             <li class="inv-purchase-order"><a href="/bleach-inventory/purchaseOrder/" title="Purchase Order"><span>Purchase Orders</span></a></li>
             {% endif %}
             {% if request.user.user_type != 'PURCHASINGOFFICER' %}
-            <li class="inv-purchase-order"><a href="/bleach-inventory/requestorder/" title="Item Requests"><span>Item Requests</span></a></li>
+            <li class="inv-request-order"><a href="/bleach-inventory/requestorder/" title="Item Requests"><span>Item Requests</span></a></li>
             {% endif %}
             {% comment %} <li class="inv-bundils"><a href="/bleach-inventory/bundle/" title="Bundles"><span>Bundles</span></a></li> {% endcomment %}
             {% if request.user.user_type != 'INVUSER' %}

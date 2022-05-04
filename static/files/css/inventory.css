@@ -228,6 +228,12 @@
   background-position: 18px 7px;
   display: block;
 }
+.inv-request-order {
+  background: url(../inventory/icons/Requestorder.png) no-repeat left;
+  background-size: 30px 30px;
+  background-position: 18px 7px;
+  display: block;
+}
 .inv-bundils {
   background: url(../inventory/icons/Bundle.png) no-repeat left;
   background-size: 30px 30px;
