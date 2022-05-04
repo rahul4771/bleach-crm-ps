@@ -373,4 +373,5 @@ class Command(BaseCommand):
                     xero_invoice.is_paid   = True
                     xero_invoice.paid_date = payment_date
                     xero_invoice.save()
+            print(InvoiceNumber)
                     
