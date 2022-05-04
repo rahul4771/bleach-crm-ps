@@ -2122,6 +2122,30 @@ def export_users_xls(request):
 			for col_num in range(len(row)):
 				ws.write(row_num, col_num, row[col_num], font_style)
 
+	if report_type == 'govarea':
+
+		response = HttpResponse(content_type='application/ms-excel')
+		response['Content-Disposition'] = 'attachment; filename="Governorates_areas.xls"'
+
+		wb = xlwt.Workbook(encoding='utf-8')
+		ws = wb.add_sheet('GOVAREA')
+
+		# columns = ['Order Date', 'Order Number', 'Client Name', 'Payment Policy', 'Payment Mode', 'Total Amount', 'Paid', 'Balance' ]
+
+		columns = ['AREA','GOVERNORATE']
+		
+		for col_num in range(len(columns)):
+			ws.write(row_num, col_num, columns[col_num], font_style)
+
+		areas = Area.objects.filter(is_active=True).values_list('name','governorate__name').order_by('governorate')
+
+		rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in area] for area in areas ]
+	
+		for row in rows:
+			row_num += 1
+			for col_num in range(len(row)):
+				ws.write(row_num, col_num, row[col_num], font_style)
+
 
 	if report_type == 'due_payments':
 
