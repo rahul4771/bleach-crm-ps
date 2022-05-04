@@ -79,7 +79,7 @@ class Command(BaseCommand):
                 payment_history.order.evaluation.customer.save()
 
 
-            payment_method    = payment_history.evaluation.payment_method
+            payment_method    = payment_history.order.evaluation.payment_method
             
             if payment_method == 'PREPAID':
                 Amount = payment_history.order.evaluation.total_cost 
