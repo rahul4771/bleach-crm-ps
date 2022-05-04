@@ -1310,6 +1310,20 @@ class InventoryStore(IsInventoryAdminUser,View):
 class InventoryInv(IsInventoryAdminUser,View):
 	def get(self,request):
 		
+		
+		# inv_items = InventoryItem.objects.filter(status=True,item_add_type='quantity')
+
+		# for item in inv_items:
+		# 	item_stores_count = QuantityStoreDetails.objects.filter(quantity_item=item).count()
+
+		# 	if item_stores_count == 1 :
+				
+		# 		item_store = QuantityStoreDetails.objects.get(quantity_item=item)
+		# 		item_store.quantity = item.total_quantity
+		# 		item_store.save()
+
+		
+		
 		# df = pd.read_excel('Book2.xls')
 
 		# for index, row in df.iterrows():
@@ -2374,12 +2388,69 @@ class InventoryPurchaseOrder(IsInventoryAdminUser,View):
 	def get(self,request):
 		search = request.GET.get('search')
 
+		purchase_order_type = request.GET.get('purchase_order_type',None)
+		print(purchase_order_type,"potyip")
+
 		if search:
-			purchase_orders = PurchaseOrder.objects.filter(is_order_completed=True).filter(Q( Q(purchase_order_id__icontains = search) | Q(supplier__supplier_name__icontains = search) )).annotate(total_units=Sum('purchase_order_purchase_order_item__item_count'), total_added_units=Sum('purchase_order_purchase_order_item__added_item_count'), total_price=Sum('purchase_order_purchase_order_item__total_price'))
+			purchase_orders_pending = PurchaseOrder.objects.filter(is_order_completed=True,is_received=False).filter(Q( Q(purchase_order_id__icontains = search) | Q(supplier__supplier_name__icontains = search) )).annotate(total_units=Sum('purchase_order_purchase_order_item__item_count'), total_added_units=Sum('purchase_order_purchase_order_item__added_item_count'), total_price=Sum('purchase_order_purchase_order_item__total_price')).order_by('-id')
+			purchase_orders_received = PurchaseOrder.objects.filter(is_order_completed=True,is_received=True).filter(Q( Q(purchase_order_id__icontains = search) | Q(supplier__supplier_name__icontains = search) )).annotate(total_units=Sum('purchase_order_purchase_order_item__item_count'), total_added_units=Sum('purchase_order_purchase_order_item__added_item_count'), total_price=Sum('purchase_order_purchase_order_item__total_price')).order_by('-id')
 		else:
-			purchase_orders = PurchaseOrder.objects.filter(is_order_completed=True).annotate(total_units=Sum('purchase_order_purchase_order_item__item_count'), total_added_units=Sum('purchase_order_purchase_order_item__added_item_count'), total_price=Sum('purchase_order_purchase_order_item__total_price'))
+			purchase_orders_pending = PurchaseOrder.objects.filter(is_order_completed=True,is_received=False).annotate(total_units=Sum('purchase_order_purchase_order_item__item_count'), total_added_units=Sum('purchase_order_purchase_order_item__added_item_count'), total_price=Sum('purchase_order_purchase_order_item__total_price')).order_by('-id')
+			purchase_orders_received = PurchaseOrder.objects.filter(is_order_completed=True,is_received=True).annotate(total_units=Sum('purchase_order_purchase_order_item__item_count'), total_added_units=Sum('purchase_order_purchase_order_item__added_item_count'), total_price=Sum('purchase_order_purchase_order_item__total_price')).order_by('-id')
 		
-		return render(request,'inventory/purchaseOrder.html',{"purchase_orders":purchase_orders,"search_query":search})
+		#PAGINATION pending tab
+		no_of_entries = request.GET.get('no_of_entries')
+		if not no_of_entries:
+			no_of_entries = 20
+
+		page = request.GET.get('page',1)
+
+		paginator=Paginator(purchase_orders_pending,no_of_entries)
+		try:
+			purchase_orders_pending=paginator.page(page)
+		except PageNotAnInteger:
+			purchase_orders_pending=paginator.page(1)
+		except EmptyPage:
+			purchase_orders_pending = paginator.page(paginator.num_pages)
+
+		# Get the index of the current page
+		index = purchase_orders_pending.number - 1  # edited to something easier without index
+		# This value is maximum index of your pages, so the last page - 1
+		max_index = len(paginator.page_range)
+		# You want a range of 7, so lets calculate where to slice the list
+		start_index = index - 3 if index >= 3 else 0
+		end_index = index + 3 if index <= max_index - 3 else max_index
+		# Get our new page range. In the latest versions of Django page_range returns
+		# an iterator. Thus pass it to list, to make our slice possible again.
+		page_range = list(paginator.page_range)[start_index:end_index]
+
+		entry_per_page=(purchase_orders_pending.end_index())-(purchase_orders_pending.start_index())+1
+
+		#received tab pagination
+		page2 = request.GET.get('page2',1)
+
+		paginator2=Paginator(purchase_orders_received,no_of_entries)
+		try:
+			purchase_orders_received=paginator2.page(page2)
+		except PageNotAnInteger:
+			purchase_orders_received=paginator2.page(1)
+		except EmptyPage:
+			purchase_orders_received = paginator2.page(paginator2.num_pages)
+
+		# Get the index of the current page
+		index2 = purchase_orders_received.number - 1  # edited to something easier without index
+		# This value is maximum index of your pages, so the last page - 1
+		max_index2 = len(paginator2.page_range)
+		# You want a range of 7, so lets calculate where to slice the list
+		start_index2 = index2 - 3 if index2 >= 3 else 0
+		end_index2 = index2 + 3 if index2 <= max_index2 - 3 else max_index2
+		# Get our new page range. In the latest versions of Django page_range returns
+		# an iterator. Thus pass it to list, to make our slice possible again.
+		page_range2 = list(paginator2.page_range)[start_index2:end_index2]
+
+		entry_per_page2=(purchase_orders_received.end_index())-(purchase_orders_received.start_index())+1
+		
+		return render(request,'inventory/purchaseOrder.html',{"purchase_order_type":purchase_order_type,"purchase_orders_pending":purchase_orders_pending,"purchase_orders_received":purchase_orders_received,"page_range":page_range,"page_range2":page_range2,"entry_per_page":entry_per_page,"entry_per_page2":entry_per_page2,"no_of_entries":no_of_entries,"search_query":search})
 
 	def post(self,request):
 		action = request.POST.get('action')
@@ -2981,12 +3052,68 @@ class InventoryRequestOrder(IsInventoryAdminUser,View):
 	def get(self,request):
 		search = request.GET.get('search')
 
+		request_order_type = request.GET.get('request_order_type',None)
+
 		if search:
-			request_orders = RequestOrder.objects.filter(is_order_completed=True).filter(Q( Q(request_order_id__icontains = search) | Q(requested_by__name__icontains = search) )).annotate(total_added_units=Sum('items_request_order__item_count'))
+			request_orders_pending = RequestOrder.objects.filter(is_order_completed=True,is_received=False).filter(Q( Q(request_order_id__icontains = search) | Q(requested_by__name__icontains = search) )).annotate(total_added_units=Sum('items_request_order__item_count')).order_by('-id')
+			request_orders_delivered = RequestOrder.objects.filter(is_order_completed=True,is_received=True).filter(Q( Q(request_order_id__icontains = search) | Q(requested_by__name__icontains = search) )).annotate(total_added_units=Sum('items_request_order__item_count')).order_by('-id')
 		else:
-			request_orders = RequestOrder.objects.filter(is_order_completed=True).annotate(total_added_units=Sum('items_request_order__item_count'))
+			request_orders_pending = RequestOrder.objects.filter(is_order_completed=True,is_received=False).annotate(total_added_units=Sum('items_request_order__item_count')).order_by('-id')
+			request_orders_delivered = RequestOrder.objects.filter(is_order_completed=True,is_received=True).annotate(total_added_units=Sum('items_request_order__item_count')).order_by('-id')
 		
-		return render(request,'inventory/requestOrder.html',{"request_orders":request_orders,"search_query":search})
+		#PAGINATION pending tab
+		no_of_entries = request.GET.get('no_of_entries')
+		if not no_of_entries:
+			no_of_entries = 20
+
+		page = request.GET.get('page',1)
+
+		paginator=Paginator(request_orders_pending,no_of_entries)
+		try:
+			request_orders_pending=paginator.page(page)
+		except PageNotAnInteger:
+			request_orders_pending=paginator.page(1)
+		except EmptyPage:
+			request_orders_pending = paginator.page(paginator.num_pages)
+
+		# Get the index of the current page
+		index = request_orders_pending.number - 1  # edited to something easier without index
+		# This value is maximum index of your pages, so the last page - 1
+		max_index = len(paginator.page_range)
+		# You want a range of 7, so lets calculate where to slice the list
+		start_index = index - 3 if index >= 3 else 0
+		end_index = index + 3 if index <= max_index - 3 else max_index
+		# Get our new page range. In the latest versions of Django page_range returns
+		# an iterator. Thus pass it to list, to make our slice possible again.
+		page_range = list(paginator.page_range)[start_index:end_index]
+
+		entry_per_page=(request_orders_pending.end_index())-(request_orders_pending.start_index())+1
+
+		#received tab pagination
+		page2 = request.GET.get('page2',1)
+
+		paginator2=Paginator(request_orders_delivered,no_of_entries)
+		try:
+			request_orders_delivered=paginator2.page(page2)
+		except PageNotAnInteger:
+			request_orders_delivered=paginator2.page(1)
+		except EmptyPage:
+			request_orders_delivered = paginator2.page(paginator2.num_pages)
+
+		# Get the index of the current page
+		index2 = request_orders_delivered.number - 1  # edited to something easier without index
+		# This value is maximum index of your pages, so the last page - 1
+		max_index2 = len(paginator2.page_range)
+		# You want a range of 7, so lets calculate where to slice the list
+		start_index2 = index2 - 3 if index2 >= 3 else 0
+		end_index2 = index2 + 3 if index2 <= max_index2 - 3 else max_index2
+		# Get our new page range. In the latest versions of Django page_range returns
+		# an iterator. Thus pass it to list, to make our slice possible again.
+		page_range2 = list(paginator2.page_range)[start_index2:end_index2]
+
+		entry_per_page2=(request_orders_delivered.end_index())-(request_orders_delivered.start_index())+1
+
+		return render(request,'inventory/requestOrder.html',{"request_order_type":request_order_type,"request_orders_delivered":request_orders_delivered,"request_orders_pending":request_orders_pending,"search_query":search,"page_range":page_range,"page_range2":page_range2,"entry_per_page":entry_per_page,"entry_per_page2":entry_per_page2,"no_of_entries":no_of_entries})
 
 	def post(self,request):
 		action = request.POST.get('action')
