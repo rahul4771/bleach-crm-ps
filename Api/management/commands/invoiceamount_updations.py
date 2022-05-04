@@ -123,6 +123,8 @@ class Command(BaseCommand):
                                                         json=invoice_data,
                                                         headers=header 
                                                     ).json()
+                print(invoice_data)
+                print(create_invoice)
                 try:
                     created_invoice = create_invoice['Status']
                 except:
