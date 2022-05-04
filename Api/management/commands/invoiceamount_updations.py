@@ -378,8 +378,8 @@ class Command(BaseCommand):
                     xero_invoice.paid_date = payment_date
                     xero_invoice.save()
             
-            payment_history.is_xero_marked = True
-            payment_history.save()
+                    payment_history.is_xero_marked = True
+                    payment_history.save()
 
             print(InvoiceNumber)
                     
