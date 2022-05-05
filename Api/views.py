@@ -417,8 +417,6 @@ class PaymentResponseCredit(APIView):
 						xero_invoice.is_paid   = True
 						xero_invoice.paid_date = payment_date
 						xero_invoice.save()
-						payment_history.is_xero_marked = True
-						payment_history.save()
 
 			if payment_policy == 'SUBSCRIPTION':
 				try:
@@ -453,8 +451,6 @@ class PaymentResponseCredit(APIView):
 						xero_invoice.is_paid   = True
 						xero_invoice.paid_date = payment_date
 						xero_invoice.save()
-						payment_history.is_xero_marked = True
-						payment_history.save()
 				########################################################################################
 
 
@@ -5373,7 +5369,7 @@ class WebsiteInquiryMailAPI(APIView):
 		
 		#send mail
 		msg_html = render_to_string('email/website-inquiry.html',{"customer_name":customer_name,"customer_contact":customer_contact,"customer_email":customer_email,"customer_message":customer_message})
-		msg = EmailMultiAlternatives('Website - Business Inquiry', '', ['rangeen.suresh@bleach-kw.com'])
+		msg = EmailMultiAlternatives('Website - Business Inquiry', '', 'notification@bleach-kw.com', ['rangeen.suresh@bleach-kw.com'])
 		msg.attach_alternative(msg_html, "text/html")
 		msg.send(fail_silently=False)
 
