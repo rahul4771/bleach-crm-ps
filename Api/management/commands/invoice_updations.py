@@ -3,6 +3,7 @@ from django.core.management.base import BaseCommand
 from order.models import Order
 from Api.models import XeroConnection
 from order.models import XeroInvoice
+from accountant.models import PaymentHistory
 
 from django.utils import timezone
 from datetime import timedelta,date,datetime
@@ -40,38 +41,37 @@ class Command(BaseCommand):
                                         'Content-Type': 'application/json'
                                             }
 
-        ##Xero Contact
-        if not subscription.evaluation.customer.xero_account_id:
-            ##Xero Create Customer ID and Save
-            contact_data                = {
-                                            "Name":subscription.evaluation.customer.name,
-                                            "ContactNumber":subscription.evaluation.customer.mobile_number,
-                                            "EmailAddress":subscription.evaluation.customer.email,
-                                            "ContactStatus":"ACTIVE",
-                                            "IsCustomer":True,
-                                            "DefaultCurrency":"KWD"
-                                                        }
-                                            
-            header                      = {
-                                        'xero-tenant-id': xero.tenant_id,
-                                        'Authorization': 'Bearer '+access_token,
-                                        'Accept': 'application/json',
-                                        'Content-Type': 'application/json'
-                                            }
-
-            create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
-                                                    json=contact_data,
-                                                    headers=header 
-                                                ).json()
-
-            order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
-            order.evaluation.customer.save()
-
-
         #SUBSCRIPTION Invoices
         subscriptions = Order.objects.select_related('evaluation__customer').filter(evaluation__quatation_status='APPROVED',evaluation__payment_method='SUBSCRIPTION',payment_status='PENDING',subscription_topay__gt=0)
         
         for subscription in subscriptions:
+            ##Xero Contact
+            if not subscription.evaluation.customer.xero_account_id:
+                ##Xero Create Customer ID and Save
+                contact_data                = {
+                                                "Name":subscription.evaluation.customer.name,
+                                                "ContactNumber":subscription.evaluation.customer.mobile_number,
+                                                "EmailAddress":subscription.evaluation.customer.email,
+                                                "ContactStatus":"ACTIVE",
+                                                "IsCustomer":True,
+                                                "DefaultCurrency":"KWD"
+                                                            }
+                                                
+                header                      = {
+                                            'xero-tenant-id': xero.tenant_id,
+                                            'Authorization': 'Bearer '+access_token,
+                                            'Accept': 'application/json',
+                                            'Content-Type': 'application/json'
+                                                }
+
+                create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
+                                                        json=contact_data,
+                                                        headers=header 
+                                                    ).json()
+
+                subscription.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
+                subscription.evaluation.customer.save()
+
             Amount = subscription.evaluation.total_cost 
             ##Invoice Line Item 
             LineItems                 = []
@@ -101,6 +101,12 @@ class Command(BaseCommand):
 					last_paid_invoice_no    = last_paid_invoice.invoice_no
 					last_paid_invoice_no    = last_paid_invoice_no.replace(last_paid_invoice_no[len(last_paid_invoice_no) - 1:], chr(ord(last_paid_invoice_no[-1])+1))
 					InvoiceNumber           = last_paid_invoice_no
+                else:
+                    try:
+                        payments_count          = PaymentHistory.objects.filter(order=subscription).count()
+                    except:
+                        payments_count          = 0
+                    InvoiceNumber               = invoice_no+chr(ord('A')+payments_count)
 
             payment_policy            = 'SUBSCRIPTION'
 

@@ -2921,6 +2921,12 @@ class InvoiceSMSMailAPI(APIView):
 					last_paid_invoice_no    = last_paid_invoice.invoice_no
 					last_paid_invoice_no    = last_paid_invoice_no.replace(last_paid_invoice_no[len(last_paid_invoice_no) - 1:], chr(ord(last_paid_invoice_no[-1])+1))
 					InvoiceNumber           = last_paid_invoice_no
+				else:
+                    try:
+                        payments_count          = PaymentHistory.objects.filter(order=subscription).count()
+                    except:
+                        payments_count          = 0
+                    InvoiceNumber               = invoice_no+chr(ord('A')+payments_count)
 			
 			#Xero Integration
 			xero                        = XeroConnection.objects.first()
