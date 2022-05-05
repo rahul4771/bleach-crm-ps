@@ -44,7 +44,7 @@ class Command(BaseCommand):
                                             }
 
         #SUBSCRIPTION Invoices
-        subscriptions = Order.objects.select_related('evaluation__customer').filter(evaluation__quatation_status='APPROVED',evaluation__payment_method='SUBSCRIPTION',payment_status='PENDING',subscription_topay__gt=0)
+        subscriptions = Order.objects.select_related('evaluation__customer').filter(evaluation__quatation_status='APPROVED',evaluation__payment_method='SUBSCRIPTION',payment_status='PENDING',subscription_topay__gt=0,~Q(order_status='ORDER_CANCELLED'))
         print(subscriptions)
         print(subscriptions.count())        
         # for subscription in subscriptions:
