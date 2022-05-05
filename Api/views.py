@@ -5356,3 +5356,21 @@ class ServiceAddOnsAPI(APIView):
 		service_add_ons_serializer = ServiceAddOnsSerializer(service_add_ons,many=True).data
 		response_dict["service_add_ons"]=service_add_ons_serializer
 		return Response(response_dict,HTTP_200_OK)
+
+class WebsiteInquiryMailAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		customer_name = 'Rangeen'
+		customer_contact = '9846798144'
+		customer_email = 'rangeens582@gmail.com'
+		customer_message = 'Test paragraph sentence. doctor strange in the multiverse of madness'
+		
+		#send mail
+		msg_html = render_to_string('email/website-inquiry.html',{"customer_name":customer_name,"customer_contact":customer_contact,"customer_email":customer_email,"customer_message":customer_message})
+		msg = EmailMultiAlternatives('Website - Business Inquiry', '', 'notification@bleach-kw.com', ['rangeen.suresh@bleach-kw.com'])
+		msg.attach_alternative(msg_html, "text/html")
+		msg.send(fail_silently=False)
+
+		return Response(HTTP_200_OK)
