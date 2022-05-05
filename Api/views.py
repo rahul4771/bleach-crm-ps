@@ -2990,8 +2990,8 @@ class InvoiceSMSMailAPI(APIView):
 										"Contact":{
 											"ContactID":order.evaluation.customer.xero_account_id
 										},
-										"Date":order.evaluation.quatation_approved_date.strftime('%Y-%m-%d'),
-										"DueDate":order.evaluation.quatation_approved_date.strftime('%Y-%m-%d'),
+										"Date":timezone.now().strftime('%Y-%m-%d'),
+										"DueDate":order.subscription_topay_date.strftime('%Y-%m-%d'),
 										"LineAmountTypes":"NoTax",
 										"InvoiceNumber":InvoiceNumber,
 										"Reference":order.order_no,
