@@ -5361,15 +5361,15 @@ class WebsiteInquiryMailAPI(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
 
-	def get(self,request):
-		customer_name = 'Rangeen'
-		customer_contact = '9846798144'
-		customer_email = 'rangeens582@gmail.com'
-		customer_message = 'Test paragraph sentence. doctor strange in the multiverse of madness'
+	def post(self,request):
+		customer_name = request.data.get('customer_name')
+		customer_contact = request.data.get('customer_contact')
+		customer_email = request.data.get('customer_email')
+		customer_message = request.data.get('customer_message')
 		
 		#send mail
 		msg_html = render_to_string('email/website-inquiry.html',{"customer_name":customer_name,"customer_contact":customer_contact,"customer_email":customer_email,"customer_message":customer_message})
-		msg = EmailMultiAlternatives('Website - Business Inquiry', '', 'notification@bleach-kw.com', ['rangeen.suresh@bleach-kw.com'])
+		msg = EmailMultiAlternatives('Website - Business Inquiry', '', ['rangeen.suresh@bleach-kw.com'])
 		msg.attach_alternative(msg_html, "text/html")
 		msg.send(fail_silently=False)
 
