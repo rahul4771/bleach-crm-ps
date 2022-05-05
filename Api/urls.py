@@ -39,6 +39,7 @@ urlpatterns = [
 
 	url(r'^soa-mail/$',views.SOAMailAPI.as_view(),name='api-soa-mail'),
 	url(r'^invoice-mail-sms/$',views.InvoiceSMSMailAPI.as_view(),name='api-invoice-mail'),
+	url(r'^website-inquiry-mail/$',views.WebsiteInquiryMailAPI.as_view(),name='api-website-inquiry-mail'),
 
 	url(r'^payment/response/credit/$',views.PaymentResponseCredit.as_view(),name='api-responsecredit'),
 	url(r'^daily-sales-list/$',views.DailySalesAPI.as_view(),name='api-daily-sales'),

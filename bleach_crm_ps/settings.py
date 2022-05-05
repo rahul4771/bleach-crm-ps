@@ -159,10 +159,10 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
-#EMAIL_USE_TLS = True
+# EMAIL_USE_TLS = True
 # EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_HOST_USER = 'ansabm2018@gmail.com'
-# EMAIL_HOST_PASSWORD = '9495259869'
+# EMAIL_HOST_USER = 'rangeens582@gmail.com'
+# EMAIL_HOST_PASSWORD = 'edizmvjvtqhjvwgo'
 # EMAIL_PORT = 587
 
 # EMAIL_HOST = 'smtp.sparkpostmail.com'
