@@ -1934,7 +1934,6 @@ def addpromocode(request):
 							)
 						InvoiceNumber  = order.invoice_no
 
-						payment_policy = 'PREPAID'
 						
 					if evaluation.payment_method == 'POSTPAID':
 						Amount = order.evaluation.total_cost 
@@ -1949,8 +1948,6 @@ def addpromocode(request):
 										}
 							)
 						InvoiceNumber  = order.invoice_no
-
-						payment_policy = 'POSTPAID'
 
 					invoice_data        = 	{
 										"Type":"ACCREC",
@@ -2006,7 +2003,6 @@ def addpromocode(request):
 									}
 						)
 					InvoiceNumber  = order.invoice_no+'A'
-					payment_policy = 'BEFORE CLEANING'
 
 					invoice_data        = 	{
 										"Type":"ACCREC",
@@ -2060,7 +2056,6 @@ def addpromocode(request):
 									}
 						)
 					InvoiceNumber  = order.invoice_no+'B'
-					payment_policy = 'AFTER CLEANING'
 
 					invoice_data        = 	{
 										"Type":"ACCREC",
@@ -2125,7 +2120,19 @@ def addpromocode(request):
 							except:
 								payments_count          = 0
 							InvoiceNumber               = invoice_no+chr(ord('A')+payments_count)
-					
+
+					Amount = order.subscription_topay
+					##Invoice Line Item 
+					LineItems                 = []
+					LineItems.append({
+						"Description":"SUBSCRIPTION",
+						"Quantity":"1",
+						"UnitAmount":Amount,
+						"AccountCode":1002,
+						"TaxType":"NONE"
+									}
+						)
+
 					invoice_data        = 	{
 										"Type":"ACCREC",
 										"Contact":{
