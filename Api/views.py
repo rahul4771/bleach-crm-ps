@@ -2332,7 +2332,8 @@ class CheckOutAPI(APIView):
 
 		###############################################################
 		if order:
-			xero_order      = Order.objects.select_related('evaluation').prefetch_related('order_scheduler_order').get(id=order_data.id).annotate(total_cleanings_count=Count('order_scheduler_order'))
+			xero_order                       = Order.objects.select_related('evaluation').prefetch_related('order_scheduler_order').get(id=order_data.id)
+			xero_order.total_cleanings_count = xero_order.order_scheduler_order.count()
 
 			if xero_order.evaluation.payment_method == 'POSTPAID' or xero_order.evaluation.payment_method == 'BREAKDOWN':
 				#Xero Integration
