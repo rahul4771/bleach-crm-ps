@@ -305,8 +305,8 @@ class Command(BaseCommand):
                                                     "Contact":{
                                                         "ContactID":payment_history.order.evaluation.customer.xero_account_id
                                                     },
-                                                    "Date":payment_history.order.subscription_topay_date.strftime('%Y-%m-%d'),
-                                                    "DueDate":payment_history.order.subscription_topay_date.strftime('%Y-%m-%d'),
+                                                    "Date":payment_history.paid_date.strftime('%Y-%m-%d'),
+                                                    "DueDate":payment_history.paid_date.strftime('%Y-%m-%d'),
                                                     "LineAmountTypes":"NoTax",
                                                     "InvoiceNumber":InvoiceNumber,
                                                     "Reference":payment_history.order.order_no,
