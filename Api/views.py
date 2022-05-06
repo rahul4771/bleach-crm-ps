@@ -2332,7 +2332,9 @@ class CheckOutAPI(APIView):
 
 		###############################################################
 		if order:
-			if order_data.evaluation.payment_method == 'POSTPAID' or order_data.evaluation.payment_method == 'BREAKDOWN':
+			xero_order      = Order.objects.select_related('evaluation').prefetch_related('order_scheduler_order').get(id=order_data.id).annotate(total_cleanings_count=Count('order_scheduler_order'))
+
+			if xero_order.evaluation.payment_method == 'POSTPAID' or xero_order.evaluation.payment_method == 'BREAKDOWN':
 				#Xero Integration
 				xero                        = XeroConnection.objects.first()
 				##xero Update Access Token and Refresh Token
@@ -2353,12 +2355,12 @@ class CheckOutAPI(APIView):
 				xero.save()
 
 				##Xero Contact
-				if not order_data.evaluation.customer.xero_account_id:
+				if not xero_order.evaluation.customer.xero_account_id:
 					##Xero Create Customer ID and Save
 					contact_data                = {
-													"Name":order_data.evaluation.customer.name,
-													"ContactNumber":order_data.evaluation.customer.mobile_number,
-													"EmailAddress":order_data.evaluation.customer.email,
+													"Name":xero_order.evaluation.customer.name,
+													"ContactNumber":xero_order.evaluation.customer.mobile_number,
+													"EmailAddress":xero_order.evaluation.customer.email,
 													"ContactStatus":"ACTIVE",
 													"IsCustomer":True,
 													"DefaultCurrency":"KWD"
@@ -2376,12 +2378,12 @@ class CheckOutAPI(APIView):
 															headers=header 
 														).json()
 
-					order_data.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
-					order_data.evaluation.customer.save()
+					xero_order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
+					xero_order.evaluation.customer.save()
 
 				#Xero Invoice
-				if order_data.evaluation.payment_method == 'POSTPAID':
-					Amount = order_data.evaluation.total_cost
+				if xero_order.evaluation.payment_method == 'POSTPAID':
+					Amount = xero_order.evaluation.total_cost
 					##Invoice Line Item 
 					LineItems                 = []
 					LineItems.append({
@@ -2392,12 +2394,12 @@ class CheckOutAPI(APIView):
 						"TaxType":"NONE"
 									}
 						)
-					InvoiceNumber = order_data.invoice_no
+					InvoiceNumber = xero_order.invoice_no
 
 					payment_policy = 'POSTPAID'
 
-				elif order_data.evaluation.payment_method == 'BREAKDOWN':
-					Amount = order_data.evaluation.after_cleaning_amount
+				elif xero_order.evaluation.payment_method == 'BREAKDOWN':
+					Amount = xero_order.evaluation.after_cleaning_amount
 					##Invoice Line Item 
 					LineItems                 = []
 					LineItems.append({
@@ -2408,7 +2410,7 @@ class CheckOutAPI(APIView):
 						"TaxType":"NONE"
 									}
 						)
-					InvoiceNumber  = order_data.invoice_no+'B'
+					InvoiceNumber  = xero_order.invoice_no+'B'
 
 					payment_policy = 'AFTER CLEANING'
 				else:
@@ -2417,13 +2419,13 @@ class CheckOutAPI(APIView):
 				invoice_data              = 	{
 												"Type":"ACCREC",
 												"Contact":{
-													"ContactID":order_data.evaluation.customer.xero_account_id
+													"ContactID":xero_order.evaluation.customer.xero_account_id
 												},
 												"Date":timezone.now().strftime('%Y-%m-%d'),
-												"DueDate":order_data.order_scheduler_order[order_data.cleaning_count-1].strftime('%Y-%m-%d'),
+												"DueDate":xero_order.order_scheduler_order[xero_order.total_cleanings_count-1].strftime('%Y-%m-%d'),
 												"LineAmountTypes":"NoTax",
 												"InvoiceNumber":InvoiceNumber,
-												"Reference":order_data.order_no,
+												"Reference":xero_order.order_no,
 												"Status":"AUTHORISED",
 												"LineItems":LineItems
 												}
@@ -2448,13 +2450,13 @@ class CheckOutAPI(APIView):
 
 				if created_invoice == 'OK':
 					try:
-						update_xero_invoice                  = XeroInvoice.objects.get(order=order_data,invoice_no=InvoiceNumber)
+						update_xero_invoice                  = XeroInvoice.objects.get(order=xero_order,invoice_no=InvoiceNumber)
 						update_xero_invoice.amount           = Amount
 						update_xero_invoice.xero_marked_date = timezone.now().date()
 						update_xero_invoice.payment_policy   = payment_policy
 						update_xero_invoice.save()
 					except:
-						XeroInvoice.objects.create(order=order_data,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
+						XeroInvoice.objects.create(order=xero_order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 			###################################################################
 
 		response_dict['success'] = True
