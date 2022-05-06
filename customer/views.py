@@ -1951,6 +1951,18 @@ def addpromocode(request):
 						InvoiceNumber  = order.invoice_no
 
 						payment_policy = 'POSTPAID'
+
+					invoice_data        = 	{
+										"Type":"ACCREC",
+										"Contact":{
+											"ContactID":order.evaluation.customer.xero_account_id
+										},
+										"LineAmountTypes":"NoTax",
+										"InvoiceNumber":InvoiceNumber,
+										"Reference":order.order_no,
+										"Status":"AUTHORISED",
+										"LineItems":LineItems
+									}
 					
 					##xero Create Invoice
 					header                      = {
@@ -1996,6 +2008,18 @@ def addpromocode(request):
 					InvoiceNumber  = order.invoice_no+'A'
 					payment_policy = 'BEFORE CLEANING'
 
+					invoice_data        = 	{
+										"Type":"ACCREC",
+										"Contact":{
+											"ContactID":order.evaluation.customer.xero_account_id
+										},
+										"LineAmountTypes":"NoTax",
+										"InvoiceNumber":InvoiceNumber,
+										"Reference":order.order_no,
+										"Status":"AUTHORISED",
+										"LineItems":LineItems
+									}
+
 					##xero Create Invoice
 					header                      = {
 													'xero-tenant-id': xero.tenant_id,
@@ -2037,6 +2061,18 @@ def addpromocode(request):
 						)
 					InvoiceNumber  = order.invoice_no+'B'
 					payment_policy = 'AFTER CLEANING'
+
+					invoice_data        = 	{
+										"Type":"ACCREC",
+										"Contact":{
+											"ContactID":order.evaluation.customer.xero_account_id
+										},
+										"LineAmountTypes":"NoTax",
+										"InvoiceNumber":InvoiceNumber,
+										"Reference":order.order_no,
+										"Status":"AUTHORISED",
+										"LineItems":LineItems
+									}
 
 					##xero Create Invoice
 					header                      = {
@@ -2090,6 +2126,18 @@ def addpromocode(request):
 								payments_count          = 0
 							InvoiceNumber               = invoice_no+chr(ord('A')+payments_count)
 					
+					invoice_data        = 	{
+										"Type":"ACCREC",
+										"Contact":{
+											"ContactID":order.evaluation.customer.xero_account_id
+										},
+										"LineAmountTypes":"NoTax",
+										"InvoiceNumber":InvoiceNumber,
+										"Reference":order.order_no,
+										"Status":"AUTHORISED",
+										"LineItems":LineItems
+									}
+
 					##xero Create Invoice
 					header                      = {
 													'xero-tenant-id': xero.tenant_id,
