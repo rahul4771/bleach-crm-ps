@@ -2332,7 +2332,7 @@ class CheckOutAPI(APIView):
 
 		###############################################################
 		if order:
-			xero_order                       = Order.objects.select_related('evaluation').prefetch_related('order_scheduler_order').get(id=order_data.id)
+			xero_order                       = Order.objects.select_related('evaluation').prefetch_related('order_scheduler_order',Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).get(id=order_data.id)
 			xero_order.total_cleanings_count = xero_order.order_scheduler_order.count()
 
 			if xero_order.evaluation.payment_method == 'POSTPAID' or xero_order.evaluation.payment_method == 'BREAKDOWN':
@@ -2423,7 +2423,7 @@ class CheckOutAPI(APIView):
 													"ContactID":xero_order.evaluation.customer.xero_account_id
 												},
 												"Date":timezone.now().strftime('%Y-%m-%d'),
-												"DueDate":xero_order.order_scheduler_order[xero_order.total_cleanings_count-1].strftime('%Y-%m-%d'),
+												"DueDate":xero_order.orderschedules[xero_order.total_cleanings_count-1].strftime('%Y-%m-%d'),
 												"LineAmountTypes":"NoTax",
 												"InvoiceNumber":InvoiceNumber,
 												"Reference":xero_order.order_no,
