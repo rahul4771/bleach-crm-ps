@@ -2423,7 +2423,7 @@ class CheckOutAPI(APIView):
 													"ContactID":xero_order.evaluation.customer.xero_account_id
 												},
 												"Date":timezone.now().strftime('%Y-%m-%d'),
-												"DueDate":xero_order.orderschedules[xero_order.total_cleanings_count-1].strftime('%Y-%m-%d'),
+												"DueDate":xero_order.orderschedules[xero_order.total_cleanings_count-1].start_at.strftime('%Y-%m-%d'),
 												"LineAmountTypes":"NoTax",
 												"InvoiceNumber":InvoiceNumber,
 												"Reference":xero_order.order_no,
