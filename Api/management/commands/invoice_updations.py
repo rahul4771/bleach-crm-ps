@@ -147,7 +147,7 @@ class Command(BaseCommand):
 		# 			XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 
         #PREPAID, CLEANING BEFORE Invoices
-        before_orders = Order.objects.select_related('evaluation__customer').filter(evaluation__quatation_status='APPROVED',payment_status='PENDING').filter(Q(evaluation__payment_method='PREPAID')|Q(Q(evaluation__payment_method='BREAKDOWN')&Q(preamount_paid__gt=0)))
+        before_orders = Order.objects.select_related('evaluation__customer').filter(evaluation__quatation_status='APPROVED',payment_status='PENDING',order_status__isnull=False).exclude().filter(Q(evaluation__payment_method='PREPAID')|Q(Q(evaluation__payment_method='BREAKDOWN')&Q(preamount_paid__gt=0))&Q()).filter(~Q(callback_status='LEGAL_ACTION'))
         print(before_orders)
         print(before_orders.count())        
         # for before_order in before_orders:
