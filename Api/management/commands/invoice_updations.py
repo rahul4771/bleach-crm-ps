@@ -1,8 +1,11 @@
+import requests
+
 from django.core.management.base import BaseCommand
 
 from order.models import Order
 from Api.models import XeroConnection
 from order.models import XeroInvoice
+from accountant.models import PaymentHistory
 
 from django.utils import timezone
 from datetime import timedelta,date,datetime
@@ -40,38 +43,37 @@ class Command(BaseCommand):
                                         'Content-Type': 'application/json'
                                             }
 
-        ##Xero Contact
-        if not subscription.evaluation.customer.xero_account_id:
-            ##Xero Create Customer ID and Save
-            contact_data                = {
-                                            "Name":subscription.evaluation.customer.name,
-                                            "ContactNumber":subscription.evaluation.customer.mobile_number,
-                                            "EmailAddress":subscription.evaluation.customer.email,
-                                            "ContactStatus":"ACTIVE",
-                                            "IsCustomer":True,
-                                            "DefaultCurrency":"KWD"
-                                                        }
-                                            
-            header                      = {
-                                        'xero-tenant-id': xero.tenant_id,
-                                        'Authorization': 'Bearer '+access_token,
-                                        'Accept': 'application/json',
-                                        'Content-Type': 'application/json'
-                                            }
-
-            create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
-                                                    json=contact_data,
-                                                    headers=header 
-                                                ).json()
-
-            order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
-            order.evaluation.customer.save()
-
-
         #SUBSCRIPTION Invoices
-        subscriptions = Order.objects.select_related('evaluation__customer').filter(evaluation__quatation_status='APPROVED',evaluation__payment_method='SUBSCRIPTION',payment_status='PENDING',subscription_topay__gt=0)
-        
+        subscriptions = Order.objects.select_related('evaluation__customer').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False,evaluation__payment_method='SUBSCRIPTION',payment_status='PENDING',subscription_topay__gt=0).exclude(order_status='ORDER_CANCELLED').filter(~Q(callback_status='LEGAL_ACTION'))
+                
         for subscription in subscriptions:
+            ##Xero Contact
+            if not subscription.evaluation.customer.xero_account_id:
+                ##Xero Create Customer ID and Save
+                contact_data                = {
+                                                "Name":subscription.evaluation.customer.name,
+                                                "ContactNumber":subscription.evaluation.customer.mobile_number,
+                                                "EmailAddress":subscription.evaluation.customer.email,
+                                                "ContactStatus":"ACTIVE",
+                                                "IsCustomer":True,
+                                                "DefaultCurrency":"KWD"
+                                                            }
+                                                
+                header                      = {
+                                            'xero-tenant-id': xero.tenant_id,
+                                            'Authorization': 'Bearer '+access_token,
+                                            'Accept': 'application/json',
+                                            'Content-Type': 'application/json'
+                                                }
+
+                create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
+                                                        json=contact_data,
+                                                        headers=header 
+                                                    ).json()
+
+                subscription.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
+                subscription.evaluation.customer.save()
+
             Amount = subscription.evaluation.total_cost 
             ##Invoice Line Item 
             LineItems                 = []
@@ -101,6 +103,12 @@ class Command(BaseCommand):
 					last_paid_invoice_no    = last_paid_invoice.invoice_no
 					last_paid_invoice_no    = last_paid_invoice_no.replace(last_paid_invoice_no[len(last_paid_invoice_no) - 1:], chr(ord(last_paid_invoice_no[-1])+1))
 					InvoiceNumber           = last_paid_invoice_no
+                else:
+                    try:
+                        payments_count          = PaymentHistory.objects.filter(order=subscription).count()
+                    except:
+                        payments_count          = 0
+                    InvoiceNumber               = invoice_no+chr(ord('A')+payments_count)
 
             payment_policy            = 'SUBSCRIPTION'
 
@@ -110,7 +118,7 @@ class Command(BaseCommand):
                                                         "ContactID":subscription.evaluation.customer.xero_account_id
                                                     },
                                                     "Date":timezone.now().strftime('%Y-%m-%d'),
-                                                    "DueDate":timezone.now().strftime('%Y-%m-%d'),
+                                                    "DueDate":subscription.subscription_topay_date.strftime('%Y-%m-%d'),
                                                     "LineAmountTypes":"NoTax",
                                                     "InvoiceNumber":InvoiceNumber,
                                                     "Reference":subscription.order_no,
@@ -136,11 +144,11 @@ class Command(BaseCommand):
 					update_xero_invoice.payment_policy   = payment_policy
 					update_xero_invoice.save()
 				except:
-					XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
+					XeroInvoice.objects.create(order=subscription,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 
         #PREPAID, CLEANING BEFORE Invoices
-        before_orders = Order.objects.select_related('evaluation__customer').filter(evaluation__quatation_status='APPROVED',payment_status='PENDING').filter(Q(evaluation__payment_method='PREPAID')|Q(Q(evaluation__payment_method='BREAKDOWN')&Q(preamount_paid__gt=0)))
-        
+        before_orders = Order.objects.select_related('evaluation__customer').filter(evaluation__quatation_status='APPROVED',payment_status='PENDING',order_status__isnull=False).exclude(order_status='ORDER_CANCELLED').filter(Q(evaluation__payment_method='PREPAID')|Q(Q(evaluation__payment_method='BREAKDOWN')&Q(preamount_paid__gt=0))).filter(~Q(callback_status='LEGAL_ACTION')).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
+                
         for before_order in before_orders:
             if before_order.evaluation.payment_method == 'PREPAID':
                 Amount = before_order.evaluation.total_cost 
@@ -179,8 +187,9 @@ class Command(BaseCommand):
 													"Contact":{
 														"ContactID":before_order.evaluation.customer.xero_account_id
 													},
-													"Date":before_order.evaluation.quatation_approved_date.strftime('%Y-%m-%d'),
-													"DueDate":before_order.evaluation.quatation_approved_date.strftime('%Y-%m-%d'),
+
+													"Date":before_order.created.strftime('%Y-%m-%d'),
+													"DueDate":before_order.orderschedules[0].start_at.strftime('%Y-%m-%d'),
 													"LineAmountTypes":"NoTax",
 													"InvoiceNumber":InvoiceNumber,
 													"Reference":before_order.order_no,
@@ -207,17 +216,16 @@ class Command(BaseCommand):
             
             if created_invoice == 'OK':
                 try:
-                    update_xero_invoice                  = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
+                    update_xero_invoice                  = XeroInvoice.objects.get(order=before_order,invoice_no=InvoiceNumber)
                     update_xero_invoice.amount           = Amount
                     update_xero_invoice.xero_marked_date = timezone.now().date()
                     update_xero_invoice.payment_policy   = payment_policy
                     update_xero_invoice.save()
                 except:
-                    XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
+                    XeroInvoice.objects.create(order=before_order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 
         #POSTPAID, CLEANING AFTER Invoices
-        after_orders  = Order.objects.select_related('evaluation__customer').prefetch_related('order_scheduler_order').filter(evaluation__quatation_status='APPROVED',payment_status='PENDING').filter(Q(evaluation__payment_method='POSTPAID')|Q(Q(evaluation__payment_method='BREAKDOWN')&Q(postamount_paid__gt=0))).annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())),remaining_cleanings_count= F('total_cleanings_count') - F('completed_cleanings_count')).filter(remaining_cleanings_count=0)
-        
+        after_orders  = Order.objects.select_related('evaluation__customer').prefetch_related('order_scheduler_order').filter(evaluation__quatation_status='APPROVED',payment_status='PENDING',order_status__isnull=False).exclude(order_status='ORDER_CANCELLED').filter(Q(evaluation__payment_method='POSTPAID')|Q(Q(evaluation__payment_method='BREAKDOWN')&Q(postamount_paid__gt=0))).filter(~Q(callback_status='LEGAL_ACTION')).annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())),remaining_cleanings_count= F('total_cleanings_count') - F('completed_cleanings_count')).filter(remaining_cleanings_count=0).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
         for after_order in after_orders:
             if after_order.evaluation.payment_method == 'POSTPAID':
                 Amount = after_order.evaluation.total_cost 
@@ -256,8 +264,8 @@ class Command(BaseCommand):
 													"Contact":{
 														"ContactID":after_order.evaluation.customer.xero_account_id
 													},
-													"Date":timezone.now().strftime('%Y-%m-%d'),
-													"DueDate":timezone.now().strftime('%Y-%m-%d'),
+													"Date":after_order.orderschedules[after_order.total_cleanings_count-1].start_at.strftime('%Y-%m-%d'),
+													"DueDate":after_order.orderschedules[after_order.total_cleanings_count-1].start_at.strftime('%Y-%m-%d'),
 													"LineAmountTypes":"NoTax",
 													"InvoiceNumber":InvoiceNumber,
 													"Reference":after_order.order_no,
