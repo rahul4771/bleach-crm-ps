@@ -4629,7 +4629,6 @@ class ItemsCheckInAPI(APIView):
 			response_dict['team_leader'] = team_leader
 
 		return_items = CheckOutItems.objects.filter(is_checked_in=False,visit=visit)
-		
 
 		items_list = []
 		item_order_no = visit.order.order_no
@@ -4695,6 +4694,7 @@ class ItemsCheckInAPI(APIView):
 		print(item_quantities,"qts")
 
 		count = 0
+		team_leader = None
 		
 		for item_id in item_ids:
 			checkin_item = CheckOutItems.objects.prefetch_related(Prefetch('checkoutitem',CheckOutItemUnits.objects.all(),to_attr="checkin_item_units")).get(id=int(item_id),is_checked_in=False)
