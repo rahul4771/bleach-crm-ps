@@ -5379,7 +5379,7 @@ class WebsiteInquiryMailAPI(APIView):
 		customer_inquiry_type = request.data.get('customer_inquiry_type')
 		
 		#send mail
-		msg_html = render_to_string('email/website-inquiry.html',{"customer_name":customer_name,"customer_contact":customer_contact,"customer_email":customer_email,"customer_message":customer_message})
+		msg_html = render_to_string('email/website-inquiry.html',{"customer_organization":customer_organization,"customer_inquiry_type":customer_inquiry_type,"customer_name":customer_name,"customer_contact":customer_contact,"customer_email":customer_email,"customer_message":customer_message})
 		msg = EmailMultiAlternatives('Website - Business Inquiry', '', 'notification@bleach-kw.com', ['rangeen.suresh@bleach-kw.com'])
 		msg.attach_alternative(msg_html, "text/html")
 		msg.send(fail_silently=False)
