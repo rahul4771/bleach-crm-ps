@@ -307,14 +307,14 @@
                             </span></div>
                             </div>
                             <div class="d-flex cd-mt-50 justify-center">
-                                {% if order.order_status == 'ORDER_CLOSED' %}
+                                {% comment %} {% if order.order_status == 'ORDER_CLOSED' %} {% endcomment %}
                                 <a href="/common/reorder?id={{order.evaluation.id}}" target="_blank">
                                 <div class="primary-btn ">
                                     <i class="fas fa-retweet white-icon"></i>
                                     Reorder
                                 </div>
                                 </a>
-                                {% endif %}
+                                {% comment %} {% endif %} {% endcomment %}
 
                                 <a {% if evaluation.payment_method == 'SUBSCRIPTION' %}href="/customer/subscription/quatation/paw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}"{% else %}href="/customer/quatation/paw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}"{% endif %} target="_blank">
                                 <div class="secondary-btn cd-ml-4">
