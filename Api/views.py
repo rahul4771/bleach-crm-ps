@@ -418,6 +418,9 @@ class PaymentResponseCredit(APIView):
 						xero_invoice.paid_date = payment_date
 						xero_invoice.save()
 
+						payment_history.is_xero_marked = True
+						payment_history.save()
+
 			if payment_policy == 'SUBSCRIPTION':
 				try:
 					xero_invoice = XeroInvoice.objects.filter(order=order,payment_policy=payment_policy,is_paid=False).last()
@@ -451,6 +454,9 @@ class PaymentResponseCredit(APIView):
 						xero_invoice.is_paid   = True
 						xero_invoice.paid_date = payment_date
 						xero_invoice.save()
+						
+						payment_history.is_xero_marked = True
+						payment_history.save()
 				########################################################################################
 
 
@@ -2922,7 +2928,7 @@ class InvoiceSMSMailAPI(APIView):
 						payments_count          = PaymentHistory.objects.filter(order=subscription).count()
 					except:
 						payments_count          = 0
-					InvoiceNumber               = invoice_no+chr(ord('A')+payments_count)
+					InvoiceNumber               = order.invoice_no+chr(ord('A')+payments_count)
 			
 			#Xero Integration
 			xero                        = XeroConnection.objects.first()
