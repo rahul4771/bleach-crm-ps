@@ -1,9 +1,10 @@
 import requests
+import json
 
 from django.core.management.base import BaseCommand
 
+from order.models import Order,OrderScheduler,XeroInvoice
 from Api.models import XeroConnection
-from order.models import Order,XeroInvoice
 from accountant.models import PaymentHistory
 from user.models import UserProfile
 
@@ -46,7 +47,7 @@ class Command(BaseCommand):
 
         #Paid History                                
         payment_history_date   = datetime.strptime("01-04-2022","%d-%m-%Y").date()
-        payment_histories      = PaymentHistory.objects.select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order').filter(is_active=True,paid_date__gte=payment_history_date,is_xero_marked=False).annotate(total_cleanings_count=Count('order_scheduler_order')).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
+        payment_histories      = PaymentHistory.objects.select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order').filter(is_active=True,paid_date__gte=payment_history_date,is_xero_marked=False).annotate(total_cleanings_count=Count('order__order_scheduler_order')).prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
                 
         for payment_history in payment_histories:
 
@@ -122,8 +123,6 @@ class Command(BaseCommand):
                                                         json=invoice_data,
                                                         headers=header 
                                                     ).json()
-                print(invoice_data)
-                print(create_invoice)
                 try:
                     created_invoice = create_invoice['Status']
                 except:
@@ -161,7 +160,7 @@ class Command(BaseCommand):
                                                         "ContactID":payment_history.order.evaluation.customer.xero_account_id
                                                     },
                                                     "Date":payment_history.order.orderschedules[payment_history.total_cleanings_count-1].start_at.strftime('%Y-%m-%d'),
-                                                    "DueDate":(payment_history.order.orderschedules[payment_history.total_cleanings_count-1].start_at+timedelta(days=14))strftime('%Y-%m-%d'),
+                                                    "DueDate":(payment_history.order.orderschedules[payment_history.total_cleanings_count-1].start_at+timedelta(days=14)).strftime('%Y-%m-%d'),
                                                     "LineAmountTypes":"NoTax",
                                                     "InvoiceNumber":InvoiceNumber,
                                                     "Reference":payment_history.order.order_no,
@@ -197,7 +196,7 @@ class Command(BaseCommand):
                         XeroInvoice.objects.create(order=payment_history.order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 
             if payment_method == 'BREAKDOWN':
-                breakdown_histories = PaymentHistory.objects.prefetch_related('order_scheduler_order').filter(order=payment_history.order).annotate(total_cleanings_count=Count('order__order_scheduler_order')).prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
+                breakdown_histories = PaymentHistory.objects.prefetch_related('order__order_scheduler_order').filter(order=payment_history.order).annotate(total_cleanings_count=Count('order__order_scheduler_order')).prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
                 breakdown_counter      = 1
                 for breakdown_history in breakdown_histories:
                     if breakdown_history == payment_history:
@@ -346,9 +345,14 @@ class Command(BaseCommand):
                     
                     subscription_counter += 1
 
+            print(InvoiceNumber)
+            print(create_invoice)
             #Payment Add to Xero
-            xero_invoice        = XeroInvoice.objects.get(invoice_no=InvoiceNumber)
-            
+            try:
+                xero_invoice        = XeroInvoice.objects.get(invoice_no=InvoiceNumber)
+            except:
+                xero_invoice        = None 
+
             payment_date        = payment_history.paid_date.date()
             payment_date_string = datetime.strftime(payment_date,'%Y-%m-%d')
             amount_paid         = payment_history.amount_paid
@@ -384,5 +388,4 @@ class Command(BaseCommand):
                     payment_history.is_xero_marked = True
                     payment_history.save()
 
-            print(InvoiceNumber)
                     
