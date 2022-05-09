@@ -149,6 +149,33 @@ class Command(BaseCommand):
         before_orders = Order.objects.select_related('evaluation__customer').filter(evaluation__quatation_status='APPROVED',payment_status='PENDING',order_status__isnull=False).exclude(order_status='ORDER_CANCELLED').filter(Q(evaluation__payment_method='PREPAID')|Q(Q(evaluation__payment_method='BREAKDOWN')&Q(preamount_paid__gt=0))).filter(~Q(callback_status='LEGAL_ACTION'))
                 
         for before_order in before_orders:
+            ##Xero Contact
+            if not before_order.evaluation.customer.xero_account_id:
+                ##Xero Create Customer ID and Save
+                contact_data                = {
+                                                "Name":before_order.evaluation.customer.name,
+                                                "ContactNumber":before_order.evaluation.customer.mobile_number,
+                                                "EmailAddress":before_order.evaluation.customer.email,
+                                                "ContactStatus":"ACTIVE",
+                                                "IsCustomer":True,
+                                                "DefaultCurrency":"KWD"
+                                                            }
+                                                
+                header                      = {
+                                            'xero-tenant-id': xero.tenant_id,
+                                            'Authorization': 'Bearer '+access_token,
+                                            'Accept': 'application/json',
+                                            'Content-Type': 'application/json'
+                                                }
+
+                create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
+                                                        json=contact_data,
+                                                        headers=header 
+                                                    ).json()
+
+                before_order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
+                before_order.evaluation.customer.save()
+
             if before_order.evaluation.payment_method == 'PREPAID':
                 Amount = before_order.evaluation.total_cost 
                 ##Invoice Line Item 
@@ -226,6 +253,33 @@ class Command(BaseCommand):
         #POSTPAID, CLEANING AFTER Invoices
         after_orders  = Order.objects.select_related('evaluation__customer').prefetch_related('order_scheduler_order').filter(evaluation__quatation_status='APPROVED',payment_status='PENDING',order_status__isnull=False).exclude(order_status='ORDER_CANCELLED').filter(Q(evaluation__payment_method='POSTPAID')|Q(Q(evaluation__payment_method='BREAKDOWN')&Q(postamount_paid__gt=0))).filter(~Q(callback_status='LEGAL_ACTION')).annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())),remaining_cleanings_count= F('total_cleanings_count') - F('completed_cleanings_count')).filter(remaining_cleanings_count=0).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
         for after_order in after_orders:
+            ##Xero Contact
+            if not after_order.evaluation.customer.xero_account_id:
+                ##Xero Create Customer ID and Save
+                contact_data                = {
+                                                "Name":after_order.evaluation.customer.name,
+                                                "ContactNumber":after_order.evaluation.customer.mobile_number,
+                                                "EmailAddress":after_order.evaluation.customer.email,
+                                                "ContactStatus":"ACTIVE",
+                                                "IsCustomer":True,
+                                                "DefaultCurrency":"KWD"
+                                                            }
+                                                
+                header                      = {
+                                            'xero-tenant-id': xero.tenant_id,
+                                            'Authorization': 'Bearer '+access_token,
+                                            'Accept': 'application/json',
+                                            'Content-Type': 'application/json'
+                                                }
+
+                create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
+                                                        json=contact_data,
+                                                        headers=header 
+                                                    ).json()
+
+                after_order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
+                after_order.evaluation.customer.save()
+
             if after_order.evaluation.payment_method == 'POSTPAID':
                 Amount = after_order.evaluation.total_cost 
                 ##Invoice Line Item 
