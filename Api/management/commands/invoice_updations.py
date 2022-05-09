@@ -280,6 +280,7 @@ class Command(BaseCommand):
                                             'Content-Type': 'application/json'
                                                 }
 
+            print(invoice_data,"data")
             create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
                                                     json=invoice_data,
                                                     headers=header 
