@@ -123,8 +123,6 @@ class Command(BaseCommand):
                                                         json=invoice_data,
                                                         headers=header 
                                                     ).json()
-                print(invoice_data)
-                print(create_invoice)
                 try:
                     created_invoice = create_invoice['Status']
                 except:
@@ -347,6 +345,8 @@ class Command(BaseCommand):
                     
                     subscription_counter += 1
 
+            print(InvoiceNumber)
+            print(created_invoice)
             #Payment Add to Xero
             xero_invoice        = XeroInvoice.objects.get(invoice_no=InvoiceNumber)
             
