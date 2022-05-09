@@ -385,5 +385,4 @@ class Command(BaseCommand):
                     payment_history.is_xero_marked = True
                     payment_history.save()
 
-            print(InvoiceNumber)
                     
