@@ -5366,6 +5366,8 @@ class WebsiteInquiryMailAPI(APIView):
 		customer_contact = request.data.get('customer_contact')
 		customer_email = request.data.get('customer_email')
 		customer_message = request.data.get('customer_message')
+		customer_organization = request.data.get('customer_organization')
+		customer_inquiry_type = request.data.get('customer_inquiry_type')
 		
 		#send mail
 		msg_html = render_to_string('email/website-inquiry.html',{"customer_name":customer_name,"customer_contact":customer_contact,"customer_email":customer_email,"customer_message":customer_message})
