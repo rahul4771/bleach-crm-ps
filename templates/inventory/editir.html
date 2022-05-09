@@ -206,7 +206,7 @@
                                     <td>{{item.product.name}}</td>
                                     <td style="text-align: center;">{{item.product.item_type}}</td>
                                     <td style="text-align: center;">{{item.product.item_category.name}}</td>
-                                    <td style="text-align: center;">{{item.item_count|floatformat:0}} {{item.product.measuring_unit}}</td>
+                                    <td style="text-align: center;">{{item.item_count|floatformat:0}} {% if item.product.measuring_unit %} {{item.product.measuring_unit}} {% else %} unit {% endif %}</td>
                                     <td style="text-align: center;"> 
                                         
                                                 <div class="btn-group" id="actionDropdown">

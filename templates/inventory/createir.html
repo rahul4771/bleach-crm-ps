@@ -207,7 +207,7 @@
                                     <td data-label="Item Name">{{item.product.name}}</td>
                                     <td style="text-align: center;" data-label="Item Type">{{item.product.item_type}}</td>
                                     <td style="text-align: center;" data-label="Category">{{item.product.item_category.name}}</td>
-                                    <td style="text-align: center;" data-label="Quantity">{{item.item_count|floatformat:0}} {{item.product.measuring_unit}}</td>
+                                    <td style="text-align: center;" data-label="Quantity">{{item.item_count|floatformat:0}} {% if item.product.measuring_unit %} {{item.product.measuring_unit}} {% else %} unit {% endif %}</td>
                                     <td style="text-align: center;"> 
                                         
                                                 <div class="btn-group" id="actionDropdown">
@@ -255,7 +255,7 @@
         </div>
     </section>
     
-    <form method="POST" action="" >{% csrf_token %}
+    <form id="itemaddform" method="POST" action="" >{% csrf_token %}
     <div id="addStore" class="inv-sidedrawer" >
        
         <div class="inv-sidedrawer-inner">
@@ -347,7 +347,7 @@
             <input type="hidden" name="item" id="id_pro_sel" value="" />
             <input type="hidden" name="request_order_id" value="{{request_order.id}}" />
             <input type="hidden" name="request_item_id" id="id_edit_item" />
-            <button class="sent-button purchaseorder-form-btn" type="submit" >Submit</button>
+            <button class="sent-button purchaseorder-form-btn" type="button" >Submit</button>
             
             <button data-dismiss="modal" onclick="closeNavAddStore()" class="cancel-button" type="button">Cancel</button>
         </div>
@@ -887,6 +887,20 @@ function subQty(){
 
         document.getElementById("id_search").style.display="none"
     }
+
+    
+    $('.purchaseorder-form-btn').click(function(){
+
+        if (app.selected_product.item_add_type == 'unit'){
+            if (app.selected_unit !== ''){
+                $('#itemaddform').submit();
+                console.log(app.selected_product.item_add_type,"testttttpo")
+            }
+        }else{
+            $('#itemaddform').submit();
+        }
+    })
+    
 
     //Delete Item
     $('.delete-item-btn').click(function(){
