@@ -86,22 +86,22 @@ class Command(BaseCommand):
                 )
 
             try:
-				last_unpaid_invoice = XeroInvoice.objects.filter(is_paid=False,order=subscription).last()
-			except:
-				last_unpaid_invoice = None
+                last_unpaid_invoice = XeroInvoice.objects.filter(is_paid=False,order=subscription).last()
+            except:
+                last_unpaid_invoice = None
 
-			if last_unpaid_invoice:
-				InvoiceNumber      = last_unpaid_invoice.invoice_no
-			else:
-				try:
-					last_paid_invoice = XeroInvoice.objects.filter(is_paid=True,order=subscription).last()
-				except:
-					last_paid_invoice = None
-				
-				if last_paid_invoice:
-					last_paid_invoice_no    = last_paid_invoice.invoice_no
-					last_paid_invoice_no    = last_paid_invoice_no.replace(last_paid_invoice_no[len(last_paid_invoice_no) - 1:], chr(ord(last_paid_invoice_no[-1])+1))
-					InvoiceNumber           = last_paid_invoice_no
+            if last_unpaid_invoice:
+                InvoiceNumber      = last_unpaid_invoice.invoice_no
+            else:
+                try:
+                    last_paid_invoice = XeroInvoice.objects.filter(is_paid=True,order=subscription).last()
+                except:
+                    last_paid_invoice = None
+                
+                if last_paid_invoice:
+                    last_paid_invoice_no    = last_paid_invoice.invoice_no
+                    last_paid_invoice_no    = last_paid_invoice_no.replace(last_paid_invoice_no[len(last_paid_invoice_no) - 1:], chr(ord(last_paid_invoice_no[-1])+1))
+                    InvoiceNumber           = last_paid_invoice_no
                 else:
                     try:
                         payments_count          = PaymentHistory.objects.filter(order=subscription).count()
@@ -129,21 +129,21 @@ class Command(BaseCommand):
 													json=invoice_data,
 													headers=header 
 												).json()
-			try:
-				created_invoice = create_invoice['Status']
-			except:
-				created_invoice = None
-			
+            try:
+                created_invoice = create_invoice['Status']
+            except:
+                created_invoice = None
 
-			if created_invoice == 'OK':
-				try:
-					update_xero_invoice                  = XeroInvoice.objects.get(order=subscription,invoice_no=InvoiceNumber)
-					update_xero_invoice.amount           = Amount
-					update_xero_invoice.xero_marked_date = timezone.now().date()
-					update_xero_invoice.payment_policy   = payment_policy
-					update_xero_invoice.save()
-				except:
-					XeroInvoice.objects.create(order=subscription,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
+
+            if created_invoice == 'OK':
+                try:
+                    update_xero_invoice                  = XeroInvoice.objects.get(order=subscription,invoice_no=InvoiceNumber)
+                    update_xero_invoice.amount           = Amount
+                    update_xero_invoice.xero_marked_date = timezone.now().date()
+                    update_xero_invoice.payment_policy   = payment_policy
+                    update_xero_invoice.save()
+                except:
+                    XeroInvoice.objects.create(order=subscription,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 
         #PREPAID, CLEANING BEFORE Invoices
         before_orders = Order.objects.select_related('evaluation__customer').filter(evaluation__quatation_status='APPROVED',payment_status='PENDING',order_status__isnull=False).exclude(order_status='ORDER_CANCELLED').filter(Q(evaluation__payment_method='PREPAID')|Q(Q(evaluation__payment_method='BREAKDOWN')&Q(preamount_paid__gt=0))).filter(~Q(callback_status='LEGAL_ACTION')).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
