@@ -9,7 +9,6 @@ from user.models import UserProfile
 
 from django.utils import timezone
 from datetime import timedelta,date,datetime
-from datetime import timedelta,date,datetime
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,Max,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField,CharField
 from django.db.models.functions import Cast
 from django.db.models import Prefetch
@@ -103,7 +102,7 @@ class Command(BaseCommand):
                                                         "ContactID":payment_history.order.evaluation.customer.xero_account_id
                                                     },
                                                     "Date":payment_history.order.created.strftime('%Y-%m-%d'),
-                                                    "DueDate":payment_history.order.orderschedules[0].start_at.strftime('%Y-%m-%d'),
+                                                    "DueDate":(payment_history.order.created+timedelta(days=14)).strftime('%Y-%m-%d'),
                                                     "LineAmountTypes":"NoTax",
                                                     "InvoiceNumber":InvoiceNumber,
                                                     "Reference":payment_history.order.order_no,
@@ -162,7 +161,7 @@ class Command(BaseCommand):
                                                         "ContactID":payment_history.order.evaluation.customer.xero_account_id
                                                     },
                                                     "Date":payment_history.order.orderschedules[payment_history.total_cleanings_count-1].start_at.strftime('%Y-%m-%d'),
-                                                    "DueDate":payment_history.order.orderschedules[payment_history.total_cleanings_count-1].start_at.strftime('%Y-%m-%d'),
+                                                    "DueDate":(payment_history.order.orderschedules[payment_history.total_cleanings_count-1].start_at+timedelta(days=14))strftime('%Y-%m-%d'),
                                                     "LineAmountTypes":"NoTax",
                                                     "InvoiceNumber":InvoiceNumber,
                                                     "Reference":payment_history.order.order_no,
@@ -219,7 +218,7 @@ class Command(BaseCommand):
                             
                             payment_policy = 'BEFORE CLEANING'
 
-                            DueDate        = payment_history.order.orderschedules[0].start_at
+                            DueDate        = payment_history.order.orderschedules[0].start_at+timedelta(days=14)
                     
                         #After Cleaning
                         if breakdown_counter == 2:
@@ -238,7 +237,7 @@ class Command(BaseCommand):
                             
                             payment_policy = 'AFTER CLEANING'
 
-                            DueDate        = payment_history.order.orderschedules[payment_history.total_cleanings_count-1].start_at
+                            DueDate        = payment_history.order.orderschedules[payment_history.total_cleanings_count-1].start_at+timedelta(days=14)
 
                         invoice_data              = 	{
                                                     "Type":"ACCREC",
