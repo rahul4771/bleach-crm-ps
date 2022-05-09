@@ -107,7 +107,7 @@ class Command(BaseCommand):
                         payments_count          = PaymentHistory.objects.filter(order=subscription).count()
                     except:
                         payments_count          = 0
-                    InvoiceNumber               = invoice_no+chr(ord('A')+payments_count)
+                    InvoiceNumber               = subscription.invoice_no+chr(ord('A')+payments_count)
 
             payment_policy            = 'SUBSCRIPTION'
 
