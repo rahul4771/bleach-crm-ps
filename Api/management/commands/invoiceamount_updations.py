@@ -162,7 +162,7 @@ class Command(BaseCommand):
                                                         "ContactID":payment_history.order.evaluation.customer.xero_account_id
                                                     },
                                                     "Date":payment_history.order.orderschedules[payment_history.total_cleanings_count-1].start_at.strftime('%Y-%m-%d'),
-                                                    "DueDate":(payment_history.order.orderschedules[payment_history.total_cleanings_count-1].start_at+timedelta(days=14))strftime('%Y-%m-%d'),
+                                                    "DueDate":(payment_history.order.orderschedules[payment_history.total_cleanings_count-1].start_at+timedelta(days=14)).strftime('%Y-%m-%d'),
                                                     "LineAmountTypes":"NoTax",
                                                     "InvoiceNumber":InvoiceNumber,
                                                     "Reference":payment_history.order.order_no,
