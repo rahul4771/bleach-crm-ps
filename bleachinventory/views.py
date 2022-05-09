@@ -3416,7 +3416,7 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 				
 				elif request_order_item.product.item_add_type == 'unit':
 					unitcount = ItemUnit.objects.filter(is_available=True,item=request_order_item.product,store=store).count()
-					if	request_order_item.product_unit.is_available == True and float(unitcount) >= float(request_order_item.item_count):
+					if	request_order_item.product_unit and request_order_item.product_unit.is_available == True and float(unitcount) >= float(request_order_item.item_count):
 						request_order_item.status = 'Available'
 					else:
 						request_order_item.status = 'Not Available'
