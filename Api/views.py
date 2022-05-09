@@ -4621,12 +4621,12 @@ class ItemsCheckInAPI(APIView):
 
 		visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(visit_id))
 
+		team_leader = None
 		for team in visit.cleaning_team:
 			team_leader = team.team_leader.name
 			response_dict['team_leader'] = team_leader
 
 		return_items = CheckOutItems.objects.filter(is_checked_in=False,visit=visit)
-		
 
 		items_list = []
 		item_order_no = visit.order.order_no
@@ -4692,6 +4692,7 @@ class ItemsCheckInAPI(APIView):
 		print(item_quantities,"qts")
 
 		count = 0
+		team_leader = None
 		
 		for item_id in item_ids:
 			checkin_item = CheckOutItems.objects.prefetch_related(Prefetch('checkoutitem',CheckOutItemUnits.objects.all(),to_attr="checkin_item_units")).get(id=int(item_id),is_checked_in=False)
@@ -5372,9 +5373,11 @@ class WebsiteInquiryMailAPI(APIView):
 		customer_contact = request.data.get('customer_contact')
 		customer_email = request.data.get('customer_email')
 		customer_message = request.data.get('customer_message')
+		customer_organization = request.data.get('customer_organization')
+		customer_inquiry_type = request.data.get('customer_inquiry_type')
 		
 		#send mail
-		msg_html = render_to_string('email/website-inquiry.html',{"customer_name":customer_name,"customer_contact":customer_contact,"customer_email":customer_email,"customer_message":customer_message})
+		msg_html = render_to_string('email/website-inquiry.html',{"customer_organization":customer_organization,"customer_inquiry_type":customer_inquiry_type,"customer_name":customer_name,"customer_contact":customer_contact,"customer_email":customer_email,"customer_message":customer_message})
 		msg = EmailMultiAlternatives('Website - Business Inquiry', '', 'notification@bleach-kw.com', ['rangeen.suresh@bleach-kw.com'])
 		msg.attach_alternative(msg_html, "text/html")
 		msg.send(fail_silently=False)
