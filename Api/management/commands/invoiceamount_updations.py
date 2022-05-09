@@ -198,7 +198,7 @@ class Command(BaseCommand):
                         XeroInvoice.objects.create(order=payment_history.order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 
             if payment_method == 'BREAKDOWN':
-                breakdown_histories = PaymentHistory.objects.prefetch_related('order_scheduler_order').filter(order=payment_history.order).annotate(total_cleanings_count=Count('order__order_scheduler_order')).prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
+                breakdown_histories = PaymentHistory.objects.prefetch_related('order__order_scheduler_order').filter(order=payment_history.order).annotate(total_cleanings_count=Count('order__order_scheduler_order')).prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
                 breakdown_counter      = 1
                 for breakdown_history in breakdown_histories:
                     if breakdown_history == payment_history:
