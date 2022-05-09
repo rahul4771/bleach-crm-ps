@@ -9,7 +9,6 @@ from accountant.models import PaymentHistory
 
 from django.utils import timezone
 from datetime import timedelta,date,datetime
-from datetime import timedelta,date,datetime
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,Max,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField,CharField
 from django.db.models.functions import Cast
 from django.db.models import Prefetch
@@ -118,7 +117,7 @@ class Command(BaseCommand):
                                                         "ContactID":subscription.evaluation.customer.xero_account_id
                                                     },
                                                     "Date":timezone.now().strftime('%Y-%m-%d'),
-                                                    "DueDate":subscription.subscription_topay_date.strftime('%Y-%m-%d'),
+                                                    "DueDate":(timezone.now()+timedelta(days=14)).strftime('%Y-%m-%d'),
                                                     "LineAmountTypes":"NoTax",
                                                     "InvoiceNumber":InvoiceNumber,
                                                     "Reference":subscription.order_no,
@@ -189,7 +188,7 @@ class Command(BaseCommand):
 													},
 
 													"Date":before_order.created.strftime('%Y-%m-%d'),
-													"DueDate":before_order.orderschedules[0].start_at.strftime('%Y-%m-%d'),
+													"DueDate":(before_order.created+timedelta(days=14)).strftime('%Y-%m-%d'),
 													"LineAmountTypes":"NoTax",
 													"InvoiceNumber":InvoiceNumber,
 													"Reference":before_order.order_no,
@@ -265,7 +264,7 @@ class Command(BaseCommand):
 														"ContactID":after_order.evaluation.customer.xero_account_id
 													},
 													"Date":after_order.orderschedules[after_order.total_cleanings_count-1].start_at.strftime('%Y-%m-%d'),
-													"DueDate":after_order.orderschedules[after_order.total_cleanings_count-1].start_at.strftime('%Y-%m-%d'),
+													"DueDate":(after_order.orderschedules[after_order.total_cleanings_count-1].start_at+timedelta(days=14)).strftime('%Y-%m-%d'),
 													"LineAmountTypes":"NoTax",
 													"InvoiceNumber":InvoiceNumber,
 													"Reference":after_order.order_no,
