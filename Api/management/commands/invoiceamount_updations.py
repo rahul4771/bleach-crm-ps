@@ -346,13 +346,13 @@ class Command(BaseCommand):
                     subscription_counter += 1
 
             print(InvoiceNumber)
-            print(created_invoice)
+            print(create_invoice)
             #Payment Add to Xero
             try:
                 xero_invoice        = XeroInvoice.objects.get(invoice_no=InvoiceNumber)
             except:
                 xero_invoice        = None 
-                
+
             payment_date        = payment_history.paid_date.date()
             payment_date_string = datetime.strftime(payment_date,'%Y-%m-%d')
             amount_paid         = payment_history.amount_paid
