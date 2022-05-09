@@ -47,7 +47,7 @@ class Command(BaseCommand):
 
         #Paid History                                
         payment_history_date   = datetime.strptime("01-04-2022","%d-%m-%Y").date()
-        payment_histories      = PaymentHistory.objects.select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order').filter(is_active=True,paid_date__gte=payment_history_date,is_xero_marked=False).annotate(total_cleanings_count=Count('order_scheduler_order')).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
+        payment_histories      = PaymentHistory.objects.select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order').filter(is_active=True,paid_date__gte=payment_history_date,is_xero_marked=False).annotate(total_cleanings_count=Count('order__order_scheduler_order')).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
                 
         for payment_history in payment_histories:
 
