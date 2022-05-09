@@ -4624,6 +4624,7 @@ class ItemsCheckInAPI(APIView):
 
 		visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(visit_id))
 
+		team_leader = None
 		for team in visit.cleaning_team:
 			team_leader = team.team_leader.name
 			response_dict['team_leader'] = team_leader
