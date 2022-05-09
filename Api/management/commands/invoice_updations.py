@@ -2,9 +2,8 @@ import requests
 
 from django.core.management.base import BaseCommand
 
-from order.models import Order
+from order.models import Order,OrderScheduler,XeroInvoice
 from Api.models import XeroConnection
-from order.models import XeroInvoice
 from accountant.models import PaymentHistory
 
 from django.utils import timezone
@@ -146,7 +145,7 @@ class Command(BaseCommand):
                     XeroInvoice.objects.create(order=subscription,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 
         #PREPAID, CLEANING BEFORE Invoices
-        before_orders = Order.objects.select_related('evaluation__customer').filter(evaluation__quatation_status='APPROVED',payment_status='PENDING',order_status__isnull=False).exclude(order_status='ORDER_CANCELLED').filter(Q(evaluation__payment_method='PREPAID')|Q(Q(evaluation__payment_method='BREAKDOWN')&Q(preamount_paid__gt=0))).filter(~Q(callback_status='LEGAL_ACTION')).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
+        before_orders = Order.objects.select_related('evaluation__customer').filter(evaluation__quatation_status='APPROVED',payment_status='PENDING',order_status__isnull=False).exclude(order_status='ORDER_CANCELLED').filter(Q(evaluation__payment_method='PREPAID')|Q(Q(evaluation__payment_method='BREAKDOWN')&Q(preamount_paid__gt=0))).filter(~Q(callback_status='LEGAL_ACTION'))
                 
         for before_order in before_orders:
             if before_order.evaluation.payment_method == 'PREPAID':
