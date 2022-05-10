@@ -192,13 +192,13 @@ class Command(BaseCommand):
 
                 payment_policy = 'PREPAID'
 
-                if before_order.evaluation.quatation_expiry_date.timestamp() <= timezone.now().timestamp():
+                if before_order.evaluation.quatation_expiry_date <= timezone.now():
                     Status  = "VOIDED"
                 else:
                     Status  = "AUTHORISED"
 
-                print(before_order.evaluation.quatation_expiry_date.timestamp())
-                print(timezone.now().timestamp())
+                print(before_order.evaluation.quatation_expiry_date)
+                print(timezone.now())
 
             if before_order.evaluation.payment_method == 'BREAKDOWN':
                 Amount = before_order.evaluation.before_cleaning_amount 
