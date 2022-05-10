@@ -35,13 +35,35 @@ class Command(BaseCommand):
         xero.refresh_token = refresh_token
         xero.save()
 
+        # header                      = {
+        #                                 'xero-tenant-id': xero.tenant_id,
+        #                                 'Authorization': 'Bearer '+access_token,
+        #                                 'Accept': 'application/json',
+        #                                 'Content-Type': 'application/json'
+        #                                     }
+        
+        contact_data                = {
+                                        "Name":"Test User",
+                                        "ContactNumber":"76897654",
+                                        "EmailAddress":"ansab.m@bleach-kw.com",
+                                        "ContactStatus":"ACTIVE",
+                                        "IsCustomer":True,
+                                        "DefaultCurrency":"KWD"
+                                                    }
+                                        
         header                      = {
-                                        'xero-tenant-id': xero.tenant_id,
-                                        'Authorization': 'Bearer '+access_token,
-                                        'Accept': 'application/json',
-                                        'Content-Type': 'application/json'
-                                            }
+                                    'xero-tenant-id': xero.tenant_id,
+                                    'Authorization': 'Bearer '+access_token,
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/json'
+                                        }
 
+        create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
+                                                json=contact_data,
+                                                headers=header 
+                                            ).json()
+        print(create_contact)
+        
         # #SUBSCRIPTION Invoices
         # subscriptions = Order.objects.select_related('evaluation__customer').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False,evaluation__payment_method='SUBSCRIPTION',payment_status='PENDING',subscription_topay__gt=0).exclude(order_status='ORDER_CANCELLED').filter(~Q(callback_status='LEGAL_ACTION'))
                 
