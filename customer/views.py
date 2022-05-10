@@ -1006,6 +1006,7 @@ class PaymentResponseDebit(View):
 						xero_invoice.is_paid   = True
 						xero_invoice.paid_date = payment_date
 						xero_invoice.save()
+
 						payment_history.is_xero_marked = True
 						payment_history.save()
 
@@ -1042,6 +1043,7 @@ class PaymentResponseDebit(View):
 						xero_invoice.is_paid   = True
 						xero_invoice.paid_date = payment_date
 						xero_invoice.save()
+						
 						payment_history.is_xero_marked = True
 						payment_history.save()
 				########################################################################################
