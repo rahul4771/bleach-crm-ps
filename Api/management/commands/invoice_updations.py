@@ -193,7 +193,7 @@ class Command(BaseCommand):
                 payment_policy = 'PREPAID'
 
                 today_end   = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)+timedelta(1)
-                if before_order.evaluation.quatation_expiry_date <= today_end:
+                if before_order.evaluation.quatation_expiry_date.replace(tzinfo=None) <= today_end:
                     Status  = "VOIDED"
                 else:
                     Status  = "AUTHORISED"
