@@ -17,9 +17,6 @@ from django.db.models import Prefetch
 class Command(BaseCommand):
     help = 'Automatic Updations'
     def handle(self, *args, **kwargs):
-        UserProfile.objects.filter(is_active=True).update(xero_account_id='')
-        payment_history_date   = datetime.strptime("01-04-2022","%d-%m-%Y").date()
-        payment_histories      = PaymentHistory.objects.select_related('order__evaluation__customer').filter(is_active=True,paid_date__gte=payment_history_date,is_xero_marked=True).update(is_xero_marked=False)
 
         #Xero Integration
         xero          = XeroConnection.objects.first()
