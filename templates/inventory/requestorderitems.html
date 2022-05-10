@@ -152,7 +152,7 @@
                                 {{item.product.item_type}}
                             </td>
                             <td class="text-center">
-                                {{item.item_count|floatformat:0}} {{item.product.measuring_unit}}
+                                {{item.item_count|floatformat:0}} {% if item.product.measuring_unit %} {{item.product.measuring_unit}} {% else %} unit {% endif %}
                               </td>  
                               
                             {% if request_order.is_admin_approved and not request_order.is_received %}
