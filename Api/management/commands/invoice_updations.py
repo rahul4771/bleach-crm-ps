@@ -6,7 +6,7 @@ from django.core.management.base import BaseCommand
 from order.models import Order,OrderScheduler,XeroInvoice
 from Api.models import XeroConnection
 from accountant.models import PaymentHistory
-from user.model import UserProfile
+from user.models import UserProfile
 
 from django.utils import timezone
 from datetime import timedelta,date,datetime
