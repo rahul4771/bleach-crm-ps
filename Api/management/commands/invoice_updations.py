@@ -45,7 +45,7 @@ class Command(BaseCommand):
         contact_data                = {
                                         "Name":"Test User",
                                         "ContactNumber":"76897654",
-                                        "EmailAddress":"ansab.m@bleach-kw.com",
+                                        "EmailAddress":"ansab@bleach-kw.com",
                                         "ContactStatus":"ACTIVE",
                                         "IsCustomer":True,
                                         "DefaultCurrency":"KWD"
