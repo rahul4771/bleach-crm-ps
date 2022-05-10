@@ -6,6 +6,7 @@ from django.core.management.base import BaseCommand
 from order.models import Order,OrderScheduler,XeroInvoice
 from Api.models import XeroConnection
 from accountant.models import PaymentHistory
+from user.model import UserProfile
 
 from django.utils import timezone
 from datetime import timedelta,date,datetime
@@ -16,6 +17,10 @@ from django.db.models import Prefetch
 class Command(BaseCommand):
     help = 'Automatic Updations'
     def handle(self, *args, **kwargs):
+        UserProfile.objects.filter(is_active=True).update(xero_account_id='')
+        payment_history_date   = datetime.strptime("01-04-2022","%d-%m-%Y").date()
+        payment_histories      = PaymentHistory.objects.select_related('order__evaluation__customer').filter(is_active=True,paid_date__gte=payment_history_date,is_xero_marked=True).update(is_xero_marked=False)
+
         #Xero Integration
         xero          = XeroConnection.objects.first()
         #Update Access Token and Refresh Token
