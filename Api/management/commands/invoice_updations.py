@@ -234,6 +234,7 @@ class Command(BaseCommand):
 													"Status":Status,
 													"LineItems":LineItems
 													}
+            print(invoice_data)
 
             ##xero Create Invoice
             header                      = {
