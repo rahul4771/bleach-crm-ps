@@ -44,36 +44,36 @@ class Command(BaseCommand):
                                         'Content-Type': 'application/json'
                                             }
         
-        # #SUBSCRIPTION Invoices
-        # subscriptions = Order.objects.select_related('evaluation__customer').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False,evaluation__payment_method='SUBSCRIPTION',payment_status='PENDING',subscription_topay__gt=0).exclude(order_status='ORDER_CANCELLED').filter(~Q(callback_status='LEGAL_ACTION'))
+        #SUBSCRIPTION Invoices
+        subscriptions = Order.objects.select_related('evaluation__customer').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False,evaluation__payment_method='SUBSCRIPTION',payment_status='PENDING',subscription_topay__gt=0).exclude(order_status='ORDER_CANCELLED').filter(~Q(callback_status='LEGAL_ACTION'))
                 
-        # for subscription in subscriptions:
-        #     ##Xero Contact
-        #     if not subscription.evaluation.customer.xero_account_id:
-        #         ##Xero Create Customer ID and Save
-        #         contact_data                = {
-        #                                         "Name":subscription.evaluation.customer.name,
-        #                                         "ContactNumber":subscription.evaluation.customer.mobile_number,
-        #                                         "EmailAddress":subscription.evaluation.customer.email,
-        #                                         "ContactStatus":"ACTIVE",
-        #                                         "IsCustomer":True,
-        #                                         "DefaultCurrency":"KWD"
-        #                                                     }
+        for subscription in subscriptions:
+            ##Xero Contact
+            if not subscription.evaluation.customer.xero_account_id:
+                ##Xero Create Customer ID and Save
+                contact_data                = {
+                                                "Name":subscription.evaluation.customer.name,
+                                                "ContactNumber":subscription.evaluation.customer.mobile_number,
+                                                "EmailAddress":subscription.evaluation.customer.email,
+                                                "ContactStatus":"ACTIVE",
+                                                "IsCustomer":True,
+                                                "DefaultCurrency":"KWD"
+                                                            }
                                                 
-        #         header                      = {
-        #                                     'xero-tenant-id': xero.tenant_id,
-        #                                     'Authorization': 'Bearer '+access_token,
-        #                                     'Accept': 'application/json',
-        #                                     'Content-Type': 'application/json'
-        #                                         }
+                header                      = {
+                                            'xero-tenant-id': xero.tenant_id,
+                                            'Authorization': 'Bearer '+access_token,
+                                            'Accept': 'application/json',
+                                            'Content-Type': 'application/json'
+                                                }
 
-        #         create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
-        #                                                 json=contact_data,
-        #                                                 headers=header 
-        #                                             ).json()
+                create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
+                                                        json=contact_data,
+                                                        headers=header 
+                                                    ).json()
 
-        #         subscription.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
-        #         subscription.evaluation.customer.save()
+                subscription.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
+                subscription.evaluation.customer.save()
 
         #     Amount = subscription.evaluation.total_cost 
         #     ##Invoice Line Item 
