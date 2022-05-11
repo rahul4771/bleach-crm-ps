@@ -75,77 +75,77 @@ class Command(BaseCommand):
                 subscription.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
                 subscription.evaluation.customer.save()
 
-        #     Amount = subscription.evaluation.total_cost 
-        #     ##Invoice Line Item 
-        #     LineItems                 = []
-        #     LineItems.append({
-        #         "Description":"SUBSCRIPTION",
-        #         "Quantity":"1",
-        #         "UnitAmount":Amount,
-        #         "AccountCode":1002,
-        #         "TaxType":"NONE"
-        #                     }
-        #         )
+            Amount = subscription.evaluation.total_cost 
+            ##Invoice Line Item 
+            LineItems                 = []
+            LineItems.append({
+                "Description":"SUBSCRIPTION",
+                "Quantity":"1",
+                "UnitAmount":Amount,
+                "AccountCode":1002,
+                "TaxType":"NONE"
+                            }
+                )
 
-        #     try:
-        #         last_unpaid_invoice = XeroInvoice.objects.filter(is_paid=False,order=subscription).last()
-        #     except:
-        #         last_unpaid_invoice = None
+            try:
+                last_unpaid_invoice = XeroInvoice.objects.filter(is_paid=False,order=subscription).last()
+            except:
+                last_unpaid_invoice = None
 
-        #     if last_unpaid_invoice:
-        #         InvoiceNumber      = last_unpaid_invoice.invoice_no
-        #     else:
-        #         try:
-        #             last_paid_invoice = XeroInvoice.objects.filter(is_paid=True,order=subscription).last()
-        #         except:
-        #             last_paid_invoice = None
+            if last_unpaid_invoice:
+                InvoiceNumber      = last_unpaid_invoice.invoice_no
+            else:
+                try:
+                    last_paid_invoice = XeroInvoice.objects.filter(is_paid=True,order=subscription).last()
+                except:
+                    last_paid_invoice = None
                 
-        #         if last_paid_invoice:
-        #             last_paid_invoice_no    = last_paid_invoice.invoice_no
-        #             last_paid_invoice_no    = last_paid_invoice_no.replace(last_paid_invoice_no[len(last_paid_invoice_no) - 1:], chr(ord(last_paid_invoice_no[-1])+1))
-        #             InvoiceNumber           = last_paid_invoice_no
-        #         else:
-        #             try:
-        #                 payments_count          = PaymentHistory.objects.filter(order=subscription).count()
-        #             except:
-        #                 payments_count          = 0
-        #             InvoiceNumber               = subscription.invoice_no+chr(ord('A')+payments_count)
+                if last_paid_invoice:
+                    last_paid_invoice_no    = last_paid_invoice.invoice_no
+                    last_paid_invoice_no    = last_paid_invoice_no.replace(last_paid_invoice_no[len(last_paid_invoice_no) - 1:], chr(ord(last_paid_invoice_no[-1])+1))
+                    InvoiceNumber           = last_paid_invoice_no
+                else:
+                    try:
+                        payments_count          = PaymentHistory.objects.filter(order=subscription).count()
+                    except:
+                        payments_count          = 0
+                    InvoiceNumber               = subscription.invoice_no+chr(ord('A')+payments_count)
 
-        #     payment_policy            = 'SUBSCRIPTION'
+            payment_policy            = 'SUBSCRIPTION'
 
-        #     invoice_data              = 	{
-        #                                             "Type":"ACCREC",
-        #                                             "Contact":{
-        #                                                 "ContactID":subscription.evaluation.customer.xero_account_id
-        #                                             },
-        #                                             "Date":timezone.now().strftime('%Y-%m-%d'),
-        #                                             "DueDate":(timezone.now()+timedelta(days=14)).strftime('%Y-%m-%d'),
-        #                                             "LineAmountTypes":"NoTax",
-        #                                             "InvoiceNumber":InvoiceNumber,
-        #                                             "Reference":subscription.order_no,
-        #                                             "Status":"AUTHORISED",
-        #                                             "LineItems":LineItems
-        #                                             }
+            invoice_data              = 	{
+                                                    "Type":"ACCREC",
+                                                    "Contact":{
+                                                        "ContactID":subscription.evaluation.customer.xero_account_id
+                                                    },
+                                                    "Date":timezone.now().strftime('%Y-%m-%d'),
+                                                    "DueDate":(timezone.now()+timedelta(days=14)).strftime('%Y-%m-%d'),
+                                                    "LineAmountTypes":"NoTax",
+                                                    "InvoiceNumber":InvoiceNumber,
+                                                    "Reference":subscription.order_no,
+                                                    "Status":"AUTHORISED",
+                                                    "LineItems":LineItems
+                                                    }
 
-        #     create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
-		# 											json=invoice_data,
-		# 											headers=header 
-		# 										).json()
-        #     try:
-        #         created_invoice = create_invoice['Status']
-        #     except:
-        #         created_invoice = None
+            create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+													json=invoice_data,
+													headers=header 
+												).json()
+            try:
+                created_invoice = create_invoice['Status']
+            except:
+                created_invoice = None
 
 
-        #     if created_invoice == 'OK':
-        #         try:
-        #             update_xero_invoice                  = XeroInvoice.objects.get(order=subscription,invoice_no=InvoiceNumber)
-        #             update_xero_invoice.amount           = Amount
-        #             update_xero_invoice.xero_marked_date = timezone.now().date()
-        #             update_xero_invoice.payment_policy   = payment_policy
-        #             update_xero_invoice.save()
-        #         except:
-        #             XeroInvoice.objects.create(order=subscription,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
+            if created_invoice == 'OK':
+                try:
+                    update_xero_invoice                  = XeroInvoice.objects.get(order=subscription,invoice_no=InvoiceNumber)
+                    update_xero_invoice.amount           = Amount
+                    update_xero_invoice.xero_marked_date = timezone.now().date()
+                    update_xero_invoice.payment_policy   = payment_policy
+                    update_xero_invoice.save()
+                except:
+                    XeroInvoice.objects.create(order=subscription,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 
         #PREPAID, CLEANING BEFORE Invoices
         # before_orders = Order.objects.select_related('evaluation__customer').filter(evaluation__quatation_status='APPROVED',payment_status='PENDING',order_status__isnull=False).exclude(order_status='ORDER_CANCELLED').filter(Q(evaluation__payment_method='PREPAID')|Q(Q(evaluation__payment_method='BREAKDOWN')&Q(preamount_paid__gt=0))).filter(~Q(callback_status='LEGAL_ACTION'))
