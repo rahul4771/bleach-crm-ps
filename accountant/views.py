@@ -1753,6 +1753,26 @@ def export_users_xls(request):
 			row_num += 1
 			for col_num in range(len(row)):
 				ws.write(row_num, col_num, row[col_num], font_style)
+
+	if report_type == 'systemuserslist':
+
+		response = HttpResponse(content_type='application/ms-excel')
+		response['Content-Disposition'] = 'attachment; filename="BLEACH_CRM_SYSTEM_USERS.xls"'
+
+		wb = xlwt.Workbook(encoding='utf-8')
+		ws = wb.add_sheet('BLEACH CRM SYSTEM USERS')
+
+		columns = ['Name','Username','User Type','Is Active']
+		
+		for col_num in range(len(columns)):
+			ws.write(row_num, col_num, columns[col_num], font_style)
+
+		users = UserProfile.objects.filter(~Q( Q(user_type='CUSTOMER')|Q(user_type=None) )).values_list('name','username','user_type','is_active')
+	
+		for row in users:
+			row_num += 1
+			for col_num in range(len(row)):
+				ws.write(row_num, col_num, row[col_num], font_style)
 	
 	
 	if report_type == 'totalsales':
