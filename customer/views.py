@@ -988,7 +988,8 @@ class PaymentResponseDebit(View):
 									"Code":"090"
 								},
 								"Date":payment_date_string,
-								"Amount":amount_paid
+								"Amount":amount_paid,
+								"Reference":payment_history.transaction_id
 								}
 
 					update_payment          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
@@ -1006,6 +1007,7 @@ class PaymentResponseDebit(View):
 						xero_invoice.is_paid   = True
 						xero_invoice.paid_date = payment_date
 						xero_invoice.save()
+
 						payment_history.is_xero_marked = True
 						payment_history.save()
 
@@ -1024,7 +1026,8 @@ class PaymentResponseDebit(View):
 									"Code":"090"
 								},
 								"Date":payment_date_string,
-								"Amount":amount_paid
+								"Amount":amount_paid,
+								"Reference":payment_history.transaction_id
 								}
 
 					update_payment          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
@@ -1042,6 +1045,7 @@ class PaymentResponseDebit(View):
 						xero_invoice.is_paid   = True
 						xero_invoice.paid_date = payment_date
 						xero_invoice.save()
+						
 						payment_history.is_xero_marked = True
 						payment_history.save()
 				########################################################################################

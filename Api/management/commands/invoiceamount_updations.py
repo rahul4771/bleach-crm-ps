@@ -366,7 +366,8 @@ class Command(BaseCommand):
                                 "Code":"090"
                             },
                             "Date":payment_date_string,
-                            "Amount":amount_paid
+                            "Amount":amount_paid,
+                            "Reference":payment_history.transaction_id
                             }
 
                 update_payment          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
