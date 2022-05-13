@@ -7165,7 +7165,7 @@ class EditOrderDetails(APIView):
 								"TaxType":"NONE"
 											}
 								)
-							InvoiceNumber      = order.invoice_no+'B'
+							InvoiceNumber      = order.invoice_no
 							invoice_data       = 	{
 													"Type":"ACCREC",
 													"LineAmountTypes":"NoTax",
