@@ -22,7 +22,7 @@ from django.db.models.functions import ExtractMonth,ExtractYear
 from django.contrib import messages
 from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,CleaningMethod,ServiceType,EvaluationBookSection,EvaluationSectionKeynote,LocationType,CleaningType,AreaType,CleaningSection
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia,Promocode,CancellOrderAmountHistory
+from order.models import XeroInvoice,OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia,Promocode,CancellOrderAmountHistory
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
 from order.forms import PromocodeForm
@@ -38,6 +38,8 @@ from django.template.loader import render_to_string
 
 from django.core.mail import send_mail,EmailMultiAlternatives
 from django.template.loader import render_to_string
+
+from Api.models import XeroConnection
 # Create your views here.
 
 class AdminHome(IsSalesAdmin,View):

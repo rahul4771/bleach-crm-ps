@@ -36,6 +36,9 @@ urlpatterns = [
 		url(r'^newfeedback/order/(?P<orderid>[-\w]+)/$',views.AddFeedBackOrder.as_view(),name='new-feedback-order'),
 		url(r'^reorder$',views.Reorder.as_view(),name='reorder'),
 
+		url(r'^cash/collect/$',views.CashCollect.as_view(),name='cashcollect'),
+		url(r'^finewriteback/$',views.FineWriteBack.as_view(),name='finewriteback'),
+
 		url(r'^newenquiry/$',views.NewEnquiry.as_view(),name='newenquiry'),
 		url(r'^existingenquiry/(?P<enquiry_id>[-\w]+)$',views.ExistingEnquiry.as_view(),name='existingenquiry'),
 		url(r'^assignevaluator/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.AssignEvaluator.as_view(),name='assignevaluator'),
