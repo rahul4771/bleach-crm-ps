@@ -6934,7 +6934,7 @@ class EditOrderDetails(APIView):
 														"LineAmountTypes":"NoTax",
 														"InvoiceNumber":InvoiceNumber,
 														"Reference":order.order_no,
-														"Status":"VOIDED"
+														"Status":"DELETED"
 														}
 
 								##xero Create Invoice
@@ -6949,6 +6949,12 @@ class EditOrderDetails(APIView):
 																		json=invoice_data,
 																		headers=header 
 																	).json()
+
+								try:
+									delete_invoice = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
+									delete_invoice.delete()
+								except:
+									delete_invoice = None
 
 								#Remove After
 								InvoiceNumber      = order.invoice_no+'B'
@@ -6957,7 +6963,7 @@ class EditOrderDetails(APIView):
 														"LineAmountTypes":"NoTax",
 														"InvoiceNumber":InvoiceNumber,
 														"Reference":order.order_no,
-														"Status":"VOIDED"
+														"Status":"DELETED"
 														}
 
 								##xero Create Invoice
@@ -6972,6 +6978,12 @@ class EditOrderDetails(APIView):
 																		json=invoice_data,
 																		headers=header 
 																	).json()
+
+								try:
+									delete_invoice = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
+									delete_invoice.delete()
+								except:
+									delete_invoice = None
 
 					#Breakdown Before
 					if payment_method == 'BREAKDOWN':
@@ -7033,7 +7045,7 @@ class EditOrderDetails(APIView):
 														"LineAmountTypes":"NoTax",
 														"InvoiceNumber":InvoiceNumber,
 														"Reference":order.order_no,
-														"Status":"VOIDED"
+														"Status":"DELETED"
 														}
 
 								##xero Create Invoice
@@ -7048,6 +7060,12 @@ class EditOrderDetails(APIView):
 																		json=invoice_data,
 																		headers=header 
 																	).json()
+
+								try:
+									delete_invoice = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
+									delete_invoice.delete()
+								except:
+									delete_invoice = None
 
 					#Post Paid
 					if payment_method == 'POSTPAID' and order.remaining_cleanings_count == 0:
@@ -7109,7 +7127,7 @@ class EditOrderDetails(APIView):
 														"LineAmountTypes":"NoTax",
 														"InvoiceNumber":InvoiceNumber,
 														"Reference":order.order_no,
-														"Status":"VOIDED"
+														"Status":"DELETED"
 														}
 
 								##xero Create Invoice
@@ -7124,6 +7142,12 @@ class EditOrderDetails(APIView):
 																		json=invoice_data,
 																		headers=header 
 																	).json()
+
+								try:
+									delete_invoice = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
+									delete_invoice.delete()
+								except:
+									delete_invoice = None
 
 								#Remove Second Case
 								InvoiceNumber      = order.invoice_no+'B'
@@ -7132,7 +7156,7 @@ class EditOrderDetails(APIView):
 														"LineAmountTypes":"NoTax",
 														"InvoiceNumber":InvoiceNumber,
 														"Reference":order.order_no,
-														"Status":"VOIDED"
+														"Status":"DELETED"
 														}
 
 								##xero Create Invoice
@@ -7148,6 +7172,11 @@ class EditOrderDetails(APIView):
 																		headers=header 
 																	).json()
 
+								try:
+									delete_invoice = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
+									delete_invoice.delete()
+								except:
+									delete_invoice = None
 
 				order.evaluation.save()
 				order.save()
