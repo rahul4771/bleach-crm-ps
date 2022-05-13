@@ -6934,7 +6934,7 @@ class EditOrderDetails(APIView):
 														"LineAmountTypes":"NoTax",
 														"InvoiceNumber":InvoiceNumber,
 														"Reference":order.order_no,
-														"Status":"DELETED"
+														"Status":"VOIDED"
 														}
 
 								##xero Create Invoice
@@ -6963,7 +6963,7 @@ class EditOrderDetails(APIView):
 														"LineAmountTypes":"NoTax",
 														"InvoiceNumber":InvoiceNumber,
 														"Reference":order.order_no,
-														"Status":"DELETED"
+														"Status":"VOIDED"
 														}
 
 								##xero Create Invoice
@@ -7045,7 +7045,7 @@ class EditOrderDetails(APIView):
 														"LineAmountTypes":"NoTax",
 														"InvoiceNumber":InvoiceNumber,
 														"Reference":order.order_no,
-														"Status":"DELETED"
+														"Status":"VOIDED"
 														}
 
 								##xero Create Invoice
@@ -7126,7 +7126,7 @@ class EditOrderDetails(APIView):
 													"LineAmountTypes":"NoTax",
 													"InvoiceNumber":InvoiceNumber,
 													"Reference":order.order_no,
-													"Status":"DELETED"
+													"Status":"VOIDED"
 													}
 
 							##xero Create Invoice
@@ -7156,7 +7156,7 @@ class EditOrderDetails(APIView):
 													"LineAmountTypes":"NoTax",
 													"InvoiceNumber":InvoiceNumber,
 													"Reference":order.order_no,
-													"Status":"DELETED"
+													"Status":"VOIDED"
 													}
 
 							##xero Create Invoice
@@ -7185,7 +7185,7 @@ class EditOrderDetails(APIView):
 													"LineAmountTypes":"NoTax",
 													"InvoiceNumber":InvoiceNumber,
 													"Reference":order.order_no,
-													"Status":"DELETED"
+													"Status":"VOIDED"
 													}
 
 							##xero Create Invoice
