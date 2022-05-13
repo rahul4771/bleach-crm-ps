@@ -6850,6 +6850,8 @@ class EditOrderDetails(APIView):
 					order.payment_status = 'COMPLETED'
 
 				if payment_method in ['PREPAID','POSTPAID','BREAKDOWN'] and order.evaluation.quatation_status == 'APPROVED':
+					invoice_data = {}
+					
 					#Xero Integration
 					xero          = XeroConnection.objects.first()
 					#Update Access Token and Refresh Token
@@ -6941,7 +6943,7 @@ class EditOrderDetails(APIView):
 													"LineItems":LineItems
 													}
 
-					if invoice_data:
+					if invoice_data != {}:
 						##xero Create Invoice
 						header                      = {
 														'xero-tenant-id': xero.tenant_id,
