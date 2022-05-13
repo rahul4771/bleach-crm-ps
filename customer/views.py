@@ -6798,7 +6798,7 @@ class EditOrderDetails(APIView):
 			discount_amount       = request.data.get('discount_amount')
 			additional_charge     = request.data.get('additional_charge')
 
-			old_payment_method    = order.payment_method
+			old_payment_method    = order.evaluation.payment_method
 			print(discount_amount,"discount_amount")
 			if order.amount_paid == 0:
 				if payment_method == 'PREPAID':
