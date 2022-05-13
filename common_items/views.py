@@ -4818,3 +4818,300 @@ class EvaluationBookCancellation(IsAuthenticated,View):
 		cancell_in_progress_order = Order.objects.select_related('evaluation__customer').get(evaluation__id=evaluation_id)
 
 		return render(request,"common/cancel-book/cancel-book.html",{"cancell_in_progress_order":cancell_in_progress_order,"cancell_books":cancell_books,})
+
+
+class CashCollect(IsAuthenticated,View):
+	def get(self,request):
+		return render(request,'common/payment/cash-collect.html',{})
+	def post(self,request):
+
+		order_id       = request.POST.get('order_id')
+		payment_policy = request.POST.get('payment_policy')
+		
+		if order_id:
+			if payment_policy == 'CLEANING BALANCE':
+				payment_method = request.POST.get('payment_method')
+				amount         = request.POST.get('amount')
+				payment_date   = datetime.strptime(request.POST.get('collection_date'),'%d/%m/%Y %I:%M %p')
+
+				#Receipt Number
+				receipt_no               = PaymentHistory.objects.filter(is_active=True,receipt_no__isnull=False).aggregate(t=Max('receipt_no'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
+				current_receipt_starting = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2))
+
+				if current_receipt_starting == int(str(receipt_no)[:4]):
+					new_receipt_no = int(receipt_no)+1
+				else:
+					new_receipt_no = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')
+
+				if payment_method == 'CASH':
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=0,order_status='ORDER_CANCELLED') 
+					payment_history = PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CASH',received_by=request.user,paid_date=payment_date,receipt_no=new_receipt_no)
+					messages.success(request,"Payment Received thruogh Cash")
+
+				if payment_method == 'CHEQUE':
+					check_no   = request.POST.get('check_number')
+					check_date = datetime.strptime(request.POST.get('check_date'),'%d-%m-%Y')
+
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=0,order_status='ORDER_CANCELLED') 
+					payment_history = PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CHEQUE',received_by=request.user,paid_date=payment_date,check_no=check_no,check_date=check_date,receipt_no=new_receipt_no)
+					
+					messages.success(request,"Payment Received through Cheque")
+
+				if payment_method == 'BANK':
+					bank_name   = request.POST.get('bank_name')
+					bank_no     = request.POST.get('ibn_number')
+
+					Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=0,order_status='ORDER_CANCELLED') 
+					payment_history = PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='BANK',received_by=request.user,paid_date=payment_date,bank_name=bank_name,bank_no=bank_no,receipt_no=new_receipt_no)
+
+					messages.success(request,"Payment Received through Bank")
+			else:
+				payment_method = request.POST.get('payment_method')
+				amount       = request.POST.get('amount')
+				payment_date = datetime.strptime(request.POST.get('collection_date'),'%d/%m/%Y %I:%M %p')
+				
+				#Receipt Number
+				receipt_no               = PaymentHistory.objects.filter(is_active=True,receipt_no__isnull=False).aggregate(t=Max('receipt_no'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
+				current_receipt_starting = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2))
+
+				if current_receipt_starting == int(str(receipt_no)[:4]):
+					new_receipt_no = int(receipt_no)+1
+				else:
+					new_receipt_no = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')			
+		
+
+				if payment_method == 'CASH':
+					if payment_policy == 'PREPAID' or payment_policy == 'POSTPAID':
+						Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount) 
+						payment_history = PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CASH',received_by=request.user,paid_date=payment_date,receipt_no=new_receipt_no)
+					elif payment_policy == 'BEFORE CLEANING':
+						Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,preamount_paid=F('preamount_paid')+amount)
+						payment_history = PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CASH',received_by=request.user,paid_date=payment_date,receipt_no=new_receipt_no)
+					elif payment_policy == 'AFTER CLEANING':
+						Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,postamount_paid=F('postamount_paid')+amount)
+						payment_history = PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CASH',received_by=request.user,paid_date=payment_date,receipt_no=new_receipt_no)
+					elif payment_policy == 'SUBSCRIPTION':
+						Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,subscription_topay=0,is_advance=False)
+						payment_history = PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CASH',received_by=request.user,paid_date=payment_date,receipt_no=new_receipt_no)
+
+					messages.success(request,"Payment Received thruogh Cash")
+
+				if payment_method == 'CHEQUE':
+					check_no   = request.POST.get('check_number')
+					check_date = datetime.strptime(request.POST.get('check_date'),'%d-%m-%Y')
+
+					if payment_policy == 'PREPAID' or payment_policy == 'POSTPAID':
+						Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount) 
+						payment_history = PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CHEQUE',received_by=request.user,paid_date=payment_date,check_no=check_no,check_date=check_date,receipt_no=new_receipt_no)
+					elif payment_policy == 'BEFORE CLEANING':
+						Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,preamount_paid=F('preamount_paid')+amount)
+						payment_history = PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CHEQUE',received_by=request.user,paid_date=payment_date,check_no=check_no,check_date=check_date,receipt_no=new_receipt_no)
+					elif payment_policy == 'AFTER CLEANING':
+						Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,postamount_paid=F('postamount_paid')+amount)
+						payment_history = PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CHEQUE',received_by=request.user,paid_date=payment_date,check_no=check_no,check_date=check_date,receipt_no=new_receipt_no)
+					elif payment_policy == 'SUBSCRIPTION':
+						Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,subscription_topay=0,is_advance=False)
+						payment_history = PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CHEQUE',received_by=request.user,paid_date=payment_date,check_no=check_no,check_date=check_date,receipt_no=new_receipt_no)
+					
+					messages.success(request,"Payment Received thruogh Cheque")
+
+				if payment_method == 'BANK':
+					bank_name   = request.POST.get('bank_name')
+					bank_no     = request.POST.get('ibn_number')
+
+					if payment_policy == 'PREPAID' or payment_policy == 'POSTPAID':
+						Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount) 
+						payment_history = PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='BANK',received_by=request.user,paid_date=payment_date,bank_name=bank_name,bank_no=bank_no,receipt_no=new_receipt_no)
+					elif payment_policy == 'BEFORE CLEANING':
+						Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,preamount_paid=F('preamount_paid')+amount)
+						payment_history = PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='BANK',received_by=request.user,paid_date=payment_date,bank_name=bank_name,bank_no=bank_no,receipt_no=new_receipt_no)
+					elif payment_policy == 'AFTER CLEANING':
+						Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,postamount_paid=F('postamount_paid')+amount)
+						payment_history = PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='BANK',received_by=request.user,paid_date=payment_date,bank_name=bank_name,bank_no=bank_no,receipt_no=new_receipt_no)
+					elif payment_policy == 'SUBSCRIPTION':
+						Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,subscription_topay=0,is_advance=False)
+						payment_history = PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='BANK',received_by=request.user,paid_date=payment_date,bank_name=bank_name,bank_no=bank_no,receipt_no=new_receipt_no)
+
+					messages.success(request,"Payment Received through Bank")
+
+				is_payment_completed = Order.objects.get(id=order_id)
+
+				if is_payment_completed.amount_paid == is_payment_completed.total_amount:
+					is_payment_completed.payment_completed_date = payment_date 
+					is_payment_completed.payment_status         = 'COMPLETED'
+					is_payment_completed.save()
+			
+			
+				####to close order
+				order_closing_check = Order.objects.select_related('evaluation__customer').filter(is_active=True,id=order_id,payment_status='COMPLETED').order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
+				if order_closing_check:
+					closing_order	= Order.objects.get(is_active=True,id=order_id)
+					closing_order.order_status = 'ORDER_CLOSED'
+					closing_order.save()
+
+				##########################################################################################
+				#Xero Integration
+				xero          = XeroConnection.objects.first()
+				order         = Order.objects.select_related('evaluation__customer').get(id=order_id)
+				#Update Access Token and Refresh Token
+				header                      = {
+												'Authorization': 'Basic '+xero.client_encoded,
+												'Content-Type': 'application/x-www-form-urlencoded'
+													}
+				body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
+				token_response              = requests.post('https://identity.xero.com/connect/token',
+														data=body,
+														headers=header 
+													).json()
+				access_token                = token_response['access_token']
+				refresh_token               = token_response['refresh_token']
+
+				xero.access_token  = access_token
+				xero.refresh_token = refresh_token
+				xero.save()
+
+				header                      = {
+												'xero-tenant-id': xero.tenant_id,
+												'Authorization': 'Bearer '+access_token,
+												'Accept': 'application/json',
+												'Content-Type': 'application/json'
+													}
+
+				payment_date        = payment_date.date()
+				payment_date_string = datetime.strftime(payment_date,'%Y-%m-%d')
+
+				if payment_policy == 'PREPAID' or payment_policy == 'POSTPAID' or payment_policy == 'BEFORE CLEANING' or payment_policy == 'AFTER CLEANING':
+					
+					try:
+						xero_invoice = XeroInvoice.objects.get(order=order,payment_policy=payment_policy)
+					except:
+						xero_invoice = None
+
+					if xero_invoice:
+						payment_data = {
+									"Invoice":{
+										"InvoiceNumber":xero_invoice.invoice_no
+									},
+									"Account":{
+										"Code":"090"
+									},
+									"Date":payment_date_string,
+									"Amount":amount
+									}
+
+						update_payment          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
+															json=payment_data,
+															headers=header 
+														).json()
+
+
+						try:
+							created_payment = update_payment['Status']
+						except:
+							created_payment = None
+
+						if created_payment == 'OK':
+							xero_invoice.is_paid   = True
+							xero_invoice.paid_date = payment_date
+							xero_invoice.save()
+
+							payment_history.is_xero_marked = True
+							payment_history.save()
+
+				if payment_policy == 'SUBSCRIPTION':
+					try:
+						xero_invoice = XeroInvoice.objects.filter(order=order,payment_policy=payment_policy,is_paid=False).last()
+					except:
+						xero_invoice = None
+
+					if xero_invoice:
+						payment_data = {
+									"Invoice":{
+										"InvoiceNumber":xero_invoice.invoice_no
+									},
+									"Account":{
+										"Code":"090"
+									},
+									"Date":payment_date_string,
+									"Amount":amount
+									}
+
+						update_payment          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
+															json=payment_data,
+															headers=header 
+														).json()
+
+
+						try:
+							created_payment = update_payment['Status']
+						except:
+							created_payment = None
+
+						if created_payment == 'OK':
+							xero_invoice.is_paid   = True
+							xero_invoice.paid_date = payment_date
+							xero_invoice.save()
+							
+							payment_history.is_xero_marked = True
+							payment_history.save()
+					
+					
+				########################################################################################
+
+		else:
+			messages.success(request,"Something Went Wrong")
+
+		return redirect('accountant:accountant-cashcollect')
+
+
+class FineWriteBack(IsAuthenticated,View):
+	def get(self,request):
+		return render(request,'common/payment/finewriteback.html',{})
+	def post(self,request):
+		order_id  = request.POST.get('order_id')
+		order     = Order.objects.get(id=order_id)
+
+		action = request.POST.get('finewriteback')
+		
+		#update Evaluation and fine
+		if action == 'Fine':
+			
+			evaluation             = Evaluation.objects.filter(id=order.evaluation.id).first()
+			if evaluation.payment_method == 'BREAKDOWN':
+				Evaluation.objects.filter(id=order.evaluation.id).update(fine_amount=F('fine_amount')+float(request.POST.get('amount')), after_cleaning_amount=F('after_cleaning_amount')+float(request.POST.get('amount')), fine_created_by=request.user,total_cost=F('total_cost')+float(request.POST.get('amount')))
+			else:
+				Evaluation.objects.filter(id=order.evaluation.id).update(fine_amount=F('fine_amount')+float(request.POST.get('amount')),fine_created_by=request.user,total_cost=F('total_cost')+float(request.POST.get('amount')))
+
+			order.total_amount    += float(request.POST.get('amount'))
+			order.remining_amount += float(request.POST.get('amount'))
+			if order.payment_status == 'COMPLETED':
+				order.payment_status  = 'PENDING'
+				order.order_status    = 'ORDER_IN_PROGRESS'				
+			order.save()
+
+			messages.success(request,"Fine Amount Succesfully Added")
+		
+		if action == 'Write-Off':
+			#close payment if remining becomes zero 
+			if (order.remining_amount-float(request.POST.get('amount'))) == 0:
+				order.payment_completed_date = timezone.now()
+				order.payment_status         = 'COMPLETED'
+				order.save()
+				
+			if order.evaluation.payment_method == 'BREAKDOWN':
+				Evaluation.objects.filter(id=order.evaluation.id).update(writeback_amount=F('writeback_amount')+float(request.POST.get('amount')),writeback_created_by=request.user,total_cost=F('total_cost')-float(request.POST.get('amount')),after_cleaning_amount=F('after_cleaning_amount')-float(request.POST.get('amount')))			
+			else:
+				Evaluation.objects.filter(id=order.evaluation.id).update(writeback_amount=F('writeback_amount')+float(request.POST.get('amount')),writeback_created_by=request.user,total_cost=F('total_cost')-float(request.POST.get('amount')))
+			Order.objects.filter(id=order_id).update(total_amount=F('total_amount')-float(request.POST.get('amount')),remining_amount=F('remining_amount')-float(request.POST.get('amount')))
+			
+			####to close order
+			order_closing_check = Order.objects.select_related('evaluation__customer').filter(is_active=True,id=order_id,payment_status='COMPLETED').order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
+			if order_closing_check:
+				closing_order	= Order.objects.get(is_active=True,id=order_id)
+				closing_order.order_status = 'ORDER_CLOSED'
+				closing_order.save()
+
+			messages.success(request,"Write Back Amount Succesfully Removed")
+
+
+		return redirect('accountant:accountantdash-board')

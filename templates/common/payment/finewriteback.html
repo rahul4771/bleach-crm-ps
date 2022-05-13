@@ -1,0 +1,464 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<div class="wrapper"><!--wrapper-->
+    {% if request.user.user_type == 'SALESADMIN' %}
+    {% include "salesadmin/common/header.html" %}
+  {% elif request.user.user_type == 'AGENT' %}
+    {% include "agent/common/header.html" %}
+  {% elif request.user.user_type == 'ADMIN' %}
+    {% include "admin/common/header.html" %}
+  {% elif request.user.user_type == 'BOOKINGOFFICER' %}
+    {% include "bookingofficer/common/header.html" %} 
+  {% elif request.user.user_type == 'EVALUATOR' %}
+    {% include "evaluator/common/header.html" %}
+  {% elif request.user.user_type == 'SENIORTEAMLEADER' %}
+    {% include "stl/common/header.html" %}
+  {% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
+    {% include "operationsupervisor/common/header.html" %}
+  {% elif request.user.user_type == 'TECHNICALSUPERVISOR' %}
+    {% include "technicalsupervisor/common/header.html" %}
+  {% elif request.user.user_type == 'ACCOUNTANT' %}
+    {% include "accountant/common/header.html" %}
+  {% elif request.user.user_type == 'TEAMINCHARGE' %}
+    {% include "tl/common/header.html" %}
+  {% endif %}
+
+<div class="wrapper"><!--wrapper-->
+   
+<section class="content"><!--content-->
+	<div class="container-fluid space topspace"><!--container-fluid space-->
+		<div class="welcome-wrapper"><!--welcome-wrapper-->
+	<h1 class="dashboard-head">Fine/Write-Off</h1>
+	<p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p>  
+		</div><!--welcome-wrapper-->
+	
+		
+		
+	<div class="main-content-holder"><!--main-content-holder-->            
+	
+	
+<form method="post" action="" enctype="multipart/form-data">{% csrf_token %}
+<div class="white-wrapper"><!--white-wrapper-->
+<div class="center-formDiv"><!--center-formDiv-->
+<div class="order-Number bold-text"> <label>Fine/Write-Off</label></div>
+<input type="radio" name="finewriteback" class="id_finewriteback" value="Fine" checked> Fine
+<input type="radio" name="finewriteback" class="id_finewriteback" value="Write-Off"> Write-Off
+</div>    
+<div class="center-formDiv"><!--center-formDiv-->
+		<div class="order-Number bold-text"> <label>Order Number</label></div>
+    <div id="search_box">
+                <input name="time" type="text" id="search_box" class="textBox auto-complete-input" placeholder="Search here existing clients or BLC Number..." data-min-size="2" data-pattern="[a-zA-Z0-9\s]" data-result-onclick="select_existing_user" data-auto-suggest-url="{% url 'accountant:get-fineorderInfo' %}">
+    </div>
+		<hr class="div">
+		
+			<div class="common-sub-head align-left order-details-head">Customer Details</div> 
+			
+				<div class="cleaning-column-wrapper ltyellow-border order-details"><!--cleaning-column-wrapper-->
+				<div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column1-->
+        <div class="details-head align-left order_blc_no"></div>
+				<div class="inside-head align-left order_customer_name"></div>
+				<p class="paragraph order_customer_mobile"></p>
+				
+				<div class="order_payment_status">
+				</div>
+
+				<div class="order_addresses">
+				</div>
+			</div><!--cleaning-column-widget cleaning-column-widget-column1-->
+			
+			<div class="cleaning-column-widget cleaning-column-widget-column2 order-details"><!--cleaning-column-widget cleaning-column-widget-column2-->
+				<div class="common-gray-text align-left order_date"></div>
+				<div class="common-gray-text align-left yellow-text lg-text order_cost"></div>
+				<div class="common-gray-text align-left sm-text gray-text order_total_cleaners"></div>
+				
+					<div class="profile-pic-line"><img class="agent_image"></div>
+			</div><!--cleaning-column-widget cleaning-column-widget-column2-->
+		</div><!--cleaning-column-wrapper-->
+		
+		<br><br>
+<div class="common-sub-head align-left ticket-form-head dynamic-fine-writeoff">Fine/Write-Off Form</div> 
+	<input type="hidden" name="order_id" id="order_id_hidden">
+
+<div class="ticket-wrapper-full ltyellow-border ticket-form"><!--ticket-wrapper-full-->
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+<div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Amount</label></div>
+                <input name="amount" id="id_amount" type="number" class="textBox OnlyNumber" placeholder="Amount in KD" min="0.001" step="any" required>
+  </div><!--ticket-form-left-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad">  
+</div><!--ticket-wrapper-full--> 
+
+<div align="center" class="ticket-form-button"><input class="assignButton" name="submit" type="submit" value="Done"> <input class="cancel-Button" name="cancel" type="button" value="Cancel"></div>   	
+</form>
+<br> <br>
+	</div><!--center-formDiv-->
+
+	</div><!--white-wrapper-->      
+			
+		
+		
+	</div><!--main-content-holder-->
+	</div><!--container-fluid space-->
+</section><!--content-->
+</div><!--wrapper-->
+
+{% include 'agent/common/footer.html' %}
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %}
+<script>
+$('document').ready(function(){
+
+$('.order-details-head').hide();
+$('.order-details').hide();
+$('.ticket-form-head').hide();
+$('.ticket-form').hide();
+$('.ticket-form-button').hide();
+
+
+//collect from payment history
+var order_id=parseInt("{{request.GET.orderid}}");
+          if(order_id)
+          {
+              $.ajax({
+
+        url: "{% url 'accountant:get-cashorderdetailedInfo' %}",
+
+        data: {'order_id':order_id}, 
+
+        dataType: 'json',
+
+        success: function (data) {
+
+            ajax_ret_orders = data;
+            $("#order_id_hidden").val(data['order_id']);
+
+            //to add order info
+            $('.order_blc_no').html(data['blc_no']);
+            $('.order_customer_name').html(data['name'])
+            $('.order_customer_mobile').html(data['mobile_number']);
+            $('.order_cost').html(+data['total_cost']+' KD');
+            $('.order_total_cleaners').html(+data['total_cleaners']+' Cleaners');
+            $('.order_date').html(data['date']);
+            $('.agent_image').prop('src',data['agent_image_url']);
+            $('.agent_image').prop('title',data['agent_name']);
+
+            order_status   = data['order_status']
+            payment_status = data['payment_status']
+
+            $('.order_payment_status').empty();
+            if(payment_status == 'COMPLETED')
+            {
+                $('.order_payment_status').append('<div class="green-bg-lg payment_status">Paid</div>');
+            }
+            else if(payment_status == 'PENDING')
+            {
+                $('.order_payment_status').append('<div class="yellow-bg-lg payment_status">Pending</div>');
+            }
+            else if(payment_status == 'ON_HOLD')
+            {
+                $('.order_payment_status').append('<div class="red-bg-lg payment_status">On Hold</div>');
+            }
+            else
+            {
+                $('.order_payment_status').append('<div class="yellow-bg-lg payment_atatus">Waiting</div>');
+            }    
+
+
+            if(order_status == 'APPROVED_BY_CLIENT')
+            {
+                $('.order_payment_status').append('<div class="blue-bg-lg">Approved</div>');
+            }
+            else if(order_status == 'ORDER_IN_PROGRESS')
+            {
+                $('.order_payment_status').append('<div class="yellow-bg-lg">On-going</div>');
+            }
+            else if(order_status == 'ORDER_CANCELLED')
+            {
+                $('.order_payment_status').append('<div class="red-bg-lg">Cancelled</div>');   
+            }
+            else if(order_status == 'ORDER_CLOSED')
+            {
+                $('.order_payment_status').append('<div class="green-bg-lg">Closed</div>');
+            }
+            else
+            {
+                $('.order_payment_status').append('<div class="yellow-bg-lg">Waiting</div>');
+            }    
+
+
+            addresses = data['order_address'];
+            
+            $(".order_addresses").empty();
+            for(i=0;i<addresses.length;++i)
+            {
+                $(".order_addresses").append('<div class="area-bold">'+addresses[i][0]+'</div><div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle '+(addresses[i][3] == 'CLEANING_FULFILLED' ? 'green-text' : 'yellow-text' )+'" aria-hidden="true"></i> '+addresses[i][1]+'-'+addresses[i][2]+'</div>');
+            }
+
+            //to show
+            $('.order-details-head').show();
+            $('.order-details').show();
+            $('.ticket-form-head').show();
+            $('.ticket-form').show();
+            $('.ticket-form-button').show();
+            
+        }
+
+    });
+          }
+
+
+});
+</script>
+
+
+
+<script>
+  //  auto complete search
+
+$(window).ready(function(){
+
+  $('.auto-complete-input').attr('autocomplete','off').keyup(search_live).focusout(autoSuggestionOnFocusOut
+      ).after($('<div/>',{class:'auto-complete-results'})).parent().css('position','relative',);
+      
+      //Initial case
+      $(".auto-complete-results").css('display','none');
+
+    
+});
+
+//Dont Know
+$(window).ready(function(){
+    $('.goto-url').click(function(){window.location.href=$(this).data('url');});
+}); 
+
+
+
+function autoSuggestionOnFocusOut(event)
+{
+  
+    setTimeout(function(){
+
+      $(event.target).siblings('.auto-complete-results').first().hide();
+      },1000);
+
+}
+
+
+function select_existing_user(event,src){
+          var order_id=$(src).attr('data-id');
+          if(order_id!=0)
+          {
+              $.ajax({
+
+        url: "{% url 'agent:get-feedbackorderinfo' %}",
+
+        data: {'order_id':order_id}, 
+
+        dataType: 'json',
+
+        success: function (data) {
+
+            ajax_ret_orders = data;
+            $("#order_id_hidden").val(data['order_id']);
+            //to add order info
+            $('.order_blc_no').html(data['blc_no']);
+            $('.order_customer_name').html(data['name'])
+            $('.order_customer_mobile').html(data['mobile_number']);
+            $('.order_cost').html(+data['total_cost']+' KD');
+            $('.order_total_cleaners').html(+data['total_cleaners']+' Cleaners');
+            $('.order_date').html(data['date']);
+            $('.agent_image').prop('src',data['agent_image_url']);
+            $('.agent_image').prop('title',data['agent_name']);
+
+            order_status   = data['order_status']
+            payment_status = data['payment_status']
+
+            $('.order_payment_status').empty();
+            if(payment_status == 'COMPLETED')
+            {
+                $('.order_payment_status').append('<div class="green-bg-lg payment_status">Paid</div>');
+            }
+            else if(payment_status == 'PENDING')
+            {
+                $('.order_payment_status').append('<div class="yellow-bg-lg payment_status">Pending</div>');
+            }
+            else if(payment_status == 'ON_HOLD')
+            {
+                $('.order_payment_status').append('<div class="red-bg-lg payment_status">On Hold</div>');
+            }
+            else
+            {
+                $('.order_payment_status').append('<div class="yellow-bg-lg payment_atatus">Waiting</div>');
+            }    
+
+
+            if(order_status == 'APPROVED_BY_CLIENT')
+            {
+                $('.order_payment_status').append('<div class="blue-bg-lg">Approved</div>');
+            }
+            else if(order_status == 'ORDER_IN_PROGRESS')
+            {
+                $('.order_payment_status').append('<div class="yellow-bg-lg">On-going</div>');
+            }
+            else if(order_status == 'ORDER_CANCELLED')
+            {
+                $('.order_payment_status').append('<div class="red-bg-lg">Cancelled</div>');   
+            }
+            else if(order_status == 'ORDER_CLOSED')
+            {
+                $('.order_payment_status').append('<div class="green-bg-lg">Closed</div>');
+            }
+            else
+            {
+                $('.order_payment_status').append('<div class="yellow-bg-lg">Waiting</div>');
+            }    
+
+
+            addresses = data['order_address'];
+            
+            $(".order_addresses").empty();
+            for(i=0;i<addresses.length;++i)
+            {
+                $(".order_addresses").append('<div class="area-bold">'+addresses[i][0]+'</div><div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle '+(addresses[i][3] == 'CLEANING_FULFILLED' ? 'green-text' : 'yellow-text' )+'" aria-hidden="true"></i> '+addresses[i][1]+'-'+addresses[i][2]+'</div>');
+            }
+
+            //to show
+            $('.order-details-head').show();
+            $('.order-details').show();
+            $('.ticket-form-head').show();
+            $('.ticket-form').show();
+            $('.ticket-form-button').show();
+
+            remining_amount = data['remining_amount'];
+            
+        }
+
+    });
+          }
+          
+}
+
+
+
+
+function autoSuggestionOnSelect(event){
+    eval($(this).data('select-result'))(event,$(this));
+    $(this).parents('.auto-complete-results').first().hide().siblings('.auto-complete-input').val('');
+}
+
+
+//Keyup condition
+function search_live(event){
+    var src=$(this);
+    var min_size=src.data('min-size');
+
+    var test_pattern=src.data('pattern');
+    if(test_pattern)
+        {
+        test_pattern=RegExp(test_pattern);
+        var inp = String.fromCharCode(event.keyCode);
+        if (! test_pattern.test(inp)) return;
+        }
+        var val=src.val();
+    if(min_size)
+        {
+        if(val.length<min_size) return;
+        }
+    var fetch_params_fn_name=eval(src.data('fetch-params'));
+    var data={};
+    if(fetch_params_fn_name)
+        data=fetch_params_fn_name();
+    data['keyword']=val;//typed key words
+    var url=src.data('auto-suggest-url');//list fetching url
+    var on_result_click=src.data('result-onclick');//after result url
+
+
+    var ajax={type:'get',url:url,data:data,
+  
+    success:function (data){
+      var listOfObjects = [];
+        if( data['order_details'])
+            {
+
+            $res=src.siblings('.auto-complete-results').first();
+            $res.contents().remove();
+            
+
+
+            $.each( data['order_details'],(i,v)=>{
+              $('<div/>',{class:'auto-complete-result-item','data-id':i,
+                text:v}).appendTo($res).
+                on('click',autoSuggestionOnSelect).
+                data('select-result',on_result_click).
+                attr('tabindex',-1);
+            });
+            $res.css('position','absolute');
+            $res.outerWidth(src.outerWidth());
+            $res.css('top',(src.position().top+src.outerHeight()).toString()+'px');
+          
+                $res.show();
+            }
+          if(data['status'] == 'false'){
+            $res=src.siblings('.auto-complete-results').first();
+            $res.contents().remove();
+          
+            $('<div/>',{class:'auto-complete-result-item','data-id':0,
+                text:"No result Found"}).appendTo($res).
+                on('click',autoSuggestionOnSelect).
+                data('select-result',on_result_click).
+                attr('tabindex',-1);
+            $res.outerWidth(src.outerWidth());
+            $res.css('top',(src.position().top+src.outerHeight()).toString()+'px');
+          
+                $res.show();
+          }
+          }
+        };
+        $.ajax(ajax);
+
+        //max and min setup
+        operation_type    = $('.id_finewriteback').val();
+        
+        if(operation_type == 'Write-Off')
+        {
+        $('#id_amount').prop('max',remining_amount);
+        }
+        else
+        {
+        $('#id_amount').removeAttr('max');
+        }
+
+}
+
+//if check -- check number
+$('.id_finewriteback').change(function(){
+    action = $(this).val();
+    if(action == 'Write-Off')
+    {
+      $('.auto-complete-input').data("auto-suggest-url","{% url 'accountant:get-cashorderInfo' %}");
+      $('.dynamic-fine-writeoff').text("Write-Off");
+        $('.order-details-head').hide();
+        $('.order-details').hide();
+        $('.ticket-form-head').hide();
+        $('.ticket-form').hide();
+        $('.ticket-form-button').hide();
+    }
+    else
+    {
+      $('.auto-complete-input').data("auto-suggest-url","{% url 'accountant:get-fineorderInfo' %}");
+      $('.dynamic-fine-writeoff').text("Fine");
+        $('.order-details-head').hide();
+        $('.order-details').hide();
+        $('.ticket-form-head').hide();
+        $('.ticket-form').hide();
+        $('.ticket-form-button').hide();
+    }
+});
+
+
+</script>
+{% endblock %}	
