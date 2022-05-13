@@ -6645,7 +6645,7 @@ class EditOrderDetails(APIView):
 		response_dict['success'] = False
 		action = request.data.get('action_type')
 
-		order = Order.objects.select_related('evaluation').get(id=order_id)
+		order = Order.objects.select_related('evaluation').prefetch_related('order_scheduler_order').annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())),remaining_cleanings_count= F('total_cleanings_count') - F('completed_cleanings_count')).get(id=order_id)
 
 		if action == 'add_section':                       
 			section_save_serializer                    = EvaluationBookSectionSerializer(data=request.data.get('section_details'))
@@ -6849,7 +6849,26 @@ class EditOrderDetails(APIView):
 				if order.remining_amount == 0:
 					order.payment_status = 'COMPLETED'
 
-				if payment_method in ['PREPAID','POSTPAID','BREAKDOWN']:
+				if payment_method in ['PREPAID','POSTPAID','BREAKDOWN'] and order.evaluation.quatation_status == 'APPROVED':
+					#Xero Integration
+					xero          = XeroConnection.objects.first()
+					#Update Access Token and Refresh Token
+					header                      = {
+													'Authorization': 'Basic '+xero.client_encoded,
+													'Content-Type': 'application/x-www-form-urlencoded'
+														}
+					body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
+					token_response              = requests.post('https://identity.xero.com/connect/token',
+															data=body,
+															headers=header 
+														).json()
+					access_token                = token_response['access_token']
+					refresh_token               = token_response['refresh_token']
+
+					xero.access_token  = access_token
+					xero.refresh_token = refresh_token
+					xero.save()	
+
 					##Xero Contact
 					if not order.evaluation.customer.xero_account_id:
 						##Xero Create Customer ID and Save
@@ -6910,7 +6929,7 @@ class EditOrderDetails(APIView):
 						InvoiceNumber  = order.invoice_no+'A'
 
 					#Post Paid
-					if payment_method == 'POSTPAID':
+					if payment_method == 'POSTPAID' and order.remaining_cleanings_count == 0:
 						Amount = order.evaluation.total_cost
 						##Invoice Line Item 
 						LineItems                 = []
