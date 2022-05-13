@@ -6928,13 +6928,24 @@ class EditOrderDetails(APIView):
 
 							if old_payment_method == 'BREAKDOWN':
 								#Remove Before
+								##Invoice Line Item 
+								LineItems                 = []
+								LineItems.append({
+									"Description":"ONE TIME SERVICE",
+									"Quantity":"1",
+									"UnitAmount":0,
+									"AccountCode":1002,
+									"TaxType":"NONE"
+												}
+									)
 								InvoiceNumber      = order.invoice_no+'A'
 								invoice_data       = 	{
 														"Type":"ACCREC",
 														"LineAmountTypes":"NoTax",
 														"InvoiceNumber":InvoiceNumber,
 														"Reference":order.order_no,
-														"Status":"VOIDED"
+														"LineItems":LineItems,
+														"Status":"AUTHORISED"
 														}
 
 								##xero Create Invoice
@@ -6957,13 +6968,24 @@ class EditOrderDetails(APIView):
 									delete_invoice = None
 
 								#Remove After
+								##Invoice Line Item 
+								LineItems                 = []
+								LineItems.append({
+									"Description":"ONE TIME SERVICE",
+									"Quantity":"1",
+									"UnitAmount":0,
+									"AccountCode":1002,
+									"TaxType":"NONE"
+												}
+									)
 								InvoiceNumber      = order.invoice_no+'B'
 								invoice_data       = 	{
 														"Type":"ACCREC",
 														"LineAmountTypes":"NoTax",
 														"InvoiceNumber":InvoiceNumber,
 														"Reference":order.order_no,
-														"Status":"VOIDED"
+														"LineItems":LineItems,
+														"Status":"AUTHORISED"
 														}
 
 								##xero Create Invoice
@@ -7039,13 +7061,25 @@ class EditOrderDetails(APIView):
 								XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 
 							if old_payment_method == 'PREPAID' or old_payment_method == 'POSTPAID':
+								#Remove
+								##Invoice Line Item 
+								LineItems                 = []
+								LineItems.append({
+									"Description":"ONE TIME SERVICE",
+									"Quantity":"1",
+									"UnitAmount":0,
+									"AccountCode":1002,
+									"TaxType":"NONE"
+												}
+									)
 								InvoiceNumber      = order.invoice_no
 								invoice_data       = 	{
 														"Type":"ACCREC",
 														"LineAmountTypes":"NoTax",
 														"InvoiceNumber":InvoiceNumber,
 														"Reference":order.order_no,
-														"Status":"VOIDED"
+														"LineItems":LineItems,
+														"Status":"AUTHORISED"
 														}
 
 								##xero Create Invoice
@@ -7120,13 +7154,25 @@ class EditOrderDetails(APIView):
 								except:
 									XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 						else:
-							InvoiceNumber      = order.invoice_no
+							#Remove
+							##Invoice Line Item 
+							LineItems                 = []
+							LineItems.append({
+								"Description":"ONE TIME SERVICE",
+								"Quantity":"1",
+								"UnitAmount":0,
+								"AccountCode":1002,
+								"TaxType":"NONE"
+											}
+								)
+							InvoiceNumber      = order.invoice_no+'B'
 							invoice_data       = 	{
 													"Type":"ACCREC",
 													"LineAmountTypes":"NoTax",
 													"InvoiceNumber":InvoiceNumber,
 													"Reference":order.order_no,
-													"Status":"VOIDED"
+													"LineItems":LineItems,
+													"Status":"AUTHORISED"
 													}
 
 							##xero Create Invoice
@@ -7150,13 +7196,24 @@ class EditOrderDetails(APIView):
 								
 						if old_payment_method == 'BREAKDOWN':
 							#Remove First Case
+							##Invoice Line Item 
+							LineItems                 = []
+							LineItems.append({
+								"Description":"ONE TIME SERVICE",
+								"Quantity":"1",
+								"UnitAmount":0,
+								"AccountCode":1002,
+								"TaxType":"NONE"
+											}
+								)
 							InvoiceNumber      = order.invoice_no+'A'
 							invoice_data       = 	{
 													"Type":"ACCREC",
 													"LineAmountTypes":"NoTax",
 													"InvoiceNumber":InvoiceNumber,
 													"Reference":order.order_no,
-													"Status":"VOIDED"
+													"LineItems":LineItems,
+													"Status":"AUTHORISED"
 													}
 
 							##xero Create Invoice
@@ -7179,13 +7236,24 @@ class EditOrderDetails(APIView):
 								delete_invoice = None
 
 							#Remove Second Case
+							##Invoice Line Item 
+							LineItems                 = []
+							LineItems.append({
+								"Description":"ONE TIME SERVICE",
+								"Quantity":"1",
+								"UnitAmount":0,
+								"AccountCode":1002,
+								"TaxType":"NONE"
+											}
+								)
 							InvoiceNumber      = order.invoice_no+'B'
 							invoice_data       = 	{
 													"Type":"ACCREC",
 													"LineAmountTypes":"NoTax",
 													"InvoiceNumber":InvoiceNumber,
 													"Reference":order.order_no,
-													"Status":"VOIDED"
+													"LineItems":LineItems,
+													"Status":"AUTHORISED"
 													}
 
 							##xero Create Invoice
