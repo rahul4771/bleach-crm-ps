@@ -6957,7 +6957,7 @@ class EditOrderDetails(APIView):
 												"Status":"AUTHORISED",
 												"LineItems":LineItems
 												}
-
+					print(invoice_data)
 					##xero Create Invoice
 					header                      = {
 													'xero-tenant-id': xero.tenant_id,
@@ -6970,6 +6970,7 @@ class EditOrderDetails(APIView):
 															json=invoice_data,
 															headers=header 
 														).json()
+					print(create_invoice)
 					try:
 						created_invoice = create_invoice['Status']
 					except:
