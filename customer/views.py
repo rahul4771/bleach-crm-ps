@@ -1966,7 +1966,6 @@ def addpromocode(request):
 							XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 
 				if evaluation.payment_method == 'BREAKDOWN':
-					payment_policy = 'BREAKDOWN'
 					#Before Invoice
 					Amount = order.evaluation.before_cleaning_amount
 					##Invoice Line Item 
@@ -1980,6 +1979,7 @@ def addpromocode(request):
 									}
 						)
 					InvoiceNumber  = order.invoice_no+'A'
+					payment_policy = 'BEFORE CLEANING'
 
 
 					invoice_data        = 	{
@@ -2031,6 +2031,7 @@ def addpromocode(request):
 									}
 						)
 					InvoiceNumber  = order.invoice_no+'B'
+					payment_policy = 'AFTER CLEANING'
 
 					invoice_data        = 	{
 										"Type":"ACCREC",

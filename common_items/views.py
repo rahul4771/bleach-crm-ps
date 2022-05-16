@@ -5326,8 +5326,6 @@ class FineWriteBack(IsAuthenticated,View):
 			xero.save()
 
 			if evaluation.payment_method == 'BREAKDOWN':
-				payment_policy = 'BREAKDOWN'
-
 				#Before Invoice
 				Amount = order.evaluation.before_cleaning_amount
 				##Invoice Line Item 
@@ -5341,6 +5339,7 @@ class FineWriteBack(IsAuthenticated,View):
 								}
 					)
 				InvoiceNumber  = order.invoice_no+'A'
+				payment_policy = 'BEFORE CLEANING'
 
 				invoice_data        = 	{
 									"Type":"ACCREC",
@@ -5391,6 +5390,7 @@ class FineWriteBack(IsAuthenticated,View):
 								}
 					)
 				InvoiceNumber  = order.invoice_no+'B'
+				payment_policy = 'AFTER CLEANING'
 
 				invoice_data        = 	{
 									"Type":"ACCREC",
