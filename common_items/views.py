@@ -5090,6 +5090,8 @@ class FineWriteBack(IsAuthenticated,View):
 				order.order_status    = 'ORDER_IN_PROGRESS'				
 			order.save()
 
+			order                       = Order.objects.get(id=order_id)
+
 			#Xero Integration
 			xero                        = XeroConnection.objects.first()
 			##xero Update Access Token and Refresh Token
@@ -5301,6 +5303,8 @@ class FineWriteBack(IsAuthenticated,View):
 				closing_order.order_status = 'ORDER_CLOSED'
 				closing_order.save()
 
+			order                       = Order.objects.get(id=order_id)
+			
 			#Xero Integration
 			xero                        = XeroConnection.objects.first()
 			##xero Update Access Token and Refresh Token
