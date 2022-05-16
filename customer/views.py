@@ -6920,6 +6920,8 @@ class EditOrderDetails(APIView):
 													"Contact":{
 														"ContactID":order.evaluation.customer.xero_account_id
 																},
+													"Date":order.created.strftime('%Y-%m-%d'),
+													"DueDate":(order.created+timedelta(days=14)).strftime('%Y-%m-%d'),
 													"LineAmountTypes":"NoTax",
 													"InvoiceNumber":InvoiceNumber,
 													"Reference":order.order_no,
@@ -7018,6 +7020,8 @@ class EditOrderDetails(APIView):
 													"Contact":{
 														"ContactID":order.evaluation.customer.xero_account_id
 																},
+													"Date":order.created.strftime('%Y-%m-%d'),
+													"DueDate":(order.created+timedelta(days=14)).strftime('%Y-%m-%d'),
 													"LineAmountTypes":"NoTax",
 													"InvoiceNumber":InvoiceNumber,
 													"Reference":order.order_no,
