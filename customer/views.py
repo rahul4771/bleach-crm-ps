@@ -6945,7 +6945,7 @@ class EditOrderDetails(APIView):
 														"InvoiceNumber":InvoiceNumber,
 														"Reference":order.order_no,
 														"LineItems":LineItems,
-														"Status":"AUTHORISED"
+														"Status":"DRAFT"
 														}
 
 								##xero Create Invoice
@@ -6960,7 +6960,7 @@ class EditOrderDetails(APIView):
 																		json=invoice_data,
 																		headers=header 
 																	).json()
-
+								print(create_invoice)
 								try:
 									delete_invoice = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
 									delete_invoice.delete()
@@ -7000,7 +7000,7 @@ class EditOrderDetails(APIView):
 																		json=invoice_data,
 																		headers=header 
 																	).json()
-
+								print(create_invoice)
 								try:
 									delete_invoice = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
 									delete_invoice.delete()
@@ -7079,7 +7079,7 @@ class EditOrderDetails(APIView):
 														"InvoiceNumber":InvoiceNumber,
 														"Reference":order.order_no,
 														"LineItems":LineItems,
-														"Status":"AUTHORISED"
+														"Status":"DRAFT"
 														}
 
 								##xero Create Invoice
@@ -7094,7 +7094,7 @@ class EditOrderDetails(APIView):
 																		json=invoice_data,
 																		headers=header 
 																	).json()
-
+								print(create_invoice)
 								try:
 									delete_invoice = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
 									delete_invoice.delete()
@@ -7172,7 +7172,7 @@ class EditOrderDetails(APIView):
 													"InvoiceNumber":InvoiceNumber,
 													"Reference":order.order_no,
 													"LineItems":LineItems,
-													"Status":"AUTHORISED"
+													"Status":"DRAFT"
 													}
 
 							##xero Create Invoice
@@ -7187,6 +7187,7 @@ class EditOrderDetails(APIView):
 																	json=invoice_data,
 																	headers=header 
 																).json()
+							print(create_invoice)
 
 							try:
 								delete_invoice = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
@@ -7213,7 +7214,7 @@ class EditOrderDetails(APIView):
 													"InvoiceNumber":InvoiceNumber,
 													"Reference":order.order_no,
 													"LineItems":LineItems,
-													"Status":"AUTHORISED"
+													"Status":"DRAFT"
 													}
 
 							##xero Create Invoice
@@ -7253,7 +7254,7 @@ class EditOrderDetails(APIView):
 													"InvoiceNumber":InvoiceNumber,
 													"Reference":order.order_no,
 													"LineItems":LineItems,
-													"Status":"AUTHORISED"
+													"Status":"DRAFT"
 													}
 
 							##xero Create Invoice
