@@ -5228,7 +5228,6 @@ class FineWriteBack(IsAuthenticated,View):
 					InvoiceNumber  = order.invoice_no
 					payment_policy = 'PREPAID'
 
-						
 				if evaluation.payment_method == 'POSTPAID':
 					Amount = order.evaluation.total_cost 
 					##Invoice Line Item 
@@ -5491,7 +5490,7 @@ class FineWriteBack(IsAuthenticated,View):
 						update_xero_invoice.save()
 					except:
 						XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
-						
+
 			messages.success(request,"Write Back Amount Succesfully Removed")
 
 		if request.user.user_type == 'ACCOUNTANT':
