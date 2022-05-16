@@ -6967,7 +6967,7 @@ class EditOrderDetails(APIView):
 														"InvoiceNumber":InvoiceNumber,
 														"Reference":order.order_no,
 														"LineItems":LineItems,
-														"Status":"AUTHORISED"
+														"Status":"DRAFT"
 														}
 
 								##xero Create Invoice
