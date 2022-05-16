@@ -5290,6 +5290,7 @@ class FineWriteBack(IsAuthenticated,View):
 				order.payment_status         = 'COMPLETED'
 				order.save()
 				
+			evaluation                         = Evaluation.objects.filter(id=order.evaluation.id).first()
 			if order.evaluation.payment_method == 'BREAKDOWN':
 				Evaluation.objects.filter(id=order.evaluation.id).update(writeback_amount=F('writeback_amount')+float(request.POST.get('amount')),writeback_created_by=request.user,total_cost=F('total_cost')-float(request.POST.get('amount')),after_cleaning_amount=F('after_cleaning_amount')-float(request.POST.get('amount')))			
 			else:
@@ -5304,7 +5305,7 @@ class FineWriteBack(IsAuthenticated,View):
 				closing_order.save()
 
 			order                       = Order.objects.get(id=order_id)
-			
+
 			#Xero Integration
 			xero                        = XeroConnection.objects.first()
 			##xero Update Access Token and Refresh Token
