@@ -5015,7 +5015,7 @@ class CashCollect(IsAuthenticated,View):
 															json=invoice_data,
 															headers=header 
 														).json()
-					print(invoice_data)
+					
 					print(create_invoice)
 					try:
 						created_invoice = create_invoice['Status']
@@ -5031,6 +5031,30 @@ class CashCollect(IsAuthenticated,View):
 							update_xero_invoice.save()
 						except:
 							XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
+					
+					#Delete Unwanted invoice
+					InvoiceNumber  = order.invoice_no+'A'
+
+					invoice_data        = 	{
+										"Type":"ACCREC",
+										"LineAmountTypes":"NoTax",
+										"InvoiceNumber":InvoiceNumber,
+										"Reference":order.order_no,
+										"Status":"DELETED"
+									}
+
+					##xero Delete Invoice
+					header                      = {
+													'xero-tenant-id': xero.tenant_id,
+													'Authorization': 'Bearer '+access_token,
+													'Accept': 'application/json',
+													'Content-Type': 'application/json'
+														}
+
+					delete_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+															json=invoice_data,
+															headers=header 
+														).json()
 
 				if payment_policy == 'BEFORE CLEANING':
 					#Before Invoice
@@ -5068,6 +5092,7 @@ class CashCollect(IsAuthenticated,View):
 															json=invoice_data,
 															headers=header 
 														).json()
+					
 					try:
 						created_invoice = create_invoice['Status']
 					except:
@@ -5082,7 +5107,54 @@ class CashCollect(IsAuthenticated,View):
 							update_xero_invoice.save()
 						except:
 							XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
+					
+					#Delete Unwanted invoice
+					InvoiceNumber  = order.invoice_no
+
+					invoice_data        = 	{
+										"Type":"ACCREC",
+										"LineAmountTypes":"NoTax",
+										"InvoiceNumber":InvoiceNumber,
+										"Reference":order.order_no,
+										"Status":"DELETED"
+									}
+					##xero Delete Invoice
+					header                      = {
+													'xero-tenant-id': xero.tenant_id,
+													'Authorization': 'Bearer '+access_token,
+													'Accept': 'application/json',
+													'Content-Type': 'application/json'
+														}
+
+					delete_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+															json=invoice_data,
+															headers=header 
+														).json()
 				
+				if payment_policy == 'POSTPAID':
+					#Delete Unwanted invoice
+					InvoiceNumber  = order.invoice_no+'A'
+
+					invoice_data        = 	{
+										"Type":"ACCREC",
+										"LineAmountTypes":"NoTax",
+										"InvoiceNumber":InvoiceNumber,
+										"Reference":order.order_no,
+										"Status":"DELETED"
+									}
+					##xero Delete Invoice
+					header                      = {
+													'xero-tenant-id': xero.tenant_id,
+													'Authorization': 'Bearer '+access_token,
+													'Accept': 'application/json',
+													'Content-Type': 'application/json'
+														}
+
+					delete_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+															json=invoice_data,
+															headers=header 
+														).json()
+
 				#Payment Add
 				payment_date        = payment_date.date()
 				payment_date_string = datetime.strftime(payment_date,'%Y-%m-%d')
