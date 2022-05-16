@@ -6871,7 +6871,32 @@ class EditOrderDetails(APIView):
 
 					xero.access_token  = access_token
 					xero.refresh_token = refresh_token
-					xero.save()	
+					xero.save()
+
+					##Xero Create Customer ID and Save
+					contact_data                = {
+													"Name":order.evaluation.customer.name,
+													"ContactNumber":order.evaluation.customer.mobile_number,
+													"EmailAddress":order.evaluation.customer.email,
+													"ContactStatus":"ACTIVE",
+													"IsCustomer":True,
+													"DefaultCurrency":"KWD"
+																}
+													
+					header                      = {
+												'xero-tenant-id': xero.tenant_id,
+												'Authorization': 'Bearer '+access_token,
+												'Accept': 'application/json',
+												'Content-Type': 'application/json'
+													}
+
+					create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
+															json=contact_data,
+															headers=header 
+														).json()
+
+					order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
+					order.evaluation.customer.save()	
 
 					#Prepaid
 					if payment_method == 'PREPAID':
@@ -6891,6 +6916,9 @@ class EditOrderDetails(APIView):
 
 						invoice_data       = 	{
 													"Type":"ACCREC",
+													"Contact":{
+														"ContactID":order.evaluation.customer.xero_account_id
+																},
 													"LineAmountTypes":"NoTax",
 													"InvoiceNumber":InvoiceNumber,
 													"Reference":order.order_no,
@@ -6985,6 +7013,9 @@ class EditOrderDetails(APIView):
 
 						invoice_data       = 	{
 													"Type":"ACCREC",
+													"Contact":{
+														"ContactID":order.evaluation.customer.xero_account_id
+																},
 													"LineAmountTypes":"NoTax",
 													"InvoiceNumber":InvoiceNumber,
 													"Reference":order.order_no,
@@ -7004,7 +7035,6 @@ class EditOrderDetails(APIView):
 																json=invoice_data,
 																headers=header 
 															).json()
-						print(create_invoice)
 				
 						try:
 							created_invoice = create_invoice['Status']
