@@ -197,7 +197,7 @@ class Command(BaseCommand):
         #         if before_order.evaluation.quatation_expiry_date <= timezone.now():
         #             Status  = "VOIDED"
         #         else:
-        #             Status  = "AUTHORISED"
+        #             Status  = "SUBMITTED"
 
         #     if before_order.evaluation.payment_method == 'BREAKDOWN':
         #         Amount = before_order.evaluation.before_cleaning_amount 
@@ -218,7 +218,7 @@ class Command(BaseCommand):
         #         if before_order.evaluation.quatation_expiry_date <= timezone.now():
         #             Status  = "VOIDED"
         #         else:
-        #             Status  = "AUTHORISED"
+        #             Status  = "SUBMITTED"
 
         #     invoice_data              = 	{
 		# 											"Type":"ACCREC",
