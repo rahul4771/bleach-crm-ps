@@ -6898,7 +6898,6 @@ class EditOrderDetails(APIView):
 					order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
 					order.evaluation.customer.save()	
 
-					print(payment_method)
 					#Prepaid
 					if payment_method == 'PREPAID':
 						Amount = order.evaluation.total_cost 
@@ -7000,7 +6999,6 @@ class EditOrderDetails(APIView):
 
 					#Breakdown Before
 					if payment_method == 'BREAKDOWN':
-						print("inside")
 						Amount = order.evaluation.before_cleaning_amount 
 						##Invoice Line Item 
 						LineItems                 = []
