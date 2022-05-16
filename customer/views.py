@@ -7004,6 +7004,7 @@ class EditOrderDetails(APIView):
 																json=invoice_data,
 																headers=header 
 															).json()
+						print(create_invoice)
 				
 						try:
 							created_invoice = create_invoice['Status']
