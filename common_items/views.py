@@ -1299,8 +1299,6 @@ class PaymentDetails(IsAuthenticated,View):
 
 class ActiveSubscriptions(IsAuthenticated,View):
 	def get(self,request):
-		#subscriptions
-
 		#Evaluation Details
 		search                  = request.GET.get('search')
 		
@@ -1314,13 +1312,14 @@ class ActiveSubscriptions(IsAuthenticated,View):
 		advance_amount = 0 
 		due_amount = 0
 
+		array = []
 		if subscriptions:
 			for invoice in subscriptions:
 				cleaning_price = 0
 				for scheduler in invoice.orderschedules:
 					if scheduler.work_status=='CLEANING_FULFILLED':
 						total_cleanings = len(scheduler.order_scheduler_book.bookschedules)
-						print(total_cleanings)
+						array.append(total_cleanings)
 						cleaning_price += scheduler.order_scheduler_book.total_cost/total_cleanings	
 						cleaning_price += (invoice.evaluation.fine_amount/total_cleanings)
 						cleaning_price += (invoice.evaluation.additional_charge/total_cleanings)
@@ -1340,7 +1339,8 @@ class ActiveSubscriptions(IsAuthenticated,View):
 					due_count += 1
 					due_amount += invoice.balance
 
-
+			print(array,"array")
+			
 		#PAGINATION CLIENTS
 		no_of_entries = request.GET.get('no_of_entries')
 		if not no_of_entries:
