@@ -1319,7 +1319,6 @@ class ActiveSubscriptions(IsAuthenticated,View):
 				for scheduler in invoice.orderschedules:
 					if scheduler.work_status=='CLEANING_FULFILLED':
 						total_cleanings = len(scheduler.order_scheduler_book.bookschedules)
-						array.append(total_cleanings)
 						cleaning_price += scheduler.order_scheduler_book.total_cost/total_cleanings	
 						cleaning_price += (invoice.evaluation.fine_amount/total_cleanings)
 						cleaning_price += (invoice.evaluation.additional_charge/total_cleanings)
@@ -1328,6 +1327,7 @@ class ActiveSubscriptions(IsAuthenticated,View):
 						cleaning_price -= (invoice.evaluation.cancelled_amount/total_cleanings)
 						cleaning_price -= (invoice.evaluation.promocode_amount/total_cleanings)
 						cleaning_price -= (invoice.evaluation.writeback_amount/total_cleanings)
+						array.append(cleaning_price)
 						
 				invoice.balance       = cleaning_price-invoice.amount_paid
 
@@ -1340,7 +1340,7 @@ class ActiveSubscriptions(IsAuthenticated,View):
 					due_amount += invoice.balance
 
 			print(array,"array")
-			
+
 		#PAGINATION CLIENTS
 		no_of_entries = request.GET.get('no_of_entries')
 		if not no_of_entries:
