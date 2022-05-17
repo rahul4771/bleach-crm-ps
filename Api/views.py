@@ -17,6 +17,7 @@ from agent.views import generate_random_username
 from bleachinventory.models import QuantityStoreDetails,ExternalCustomer,Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,CheckOutItemUnits,ItemHistory,InventoryAccessory,InventoryFinshedItem,Store
 import re
 import random
+from random import randint
 import string
 import functools
 import operator
@@ -5391,3 +5392,49 @@ class WebsiteInquiryMailAPI(APIView):
 		msg.send(fail_silently=False)
 
 		return Response(HTTP_200_OK)
+
+
+
+### EVALUATION APIS
+
+
+class EvaluationBookingCustomerOtpGenerationAPI(APIView):
+	def post(self,request):
+		response_dict = {}
+
+		customer_mobile = request.data.get('mobile_number')
+
+		#checking if mobile number/customer already exists on datababse
+		try:
+			customer = UserProfile.objects.get(is_active=True,user_type='CUSTOMER',mobile_number=int(customer_mobile))
+			response_dict['is_new_customer'] = False
+
+			customer_otp = randint(100001,999999)
+
+			customer.evaluation_booking_otp = customer_otp
+			customer.save()
+
+		except:
+			response_dict['is_new_customer'] = True
+			customer_otp = randint(100001,999999)
+			response_dict['customer_otp'] = customer_otp
+
+		return Response(response_dict,HTTP_200_OK)
+
+class EvaluationBookingCustomerOtpVerificationAPI(APIView):
+	def post(self,request):
+		response_dict = {}
+
+		customer_otp = request.data.get('customer_otp')
+
+		#checking if mobile number/customer already exists on datababse
+		try:
+			customer = UserProfile.objects.get(is_active=True,user_type='CUSTOMER',evaluation_booking_otp=int(customer_otp))
+			customer.evaluation_booking_otp = 'abcdef'
+			customer.save()
+			response_dict['customer_verified'] = True
+
+		except:
+			response_dict['customer_verified'] = False
+
+		return Response(response_dict,HTTP_200_OK)
