@@ -2429,7 +2429,6 @@ class OrderDetails(IsAgent,View):
 			pending_orders_count  = 0
 
 
-
 		#Prefetch filters
 		try:
 			fil_governorate       = int(request.GET.get('governorate'))
