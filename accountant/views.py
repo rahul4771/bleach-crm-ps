@@ -28,6 +28,7 @@ from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investi
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
 from Api.models import XeroConnection
+from accountant.models import XeroInvoice
 
 import requests
 from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
@@ -3108,8 +3109,103 @@ class OrderCancellation(IsAccountant,View):
 		#cash back		
 		cashback_id                   = request.POST.get('cashback_id')
 		return_amount                 = request.POST.get('return_amount')
+
+		#Xero Integration
+		xero                        = XeroConnection.objects.first()
+		##xero Update Access Token and Refresh Token
+		header                      = {
+										'Authorization': 'Basic '+xero.client_encoded,
+										'Content-Type': 'application/x-www-form-urlencoded'
+											}
+		body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
+		token_response              = requests.post('https://identity.xero.com/connect/token',
+												data=body,
+												headers=header 
+											).json()
+		access_token                = token_response['access_token']
+		refresh_token               = token_response['refresh_token']
+
+		xero.access_token  = access_token
+		xero.refresh_token = refresh_token
+		xero.save()
+
+		#Last Send Invoice Cancellation
 		cashback_history              = CancellOrderAmountHistory.objects.select_related('order').get(id=cashback_id)
+		order                         = cashback_history.order
+
+		##xero Delete Invoice
+		header                      = {
+										'xero-tenant-id': xero.tenant_id,
+										'Authorization': 'Bearer '+access_token,
+										'Accept': 'application/json',
+										'Content-Type': 'application/json'
+											}
+		if order.evaluation.payment_method == 'PREPAID' or 'POSTPAID':
+			InvoiceNumber       = order.invoice_no
+			invoice_data        = 	{
+									"Type":"ACCREC",
+									"LineAmountTypes":"NoTax",
+									"InvoiceNumber":InvoiceNumber,
+									"Reference":order.order_no,
+									"Status":"DELETED"
+								}
+
+			delete_invoice      = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+													json=invoice_data,
+													headers=header 
+												).json()
+			
+		elif order.evaluation.payment_method == 'BREAKDOWN':
+			InvoiceNumber       = order.invoice_no+'A'
+			invoice_data        = 	{
+									"Type":"ACCREC",
+									"LineAmountTypes":"NoTax",
+									"InvoiceNumber":InvoiceNumber,
+									"Reference":order.order_no,
+									"Status":"DELETED"
+								}
+
+			delete_invoice      = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+													json=invoice_data,
+													headers=header 
+												).json()
+
+			InvoiceNumber       = order.invoice_no+'B'
+			invoice_data        = 	{
+									"Type":"ACCREC",
+									"LineAmountTypes":"NoTax",
+									"InvoiceNumber":InvoiceNumber,
+									"Reference":order.order_no,
+									"Status":"DELETED"
+								}
+								
+			delete_invoice      = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+													json=invoice_data,
+													headers=header 
+												).json()
+
+		elif order.evaluation.payment_method == 'SUBSCRIPTION':
+			try:
+				last_invoice = XeroInvoice.objects.filter(order=order,is_paid=False).last()
+			except:
+				last_invoice = None
+			
+			if last_invoice:
+				InvoiceNumber       = last_invoice.invoice_no
+				invoice_data        = 	{
+										"Type":"ACCREC",
+										"LineAmountTypes":"NoTax",
+										"InvoiceNumber":InvoiceNumber,
+										"Reference":order.order_no,
+										"Status":"DELETED"
+									}
+									
+				delete_invoice      = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+														json=invoice_data,
+														headers=header 
+													).json()
 		
+		#Update
 		cashback_history.order.remining_amount  = 0
 		cashback_history.order.amount_paid     -= float(return_amount)
 		cashback_history.order.order_status     = 'ORDER_CANCELLED'
@@ -3118,7 +3214,6 @@ class OrderCancellation(IsAccountant,View):
 		cashback_history.order.save()
 		cashback_history.save()
 
-		print(cashback_history)
 		return redirect('accountant:accountantdash-board')
 
 

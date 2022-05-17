@@ -45,6 +45,7 @@ from django.db.models import Count
 from dateutil.relativedelta import relativedelta
 
 from Api.models import XeroConnection
+from accountant.models import XeroInvoice
 
 from django.core.mail import send_mail,EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -1312,14 +1313,13 @@ class ActiveSubscriptions(IsAuthenticated,View):
 		advance_amount = 0 
 		due_amount = 0
 
-		array = []
 		if subscriptions:
 			for invoice in subscriptions:
 				cleaning_price = 0
 				for scheduler in invoice.orderschedules:
 					if scheduler.work_status=='CLEANING_FULFILLED':
 						total_cleanings = len(scheduler.order_scheduler_book.bookschedules)
-						cleaning_price += scheduler.order_scheduler_book.total_cost/total_cleanings	
+						cleaning_price += scheduler.order_scheduler_book.total_cost/total_cleanings
 						cleaning_price += (invoice.evaluation.fine_amount/total_cleanings)
 						cleaning_price += (invoice.evaluation.additional_charge/total_cleanings)
 						cleaning_price -= (invoice.evaluation.discount/total_cleanings)
@@ -1327,7 +1327,7 @@ class ActiveSubscriptions(IsAuthenticated,View):
 						cleaning_price -= (invoice.evaluation.cancelled_amount/total_cleanings)
 						cleaning_price -= (invoice.evaluation.promocode_amount/total_cleanings)
 						cleaning_price -= (invoice.evaluation.writeback_amount/total_cleanings)
-						array.append(cleaning_price)
+						
 						
 				invoice.balance       = cleaning_price-invoice.amount_paid
 
@@ -4723,9 +4723,104 @@ class OrderCancellation(IsAuthenticated,View):
 
 		elif cancell_option == 'CREDIT':
 			amount = float(request.POST.get('amount'))			
+
+			#Xero Integration
+			xero                        = XeroConnection.objects.first()
+			##xero Update Access Token and Refresh Token
+			header                      = {
+											'Authorization': 'Basic '+xero.client_encoded,
+											'Content-Type': 'application/x-www-form-urlencoded'
+												}
+			body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
+			token_response              = requests.post('https://identity.xero.com/connect/token',
+													data=body,
+													headers=header 
+												).json()
+			access_token                = token_response['access_token']
+			refresh_token               = token_response['refresh_token']
+
+			xero.access_token  = access_token
+			xero.refresh_token = refresh_token
+			xero.save()
+
+			#Last Send Invoice Cancellation
+			order                       = Order.objects.get(id=order_id)
+
+			##xero Delete Invoice
+			header                      = {
+											'xero-tenant-id': xero.tenant_id,
+											'Authorization': 'Bearer '+access_token,
+											'Accept': 'application/json',
+											'Content-Type': 'application/json'
+												}
+			if order.evaluation.payment_method == 'PREPAID' or 'POSTPAID':
+				InvoiceNumber       = order.invoice_no
+				invoice_data        = 	{
+										"Type":"ACCREC",
+										"LineAmountTypes":"NoTax",
+										"InvoiceNumber":InvoiceNumber,
+										"Reference":order.order_no,
+										"Status":"DELETED"
+									}
+
+				delete_invoice      = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+														json=invoice_data,
+														headers=header 
+													).json()
+				
+			elif order.evaluation.payment_method == 'BREAKDOWN':
+				InvoiceNumber       = order.invoice_no+'A'
+				invoice_data        = 	{
+										"Type":"ACCREC",
+										"LineAmountTypes":"NoTax",
+										"InvoiceNumber":InvoiceNumber,
+										"Reference":order.order_no,
+										"Status":"DELETED"
+									}
+
+				delete_invoice      = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+														json=invoice_data,
+														headers=header 
+													).json()
+
+				InvoiceNumber       = order.invoice_no+'B'
+				invoice_data        = 	{
+										"Type":"ACCREC",
+										"LineAmountTypes":"NoTax",
+										"InvoiceNumber":InvoiceNumber,
+										"Reference":order.order_no,
+										"Status":"DELETED"
+									}
+									
+				delete_invoice      = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+														json=invoice_data,
+														headers=header 
+													).json()
+
+			elif order.evaluation.payment_method == 'SUBSCRIPTION':
+				try:
+					last_invoice = XeroInvoice.objects.filter(order=order,is_paid=False).last()
+				except:
+					last_invoice = None
+				
+				if last_invoice:
+					InvoiceNumber       = last_invoice.invoice_no
+					invoice_data        = 	{
+											"Type":"ACCREC",
+											"LineAmountTypes":"NoTax",
+											"InvoiceNumber":InvoiceNumber,
+											"Reference":order.order_no,
+											"Status":"DELETED"
+										}
+										
+					delete_invoice      = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+															json=invoice_data,
+															headers=header 
+														).json()
+
+			#update
 			CancellOrderAmountHistory.objects.create(order_id=order_id,return_amount=amount,amount_return_method='CREDIT',is_completed=True)
-			
-			order                 = Order.objects.get(id=order_id)
+
 			order.evaluation.customer.credit_amount += amount
 			order.amount_paid                       -= amount
 			order.remining_amount                    = 0
@@ -4792,13 +4887,108 @@ class OrderCancellation(IsAuthenticated,View):
 			order.cancell_note    = request.POST.get('notes')
 			order.save()
 		else:
-			print("canceltesttt22")
-			order                 = Order.objects.get(id=order_id)
+			#Xero Integration
+			xero                        = XeroConnection.objects.first()
+			##xero Update Access Token and Refresh Token
+			header                      = {
+											'Authorization': 'Basic '+xero.client_encoded,
+											'Content-Type': 'application/x-www-form-urlencoded'
+												}
+			body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
+			token_response              = requests.post('https://identity.xero.com/connect/token',
+													data=body,
+													headers=header 
+												).json()
+			access_token                = token_response['access_token']
+			refresh_token               = token_response['refresh_token']
+
+			xero.access_token  = access_token
+			xero.refresh_token = refresh_token
+			xero.save()
+
+			#Last Send Invoice Cancellation
+			order                       = Order.objects.get(id=order_id)
+
+			##xero Delete Invoice
+			header                      = {
+											'xero-tenant-id': xero.tenant_id,
+											'Authorization': 'Bearer '+access_token,
+											'Accept': 'application/json',
+											'Content-Type': 'application/json'
+												}
+			if order.evaluation.payment_method == 'PREPAID' or 'POSTPAID':
+				InvoiceNumber       = order.invoice_no
+				invoice_data        = 	{
+										"Type":"ACCREC",
+										"LineAmountTypes":"NoTax",
+										"InvoiceNumber":InvoiceNumber,
+										"Reference":order.order_no,
+										"Status":"DELETED"
+									}
+
+				delete_invoice      = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+														json=invoice_data,
+														headers=header 
+													).json()
+				
+			elif order.evaluation.payment_method == 'BREAKDOWN':
+				InvoiceNumber       = order.invoice_no+'A'
+				invoice_data        = 	{
+										"Type":"ACCREC",
+										"LineAmountTypes":"NoTax",
+										"InvoiceNumber":InvoiceNumber,
+										"Reference":order.order_no,
+										"Status":"DELETED"
+									}
+
+				delete_invoice      = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+														json=invoice_data,
+														headers=header 
+													).json()
+
+				InvoiceNumber       = order.invoice_no+'B'
+				invoice_data        = 	{
+										"Type":"ACCREC",
+										"LineAmountTypes":"NoTax",
+										"InvoiceNumber":InvoiceNumber,
+										"Reference":order.order_no,
+										"Status":"DELETED"
+									}
+									
+				delete_invoice      = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+														json=invoice_data,
+														headers=header 
+													).json()
+
+			elif order.evaluation.payment_method == 'SUBSCRIPTION':
+				try:
+					last_invoice = XeroInvoice.objects.filter(order=order,is_paid=False).last()
+				except:
+					last_invoice = None
+				
+				if last_invoice:
+					InvoiceNumber       = last_invoice.invoice_no
+					invoice_data        = 	{
+											"Type":"ACCREC",
+											"LineAmountTypes":"NoTax",
+											"InvoiceNumber":InvoiceNumber,
+											"Reference":order.order_no,
+											"Status":"DELETED"
+										}
+										
+					delete_invoice      = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+															json=invoice_data,
+															headers=header 
+														).json()
+
+			#update
 			order.remining_amount = 0
 			order.cancelled_by    = request.user
 			order.cancell_note    = request.POST.get('notes')
 			order.order_status    = 'ORDER_CANCELLED' 
 			order.save()
+
+
 
 			messages.success(request,'Order Successfully Cancelled')
 
