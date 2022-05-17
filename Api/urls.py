@@ -100,4 +100,8 @@ urlpatterns = [
 
 	url(r'^xero/save/$',views.XeroInfoSaveAPI.as_view(),name='xero-save'),
 	url(r'^transactions/daily/$',views.DailyTransactionsAPI.as_view(),name='daily-transactions'),
+
+	###evaluation booking apis
+	url(r'^evaluation-booking-customer-otp-generation/$',views.EvaluationBookingCustomerOtpGenerationAPI.as_view(),name='evaluation-booking-customer-otp-generation'),
+	url(r'^evaluation-booking-customer-otp-verification/$',views.EvaluationBookingCustomerOtpVerificationAPI.as_view(),name='evaluation-booking-customer-otp-verification'),
 ]

@@ -144,6 +144,8 @@ class UserProfile(AbstractUser):
 
     address_otp                 = models.CharField(max_length=100,blank=True,null=True)
 
+    evaluation_booking_otp      = models.CharField(max_length=100,blank=True,null=True)
+
     xero_account_id             = models.CharField(max_length=100,blank=True,null=True)
 
     bamboo_employee_id          = models.CharField(max_length=20,blank=True,null=True)

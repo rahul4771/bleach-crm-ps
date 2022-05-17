@@ -1319,7 +1319,7 @@ class ActiveSubscriptions(IsAuthenticated,View):
 				for scheduler in invoice.orderschedules:
 					if scheduler.work_status=='CLEANING_FULFILLED':
 						total_cleanings = len(scheduler.order_scheduler_book.bookschedules)
-						cleaning_price += scheduler.order_scheduler_book.total_cost/total_cleanings
+						cleaning_price += scheduler.order_scheduler_book.total_cost/total_cleanings	
 						cleaning_price += (invoice.evaluation.fine_amount/total_cleanings)
 						cleaning_price += (invoice.evaluation.additional_charge/total_cleanings)
 						cleaning_price -= (invoice.evaluation.discount/total_cleanings)
