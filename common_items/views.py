@@ -4757,7 +4757,7 @@ class OrderCancellation(IsAuthenticated,View):
 
 			#Last Send Invoice Cancellation
 			order                       = Order.objects.get(id=order_id)
-			
+
 			##xero Delete Invoice
 			header                      = {
 											'xero-tenant-id': xero.tenant_id,
@@ -4940,6 +4940,7 @@ class OrderCancellation(IsAuthenticated,View):
 														headers=header 
 													).json()
 				
+
 			elif order.evaluation.payment_method == 'BREAKDOWN':
 				InvoiceNumber       = order.invoice_no+'A'
 				invoice_data        = 	{
