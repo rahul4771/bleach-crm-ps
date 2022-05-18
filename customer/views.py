@@ -6670,6 +6670,335 @@ class AddDeleteService(APIView):
 
 				service_dict[saved_service.id] = services[service_detail]['service_type']				
 
+			#Xero Updation
+			payment_method = order.evaluation.payment_method
+			if payment_method in ['PREPAID','POSTPAID','BREAKDOWN'] and order.evaluation.quatation_status == 'APPROVED':
+				invoice_data = {}
+
+				#Xero Integration
+				xero          = XeroConnection.objects.first()
+				#Update Access Token and Refresh Token
+				header                      = {
+												'Authorization': 'Basic '+xero.client_encoded,
+												'Content-Type': 'application/x-www-form-urlencoded'
+													}
+				body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
+				token_response              = requests.post('https://identity.xero.com/connect/token',
+														data=body,
+														headers=header 
+													).json()
+				access_token                = token_response['access_token']
+				refresh_token               = token_response['refresh_token']
+
+				xero.access_token  = access_token
+				xero.refresh_token = refresh_token
+				xero.save()
+
+				##Xero Create Customer ID and Save
+				contact_data                = {
+												"Name":order.evaluation.customer.name,
+												"ContactNumber":order.evaluation.customer.mobile_number,
+												"EmailAddress":order.evaluation.customer.email,
+												"ContactStatus":"ACTIVE",
+												"IsCustomer":True,
+												"DefaultCurrency":"KWD"
+															}
+												
+				header                      = {
+											'xero-tenant-id': xero.tenant_id,
+											'Authorization': 'Bearer '+access_token,
+											'Accept': 'application/json',
+											'Content-Type': 'application/json'
+												}
+
+				create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
+														json=contact_data,
+														headers=header 
+													).json()
+
+				order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
+				order.evaluation.customer.save()	
+
+				#Prepaid
+				if payment_method == 'PREPAID':
+					Amount = order.evaluation.total_cost 
+					##Invoice Line Item 
+					LineItems                 = []
+					LineItems.append({
+						"Description":"ONE TIME SERVICE",
+						"Quantity":"1",
+						"UnitAmount":Amount,
+						"AccountCode":1002,
+						"TaxType":"NONE"
+									}
+						)
+					InvoiceNumber  = order.invoice_no
+					payment_policy = 'PREPAID'
+
+					invoice_data       = 	{
+												"Type":"ACCREC",
+												"Contact":{
+													"ContactID":order.evaluation.customer.xero_account_id
+															},
+												"Date":order.created.strftime('%Y-%m-%d'),
+												"DueDate":(order.created+timedelta(days=14)).strftime('%Y-%m-%d'),
+												"LineAmountTypes":"NoTax",
+												"InvoiceNumber":InvoiceNumber,
+												"Reference":order.order_no,
+												"Status":"SUBMITTED",
+												"LineItems":LineItems
+												}
+
+					##xero Create Invoice
+					header                      = {
+													'xero-tenant-id': xero.tenant_id,
+													'Authorization': 'Bearer '+access_token,
+													'Accept': 'application/json',
+													'Content-Type': 'application/json'
+														}
+
+					create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+															json=invoice_data,
+															headers=header 
+														).json()
+			
+					try:
+						created_invoice = create_invoice['Status']
+					except:
+						created_invoice = None
+					
+					if created_invoice == 'OK':
+						try:
+							update_xero_invoice                  = XeroInvoice.objects.get(order=before_order,invoice_no=InvoiceNumber)
+							update_xero_invoice.amount           = Amount
+							update_xero_invoice.xero_marked_date = timezone.now().date()
+							update_xero_invoice.payment_policy   = payment_policy
+							update_xero_invoice.save()
+						except:
+							XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
+
+						#Remove Before
+						##Invoice Line Item 
+						LineItems                 = []
+						LineItems.append({
+							"Description":"ONE TIME SERVICE",
+							"Quantity":"1",
+							"UnitAmount":0,
+							"AccountCode":1002,
+							"TaxType":"NONE"
+										}
+							)
+						InvoiceNumber      = order.invoice_no+'A'
+						invoice_data       = 	{
+												"Type":"ACCREC",
+												"LineAmountTypes":"NoTax",
+												"InvoiceNumber":InvoiceNumber,
+												"Reference":order.order_no,
+												"LineItems":LineItems,
+												"Status":"DRAFT"
+												}
+
+						##xero Create Invoice
+						header                      = {
+														'xero-tenant-id': xero.tenant_id,
+														'Authorization': 'Bearer '+access_token,
+														'Accept': 'application/json',
+														'Content-Type': 'application/json'
+															}
+
+						create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+																json=invoice_data,
+																headers=header 
+															).json()
+
+						try:
+							delete_invoice = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
+							delete_invoice.delete()
+						except:
+							delete_invoice = None
+
+				#Breakdown Before
+				if payment_method == 'BREAKDOWN':
+					Amount = order.evaluation.before_cleaning_amount 
+					##Invoice Line Item 
+					LineItems                 = []
+					LineItems.append({
+						"Description":"ONE TIME SERVICE",
+						"Quantity":"1",
+						"UnitAmount":Amount,
+						"AccountCode":1002,
+						"TaxType":"NONE"
+									}
+						)
+					InvoiceNumber  = order.invoice_no+'A'
+					payment_policy = 'BEFORE CLEANING'
+
+					invoice_data       = 	{
+												"Type":"ACCREC",
+												"Contact":{
+													"ContactID":order.evaluation.customer.xero_account_id
+															},
+												"Date":order.created.strftime('%Y-%m-%d'),
+												"DueDate":(order.created+timedelta(days=14)).strftime('%Y-%m-%d'),
+												"LineAmountTypes":"NoTax",
+												"InvoiceNumber":InvoiceNumber,
+												"Reference":order.order_no,
+												"Status":"SUBMITTED",
+												"LineItems":LineItems
+												}
+
+					##xero Create Invoice
+					header                      = {
+													'xero-tenant-id': xero.tenant_id,
+													'Authorization': 'Bearer '+access_token,
+													'Accept': 'application/json',
+													'Content-Type': 'application/json'
+														}
+
+					create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+															json=invoice_data,
+															headers=header 
+														).json()
+					print(create_invoice)
+			
+					try:
+						created_invoice = create_invoice['Status']
+					except:
+						created_invoice = None
+					
+					if created_invoice == 'OK':
+						try:
+							update_xero_invoice                  = XeroInvoice.objects.get(order=before_order,invoice_no=InvoiceNumber)
+							update_xero_invoice.amount           = Amount
+							update_xero_invoice.xero_marked_date = timezone.now().date()
+							update_xero_invoice.payment_policy   = payment_policy
+							update_xero_invoice.save()
+						except:
+							XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
+
+						#Remove
+						##Invoice Line Item 
+						LineItems                 = []
+						LineItems.append({
+							"Description":"ONE TIME SERVICE",
+							"Quantity":"1",
+							"UnitAmount":0,
+							"AccountCode":1002,
+							"TaxType":"NONE"
+										}
+							)
+						InvoiceNumber      = order.invoice_no
+						invoice_data       = 	{
+												"Type":"ACCREC",
+												"LineAmountTypes":"NoTax",
+												"InvoiceNumber":InvoiceNumber,
+												"Reference":order.order_no,
+												"LineItems":LineItems,
+												"Status":"DRAFT"
+												}
+
+						##xero Create Invoice
+						header                      = {
+														'xero-tenant-id': xero.tenant_id,
+														'Authorization': 'Bearer '+access_token,
+														'Accept': 'application/json',
+														'Content-Type': 'application/json'
+															}
+
+						create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+																json=invoice_data,
+																headers=header 
+															).json()
+
+						try:
+							delete_invoice = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
+							delete_invoice.delete()
+						except:
+							delete_invoice = None
+
+				#Post Paid
+				if payment_method == 'POSTPAID':
+					#Remove
+					##Invoice Line Item 
+					LineItems                 = []
+					LineItems.append({
+						"Description":"ONE TIME SERVICE",
+						"Quantity":"1",
+						"UnitAmount":0,
+						"AccountCode":1002,
+						"TaxType":"NONE"
+									}
+						)
+					InvoiceNumber      = order.invoice_no
+					invoice_data       = 	{
+											"Type":"ACCREC",
+											"LineAmountTypes":"NoTax",
+											"InvoiceNumber":InvoiceNumber,
+											"Reference":order.order_no,
+											"LineItems":LineItems,
+											"Status":"DRAFT"
+											}
+
+					##xero Create Invoice
+					header                      = {
+													'xero-tenant-id': xero.tenant_id,
+													'Authorization': 'Bearer '+access_token,
+													'Accept': 'application/json',
+													'Content-Type': 'application/json'
+														}
+
+					create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+															json=invoice_data,
+															headers=header 
+														).json()
+
+					try:
+						delete_invoice = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
+						delete_invoice.delete()
+					except:
+						delete_invoice = None	
+
+
+					#Remove First Case
+					##Invoice Line Item 
+					LineItems                 = []
+					LineItems.append({
+						"Description":"ONE TIME SERVICE",
+						"Quantity":"1",
+						"UnitAmount":0,
+						"AccountCode":1002,
+						"TaxType":"NONE"
+									}
+						)
+					InvoiceNumber      = order.invoice_no+'A'
+					invoice_data       = 	{
+											"Type":"ACCREC",
+											"LineAmountTypes":"NoTax",
+											"InvoiceNumber":InvoiceNumber,
+											"Reference":order.order_no,
+											"LineItems":LineItems,
+											"Status":"DRAFT"
+											}
+
+					##xero Create Invoice
+					header                      = {
+													'xero-tenant-id': xero.tenant_id,
+													'Authorization': 'Bearer '+access_token,
+													'Accept': 'application/json',
+													'Content-Type': 'application/json'
+														}
+
+					create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+															json=invoice_data,
+															headers=header 
+														).json()
+
+					try:
+						delete_invoice = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
+						delete_invoice.delete()
+					except:
+						delete_invoice = None
+
 			response_dict['evaluation_book_ids'] = service_dict
 			response_dict['success']             = True
 		
@@ -7582,6 +7911,250 @@ class ServiceCancellation(APIView):
 					scheduler.save()
 
 			service_book.save()
+
+		#Xero Invoice Updation
+		order          = Order.objects.prefetch_related('order_scheduler_order').annotate(cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).get(id=order_id)
+		payment_method = order.evaluation.payment_method
+
+		if payment_method in ['PREPAID','POSTPAID','BREAKDOWN']:
+
+			#Xero Integration
+			xero          = XeroConnection.objects.first()
+			#Update Access Token and Refresh Token
+			header                      = {
+											'Authorization': 'Basic '+xero.client_encoded,
+											'Content-Type': 'application/x-www-form-urlencoded'
+												}
+			body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
+			token_response              = requests.post('https://identity.xero.com/connect/token',
+													data=body,
+													headers=header 
+												).json()
+			access_token                = token_response['access_token']
+			refresh_token               = token_response['refresh_token']
+
+			xero.access_token  = access_token
+			xero.refresh_token = refresh_token
+			xero.save()	
+
+			#Prepaid
+			if payment_method == 'PREPAID' and order.evaluation.quatation_status == 'APPROVED':
+				Amount = order.evaluation.total_cost 
+				##Invoice Line Item 
+				LineItems                 = []
+				LineItems.append({
+					"Description":"ONE TIME SERVICE",
+					"Quantity":"1",
+					"UnitAmount":Amount,
+					"AccountCode":1002,
+					"TaxType":"NONE"
+								}
+					)
+				InvoiceNumber  = order.invoice_no
+				payment_policy = 'PREPAID'
+
+				invoice_data       = 	{
+											"Type":"ACCREC",
+											"Date":order.created.strftime('%Y-%m-%d'),
+											"DueDate":(order.created+timedelta(days=14)).strftime('%Y-%m-%d'),
+											"LineAmountTypes":"NoTax",
+											"InvoiceNumber":InvoiceNumber,
+											"Reference":order.order_no,
+											"Status":"SUBMITTED",
+											"LineItems":LineItems
+											}
+
+				##xero Create Invoice
+				header                      = {
+												'xero-tenant-id': xero.tenant_id,
+												'Authorization': 'Bearer '+access_token,
+												'Accept': 'application/json',
+												'Content-Type': 'application/json'
+													}
+
+				create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+														json=invoice_data,
+														headers=header 
+													).json()
+		
+				try:
+					created_invoice = create_invoice['Status']
+				except:
+					created_invoice = None
+				
+				if created_invoice == 'OK':
+					try:
+						update_xero_invoice                  = XeroInvoice.objects.get(order=before_order,invoice_no=InvoiceNumber)
+						update_xero_invoice.amount           = Amount
+						update_xero_invoice.xero_marked_date = timezone.now().date()
+						update_xero_invoice.payment_policy   = payment_policy
+						update_xero_invoice.save()
+					except:
+						XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
+
+			#Breakdown Before
+			if payment_method == 'BREAKDOWN' and order.evaluation.quatation_status == 'APPROVED':
+				Amount = order.evaluation.before_cleaning_amount 
+				##Invoice Line Item 
+				LineItems                 = []
+				LineItems.append({
+					"Description":"ONE TIME SERVICE",
+					"Quantity":"1",
+					"UnitAmount":Amount,
+					"AccountCode":1002,
+					"TaxType":"NONE"
+								}
+					)
+				InvoiceNumber  = order.invoice_no+'A'
+				payment_policy = 'BEFORE CLEANING'
+
+				invoice_data       = 	{
+											"Type":"ACCREC",
+											"Date":order.created.strftime('%Y-%m-%d'),
+											"DueDate":(order.created+timedelta(days=14)).strftime('%Y-%m-%d'),
+											"LineAmountTypes":"NoTax",
+											"InvoiceNumber":InvoiceNumber,
+											"Reference":order.order_no,
+											"Status":"SUBMITTED",
+											"LineItems":LineItems
+											}
+
+				##xero Create Invoice
+				header                      = {
+												'xero-tenant-id': xero.tenant_id,
+												'Authorization': 'Bearer '+access_token,
+												'Accept': 'application/json',
+												'Content-Type': 'application/json'
+													}
+
+				create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+														json=invoice_data,
+														headers=header 
+													).json()
+		
+				try:
+					created_invoice = create_invoice['Status']
+				except:
+					created_invoice = None
+				
+				if created_invoice == 'OK':
+					try:
+						update_xero_invoice                  = XeroInvoice.objects.get(order=before_order,invoice_no=InvoiceNumber)
+						update_xero_invoice.amount           = Amount
+						update_xero_invoice.xero_marked_date = timezone.now().date()
+						update_xero_invoice.payment_policy   = payment_policy
+						update_xero_invoice.save()
+					except:
+						XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
+				
+			#BREAKDOWN AFTER
+			if payment_method == 'BREAKDOWN' and order.completed_cleaning_count == order.cleaning_count:
+				Amount = order.evaluation.before_cleaning_amount 
+				##Invoice Line Item 
+				LineItems                 = []
+				LineItems.append({
+					"Description":"ONE TIME SERVICE",
+					"Quantity":"1",
+					"UnitAmount":Amount,
+					"AccountCode":1002,
+					"TaxType":"NONE"
+								}
+					)
+				InvoiceNumber  = order.invoice_no+'B'
+				payment_policy = 'BEFORE CLEANING'
+
+				invoice_data       = 	{
+											"Type":"ACCREC",
+											"Date":order.created.strftime('%Y-%m-%d'),
+											"DueDate":(order.created+timedelta(days=14)).strftime('%Y-%m-%d'),
+											"LineAmountTypes":"NoTax",
+											"InvoiceNumber":InvoiceNumber,
+											"Reference":order.order_no,
+											"Status":"SUBMITTED",
+											"LineItems":LineItems
+											}
+
+				##xero Create Invoice
+				header                      = {
+												'xero-tenant-id': xero.tenant_id,
+												'Authorization': 'Bearer '+access_token,
+												'Accept': 'application/json',
+												'Content-Type': 'application/json'
+													}
+
+				create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+														json=invoice_data,
+														headers=header 
+													).json()
+
+				try:
+					created_invoice = create_invoice['Status']
+				except:
+					created_invoice = None
+
+				if created_invoice == 'OK':
+					try:
+						update_xero_invoice                  = XeroInvoice.objects.get(order=before_order,invoice_no=InvoiceNumber)
+						update_xero_invoice.amount           = Amount
+						update_xero_invoice.xero_marked_date = timezone.now().date()
+						update_xero_invoice.payment_policy   = payment_policy
+						update_xero_invoice.save()
+					except:
+						XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
+			#POSTPAID
+			if payment_method == 'POSTPAID' and order.completed_cleaning_count == order.cleaning_count:
+				Amount = order.evaluation.before_cleaning_amount 
+				##Invoice Line Item 
+				LineItems                 = []
+				LineItems.append({
+					"Description":"ONE TIME SERVICE",
+					"Quantity":"1",
+					"UnitAmount":Amount,
+					"AccountCode":1002,
+					"TaxType":"NONE"
+								}
+					)
+				InvoiceNumber  = order.invoice_no
+				payment_policy = 'BEFORE CLEANING'
+
+				invoice_data       = 	{
+											"Type":"ACCREC",
+											"Date":order.created.strftime('%Y-%m-%d'),
+											"DueDate":(order.created+timedelta(days=14)).strftime('%Y-%m-%d'),
+											"LineAmountTypes":"NoTax",
+											"InvoiceNumber":InvoiceNumber,
+											"Reference":order.order_no,
+											"Status":"SUBMITTED",
+											"LineItems":LineItems
+											}
+
+				##xero Create Invoice
+				header                      = {
+												'xero-tenant-id': xero.tenant_id,
+												'Authorization': 'Bearer '+access_token,
+												'Accept': 'application/json',
+												'Content-Type': 'application/json'
+													}
+
+				create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+														json=invoice_data,
+														headers=header 
+													).json()
+
+				try:
+					created_invoice = create_invoice['Status']
+				except:
+					created_invoice = None
+
+				if created_invoice == 'OK':
+					try:
+						update_xero_invoice                  = XeroInvoice.objects.get(order=before_order,invoice_no=InvoiceNumber)
+						update_xero_invoice.amount           = Amount
+						update_xero_invoice.xero_marked_date = timezone.now().date()
+						update_xero_invoice.payment_policy   = payment_policy
+						update_xero_invoice.save()
+					except:
+						XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 		
 		response_dict['success'] = True
 		
