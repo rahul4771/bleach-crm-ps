@@ -1646,6 +1646,8 @@
                         <div class="order-details-left-wrapper ">
                             
                             <!-- Edit Button Conditions Starts Here -->
+                            {% if order.evaluation.quatation_status == 'PENDING' %}
+
                             {% if request.user.user_type == 'ADMIN' or request.user.user_type == 'TECHNICALSUPERVISOR' or request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'TEAMINCHARGE'  %}
                                 
                             {% elif request.user.user_type == 'AGENT' %}
@@ -1685,6 +1687,8 @@
                                         id="done">
                                 </div>
                             {% endif %} 
+
+                            {% endif %}
 
                             <!-- Edit Button Conditions End Here -->
                             
