@@ -28,7 +28,6 @@ from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investi
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
 from Api.models import XeroConnection
-from accountant.models import XeroInvoice
 
 import requests
 from django.http import HttpResponse,JsonResponse,HttpResponseRedirect

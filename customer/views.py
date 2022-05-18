@@ -31,7 +31,6 @@ from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMemb
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
 from Api.models import XeroConnection
-from accountant.models import XeroInvoice
 from bleachadmin.models import ServiceProductivity,ServicePriceRange,ServiceAddOns
 from agent.forms import UserProfileForm,AddressForm
 from evaluator.forms import QuatationServiceFormCustomer

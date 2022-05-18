@@ -30,7 +30,7 @@ from django.contrib import messages
 
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons,CleaningMethod,CleaningSection,ServiceType,AreaType
-from order.models import XeroInvoice,Promocode,OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia,CancellOrderAmountHistory
+from order.models import Promocode,OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia,CancellOrderAmountHistory,XeroInvoice
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
@@ -45,7 +45,6 @@ from django.db.models import Count
 from dateutil.relativedelta import relativedelta
 
 from Api.models import XeroConnection
-from accountant.models import XeroInvoice
 
 from django.core.mail import send_mail,EmailMultiAlternatives
 from django.template.loader import render_to_string
