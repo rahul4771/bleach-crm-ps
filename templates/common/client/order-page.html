@@ -239,7 +239,7 @@
 
 
  <!--- Image Upload modal ends here-->
-    <!-- CHANGE PAYMENT MODAL BEGINS HERE-->
+<!-- CHANGE PAYMENT MODAL BEGINS HERE-->
     <div class="modal fade " id="editPaymentModal" tabindex="-1" role="dialog" aria-labelledby="editPaymentModal" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
           <div class="modal-content primary-modal-border">
@@ -1462,19 +1462,25 @@
                 
             
                 {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
-                {% if order.order_status == 'APPROVED_BY_CLIENT' %}
-                <div class="order-status approved-status-bg">Approved</div>
-                {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
-                <div class="order-status order-in-progress-status-bg">Order in progress</div>
-                {% elif order.order_status == 'ORDER_CLOSED' %}
-                <div class="order-status completed-status-bg">Order closed</div>
-                {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
-                <div class="order-status cancel-in-progress-status-bg">Cancel in progress</div>
+                    {% if order.order_status == 'APPROVED_BY_CLIENT' %}
+                    <div class="order-status approved-status-bg">Approved</div>
+                    {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
+                    <div class="order-status order-in-progress-status-bg">Order in progress</div>
+                    {% elif order.order_status == 'ORDER_CLOSED' %}
+                    <div class="order-status completed-status-bg">Order closed</div>
+                    {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
+                    <div class="order-status cancel-in-progress-status-bg">Cancel in progress</div>
+                    {% else %}
+                    <div class="order-status cancelled-status-bg">Cancelled</div>
+                    {% endif %}
                 {% else %}
-                <div class="order-status cancelled-status-bg">Cancelled</div>
-                {% endif %}
-                {% else %}
-                <div class="order-status approved-not-paid-status-bg">Approved Not Paid</div>
+                    {% if order.order_status == 'CANCEL_IN_PROGRESS' %}
+                    <div class="order-status cancel-in-progress-status-bg">Cancel in progress</div>
+                    {% elif order.order_status == 'ORDER_CANCELLED' %}
+                    <div class="order-status cancelled-status-bg">Cancelled</div>
+                    {% else %}
+                    <div class="order-status approved-not-paid-status-bg">Approved Not Paid</div>
+                    {% endif %}
                 {% endif %}
             
 
