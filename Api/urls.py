@@ -48,6 +48,8 @@ urlpatterns = [
 	url(r'^payment-policy-edit/$',views.PaymentPolicyEditAPI.as_view(),name='api-payment-policy-edit'),
 	url(r'^cleaning-team-data/$',views.CleaningTeamAPI.as_view(),name='api-cleaning-team-data'),
 	url(r'^service-productivity/$',views.ServiceProductivityAPI.as_view(),name='api-service-productivity'),
+	
+	#website APIS
 	url(r'^service-price-ranges/(?P<cleaning_type>\D+)/$',views.ServicePriceRangeAPI.as_view(),name='api-service-price-ranges'),
 	url(r'^service-add-ons/(?P<cleaning_type>\D+)/$',views.ServiceAddOnsAPI.as_view(),name='api-service-add-ons'),
 
@@ -104,4 +106,6 @@ urlpatterns = [
 	###evaluation booking apis
 	url(r'^evaluation-booking-customer-otp-generation/$',views.EvaluationBookingCustomerOtpGenerationAPI.as_view(),name='evaluation-booking-customer-otp-generation'),
 	url(r'^evaluation-booking-customer-otp-verification/$',views.EvaluationBookingCustomerOtpVerificationAPI.as_view(),name='evaluation-booking-customer-otp-verification'),
+	url(r'^evaluation-booking-slots/$',views.GetEvaluationBookingSlots.as_view(),name='evaluation-booking-slots'),
+
 ]

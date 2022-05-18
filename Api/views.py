@@ -5575,8 +5575,42 @@ class WebsiteInquiryMailAPI(APIView):
 
 ### EVALUATION APIS
 
+class GetEvaluationBookingSlots(APIView):  
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def post(self,request):
+
+		slots_list = {}
+
+		cleaning_date       = datetime.strptime(request.data.get('cleaning_date'),'%d-%m-%Y')
+
+		slots           = [8,9,10,11,12,13,14,15,16,17,18,19,20,21,22]
+		available_slots = {}
+
+		#slote wise checking
+		for slot in slots:
+			
+			slot_start_datetime 			 = cleaning_date.replace(hour=slot,minute=0,second=0,microsecond=0)
+			slot_end_datetime                = slot_start_datetime+timedelta(hours=1)
+			slot_start_time 			     = slot_start_datetime.time()
+			slot_end_time                    = slot_end_datetime.time()
+
+			occupied_evaluators = EvaluationDetails.objects.filter(is_active=True,proposed_time=slot_start_datetime).values_list('evaluator__id',flat=True)	
+			
+			available_evaluators = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR').exclude(id__in=occupied_evaluators).values('id','name')
+			
+			available_slots[slot] = available_evaluators
+
+		slots_list['available_slots']= available_slots
+		slots_list['success']= True
+
+		return Response(slots_list,HTTP_200_OK)
 
 class EvaluationBookingCustomerOtpGenerationAPI(APIView):
+	permission_classes  	= (AllowAny,)
+	authentication_classes  = ()
+	
 	def post(self,request):
 		response_dict = {}
 
@@ -5600,6 +5634,9 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 		return Response(response_dict,HTTP_200_OK)
 
 class EvaluationBookingCustomerOtpVerificationAPI(APIView):
+	permission_classes  	= (AllowAny,)
+	authentication_classes  = ()
+	
 	def post(self,request):
 		response_dict = {}
 
