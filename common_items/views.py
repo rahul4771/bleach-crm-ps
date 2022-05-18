@@ -4721,7 +4721,20 @@ class OrderCancellation(IsAuthenticated,View):
 			messages.success(request,'Order Successfully Cancelled and CashBack Request Send to Customer')
 
 		elif cancell_option == 'CREDIT':
-			amount = float(request.POST.get('amount'))			
+			amount = float(request.POST.get('amount'))
+
+			#update
+			CancellOrderAmountHistory.objects.create(order_id=order_id,return_amount=amount,amount_return_method='CREDIT',is_completed=True)
+
+			order                                    = Order.objects.get(id=order_id)
+			order.evaluation.customer.credit_amount += amount
+			order.amount_paid                       -= amount
+			order.remining_amount                    = 0
+			order.cancelled_by    = request.user
+			order.cancell_note    = request.POST.get('notes')
+			order.order_status    = 'ORDER_CANCELLED' 
+			order.evaluation.customer.save()
+			order.save()			
 
 			#Xero Integration
 			xero                        = XeroConnection.objects.first()
@@ -4744,7 +4757,7 @@ class OrderCancellation(IsAuthenticated,View):
 
 			#Last Send Invoice Cancellation
 			order                       = Order.objects.get(id=order_id)
-
+			
 			##xero Delete Invoice
 			header                      = {
 											'xero-tenant-id': xero.tenant_id,
@@ -4752,6 +4765,7 @@ class OrderCancellation(IsAuthenticated,View):
 											'Accept': 'application/json',
 											'Content-Type': 'application/json'
 												}
+
 			if order.evaluation.payment_method == 'PREPAID' or 'POSTPAID':
 				InvoiceNumber       = order.invoice_no
 				invoice_data        = 	{
@@ -4816,18 +4830,6 @@ class OrderCancellation(IsAuthenticated,View):
 															json=invoice_data,
 															headers=header 
 														).json()
-
-			#update
-			CancellOrderAmountHistory.objects.create(order_id=order_id,return_amount=amount,amount_return_method='CREDIT',is_completed=True)
-
-			order.evaluation.customer.credit_amount += amount
-			order.amount_paid                       -= amount
-			order.remining_amount                    = 0
-			order.cancelled_by    = request.user
-			order.cancell_note    = request.POST.get('notes')
-			order.order_status    = 'ORDER_CANCELLED' 
-			order.evaluation.customer.save()
-			order.save()
 
 			messages.success(request,'Order Successfully Cancelled and Remining Amount Credited')
 
@@ -4886,6 +4888,14 @@ class OrderCancellation(IsAuthenticated,View):
 			order.cancell_note    = request.POST.get('notes')
 			order.save()
 		else:
+			#update
+			order                 = Order.objects.get(id=order_id)
+			order.remining_amount = 0
+			order.cancelled_by    = request.user
+			order.cancell_note    = request.POST.get('notes')
+			order.order_status    = 'ORDER_CANCELLED' 
+			order.save()
+
 			#Xero Integration
 			xero                        = XeroConnection.objects.first()
 			##xero Update Access Token and Refresh Token
@@ -4979,15 +4989,6 @@ class OrderCancellation(IsAuthenticated,View):
 															json=invoice_data,
 															headers=header 
 														).json()
-
-			#update
-			order.remining_amount = 0
-			order.cancelled_by    = request.user
-			order.cancell_note    = request.POST.get('notes')
-			order.order_status    = 'ORDER_CANCELLED' 
-			order.save()
-
-
 
 			messages.success(request,'Order Successfully Cancelled')
 
