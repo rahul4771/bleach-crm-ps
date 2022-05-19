@@ -5593,7 +5593,6 @@ class CashCollect(IsAuthenticated,View):
 															headers=header 
 														).json()
 
-						print(update_payment)
 						try:
 							created_payment = update_payment['Status']
 						except:
