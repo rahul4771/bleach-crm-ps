@@ -5414,27 +5414,15 @@ class CashCollect(IsAuthenticated,View):
 
 				#Invoice Authorize
 				if payment_policy == 'PREPAID':
-					Amount = order.evaluation.total_cost 
-					##Invoice Line Item 
-					LineItems                 = []
-					LineItems.append({
-						"Description":"ONE TIME SERVICE",
-						"Quantity":"1",
-						"UnitAmount":Amount,
-						"AccountCode":1002,
-						"TaxType":"NONE"
-									}
-						)
+					Amount         = order.evaluation.total_cost 
 					InvoiceNumber  = order.invoice_no
 					payment_policy = 'PREPAID'
-
 					invoice_data        = 	{
 										"Type":"ACCREC",
 										"LineAmountTypes":"NoTax",
 										"InvoiceNumber":InvoiceNumber,
 										"Reference":order.order_no,
-										"Status":"AUTHORISED",
-										"LineItems":LineItems
+										"Status":"AUTHORISED"
 									}
 
 					##xero Create Invoice
@@ -5450,7 +5438,6 @@ class CashCollect(IsAuthenticated,View):
 															headers=header 
 														).json()
 					
-					print(create_invoice)
 					try:
 						created_invoice = create_invoice['Status']
 					except:
@@ -5468,7 +5455,6 @@ class CashCollect(IsAuthenticated,View):
 					
 					#Delete Unwanted invoice
 					InvoiceNumber  = order.invoice_no+'A'
-
 					invoice_data        = 	{
 										"Type":"ACCREC",
 										"LineAmountTypes":"NoTax",
@@ -5493,16 +5479,6 @@ class CashCollect(IsAuthenticated,View):
 				if payment_policy == 'BEFORE CLEANING':
 					#Before Invoice
 					Amount = order.evaluation.before_cleaning_amount
-					##Invoice Line Item 
-					LineItems                 = []
-					LineItems.append({
-						"Description":"ONE TIME SERVICE",
-						"Quantity":"1",
-						"UnitAmount":Amount,
-						"AccountCode":1002,
-						"TaxType":"NONE"
-									}
-						)
 					InvoiceNumber  = order.invoice_no+'A'
 
 					invoice_data        = 	{
@@ -5510,8 +5486,7 @@ class CashCollect(IsAuthenticated,View):
 										"LineAmountTypes":"NoTax",
 										"InvoiceNumber":InvoiceNumber,
 										"Reference":order.order_no,
-										"Status":"AUTHORISED",
-										"LineItems":LineItems
+										"Status":"AUTHORISED"
 									}
 
 					##xero Create Invoice
@@ -5600,6 +5575,7 @@ class CashCollect(IsAuthenticated,View):
 					except:
 						xero_invoice = None
 
+					print(xero_invoice,"xero_invoice")
 					if xero_invoice:
 						payment_data = {
 									"Invoice":{
@@ -5617,7 +5593,7 @@ class CashCollect(IsAuthenticated,View):
 															headers=header 
 														).json()
 
-
+						print(update_payment)
 						try:
 							created_payment = update_payment['Status']
 						except:
