@@ -5547,7 +5547,14 @@ class ServiceAddOnsAPI(APIView):
 		except:
 			service_add_ons = None
 
+		for addon in service_add_ons:
+			if addon.service_type.name == 'Kitchen Cleaning':
+				addon.category_updated     = addon.category.split()[0]
+				addon.category_updated_min = addon.category.split()[2]
+				addon.category_updated_max = addon.category.split()[4]
+
 		service_add_ons_serializer = ServiceAddOnsSerializer(service_add_ons,many=True).data
+
 		response_dict["service_add_ons"]=service_add_ons_serializer
 		return Response(response_dict,HTTP_200_OK)
 

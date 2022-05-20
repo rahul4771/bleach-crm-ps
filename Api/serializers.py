@@ -299,6 +299,10 @@ class ServicePriceRangeSerializer(serializers.ModelSerializer):
 
 class ServiceAddOnsSerializer(serializers.ModelSerializer):
     service_type = ServiceTypeShowSerializer(read_only=True)
+    category_updated = serializers.CharField(max_length=10,allow_blank=True,allow_null=True)
+    category_updated_max   = serializers.CharField(max_length=10,allow_blank=True,allow_null=True)
+    category_updated_min   = serializers.CharField(max_length=10,allow_blank=True,allow_null=True)
+
     class Meta:
         model   = ServiceAddOns
-        fields  = ('__all__')
+        fields  = ('service_type','price','category','name','size','productivity','category_updated','category_updated_max','category_updated_min')
