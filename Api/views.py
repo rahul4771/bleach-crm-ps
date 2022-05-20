@@ -5548,7 +5548,7 @@ class ServiceAddOnsAPI(APIView):
 			service_add_ons = None
 
 		for addon in service_add_ons:
-			if addon.service_type.name == 'Kitchen Cleaning':
+			if addon.service_type.name == 'Kitchen Cleaning' and addon.category != None :
 				addon.category_updated     = addon.category.split()[0]
 				addon.category_updated_min = addon.category.split()[2]
 				addon.category_updated_max = addon.category.split()[4]
