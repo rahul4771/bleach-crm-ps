@@ -298,16 +298,54 @@ class ServicePriceRangeSerializer(serializers.ModelSerializer):
 
 class ServiceAddOnsSerializer(serializers.ModelSerializer):
     service_type = ServiceTypeShowSerializer(read_only=True)
-    category_updated = serializers.CharField(max_length=10,allow_blank=True,allow_null=True)
-    category_updated_max   = serializers.CharField(max_length=10,allow_blank=True,allow_null=True)
-    category_updated_min   = serializers.CharField(max_length=10,allow_blank=True,allow_null=True)
+    category_updated = serializers.SerializerMethodField('get_category_updated')
+    category_updated_maximum   = serializers.SerializerMethodField('get_category_updated_maximum')
+    category_updated_minimum   = serializers.SerializerMethodField('get_category_updated_minimum')
+
+    #minimum size value to serializer field
+    def get_category_updated_minimum(self, obj):
+        global category1
+        category = getattr(obj,"category")
+        category_split_list = category.split()
+
+        if category and len(category_split_list) >= 4 :
+            category1 = category_split_list[2]
+        else:
+            category1 = None
+
+        return category1
+    
+    #size name to serializer field
+    def get_category_updated(self, obj):
+        global category2
+        category = getattr(obj,"category")
+        category_split_list = category.split()
+
+        if category and len(category_split_list) >= 4 :
+            category2 = category_split_list[0]
+        else:
+            category2 = None
+
+        return category2
+
+    #maximum size value to serializer field
+    def get_category_updated_maximum(self, obj):
+        global category3
+        category = getattr(obj,"category")
+        category_split_list = category.split()
+
+        if category and len(category_split_list) >= 4 :
+            category3 = category_split_list[4]
+        else:
+            category3 = None
+
+        return category3
 
     class Meta:
         model   = ServiceAddOns
-        fields  = ('service_type','price','category','name','size','productivity','category_updated','category_updated_max','category_updated_min')
+        fields  = ('service_type','price','category','name','size','productivity','category_updated','category_updated_maximum','category_updated_minimum')
 
-    def get_category_updated(self, obj):
-        return {}
+    
 
     def get_category_updated_max(self, obj):
         return {}
