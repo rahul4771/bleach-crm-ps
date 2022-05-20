@@ -5549,9 +5549,11 @@ class ServiceAddOnsAPI(APIView):
 
 		for addon in service_add_ons:
 			if addon.service_type.name == 'Kitchen Cleaning' and addon.category != None :
-				addon.category_updated     = addon.category.split()[0]
-				addon.category_updated_min = addon.category.split()[2]
-				addon.category_updated_max = addon.category.split()[4]
+				category_split_list        = addon.category.split()
+				if len(category_split_list) >= 4:
+					addon.category_updated     = addon.category.split()[0]
+					addon.category_updated_min = addon.category.split()[2]
+					addon.category_updated_max = addon.category.split()[4]
 
 		service_add_ons_serializer = ServiceAddOnsSerializer(service_add_ons,many=True).data
 
@@ -5670,13 +5672,23 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 
 			if int(customer_otp_saved) == int(customer_otp):
 				print(customer_otp_saved,customer_otp,"yurekay")
+			
+			request.data._mutable = True
+			request.data['mobile_number'] = 9999594
+			request.data._mutable = False
+			
+			serializer = UserProfileSerializer(data=request.data)
 
-			# serializer = UserProfileSerializer(data=request.data)
+			if serializer.is_valid():   
+				serializer.save(username=generate_random_username(),user_type='CUSTOMER')
 
-			# if serializer.is_valid():   
-			# 	serializer.save(username=generate_random_username(),user_type='CUSTOMER')
-
-			# 	response_dict['success']  = True 
-			# 	response_dict['customer'] = serializer.data
+				response_dict['success']  = True 
+				response_dict['customer'] = serializer.data
+			else: 
+				errors= serializer.errors   
+				key=tuple(errors.keys())[0] 
+				error=errors[key]
+				response_dict['Error']=key +':'+ error[0]
+				response_dict['Error_List'] = serializer.errors
 
 		return Response(response_dict,HTTP_200_OK)

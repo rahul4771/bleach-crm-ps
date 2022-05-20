@@ -23,7 +23,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         self.fields['name'].required          = True
         self.fields['gender'].required        = True
         self.fields['email'].required         = True
-        self.fields['date_of_birth'].required = True
         self.fields['mobile_number'].required = True
         self.fields['nationality'].required   = True  
 
