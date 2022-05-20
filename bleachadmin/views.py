@@ -40,8 +40,6 @@ from django.template.loader import render_to_string
 
 class AdminHome(IsAdmin,View):
 	def get(self,request):
-
-		ServiceAddOns.objects.filter(name='Gas Burners / Oven / Stoves').update(name='Cooking Range')
 		
 		#cleaners and leaders
 		cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER')
