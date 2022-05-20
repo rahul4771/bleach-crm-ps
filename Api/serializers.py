@@ -298,12 +298,12 @@ class ServicePriceRangeSerializer(serializers.ModelSerializer):
 
 class ServiceAddOnsSerializer(serializers.ModelSerializer):
     service_type = ServiceTypeShowSerializer(read_only=True)
-    category_updated = serializers.SerializerMethodField('get_category_updated')
-    category_updated_maximum   = serializers.SerializerMethodField('get_category_updated_maximum')
-    category_updated_minimum   = serializers.SerializerMethodField('get_category_updated_minimum')
+    category_updated = serializers.SerializerMethodField('_get_category_updated')
+    category_updated_maximum   = serializers.SerializerMethodField('_get_category_updated_maximum')
+    category_updated_minimum   = serializers.SerializerMethodField('_get_category_updated_minimum')
 
     #minimum size value to serializer field
-    def get_category_updated_minimum(self, obj):
+    def _get_category_updated_minimum(self, obj):
         global category1
         category = getattr(obj,"category")
         category_split_list = category.split()
@@ -316,7 +316,7 @@ class ServiceAddOnsSerializer(serializers.ModelSerializer):
         return category1
     
     #size name to serializer field
-    def get_category_updated(self, obj):
+    def _get_category_updated(self, obj):
         global category2
         category = getattr(obj,"category")
         category_split_list = category.split()
@@ -329,7 +329,7 @@ class ServiceAddOnsSerializer(serializers.ModelSerializer):
         return category2
 
     #maximum size value to serializer field
-    def get_category_updated_maximum(self, obj):
+    def _get_category_updated_maximum(self, obj):
         global category3
         category = getattr(obj,"category")
         category_split_list = category.split()
