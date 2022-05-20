@@ -5615,21 +5615,23 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 		response_dict = {}
 
 		customer_mobile = request.data.get('mobile_number')
+		customer_otp = randint(100001,999999)
 
 		#checking if mobile number/customer already exists on datababse
 		try:
 			customer = UserProfile.objects.get(is_active=True,user_type='CUSTOMER',mobile_number=int(customer_mobile))
 			response_dict['is_new_customer'] = False
 
-			customer_otp = randint(100001,999999)
-
 			customer.evaluation_booking_otp = customer_otp
 			customer.save()
 
 		except:
 			response_dict['is_new_customer'] = True
-			customer_otp = randint(100001,999999)
+			# customer_mobile = 9999594
+			request.session['customer_otp-'+str(customer_mobile)+''] = customer_otp
 			response_dict['customer_otp'] = customer_otp
+
+		response_dict['customer_mobile'] = customer_mobile
 
 		return Response(response_dict,HTTP_200_OK)
 
@@ -5651,5 +5653,23 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 
 		except:
 			response_dict['customer_verified'] = False
+
+			customer_otp_saved = 000000
+
+			if 'customer_otp-'+str(9999594)+'' in request.session:
+				customer_otp_saved = request.session['customer_otp-'+str(9999594)+'']
+
+			print(customer_otp_saved,customer_otp,"yurekay")
+
+			if int(customer_otp_saved) == int(customer_otp):
+				print(customer_otp_saved,customer_otp,"yurekay")
+
+			# serializer = UserProfileSerializer(data=request.data)
+
+			# if serializer.is_valid():   
+			# 	serializer.save(username=generate_random_username(),user_type='CUSTOMER')
+
+			# 	response_dict['success']  = True 
+			# 	response_dict['customer'] = serializer.data
 
 		return Response(response_dict,HTTP_200_OK)
