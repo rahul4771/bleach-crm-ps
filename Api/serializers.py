@@ -306,10 +306,14 @@ class ServiceAddOnsSerializer(serializers.ModelSerializer):
     def _get_category_updated_minimum(self, obj):
         global category1
         category = getattr(obj,"category")
-        category_split_list = category.split()
+        
+        if category:
+            category_split_list = category.split()
 
-        if category and len(category_split_list) >= 4 :
-            category1 = category_split_list[2]
+            if len(category_split_list) >= 4 :
+                category1 = category_split_list[2]
+            else:
+                category1 = None
         else:
             category1 = None
 
@@ -319,10 +323,15 @@ class ServiceAddOnsSerializer(serializers.ModelSerializer):
     def _get_category_updated(self, obj):
         global category2
         category = getattr(obj,"category")
-        category_split_list = category.split()
+        
+        if category:
+            category_split_list = category.split()
 
-        if category and len(category_split_list) >= 4 :
-            category2 = category_split_list[0]
+            if len(category_split_list) >= 4 :
+                category2 = category_split_list[0]
+            else:
+                category2 = None
+
         else:
             category2 = None
 
@@ -332,10 +341,15 @@ class ServiceAddOnsSerializer(serializers.ModelSerializer):
     def _get_category_updated_maximum(self, obj):
         global category3
         category = getattr(obj,"category")
-        category_split_list = category.split()
+        
+        if category:
+            category_split_list = category.split()
 
-        if category and len(category_split_list) >= 4 :
-            category3 = category_split_list[4]
+            if category and len(category_split_list) >= 4 :
+                category3 = category_split_list[4]
+            else:
+                category3 = None
+
         else:
             category3 = None
 
