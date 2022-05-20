@@ -239,7 +239,7 @@
 
 
  <!--- Image Upload modal ends here-->
-    <!-- CHANGE PAYMENT MODAL BEGINS HERE-->
+<!-- CHANGE PAYMENT MODAL BEGINS HERE-->
     <div class="modal fade " id="editPaymentModal" tabindex="-1" role="dialog" aria-labelledby="editPaymentModal" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
           <div class="modal-content primary-modal-border">
@@ -1462,19 +1462,25 @@
                 
             
                 {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
-                {% if order.order_status == 'APPROVED_BY_CLIENT' %}
-                <div class="order-status approved-status-bg">Approved</div>
-                {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
-                <div class="order-status order-in-progress-status-bg">Order in progress</div>
-                {% elif order.order_status == 'ORDER_CLOSED' %}
-                <div class="order-status completed-status-bg">Order closed</div>
-                {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
-                <div class="order-status cancel-in-progress-status-bg">Cancel in progress</div>
+                    {% if order.order_status == 'APPROVED_BY_CLIENT' %}
+                    <div class="order-status approved-status-bg">Approved</div>
+                    {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
+                    <div class="order-status order-in-progress-status-bg">Order in progress</div>
+                    {% elif order.order_status == 'ORDER_CLOSED' %}
+                    <div class="order-status completed-status-bg">Order closed</div>
+                    {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
+                    <div class="order-status cancel-in-progress-status-bg">Cancel in progress</div>
+                    {% else %}
+                    <div class="order-status cancelled-status-bg">Cancelled</div>
+                    {% endif %}
                 {% else %}
-                <div class="order-status cancelled-status-bg">Cancelled</div>
-                {% endif %}
-                {% else %}
-                <div class="order-status approved-not-paid-status-bg">Approved Not Paid</div>
+                    {% if order.order_status == 'CANCEL_IN_PROGRESS' %}
+                    <div class="order-status cancel-in-progress-status-bg">Cancel in progress</div>
+                    {% elif order.order_status == 'ORDER_CANCELLED' %}
+                    <div class="order-status cancelled-status-bg">Cancelled</div>
+                    {% else %}
+                    <div class="order-status approved-not-paid-status-bg">Approved Not Paid</div>
+                    {% endif %}
                 {% endif %}
             
 
@@ -1834,6 +1840,7 @@
 
                                     <!-- Section edit condition starts here -->
                                     <div v-if="edit" class="order-clean-edit"  >
+                                    {% if order.evaluation.quatation_status == 'PENDING' %}
                                     {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN' %}                                                                              
                                         {% if order.evaluation.quatation_status == 'APPROVED' %}
                                             {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
@@ -1852,6 +1859,7 @@
                                             <img class="pointer" src="{% static 'files/icons/delete.png' %}" @click="deleteSection({{forloop.counter}},{{section.id}})">
                                             {% endif %}
                                         {% endif %}                                        
+                                    {% endif %}
                                     {% endif %}
                                     </div>
                                     <!-- Section edit condition ends here -->
@@ -2640,19 +2648,7 @@
                                                 <div class="row c-mb-3">
                                                     <div class="col-xs-6">Payment Method</div>
                                                     <div class="col-xs-6">: <span class="c-text">{{order.evaluation.payment_method|default_if_none:''}}</span>
-                                                        {% if order.amount_paid == 0.000 and order.evaluation.is_promocode_applied == False and not order.evaluation.payment_method == 'POSTPAID' and not order.evaluation.payment_method == 'SUBSCRIPTION' %}
-                                                        <button class="model-close ml-10" >
-                                                            <img  class="policy-time-edit pointer" src="{% static 'files/icons/edit.png' %}" data-amount_before_cleaning="{{order.evaluation.before_cleaning_amount}}" data-amount_after_cleaning="{{order.evaluation.after_cleaning_amount}}" data-discount="{{order.evaluation.discount}}" data-payment_method="{{order.evaluation.payment_method}}" data-total_amount="{{order.evaluation.estimated_cost}}" data-final_amount="{{order.evaluation.total_cost}}" data-additional_charge="{{order.evaluation.additional_charge|default_if_none:'0'}}" data-cancelled_amount="{{order.evaluation.cancelled_amount|default_if_none:'0'}}" onclick="openPaymentEdit(this)">
-                                                        </button>
-                                                        {% endif %}
-
-                                                        {% if order.evaluation.payment_method == 'POSTPAID' and order.evaluation.quatation_status == 'PENDING' %}
-                                                        <button class="model-close ml-10" >
-                                                            <img  class="policy-time-edit pointer" src="{% static 'files/icons/edit.png' %}" data-amount_before_cleaning="{{order.evaluation.before_cleaning_amount}}" data-amount_after_cleaning="{{order.evaluation.after_cleaning_amount}}" data-discount="{{order.evaluation.discount}}" data-payment_method="{{order.evaluation.payment_method}}" data-total_amount="{{order.evaluation.estimated_cost}}" data-final_amount="{{order.evaluation.total_cost}}" data-additional_charge="{{order.evaluation.additional_charge|default_if_none:'0'}}" data-cancelled_amount="{{order.evaluation.cancelled_amount|default_if_none:'0'}}" onclick="openPaymentEdit(this)">
-                                                        </button>
-                                                        {% endif %}
-
-                                                        {% if order.evaluation.payment_method == 'SUBSCRIPTION' and order.evaluation.quatation_status == 'PENDING' %}
+                                                        {% if order.amount_paid == 0.000 and order.evaluation.is_promocode_applied == False %}
                                                         <button class="model-close ml-10" >
                                                             <img  class="policy-time-edit pointer" src="{% static 'files/icons/edit.png' %}" data-amount_before_cleaning="{{order.evaluation.before_cleaning_amount}}" data-amount_after_cleaning="{{order.evaluation.after_cleaning_amount}}" data-discount="{{order.evaluation.discount}}" data-payment_method="{{order.evaluation.payment_method}}" data-total_amount="{{order.evaluation.estimated_cost}}" data-final_amount="{{order.evaluation.total_cost}}" data-additional_charge="{{order.evaluation.additional_charge|default_if_none:'0'}}" data-cancelled_amount="{{order.evaluation.cancelled_amount|default_if_none:'0'}}" onclick="openPaymentEdit(this)">
                                                         </button>

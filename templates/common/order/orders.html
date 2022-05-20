@@ -272,20 +272,27 @@
         {% for order in evaluation.evaluationorder %}
       
         {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
-        {% if order.order_status == 'APPROVED_BY_CLIENT' %}
-        class="approved-line"
-        {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
-        class="order-in-progress-line"
-        {% elif order.order_status == 'ORDER_CLOSED' %}
-        class="completed-line"
-        {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
-        class="cancel-in-progress-line"
+          {% if order.order_status == 'APPROVED_BY_CLIENT' %}
+          class="approved-line"
+          {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
+          class="order-in-progress-line"
+          {% elif order.order_status == 'ORDER_CLOSED' %}
+          class="completed-line"
+          {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
+          class="cancel-in-progress-line"
+          {% else %}
+          class="cancelled-line"
+          {% endif %}
         {% else %}
-        class="cancelled-line"
+          {% if order.order_status == 'CANCEL_IN_PROGRESS' %}
+          class="cancel-in-progress-line"
+          {% elif order.order_status == 'ORDER_CANCELLED' %}
+          class="cancelled-line"
+          {% else %}
+          class="approved-not-paid-line"
+          {% endif %}
         {% endif %}
-        {% else %}
-        class="approved-not-paid-line"
-        {% endif %}
+
         {% endfor %}
 
         {% elif evaluation.quatation_status == 'REJECTED' %}class="rejected-line"
@@ -316,19 +323,25 @@
         {% for order in evaluation.evaluationorder %}
       
         {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
-        {% if order.order_status == 'APPROVED_BY_CLIENT' %}
-        <div class="d-flex "><div class="round-marker approved-status-bg"></div><span>Approved</span></div>
-        {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
-        <div  class="d-flex "><div class="round-marker order-in-progress-status-bg"></div><span>Order in progress</span></div>
-        {% elif order.order_status == 'ORDER_CLOSED' %}
-        <div  class="d-flex "><div class="round-marker completed-status-bg"></div><span>Completed</span></div>
-        {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
-        <div  class="d-flex "><div class="round-marker cancel-in-progress-status-bg"></div><span>Cancel in Progress</span></div>
+          {% if order.order_status == 'APPROVED_BY_CLIENT' %}
+          <div class="d-flex "><div class="round-marker approved-status-bg"></div><span>Approved</span></div>
+          {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
+          <div  class="d-flex "><div class="round-marker order-in-progress-status-bg"></div><span>Order in progress</span></div>
+          {% elif order.order_status == 'ORDER_CLOSED' %}
+          <div  class="d-flex "><div class="round-marker completed-status-bg"></div><span>Completed</span></div>
+          {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
+          <div  class="d-flex "><div class="round-marker cancel-in-progress-status-bg"></div><span>Cancel in Progress</span></div>
+          {% else %}
+          <div  class="d-flex "><div class="round-marker cancelled-status-bg"></div><span>Order Cancelled</span></div>
+          {% endif %}
         {% else %}
-        <div  class="d-flex "><div class="round-marker cancelled-status-bg"></div><span>Order Cancelled</span></div>
-        {% endif %}
-        {% else %}
-        <div  class="d-flex "><div class="round-marker approved-not-paid-status-bg"></div><span>Approved-Not Paid</span></div>
+          {% if order.order_status == 'CANCEL_IN_PROGRESS' %}
+          <div  class="d-flex "><div class="round-marker cancel-in-progress-status-bg"></div><span>Cancel in Progress</span></div>
+          {% elif order.order_status == 'ORDER_CANCELLED' %}
+          <div  class="d-flex "><div class="round-marker cancelled-status-bg"></div><span>Order Cancelled</span></div>
+          {% else %}
+          <div  class="d-flex "><div class="round-marker approved-not-paid-status-bg"></div><span>Approved-Not Paid</span></div>
+          {% endif %}
         {% endif %}
         {% endfor %}
 

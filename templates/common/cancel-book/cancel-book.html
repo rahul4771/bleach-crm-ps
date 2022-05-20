@@ -92,7 +92,7 @@
                       {% endif %}
                       {% endif %}
 
-                      {% if cancell_in_progress_order.evaluation.quatation_status == 'PENDING' or cancell_in_progress_order.evaluation.quatation_status == 'EXPIRED' or cancell_in_progress_order.evaluation.quatation_status == 'REJECTED' or cancell_in_progress_order.evaluation.payment_method == 'BREAKDOWN' or cancell_in_progress_order.evaluation.payment_method == 'POSTPAID' %}
+                      {% if cancell_in_progress_order.evaluation.quatation_status == 'PENDING' or cancell_in_progress_order.evaluation.quatation_status == 'EXPIRED' or cancell_in_progress_order.evaluation.quatation_status == 'REJECTED' or cancell_in_progress_order.evaluation.payment_method == 'BREAKDOWN' or cancell_in_progress_order.evaluation.payment_method == 'POSTPAID' or cancell_in_progress_order.amount_paid == 0 %}
                       <option value="REDUCTION">Reduce Order Amount</option>
                       {% endif %}
                 </select>
