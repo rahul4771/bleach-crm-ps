@@ -1338,8 +1338,6 @@ class ActiveSubscriptions(IsAuthenticated,View):
 					due_count += 1
 					due_amount += invoice.balance
 
-			print(array,"array")
-
 		#PAGINATION CLIENTS
 		no_of_entries = request.GET.get('no_of_entries')
 		if not no_of_entries:
