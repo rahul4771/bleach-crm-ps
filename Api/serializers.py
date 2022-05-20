@@ -305,3 +305,12 @@ class ServiceAddOnsSerializer(serializers.ModelSerializer):
     class Meta:
         model   = ServiceAddOns
         fields  = ('service_type','price','category','name','size','productivity','category_updated','category_updated_max','category_updated_min')
+
+    def get_category_updated(self, obj):
+        return {}
+
+    def get_category_updated_max(self, obj):
+        return {}
+
+    def get_category_updated_min(self, obj):
+        return {}
