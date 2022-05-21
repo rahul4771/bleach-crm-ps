@@ -23,7 +23,7 @@ from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,Evaluat
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia,Promocode
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
-from bleachadmin.models import ServiceProductivity,ServicePriceRange,Settings
+from bleachadmin.models import ServiceProductivity,ServicePriceRange,Settings,ServiceAddOns
 from Api.models import XeroConnection
 
 from order.forms import PromocodeForm
@@ -40,7 +40,7 @@ from django.template.loader import render_to_string
 
 class AdminHome(IsAdmin,View):
 	def get(self,request):
-
+		
 		#cleaners and leaders
 		cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER')
 		leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE')

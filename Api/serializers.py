@@ -23,7 +23,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         self.fields['name'].required          = True
         self.fields['gender'].required        = True
         self.fields['email'].required         = True
-        self.fields['date_of_birth'].required = True
         self.fields['mobile_number'].required = True
         self.fields['nationality'].required   = True  
 
@@ -299,6 +298,71 @@ class ServicePriceRangeSerializer(serializers.ModelSerializer):
 
 class ServiceAddOnsSerializer(serializers.ModelSerializer):
     service_type = ServiceTypeShowSerializer(read_only=True)
+    category_updated = serializers.SerializerMethodField('_get_category_updated')
+    category_updated_maximum   = serializers.SerializerMethodField('_get_category_updated_maximum')
+    category_updated_minimum   = serializers.SerializerMethodField('_get_category_updated_minimum')
+
+    #minimum size value to serializer field
+    def _get_category_updated_minimum(self, obj):
+        global category1
+        category = getattr(obj,"category")
+        
+        if category:
+            category_split_list = category.split()
+
+            if len(category_split_list) >= 4 :
+                category1 = category_split_list[2]
+            else:
+                category1 = None
+        else:
+            category1 = None
+
+        return category1
+    
+    #size name to serializer field
+    def _get_category_updated(self, obj):
+        global category2
+        category = getattr(obj,"category")
+        
+        if category:
+            category_split_list = category.split()
+
+            if len(category_split_list) >= 4 :
+                category2 = category_split_list[0]
+            else:
+                category2 = None
+
+        else:
+            category2 = None
+
+        return category2
+
+    #maximum size value to serializer field
+    def _get_category_updated_maximum(self, obj):
+        global category3
+        category = getattr(obj,"category")
+        
+        if category:
+            category_split_list = category.split()
+
+            if category and len(category_split_list) >= 4 :
+                category3 = category_split_list[4]
+            else:
+                category3 = None
+
+        else:
+            category3 = None
+
+        return category3
+
     class Meta:
         model   = ServiceAddOns
-        fields  = ('__all__')
+        fields  = ('service_type','price','category','name','size','productivity','category_updated','category_updated_maximum','category_updated_minimum')
+
+    
+
+    def get_category_updated_max(self, obj):
+        return {}
+
+    def get_category_updated_min(self, obj):
+        return {}

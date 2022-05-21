@@ -5548,6 +5548,7 @@ class ServiceAddOnsAPI(APIView):
 			service_add_ons = None
 
 		service_add_ons_serializer = ServiceAddOnsSerializer(service_add_ons,many=True).data
+
 		response_dict["service_add_ons"]=service_add_ons_serializer
 		return Response(response_dict,HTTP_200_OK)
 
@@ -5663,13 +5664,23 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 
 			if int(customer_otp_saved) == int(customer_otp):
 				print(customer_otp_saved,customer_otp,"yurekay")
+			
+			request.data._mutable = True
+			request.data['mobile_number'] = 9999594
+			request.data._mutable = False
+			
+			serializer = UserProfileSerializer(data=request.data)
 
-			# serializer = UserProfileSerializer(data=request.data)
+			if serializer.is_valid():   
+				serializer.save(username=generate_random_username(),user_type='CUSTOMER')
 
-			# if serializer.is_valid():   
-			# 	serializer.save(username=generate_random_username(),user_type='CUSTOMER')
-
-			# 	response_dict['success']  = True 
-			# 	response_dict['customer'] = serializer.data
+				response_dict['success']  = True 
+				response_dict['customer'] = serializer.data
+			else: 
+				errors= serializer.errors   
+				key=tuple(errors.keys())[0] 
+				error=errors[key]
+				response_dict['Error']=key +':'+ error[0]
+				response_dict['Error_List'] = serializer.errors
 
 		return Response(response_dict,HTTP_200_OK)
