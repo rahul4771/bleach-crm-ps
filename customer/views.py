@@ -350,7 +350,7 @@ class Quatation(View):
 							"Description":"ONE TIME SERVICE",
 							"Quantity":"1",
 							"UnitAmount":Amount,
-							"AccountCode":1207001,
+							"AccountCode":123456,
 							"TaxType":"NONE"
 										}
 							)
