@@ -94,7 +94,7 @@ class Command(BaseCommand):
         #             "Description":"ONE TIME SERVICE",
         #             "Quantity":"1",
         #             "UnitAmount":Amount,
-        #             "AccountCode":1002,
+        #             "AccountCode":1207001,
         #             "TaxType":"NONE"
         #                         }
         #             )
@@ -151,7 +151,7 @@ class Command(BaseCommand):
         #             "Description":"ONE TIME SERVICE",
         #             "Quantity":"1",
         #             "UnitAmount":Amount,
-        #             "AccountCode":1002,
+        #             "AccountCode":1207001,
         #             "TaxType":"NONE"
         #                         }
         #             )
@@ -214,7 +214,7 @@ class Command(BaseCommand):
         #                         "Description":"ONE TIME SERVICE",
         #                         "Quantity":"1",
         #                         "UnitAmount":Amount,
-        #                         "AccountCode":1002,
+        #                         "AccountCode":1207001,
         #                         "TaxType":"NONE"
         #                                     }
         #                         )
@@ -233,7 +233,7 @@ class Command(BaseCommand):
         #                         "Description":"ONE TIME SERVICE",
         #                         "Quantity":"1",
         #                         "UnitAmount":Amount,
-        #                         "AccountCode":1002,
+        #                         "AccountCode":1207001,
         #                         "TaxType":"NONE"
         #                                     }
         #                         )
@@ -299,7 +299,7 @@ class Command(BaseCommand):
         #                     "Description":"SUBSCRIPTION",
         #                     "Quantity":"1",
         #                     "UnitAmount":Amount,
-        #                     "AccountCode":1002,
+        #                     "AccountCode":1207001,
         #                     "TaxType":"NONE"
         #                                 }
         #                     )
@@ -368,7 +368,7 @@ class Command(BaseCommand):
         #                         "InvoiceNumber":xero_invoice.invoice_no
         #                     },
         #                     "Account":{
-        #                         "Code":"090"
+        #                         "Code":"1201023"
         #                     },
         #                     "Date":payment_date_string,
         #                     "Amount":amount_paid,

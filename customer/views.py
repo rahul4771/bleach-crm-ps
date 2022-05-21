@@ -350,7 +350,7 @@ class Quatation(View):
 							"Description":"ONE TIME SERVICE",
 							"Quantity":"1",
 							"UnitAmount":Amount,
-							"AccountCode":1002,
+							"AccountCode":1207001,
 							"TaxType":"NONE"
 										}
 							)
@@ -366,7 +366,7 @@ class Quatation(View):
 							"Description":"ONE TIME SERVICE",
 							"Quantity":"1",
 							"UnitAmount":Amount,
-							"AccountCode":1002,
+							"AccountCode":1207001,
 							"TaxType":"NONE"
 										}
 							)
@@ -644,7 +644,7 @@ class SubscriptionQuatation(View):
 						"Description":"SUBSCRIPTION",
 						"Quantity":"1",
 						"UnitAmount":Amount,
-						"AccountCode":1002,
+						"AccountCode":1207001,
 						"TaxType":"NONE"
 									}
 						)
@@ -978,7 +978,7 @@ class PaymentResponseDebit(View):
 					"Description":"ONE TIME SERVICE",
 					"Quantity":"1",
 					"UnitAmount":Amount,
-					"AccountCode":1002,
+					"AccountCode":1207001,
 					"TaxType":"NONE"
 								}
 					)
@@ -1055,7 +1055,7 @@ class PaymentResponseDebit(View):
 					"Description":"ONE TIME SERVICE",
 					"Quantity":"1",
 					"UnitAmount":Amount,
-					"AccountCode":1002,
+					"AccountCode":1207001,
 					"TaxType":"NONE"
 								}
 					)
@@ -1162,7 +1162,7 @@ class PaymentResponseDebit(View):
 									"InvoiceNumber":xero_invoice.invoice_no
 								},
 								"Account":{
-									"Code":"090"
+									"Code":"1201023"
 								},
 								"Date":payment_date_string,
 								"Amount":amount_paid,
@@ -1200,7 +1200,7 @@ class PaymentResponseDebit(View):
 									"InvoiceNumber":xero_invoice.invoice_no
 								},
 								"Account":{
-									"Code":"090"
+									"Code":"1201023"
 								},
 								"Date":payment_date_string,
 								"Amount":amount_paid,
@@ -2083,7 +2083,7 @@ def addpromocode(request):
 							"Description":"ONE TIME SERVICE",
 							"Quantity":"1",
 							"UnitAmount":Amount,
-							"AccountCode":1002,
+							"AccountCode":1207001,
 							"TaxType":"NONE"
 										}
 							)
@@ -2099,7 +2099,7 @@ def addpromocode(request):
 							"Description":"ONE TIME SERVICE",
 							"Quantity":"1",
 							"UnitAmount":Amount,
-							"AccountCode":1002,
+							"AccountCode":1207001,
 							"TaxType":"NONE"
 										}
 							)
@@ -2151,7 +2151,7 @@ def addpromocode(request):
 						"Description":"ONE TIME SERVICE",
 						"Quantity":"1",
 						"UnitAmount":Amount,
-						"AccountCode":1002,
+						"AccountCode":1207001,
 						"TaxType":"NONE"
 									}
 						)
@@ -2203,7 +2203,7 @@ def addpromocode(request):
 						"Description":"ONE TIME SERVICE",
 						"Quantity":"1",
 						"UnitAmount":Amount,
-						"AccountCode":1002,
+						"AccountCode":1207001,
 						"TaxType":"NONE"
 									}
 						)
@@ -6703,7 +6703,7 @@ class AddDeleteService(APIView):
 						"Description":"ONE TIME SERVICE",
 						"Quantity":"1",
 						"UnitAmount":Amount,
-						"AccountCode":1002,
+						"AccountCode":1207001,
 						"TaxType":"NONE"
 									}
 						)
@@ -6787,7 +6787,7 @@ class AddDeleteService(APIView):
 						"Description":"ONE TIME SERVICE",
 						"Quantity":"1",
 						"UnitAmount":Amount,
-						"AccountCode":1002,
+						"AccountCode":1207001,
 						"TaxType":"NONE"
 									}
 						)
@@ -7229,7 +7229,7 @@ class EditOrderDetails(APIView):
 							"Description":"ONE TIME SERVICE",
 							"Quantity":"1",
 							"UnitAmount":Amount,
-							"AccountCode":1002,
+							"AccountCode":1207001,
 							"TaxType":"NONE"
 										}
 							)
@@ -7286,7 +7286,7 @@ class EditOrderDetails(APIView):
 									"Description":"ONE TIME SERVICE",
 									"Quantity":"1",
 									"UnitAmount":0,
-									"AccountCode":1002,
+									"AccountCode":1207001,
 									"TaxType":"NONE"
 												}
 									)
@@ -7328,7 +7328,7 @@ class EditOrderDetails(APIView):
 							"Description":"ONE TIME SERVICE",
 							"Quantity":"1",
 							"UnitAmount":Amount,
-							"AccountCode":1002,
+							"AccountCode":1207001,
 							"TaxType":"NONE"
 										}
 							)
@@ -7386,7 +7386,7 @@ class EditOrderDetails(APIView):
 									"Description":"ONE TIME SERVICE",
 									"Quantity":"1",
 									"UnitAmount":0,
-									"AccountCode":1002,
+									"AccountCode":1207001,
 									"TaxType":"NONE"
 												}
 									)
@@ -7429,7 +7429,7 @@ class EditOrderDetails(APIView):
 								"Description":"ONE TIME SERVICE",
 								"Quantity":"1",
 								"UnitAmount":0,
-								"AccountCode":1002,
+								"AccountCode":1207001,
 								"TaxType":"NONE"
 											}
 								)
@@ -7470,7 +7470,7 @@ class EditOrderDetails(APIView):
 								"Description":"ONE TIME SERVICE",
 								"Quantity":"1",
 								"UnitAmount":0,
-								"AccountCode":1002,
+								"AccountCode":1207001,
 								"TaxType":"NONE"
 											}
 								)
@@ -7870,7 +7870,7 @@ class ServiceCancellation(APIView):
 					"Description":"ONE TIME SERVICE",
 					"Quantity":"1",
 					"UnitAmount":Amount,
-					"AccountCode":1002,
+					"AccountCode":1207001,
 					"TaxType":"NONE"
 								}
 					)
@@ -7925,7 +7925,7 @@ class ServiceCancellation(APIView):
 					"Description":"ONE TIME SERVICE",
 					"Quantity":"1",
 					"UnitAmount":Amount,
-					"AccountCode":1002,
+					"AccountCode":1207001,
 					"TaxType":"NONE"
 								}
 					)
@@ -7980,7 +7980,7 @@ class ServiceCancellation(APIView):
 					"Description":"ONE TIME SERVICE",
 					"Quantity":"1",
 					"UnitAmount":Amount,
-					"AccountCode":1002,
+					"AccountCode":1207001,
 					"TaxType":"NONE"
 								}
 					)
@@ -8034,7 +8034,7 @@ class ServiceCancellation(APIView):
 					"Description":"ONE TIME SERVICE",
 					"Quantity":"1",
 					"UnitAmount":Amount,
-					"AccountCode":1002,
+					"AccountCode":1207001,
 					"TaxType":"NONE"
 								}
 					)

@@ -1199,7 +1199,7 @@ class CashCollect(IsAccountant,View):
 						"Description":"ONE TIME SERVICE",
 						"Quantity":"1",
 						"UnitAmount":Amount,
-						"AccountCode":1002,
+						"AccountCode":1207001,
 						"TaxType":"NONE"
 									}
 						)
@@ -1252,7 +1252,7 @@ class CashCollect(IsAccountant,View):
 						"Description":"ONE TIME SERVICE",
 						"Quantity":"1",
 						"UnitAmount":Amount,
-						"AccountCode":1002,
+						"AccountCode":1207001,
 						"TaxType":"NONE"
 									}
 						)
@@ -1311,7 +1311,7 @@ class CashCollect(IsAccountant,View):
 										"InvoiceNumber":xero_invoice.invoice_no
 									},
 									"Account":{
-										"Code":"090"
+										"Code":"1201023"
 									},
 									"Date":payment_date_string,
 									"Amount":amount
@@ -1348,7 +1348,7 @@ class CashCollect(IsAccountant,View):
 										"InvoiceNumber":xero_invoice.invoice_no
 									},
 									"Account":{
-										"Code":"090"
+										"Code":"1201023"
 									},
 									"Date":payment_date_string,
 									"Amount":amount
