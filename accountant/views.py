@@ -1199,7 +1199,7 @@ class CashCollect(IsAccountant,View):
 						"Description":"ONE TIME SERVICE",
 						"Quantity":"1",
 						"UnitAmount":Amount,
-						"AccountCode":1207001,
+						"AccountCode":1207004,
 						"TaxType":"NONE"
 									}
 						)
@@ -1252,7 +1252,7 @@ class CashCollect(IsAccountant,View):
 						"Description":"ONE TIME SERVICE",
 						"Quantity":"1",
 						"UnitAmount":Amount,
-						"AccountCode":1207001,
+						"AccountCode":1207004,
 						"TaxType":"NONE"
 									}
 						)
