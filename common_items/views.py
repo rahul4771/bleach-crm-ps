@@ -4912,7 +4912,7 @@ class OrderCancellation(IsAuthenticated,View):
 						"Description":"ONE TIME SERVICE",
 						"Quantity":"1",
 						"UnitAmount":Amount,
-						"AccountCode":1002,
+						"AccountCode":1207004,
 						"TaxType":"NONE"
 									}
 						)
@@ -4967,7 +4967,7 @@ class OrderCancellation(IsAuthenticated,View):
 						"Description":"ONE TIME SERVICE",
 						"Quantity":"1",
 						"UnitAmount":Amount,
-						"AccountCode":1002,
+						"AccountCode":1207004,
 						"TaxType":"NONE"
 									}
 						)
@@ -5022,7 +5022,7 @@ class OrderCancellation(IsAuthenticated,View):
 						"Description":"ONE TIME SERVICE",
 						"Quantity":"1",
 						"UnitAmount":Amount,
-						"AccountCode":1002,
+						"AccountCode":1207004,
 						"TaxType":"NONE"
 									}
 						)
@@ -5076,7 +5076,7 @@ class OrderCancellation(IsAuthenticated,View):
 						"Description":"ONE TIME SERVICE",
 						"Quantity":"1",
 						"UnitAmount":Amount,
-						"AccountCode":1002,
+						"AccountCode":1207004,
 						"TaxType":"NONE"
 									}
 						)
@@ -5580,7 +5580,7 @@ class CashCollect(IsAuthenticated,View):
 										"InvoiceNumber":xero_invoice.invoice_no
 									},
 									"Account":{
-										"Code":"090"
+										"Code":"1201023"
 									},
 									"Date":payment_date_string,
 									"Amount":amount
@@ -5616,7 +5616,7 @@ class CashCollect(IsAuthenticated,View):
 										"InvoiceNumber":xero_invoice.invoice_no
 									},
 									"Account":{
-										"Code":"090"
+										"Code":"1201023"
 									},
 									"Date":payment_date_string,
 									"Amount":amount
@@ -5707,7 +5707,7 @@ class FineWriteBack(IsAuthenticated,View):
 					"Description":"ONE TIME SERVICE",
 					"Quantity":"1",
 					"UnitAmount":Amount,
-					"AccountCode":1002,
+					"AccountCode":1207004,
 					"TaxType":"NONE"
 								}
 					)
@@ -5757,7 +5757,7 @@ class FineWriteBack(IsAuthenticated,View):
 					"Description":"ONE TIME SERVICE",
 					"Quantity":"1",
 					"UnitAmount":Amount,
-					"AccountCode":1002,
+					"AccountCode":1207004,
 					"TaxType":"NONE"
 								}
 					)
@@ -5808,7 +5808,7 @@ class FineWriteBack(IsAuthenticated,View):
 						"Description":"ONE TIME SERVICE",
 						"Quantity":"1",
 						"UnitAmount":Amount,
-						"AccountCode":1002,
+						"AccountCode":1207004,
 						"TaxType":"NONE"
 									}
 						)
@@ -5823,7 +5823,7 @@ class FineWriteBack(IsAuthenticated,View):
 						"Description":"ONE TIME SERVICE",
 						"Quantity":"1",
 						"UnitAmount":Amount,
-						"AccountCode":1002,
+						"AccountCode":1207004,
 						"TaxType":"NONE"
 									}
 						)
@@ -5919,7 +5919,7 @@ class FineWriteBack(IsAuthenticated,View):
 					"Description":"ONE TIME SERVICE",
 					"Quantity":"1",
 					"UnitAmount":Amount,
-					"AccountCode":1002,
+					"AccountCode":1207004,
 					"TaxType":"NONE"
 								}
 					)
@@ -5970,7 +5970,7 @@ class FineWriteBack(IsAuthenticated,View):
 					"Description":"ONE TIME SERVICE",
 					"Quantity":"1",
 					"UnitAmount":Amount,
-					"AccountCode":1002,
+					"AccountCode":1207004,
 					"TaxType":"NONE"
 								}
 					)
@@ -6022,7 +6022,7 @@ class FineWriteBack(IsAuthenticated,View):
 						"Description":"ONE TIME SERVICE",
 						"Quantity":"1",
 						"UnitAmount":Amount,
-						"AccountCode":1002,
+						"AccountCode":1207004,
 						"TaxType":"NONE"
 									}
 						)
@@ -6038,7 +6038,7 @@ class FineWriteBack(IsAuthenticated,View):
 						"Description":"ONE TIME SERVICE",
 						"Quantity":"1",
 						"UnitAmount":Amount,
-						"AccountCode":1002,
+						"AccountCode":1207004,
 						"TaxType":"NONE"
 									}
 						)

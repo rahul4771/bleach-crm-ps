@@ -390,7 +390,7 @@ class PaymentResponseCredit(APIView):
 					"Description":"ONE TIME SERVICE",
 					"Quantity":"1",
 					"UnitAmount":Amount,
-					"AccountCode":1002,
+					"AccountCode":1207004,
 					"TaxType":"NONE"
 								}
 					)
@@ -467,7 +467,7 @@ class PaymentResponseCredit(APIView):
 					"Description":"ONE TIME SERVICE",
 					"Quantity":"1",
 					"UnitAmount":Amount,
-					"AccountCode":1002,
+					"AccountCode":1207004,
 					"TaxType":"NONE"
 								}
 					)
@@ -575,7 +575,7 @@ class PaymentResponseCredit(APIView):
 									"InvoiceNumber":xero_invoice.invoice_no
 								},
 								"Account":{
-									"Code":"090"
+									"Code":"1201023"
 								},
 								"Date":payment_date_string,
 								"Amount":amount_paid,
@@ -613,7 +613,7 @@ class PaymentResponseCredit(APIView):
 									"InvoiceNumber":xero_invoice.invoice_no
 								},
 								"Account":{
-									"Code":"090"
+									"Code":"1201023"
 								},
 								"Date":payment_date_string,
 								"Amount":amount_paid,
@@ -2575,7 +2575,7 @@ class CheckOutAPI(APIView):
 						"Description":"ONE TIME SERVICE",
 						"Quantity":"1",
 						"UnitAmount":Amount,
-						"AccountCode":1002,
+						"AccountCode":1207004,
 						"TaxType":"NONE"
 									}
 						)
@@ -2591,7 +2591,7 @@ class CheckOutAPI(APIView):
 						"Description":"ONE TIME SERVICE",
 						"Quantity":"1",
 						"UnitAmount":Amount,
-						"AccountCode":1002,
+						"AccountCode":1207004,
 						"TaxType":"NONE"
 									}
 						)
@@ -3165,7 +3165,7 @@ class InvoiceSMSMailAPI(APIView):
 				"Description":"SUBSCRIPTION",
 				"Quantity":"1",
 				"UnitAmount":Amount,
-				"AccountCode":1002,
+				"AccountCode":1207004,
 				"TaxType":"NONE"
 							}
 				)
