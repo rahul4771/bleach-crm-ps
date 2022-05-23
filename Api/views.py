@@ -5651,6 +5651,7 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 			customer.evaluation_booking_otp = 'abcdef'
 			customer.save()
 			response_dict['customer_verified'] = True
+			response_dict['customer'] = UserProfileSerializer(instance=customer,many=False).data
 
 		except:
 			response_dict['customer_verified'] = False
@@ -5666,7 +5667,7 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 				print(customer_otp_saved,customer_otp,"yurekay")
 			
 			request.data._mutable = True
-			request.data['mobile_number'] = 9999594
+			request.data['mobile_number'] = 99995943
 			request.data._mutable = False
 			
 			serializer = UserProfileSerializer(data=request.data)
