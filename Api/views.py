@@ -5644,8 +5644,9 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 		response_dict = {}
 
 		customer_otp = request.data.get('customer_otp')
+		customer_mobile = request.data.get('customer_mobile')
 
-		#checking if mobile number/customer already exists on datababse
+		#checking if mobile number/customer already exists on database
 		try:
 			customer = UserProfile.objects.get(is_active=True,user_type='CUSTOMER',evaluation_booking_otp=int(customer_otp))
 			customer.evaluation_booking_otp = 'abcdef'
@@ -5653,36 +5654,75 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 			response_dict['customer_verified'] = True
 			response_dict['customer'] = UserProfileSerializer(instance=customer,many=False).data
 
-			t, c= Token.objects.get_or_create(user=customer)
+			#generating a password using customer name and mobile
+			customer_password = str(customer.username)[:4]+'_'+str(customer.mobile_number)[:4]
+
+			#shuffling the generated password
+			random_password = ''.join(random.sample(customer_password,len(customer_password)))
+
+			customer.set_password(random_password)
+			customer.save()
+
+			#authenticating/logging in customer
+			user = authenticate(username=customer.username,password=random_password)
+
+			#login token generation
+			t, c = Token.objects.get_or_create(user=customer)
 			response_dict['token']               = t.key
+
+			response_dict['otp_message'] = 'User Verified !'
 
 		except:
 			response_dict['customer_verified'] = False
 
 			customer_otp_saved = 000000
 
-			if 'customer_otp-'+str(9999594)+'' in request.session:
-				customer_otp_saved = request.session['customer_otp-'+str(9999594)+'']
+			if 'customer_otp-'+str(customer_mobile)+'' in request.session:
+				customer_otp_saved = request.session['customer_otp-'+str(customer_mobile)+'']
 
-			customer_data = json.dumps(request.data)
-			customer_data = json.loads(customer_data)
+				customer_data = json.dumps(request.data)
+				customer_data = json.loads(customer_data)
 
-			customer_data['mobile_number'] = 99995944
+				customer_data['mobile_number'] = customer_mobile
 
-			# print(request.data['name'][:4],str(request.data['mobile_number'])[:4],"chambb")
-			
-			serializer = UserProfileSerializer(data=customer_data)
-
-			if serializer.is_valid():   
-				serializer.save(username=generate_random_username(),user_type='CUSTOMER')
+				# print(request.data['name'][:4],str(request.data['mobile_number'])[:4],"chambb")
 				
-				response_dict['success']  = True 
-				response_dict['customer'] = serializer.data
-			else: 
-				errors= serializer.errors   
-				key=tuple(errors.keys())[0] 
-				error=errors[key]
-				response_dict['Error']=key +':'+ error[0]
-				response_dict['Error_List'] = serializer.errors
+				serializer = UserProfileSerializer(data=customer_data)
+
+				if serializer.is_valid():   
+					customer = serializer.save(username=generate_random_username(),user_type='CUSTOMER')
+					
+					print(customer,"custmr")
+					#generating a password using customer name and mobile
+					customer_password = str(customer.username)[:4]+'_'+str(customer.mobile_number)[:4]
+
+					#shuffling the generated password
+					random_password = ''.join(random.sample(customer_password,len(customer_password)))
+
+					customer.set_password(random_password)
+					customer.save()
+
+					#authenticating/logging in customer
+					user = authenticate(username=customer.username,password=random_password)
+
+					#login token generation
+					t, c = Token.objects.get_or_create(user=customer)
+					response_dict['token']               = t.key
+					
+					response_dict['success']  = True 
+					response_dict['customer'] = serializer.data
+
+					response_dict['otp_message'] = 'User Verified !'
+				else: 
+					errors= serializer.errors   
+					key=tuple(errors.keys())[0] 
+					error=errors[key]
+					response_dict['Error']=key +':'+ error[0]
+					response_dict['Error_List'] = serializer.errors
+					response_dict['otp_message'] = 'Please fill the form correctly !'
+
+			else:
+
+				response_dict['otp_message'] = 'OTP is incorrect !'
 
 		return Response(response_dict,HTTP_200_OK)
