@@ -5651,7 +5651,7 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 			customer = UserProfile.objects.get(is_active=True,user_type='CUSTOMER',evaluation_booking_otp=int(customer_otp))
 			customer.evaluation_booking_otp = 'abcdef'
 			customer.save()
-			response_dict['customer_verified'] = True
+			response_dict['existing_customer'] = True
 			response_dict['customer'] = UserProfileSerializer(instance=customer,many=False).data
 
 			#generating a password using customer name and mobile
@@ -5671,9 +5671,10 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 			response_dict['token']               = t.key
 
 			response_dict['otp_message'] = 'User Verified !'
+			response_dict['otp_verified'] = True
 
 		except:
-			response_dict['customer_verified'] = False
+			response_dict['existing_customer'] = False
 
 			customer_otp_saved = 000000
 
@@ -5713,6 +5714,7 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 					response_dict['customer'] = serializer.data
 
 					response_dict['otp_message'] = 'User Verified !'
+					response_dict['otp_verified'] = True
 				else: 
 					errors= serializer.errors   
 					key=tuple(errors.keys())[0] 
@@ -5724,5 +5726,6 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 			else:
 
 				response_dict['otp_message'] = 'OTP is incorrect !'
+				response_dict['otp_verified'] = False
 
 		return Response(response_dict,HTTP_200_OK)
