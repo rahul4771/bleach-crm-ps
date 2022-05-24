@@ -201,7 +201,7 @@
     <td>{{client.customer_type}}</td>
     <td>{{client.mobile_number}}</td>
     <td>
-        <div class="d-flex" ><div id="clientstatus{{client.id}}" class="round-marker yellow-bg"></div><span class="client-status">Not Active</span></div>        
+        <div class="d-flex" ><div id="clientstatus{{client.id}}" class="round-marker yellow-bg"></div><span class="client-status" >Not Active</span>{% if request.user.username == 'superuser' %}<button onclick="deleteuser({{client.id}},'deleteuser')">Delete</button>{% endif %}</div>        
     </td>
     <td class="align-center"><a class="d-flex dropdown-orders" href="{% url 'common_items:client-orders' client.id %}" target="_blank" ><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Client Details</div></a></td>
     </tr>
@@ -355,6 +355,19 @@ $("#governorate_filter_id").change(function(){
 
 });
 
+function deleteuser(client_id,status,args){
+  var url='{% url 'common_items:clients' %}';
+  var params={client_id:client_id,status:status,
+  };
+  for(key in args) 
+      params[key]=args[key];
+  var query='';
+  for(key in params)
+      if(params[key]) 
+          query+='&'+key+'='+params[key].toString();
+  query=query.replace('&','?');
+  window.location.href=url+query;  
+}
 
 function set_params_go(args)
 {

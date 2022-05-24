@@ -366,6 +366,12 @@ class ClientDetails(IsAuthenticated,View):
 		except:
 			fil_area              = None
 
+		clientstatus = request.GET.get('status')
+		client_id = request.GET.get('client_id')
+		if clientstatus == 'deleteuser' and client_id != None:
+			client = UserProfile.objects.get(id=client_id)
+			client.delete()
+
 
 
 		customer_address_filter       = []

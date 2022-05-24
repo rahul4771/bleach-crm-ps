@@ -41,9 +41,6 @@ from django.template.loader import render_to_string
 class AdminHome(IsAdmin,View):
 	def get(self,request):
 		
-		# UserProfile.objects.filter(name='test').delete()
-		# UserProfile.objects.filter(name='ss').delete()
-		
 		#cleaners and leaders
 		cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER')
 		leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE')
