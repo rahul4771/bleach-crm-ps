@@ -5678,7 +5678,9 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 
 			customer_otp_saved = 000000
 
+			print('customer_otp-'+str(customer_mobile)+'',"etstotp")
 			if 'customer_otp-'+str(customer_mobile)+'' in request.session:
+				print('customer_otp-'+str(customer_mobile)+'',"etstotp22")
 				customer_otp_saved = request.session['customer_otp-'+str(customer_mobile)+'']
 
 				customer_data = json.dumps(request.data)
