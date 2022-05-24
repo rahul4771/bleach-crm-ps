@@ -5630,10 +5630,9 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 			response_dict['is_new_customer'] = True
 			# customer_mobile = 9999594
 			request.session['customer_otp-'+str(customer_mobile)+''] = customer_otp
-			response_dict['customer_otp'] = customer_otp
 
 		response_dict['customer_mobile'] = customer_mobile
-		response_dict['customer_otp'] = response_dict
+		response_dict['customer_otp'] = customer_otp
 
 		return Response(response_dict,HTTP_200_OK)
 
