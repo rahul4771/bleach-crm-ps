@@ -5633,6 +5633,7 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 			response_dict['customer_otp'] = customer_otp
 
 		response_dict['customer_mobile'] = customer_mobile
+		response_dict['customer_otp'] = response_dict
 
 		return Response(response_dict,HTTP_200_OK)
 
@@ -5653,6 +5654,9 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 			response_dict['customer_verified'] = True
 			response_dict['customer'] = UserProfileSerializer(instance=customer,many=False).data
 
+			t, c= Token.objects.get_or_create(user=customer)
+			response_dict['token']               = t.key
+
 		except:
 			response_dict['customer_verified'] = False
 
@@ -5661,20 +5665,18 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 			if 'customer_otp-'+str(9999594)+'' in request.session:
 				customer_otp_saved = request.session['customer_otp-'+str(9999594)+'']
 
-			print(customer_otp_saved,customer_otp,"yurekay")
+			customer_data = json.dumps(request.data)
+			customer_data = json.loads(customer_data)
 
-			if int(customer_otp_saved) == int(customer_otp):
-				print(customer_otp_saved,customer_otp,"yurekay")
+			customer_data['mobile_number'] = 99995944
+
+			# print(request.data['name'][:4],str(request.data['mobile_number'])[:4],"chambb")
 			
-			request.data._mutable = True
-			request.data['mobile_number'] = 99995943
-			request.data._mutable = False
-			
-			serializer = UserProfileSerializer(data=request.data)
+			serializer = UserProfileSerializer(data=customer_data)
 
 			if serializer.is_valid():   
 				serializer.save(username=generate_random_username(),user_type='CUSTOMER')
-
+				
 				response_dict['success']  = True 
 				response_dict['customer'] = serializer.data
 			else: 
