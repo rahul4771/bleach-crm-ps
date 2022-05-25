@@ -1867,11 +1867,11 @@ class InventoryOrder(IsInventoryAdminUser,View):
 
 		if order_date:
 			order_date = datetime.strptime(order_date,'%d-%m-%Y')
-			order_date_start = order_date.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
-			order_date_end   = order_date_start+timedelta(1)
 		else:
-			order_date_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
-			order_date_end   = order_date_start+timedelta(1)
+			order_date = timezone.now()
+
+		order_date_start = order_date.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
+		order_date_end   = order_date_start+timedelta(1)
 
 		print(order_date.day, order_date.month,order_date.year,"ser")
 		
