@@ -1867,18 +1867,18 @@ class InventoryOrder(IsInventoryAdminUser,View):
 
 		if order_date:
 			order_date = datetime.strptime(order_date,'%d-%m-%Y')
+			order_date_start = order_date.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
+			order_date_end   = order_date_start+timedelta(1)
 		else:
-			order_date = date.today()
+			order_date_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
+			order_date_end   = order_date_start+timedelta(1)
 
-		start_date  = order_date.replace(hour=0,minute=0,second=0,microsecond=0)
-		end_date = order_date.replace(hour=23,minute=59,second=59,microsecond=0)
-
-		print(search,order_date,"ser")
+		print(order_date.day, order_date.month,order_date.year,"ser")
 		
 		calendar_order_schedules_list       = []
 		calendar_order_schedules_duplicates = []
 		# orders       = CleaningTeam.objects.select_related('team_leader','order_scheduler__order').filter(order_scheduler__start_at__date=order_date).filter(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler__work_status='CLEANING_IN_PROGRESS')|Q(order_scheduler__work_status='CLEANING_FULFILLED')).annotate(duplicate=Concat('order_scheduler__start_at','order_scheduler__order__id','team_leader__id',output_field=CharField()))
-		calendar_order_schedules_alls       = CleaningTeam.objects.filter(order_scheduler__start_at__date__range=(start_date,end_date)).filter(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler__work_status='CLEANING_IN_PROGRESS')|Q(order_scheduler__work_status='CLEANING_FULFILLED')).annotate(duplicate=Concat('order_scheduler__start_at','order_scheduler__order__id','team_leader__id',output_field=CharField()))
+		calendar_order_schedules_alls       = CleaningTeam.objects.filter(order_scheduler__start_at__day=str(order_date_start.day),order_scheduler__start_at__month=str(order_date_start.month),order_scheduler__start_at__year=str(order_date_start.year)).filter(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler__work_status='CLEANING_IN_PROGRESS')|Q(order_scheduler__work_status='CLEANING_FULFILLED')).annotate(duplicate=Concat('order_scheduler__start_at','order_scheduler__order__id','team_leader__id',output_field=CharField()))
 		for calendar_order_schedules_all in calendar_order_schedules_alls:
 			if not calendar_order_schedules_all.duplicate in calendar_order_schedules_duplicates:
 				calendar_order_schedules_list.append(calendar_order_schedules_all.order_scheduler.id)
