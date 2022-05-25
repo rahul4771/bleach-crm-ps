@@ -1866,7 +1866,7 @@ class InventoryOrder(IsInventoryAdminUser,View):
 		order_date = request.GET.get('order_date')          
 
 		if order_date:
-			order_date = datetime.strptime(order_date,'%d-%m-%Y')
+			order_date = datetime.strptime(order_date,'%Y-%m-%d')
 		else:
 			order_date = date.today()
 
@@ -1875,7 +1875,7 @@ class InventoryOrder(IsInventoryAdminUser,View):
 		calendar_order_schedules_list       = []
 		calendar_order_schedules_duplicates = []
 		# orders       = CleaningTeam.objects.select_related('team_leader','order_scheduler__order').filter(order_scheduler__start_at__date=order_date).filter(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler__work_status='CLEANING_IN_PROGRESS')|Q(order_scheduler__work_status='CLEANING_FULFILLED')).annotate(duplicate=Concat('order_scheduler__start_at','order_scheduler__order__id','team_leader__id',output_field=CharField()))
-		orders       = CleaningTeam.objects.filter(order_scheduler__start_at__date='2020-12-02').filter(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler__work_status='CLEANING_IN_PROGRESS')|Q(order_scheduler__work_status='CLEANING_FULFILLED')).annotate(duplicate=Concat('order_scheduler__start_at','order_scheduler__order__id','team_leader__id',output_field=CharField()))
+		orders       = CleaningTeam.objects.filter(order_scheduler__start_at__date=order_date).filter(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler__work_status='CLEANING_IN_PROGRESS')|Q(order_scheduler__work_status='CLEANING_FULFILLED')).annotate(duplicate=Concat('order_scheduler__start_at','order_scheduler__order__id','team_leader__id',output_field=CharField()))
 		# for calendar_order_schedules_all in calendar_order_schedules_alls:
 		# 	if not calendar_order_schedules_all.duplicate in calendar_order_schedules_duplicates:
 		# 		calendar_order_schedules_list.append(calendar_order_schedules_all.order_scheduler.id)
