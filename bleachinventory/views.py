@@ -50,9 +50,10 @@ class InventoryHome(IsInventoryAdminUser,View):
 		if order_date:
 			order_date = datetime.strptime(order_date,'%d-%m-%Y')
 		else:
-			order_date = date.today()
+			order_date = timezone.now()
 
-		print(order_date,"ser")
+		order_date_start = order_date.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
+		order_date_end   = order_date_start+timedelta(1)
 		
 		purchase_items = items.filter(Q(item_status='out_of_stock') | Q(item_status='about_to_finish')).prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.all(),to_attr='units'))
 		
@@ -70,7 +71,8 @@ class InventoryHome(IsInventoryAdminUser,View):
 
 		calendar_order_schedules_list       = []
 		calendar_order_schedules_duplicates = []
-		calendar_order_schedules_alls       = CleaningTeam.objects.select_related('team_leader','order_scheduler__order').filter(order_scheduler__start_at__date=order_date).filter(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler__work_status='CLEANING_IN_PROGRESS')|Q(order_scheduler__work_status='CLEANING_FULFILLED')).annotate(duplicate=Concat('order_scheduler__start_at','order_scheduler__order__id','team_leader__id',output_field=CharField()))
+		calendar_order_schedules_alls = CleaningTeam.objects.select_related('team_leader','order_scheduler__order').filter(order_scheduler__start_at__gte=order_date_start,order_scheduler__start_at__lte=order_date_end).filter(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler__work_status='CLEANING_IN_PROGRESS')|Q(order_scheduler__work_status='CLEANING_FULFILLED')).annotate(duplicate=Concat('order_scheduler__start_at','order_scheduler__order__id','team_leader__id',output_field=CharField()))
+		
 		for calendar_order_schedules_all in calendar_order_schedules_alls:
 			if not calendar_order_schedules_all.duplicate in calendar_order_schedules_duplicates:
 				calendar_order_schedules_list.append(calendar_order_schedules_all.order_scheduler.id)
@@ -1872,13 +1874,11 @@ class InventoryOrder(IsInventoryAdminUser,View):
 
 		order_date_start = order_date.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
 		order_date_end   = order_date_start+timedelta(1)
-
-		print(order_date.day, order_date.month,order_date.year,"ser")
 		
 		calendar_order_schedules_list       = []
 		calendar_order_schedules_duplicates = []
-		# orders       = CleaningTeam.objects.select_related('team_leader','order_scheduler__order').filter(order_scheduler__start_at__date=order_date).filter(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler__work_status='CLEANING_IN_PROGRESS')|Q(order_scheduler__work_status='CLEANING_FULFILLED')).annotate(duplicate=Concat('order_scheduler__start_at','order_scheduler__order__id','team_leader__id',output_field=CharField()))
-		calendar_order_schedules_alls       = CleaningTeam.objects.filter(order_scheduler__start_at__gte=order_date_start,order_scheduler__start_at__lte=order_date_end).filter(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler__work_status='CLEANING_IN_PROGRESS')|Q(order_scheduler__work_status='CLEANING_FULFILLED')).annotate(duplicate=Concat('order_scheduler__start_at','order_scheduler__order__id','team_leader__id',output_field=CharField()))
+		calendar_order_schedules_alls = CleaningTeam.objects.select_related('team_leader','order_scheduler__order').filter(order_scheduler__start_at__gte=order_date_start,order_scheduler__start_at__lte=order_date_end).filter(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler__work_status='CLEANING_IN_PROGRESS')|Q(order_scheduler__work_status='CLEANING_FULFILLED')).annotate(duplicate=Concat('order_scheduler__start_at','order_scheduler__order__id','team_leader__id',output_field=CharField()))
+		
 		for calendar_order_schedules_all in calendar_order_schedules_alls:
 			if not calendar_order_schedules_all.duplicate in calendar_order_schedules_duplicates:
 				calendar_order_schedules_list.append(calendar_order_schedules_all.order_scheduler.id)
@@ -1925,12 +1925,10 @@ class PendingItems(IsInventoryAdminUser,View):
 	def get(self,request):
 		search = request.GET.get('search')
 
-		# if search:
-		# 	checkout_items = CheckOutItems.objects.filter(is_checked_in=False,visit__stock_in_initiated=True).filter(Q(service_item__item__is_reusable=True)|Q(item__is_reusable=True)).filter(Q(visit__order__order_no__icontains=search)|Q(is_collected_by__name__icontains=search)|Q(service_item__item__name__icontains=search)|Q(item__name__icontains=search)|Q(service_item__item__item_code__icontains=search)|Q(item__item_code__icontains=search)).select_related('visit').prefetch_related(Prefetch('visit__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team'))
-		# else:
-		# 	checkout_items = CheckOutItems.objects.filter(is_checked_in=False,visit__stock_in_initiated=True).filter(Q(service_item__item__is_reusable=True)|Q(item__is_reusable=True)).select_related('visit').prefetch_related(Prefetch('visit__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team'))
-		
-		checkout_items = CleaningTeam.objects.filter(order_scheduler__start_at__gte='2022-05-30',order_scheduler__start_at__lte='2022-05-31').filter(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler__work_status='CLEANING_IN_PROGRESS')|Q(order_scheduler__work_status='CLEANING_FULFILLED')).annotate(duplicate=Concat('order_scheduler__start_at','order_scheduler__order__id','team_leader__id',output_field=CharField()))
+		if search:
+			checkout_items = CheckOutItems.objects.filter(is_checked_in=False,visit__stock_in_initiated=True).filter(Q(service_item__item__is_reusable=True)|Q(item__is_reusable=True)).filter(Q(visit__order__order_no__icontains=search)|Q(is_collected_by__name__icontains=search)|Q(service_item__item__name__icontains=search)|Q(item__name__icontains=search)|Q(service_item__item__item_code__icontains=search)|Q(item__item_code__icontains=search)).select_related('visit').prefetch_related(Prefetch('visit__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team'))
+		else:
+			checkout_items = CheckOutItems.objects.filter(is_checked_in=False,visit__stock_in_initiated=True).filter(Q(service_item__item__is_reusable=True)|Q(item__is_reusable=True)).select_related('visit').prefetch_related(Prefetch('visit__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team'))
 		
 		#PAGINATION ITEMS
 		no_of_entries = request.GET.get('no_of_entries')
