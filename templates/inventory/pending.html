@@ -68,6 +68,7 @@
                                 </th>
                                <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                     Checkout Date
+                                    {{checkout_items|length}}
                                 </th>
                                
     
@@ -79,6 +80,7 @@
                         
                         <tr>
                             <td class="td-md-width">
+                                {{item.start_at|date:'d-m-Y'}}
                                 {{item.visit.order.order_no}}
                             </td>
                             <td class="text-center">

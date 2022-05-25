@@ -1922,10 +1922,12 @@ class PendingItems(IsInventoryAdminUser,View):
 	def get(self,request):
 		search = request.GET.get('search')
 
-		if search:
-			checkout_items = CheckOutItems.objects.filter(is_checked_in=False,visit__stock_in_initiated=True).filter(Q(service_item__item__is_reusable=True)|Q(item__is_reusable=True)).filter(Q(visit__order__order_no__icontains=search)|Q(is_collected_by__name__icontains=search)|Q(service_item__item__name__icontains=search)|Q(item__name__icontains=search)|Q(service_item__item__item_code__icontains=search)|Q(item__item_code__icontains=search)).select_related('visit').prefetch_related(Prefetch('visit__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team'))
-		else:
-			checkout_items = CheckOutItems.objects.filter(is_checked_in=False,visit__stock_in_initiated=True).filter(Q(service_item__item__is_reusable=True)|Q(item__is_reusable=True)).select_related('visit').prefetch_related(Prefetch('visit__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team'))
+		# if search:
+		# 	checkout_items = CheckOutItems.objects.filter(is_checked_in=False,visit__stock_in_initiated=True).filter(Q(service_item__item__is_reusable=True)|Q(item__is_reusable=True)).filter(Q(visit__order__order_no__icontains=search)|Q(is_collected_by__name__icontains=search)|Q(service_item__item__name__icontains=search)|Q(item__name__icontains=search)|Q(service_item__item__item_code__icontains=search)|Q(item__item_code__icontains=search)).select_related('visit').prefetch_related(Prefetch('visit__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team'))
+		# else:
+		# 	checkout_items = CheckOutItems.objects.filter(is_checked_in=False,visit__stock_in_initiated=True).filter(Q(service_item__item__is_reusable=True)|Q(item__is_reusable=True)).select_related('visit').prefetch_related(Prefetch('visit__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team'))
+		
+		checkout_items = CleaningTeam.objects.all()
 		
 		#PAGINATION ITEMS
 		no_of_entries = request.GET.get('no_of_entries')
