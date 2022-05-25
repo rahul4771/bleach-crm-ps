@@ -169,12 +169,9 @@
                         {% for visit in visits %}
                         <tr>
                             <td>
-                                {{visit.team_leader.name}}
                                 {{visit.start_at|time:"g:i A"}}
                             </td>
                             <td>
-                                {{visit.start_at}}
-                                {{visit.order_scheduler.order.order_no}}
                                 {{visit.order.order_no}}
                             </td>
                             <td>
