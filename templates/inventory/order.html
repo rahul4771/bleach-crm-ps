@@ -170,10 +170,10 @@
                         <tr>
                             <td>
                                 {{visit.team_leader.name}}
-                                {{visit.start_at|time:"d-m-Y"}}
                                 {{visit.start_at|time:"g:i A"}}
                             </td>
                             <td>
+                                {{visit.start_at|date:"d-m-Y"}}
                                 {{visit.order_scheduler.order.order_no}}
                                 {{visit.order.order_no}}
                             </td>
