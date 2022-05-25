@@ -68,18 +68,17 @@ class InventoryHome(IsInventoryAdminUser,View):
 
 		teamassign_to_date             = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)
 
-		# calendar_order_schedules_list       = []
-		# calendar_order_schedules_duplicates = []
-		# calendar_order_schedules_alls       = CleaningTeam.objects.select_related('team_leader','order_scheduler__order').filter(order_scheduler__start_at__date=order_date).filter(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler__work_status='CLEANING_IN_PROGRESS')|Q(order_scheduler__work_status='CLEANING_FULFILLED')).annotate(duplicate=Concat('order_scheduler__start_at','order_scheduler__order__id','team_leader__id',output_field=CharField()))
-		# for calendar_order_schedules_all in calendar_order_schedules_alls:
-		# 	if not calendar_order_schedules_all.duplicate in calendar_order_schedules_duplicates:
-		# 		calendar_order_schedules_list.append(calendar_order_schedules_all.order_scheduler.id)
-		# 		calendar_order_schedules_duplicates.append(calendar_order_schedules_all.duplicate)
+		calendar_order_schedules_list       = []
+		calendar_order_schedules_duplicates = []
+		calendar_order_schedules_alls       = CleaningTeam.objects.select_related('team_leader','order_scheduler__order').filter(order_scheduler__start_at__date=order_date).filter(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler__work_status='CLEANING_IN_PROGRESS')|Q(order_scheduler__work_status='CLEANING_FULFILLED')).annotate(duplicate=Concat('order_scheduler__start_at','order_scheduler__order__id','team_leader__id',output_field=CharField()))
+		for calendar_order_schedules_all in calendar_order_schedules_alls:
+			if not calendar_order_schedules_all.duplicate in calendar_order_schedules_duplicates:
+				calendar_order_schedules_list.append(calendar_order_schedules_all.order_scheduler.id)
+				calendar_order_schedules_duplicates.append(calendar_order_schedules_all.duplicate)
 		
-		# print(calendar_order_schedules_list,calendar_order_schedules_duplicates,calendar_order_schedules_alls,"datass")
+		print(calendar_order_schedules_list,calendar_order_schedules_duplicates,calendar_order_schedules_alls,"datass")
 
-		# orders = OrderScheduler.objects.filter(id__in=calendar_order_schedules_list).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
-		orders = OrderScheduler.objects.filter(is_active=True)
+		orders = OrderScheduler.objects.filter(id__in=calendar_order_schedules_list).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
 		
 		return render(request,'inventory/home.html',{"items_count":items_count,"recent_items":recent_items,"purchase_items":purchase_items,"orders":orders,"purchase_orders":purchase_orders,"po_count":po_count,"request_orders":request_orders,"ro_count":ro_count,"order_date":order_date,"orders":orders})
 
