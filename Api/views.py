@@ -735,11 +735,10 @@ class LeaveScheduleAPI(APIView):
 			leaveschedules = None
 			newdf1 = []
 
-		#creating month range and getting
+		#creating month range and getting start date and end date for occupied members query
 		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
 		monthdate2 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)-relativedelta(days=1)
 
-		
 		occupied_members           = CleaningTeamMember.objects.select_related('team__order_scheduler').filter( Q (Q(is_active=True) & Q(Q(start_at__gte=monthdate1)&Q(end_at__lte=monthdate2)) ) )
 		occupied_member_serializer = OccupiedMembersSerializer(occupied_members,many=True).data
 
@@ -823,11 +822,13 @@ class LeaveSchedulePopupAPI(APIView):
 		staff_id  	    = request.GET.get('staff_id')
 		try:
 			occupied_date   = datetime.strptime(request.GET.get('occupied_date'),'%Y-%m-%d')
+			occupied_date_start = occupied_date.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
+			occupied_date_end   = occupied_date_start+timedelta(1)
 		except:
 			occupied_date   = None
 
 		try:
-			cleaning_members = CleaningTeamMember.objects.select_related('team__order_scheduler__order').filter(Q(Q(start_at__date=occupied_date)|Q(end_at__date=occupied_date))&Q(member__id=staff_id))
+			cleaning_members = CleaningTeamMember.objects.select_related('team__order_scheduler__order').filter(Q(Q(start_at__gte=occupied_date_start)&Q(end_at__lte=occupied_date_end))&Q(member__id=staff_id))
 		except:
 			cleaning_members = None
 
