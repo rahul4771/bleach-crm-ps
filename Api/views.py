@@ -735,7 +735,12 @@ class LeaveScheduleAPI(APIView):
 			leaveschedules = None
 			newdf1 = []
 
-		occupied_members           = CleaningTeamMember.objects.select_related('team__order_scheduler').filter( Q(Q(is_active=True) & Q(Q(Q(start_at__month=month)&Q(start_at__year=year)) | Q(Q(end_at__month=month)&Q(end_at__year=year))) ) )
+		#creating month range and getting
+		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
+		monthdate2 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)-relativedelta(days=1)
+
+		
+		occupied_members           = CleaningTeamMember.objects.select_related('team__order_scheduler').filter( Q (Q(is_active=True) & Q(Q(start_at__gte=monthdate1)&Q(end_at__lte=monthdate2)) ) )
 		occupied_member_serializer = OccupiedMembersSerializer(occupied_members,many=True).data
 
 		response_dict["staffs"]    = newdf1
