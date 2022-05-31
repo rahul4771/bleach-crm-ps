@@ -44,7 +44,7 @@ def random_char(char_num):
 class AdminHome(IsAdmin,View):
 	def get(self,request):
 		
-		edtusers = UserProfile.objects.filter(user_type='CLEANER')
+		edtusers = UserProfile.objects.all()
 
 		user_mobiles = 10000000
 
