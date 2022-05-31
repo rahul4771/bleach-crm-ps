@@ -38,26 +38,8 @@ from django.core.mail import send_mail,EmailMultiAlternatives
 from django.template.loader import render_to_string
 # Create your views here.
 
-def random_char(char_num):
-	return ''.join(random.choice(string.ascii_lowercase) for _ in range(char_num))
-
 class AdminHome(IsAdmin,View):
 	def get(self,request):
-		
-		edtusers = UserProfile.objects.all()
-
-		user_mobiles = 20000000
-
-		for user in edtusers:
-			
-			user_mobiles=int(user_mobiles+1)
-			user_email = random_char(7)+"@bleachkwtest.com"
-			
-			user.email = user_email
-			user.mobile_number = user_mobiles
-			user.bleach_mobile_number = user_mobiles
-			user.save()
-
 		
 		#cleaners and leaders
 		cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER')

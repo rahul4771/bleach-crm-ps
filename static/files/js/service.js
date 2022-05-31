@@ -5,11 +5,11 @@
 // var api ='https://my.bleachkw.com';
 // var url ='https://my.bleachkw.com';
 
-// var api ='http://34.220.82.173:8000';
-// var url ='http://34.220.82.173:8000';
+var api ='http://34.220.82.173:8000';
+var url ='http://34.220.82.173:8000';
 
-var api ='http://127.0.0.1:8000';
-var url ='http://127.0.0.1:8000';
+// var api ='http://127.0.0.1:8000';
+// var url ='http://127.0.0.1:8000';
 
 
 async function _post(url,data){
