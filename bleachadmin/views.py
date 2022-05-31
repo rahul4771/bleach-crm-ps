@@ -46,11 +46,14 @@ class AdminHome(IsAdmin,View):
 		
 		edtusers = UserProfile.objects.all()
 
-		user_mobiles = 10000000
+		user_mobiles = 20000000
 
 		for user in edtusers:
+			
 			user_mobiles=int(user_mobiles+1)
-			user.email = random_char(7)+"@bleachkwtest.com"
+			user_email = random_char(7)+"@bleachkwtest.com"
+			
+			user.email = user_email
 			user.mobile_number = user_mobiles
 			user.bleach_mobile_number = user_mobiles
 			user.save()
