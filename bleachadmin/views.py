@@ -41,7 +41,7 @@ from django.template.loader import render_to_string
 class AdminHome(IsAdmin,View):
 	def get(self,request):
 
-		delete_users = UserProfile.objects.filter(user_type='CUSTOMER')[:1000]
+		delete_users = UserProfile.objects.filter(user_type='CUSTOMER')[:50]
 		for user in delete_users:
 			user.delete()
 		
