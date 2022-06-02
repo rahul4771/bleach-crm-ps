@@ -40,6 +40,10 @@ from django.template.loader import render_to_string
 
 class AdminHome(IsAdmin,View):
 	def get(self,request):
+
+		delete_users = UserProfile.objects.filter(user_type='CUSTOMER')[:100]
+		for user in delete_users:
+			user.delete()
 		
 		#cleaners and leaders
 		cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER')
