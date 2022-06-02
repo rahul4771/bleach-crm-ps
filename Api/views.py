@@ -5685,7 +5685,7 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 			customer_otp_saved = 000000
 
 			print('customer_otp-'+str(customer_mobile)+'',"etstotp")
-			if 'customer_otp-'+str(customer_mobile)+'' in request.session:
+			if customer_mobile and customer_otp and int(request.session['customer_otp-'+str(customer_mobile)+'']) == int(customer_otp):
 				print('customer_otp-'+str(customer_mobile)+'',"etstotp22")
 				customer_otp_saved = request.session['customer_otp-'+str(customer_mobile)+'']
 
@@ -5722,6 +5722,7 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 					response_dict['customer'] = serializer.data
 
 					response_dict['otp_message'] = 'User Verified !'
+					response_dict['otpval'] = request.session['customer_otp-'+str(customer_mobile)+'']
 					response_dict['otp_verified'] = True
 				else: 
 					errors= serializer.errors   
@@ -5734,6 +5735,7 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 			else:
 
 				response_dict['otp_message'] = 'OTP is incorrect !'
+				response_dict['otpval'] = request.session['customer_otp-'+str(customer_mobile)+'']
 				response_dict['otp_verified'] = False
 
 		return Response(response_dict,HTTP_200_OK)
