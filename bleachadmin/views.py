@@ -38,12 +38,24 @@ from django.core.mail import send_mail,EmailMultiAlternatives
 from django.template.loader import render_to_string
 # Create your views here.
 
+
 class AdminHome(IsAdmin,View):
 	def get(self,request):
 
-		delete_users = UserProfile.objects.filter(user_type='CUSTOMER')[:50]
-		for user in delete_users:
-			user.delete()
+		edtusers = UserProfile.objects.all()
+
+		user_mobiles = 20000000
+
+		for user in edtusers:
+			
+			user_mobiles=int(user_mobiles+1)
+			user_email = str(user_mobiles)+"@bleachkwtest.com"
+			
+			user.email = user_email
+			user.mobile_number = user_mobiles
+			user.bleach_mobile_number = user_mobiles
+			user.save()
+
 		
 		#cleaners and leaders
 		cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER')
