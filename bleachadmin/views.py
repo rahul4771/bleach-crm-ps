@@ -55,6 +55,7 @@ class AdminHome(IsAdmin,View):
 			user.mobile_number = user_mobiles
 			user.bleach_mobile_number = user_mobiles
 			user.save()
+			print(user,"ser")
 
 		
 		#cleaners and leaders
