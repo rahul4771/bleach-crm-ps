@@ -58,7 +58,7 @@
             <li class="lhs_subscription"><a href="{% url 'common_items:active-subscriptions' %}" title="Active Subscriptions"><span>Subscriptions</span></a></li>
             <li class="lhs-resources border"><a href="{% url 'common_items:resource-management' %}" title="Resources"><span>Resources</span></a></li>
             <br> <br>
-            <li class="lhs-new-enquiry cap"><a href="{% url 'common_items:newenquiry' %}"><span>New Enquiry</span></a></li>
+            {% comment %} <li class="lhs-new-enquiry cap"><a href="{% url 'common_items:newenquiry' %}"><span>New Enquiry</span></a></li> {% endcomment %}
             <li class="lhs-addfeedback cap"><a href="{% url 'agent:new-feedback' %}"><span>Add Feedback</span></a></li>
             <li class="lhs-raiseticket cap border"><a href="{% url 'common_items:raise-tickets' %}"><span>Raise Ticket</span></a></li>
             </ul>
