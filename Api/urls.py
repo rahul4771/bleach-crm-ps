@@ -78,6 +78,7 @@ urlpatterns = [
 	url(r'^external_customers/$',views.ExternalCustomersView.as_view(),name='api-external-customers'),
 	url(r'^item_units/$',views.ItemUnitsProduct.as_view(),name='api-item-units'),
 	url(r'^item_stores/$',views.ItemStores.as_view(),name='api-item-stores'),
+	url(r'^item_stores_test/$',views.ItemStoresAPI.as_view(),name='api-item-stores'),
 	###Team Leader Mobile app API'S
 	url(r'^login/$',views.LoginAPI.as_view(),name='api-login'),
 	url(r'^tl/home/$',views.TlHomeAPI.as_view(),name='api-stlhome'),
@@ -107,7 +108,5 @@ urlpatterns = [
 	url(r'^evaluation-booking-customer-otp-generation/$',views.EvaluationBookingCustomerOtpGenerationAPI.as_view(),name='evaluation-booking-customer-otp-generation'),
 	url(r'^evaluation-booking-customer-otp-verification/$',views.EvaluationBookingCustomerOtpVerificationAPI.as_view(),name='evaluation-booking-customer-otp-verification'),
 	url(r'^evaluation-booking-slots/$',views.GetEvaluationBookingSlots.as_view(),name='evaluation-booking-slots'),
-
-	url(r'^test-mobile-upate/$',views.TestMobEmailUpdate.as_view(),name='test-mobile-update'),
 
 ]
