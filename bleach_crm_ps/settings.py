@@ -74,7 +74,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
+SESSION_ENGINE = "django.contrib.sessions.backends.file"
 
 
 ROOT_URLCONF = 'bleach_crm_ps.urls'
