@@ -416,14 +416,6 @@ class ClientDetails(IsAuthenticated,View):
 		if fil_customertype:
 			filters            = functools.reduce(operator.and_,filters)
 			client_details     = client_details.filter(filters)
-
-		# edtusers = UserProfile.objects.filter(user_type='CUSTOMER',is_active=True)
-
-		# for testuser in edtusers:
-		# 	testuser.phone_number = 20003456
-		# 	testuser.save()
-
-		Governorate.objects.create(name='goar')
 		
 		#PAGINATION CLIENTS
 		no_of_entries = request.GET.get('no_of_entries')
