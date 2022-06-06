@@ -5688,66 +5688,59 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 		except:
 			response_dict['existing_customer'] = False
 
-			customer_otp_saved = 000000
-
 			print('customerotp',"etstotp")
+
+			session_otp = request.session.get('customerotp',False)
+			print(session_otp,"otopp")
 			
-			if 'customerotp' in request.session:
-				if int(request.session['customerotp']) == int(customer_otp):
-					print('customerotp',"etstotp22")
-					customer_otp_saved = request.session['customerotp']
+			if int(session_otp) == int(customer_otp):
 
-					customer_data = json.dumps(request.data)
-					customer_data = json.loads(customer_data)
+				customer_data = json.dumps(request.data)
+				customer_data = json.loads(customer_data)
 
-					customer_data['mobile_number'] = customer_mobile
+				customer_data['mobile_number'] = customer_mobile
+				
+				serializer = UserProfileSerializer(data=customer_data)
 
-					# print(request.data['name'][:4],str(request.data['mobile_number'])[:4],"chambb")
+				if serializer.is_valid():   
+					customer = serializer.save(username=generate_random_username(),user_type='CUSTOMER')
 					
-					serializer = UserProfileSerializer(data=customer_data)
+					print(customer,"custmr")
+					#generating a password using customer name and mobile
+					customer_password = str(customer.username)[:4]+'_'+str(customer.mobile_number)[:4]
 
-					if serializer.is_valid():   
-						customer = serializer.save(username=generate_random_username(),user_type='CUSTOMER')
-						
-						print(customer,"custmr")
-						#generating a password using customer name and mobile
-						customer_password = str(customer.username)[:4]+'_'+str(customer.mobile_number)[:4]
+					#shuffling the generated password
+					random_password = ''.join(random.sample(customer_password,len(customer_password)))
 
-						#shuffling the generated password
-						random_password = ''.join(random.sample(customer_password,len(customer_password)))
+					customer.set_password(random_password)
+					customer.save()
 
-						customer.set_password(random_password)
-						customer.save()
+					#authenticating/logging in customer
+					user = authenticate(username=customer.username,password=random_password)
 
-						#authenticating/logging in customer
-						user = authenticate(username=customer.username,password=random_password)
+					#login token generation
+					t, c = Token.objects.get_or_create(user=customer)
+					response_dict['token']               = t.key
+					
+					response_dict['success']  = True 
+					response_dict['customer'] = serializer.data
 
-						#login token generation
-						t, c = Token.objects.get_or_create(user=customer)
-						response_dict['token']               = t.key
-						
-						response_dict['success']  = True 
-						response_dict['customer'] = serializer.data
+					response_dict['otp_message'] = 'User Verified !'
+					response_dict['otp_verified'] = True
 
-						response_dict['otp_message'] = 'User Verified !'
-						response_dict['otp_verified'] = True
+					del request.session['customerotp']
+					request.session.modified = True
+					
+				else: 
+					errors= serializer.errors   
+					key=tuple(errors.keys())[0] 
+					error=errors[key]
+					response_dict['Error']=key +':'+ error[0]
+					response_dict['Error_List'] = serializer.errors
+					response_dict['otp_message'] = 'Please fill the form correctly !'
 
-						del request.session['customerotp']
-						request.session.modified = True
-						
-					else: 
-						errors= serializer.errors   
-						key=tuple(errors.keys())[0] 
-						error=errors[key]
-						response_dict['Error']=key +':'+ error[0]
-						response_dict['Error_List'] = serializer.errors
-						response_dict['otp_message'] = 'Please fill the form correctly !'
-
-				else:
-					response_dict['otp_message'] = 'OTP is incorrect !'
-					response_dict['otp_verified'] = False
 			else:
-				response_dict['otp_message'] = 'Data Missing !'
+				response_dict['otp_message'] = 'OTP is incorrect !'
 				response_dict['otp_verified'] = False
 
 		return Response(response_dict,HTTP_200_OK)
