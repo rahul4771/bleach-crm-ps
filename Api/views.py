@@ -5747,18 +5747,16 @@ class TestMobEmailUpdate(APIView):
 	def get(self,request):
 		response_dict = {}
 		response_dict['success'] = False
-		testusers = UserProfile.objects.all()
+		testusers = UserProfile.objects.filter(user_type='CUSTOMER')
 
-		mobile = 20000000
+		customerid = 10000000
 
 		for user in testusers:
-			mobile = int(mobile+1)
+			customerid = int(customerid+1)
 
-			user.mobile_number = mobile
-			user.bleach_mobile_number = mobile
-			user.email = str(mobile)+"@bleachtest.com"
+			user.customer_id = customerid
 			user.save()
-			response_dict['mobile'] = mobile
+			response_dict['mobile'] = customerid
 			response_dict['success'] = True
 
 		return Response(response_dict,HTTP_200_OK)
