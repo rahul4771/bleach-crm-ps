@@ -4894,3 +4894,7 @@ class InvestigationDetails(IsAgent,View):
 		for media in investigation_details.investigationmedias:
 			print(media.media.url,"ul")
 		return render(request,"agent/ticket/Investigation.html",{'investigation_details':investigation_details})
+
+class TestPage(IsAgent,View):
+	def get(self,request):
+		return render(request,"agent/ticket/Investigation.html",{})
