@@ -5744,7 +5744,7 @@ class TestMobEmailUpdate(APIView):
 	permission_classes  	= (AllowAny,)
 	authentication_classes  = ()
 	
-	def post(self,request):
+	def get(self,request):
 		response_dict['success'] = False
 		testusers = UserProfile.objects.all()
 
