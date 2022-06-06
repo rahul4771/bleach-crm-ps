@@ -5686,7 +5686,7 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 
 			print('customer_otp-'+str(customer_mobile)+'',"etstotp")
 			
-			if request.session['customer_otp-'+str(customer_mobile)+''] and customer_mobile and customer_otp:
+			if 'customer_otp-'+str(customer_mobile)+'' in request.session:
 				if int(request.session['customer_otp-'+str(customer_mobile)+'']) == int(customer_otp):
 					print('customer_otp-'+str(customer_mobile)+'',"etstotp22")
 					customer_otp_saved = request.session['customer_otp-'+str(customer_mobile)+'']
