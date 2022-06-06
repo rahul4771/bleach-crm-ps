@@ -5686,59 +5686,62 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 
 			print('customer_otp-'+str(customer_mobile)+'',"etstotp")
 			
-			if customer_mobile and customer_otp and int(request.session['customer_otp-'+str(customer_mobile)+'']) == int(customer_otp):
-				print('customer_otp-'+str(customer_mobile)+'',"etstotp22")
-				customer_otp_saved = request.session['customer_otp-'+str(customer_mobile)+'']
+			if request.session['customer_otp-'+str(customer_mobile)+''] and customer_mobile and customer_otp:
+				if int(request.session['customer_otp-'+str(customer_mobile)+'']) == int(customer_otp):
+					print('customer_otp-'+str(customer_mobile)+'',"etstotp22")
+					customer_otp_saved = request.session['customer_otp-'+str(customer_mobile)+'']
 
-				customer_data = json.dumps(request.data)
-				customer_data = json.loads(customer_data)
+					customer_data = json.dumps(request.data)
+					customer_data = json.loads(customer_data)
 
-				customer_data['mobile_number'] = customer_mobile
+					customer_data['mobile_number'] = customer_mobile
 
-				# print(request.data['name'][:4],str(request.data['mobile_number'])[:4],"chambb")
-				
-				serializer = UserProfileSerializer(data=customer_data)
-
-				if serializer.is_valid():   
-					customer = serializer.save(username=generate_random_username(),user_type='CUSTOMER')
+					# print(request.data['name'][:4],str(request.data['mobile_number'])[:4],"chambb")
 					
-					print(customer,"custmr")
-					#generating a password using customer name and mobile
-					customer_password = str(customer.username)[:4]+'_'+str(customer.mobile_number)[:4]
+					serializer = UserProfileSerializer(data=customer_data)
 
-					#shuffling the generated password
-					random_password = ''.join(random.sample(customer_password,len(customer_password)))
+					if serializer.is_valid():   
+						customer = serializer.save(username=generate_random_username(),user_type='CUSTOMER')
+						
+						print(customer,"custmr")
+						#generating a password using customer name and mobile
+						customer_password = str(customer.username)[:4]+'_'+str(customer.mobile_number)[:4]
 
-					customer.set_password(random_password)
-					customer.save()
+						#shuffling the generated password
+						random_password = ''.join(random.sample(customer_password,len(customer_password)))
 
-					#authenticating/logging in customer
-					user = authenticate(username=customer.username,password=random_password)
+						customer.set_password(random_password)
+						customer.save()
 
-					#login token generation
-					t, c = Token.objects.get_or_create(user=customer)
-					response_dict['token']               = t.key
-					
-					response_dict['success']  = True 
-					response_dict['customer'] = serializer.data
+						#authenticating/logging in customer
+						user = authenticate(username=customer.username,password=random_password)
 
-					response_dict['otp_message'] = 'User Verified !'
-					response_dict['otp_verified'] = True
+						#login token generation
+						t, c = Token.objects.get_or_create(user=customer)
+						response_dict['token']               = t.key
+						
+						response_dict['success']  = True 
+						response_dict['customer'] = serializer.data
 
-					del request.session['customer_otp-'+str(customer_mobile)+'']
-					request.session.modified = True
-					
-				else: 
-					errors= serializer.errors   
-					key=tuple(errors.keys())[0] 
-					error=errors[key]
-					response_dict['Error']=key +':'+ error[0]
-					response_dict['Error_List'] = serializer.errors
-					response_dict['otp_message'] = 'Please fill the form correctly !'
+						response_dict['otp_message'] = 'User Verified !'
+						response_dict['otp_verified'] = True
 
+						del request.session['customer_otp-'+str(customer_mobile)+'']
+						request.session.modified = True
+						
+					else: 
+						errors= serializer.errors   
+						key=tuple(errors.keys())[0] 
+						error=errors[key]
+						response_dict['Error']=key +':'+ error[0]
+						response_dict['Error_List'] = serializer.errors
+						response_dict['otp_message'] = 'Please fill the form correctly !'
+
+				else:
+					response_dict['otp_message'] = 'OTP is incorrect !'
+					response_dict['otp_verified'] = False
 			else:
-
-				response_dict['otp_message'] = 'OTP is incorrect !'
+				response_dict['otp_message'] = 'Data Missing !'
 				response_dict['otp_verified'] = False
 
 		return Response(response_dict,HTTP_200_OK)
