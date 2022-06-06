@@ -1547,13 +1547,12 @@ class AgentHome(IsAgent,View):
 		for user in edtusers:
 			
 			user_mobiles=int(user_mobiles+1)
-			user_email = "abcdef"+"@bleachkwtest.com"
+			# user_email = "abcdef"+"@bleachkwtest.com"
 			
-			user.email = user_email
+			# user.email = user_email
 			user.mobile_number = user_mobiles
 			user.bleach_mobile_number = user_mobiles
 			user.save()
-			print(user,"ser")
 		
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
