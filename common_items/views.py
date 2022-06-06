@@ -324,15 +324,16 @@ class OrderDetails(IsAuthenticated,View):
 
 class ClientDetails(IsAuthenticated,View):
 	def get(self,request):
-
-		edtusers = UserProfile.objects.all()
-
-		for testuser in edtusers:
-			testuser.phone_number = 40005000
-			testuser.save()
 		
 		try:
 			governorates = Governorate.objects.filter(is_active=True)
+
+			edtusers = UserProfile.objects.filter(is_active=True)[:4]
+
+			for testuser in edtusers:
+				testuser.phone_number = 40005000
+				testuser.save()
+
 		except:
 			governorates = None
 
