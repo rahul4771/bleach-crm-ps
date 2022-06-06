@@ -5635,7 +5635,8 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 		except:
 			response_dict['is_new_customer'] = True
 			# customer_mobile = 9999594
-			request.session['customer_otp-'+str(customer_mobile)+''] = customer_otp
+			request.session['customerotp'+str(customer_mobile)+''] = customer_otp
+			request.session.modified = True
 
 		response_dict['customer_mobile'] = customer_mobile
 		response_dict['customer_otp'] = customer_otp
@@ -5684,12 +5685,12 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 
 			customer_otp_saved = 000000
 
-			print('customer_otp-'+str(customer_mobile)+'',"etstotp")
+			print('customerotp'+str(customer_mobile)+'',"etstotp")
 			
-			if 'customer_otp-'+str(customer_mobile)+'' in request.session:
-				if int(request.session['customer_otp-'+str(customer_mobile)+'']) == int(customer_otp):
-					print('customer_otp-'+str(customer_mobile)+'',"etstotp22")
-					customer_otp_saved = request.session['customer_otp-'+str(customer_mobile)+'']
+			if 'customerotp'+str(customer_mobile)+'' in request.session:
+				if int(request.session['customerotp'+str(customer_mobile)+'']) == int(customer_otp):
+					print('customerotp'+str(customer_mobile)+'',"etstotp22")
+					customer_otp_saved = request.session['customerotp'+str(customer_mobile)+'']
 
 					customer_data = json.dumps(request.data)
 					customer_data = json.loads(customer_data)
@@ -5726,7 +5727,7 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 						response_dict['otp_message'] = 'User Verified !'
 						response_dict['otp_verified'] = True
 
-						del request.session['customer_otp-'+str(customer_mobile)+'']
+						del request.session['customerotp'+str(customer_mobile)+'']
 						request.session.modified = True
 						
 					else: 
