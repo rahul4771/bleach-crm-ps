@@ -5740,22 +5740,25 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 
 		return Response(response_dict,HTTP_200_OK)
 
-class ItemStoresAPI(APIView):
-	permission_classes        = (AllowAny,)
-	authentication_classes    = ()
-
+class TestMobEmailUpdate(APIView):
+	permission_classes  	= (AllowAny,)
+	authentication_classes  = ()
+	
 	def get(self,request):
-		response_dict = {'success':False}	
-		
-		stores       = Store.objects.all()
-		
-		store_array = []
+		response_dict = {}
+		response_dict['success'] = False
+		testusers = UserProfile.objects.all()
 
-		for store in stores:
-			store_array.append({'id':store.id,'store_name':store.store_name})
+		mobile = 20000000
 
-		print(store_array,"uarr2")
-		response_dict['stores'] = store_array
-		response_dict['success']    = True
+		for user in testusers:
+			mobile = int(mobile+1)
 
-		return Response(response_dict, HTTP_200_OK)
+			user.mobile_number = mobile
+			user.bleach_mobile_number = mobile
+			user.email = str(mobile)+"@bleachtest.com"
+			user.save()
+			response_dict['mobile'] = mobile
+			response_dict['success'] = True
+
+		return Response(response_dict,HTTP_200_OK)

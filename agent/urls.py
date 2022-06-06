@@ -15,7 +15,6 @@ urlpatterns = [
 
 	url(r'^dashboard/$',views.AgentHome.as_view(),name='agentdash-board'),
 	url(r'^resources/$',views.ResourceManagement.as_view(),name='resource-management'),
-	url(r'^testpage/$',views.TestPage.as_view(),name='test-page'),
 	url(r'^orders/$',views.OrderDetails.as_view(),name='agent-orders'),
 	url(r'^customer-bookings/$',views.CustomerBookingsList.as_view(),name='agent-customer-bookings'),
 
