@@ -5725,8 +5725,8 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 					response_dict['otp_message'] = 'User Verified !'
 					response_dict['otp_verified'] = True
 
-					del request.session['customer_otp-'+str(customer_mobile)+'']
-					request.session.modified = True
+					# del request.session['customer_otp-'+str(customer_mobile)+'']
+					# request.session.modified = True
 					
 				else: 
 					errors= serializer.errors   
