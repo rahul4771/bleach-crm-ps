@@ -5636,10 +5636,10 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 			response_dict['is_new_customer'] = True
 			# customer_mobile = 9999594
 			
-			if 'customerotp' in request.session:
-				request.session['customerotp']
+			if 'customerotp'+str(customer_mobile) in request.session:
+				request.session['customerotp'+str(customer_mobile)]
 			else:
-				request.session['customerotp'] = customer_otp
+				request.session['customerotp'+str(customer_mobile)] = customer_otp
 
 			request.session.modified = True
 
@@ -5688,9 +5688,7 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 		except:
 			response_dict['existing_customer'] = False
 
-			print('customerotp',"etstotp")
-
-			session_otp = request.session.get('customerotp',False)
+			session_otp = request.session.get('customerotp'+str(customer_mobile),False)
 			print(session_otp,"otopp")
 			
 			if int(session_otp) == int(customer_otp):
@@ -5728,7 +5726,7 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 					response_dict['otp_message'] = 'User Verified !'
 					response_dict['otp_verified'] = True
 
-					del request.session['customerotp']
+					del request.session['customerotp'+str(customer_mobile)]
 					request.session.modified = True
 					
 				else: 
