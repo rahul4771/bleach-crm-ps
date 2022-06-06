@@ -75,6 +75,7 @@ MIDDLEWARE = [
 ]
 
 SESSION_ENGINE = "django.contrib.sessions.backends.file"
+SESSION_FILE_PATH  = os.path.join(BASE_DIR, 'session')
 
 
 ROOT_URLCONF = 'bleach_crm_ps.urls'
