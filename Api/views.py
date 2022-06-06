@@ -5739,24 +5739,3 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 				response_dict['otp_verified'] = False
 
 		return Response(response_dict,HTTP_200_OK)
-
-class TestMobEmailUpdate(APIView):
-	permission_classes  	= (AllowAny,)
-	authentication_classes  = ()
-	
-	def get(self,request):
-		response_dict = {}
-		response_dict['success'] = False
-		testusers = UserProfile.objects.filter(user_type='CUSTOMER')
-
-		customerid = 10000000
-
-		for user in testusers:
-			customerid = int(customerid+1)
-
-			user.customer_id = customerid
-			user.save()
-			response_dict['mobile'] = customerid
-			response_dict['success'] = True
-
-		return Response(response_dict,HTTP_200_OK)

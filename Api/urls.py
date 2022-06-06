@@ -109,6 +109,4 @@ urlpatterns = [
 	url(r'^evaluation-booking-customer-otp-verification/$',views.EvaluationBookingCustomerOtpVerificationAPI.as_view(),name='evaluation-booking-customer-otp-verification'),
 	url(r'^evaluation-booking-slots/$',views.GetEvaluationBookingSlots.as_view(),name='evaluation-booking-slots'),
 
-	url(r'^test-mobile-update/$',views.TestMobEmailUpdate.as_view(),name='test-mobile-update'),
-
 ]
