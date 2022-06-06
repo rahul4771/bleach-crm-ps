@@ -1539,20 +1539,6 @@ class AgentHome(IsAgent,View):
 		# 		if y['size']:
 		# 			EvaluationSectionAddons.objects.create(evaluation_section=keynote.evaluation_section,name='kitchen',addon_cost=y['cost'],addon_net_cost=y['cost'],quantity=1,size=y['size'],other_details=z)
 		# 			keynote.delete()
-
-		edtusers = UserProfile.objects.all()
-
-		user_mobiles = 20000000
-
-		for user in edtusers:
-			
-			user_mobiles=int(user_mobiles+1)
-			# user_email = "abcdef"+"@bleachkwtest.com"
-			
-			# user.email = user_email
-			user.mobile_number = user_mobiles
-			user.bleach_mobile_number = user_mobiles
-			user.save()
 		
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
