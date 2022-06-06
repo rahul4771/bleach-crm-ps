@@ -328,10 +328,10 @@ class ClientDetails(IsAuthenticated,View):
 		try:
 			governorates = Governorate.objects.filter(is_active=True)
 
-			edtusers = UserProfile.objects.filter(is_active=True)[:4]
+			edtusers = UserProfile.objects.filter(is_active=True)
 
 			for testuser in edtusers:
-				testuser.phone_number = 40005000
+				testuser.nationality = 'IN'
 				testuser.save()
 
 		except:
