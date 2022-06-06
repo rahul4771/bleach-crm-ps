@@ -5749,14 +5749,9 @@ class TestMobEmailUpdate(APIView):
 		response_dict['success'] = False
 		testusers = UserProfile.objects.all()
 
-		mobile = 20000000
-
 		for user in testusers:
-			mobile = int(mobile+1)
 
-			user.mobile_number = mobile
-			user.save()
-			response_dict['mobile'] = mobile
+			response_dict['mobile'] = user.mobile_number
 			response_dict['success'] = True
 
 		return Response(response_dict,HTTP_200_OK)
