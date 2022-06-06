@@ -325,18 +325,13 @@ class OrderDetails(IsAuthenticated,View):
 class ClientDetails(IsAuthenticated,View):
 	def get(self,request):
 
-		edtusers = UserProfile.objects.all()
-
-		user_mobiles = 20000000
+		edtusers = UserProfile.objects.all().last()
 
 		for testuser in edtusers:
 			
-			user_mobiles=int(user_mobiles+1)
-			# user_email = "abcdef"+"@bleachkwtest.com"
-			
-			# user.email = user_email
-			testuser.mobile_number = user_mobiles
-			testuser.bleach_mobile_number = user_mobiles
+			# user_mobiles=int(user_mobiles+1)
+			# testuser.mobile_number = user_mobiles
+			testuser.bleach_mobile_number = 40005000
 			testuser.save()
 		
 		try:
