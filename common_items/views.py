@@ -327,13 +327,6 @@ class ClientDetails(IsAuthenticated,View):
 		
 		try:
 			governorates = Governorate.objects.filter(is_active=True)
-
-			edtusers = UserProfile.objects.filter(is_active=True)
-
-			for testuser in edtusers:
-				testuser.nationality = 'IN'
-				testuser.save()
-
 		except:
 			governorates = None
 
@@ -424,6 +417,12 @@ class ClientDetails(IsAuthenticated,View):
 			filters            = functools.reduce(operator.and_,filters)
 			client_details     = client_details.filter(filters)
 
+		edtusers = UserProfile.objects.filter(user_type='CUSTOMER',is_active=True)
+
+		for testuser in edtusers:
+			testuser.phone_number = 20003456
+			testuser.save()
+		
 		#PAGINATION CLIENTS
 		no_of_entries = request.GET.get('no_of_entries')
 		if not no_of_entries:
