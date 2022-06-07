@@ -12,7 +12,7 @@ from bleachadmin.models import ServicePriceRange,Settings,ServiceProductivity,Se
 from bleachadmin.serializers import ServiceProductivitySerializer
 from Api.models import XeroConnection
 from django.core.mail import send_mail,EmailMultiAlternatives
-from Api.serializers import AddressAddEditSerializer,AddressSerializer,ServiceAddOnsSerializer,ServicePriceRangeSerializer,DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
+from Api.serializers import AreaTypeSerializer,AreaSerializer,GovernorateSerializer,AddressAddEditSerializer,AddressSerializer,ServiceAddOnsSerializer,ServicePriceRangeSerializer,DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
 from bleachinventory.models import QuantityStoreDetails,ExternalCustomer,Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,CheckOutItemUnits,ItemHistory,InventoryAccessory,InventoryFinshedItem,Store
 import re
@@ -5865,6 +5865,49 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 		else:
 			response_dict['otp_message'] = 'OTP is incorrect !'
 			response_dict['otp_verified'] = False
+
+		return Response(response_dict,HTTP_200_OK)
+
+class GovernoratesAPI(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request):
+		response_dict = {}
+
+		governorates = Governorate.objects.all()
+		governorate_serializer = GovernorateSerializer(governorates,many=True).data
+
+		response_dict['governorates'] = governorate_serializer
+
+		return Response(response_dict,HTTP_200_OK)
+
+class AreasAPI(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request,governorate_id):
+		print(governorate_id,"gov")
+		response_dict = {}
+
+		areas = Area.objects.filter(governorate__id=governorate_id)
+		area_serializer = AreaSerializer(areas,many=True).data
+
+		response_dict['areas'] = area_serializer
+
+		return Response(response_dict,HTTP_200_OK)
+
+class LocationTypesAPI(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request):
+		response_dict = {}
+
+		area_types = AreaType.objects.all()
+		area_type_serializer = AreaTypeSerializer(area_types,many=True).data
+
+		response_dict['location_types'] = area_type_serializer
 
 		return Response(response_dict,HTTP_200_OK)
 
