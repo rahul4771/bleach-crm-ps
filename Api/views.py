@@ -570,6 +570,9 @@ class PaymentResponseCredit(APIView):
 					xero_invoice = None
 
 				if xero_invoice:
+					bank_charge  = amount_paid*.025
+
+					#Payment Update
 					payment_data = {
 								"Invoice":{
 									"InvoiceNumber":xero_invoice.invoice_no
@@ -578,7 +581,7 @@ class PaymentResponseCredit(APIView):
 									"Code":"1201023"
 								},
 								"Date":payment_date_string,
-								"Amount":amount_paid,
+								"Amount":amount_paid-bank_charge,
 								"Reference":payment_history.transaction_id
 								}
 
@@ -587,13 +590,35 @@ class PaymentResponseCredit(APIView):
 														headers=header 
 													).json()
 
-
 					try:
 						created_payment = update_payment['Status']
 					except:
 						created_payment = None
 
-					if created_payment == 'OK':
+					#BankCharge Update
+					bankcharge_data = {
+								"Invoice":{
+									"InvoiceNumber":xero_invoice.invoice_no
+								},
+								"Account":{
+									"Code":"3202014"
+								},
+								"Date":payment_date_string,
+								"Amount":bank_charge,
+								"Reference":payment_history.transaction_id
+								}
+
+					update_bankcharge          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
+														json=payment_data,
+														headers=header 
+													).json()
+
+					try:
+						created_bankcharge = update_bankcharge['Status']
+					except:
+						created_bankcharge = None
+
+					if created_payment == 'OK' and created_bankcharge == 'OK':
 						xero_invoice.is_paid   = True
 						xero_invoice.paid_date = payment_date
 						xero_invoice.save()
@@ -608,6 +633,9 @@ class PaymentResponseCredit(APIView):
 					xero_invoice = None
 
 				if xero_invoice:
+					bank_charge  = amount_paid*.025
+
+					#Payment Update
 					payment_data = {
 								"Invoice":{
 									"InvoiceNumber":xero_invoice.invoice_no
@@ -616,7 +644,7 @@ class PaymentResponseCredit(APIView):
 									"Code":"1201023"
 								},
 								"Date":payment_date_string,
-								"Amount":amount_paid,
+								"Amount":amount_paid-bank_charge,
 								"Reference":payment_history.transaction_id
 								}
 
@@ -631,7 +659,30 @@ class PaymentResponseCredit(APIView):
 					except:
 						created_payment = None
 
-					if created_payment == 'OK':
+					#BankCharge Update
+					bankcharge_data = {
+								"Invoice":{
+									"InvoiceNumber":xero_invoice.invoice_no
+								},
+								"Account":{
+									"Code":"3202014"
+								},
+								"Date":payment_date_string,
+								"Amount":bank_charge,
+								"Reference":payment_history.transaction_id
+								}
+
+					update_bankcharge          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
+														json=payment_data,
+														headers=header 
+													).json()
+
+					try:
+						created_bankcharge = update_bankcharge['Status']
+					except:
+						created_bankcharge = None
+
+					if created_payment == 'OK' and created_bankcharge == 'OK':
 						xero_invoice.is_paid   = True
 						xero_invoice.paid_date = payment_date
 						xero_invoice.save()
