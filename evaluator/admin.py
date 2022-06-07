@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.contrib.sessions.models import Session
 from evaluator.models import ServiceType,LocationType,CleaningType,CleaningMethod,AreaType,CleaningSection,Evaluation,EvaluationDetails,EvaluationMedia,EvaluationBook,EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons
 # Register your models here.
 
@@ -9,7 +8,6 @@ admin.site.register(CleaningType)
 admin.site.register(CleaningMethod)
 admin.site.register(AreaType)
 admin.site.register(CleaningSection)
-admin.site.register(Session)
 
 
 class EvaluationAdmin(admin.ModelAdmin):

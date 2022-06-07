@@ -2,7 +2,7 @@ from django.shortcuts import render
 import json
 from django.template.loader import render_to_string
 from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
-from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule,Shift
+from user.models import CustomerOTP,UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule,Shift
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons,CleaningMethod,CleaningSection,ServiceType,AreaType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,Reporting,PaybackDiscount,PaybackDiscountDetails,XeroInvoice
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
@@ -5628,20 +5628,16 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 		try:
 			customer = UserProfile.objects.get(is_active=True,user_type='CUSTOMER',mobile_number=int(customer_mobile))
 			response_dict['is_new_customer'] = False
-
-			customer.evaluation_booking_otp = customer_otp
-			customer.save()
-
 		except:
 			response_dict['is_new_customer'] = True
-			# customer_mobile = 9999594
-			
-			if 'customerotp'+str(customer_mobile) in request.session:
-				request.session['customerotp'+str(customer_mobile)]
-			else:
-				request.session['customerotp'+str(customer_mobile)] = customer_otp
 
-			request.session.modified = True
+		#creating entry in otp model using customer mobile number
+		try:
+			customer = CustomerOTP.objects.get(mobile_number=customer_mobile)
+			customer.otp = customer_otp
+			customer.save()
+		except:
+			CustomerOTP.objects.create(mobile_number=customer_mobile,otp=customer_otp)
 
 		response_dict['customer_mobile'] = customer_mobile
 		response_dict['customer_otp'] = customer_otp
@@ -5658,40 +5654,47 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 		customer_otp = request.data.get('customer_otp')
 		customer_mobile = request.data.get('customer_mobile')
 
-		#checking if mobile number/customer already exists on database
 		try:
-			customer = UserProfile.objects.get(is_active=True,user_type='CUSTOMER',evaluation_booking_otp=int(customer_otp))
-			customer.evaluation_booking_otp = 'abcdef'
-			customer.save()
-			response_dict['existing_customer'] = True
-			response_dict['customer'] = UserProfileSerializer(instance=customer,many=False).data
-
-			#generating a password using customer name and mobile
-			customer_password = str(customer.username)[:4]+'_'+str(customer.mobile_number)[:4]
-
-			#shuffling the generated password
-			random_password = ''.join(random.sample(customer_password,len(customer_password)))
-
-			customer.set_password(random_password)
-			customer.save()
-
-			#authenticating/logging in customer
-			user = authenticate(username=customer.username,password=random_password)
-
-			#login token generation
-			t, c = Token.objects.get_or_create(user=customer)
-			response_dict['token']               = t.key
-
-			response_dict['otp_message'] = 'User Verified !'
-			response_dict['otp_verified'] = True
-
-		except:
-			response_dict['existing_customer'] = False
-
-			session_otp = request.session.get('customerotp'+str(customer_mobile),False)
+			session_otp = CustomerOTP.objects.get(mobile_number=customer_mobile,otp=customer_otp)
+			saved_otp = session_otp.otp
 			print(session_otp,"otopp")
+		except:
+			session_otp = None
+			saved_otp = False
 			
-			if int(session_otp) == int(customer_otp):
+		if int(saved_otp) == int(customer_otp):
+
+			#checking if mobile number/customer already exists on database
+			try:
+		
+				customer = UserProfile.objects.get(is_active=True,user_type='CUSTOMER',mobile_number=int(customer_mobile))
+				
+				response_dict['existing_customer'] = True
+				response_dict['customer'] = UserProfileSerializer(instance=customer,many=False).data
+
+				#generating a password using customer name and mobile
+				customer_password = str(customer.username)[:4]+'_'+str(customer.mobile_number)[:4]
+
+				#shuffling the generated password
+				random_password = ''.join(random.sample(customer_password,len(customer_password)))
+
+				customer.set_password(random_password)
+				customer.save()
+
+				#authenticating/logging in customer
+				user = authenticate(username=customer.username,password=random_password)
+
+				#login token generation
+				t, c = Token.objects.get_or_create(user=customer)
+				response_dict['token']               = t.key
+
+				response_dict['otp_message'] = 'User Verified !'
+				response_dict['otp_verified'] = True
+				session_otp.delete()
+
+			except:
+
+				response_dict['existing_customer'] = False
 
 				customer_data = json.dumps(request.data)
 				customer_data = json.loads(customer_data)
@@ -5726,8 +5729,7 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 					response_dict['otp_message'] = 'User Verified !'
 					response_dict['otp_verified'] = True
 
-					del request.session['customerotp'+str(customer_mobile)]
-					request.session.modified = True
+					session_otp.delete()
 					
 				else: 
 					errors= serializer.errors   
@@ -5737,8 +5739,8 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 					response_dict['Error_List'] = serializer.errors
 					response_dict['otp_message'] = 'Please fill the form correctly !'
 
-			else:
-				response_dict['otp_message'] = 'OTP is incorrect !'
-				response_dict['otp_verified'] = False
+		else:
+			response_dict['otp_message'] = 'OTP is incorrect !'
+			response_dict['otp_verified'] = False
 
 		return Response(response_dict,HTTP_200_OK)
