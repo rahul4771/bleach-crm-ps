@@ -89,6 +89,12 @@ class AddressSerializer(serializers.ModelSerializer):
         model  = Address 
         fields = ('governorate','area','block','avenue','building','street','floor','apartment',) 
 
+class AddressAddEditSerializer(serializers.ModelSerializer): 
+    
+    class Meta: 
+        model  = Address 
+        fields = ('customer','governorate','area','block','avenue','building','street','floor','apartment','currently_active') 
+
 class EvaluationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Evaluation

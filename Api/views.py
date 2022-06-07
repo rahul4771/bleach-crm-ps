@@ -12,7 +12,7 @@ from bleachadmin.models import ServicePriceRange,Settings,ServiceProductivity,Se
 from bleachadmin.serializers import ServiceProductivitySerializer
 from Api.models import XeroConnection
 from django.core.mail import send_mail,EmailMultiAlternatives
-from Api.serializers import ServiceAddOnsSerializer,ServicePriceRangeSerializer,DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
+from Api.serializers import AddressAddEditSerializer,AddressSerializer,ServiceAddOnsSerializer,ServicePriceRangeSerializer,DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
 from bleachinventory.models import QuantityStoreDetails,ExternalCustomer,Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,CheckOutItemUnits,ItemHistory,InventoryAccessory,InventoryFinshedItem,Store
 import re
@@ -5714,6 +5714,16 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 					random_password = ''.join(random.sample(customer_password,len(customer_password)))
 
 					customer.set_password(random_password)
+
+					#customer id generation
+					customer_id                  = UserProfile.objects.filter(is_active=True,customer_id__isnull=False).aggregate(t=Max('customer_id'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'1000')
+					current_customer_id_starting = int(str(timezone.now().year)[2:]+str(timezone.now().month).zfill(2))					
+					if current_customer_id_starting == int(str(customer_id)[:4]):
+						new_customer_id = int(customer_id)+1
+					else:
+						new_customer_id   = int(str(timezone.now().year)[2:]+str(timezone.now().month).zfill(2)+'1001')
+					
+					customer.customer_id = new_customer_id
 					customer.save()
 
 					#authenticating/logging in customer
@@ -5742,5 +5752,60 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 		else:
 			response_dict['otp_message'] = 'OTP is incorrect !'
 			response_dict['otp_verified'] = False
+
+		return Response(response_dict,HTTP_200_OK)
+
+
+class CustomerAddressesAPI(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request,customer_id):
+		response_dict = {'success':False}
+		
+		addresses = Address.objects.filter(customer__id=int(customer_id))
+
+		address_serializer = AddressSerializer(addresses,many=True).data
+
+		response_dict['addresses'] = address_serializer
+		response_dict['customer_id'] = customer_id
+
+		return Response(response_dict,HTTP_200_OK)
+
+	def post(self,request,customer_id):
+		response_dict = {}
+
+		action = request.GET.get('action')
+
+		if action == 'add_address':
+
+			customer_addresses = request.data.get('addresses')
+
+			for address in customer_addresses:
+				address['customer'] = customer_id
+				
+				address_serializer = AddressAddEditSerializer(data=address,context={'user':request.user})
+
+				if address_serializer.is_valid():
+					customer_address        = address_serializer.save()
+					response_dict['message']   = 'Address added successfully!'
+				else:
+					response_dict['message']   = get_error(address_serializer)
+
+		elif action == 'edit_address':
+			address_id = request.data.get('address_id')
+			address    = Address.objects.get(id=address_id)
+			request.data['customer'] = address.customer.id
+			customer_address_serializer = AddressAddEditSerializer(instance=address,data=request.data,context={'user':request.user})
+
+			if customer_address_serializer.is_valid():
+				customer_address           = customer_address_serializer.save()
+
+				response_dict['success']   = True
+
+				response_dict['message']   = 'Customer Address Updated Succesfully'
+
+			else:
+				response_dict['message']   = get_error(customer_address_serializer)
 
 		return Response(response_dict,HTTP_200_OK)
