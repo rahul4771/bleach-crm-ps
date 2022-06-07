@@ -570,8 +570,6 @@ class PaymentResponseCredit(APIView):
 					xero_invoice = None
 
 				if xero_invoice:
-					bank_charge  = amount_paid*.025
-
 					#Payment Update
 					payment_data = {
 								"Invoice":{
@@ -595,36 +593,69 @@ class PaymentResponseCredit(APIView):
 					except:
 						created_payment = None
 
-					#BankCharge Update
-					bankcharge_data = {
-								"Invoice":{
-									"InvoiceNumber":xero_invoice.invoice_no
-								},
-								"Account":{
-									"Code":"3202014"
-								},
-								"Date":payment_date_string,
-								"Amount":bank_charge,
-								"Reference":payment_history.transaction_id
-								}
-
-					update_bankcharge          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
-														json=payment_data,
-														headers=header 
-													).json()
-
-					try:
-						created_bankcharge = update_bankcharge['Status']
-					except:
-						created_bankcharge = None
-
-					if created_payment == 'OK' and created_bankcharge == 'OK':
+					if created_payment == 'OK':
 						xero_invoice.is_paid   = True
 						xero_invoice.paid_date = payment_date
 						xero_invoice.save()
 
 						payment_history.is_xero_marked = True
 						payment_history.save()
+
+					# bank_charge  = amount_paid*.025
+
+					# #Payment Update
+					# payment_data = {
+					# 			"Invoice":{
+					# 				"InvoiceNumber":xero_invoice.invoice_no
+					# 			},
+					# 			"Account":{
+					# 				"Code":"1201023"
+					# 			},
+					# 			"Date":payment_date_string,
+					# 			"Amount":amount_paid-bank_charge,
+					# 			"Reference":payment_history.transaction_id
+					# 			}
+
+					# update_payment          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
+					# 									json=payment_data,
+					# 									headers=header 
+					# 								).json()
+
+					# try:
+					# 	created_payment = update_payment['Status']
+					# except:
+					# 	created_payment = None
+
+					# #BankCharge Update
+					# bankcharge_data = {
+					# 			"Invoice":{
+					# 				"InvoiceNumber":xero_invoice.invoice_no
+					# 			},
+					# 			"Account":{
+					# 				"Code":"3202014"
+					# 			},
+					# 			"Date":payment_date_string,
+					# 			"Amount":bank_charge,
+					# 			"Reference":payment_history.transaction_id
+					# 			}
+
+					# update_bankcharge          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
+					# 									json=payment_data,
+					# 									headers=header 
+					# 								).json()
+
+					# try:
+					# 	created_bankcharge = update_bankcharge['Status']
+					# except:
+					# 	created_bankcharge = None
+
+					# if created_payment == 'OK' and created_bankcharge == 'OK':
+					# 	xero_invoice.is_paid   = True
+					# 	xero_invoice.paid_date = payment_date
+					# 	xero_invoice.save()
+
+					# 	payment_history.is_xero_marked = True
+					# 	payment_history.save()
 
 			if payment_policy == 'SUBSCRIPTION':
 				try:
@@ -633,8 +664,6 @@ class PaymentResponseCredit(APIView):
 					xero_invoice = None
 
 				if xero_invoice:
-					bank_charge  = amount_paid*.025
-
 					#Payment Update
 					payment_data = {
 								"Invoice":{
@@ -653,42 +682,75 @@ class PaymentResponseCredit(APIView):
 														headers=header 
 													).json()
 
-
 					try:
 						created_payment = update_payment['Status']
 					except:
 						created_payment = None
 
-					#BankCharge Update
-					bankcharge_data = {
-								"Invoice":{
-									"InvoiceNumber":xero_invoice.invoice_no
-								},
-								"Account":{
-									"Code":"3202014"
-								},
-								"Date":payment_date_string,
-								"Amount":bank_charge,
-								"Reference":payment_history.transaction_id
-								}
-
-					update_bankcharge          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
-														json=payment_data,
-														headers=header 
-													).json()
-
-					try:
-						created_bankcharge = update_bankcharge['Status']
-					except:
-						created_bankcharge = None
-
-					if created_payment == 'OK' and created_bankcharge == 'OK':
+					if created_payment == 'OK':
 						xero_invoice.is_paid   = True
 						xero_invoice.paid_date = payment_date
 						xero_invoice.save()
 						
 						payment_history.is_xero_marked = True
 						payment_history.save()
+
+					# bank_charge  = amount_paid*.025
+
+					# #Payment Update
+					# payment_data = {
+					# 			"Invoice":{
+					# 				"InvoiceNumber":xero_invoice.invoice_no
+					# 			},
+					# 			"Account":{
+					# 				"Code":"1201023"
+					# 			},
+					# 			"Date":payment_date_string,
+					# 			"Amount":amount_paid-bank_charge,
+					# 			"Reference":payment_history.transaction_id
+					# 			}
+
+					# update_payment          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
+					# 									json=payment_data,
+					# 									headers=header 
+					# 								).json()
+
+
+					# try:
+					# 	created_payment = update_payment['Status']
+					# except:
+					# 	created_payment = None
+
+					# #BankCharge Update
+					# bankcharge_data = {
+					# 			"Invoice":{
+					# 				"InvoiceNumber":xero_invoice.invoice_no
+					# 			},
+					# 			"Account":{
+					# 				"Code":"3202014"
+					# 			},
+					# 			"Date":payment_date_string,
+					# 			"Amount":bank_charge,
+					# 			"Reference":payment_history.transaction_id
+					# 			}
+
+					# update_bankcharge          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
+					# 									json=payment_data,
+					# 									headers=header 
+					# 								).json()
+
+					# try:
+					# 	created_bankcharge = update_bankcharge['Status']
+					# except:
+					# 	created_bankcharge = None
+
+					# if created_payment == 'OK' and created_bankcharge == 'OK':
+					# 	xero_invoice.is_paid   = True
+					# 	xero_invoice.paid_date = payment_date
+					# 	xero_invoice.save()
+						
+					# 	payment_history.is_xero_marked = True
+					# 	payment_history.save()
 				########################################################################################
 
 
