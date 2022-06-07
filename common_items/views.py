@@ -5619,7 +5619,7 @@ class CashCollect(IsAuthenticated,View):
 									}
 
 						update_bankcharge          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
-															json=payment_data,
+															json=bankcharge_data,
 															headers=header 
 														).json()
 
