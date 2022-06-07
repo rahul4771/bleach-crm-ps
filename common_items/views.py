@@ -324,7 +324,7 @@ class OrderDetails(IsAuthenticated,View):
 
 class ClientDetails(IsAuthenticated,View):
 	def get(self,request):
-
+		
 		try:
 			governorates = Governorate.objects.filter(is_active=True)
 		except:
@@ -365,6 +365,12 @@ class ClientDetails(IsAuthenticated,View):
 			fil_area			  = int(request.GET.get('area'))
 		except:
 			fil_area              = None
+
+		clientstatus = request.GET.get('status')
+		client_id = request.GET.get('client_id')
+		if clientstatus == 'deleteuser' and client_id != None:
+			client = UserProfile.objects.get(id=client_id)
+			client.delete()
 
 
 
@@ -410,7 +416,7 @@ class ClientDetails(IsAuthenticated,View):
 		if fil_customertype:
 			filters            = functools.reduce(operator.and_,filters)
 			client_details     = client_details.filter(filters)
-
+		
 		#PAGINATION CLIENTS
 		no_of_entries = request.GET.get('no_of_entries')
 		if not no_of_entries:

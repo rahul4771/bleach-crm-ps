@@ -680,6 +680,7 @@
 
             {% if book_section.sectionaddons %}
             {% for addon in book_section.sectionaddons %}
+            {% if addon.name != 'kitchen' %}
             <!--Addons loads here-->
             <div class="col-md-12 col-print-12 order-4">
               <div class="inv-price-card mt-4 row">
@@ -720,6 +721,7 @@
                 </div>
                 </div>
                 <!--Addons ends here-->
+                {% endif %}
                 {% endfor %}
                 {% endif %}
 

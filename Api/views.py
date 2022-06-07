@@ -2,7 +2,7 @@ from django.shortcuts import render
 import json
 from django.template.loader import render_to_string
 from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
-from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule,Shift
+from user.models import CustomerOTP,UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule,Shift
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons,CleaningMethod,CleaningSection,ServiceType,AreaType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,Reporting,PaybackDiscount,PaybackDiscountDetails,XeroInvoice
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
@@ -786,7 +786,11 @@ class LeaveScheduleAPI(APIView):
 			leaveschedules = None
 			newdf1 = []
 
-		occupied_members           = CleaningTeamMember.objects.select_related('team__order_scheduler').filter( Q(Q(is_active=True) & Q(Q(Q(start_at__month=month)&Q(start_at__year=year)) | Q(Q(end_at__month=month)&Q(end_at__year=year))) ) )
+		#creating month range and getting start date and end date for occupied members query
+		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
+		monthdate2 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)-relativedelta(days=1)
+
+		occupied_members           = CleaningTeamMember.objects.select_related('team__order_scheduler').filter( Q (Q(is_active=True) & Q(Q(start_at__gte=monthdate1)&Q(end_at__lte=monthdate2)) ) )
 		occupied_member_serializer = OccupiedMembersSerializer(occupied_members,many=True).data
 
 		response_dict["staffs"]    = newdf1
@@ -869,11 +873,13 @@ class LeaveSchedulePopupAPI(APIView):
 		staff_id  	    = request.GET.get('staff_id')
 		try:
 			occupied_date   = datetime.strptime(request.GET.get('occupied_date'),'%Y-%m-%d')
+			occupied_date_start = occupied_date.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
+			occupied_date_end   = occupied_date_start+timedelta(1)
 		except:
 			occupied_date   = None
 
 		try:
-			cleaning_members = CleaningTeamMember.objects.select_related('team__order_scheduler__order').filter(Q(Q(start_at__date=occupied_date)|Q(end_at__date=occupied_date))&Q(member__id=staff_id))
+			cleaning_members = CleaningTeamMember.objects.select_related('team__order_scheduler__order').filter(Q(Q(start_at__gte=occupied_date_start)&Q(end_at__lte=occupied_date_end))&Q(member__id=staff_id))
 		except:
 			cleaning_members = None
 
@@ -5673,17 +5679,19 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 		try:
 			customer = UserProfile.objects.get(is_active=True,user_type='CUSTOMER',mobile_number=int(customer_mobile))
 			response_dict['is_new_customer'] = False
-
-			customer.evaluation_booking_otp = customer_otp
-			customer.save()
-
 		except:
 			response_dict['is_new_customer'] = True
-			# customer_mobile = 9999594
-			request.session['customer_otp-'+str(customer_mobile)+''] = customer_otp
-			response_dict['customer_otp'] = customer_otp
+
+		#creating entry in otp model using customer mobile number
+		try:
+			customer = CustomerOTP.objects.get(mobile_number=customer_mobile)
+			customer.otp = customer_otp
+			customer.save()
+		except:
+			CustomerOTP.objects.create(mobile_number=customer_mobile,otp=customer_otp)
 
 		response_dict['customer_mobile'] = customer_mobile
+		response_dict['customer_otp'] = customer_otp
 
 		return Response(response_dict,HTTP_200_OK)
 
@@ -5695,43 +5703,95 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 		response_dict = {}
 
 		customer_otp = request.data.get('customer_otp')
+		customer_mobile = request.data.get('customer_mobile')
 
-		#checking if mobile number/customer already exists on datababse
 		try:
-			customer = UserProfile.objects.get(is_active=True,user_type='CUSTOMER',evaluation_booking_otp=int(customer_otp))
-			customer.evaluation_booking_otp = 'abcdef'
-			customer.save()
-			response_dict['customer_verified'] = True
-
+			session_otp = CustomerOTP.objects.get(mobile_number=customer_mobile,otp=customer_otp)
+			saved_otp = session_otp.otp
+			print(session_otp,"otopp")
 		except:
-			response_dict['customer_verified'] = False
-
-			customer_otp_saved = 000000
-
-			if 'customer_otp-'+str(9999594)+'' in request.session:
-				customer_otp_saved = request.session['customer_otp-'+str(9999594)+'']
-
-			print(customer_otp_saved,customer_otp,"yurekay")
-
-			if int(customer_otp_saved) == int(customer_otp):
-				print(customer_otp_saved,customer_otp,"yurekay")
+			session_otp = None
+			saved_otp = False
 			
-			request.data._mutable = True
-			request.data['mobile_number'] = 9999594
-			request.data._mutable = False
-			
-			serializer = UserProfileSerializer(data=request.data)
+		if int(saved_otp) == int(customer_otp):
 
-			if serializer.is_valid():   
-				serializer.save(username=generate_random_username(),user_type='CUSTOMER')
+			#checking if mobile number/customer already exists on database
+			try:
+		
+				customer = UserProfile.objects.get(is_active=True,user_type='CUSTOMER',mobile_number=int(customer_mobile))
+				
+				response_dict['existing_customer'] = True
+				response_dict['customer'] = UserProfileSerializer(instance=customer,many=False).data
 
-				response_dict['success']  = True 
-				response_dict['customer'] = serializer.data
-			else: 
-				errors= serializer.errors   
-				key=tuple(errors.keys())[0] 
-				error=errors[key]
-				response_dict['Error']=key +':'+ error[0]
-				response_dict['Error_List'] = serializer.errors
+				#generating a password using customer name and mobile
+				customer_password = str(customer.username)[:4]+'_'+str(customer.mobile_number)[:4]
+
+				#shuffling the generated password
+				random_password = ''.join(random.sample(customer_password,len(customer_password)))
+
+				customer.set_password(random_password)
+				customer.save()
+
+				#authenticating/logging in customer
+				user = authenticate(username=customer.username,password=random_password)
+
+				#login token generation
+				t, c = Token.objects.get_or_create(user=customer)
+				response_dict['token']               = t.key
+
+				response_dict['otp_message'] = 'User Verified !'
+				response_dict['otp_verified'] = True
+				session_otp.delete()
+
+			except:
+
+				response_dict['existing_customer'] = False
+
+				customer_data = json.dumps(request.data)
+				customer_data = json.loads(customer_data)
+
+				customer_data['mobile_number'] = customer_mobile
+				
+				serializer = UserProfileSerializer(data=customer_data)
+
+				if serializer.is_valid():   
+					customer = serializer.save(username=generate_random_username(),user_type='CUSTOMER')
+					
+					print(customer,"custmr")
+					#generating a password using customer name and mobile
+					customer_password = str(customer.username)[:4]+'_'+str(customer.mobile_number)[:4]
+
+					#shuffling the generated password
+					random_password = ''.join(random.sample(customer_password,len(customer_password)))
+
+					customer.set_password(random_password)
+					customer.save()
+
+					#authenticating/logging in customer
+					user = authenticate(username=customer.username,password=random_password)
+
+					#login token generation
+					t, c = Token.objects.get_or_create(user=customer)
+					response_dict['token']               = t.key
+					
+					response_dict['success']  = True 
+					response_dict['customer'] = serializer.data
+
+					response_dict['otp_message'] = 'User Verified !'
+					response_dict['otp_verified'] = True
+
+					session_otp.delete()
+					
+				else: 
+					errors= serializer.errors   
+					key=tuple(errors.keys())[0] 
+					error=errors[key]
+					response_dict['Error']=key +':'+ error[0]
+					response_dict['Error_List'] = serializer.errors
+					response_dict['otp_message'] = 'Please fill the form correctly !'
+
+		else:
+			response_dict['otp_message'] = 'OTP is incorrect !'
+			response_dict['otp_verified'] = False
 
 		return Response(response_dict,HTTP_200_OK)

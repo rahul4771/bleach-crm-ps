@@ -16,7 +16,7 @@ from django.db.models.functions import Cast
 from django.db.models import Prefetch
 from bleach_crm_ps.utils import get_error
 from django.db.models.functions import ExtractMonth,ExtractYear
-
+import random,string
 from django.contrib import messages
 from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,CleaningMethod,ServiceType,EvaluationBookSection,EvaluationSectionKeynote,LocationType,CleaningType,AreaType
@@ -37,6 +37,7 @@ import requests
 from django.core.mail import send_mail,EmailMultiAlternatives
 from django.template.loader import render_to_string
 # Create your views here.
+
 
 class AdminHome(IsAdmin,View):
 	def get(self,request):

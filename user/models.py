@@ -144,8 +144,6 @@ class UserProfile(AbstractUser):
 
     address_otp                 = models.CharField(max_length=100,blank=True,null=True)
 
-    evaluation_booking_otp      = models.CharField(max_length=100,blank=True,null=True)
-
     xero_account_id             = models.CharField(max_length=100,blank=True,null=True)
 
     bamboo_employee_id          = models.CharField(max_length=20,blank=True,null=True)
@@ -288,3 +286,13 @@ class Shift(models.Model):
 
     def __str__(self):
         return self.shift
+
+class CustomerOTP(models.Model):
+    mobile_number 	= models.CharField(max_length=10,blank=True,null=True,unique=True)
+    otp             = models.CharField(max_length=10,blank=True,null=True)
+
+    def __unicode__(self):
+        return str(self.mobile_number)
+
+    def __str__(self):
+        return self.mobile_number

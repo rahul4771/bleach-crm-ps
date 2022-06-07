@@ -78,6 +78,7 @@ urlpatterns = [
 	url(r'^external_customers/$',views.ExternalCustomersView.as_view(),name='api-external-customers'),
 	url(r'^item_units/$',views.ItemUnitsProduct.as_view(),name='api-item-units'),
 	url(r'^item_stores/$',views.ItemStores.as_view(),name='api-item-stores'),
+	
 	###Team Leader Mobile app API'S
 	url(r'^login/$',views.LoginAPI.as_view(),name='api-login'),
 	url(r'^tl/home/$',views.TlHomeAPI.as_view(),name='api-stlhome'),

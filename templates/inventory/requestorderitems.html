@@ -90,7 +90,7 @@
           
                         <div style="position: relative;">
                             <div class="inv-input-container inv-border h-30">
-                                {% if is_all_items_available and request_order.is_admin_approved and not request_order.is_received %}
+                                {% if request_order.is_admin_approved and not request_order.is_received %}
                                 <input autocomplete="off" onclick="storeListShow()" type="text" id="store-name" name="storename" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showStores()" required>
                                 {% else %}
                                 <input autocomplete="off" type="text" id="store-name" name="storename" style="border: none !important; width: 90%;" class=" inv-in" disabled>
