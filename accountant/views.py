@@ -1306,19 +1306,15 @@ class CashCollect(IsAccountant,View):
 						xero_invoice = None
 
 					if xero_invoice:
-						#1201023
-						bank_charge  = .250
-
-						#Update Payment
 						payment_data = {
 									"Invoice":{
 										"InvoiceNumber":xero_invoice.invoice_no
 									},
 									"Account":{
-										"Code":"090"
+										"Code":"1201023"
 									},
 									"Date":payment_date_string,
-									"Amount":amount-.250
+									"Amount":amount
 									}
 
 						update_payment          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
@@ -1326,36 +1322,13 @@ class CashCollect(IsAccountant,View):
 															headers=header 
 														).json()
 
-						print(update_payment)
+
 						try:
 							created_payment = update_payment['Status']
 						except:
 							created_payment = None
 
-						#BankCharge Update
-						bankcharge_data = {
-									"Invoice":{
-										"InvoiceNumber":xero_invoice.invoice_no
-									},
-									"Account":{
-										"Code":"080"
-									},
-									"Date":payment_date_string,
-									"Amount":bank_charge
-									}
-
-						update_bankcharge          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
-															json=payment_data,
-															headers=header 
-														).json()
-
-						print(update_bankcharge)
-						try:
-							created_bankcharge = update_bankcharge['Status']
-						except:
-							created_bankcharge = None
-
-						if created_payment == 'OK' and created_bankcharge == 'OK':
+						if created_payment == 'OK':
 							xero_invoice.is_paid   = True
 							xero_invoice.paid_date = payment_date
 							xero_invoice.save()
