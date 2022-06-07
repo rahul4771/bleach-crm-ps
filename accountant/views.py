@@ -1315,7 +1315,7 @@ class CashCollect(IsAccountant,View):
 										"InvoiceNumber":xero_invoice.invoice_no
 									},
 									"Account":{
-										"Code":"1201023"
+										"Code":"090"
 									},
 									"Date":payment_date_string,
 									"Amount":amount-.250
@@ -1337,7 +1337,7 @@ class CashCollect(IsAccountant,View):
 										"InvoiceNumber":xero_invoice.invoice_no
 									},
 									"Account":{
-										"Code":"3202014"
+										"Code":"080"
 									},
 									"Date":payment_date_string,
 									"Amount":bank_charge
@@ -1348,6 +1348,7 @@ class CashCollect(IsAccountant,View):
 															headers=header 
 														).json()
 
+						print(update_bankcharge)
 						try:
 							created_bankcharge = update_bankcharge['Status']
 						except:
