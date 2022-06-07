@@ -343,6 +343,7 @@ class Quatation(View):
 
 					#Xero Invoice
 					if order.evaluation.payment_method == 'PREPAID':
+						#1207004
 						Amount = order.evaluation.total_cost 
 						##Invoice Line Item 
 						LineItems                 = []
@@ -350,7 +351,7 @@ class Quatation(View):
 							"Description":"ONE TIME SERVICE",
 							"Quantity":"1",
 							"UnitAmount":Amount,
-							"AccountCode":1207004,
+							"AccountCode":1002,
 							"TaxType":"NONE"
 										}
 							)
