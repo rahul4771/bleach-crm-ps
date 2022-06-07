@@ -5873,8 +5873,11 @@ class CustomerAddressesAPI(APIView):
 	permission_classes        = (AllowAny,)
 	authentication_classes    = ()
 
-	def get(self,request,customer_id):
-		response_dict = {'success':False}
+	def get(self,request,token):
+		response_dict = {}
+
+		user = Token.objects.get(key=token).user
+		customer_id = user.id
 		
 		addresses = Address.objects.filter(customer__id=int(customer_id))
 
@@ -5885,7 +5888,10 @@ class CustomerAddressesAPI(APIView):
 
 		return Response(response_dict,HTTP_200_OK)
 
-	def post(self,request,customer_id):
+	def post(self,request,token):
+		user = Token.objects.get(key=token).user
+		customer_id = user.id
+
 		response_dict = {}
 
 		action = request.GET.get('action')
