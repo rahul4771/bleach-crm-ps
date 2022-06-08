@@ -55,7 +55,7 @@ class Command(BaseCommand):
         for payment_history in payment_histories:
             payments = requests.get('https://api.xero.com/api.xro/2.0/Payments?where=Reference='+payment_history.transaction_id,
                                                                 headers=header 
-                                                            )
+                                                            ).json()
             print(payments)
             
             
