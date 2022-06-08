@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
-from evaluator.models import Evaluation,EvaluationDetails
+from evaluator.models import Evaluation,EvaluationDetails,AreaType
 from order.models import Promocode
 from bleachinventory.models import Line,Segment,Category,Attribute,AttributeValue,BundleItems,InventoryItem,ItemUnit,SupplierItems
 from bleachadmin.models import Settings,ServiceProductivity,ServicePriceRange,Settings,ServiceAddOns
@@ -72,15 +72,20 @@ class ShiftScheduleSerializer(serializers.ModelSerializer):
             td['shift3_end_at']    = ((obj.shift3_end_at)+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
         return(td)
 
+class AreaTypeSerializer(serializers.ModelSerializer):
+    class Meta:      
+        model = AreaType   
+        fields = ('name',)  
+
 class GovernorateSerializer(serializers.ModelSerializer):
     class Meta:      
         model = Governorate   
-        fields = ('name',)  
+        fields = ('id','name',)  
 
 class AreaSerializer(serializers.ModelSerializer):
     class Meta:      
         model = Area   
-        fields = ('name',)
+        fields = ('id','name',)
         
 class AddressSerializer(serializers.ModelSerializer): 
     governorate     = GovernorateSerializer(read_only=True)
@@ -88,6 +93,12 @@ class AddressSerializer(serializers.ModelSerializer):
     class Meta: 
         model  = Address 
         fields = ('governorate','area','block','avenue','building','street','floor','apartment',) 
+
+class AddressAddEditSerializer(serializers.ModelSerializer): 
+    
+    class Meta: 
+        model  = Address 
+        fields = ('customer','governorate','area','block','avenue','building','street','floor','apartment','currently_active') 
 
 class EvaluationSerializer(serializers.ModelSerializer):
     class Meta:
