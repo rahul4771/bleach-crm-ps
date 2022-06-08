@@ -53,7 +53,7 @@ class Command(BaseCommand):
         print(payment_histories)
         print(payment_histories.count())
         for payment_history in payment_histories:
-            payments = requests.post('https://api.xero.com/api.xro/2.0/Payments?where=Invoice.InvoiceId=='+payment_history.order.invoice_no,
+            payments = requests.get('https://api.xero.com/api.xro/2.0/Payments?where=Invoice.InvoiceId=='+payment_history.order.invoice_no,
                                                                 headers=header 
                                                             )
             print(payments)
