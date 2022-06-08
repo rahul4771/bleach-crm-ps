@@ -64,7 +64,7 @@ class Command(BaseCommand):
                                                                 data={
                                                                     "Status": "DELETED"
                                                                 } 
-                                                            )
+                                                            ).json()
                 print(delete_payment)
             break
                 
