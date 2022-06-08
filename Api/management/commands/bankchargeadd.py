@@ -59,6 +59,8 @@ class Command(BaseCommand):
             payments = data['Payments']
             for payment in payments:
                 print(payment['PaymentID'])
+            
+            break
                 
             
             
