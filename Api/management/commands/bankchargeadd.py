@@ -45,7 +45,6 @@ class Command(BaseCommand):
                                                         'Accept': 'application/json',
                                                         'Content-Type': 'application/json'
                                                             }
-        body                        = {}
 
         #Paid History                                
         payment_history_date   = datetime.strptime("01-04-2022","%d-%m-%Y").date()
@@ -61,9 +60,7 @@ class Command(BaseCommand):
                 print(payment['PaymentID'])
                 delete_payment = requests.post('https://api.xero.com/api.xro/2.0/Payments/'+payment['PaymentID'],
                                                                 headers=header,
-                                                                data={
-                                                                    "Status": "DELETED"
-                                                                } 
+                                                                data={"Status":"DELETED",} 
                                                             ).json()
                 print(delete_payment)
             break
