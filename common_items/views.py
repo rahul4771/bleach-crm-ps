@@ -5418,8 +5418,7 @@ class CashCollect(IsAuthenticated,View):
 
 				#Invoice Authorize
 				if payment_policy == 'PREPAID':
-					BankCharge     = .250 #
-					Amount         = order.evaluation.total_cost #
+					Amount         = order.evaluation.total_cost
 
 					InvoiceNumber  = order.invoice_no
 					payment_policy = 'PREPAID'
@@ -5430,14 +5429,6 @@ class CashCollect(IsAuthenticated,View):
 						"Quantity":"1",
 						"UnitAmount":Amount,
 						"AccountCode":1207004,
-						"TaxType":"NONE"
-									}
-						)
-					LineItems.append({
-						"Description":"BANK CHARGE",
-						"Quantity":"1",
-						"UnitAmount":-BankCharge,
-						"AccountCode":3202014,
 						"TaxType":"NONE"
 									}
 						)
@@ -5610,7 +5601,7 @@ class CashCollect(IsAuthenticated,View):
 										"Code":"1201023"
 									},
 									"Date":payment_date_string,
-									"Amount":float(amount)-.250
+									"Amount":amount
 									}
 
 						update_payment          = requests.put('https://api.xero.com/api.xro/2.0/Payments',

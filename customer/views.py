@@ -1373,7 +1373,7 @@ class PaymentResponseDebit(View):
 									"Code":"1201023"
 								},
 								"Date":payment_date_string,
-								"Amount":amount_paid-bank_charge,
+								"Amount":float(amount_paid)-bank_charge,
 								"Reference":payment_history.transaction_id
 								}
 
@@ -1414,7 +1414,7 @@ class PaymentResponseDebit(View):
 									"Code":"1201023"
 								},
 								"Date":payment_date_string,
-								"Amount":amount_paid-bank_charge,
+								"Amount":float(amount_paid)-bank_charge,
 								"Reference":payment_history.transaction_id
 								}
 
