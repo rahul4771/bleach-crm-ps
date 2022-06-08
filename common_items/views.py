@@ -5418,15 +5418,36 @@ class CashCollect(IsAuthenticated,View):
 
 				#Invoice Authorize
 				if payment_policy == 'PREPAID':
-					Amount         = order.evaluation.total_cost 
+					BankCharge     = .250 #
+					Amount         = float(order.evaluation.total_cost)-.250 #
+
 					InvoiceNumber  = order.invoice_no
 					payment_policy = 'PREPAID'
+					##Invoice Line Item #
+					LineItems                 = []
+					LineItems.append({
+						"Description":"ONE TIME SERVICE",
+						"Quantity":"1",
+						"UnitAmount":Amount,
+						"AccountCode":1207004,
+						"TaxType":"NONE"
+									}
+						)
+					LineItems.append({
+						"Description":"BANK CHARGE",
+						"Quantity":"1",
+						"UnitAmount":-BankCharge,
+						"AccountCode":3202014,
+						"TaxType":"NONE"
+									}
+						)
 					invoice_data        = 	{
 										"Type":"ACCREC",
 										"LineAmountTypes":"NoTax",
 										"InvoiceNumber":InvoiceNumber,
 										"Reference":order.order_no,
-										"Status":"AUTHORISED"
+										"Status":"AUTHORISED",
+										"LineItems":LineItems
 									}
 
 					##xero Create Invoice
