@@ -38,16 +38,24 @@ class Command(BaseCommand):
         xero.refresh_token = refresh_token
         xero.save()
 
+
         header                      = {
-                                        'xero-tenant-id': xero.tenant_id,
-                                        'Authorization': 'Bearer '+access_token,
-                                        'Accept': 'application/json',
-                                        'Content-Type': 'application/json'
-                                            }
+                                                        'xero-tenant-id': xero.tenant_id,
+                                                        'Authorization': 'Bearer '+access_token,
+                                                        'Accept': 'application/json',
+                                                        'Content-Type': 'application/json'
+                                                            }
+        body                        = {}
 
         #Paid History                                
         payment_history_date   = datetime.strptime("01-04-2022","%d-%m-%Y").date()
-        payment_histories      = PaymentHistory.objects.select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order').filter(is_active=True,paid_date__gte=payment_history_date,is_xero_marked=True).filter(Q(Q(payment_gateway='CREDITCARD')|Q(payment_gateway='DEBITCARD'))).annotate(total_cleanings_count=Count('order__order_scheduler_order')).prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
-        
+        payment_histories      = PaymentHistory.objects.select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order').filter(is_active=True,paid_date__gte=payment_history_date,is_xero_marked=True,order__evaluation__payment_method='PREPAID').filter(Q(Q(payment_gateway='CREDITCARD')|Q(payment_gateway='DEBITCARD'))).annotate(total_cleanings_count=Count('order__order_scheduler_order')).prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
         print(payment_histories)
         print(payment_histories.count())
+        for payment_history in payment_histories:
+            payments = requests.post('https://api.xero.com/api.xro/2.0/Payments?where=Invoice.InvoiceId=='+payment_history.order.invoice_no,
+                                                                headers=header 
+                                                            )
+            print(payments)
+            
+            
