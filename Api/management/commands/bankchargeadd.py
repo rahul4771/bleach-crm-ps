@@ -65,6 +65,7 @@ class Command(BaseCommand):
                                                                     "Status": "DELETED"
                                                                 } 
                                                             )
+                print(delete_payment)
             break
                 
             
