@@ -50,7 +50,7 @@ class Command(BaseCommand):
         #Paid History                                
         payment_history_date   = datetime.strptime("01-04-2022","%d-%m-%Y").date()
         payment_histories      = PaymentHistory.objects.select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order').filter(is_active=True,paid_date__gte=payment_history_date,is_xero_marked=True).filter(Q(Q(payment_gateway='CREDITCARD')|Q(payment_gateway='DEBITCARD'))).annotate(total_cleanings_count=Count('order__order_scheduler_order')).prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
-        
+        print(payment_histories.count())
         for payment_history in payment_histories:
             print(payment_history.order.order_no)
             data     = requests.get('https://api.xero.com/api.xro/2.0/Payments?where=Reference=="'+payment_history.transaction_id+'"',
@@ -59,7 +59,12 @@ class Command(BaseCommand):
             payments = data['Payments']
             for payment in payments:
                 print(payment['PaymentID'])
-            
+                delete_payment = requests.post('https://api.xero.com/api.xro/2.0/Payments/'+payment['PaymentID'],
+                                                                headers=header,
+                                                                body={
+                                                                    "Status": "DELETED"
+                                                                } 
+                                                            )
             break
                 
             
