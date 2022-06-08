@@ -5610,7 +5610,7 @@ class CashCollect(IsAuthenticated,View):
 										"Code":"1201023"
 									},
 									"Date":payment_date_string,
-									"Amount":amount-.250
+									"Amount":float(amount)-.250
 									}
 
 						update_payment          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
