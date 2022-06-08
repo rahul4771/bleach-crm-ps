@@ -53,7 +53,7 @@ class Command(BaseCommand):
         print(payment_histories)
         print(payment_histories.count())
         for payment_history in payment_histories:
-            payments = requests.get('https://api.xero.com/api.xro/2.0/Payments?where=Reference=='+payment_history.transaction_id,
+            payments = requests.get('https://api.xero.com/api.xro/2.0/Payments?where=Reference=="'+payment_history.transaction_id+'"',
                                                                 headers=header 
                                                             ).json()
             print(payments)
