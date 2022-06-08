@@ -5419,7 +5419,7 @@ class CashCollect(IsAuthenticated,View):
 				#Invoice Authorize
 				if payment_policy == 'PREPAID':
 					BankCharge     = .250 #
-					Amount         = float(order.evaluation.total_cost)-.250 #
+					Amount         = order.evaluation.total_cost #
 
 					InvoiceNumber  = order.invoice_no
 					payment_policy = 'PREPAID'

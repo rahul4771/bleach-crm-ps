@@ -384,7 +384,8 @@ class PaymentResponseCredit(APIView):
 			#Invoice Authorize
 			if payment_policy == 'PREPAID':
 				BankCharge = float(order.evaluation.total_cost)*.025
-				Amount     = float(order.evaluation.total_cost)-BankCharge
+				Amount     = float(order.evaluation.total_cost)
+
 				##Invoice Line Item 
 				LineItems                 = []
 				LineItems.append({
@@ -469,7 +470,8 @@ class PaymentResponseCredit(APIView):
 			if payment_policy == 'BEFORE CLEANING':
 				#Before Invoice
 				BankCharge = float(order.evaluation.before_cleaning_amount)*.025
-				Amount     = float(order.evaluation.before_cleaning_amount)-BankCharge
+				Amount     = float(order.evaluation.before_cleaning_amount)
+
 				##Invoice Line Item 
 				LineItems                 = []
 				LineItems.append({
@@ -553,7 +555,8 @@ class PaymentResponseCredit(APIView):
 			if payment_policy == 'AFTER CLEANING':
 				#Before Invoice
 				BankCharge = float(order.evaluation.after_cleaning_amount)*.025
-				Amount     = float(order.evaluation.after_cleaning_amount)-BankCharge  
+				Amount     = float(order.evaluation.after_cleaning_amount) 
+
 				##Invoice Line Item 
 				LineItems                 = []
 				LineItems.append({
@@ -613,7 +616,8 @@ class PaymentResponseCredit(APIView):
 			
 			if payment_policy == 'POSTPAID':
 				BankCharge = float(order.evaluation.total_cost)*.025
-				Amount     = float(order.evaluation.total_cost)-BankCharge  
+				Amount     = float(order.evaluation.total_cost) 
+
 				##Invoice Line Item 
 				LineItems                 = []
 				LineItems.append({
@@ -702,7 +706,8 @@ class PaymentResponseCredit(APIView):
 				
 				if xero_invoice:
 					BankCharge = float(order.subscription_topay)*.025
-					Amount     = float(order.subscription_topay)-BankCharge  
+					Amount     = float(order.subscription_topay)
+
 					##Invoice Line Item 
 					LineItems                 = []
 					LineItems.append({
@@ -772,6 +777,8 @@ class PaymentResponseCredit(APIView):
 					xero_invoice = None
 
 				if xero_invoice:
+					bank_charge  = amount_paid*.025
+
 					#Payment Update
 					payment_data = {
 								"Invoice":{
@@ -802,62 +809,6 @@ class PaymentResponseCredit(APIView):
 
 						payment_history.is_xero_marked = True
 						payment_history.save()
-
-					# bank_charge  = amount_paid*.025
-
-					# #Payment Update
-					# payment_data = {
-					# 			"Invoice":{
-					# 				"InvoiceNumber":xero_invoice.invoice_no
-					# 			},
-					# 			"Account":{
-					# 				"Code":"1201023"
-					# 			},
-					# 			"Date":payment_date_string,
-					# 			"Amount":amount_paid-bank_charge,
-					# 			"Reference":payment_history.transaction_id
-					# 			}
-
-					# update_payment          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
-					# 									json=payment_data,
-					# 									headers=header 
-					# 								).json()
-
-					# try:
-					# 	created_payment = update_payment['Status']
-					# except:
-					# 	created_payment = None
-
-					# #BankCharge Update
-					# bankcharge_data = {
-					# 			"Invoice":{
-					# 				"InvoiceNumber":xero_invoice.invoice_no
-					# 			},
-					# 			"Account":{
-					# 				"Code":"3202014"
-					# 			},
-					# 			"Date":payment_date_string,
-					# 			"Amount":bank_charge,
-					# 			"Reference":payment_history.transaction_id
-					# 			}
-
-					# update_bankcharge          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
-					# 									json=payment_data,
-					# 									headers=header 
-					# 								).json()
-
-					# try:
-					# 	created_bankcharge = update_bankcharge['Status']
-					# except:
-					# 	created_bankcharge = None
-
-					# if created_payment == 'OK' and created_bankcharge == 'OK':
-					# 	xero_invoice.is_paid   = True
-					# 	xero_invoice.paid_date = payment_date
-					# 	xero_invoice.save()
-
-					# 	payment_history.is_xero_marked = True
-					# 	payment_history.save()
 
 			if payment_policy == 'SUBSCRIPTION':
 				try:
@@ -866,6 +817,8 @@ class PaymentResponseCredit(APIView):
 					xero_invoice = None
 
 				if xero_invoice:
+					bank_charge  = amount_paid*.025
+
 					#Payment Update
 					payment_data = {
 								"Invoice":{
@@ -896,63 +849,6 @@ class PaymentResponseCredit(APIView):
 						
 						payment_history.is_xero_marked = True
 						payment_history.save()
-
-					# bank_charge  = amount_paid*.025
-
-					# #Payment Update
-					# payment_data = {
-					# 			"Invoice":{
-					# 				"InvoiceNumber":xero_invoice.invoice_no
-					# 			},
-					# 			"Account":{
-					# 				"Code":"1201023"
-					# 			},
-					# 			"Date":payment_date_string,
-					# 			"Amount":amount_paid-bank_charge,
-					# 			"Reference":payment_history.transaction_id
-					# 			}
-
-					# update_payment          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
-					# 									json=payment_data,
-					# 									headers=header 
-					# 								).json()
-
-
-					# try:
-					# 	created_payment = update_payment['Status']
-					# except:
-					# 	created_payment = None
-
-					# #BankCharge Update
-					# bankcharge_data = {
-					# 			"Invoice":{
-					# 				"InvoiceNumber":xero_invoice.invoice_no
-					# 			},
-					# 			"Account":{
-					# 				"Code":"3202014"
-					# 			},
-					# 			"Date":payment_date_string,
-					# 			"Amount":bank_charge,
-					# 			"Reference":payment_history.transaction_id
-					# 			}
-
-					# update_bankcharge          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
-					# 									json=payment_data,
-					# 									headers=header 
-					# 								).json()
-
-					# try:
-					# 	created_bankcharge = update_bankcharge['Status']
-					# except:
-					# 	created_bankcharge = None
-
-					# if created_payment == 'OK' and created_bankcharge == 'OK':
-					# 	xero_invoice.is_paid   = True
-					# 	xero_invoice.paid_date = payment_date
-					# 	xero_invoice.save()
-						
-					# 	payment_history.is_xero_marked = True
-					# 	payment_history.save()
 				########################################################################################
 
 

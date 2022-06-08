@@ -973,7 +973,7 @@ class PaymentResponseDebit(View):
 			#Invoice Authorize
 			if payment_policy == 'PREPAID':
 				BankCharge = .250
-				Amount     = float(order.evaluation.total_cost)-BankCharge  
+				Amount     = float(order.evaluation.total_cost)  
 				##Invoice Line Item 
 				LineItems                 = []
 				LineItems.append({
@@ -1058,7 +1058,7 @@ class PaymentResponseDebit(View):
 			if payment_policy == 'BEFORE CLEANING':
 				#Before Invoice
 				BankCharge = .250
-				Amount     = float(order.evaluation.before_cleaning_amount)-BankCharge  
+				Amount     = float(order.evaluation.before_cleaning_amount) 
 				##Invoice Line Item 
 				LineItems                 = []
 				LineItems.append({
@@ -1142,7 +1142,7 @@ class PaymentResponseDebit(View):
 			if payment_policy == 'AFTER CLEANING':
 				#Before Invoice
 				BankCharge = .250
-				Amount     = float(order.evaluation.after_cleaning_amount)-BankCharge  
+				Amount     = float(order.evaluation.after_cleaning_amount)
 				##Invoice Line Item 
 				LineItems                 = []
 				LineItems.append({
@@ -1202,7 +1202,7 @@ class PaymentResponseDebit(View):
 			
 			if payment_policy == 'POSTPAID':
 				BankCharge = .250
-				Amount     = float(order.evaluation.total_cost)-BankCharge  
+				Amount     = float(order.evaluation.total_cost) 
 				##Invoice Line Item 
 				LineItems                 = []
 				LineItems.append({
@@ -1291,7 +1291,7 @@ class PaymentResponseDebit(View):
 				
 				if xero_invoice:
 					BankCharge = .250
-					Amount     = float(order.subscription_topay)-BankCharge  
+					Amount     = float(order.subscription_topay) 
 					##Invoice Line Item 
 					LineItems                 = []
 					LineItems.append({
@@ -1363,6 +1363,7 @@ class PaymentResponseDebit(View):
 
 				if xero_invoice:
 					bank_charge  = .250
+
 					#Payment Update
 					payment_data = {
 								"Invoice":{
@@ -1403,6 +1404,7 @@ class PaymentResponseDebit(View):
 
 				if xero_invoice:
 					bank_charge  = .250
+					
 					#Payment Update
 					payment_data = {
 								"Invoice":{
