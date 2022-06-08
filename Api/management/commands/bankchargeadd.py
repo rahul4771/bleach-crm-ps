@@ -60,7 +60,7 @@ class Command(BaseCommand):
                 print(payment['PaymentID'])
                 body = {"Status":"DELETED"}
                 delete_payment = requests.post('https://api.xero.com/api.xro/2.0/Payments/'+payment['PaymentID'],
-                                                                data=body,
+                                                                json=body,
                                                                 headers=header 
                                                             ).json()
                 print(delete_payment)
