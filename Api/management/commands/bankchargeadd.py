@@ -64,7 +64,8 @@ class Command(BaseCommand):
                                                                 headers=header 
                                                             ).json()
                 print(delete_payment)
-            break
-                
+            
+            payment.is_xero_marked = False
+            payment.save()
             
             
