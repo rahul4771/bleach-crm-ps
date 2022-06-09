@@ -6069,3 +6069,72 @@ class CustomerAddressesAPI(APIView):
 				response_dict['message']   = get_error(customer_address_serializer)
 
 		return Response(response_dict,HTTP_200_OK)
+
+class EvaluationBookingAPI(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def post(self,request):
+		response_dict = {}
+		response_dict['success'] = False
+
+		customer_id = request.data.get('customer_id')
+		address_id = request.data.get('address_id')
+		evaluation_note = request.data.get('evaluation_note')
+
+		customer = UserProfile.objects.get(id=customer_id)
+		address = Address.objects.get(id=address_id)
+
+		proposed_date                     = request.data.get('booking_date')
+		proposed_time                     = request.data.get('booking_time')
+		print(proposed_date,proposed_time,"romp")
+		converted_proposed_time           = datetime.strptime(proposed_date+" "+proposed_time,'%d-%m-%Y %I:%M %p')	
+		#available evaluator
+		availableevaluators               = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR',is_onlineevaluator=True).prefetch_related('evaluator_evaluation').annotate(busyevaluationcount=Sum(Case(When(evaluator_evaluation__proposed_time=converted_proposed_time,then=1),default=0,output_field=IntegerField()))).filter(busyevaluationcount__lt=2)
+	
+
+		if availableevaluators:
+			#create Main Evaluation
+			tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+
+			current_blc_starting = int(str(timezone.now().year)+str(timezone.now().month).zfill(2))		
+			
+			if current_blc_starting == int(str(tracking_no)[:6]):
+				new_tracking_no = int(tracking_no)+1
+				evaluation_no   = 'BLC'+str(new_tracking_no)
+			else:
+				evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
+				tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+			
+			evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,customer=customer,quatation_expiry_date=timezone.now()+timedelta(14))
+			
+			#Booking Number
+			booking_id               = CustomerBooking.objects.filter(is_active=True).aggregate(t=Max('booking_id'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
+			current_booking_starting = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2))
+
+			if current_booking_starting == int(str(booking_id)[:4]):
+				new_booking_id = int(booking_id)+1
+			else:
+				new_booking_id = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')
+			
+			#booking save
+			customerbooking = CustomerBooking.objects.create(booking_id=new_booking_id,booking_type='EVALUATIONBOOKING',evaluation=evaluation)
+			
+			#evaluation details save
+			##select evaluator
+			if availableevaluators.filter(busyevaluationcount=0):
+				evaluator = availableevaluators.filter(busyevaluationcount=0).first()
+			elif availableevaluators.filter(busyevaluationcount=1):
+				evaluator = availableevaluators.filter(busyevaluationcount=1).first()
+
+			evaluation_details = EvaluationDetails.objects.create(evaluation=evaluation,evaluator=evaluator,attender_note=evaluation_note,proposed_time=converted_proposed_time,address=address)		
+
+			response_dict['booking_id']     = customerbooking.id
+			response_dict['address']        = AddressSerializer(address,many=False).data
+			response_dict['visit_date_time']= datetime.strftime(evaluation_details.proposed_time,'%d-%m-%Y %I:%M %p')
+			response_dict['evaluation_note']= evaluation_details.attender_note
+			response_dict['success']        = True
+		else:
+			response_dict['Error']          = "Evaluators not Available...Please Change date or Slote !"
+		
+		return Response(response_dict,HTTP_200_OK)
