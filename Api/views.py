@@ -6078,12 +6078,11 @@ class EvaluationBookingAPI(APIView):
 		response_dict = {}
 		response_dict['success'] = False
 
-		customer_id = request.data.get('customer_id')
 		address_id = request.data.get('address_id')
 		evaluation_note = request.data.get('evaluation_note')
 
-		customer = UserProfile.objects.get(id=customer_id)
 		address = Address.objects.get(id=address_id)
+		customer = UserProfile.objects.get(id=address.customer.id)
 
 		proposed_date                     = request.data.get('booking_date')
 		proposed_time                     = request.data.get('booking_time')
