@@ -5418,15 +5418,27 @@ class CashCollect(IsAuthenticated,View):
 
 				#Invoice Authorize
 				if payment_policy == 'PREPAID':
-					Amount         = order.evaluation.total_cost 
+					Amount         = order.evaluation.total_cost
+
 					InvoiceNumber  = order.invoice_no
 					payment_policy = 'PREPAID'
+					##Invoice Line Item #
+					LineItems                 = []
+					LineItems.append({
+						"Description":"ONE TIME SERVICE",
+						"Quantity":"1",
+						"UnitAmount":Amount,
+						"AccountCode":1207004,
+						"TaxType":"NONE"
+									}
+						)
 					invoice_data        = 	{
 										"Type":"ACCREC",
 										"LineAmountTypes":"NoTax",
 										"InvoiceNumber":InvoiceNumber,
 										"Reference":order.order_no,
-										"Status":"AUTHORISED"
+										"Status":"AUTHORISED",
+										"LineItems":LineItems
 									}
 
 					##xero Create Invoice
@@ -5609,61 +5621,6 @@ class CashCollect(IsAuthenticated,View):
 
 							payment_history.is_xero_marked = True
 							payment_history.save()
-
-						# bank_charge  = .250
-						# #Update Payment
-						# payment_data = {
-						# 			"Invoice":{
-						# 				"InvoiceNumber":xero_invoice.invoice_no
-						# 			},
-						# 			"Account":{
-						# 				"Code":"090"
-						# 			},
-						# 			"Date":payment_date_string,
-						# 			"Amount":float(amount)-.250
-						# 			}
-
-						# update_payment          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
-						# 									json=payment_data,
-						# 									headers=header 
-						# 								).json()
-
-						# print(update_payment)
-						# try:
-						# 	created_payment = update_payment['Status']
-						# except:
-						# 	created_payment = None
-
-						# #BankCharge Update
-						# bankcharge_data = {
-						# 			"Invoice":{
-						# 				"InvoiceNumber":xero_invoice.invoice_no
-						# 			},
-						# 			"Account":{
-						# 				"Code":"080"
-						# 			},
-						# 			"Date":payment_date_string,
-						# 			"Amount":bank_charge
-						# 			}
-
-						# update_bankcharge          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
-						# 									json=bankcharge_data,
-						# 									headers=header 
-						# 								).json()
-
-						# print(update_bankcharge)
-						# try:
-						# 	created_bankcharge = update_bankcharge['Status']
-						# except:
-						# 	created_bankcharge = None
-
-						# if created_payment == 'OK' and created_bankcharge == 'OK':
-						# 	xero_invoice.is_paid   = True
-						# 	xero_invoice.paid_date = payment_date
-						# 	xero_invoice.save()
-
-						# 	payment_history.is_xero_marked = True
-						# 	payment_history.save()
 
 				if payment_policy == 'SUBSCRIPTION':
 					try:
