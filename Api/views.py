@@ -6080,6 +6080,7 @@ class EvaluationBookingAPI(APIView):
 
 		address_id = request.data.get('address_id')
 		evaluation_note = request.data.get('evaluation_note')
+		is_assistance_needed = request.data.get('is_assistance_needed')
 
 		address = Address.objects.get(id=address_id)
 		customer = UserProfile.objects.get(id=address.customer.id)
@@ -6117,7 +6118,7 @@ class EvaluationBookingAPI(APIView):
 				new_booking_id = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')
 			
 			#booking save
-			customerbooking = CustomerBooking.objects.create(booking_id=new_booking_id,booking_type='EVALUATIONBOOKING',evaluation=evaluation)
+			customerbooking = CustomerBooking.objects.create(booking_id=new_booking_id,booking_type='EVALUATIONBOOKING',evaluation=evaluation,is_assistance_needed=is_assistance_needed)
 			
 			#evaluation details save
 			##select evaluator

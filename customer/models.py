@@ -13,6 +13,7 @@ class CustomerBooking(models.Model):
 	booking_date = models.DateTimeField(auto_now=True)
 	evaluation   = models.ForeignKey(Evaluation,blank=False,null=False,related_name='booking_evaluation',on_delete=models.CASCADE)
 	is_bookingcompleted       = models.BooleanField(null=False,blank=True,default=False)
+	is_assistance_needed      = models.BooleanField(null=False,blank=True,default=False)
 
 	is_active    = models.BooleanField(null=False,blank=True,default=True)
 	created      = models.DateTimeField(auto_now_add=True)
