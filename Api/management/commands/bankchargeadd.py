@@ -65,7 +65,8 @@ class Command(BaseCommand):
                                                             ).json()
                 print(delete_payment)
             
-            payment_history.is_xero_marked = False
-            payment_history.save()
+            if delete_payment['Status'] == 'OK':
+                payment_history.is_xero_marked = False
+                payment_history.save()
             
             
