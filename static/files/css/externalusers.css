@@ -16,6 +16,7 @@
 }
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700&subset=cyrillic,cyrillic-ext,latin,greek-ext,greek,latin-ext,vietnamese");
 @import url("https://fonts.googleapis.com/css?family=Sanchez&subset=latin,latin-ext");
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -845,14 +846,45 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
   right: 0;
   width: 250px;
 }
+#customer-address2{
+  font-family: AvenirLTStd !important;
+  text-align: right;
+  font-size: 14px;
+  float: right;
+  right: 0;
+  width: 250px;
+}
 #contact-text{
   font-family: AvenirLTStd !important;
   font-size: 16px;
   display: inline-block;
 }
+#id_instruction{
+  margin-top: 20px;
+  font-family: AvenirLTStd !important;
+  font-size: 14px;
+  
+}
+#contact-text2{
+  font-family: AvenirLTStd !important;
+  font-size: 14px;
+  display: inline-block;
+}
+#cus-head{
+  font-family: AvenirLTStd !important;
+  font-size: 18px;
+  display: inline-block;
+}
 #contact-number{
   text-align: right;
   font-size: 16px;
+  float: right;
+  right: 0;
+  font-family: AvenirLTStd !important;
+}
+#contact-number2{
+  text-align: right;
+  font-size: 14px;
   float: right;
   right: 0;
   font-family: AvenirLTStd !important;
@@ -877,6 +909,16 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
   margin-left: auto;
   font-weight: 100;
   font-size: 48px;
+  color: #289BAC !important;
+  text-align: center;
+  margin-bottom: 40px;
+}
+#book_recipt{
+  font-family: AvenirLTStd !important;
+  margin-top: -10px;
+  margin-left: auto;
+  font-weight: 100;
+  font-size: 30px;
   color: #289BAC !important;
   text-align: center;
   margin-bottom: 40px;
@@ -1310,8 +1352,16 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
   
   width: 380px;
 }
+#left_id2{
+  float: left;
+  
+  width: 380px;
+}
 #left_id div{
   margin-bottom: 15px;
+}
+#left_id2 div{
+  margin-bottom: 10px;
 }
 #right_id{
   float: right;
@@ -1322,6 +1372,16 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
 
 #right_id div{
   margin-bottom: 15px;
+}
+#right_id2{
+  float: right;
+  right: 0;
+  width: 350px;
+  
+}
+
+#right_id2 div{
+  margin-bottom: 10px;
 }
 #table_section{
   width: 100%;
@@ -1380,4 +1440,10 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
   text-align: right;
 
   float: right;
+}
+#eval_note_cection{
+  margin-top: 30px;
+  float: left;
+  width: 780px;
+
 }

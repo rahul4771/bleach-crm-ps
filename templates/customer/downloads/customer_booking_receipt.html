@@ -31,287 +31,73 @@
 
   <div id="container">
     <section>
-      <h1 id="qu-text">QUOTATION</h1>
+      <h1 id="book_recipt" style="font-size: 30px;">Booking Recipt</h1>
    </section>
-
    <section id="customer_container">
-    {% for evaluation_detail in order.evaluation.evaluationdetails %}
-    {% if forloop.first %}              
-     <div id="left_id">
-       <div>
-         <span id="contact-text">Customer</span>
-         <span id="customer-name">{{evaluation_detail.evaluation.customer.name}}</span>
-       </div>
-      
-       <div>
-         <span id="contact-text">Contact No</span>
-         <span id="contact-number">{{evaluation_detail.evaluation.customer.mobile_number}}</span>
-       </div>
-       <div>
-         <span id="contact-text">Email</span>
-         <span id="contact-number">{{evaluation_detail.evaluation.customer.email}}</span>
-       </div>
-       <div>
-         <span id="address-text">Address </span>
-         <span id="customer-address">{{evaluation_detail.address.apartment}}, {% if evaluation_detail.address.floor %}{{evaluation_detail.address.floor}} {% else %}{% endif %} {{evaluation_detail.address.building}},{{evaluation_detail.address.block}}, {{evaluation_detail.address.street}},{% if evaluation_detail.address.avenue %}{{evaluation_detail.address.avenue}} {% else %}{% endif %}<br>{{evaluation_detail.address.area.name}}, {{evaluation_detail.address.governorate.name}}</span>
-       </div><br>
-     </div>
-   {% endif %}
-   {% endfor %}
-
-     <div id="right_id">
+           
+    <div id="left_id2">
+      <div>
+        <span id="cus-head">Customer Details</span>
        
-         <div>
-           <span id="contact-text">Quotation Number</span>
-           <span id="contact-number"> <b>{{order.order_no}}</b> </span>
-         </div>
-         <div>
-           <span id="contact-text">Initiated Date</span>
-           <span id="contact-number">{{order.evaluation.created|date:'d-m-Y'}}</span>
-         </div>
-         <div>
-           <span id="contact-text">Due Date</span>
-           <span id="contact-number">{{order.evaluation.quatation_expiry_date|date:'d-m-Y'}}</span>
-         </div>
-         {% if order.evaluation.evaluator %}
-         <div>
-           <span id="contact-text">Evaluator</span>
-           <span id="contact-number">{{order.evaluation.evaluator.name}}</span>
-         </div>
-         {% endif %}
-         <div>
-          <span id="contact-text">Payment Policy</span>
-          <span id="contact-number">{{order.evaluation.payment_method}}</span>
-        </div>
-     </div>
-
-   </section>
-   
-
-   <section id="table_section">
-
-    <table id="soa_table2">
-      <tr>
-        <th style="width: 40%;">Service</th>
-        <th>Size</th>
+      </div>
+      <div>
+        <span id="contact-text2">Customer ID</span>
+        <span id="contact-number2">45123768731 </span>
+      </div>
+      <div>
+        <span id="contact-text2">Customer</span>
+        <span id="contact-number2">Sonu George</span>
+      </div>
       
-        <th>Visit</th>
-        <th>Unit Price</th>
-        <th>Net Price</th>
-      </tr>
-
-      {% for evaluation_detail in order.evaluation.evaluationdetails %}            
-      {% for evaluation_book in evaluation_detail.evaluationbooks %}
-      {% for book_section in evaluation_book.booksections %}
-      {% if book_section.evaluation_book.service_type.name != 'Kitchen Appliances' %}
-      <tr>
-        <td>
-          {{evaluation_book.service_type}} - {{book_section.section_name}}
-          <div class="d-flex mb-10" > {% if evaluation_book.status == 'CANCELLED' %} <div class="status-dot cancel-chip-bg"></div> <div class="ml-2">Cancelled</div> {% endif %}</div>
-
-        </td>
-        <td style="text-align: center;">
-          {{book_section.size}} 
-          {% if evaluation_book.service_type.name == 'Upholstery Cleaning' %}
-                                                       
-          {% for price_range in price_ranges %}
-          {% if price_range.name == book_section.size and price_range.service_type == evaluation_book.service_type and price_range.upholstery_type == book_section.upholstery_type %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}} Seater){% endif %}
-          {% endfor %}
-            
-          {% else %}
-              
-          {% for price_range in price_ranges %}
-          {% if price_range.name == book_section.size and price_range.service_type == evaluation_book.service_type and evaluation_book.service_type.name != 'Mattress Cleaning' and price_range.is_newkitchen == book_section.new_kitchen and price_range.is_cabinet == book_section.is_cabinet and price_range.is_highprice_facade == book_section.is_highprice_facade and price_range.is_highprice_window == book_section.is_highprice_window %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}} Sqm){% endif %}
-          {% endfor %}
-              
-          {% endif %}
-        </td>
-        <td style="text-align: center;">
-          {% if evaluation_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{book_section.section_cleanings|floatformat:"-1"}}{% endif %}
-        </td>
-        <td style="text-align: right;">
-          {% if book_section.sectiononly_cost %}{{book_section.sectiononly_cost|floatformat:'3'}}{% else %}{{book_section.section_cost|floatformat:'3'}}{% endif %}
-        </td>
-        <td style="text-align: right;">
-          {% if book_section.sectiononly_net_cost %}{{book_section.sectiononly_net_cost|floatformat:'3'}}{% else %}{{book_section.section_net_cost|floatformat:'3'}}{% endif %}
-        </td>
-      </tr>
-      {% endif %}
-
-      {% if book_section.sectionaddons %}
-      {% for addon in book_section.sectionaddons %}
-      <!-- ADDONS BEGINS HERE -->
-      <tr>
-        <td>
-          {{book_section.section_name}} - {{addon.name}} (x{{addon.quantity|default_if_none:'1'}})
-          <div class="d-flex mb-10" > {% if evaluation_book.status == 'CANCELLED' %} <div class="status-dot cancel-chip-bg"></div> <div class="ml-2">Cancelled</div> {% endif %}</div>
-
-        </td>
-        <td>
-          {{addon.size|default_if_none:'-'}}
-        </td>
-        <td style="text-align: right;">
-          {% if evaluation_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{book_section.section_cleanings|floatformat:"-1"}}{% endif %}
-        </td>
-        <td style="text-align: right;">
-          {{addon.addon_cost|floatformat:'3'}}
-        </td>
-        <td style="text-align: right;">
-          {{addon.addon_net_cost|floatformat:'3'}}
-        </td>
-      </tr>
-      <!-- ADDONS ENDS HERE -->
-      {% endfor %}
-      {% endif %}
-
-
-      {% endfor %}
-      {% endfor %}
-      {% endfor %}
+      <div>
+        <span id="contact-text2">Contact No</span>
+        <span id="contact-number2">987654321 </span>
+      </div>
    
+      <div>
+        <span id="contact-text2">Address </span>
+        <span id="customer-address2">Address AddressAddressAddress </span>
+      </div><br>
+    </div>
+ 
 
-      <tr>
-        <td colspan="4"> Sub Total</td>
-        <td style="text-align: right;">{{order.evaluation.estimated_cost|floatformat:'3'}} KD</td>
-      </tr>
-    </table>
+    <div id="right_id2">
+      <div>
+        <span id="cus-head">Evaluation Detail</span>
+       
+      </div>
+        <div>
+          <span id="contact-text2">Booking ID</span>
+          <span id="contact-number2"> 2342354</span>
+        </div>
+        <div>
+          <span id="contact-text2">Visit Day</span>
+          <span id="contact-number2">12-03-2022</span>
+        </div>
+        <div>
+          <span id="contact-text2">Visit Time</span>
+          <span id="contact-number2">10.00 AM to 11A M</span>
+        </div>       
+    </div>
 
+  </section>
+  <section id="eval_note_cection">
+    <div id="in_eval">
+      <div>
+        <span id="cus-head"><b>Instruction For Evaluation</b></span>
+      </div>
+      <div id="id_instruction">
+        Thank you for your interest in BLEACH® cleaning services. You have safely landed on our ‘Connection Junction’. Here, our professionally trained and prompt customer service team gladly assists you on your journey to a cleaner and healthier surrounding with us.We at BLEACH® take pride in being one of the most comprehensive cleaning services providers in Kuwait. You can Call and WhatsApp us or email us at customercare@bleach-kw.comfor a quick resolution to all your questions and concerns by our 24/7 customer care personnel.
+      </div>
+    </div>
   </section>
 
 
-    {% if order.evaluation.payment_method == 'BREAKDOWN' %}
-    <section id="paymentmode-sec">
-      <span> BREAKDOWN Payment Mode</span>
-    </section>
-    <section id="lastsection">
-      <div>
-        <span id="paymenttime">
-          Payment Before Cleaning
-        </span>
-        <span id="paymenttime-amount">
-          <b>{{order.evaluation.before_cleaning_amount|floatformat:'3'}}</b> KD
-        </span>
-      </div>
-      <div>
-        <span id="paymenttime">
-          Payment After Cleaning
-        </span>
-        <span id="paymenttime-amount">
-          <b>{{order.evaluation.after_cleaning_amount|floatformat:'3'}}</b> KD
-        </span>
-      </div>
-    </section>
-    {% endif %}
 
-    {% if order.evaluation.payment_method == 'PREPAID' %}
-    <section id="lastsection">
-      <div>
-        <span id="paymenttime">
-          Payment Before Cleaning
-        </span>
-        <span id="paymenttime-amount">
-          <b>{{order.total_amount|floatformat:"3"}}</b> KD
-        </span>
-      </div>
-    </section>
-    {% endif %}
+   
 
-    {% if order.evaluation.payment_method == 'POSTPAID' %}
-    <section id="lastsection">
-      <div>
-        <span id="paymenttime">
-          Payment After Cleaning
-        </span>
-        <span id="paymenttime-amount">
-          <b>{{order.total_amount|floatformat:"3"}}</b> KD
-        </span>
-      </div>
-    </section>
-    {% endif %}
 
-    <section id="total-section">
-      <div>
-        <span id="paymenttime">
-          <b>Sub Total</b>
-        </span>
-        <span id="paymenttime-amount">
-          <b>{{order.evaluation.estimated_cost|floatformat:'3'}}</b>
-        </span>
-      </div>
-      
-      {% if order.evaluation.discount != 0 %}
-      <div>
-        <span id="paymenttime">
-          <b>Discount</b>
-        </span>
-        <span id="paymenttime-amount">
-          <b>-{{order.evaluation.discount|floatformat:"3"}}</b>
-        </span>
-      </div>
-      {% endif %}
-
-      {% if order.evaluation.additional_charge != 0 %}
-      <div>
-        <span id="paymenttime">
-          <b>Additional Charge(s)</b>
-        </span>
-        <span id="paymenttime-amount">
-          <b>{{order.evaluation.additional_charge|floatformat:"3"}}</b>
-        </span>
-      </div>
-      {% endif %}
-
-      {% if order.evaluation.credit_amount != 0 %}
-      <div>
-        <span id="paymenttime">
-          <b>Credit Added</b>
-        </span>
-        <span id="paymenttime-amount">
-          <b>-{{order.evaluation.credit_amount|floatformat:"3"}}}</b>
-        </span>
-      </div>
-      {% endif %}
-      
-      {% if order.evaluation.fine_amount != 0 %}
-      <div>
-        <span id="paymenttime">
-          <b>Fine</b>
-        </span>
-        <span id="paymenttime-amount">
-          <b>-{{order.evaluation.fine_amount|floatformat:'3'}}</b>
-        </span>
-      </div>
-      {% endif %}
-
-      {% if order.evaluation.writeback_amount != 0 %}
-      <div>
-        <span id="paymenttime">
-          <b>Write-Off Amount</b>
-        </span>
-        <span id="paymenttime-amount">
-          <b>-{{order.evaluation.writeback_amount|floatformat:'3'}}</b>
-        </span>
-      </div>
-      {% endif %}
-
-      {% if order.evaluation.is_promocode_applied == True %}
-      <div>
-        <span id="paymenttime">
-          <b>Coupon Added</b>
-        </span>
-        <span id="paymenttime-amount">
-          <b>-{{order.evaluation.promocode_amount|floatformat:"3"}}</b>
-        </span>
-      </div>
-      {% endif %}
-
-    </section>
-    <section id="final-section">
-      <span id="total_id">Total</span>
-      <h1 id="total_amount">
-        {{order.total_amount|floatformat:"3"}} <span id="kd-font">KD</span>
-      </h1>
-    </section>
+   
   </div>
 </body>
 <footer>{% include 'customer/downloads/footer.html' %}</footer>

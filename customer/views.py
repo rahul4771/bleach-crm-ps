@@ -1837,7 +1837,7 @@ def customer_booking_html_to_pdf_view(request,booking_id):
 	fs = FileSystemStorage('/home/pdf/tmp/customer_booking/')
 	with fs.open('customer_evaluation_booking_receipt.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
-		response['Content-Disposition'] = 'attachment; filename="'+evaluation_id+'_quatation.pdf"'
+		response['Content-Disposition'] = 'attachment; filename="'+booking_id+'_quatation.pdf"'
 		return response
 	return response
 
