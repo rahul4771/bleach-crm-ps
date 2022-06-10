@@ -1818,6 +1818,29 @@ def receipt_html_to_pdf_view(request,payment_id):
 		return response
 	return response	
 
+def customer_booking_html_to_pdf_view(request,booking_id):
+
+	try:
+		customer_booking = CustomerBooking.objects.get(booking_id=booking_id)
+		evaluation_details = EvaluationDetails.objects.filter(evaluation=customer_booking.evaluation).first()
+	except:
+		customer_booking = None
+		evaluation_details = None
+
+	html_string = render_to_string("customer/downloads/customer_booking_receipt.html",{"booking":customer_booking,"evaluation_details":evaluation_details})
+
+	html     = HTML(string=html_string,base_url=request.build_absolute_uri())
+	main_doc = html.render()
+
+	main_doc.write_pdf(target='/home/pdf/tmp/customer_booking/customer_evaluation_booking_receipt.pdf');
+
+	fs = FileSystemStorage('/home/pdf/tmp/customer_booking/')
+	with fs.open('customer_evaluation_booking_receipt.pdf') as pdf:
+		response = HttpResponse(pdf, content_type='application/pdf')
+		response['Content-Disposition'] = 'attachment; filename="'+evaluation_id+'_quatation.pdf"'
+		return response
+	return response
+
 def soa_calculate(n,collection):
     collection_sum = sum(collection)
     result           = [int(n/collection_sum*i) for i in collection]
