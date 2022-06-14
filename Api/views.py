@@ -2317,7 +2317,7 @@ class DailySalesChartAPI(APIView):
 		return Response(response_dict,HTTP_200_OK)
 
 class PaymentPolicyEditAPI(APIView):
-	permission_classes  	=   (AllowAny,)
+	permission_classes  	= (AllowAny,)
 	authentication_classes  = ()
 
 	def get(self,request):
