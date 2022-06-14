@@ -1,0 +1,105 @@
+{% load static %}
+{% load mathfilters %}
+<!DOCTYPE html>
+<html lang="en" xml:lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" id="viewportMeta" />
+
+
+  <meta name="description" content="Bleach Invoice">
+  <meta name="author" content="Invoice">
+
+  <link href="{% static 'files/css/externalusers.css' %}" rel="stylesheet" type="text/css">
+
+  <link href="{% static 'files/css/colors.css' %}" rel="stylesheet" type="text/css">
+
+  <title>Bleach Cleaning Services | Invoice</title>
+</head>
+<header>
+  {% include 'customer/downloads/header.html' %}
+</header>
+
+<body id="printableArea">
+  <!-- Reject Modal-->
+
+  <div id="container">
+    <section>
+      <h1 id="book_recipt" style="font-size: 30px;">Booking Recipt</h1>
+   </section>
+   <section id="customer_container">
+           
+    <div id="left_id2">
+      <div>
+        <span id="cus-head">Customer Details</span>
+       
+      </div>
+      <div>
+        <span id="contact-text2">Customer ID</span>
+        <span id="contact-number2">45123768731 </span>
+      </div>
+      <div>
+        <span id="contact-text2">Customer</span>
+        <span id="contact-number2">Sonu George</span>
+      </div>
+      
+      <div>
+        <span id="contact-text2">Contact No</span>
+        <span id="contact-number2">987654321 </span>
+      </div>
+   
+      <div>
+        <span id="contact-text2">Address </span>
+        <span id="customer-address2">Address AddressAddressAddress </span>
+      </div><br>
+    </div>
+ 
+
+    <div id="right_id2">
+      <div>
+        <span id="cus-head">Evaluation Detail</span>
+       
+      </div>
+        <div>
+          <span id="contact-text2">Booking ID</span>
+          <span id="contact-number2"> 2342354</span>
+        </div>
+        <div>
+          <span id="contact-text2">Visit Day</span>
+          <span id="contact-number2">12-03-2022</span>
+        </div>
+        <div>
+          <span id="contact-text2">Visit Time</span>
+          <span id="contact-number2">10.00 AM to 11A M</span>
+        </div>       
+    </div>
+
+  </section>
+  <section id="eval_note_cection">
+    <div id="in_eval">
+      <div>
+        <span id="cus-head"><b>Instruction For Evaluation</b></span>
+      </div>
+      <div id="id_instruction">
+        Thank you for your interest in BLEACH® cleaning services. You have safely landed on our ‘Connection Junction’. Here, our professionally trained and prompt customer service team gladly assists you on your journey to a cleaner and healthier surrounding with us.We at BLEACH® take pride in being one of the most comprehensive cleaning services providers in Kuwait. You can Call and WhatsApp us or email us at customercare@bleach-kw.comfor a quick resolution to all your questions and concerns by our 24/7 customer care personnel.
+      </div>
+    </div>
+  </section>
+
+
+
+   
+
+
+   
+  </div>
+</body>
+<footer>{% include 'customer/downloads/footer.html' %}</footer>
+
+</html>

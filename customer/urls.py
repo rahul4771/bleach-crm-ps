@@ -29,6 +29,7 @@ urlpatterns = [
 		url(r'^order-detail/download/(?P<order_id>[-\w]+)/(?P<service_id>[-\w]+)/(?P<section_id>[-\w]+)$',views.orderdetail_html_to_pdf_view,name='order-detail-download'),
 		url(r'^terms-and-conditions/download$',views.termsandconditions_to_pdf,name='terms-conditions-download'),
 		url(r'^stock-out/download/(?P<visit_id>[-\w]+)/$',views.stockout,name='stockout-download'),
+		url(r'^customer-evaluation-booking/download/(?P<booking_id>[-\w]+)$',views.customer_booking_html_to_pdf_view,name='customer-evaluation-booking-download'),
 
 		url(r'^add-promocode/$',views.addpromocode,name='add-promocode'),
 

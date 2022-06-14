@@ -112,5 +112,6 @@ urlpatterns = [
 	url(r'^evaluation-booking-customer-otp-generation/$',views.EvaluationBookingCustomerOtpGenerationAPI.as_view(),name='evaluation-booking-customer-otp-generation'),
 	url(r'^evaluation-booking-customer-otp-verification/$',views.EvaluationBookingCustomerOtpVerificationAPI.as_view(),name='evaluation-booking-customer-otp-verification'),
 	url(r'^evaluation-booking-slots/$',views.GetEvaluationBookingSlots.as_view(),name='evaluation-booking-slots'),
+	url(r'^evaluation-booking-submit/$',views.EvaluationBookingAPI.as_view(),name='evaluation-booking-api'),
 
 ]

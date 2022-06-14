@@ -157,16 +157,15 @@
                                             <a class="inv-plan-img-btn2-disabled d-flex dropdown-orders" disabled> <img class="btn-img2 dropdown-icon2 pr-2" src="{% static 'files/inventory/invoice.png' %}" alt=""><div class="ml-2 dropdown-text">Invoice</div></a>
                                         {% endif %}
 
-                                        {% if request.user.user_type != 'STOCKCONTROLLER' %}
-                                            {% if order.is_rejected == True or order.is_received == False %}                
-                                            <a class="d-flex dropdown-orders" href="/bleach-inventory/editpo/{{order.id}}"><img class="dropdown-icon2 pr-2" src="{% static 'files/inventory/pencil.png' %}"  alt=""><div class="ml-2 dropdown-text">Edit</div></a>
-                                            {% endif %}
-
                                         
-                                            {% if request.user.user_type == 'INVENTORYADMIN' %}
-                                            <a class="d-flex dropdown-orders delete-order" data-id="{{order.id}}"  data-toggle="modal" data-target="#deleteModel"> <img class="dropdown-icon2" src="{% static 'files/inventory/bin.png' %}"  alt=""> <div class="ml-2 dropdown-text">Delete</div> </button>
-                                            {% endif %}
+                                        {% if order.is_rejected == True or order.is_received == False %}                
+                                        <a class="d-flex dropdown-orders" href="/bleach-inventory/editpo/{{order.id}}"><img class="dropdown-icon2 pr-2" src="{% static 'files/inventory/pencil.png' %}"  alt=""><div class="ml-2 dropdown-text">Edit</div></a>
                                         {% endif %}
+
+                                        {% if request.user.user_type == 'INVENTORYADMIN' %}
+                                        <a class="d-flex dropdown-orders delete-order" data-id="{{order.id}}"  data-toggle="modal" data-target="#deleteModel"> <img class="dropdown-icon2" src="{% static 'files/inventory/bin.png' %}"  alt=""> <div class="ml-2 dropdown-text">Delete</div> </button>
+                                        {% endif %}
+                                        
                                       
                                     </div>
                                   </div>
