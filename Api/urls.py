@@ -114,4 +114,7 @@ urlpatterns = [
 	url(r'^evaluation-booking-slots/$',views.GetEvaluationBookingSlots.as_view(),name='evaluation-booking-slots'),
 	url(r'^evaluation-booking-submit/$',views.EvaluationBookingAPI.as_view(),name='evaluation-booking-api'),
 
+	###Cleaning booking apis
+	url('^find-dates/$',views.FindDates.as_view(),name='find-dates'),
+
 ]
