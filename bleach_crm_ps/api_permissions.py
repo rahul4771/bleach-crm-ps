@@ -17,3 +17,8 @@ class IsTeamInchargePermission(CommonPermission):
     def check_perm(self, request, view):
         if request.user.user_type=='TEAMINCHARGE':
             return True
+
+class IsCustomerPermission(CommonPermission):
+    def check_perm(self, request, view):
+        if request.user.user_type=='CUSTOMER':
+            return True

@@ -2,7 +2,7 @@ from rest_framework import serializers
 from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import ServiceType,Evaluation,EvaluationDetails,EvaluationBook,EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons
 from order.models import Order
-from customer.models import CustomerBooking
+from customer.models import CustomerBooking,CartService,CartSchedule
 
 class ServiceTypeSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -95,8 +95,25 @@ class EvaluationDetailsSerializer(serializers.ModelSerializer):
 		model  = EvaluationDetails
 		fields = ('id','evaluator','proposed_time','address','evaluation','evaluation_book_evaluation_details')	
 		read_only_fields = ('id','evaluation')
+
 class CustomerBookingSerializer(serializers.ModelSerializer):
 	evaluation = EvaluationSerializer(read_only=True)
 	class Meta:
 		model  = CustomerBooking
 		fields = ('evaluation','booking_id','booking_type','booking_date',)
+
+class CartServiceSerializer(serializers.ModelSerializer):
+	class Meta:
+		model  = CartService
+		fields = ('cart','service_type','cleaning_policy','area_type','cleaning_method','location_type','section_name','category','dirt_level','quantity','size','unit','age','floor','apartment','room','wall_type','ceiling_type','floor_type','material','colour','cause_of_stain','age_of_stain','cement_residue','oil_residue','hall_size','window_side','new_kitchen','is_cabinet','is_highprice_facade','is_highprice_window','upholstery_type','vacuuming','total_cost')
+
+class CartServiceShowSerializer(serializers.ModelSerializer):
+	service_type = ServiceTypeSerializer(read_only=True)
+	class Meta:
+		model  = CartService
+		fields = ('service_type','section_name','size','unit','total_cost')
+
+class CartScheduleSerializer(serializers.ModelSerializer):	
+	class Meta:
+		model  = CartSchedule
+		fields = ('cart','start_at','end_at','no_of_cleaners','cleaning_hours','hourly_cleaning_duration')

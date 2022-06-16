@@ -83,5 +83,8 @@ urlpatterns = [
 		url(r'^resubmitorder/(?P<order_id>[-\w]+)$',views.ReSubmitOrder.as_view(),name='resubmit-order'),
 
 		url(r'^emailtest$',views.EmailTest.as_view(),name='email-test'),
-		url(r'^cart$',views.Cart.as_view(),name='cart'),
+		# url(r'^cart$',views.Cart.as_view(),name='cart'),
+		
+		#website APIs
+		url(r'^cart/(?P<token>\w+)/$',views.CartAPI.as_view(),name='customer-cart'),
 	]

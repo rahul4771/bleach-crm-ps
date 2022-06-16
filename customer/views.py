@@ -29,7 +29,7 @@ from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,Evaluat
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,Promocode,CancellOrderAmountHistory,XeroInvoice
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
-from customer.models import CustomerBooking
+from customer.models import CustomerBooking,CustomerCart,CartService,CartSchedule
 from Api.models import XeroConnection
 from bleachadmin.models import ServiceProductivity,ServicePriceRange,ServiceAddOns
 from agent.forms import UserProfileForm,AddressForm
@@ -41,11 +41,14 @@ import requests
 
 #restframe work 
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework.response import Response 
 from rest_framework.status import HTTP_200_OK 
-
-from customer.serilizers import UserProfileSerializer,AddressSerializer,AddressSaveSerializer,EvaluationBookSerializer,EvaluationBookSectionSerializer,EvaluationSectionKeynoteSerializer,EvaluationSerializer,OrderSerializer,EvaluationDetailsSerializer,CustomerBookingSerializer,EvaluationSectionAddonSerializer
+from rest_framework import status
+from rest_framework.authentication import TokenAuthentication 
+from rest_framework.authtoken.models import Token
+from bleach_crm_ps.api_permissions import IsCustomerPermission
+from customer.serilizers import CartServiceShowSerializer,CartServiceSerializer,CartScheduleSerializer,UserProfileSerializer,AddressSerializer,AddressSaveSerializer,EvaluationBookSerializer,EvaluationBookSectionSerializer,EvaluationSectionKeynoteSerializer,EvaluationSerializer,OrderSerializer,EvaluationDetailsSerializer,CustomerBookingSerializer,EvaluationSectionAddonSerializer
 from bleachadmin.serializers import ServiceAddOnsSerializer
 from agent.serializers import UserProfileShowSerializer
 from Api.serializers import OrderScheduleShowSerializer
@@ -8331,3 +8334,55 @@ class EmailTest(APIView):
 
 		response_dict['success'] = True
 		return Response(response_dict,HTTP_200_OK)
+
+class CartAPI(APIView):
+	permission_classes        = (IsAuthenticated,)
+	authentication_classes    = (TokenAuthentication,)
+
+	def get(self,request,token):
+		response_dict = {'success':False}
+
+		user = Token.objects.get(key=token).user
+
+		try:
+			cart = CustomerCart.objects.get(customer=user)
+		except:
+			cart = CustomerCart.objects.create(customer=user)
+
+		services = CartService.objects.filter(cart=cart)
+
+		cart_services = CartServiceShowSerializer(services,many=True).data
+
+		response_dict['success'] = True
+		response_dict['data'] = cart_services
+
+		return Response(response_dict,HTTP_200_OK)
+
+	def post(self,request,token):
+		response_dict = {'success':False}
+
+		user = Token.objects.get(key=token).user
+
+		try:
+			cart = CustomerCart.objects.get(customer=user)
+		except:
+			cart = CustomerCart.objects.create(customer=user)
+
+		service_data = request.data.get('service_data')
+
+		service_data_serializer = CartServiceSerializer(data=service_data)
+
+		if service_data_serializer.is_valid():
+			service = service_data_serializer.save()
+			response_dict['success']  = True
+
+		else:
+			errors= service_data_serializer.errors   
+			key=tuple(errors.keys())[0] 
+			error=errors[key]
+			response_dict['Error']=key +':'+ error[0]
+			response_dict['Error_List'] = service_data_serializer.errors
+
+		return Response(response_dict,HTTP_200_OK)
+
+		
