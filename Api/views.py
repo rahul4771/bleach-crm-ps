@@ -979,7 +979,7 @@ class LeaveScheduleAPI(APIView):
 
 				headers = {
 						"Content-Type": "application/json",
-						"Authorization": "Basic NDNhMjE5Y2ZlNmYyZGJlMjUwYTllYjdiNWUyNzc0MzM1YzE0Njg1ODo="
+						"Authorization": "Basic MjI4ZmQ2Y2EwNzUwZmRmZWMyYjRhMWJkZjYzMmExODdhNDAxMDg4YTo="
 					}
 
 				if bamboo_employee_id:
@@ -1174,7 +1174,7 @@ class DeleteLeaveSchedule(APIView):
 				
 			headers = {
 				"Accept": "application/json",
-				"Authorization": "Basic NDNhMjE5Y2ZlNmYyZGJlMjUwYTllYjdiNWUyNzc0MzM1YzE0Njg1ODo="
+				"Authorization": "Basic MjI4ZmQ2Y2EwNzUwZmRmZWMyYjRhMWJkZjYzMmExODdhNDAxMDg4YTo="
 			}
 
 			#get time off request id
@@ -1194,7 +1194,7 @@ class DeleteLeaveSchedule(APIView):
 
 			headers = {
 				"Content-Type": "application/json",
-				"Authorization": "Basic NDNhMjE5Y2ZlNmYyZGJlMjUwYTllYjdiNWUyNzc0MzM1YzE0Njg1ODo="
+				"Authorization": "Basic MjI4ZmQ2Y2EwNzUwZmRmZWMyYjRhMWJkZjYzMmExODdhNDAxMDg4YTo="
 			}
 
 			print(url,payload,"loadss")

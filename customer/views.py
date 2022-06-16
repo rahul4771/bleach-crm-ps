@@ -8361,13 +8361,16 @@ class CartAPI(APIView):
 	def post(self,request,token):
 		response_dict = {'success':False}
 
+		#get user from token
 		user = Token.objects.get(key=token).user
 
+		#get or create cart
 		try:
 			cart = CustomerCart.objects.get(customer=user)
 		except:
 			cart = CustomerCart.objects.create(customer=user)
 
+		#saving service details through serializer
 		service_data = request.data.get('service_data')
 
 		service_data['cart'] = cart.id
