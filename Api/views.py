@@ -6011,8 +6011,8 @@ class LocationTypesAPI(APIView):
 
 
 class CustomerAddressesAPI(APIView):
-	permission_classes        = (AllowAny,)
-	authentication_classes    = ()
+	permission_classes        = (IsAuthenticated,)
+	authentication_classes    = (TokenAuthentication,)
 
 	def get(self,request,token):
 		response_dict = {}
@@ -6071,8 +6071,8 @@ class CustomerAddressesAPI(APIView):
 		return Response(response_dict,HTTP_200_OK)
 
 class EvaluationBookingAPI(APIView):
-	permission_classes        = (AllowAny,)
-	authentication_classes    = ()
+	permission_classes        = (IsAuthenticated,)
+	authentication_classes    = (TokenAuthentication,)
 
 	def post(self,request):
 		response_dict = {}
