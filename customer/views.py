@@ -8370,6 +8370,8 @@ class CartAPI(APIView):
 
 		service_data = request.data.get('service_data')
 
+		service_data['cart'] = cart.id
+
 		service_data_serializer = CartServiceSerializer(data=service_data)
 
 		if service_data_serializer.is_valid():
