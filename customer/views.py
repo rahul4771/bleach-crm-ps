@@ -8375,6 +8375,11 @@ class CartAPI(APIView):
 
 		service_data['cart'] = cart.id
 
+		#getting service price through productivity id 
+		total_cost = ServicePriceRange.objects.get(id=request.data.get('productivity_id')).price
+
+		service_data['total_cost'] = total_cost
+
 		service_data_serializer = CartServiceSerializer(data=service_data)
 
 		if service_data_serializer.is_valid():
