@@ -51,7 +51,7 @@ from bleach_crm_ps.api_permissions import IsCustomerPermission
 from customer.serilizers import CartServiceShowSerializer,CartServiceSerializer,CartScheduleSerializer,UserProfileSerializer,AddressSerializer,AddressSaveSerializer,EvaluationBookSerializer,EvaluationBookSectionSerializer,EvaluationSectionKeynoteSerializer,EvaluationSerializer,OrderSerializer,EvaluationDetailsSerializer,CustomerBookingSerializer,EvaluationSectionAddonSerializer
 from bleachadmin.serializers import ServiceAddOnsSerializer
 from agent.serializers import UserProfileShowSerializer
-from Api.serializers import OrderScheduleShowSerializer
+from Api.serializers import OrderScheduleShowSerializer,EvaluationBookAPISerializer,SectionAPISerializer,EvaluationDetailsAPISerializer
 
 def get_client_ip(request):
 	x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -8361,6 +8361,8 @@ class CartAPI(APIView):
 	def post(self,request,token):
 		response_dict = {'success':False}
 
+		action = request.data.get('action')
+
 		#get user from token
 		user = Token.objects.get(key=token).user
 
@@ -8370,29 +8372,192 @@ class CartAPI(APIView):
 		except:
 			cart = CustomerCart.objects.create(customer=user)
 
-		#saving service details through serializer
-		service_data = request.data.get('service_data')
+		#ADDING A NEW SERVICE
+		if action == 'add_service':
 
-		service_data['cart'] = cart.id
+			#saving service details through serializer
+			service_data = request.data.get('service_data')
 
-		#getting service price through productivity id 
-		total_cost = ServicePriceRange.objects.get(id=request.data.get('productivity_id')).price
+			service_data['cart'] = cart.id
 
-		service_data['total_cost'] = total_cost
+			#getting service price through productivity id 
+			total_cost = ServicePriceRange.objects.get(id=request.data.get('productivity_id')).price
 
-		service_data_serializer = CartServiceSerializer(data=service_data)
+			service_data['total_cost'] = total_cost
 
-		if service_data_serializer.is_valid():
-			service = service_data_serializer.save()
-			response_dict['success']  = True
+			service_data_serializer = CartServiceSerializer(data=service_data)
 
-		else:
-			errors= service_data_serializer.errors   
-			key=tuple(errors.keys())[0] 
-			error=errors[key]
-			response_dict['Error']=key +':'+ error[0]
-			response_dict['Error_List'] = service_data_serializer.errors
+			if service_data_serializer.is_valid():
+				service = service_data_serializer.save()
+				response_dict['success']  = True
+			else:
+				errors= service_data_serializer.errors   
+				key=tuple(errors.keys())[0] 
+				error=errors[key]
+				response_dict['Error']=key +':'+ error[0]
+				response_dict['Error_List'] = service_data_serializer.errors
+
+		#UPDATING EXISTING SERVICE
+		if action == 'edit_service':
+
+			#saving service details through serializer
+			service_data = request.data.get('service_data')
+
+			service_data['cart'] = cart.id
+
+			#getting service price through productivity id 
+			total_cost = ServicePriceRange.objects.get(id=request.data.get('productivity_id')).price
+
+			service_data['total_cost'] = total_cost
+
+			try:
+				cart_service = CartService.objects.get(id=request.data.get('cart_service_id'))
+
+				service_data_serializer = CartServiceSerializer(data=service_data,instance=cart_service)
+
+				if service_data_serializer.is_valid():
+					service = service_data_serializer.save()
+					response_dict['success']  = True 
+				else:
+					errors= service_data_serializer.errors   
+					key=tuple(errors.keys())[0] 
+					error=errors[key]
+					response_dict['Error']=key +':'+ error[0]
+					response_dict['Error_List'] = service_data_serializer.errors
+			except:
+				cart_service = None
+
+		#DELETE SERVICE
+		if action == 'delete_service':
+
+			try:
+				cart_service = CartService.objects.get(id=request.data.get('cart_service_id'))
+				cart_service.delete()
+				response_dict['success']  = True
+			except:
+				cart_service = None
 
 		return Response(response_dict,HTTP_200_OK)
 
+class FindDates(APIView):
+    permission_classes     = (AllowAny,)
+    authentication_classes = ()
+
+    def post(self,request):
+        response_dict = {"success":False}
+        action        = request.data.get('action_type')
+    
+        #To check given a start date for weekly or list of dates for monthly
+        current_date   = datetime.strptime(request.data.get('start_date'),'%d-%m-%Y').date()
+        
+        #Total Visits
+        total_visits      = request.data.get('total_visits') 
+        dates             = []
+
+
+        if action == 'weekly':
+            #Days(For Monday-0,Tuesday-2 etc)
+            days              = request.data.get('days')
+            
+            while len(dates) != total_visits:
+                #Append Date
+                if current_date.weekday() in days:
+                    current_week = current_date.isocalendar()[1]
+                    dates.append(datetime.strftime(current_date,'%d-%m-%Y'))
+                current_date  = current_date+timedelta(days=1)
+
+        elif action == 'daily':
+            #Days(For Monday-0,Tuesday-2 etc)
+            days              = request.data.get('days')
+            
+            while len(dates) != total_visits:
+                #Append Date
+                dates.append(datetime.strftime(current_date,'%d-%m-%Y'))
+                current_date  = current_date+timedelta(days=1)
+
+        elif action == 'alternate_daily':
+            #Days(For Monday-0,Tuesday-2 etc)
+            days              = request.data.get('days')
+            
+            while len(dates) != total_visits:
+                #Append Date
+                dates.append(datetime.strftime(current_date,'%d-%m-%Y'))
+                current_date  = current_date+timedelta(days=2)
+
+        elif action ==  'alternate_weekly':
+            #Days(For Monday-0,Tuesday-2 etc)
+            days              = request.data.get('days')
+
+            current_week      = current_date.isocalendar()[1]
+            while len(dates) != total_visits:
+                #To Skip a Week
+                if current_week != current_date.isocalendar()[1]:
+                    current_date = current_date+timedelta(days=7)
+                    current_week = current_date.isocalendar()[1]
+                
+                #Append Date
+                if current_date.weekday() in days:
+                    dates.append(datetime.strftime(current_date,'%d-%m-%Y'))
+                current_date  = current_date+timedelta(days=1)
+
+        elif action == 'monthly':
+            coming_days   = request.data.get('coming_days') 
+
+            counter = 0
+            while len(dates) != total_visits:
+                new_dates = list(map(lambda coming_day:
+                                datetime.strftime(current_date.replace(day=coming_day)+relativedelta.relativedelta(months=counter),'%d-%m-%Y') 
+                                if current_date<=current_date.replace(day=coming_day)+relativedelta.relativedelta(months=counter) else None,
+                                coming_days)) 
+                new_dates = [new_date for new_date in new_dates if new_date]
+                
+                #Append Next Month Dates
+                for new_date in new_dates:
+                    if len(dates) != total_visits and new_date not in dates:
+                        dates.append(new_date)
+                    elif len(dates) == total_visits:
+                        break
+
+                counter      = counter+1
+
+        response_dict['success']  = True
+        response_dict['dates']    = dates
+        
+        return Response(response_dict, HTTP_200_OK)
+
+class CartScheduleAPI(APIView):
+	permission_classes        = (IsAuthenticated,)
+	authentication_classes    = (TokenAuthentication,)
+
+	def get(self,request,token):
+		response_dict = {'success':False}
+		user = Token.objects.get(key=token).user
+		response_dict['var'] = user.id
+		return Response(response_dict,HTTP_200_OK)
+
+	def post(self,request,token):
+		response_dict = {'success':False}
+
+		user = Token.objects.get(key=token).user
+
+		#GETTING CLEANING SLOT DETAILS
+		schedule_date           =  request.data.get('date')
+		schedule_time           =  request.data.get('time')
+		print(schedule_date,schedule_time,"deta")
+		start_date_time         =  datetime.strptime(schedule_date+' '+schedule_time,'%d-%m-%Y %I:%M %p')
+		end_date_time           =  start_date_time + timedelta(hours=int(request.data.get('cleaning_hours'))) 	
+		start_time              =  start_date_time.time()
+		end_time                =  end_date_time.time()
+
+		try:
+			cart = CustomerCart.objects.get(customer=user)
+		except:
+			cart = CustomerCart.objects.create(customer=user)
+
+		#CREATING CART schedule
+		cart_schedule = CartSchedule.objects.create(cart=cart,start_at=start_date_time,end_at=end_date_time,no_of_cleaners=request.data.get('no_of_cleaners'),cleaning_hours=request.data.get('cleaning_hours'))
+
+		response_dict['success'] = True
+
+		return Response(response_dict,HTTP_200_OK)
 		

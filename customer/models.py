@@ -136,6 +136,6 @@ class CartSchedule(models.Model):
 		return str(self.cart.customer.name+'-'+self.start_at)
 
 	def __str__(self):
-		return self.cart.customer.name+'-'+self.start_at
+		return self.cart.customer.name+'-'+str(self.start_at)
 	
 	

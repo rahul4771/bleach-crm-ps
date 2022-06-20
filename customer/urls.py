@@ -86,5 +86,7 @@ urlpatterns = [
 		# url(r'^cart$',views.Cart.as_view(),name='cart'),
 		
 		#website APIs
+		url(r'^find-dates/$',views.FindDates.as_view(),name='find-dates'),
 		url(r'^cart/(?P<token>\w+)/$',views.CartAPI.as_view(),name='customer-cart'),
+		url(r'^cart/schedule/(?P<token>\w+)/$',views.CartScheduleAPI.as_view(),name='customer-cart-schedule'),
 	]

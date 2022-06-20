@@ -186,7 +186,6 @@ class SectionAPISerializer(serializers.ModelSerializer):
         fields = ('section_name','category','dirt_level','size','quantity','unit','age','floor','apartment','room','wall_type','ceiling_type','floor_type','material','colour','cause_of_stain','age_of_stain','cement_residue','oil_residue','hall_size','window_side','new_kitchen','is_highprice_facade','is_highprice_window','upholstery_type','vacuuming','section_cost','section_cleanings','section_net_cost','keynotesections','addonsections')
 
 
-
 class EvaluationBookAPISerializer(serializers.ModelSerializer):
     service_type             = ServiceTypeShowSerializer(read_only=True)
     evaluationsection_book   = SectionAPISerializer(many=True,read_only=True)
