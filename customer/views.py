@@ -8411,8 +8411,10 @@ class CartAPI(APIView):
 			service_data['total_cost'] = total_cost
 
 			try:
+				#getting existing cart service object
 				cart_service = CartService.objects.get(id=request.data.get('cart_service_id'))
 
+				#updating cart service details using serializer
 				service_data_serializer = CartServiceSerializer(data=service_data,instance=cart_service)
 
 				if service_data_serializer.is_valid():
@@ -8543,7 +8545,7 @@ class CartScheduleAPI(APIView):
 		#GETTING CLEANING SLOT DETAILS
 		schedule_date           =  request.data.get('date')
 		schedule_time           =  request.data.get('time')
-		print(schedule_date,schedule_time,"deta")
+		
 		start_date_time         =  datetime.strptime(schedule_date+' '+schedule_time,'%d-%m-%Y %I:%M %p')
 		end_date_time           =  start_date_time + timedelta(hours=int(request.data.get('cleaning_hours'))) 	
 		start_time              =  start_date_time.time()
