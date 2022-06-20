@@ -297,6 +297,9 @@ class PaymentResponseCredit(APIView):
 				tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
 			evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=int(tracking_no)+1,customer=customer_cart.customer,estimated_cost=customer_cart.total_cost,total_cost=customer_cart.total_cost,payment_method='PREPAID',payment_way='ONLINE',quatation_status='APPROVED',quatation_approved_date=timezone.now(),quatation_expiry_date=timezone.now()+timedelta(14))
 
+			#Customer Booking
+
+			
 			#order
 			last_invoice_no  		 = Order.objects.filter(is_active=True).aggregate(t=Max('invoice_no'))['t']
 			current_invoice_starting = str(timezone.now().year)
