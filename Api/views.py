@@ -1024,7 +1024,7 @@ class LeaveScheduleAPI(APIView):
 
 				headers = {
 						"Content-Type": "application/json",
-						"Authorization": "Basic NDNhMjE5Y2ZlNmYyZGJlMjUwYTllYjdiNWUyNzc0MzM1YzE0Njg1ODo="
+						"Authorization": "Basic MjI4ZmQ2Y2EwNzUwZmRmZWMyYjRhMWJkZjYzMmExODdhNDAxMDg4YTo="
 					}
 
 				if bamboo_employee_id:
@@ -1219,7 +1219,7 @@ class DeleteLeaveSchedule(APIView):
 				
 			headers = {
 				"Accept": "application/json",
-				"Authorization": "Basic NDNhMjE5Y2ZlNmYyZGJlMjUwYTllYjdiNWUyNzc0MzM1YzE0Njg1ODo="
+				"Authorization": "Basic MjI4ZmQ2Y2EwNzUwZmRmZWMyYjRhMWJkZjYzMmExODdhNDAxMDg4YTo="
 			}
 
 			#get time off request id
@@ -1239,7 +1239,7 @@ class DeleteLeaveSchedule(APIView):
 
 			headers = {
 				"Content-Type": "application/json",
-				"Authorization": "Basic NDNhMjE5Y2ZlNmYyZGJlMjUwYTllYjdiNWUyNzc0MzM1YzE0Njg1ODo="
+				"Authorization": "Basic MjI4ZmQ2Y2EwNzUwZmRmZWMyYjRhMWJkZjYzMmExODdhNDAxMDg4YTo="
 			}
 
 			print(url,payload,"loadss")
@@ -6184,88 +6184,3 @@ class EvaluationBookingAPI(APIView):
 		return Response(response_dict,HTTP_200_OK)
 
 
-class FindDates(APIView):
-    permission_classes     = (AllowAny,)
-    authentication_classes = ()
-
-    def post(self,request):
-        response_dict = {"success":False}
-        action        = request.data.get('action_type')
-    
-        #To check given a start date for weekly or list of dates for monthly
-        current_date   = datetime.strptime(request.data.get('start_date'),'%d-%m-%Y').date()
-        
-        #Total Visits
-        total_visits      = request.data.get('total_visits') 
-        dates             = []
-
-
-        if action == 'weekly':
-            #Days(For Monday-0,Tuesday-2 etc)
-            days              = request.data.get('days')
-            
-            while len(dates) != total_visits:
-                #Append Date
-                if current_date.weekday() in days:
-                    current_week = current_date.isocalendar()[1]
-                    dates.append(datetime.strftime(current_date,'%d-%m-%Y'))
-                current_date  = current_date+timedelta(days=1)
-
-        elif action == 'daily':
-            #Days(For Monday-0,Tuesday-2 etc)
-            days              = request.data.get('days')
-            
-            while len(dates) != total_visits:
-                #Append Date
-                dates.append(datetime.strftime(current_date,'%d-%m-%Y'))
-                current_date  = current_date+timedelta(days=1)
-
-        elif action == 'alternate_daily':
-            #Days(For Monday-0,Tuesday-2 etc)
-            days              = request.data.get('days')
-            
-            while len(dates) != total_visits:
-                #Append Date
-                dates.append(datetime.strftime(current_date,'%d-%m-%Y'))
-                current_date  = current_date+timedelta(days=2)
-
-        elif action ==  'alternate_weekly':
-            #Days(For Monday-0,Tuesday-2 etc)
-            days              = request.data.get('days')
-
-            current_week      = current_date.isocalendar()[1]
-            while len(dates) != total_visits:
-                #To Skip a Week
-                if current_week != current_date.isocalendar()[1]:
-                    current_date = current_date+timedelta(days=7)
-                    current_week = current_date.isocalendar()[1]
-                
-                #Append Date
-                if current_date.weekday() in days:
-                    dates.append(datetime.strftime(current_date,'%d-%m-%Y'))
-                current_date  = current_date+timedelta(days=1)
-
-        elif action == 'monthly':
-            coming_days   = request.data.get('coming_days') 
-
-            counter = 0
-            while len(dates) != total_visits:
-                new_dates = list(map(lambda coming_day:
-                                datetime.strftime(current_date.replace(day=coming_day)+relativedelta.relativedelta(months=counter),'%d-%m-%Y') 
-                                if current_date<=current_date.replace(day=coming_day)+relativedelta.relativedelta(months=counter) else None,
-                                coming_days)) 
-                new_dates = [new_date for new_date in new_dates if new_date]
-                
-                #Append Next Month Dates
-                for new_date in new_dates:
-                    if len(dates) != total_visits and new_date not in dates:
-                        dates.append(new_date)
-                    elif len(dates) == total_visits:
-                        break
-
-                counter      = counter+1
-
-        response_dict['success']  = True
-        response_dict['dates']    = dates
-        
-        return Response(response_dict, HTTP_200_OK)

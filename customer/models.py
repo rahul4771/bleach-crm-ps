@@ -62,10 +62,10 @@ class CustomerCart(models.Model):
 	updated      		= models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.cart_id)
+		return str(self.customer.name)
 
 	def __str__(self):
-		return self.cart_id
+		return self.customer.name
 
 class CartService(models.Model):
 	cart				= models.ForeignKey('CustomerCart',blank=False,null=False,on_delete=models.CASCADE,related_name='cart_service')
@@ -113,6 +113,12 @@ class CartService(models.Model):
 	created      		= models.DateTimeField(auto_now_add=True)
 	updated      		= models.DateTimeField(auto_now=True)
 
+	def __unicode__(self):
+		return str(self.cart.customer.name+'-'+self.service_type.name)
+
+	def __str__(self):
+		return self.cart.customer.name+'-'+self.service_type.name
+
 class CartSchedule(models.Model):
 	cart					= models.ForeignKey('CustomerCart',blank=False,null=False,on_delete=models.CASCADE,related_name='cart_schedule')
 	start_at		   	 	= models.DateTimeField(blank=True,null=True)
@@ -125,5 +131,11 @@ class CartSchedule(models.Model):
 	is_active    			= models.BooleanField(null=False,blank=True,default=True)
 	created      			= models.DateTimeField(auto_now_add=True)
 	updated      			= models.DateTimeField(auto_now=True)
+
+	def __unicode__(self):
+		return str(self.cart.customer.name+'-'+self.start_at)
+
+	def __str__(self):
+		return self.cart.customer.name+'-'+str(self.start_at)
 	
 	

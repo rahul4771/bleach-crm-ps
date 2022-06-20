@@ -61,7 +61,7 @@ def loadtimeoffsbamboo():
 
 	headers = {
 		"Accept": "application/json",
-		"Authorization": "Basic NDNhMjE5Y2ZlNmYyZGJlMjUwYTllYjdiNWUyNzc0MzM1YzE0Njg1ODo="
+		"Authorization": "Basic MjI4ZmQ2Y2EwNzUwZmRmZWMyYjRhMWJkZjYzMmExODdhNDAxMDg4YTo="
 	}
 
 	response = requests.request("GET", url, headers=headers)
@@ -129,7 +129,7 @@ def deletetimeoffsbamboo():
 
 	headers = {
 		"Accept": "application/json",
-		"Authorization": "Basic NDNhMjE5Y2ZlNmYyZGJlMjUwYTllYjdiNWUyNzc0MzM1YzE0Njg1ODo="
+		"Authorization": "Basic MjI4ZmQ2Y2EwNzUwZmRmZWMyYjRhMWJkZjYzMmExODdhNDAxMDg4YTo="
 	}
 
 	response = requests.request("GET", url, headers=headers)

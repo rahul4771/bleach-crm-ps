@@ -111,7 +111,7 @@ class CartServiceShowSerializer(serializers.ModelSerializer):
 	service_type = ServiceTypeSerializer(read_only=True)
 	class Meta:
 		model  = CartService
-		fields = ('service_type','section_name','size','unit','total_cost')
+		fields = ('id','service_type','section_name','size','unit','total_cost')
 
 class CartScheduleSerializer(serializers.ModelSerializer):	
 	class Meta:
