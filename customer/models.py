@@ -61,6 +61,12 @@ class CustomerCart(models.Model):
 	created      		= models.DateTimeField(auto_now_add=True)
 	updated      		= models.DateTimeField(auto_now=True)
 
+	def __unicode__(self):
+		return str(self.cart_id)
+
+	def __str__(self):
+		return self.cart_id
+
 class CartService(models.Model):
 	cart				= models.ForeignKey('CustomerCart',blank=False,null=False,on_delete=models.CASCADE,related_name='cart_service')
 	service_type		= models.ForeignKey(ServiceType,blank=True,null=True,related_name='cart_service_type')
