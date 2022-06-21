@@ -11,7 +11,7 @@ from datetime import timedelta,date,datetime
 class ServiceTypeShowSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = ServiceType
-		fields= ('name',)
+		fields= ('id','name',)
 
 class UserProfileShowSerializer(serializers.ModelSerializer):
 	class Meta:
