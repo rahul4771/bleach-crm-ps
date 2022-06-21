@@ -886,7 +886,17 @@ class PaymentResponseDebit(View):
 				tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
 			evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=int(tracking_no)+1,customer=customer_cart.customer,estimated_cost=customer_cart.total_cost,total_cost=customer_cart.total_cost,payment_method='PREPAID',payment_way='ONLINE',quatation_status='APPROVED',quatation_approved_date=timezone.now(),quatation_expiry_date=timezone.now()+timedelta(14))
 			
+			#Booking Number
+			booking_id               = CustomerBooking.objects.filter(is_active=True).aggregate(t=Max('booking_id'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
+			current_booking_starting = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2))
+
+			if current_booking_starting == int(str(booking_id)[:4]):
+				new_booking_id = int(booking_id)+1
+			else:
+				new_booking_id = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')
+
 			#Customer Booking
+			customerbooking = CustomerBooking.objects.create(booking_id=new_booking_id,booking_type='CLEANINGBOOKING',evaluation=evaluation,is_bookingcompleted=True)
 
 			#order
 			last_invoice_no  		 = Order.objects.filter(is_active=True).aggregate(t=Max('invoice_no'))['t']
