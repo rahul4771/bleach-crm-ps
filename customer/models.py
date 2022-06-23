@@ -107,6 +107,12 @@ class CartService(models.Model):
 	upholstery_type     = models.CharField(max_length=50,blank=True,null=True,choices=SERVICEDIVISION_CHOICES)
 	vacuuming        	= models.BooleanField(null=False,blank=True,default=False)
 
+	addon_name          = models.CharField(max_length=100,blank=True,null=True)
+	addon_category      = models.CharField(max_length=100,blank=True,null=True)
+	addon_size          = models.CharField(max_length=100,blank=True,null=True)
+	addon_price         = models.FloatField(blank=True,null=True)
+	addon_productivity  = models.FloatField(blank=True,null=True)
+
 	total_cost          = models.FloatField(blank=True,null=True,default=0)
 
 	is_active    		= models.BooleanField(null=False,blank=True,default=True)

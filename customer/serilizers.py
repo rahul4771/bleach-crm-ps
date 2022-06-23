@@ -105,13 +105,13 @@ class CustomerBookingSerializer(serializers.ModelSerializer):
 class CartServiceSerializer(serializers.ModelSerializer):
 	class Meta:
 		model  = CartService
-		fields = ('cart','service_type','cleaning_policy','area_type','cleaning_method','location_type','section_name','category','dirt_level','quantity','size','unit','age','floor','apartment','room','wall_type','ceiling_type','floor_type','material','colour','cause_of_stain','age_of_stain','cement_residue','oil_residue','hall_size','window_side','new_kitchen','is_cabinet','is_highprice_facade','is_highprice_window','upholstery_type','vacuuming','total_cost')
+		fields = ('cart','service_type','cleaning_policy','area_type','cleaning_method','location_type','section_name','category','dirt_level','quantity','size','unit','age','floor','apartment','room','wall_type','ceiling_type','floor_type','material','colour','cause_of_stain','age_of_stain','cement_residue','oil_residue','hall_size','window_side','new_kitchen','is_cabinet','is_highprice_facade','is_highprice_window','upholstery_type','vacuuming','total_cost','addon_name','addon_category','addon_size','addon_price','addon_productivity')
 
 class CartServiceShowSerializer(serializers.ModelSerializer):
 	service_type = ServiceTypeSerializer(read_only=True)
 	class Meta:
 		model  = CartService
-		fields = ('id','service_type','section_name','size','unit','total_cost')
+		fields = ('id','service_type','section_name','size','unit','addon_name','addon_category','addon_size','addon_price','total_cost')
 
 class CartScheduleSerializer(serializers.ModelSerializer):	
 	class Meta:
