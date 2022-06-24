@@ -33,7 +33,7 @@
                             Filter
                         </button> {% endcomment %}
                         
-                        {% if request.user.user_type != 'STOCKCONTROLLER' %}
+                        {% if request.user.user_type != 'STOCKCONTROLLER' or request.user.name == 'Jayson Manalo' %}
                         <a href="/bleach-inventory/createpo/"><button class="inv-blue-btn" onclick="showDrawer('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Create PO</button></a>
                         {% endif %}
 

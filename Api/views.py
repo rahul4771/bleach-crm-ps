@@ -1888,17 +1888,17 @@ class DailySalesAPI(APIView):
 					'Date': str(date.date()),
 					'Day': date.strftime("%A"),
 					'gross_amount':orderschedules['gross_amount'],
-					'subtractions':round( int(orderschedules['cancelled_amount'])+int(orderschedules['write_off_amount'])+int(orderschedules['promocode_amount']), 2),
+					'subtractions':round( float(orderschedules['cancelled_amount'])+float(orderschedules['write_off_amount'])+float(orderschedules['promocode_amount']), 2),
 					'additions': round(orderschedules['fine_amount'],2),
-					'net_amount': round( int(orderschedules['gross_amount']) - ( int(orderschedules['cancelled_amount'])+int(orderschedules['write_off_amount'])+int(orderschedules['promocode_amount']) ) + int(orderschedules['fine_amount']), 2)
+					'net_amount': round( float(orderschedules['gross_amount']) - ( float(orderschedules['cancelled_amount'])+float(orderschedules['write_off_amount'])+float(orderschedules['promocode_amount']) ) + float(orderschedules['fine_amount']), 2)
 				}
 
 			saleslist.append(list_item)
 			
-			gross_amount_month += int(orderschedules['gross_amount'])
-			subtraction_month += int(orderschedules['cancelled_amount'])+int(orderschedules['write_off_amount'])+int(orderschedules['promocode_amount'])
-			addition_month += int(orderschedules['fine_amount'])
-			net_sale_month += int(orderschedules['gross_amount']) - ( int(orderschedules['cancelled_amount'])+int(orderschedules['write_off_amount'])+int(orderschedules['promocode_amount']) ) + int(orderschedules['fine_amount'])
+			gross_amount_month += float(orderschedules['gross_amount'])
+			subtraction_month += float(orderschedules['cancelled_amount'])+float(orderschedules['write_off_amount'])+float(orderschedules['promocode_amount'])
+			addition_month += float(orderschedules['fine_amount'])
+			net_sale_month += float(orderschedules['gross_amount']) - ( float(orderschedules['cancelled_amount'])+float(orderschedules['write_off_amount'])+float(orderschedules['promocode_amount']) ) + float(orderschedules['fine_amount'])
 				
 		response_dict = {'success':True,'list':saleslist,'gross_amount_month':gross_amount_month,'subtraction_month':subtraction_month,'addition_month':addition_month,'net_sale_month':net_sale_month,'month_name':full_month_name}
 
@@ -1913,6 +1913,7 @@ class DailySalesBreakDownAPI(APIView):
 		print("heers")
 		response_dict = {'success':False}
 
+		#date setup for getting schedules on specified date
 		todate = datetime.now().replace(hour=0,minute=0,second=0,microsecond=0)
 
 		sales_date = request.GET.get('sales_date')
@@ -1923,16 +1924,13 @@ class DailySalesBreakDownAPI(APIView):
 		end_date_day   = start_date_day+timedelta(1)
 		end_date_day   = end_date_day.replace(hour=0,minute=0,second=0,microsecond=0)
 		
-		print(start_date_day,end_date_day,"smonthlist")
-	
+		#orderschedules query
 		if start_date_day < todate:
 			orderschedules = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED'))).order_by('end_at')
-			orderschedules_sums = orderschedules.annotate(no_of_order_visits=Count('order__order_scheduler_order')).aggregate(gross_amount=Coalesce(Sum('cleaning_cost'),0), cancelled_amount=Coalesce(Sum(F('order__evaluation__cancelled_amount')/F('no_of_order_visits'),output_field=FloatField()),0), write_off_amount=Coalesce(Sum(F('order__evaluation__writeback_amount')/F('no_of_order_visits'),output_field=FloatField()),0), promocode_amount=Coalesce(Sum(F('order__evaluation__promocode_amount')/F('no_of_order_visits'),output_field=FloatField()),0), fine_amount=Coalesce(Sum(F('order__evaluation__fine_amount')/F('no_of_order_visits'),output_field=FloatField()),0) )
+			
 		else:
 			orderschedules = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED') | Q(work_status='CLEANING_TEAM_ASSIGNED') | Q(work_status='CLEANING_IN_PROGRESS'))).order_by('end_at')
-			orderschedules_sums = orderschedules.annotate(no_of_order_visits=Count('order__order_scheduler_order')).aggregate(gross_amount=Coalesce(Sum('cleaning_cost'),0), cancelled_amount=Coalesce(Sum(F('order__evaluation__cancelled_amount')/F('no_of_order_visits'),output_field=FloatField()),0), write_off_amount=Coalesce(Sum(F('order__evaluation__writeback_amount')/F('no_of_order_visits'),output_field=FloatField()),0), promocode_amount=Coalesce(Sum(F('order__evaluation__promocode_amount')/F('no_of_order_visits'),output_field=FloatField()),0), fine_amount=Coalesce(Sum(F('order__evaluation__fine_amount')/F('no_of_order_visits'),output_field=FloatField()),0) )
-
-		print(orderschedules,"countt")
+			
 		
 		saleslist = []
 
@@ -1942,23 +1940,23 @@ class DailySalesBreakDownAPI(APIView):
 		subtraction_day = 0
 
 		for schedule in orderschedules:
+			#schedule count of order
+			order_schedule_count = OrderScheduler.objects.filter(order__order_no=schedule.order.order_no).count()
 
-			# order_amount     = schedule.cleaning_cost
-			if schedule.cleaning_cost:
-				net_amount  	= round( int(orderschedules_sums['gross_amount']) - ( int(orderschedules_sums['cancelled_amount'])+int(orderschedules_sums['write_off_amount'])+int(orderschedules_sums['promocode_amount']) ) + int(orderschedules_sums['fine_amount']), 2)
-				gross_amount 	= orderschedules_sums['gross_amount']
-				subtractions 	= round( int(orderschedules_sums['cancelled_amount'])+int(orderschedules_sums['write_off_amount'])+int(orderschedules_sums['promocode_amount']), 2)
-				additions 		= round(orderschedules_sums['fine_amount'],2)
-			else:
-				net_amount  	= 0
-				gross_amount 	= 0
-				subtractions 	= 0
-				additions 		= 0
+			#calculating schedule total
+			gross_amount = float(schedule.cleaning_cost)
+			cancelled_amount = float(schedule.order.evaluation.cancelled_amount)/float(order_schedule_count) or 0
+			promocode_amount = float(schedule.order.evaluation.promocode_amount)/float(order_schedule_count) or 0
+			write_off_amount = float(schedule.order.evaluation.writeback_amount)/float(order_schedule_count) or 0
+			fine_amount		 = float(schedule.order.evaluation.fine_amount)/float(order_schedule_count) or 0
+			net_amount 		 = round( float(gross_amount) - ( float(cancelled_amount)+float(write_off_amount)+float(promocode_amount) ) + float(fine_amount), 2)
 
-			net_day_sales += float(net_amount)	
+
+			#calculating all schedules in the date totals
+			net_day_sales += float(net_amount)
 			gross_day_sales += float(gross_amount)
-			addition_day += float(additions)
-			subtraction_day += float(subtractions)		
+			addition_day += float(fine_amount)
+			subtraction_day += round( float(cancelled_amount)+float(write_off_amount)+float(promocode_amount), 2)
 
 			schedule_dict = {
 				'order_no' : schedule.order.order_no,
@@ -1971,6 +1969,7 @@ class DailySalesBreakDownAPI(APIView):
 
 			saleslist.append(schedule_dict)
 
+		#daily target calculation
 		sales_status = float(2000) - float(net_day_sales)
 	
 		response_dict = {'success':True,'list':saleslist,'net_day_sales':net_day_sales,'gross_day_sales':gross_day_sales,'subtractions':subtraction_day,'additions':addition_day,'sales_status':sales_status,'day':sales_day_name}
@@ -2014,7 +2013,7 @@ class DailySalesChartAPI(APIView):
 			
 			list_item = {
 				'date': str(date.date()),
-				'totalamount': round( int(orderschedules['gross_amount']) - ( int(orderschedules['cancelled_amount'])+int(orderschedules['write_off_amount'])+int(orderschedules['promocode_amount']) ) + int(orderschedules['fine_amount']), 2)
+				'totalamount': round( float(orderschedules['gross_amount']) - ( float(orderschedules['cancelled_amount'])+float(orderschedules['write_off_amount'])+float(orderschedules['promocode_amount']) ) + float(orderschedules['fine_amount']), 2)
 			}
 
 			saleslist.append(list_item)
