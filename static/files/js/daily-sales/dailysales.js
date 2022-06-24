@@ -243,7 +243,7 @@ function monthlysales(){
         //looping through main list and adding items to table body
         $.each(response.data.list, function(key,value) {  
             
-            var salestatus = parseFloat(parseFloat(value.gross_amount) - parseFloat(2000.000)).toFixed(3) ;
+            var salestatus = parseFloat(parseFloat(value.net_amount) - parseFloat(2000.000)).toFixed(3) ;
 
             //checking service or evauator mode
             
