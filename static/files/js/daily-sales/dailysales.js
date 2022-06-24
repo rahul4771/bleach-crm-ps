@@ -39,7 +39,7 @@ function nextDay(){
     //daily sales api fetch for single day
     axios.get(url+'/api/daily-sales-breakdown-list/',{ params: { 'sales_date': d } })
     .then(function (response) {
-        console.log(response.data.total_day_sales,"salelis")
+        console.log(response.data.net_day_sales,"salelis")
         $('.progress-loader').hide()
         $('#salesTable').show()
         $('.chart_boxDiv').show()
@@ -48,10 +48,14 @@ function nextDay(){
             $('#sales_status').html('');
 
             $.each(response.data.list,function(key,value){
+                $("#model-table2").empty();
                 $('#model-table2').append('<tr><td>'+value.order_no+'</td><td>'+value.customer+'</td><td>'+value.payment_policy+'</td><td  style="text-align: right;">'+parseFloat(value.net_amount).toFixed(3)+'</td><td>'+value.service_type+'</td><td>'+value.salesman+'</td></tr>');
             })
 
-            $('#total_day_sale').text(parseFloat(response.data.total_day_sales).toFixed(3));
+            $('#net_day_sale').text(parseFloat(response.data.net_day_sales).toFixed(3));
+            $('#gross_day_sale').text(parseFloat(response.data.gross_day_sales).toFixed(3));
+            $('#addition_day').text(parseFloat(response.data.additions).toFixed(3));
+            $('#subtraction_day').text(parseFloat(response.data.subtractions).toFixed(3));
             $('#sale_day').text(response.data.day);
             
             if (response.data.sales_status < 2000){
@@ -63,8 +67,11 @@ function nextDay(){
             }
 
         }else{
-            $("#model-table2 tr:not(:first)").remove(); 
-            $('#total_day_sale').text('000.000');
+            $("#model-table2").empty();
+            $('#net_day_sale').text('000.000');
+            $('#gross_day_sale').text('000.000');
+            $('#addition_day').text('000.000');
+            $('#subtraction_day').text('000.000');
             $('#sales_status').html('');
             $('#sales_status').append('000.000 <i class="fa fa-arrow-down" aria-hidden="true" style="color:#ec6262;"></i>');
             $('#sale_day').text(response.data.day);
@@ -97,17 +104,21 @@ function prevDay(){.0
         $('.progress-loader').hide()
         $('#salesTable').show()
         $('.chart_boxDiv').show()
-        console.log(response.data.total_day_sales,"salelis")
+        console.log(response.data.net_day_sales,"salelis")
 
         if (response.data.list.length > 0){
             $("#model-table2 tr:not(:first)").remove(); 
             $('#sales_status').html('');
 
             $.each(response.data.list,function(key,value){
+                $("#model-table2").empty();
                 $('#model-table2').append('<tr><td>'+value.order_no+'</td><td>'+value.customer+'</td><td>'+value.payment_policy+'</td><td  style="text-align: right;">'+parseFloat(value.net_amount).toFixed(3)+'</td><td>'+value.service_type+'</td><td>'+value.salesman+'</td></tr>');
             })
 
-            $('#total_day_sale').text(parseFloat(response.data.total_day_sales).toFixed(3));
+            $('#net_day_sale').text(parseFloat(response.data.net_day_sales).toFixed(3));
+            $('#gross_day_sale').text(parseFloat(response.data.gross_day_sales).toFixed(3));
+            $('#addition_day').text(parseFloat(response.data.additions).toFixed(3));
+            $('#subtraction_day').text(parseFloat(response.data.subtractions).toFixed(3));
             $('#sale_day').text(response.data.day);
             
             if (response.data.sales_status < 2000){
@@ -119,8 +130,11 @@ function prevDay(){.0
             }
 
         }else{
-            $("#model-table2 tr:not(:first)").remove(); 
-            $('#total_day_sale').text('000.000');
+            $("#model-table2").empty();
+            $('#net_day_sale').text('000.000');
+            $('#gross_day_sale').text('000.000');
+            $('#addition_day').text('000.000');
+            $('#subtraction_day').text('000.000');
             $('#sales_status').html('');
             $('#sales_status').append('000.000 <i class="fa fa-arrow-down" aria-hidden="true" style="color:#ec6262;"></i>');
             $('#sale_day').text(response.data.day);
@@ -149,17 +163,21 @@ function showModal(dd){
       //daily sales api fetch for single day
       axios.get(url+'/api/daily-sales-breakdown-list/',{ params: { 'sales_date': d } })
         .then(function (response) {
-            console.log(response.data.total_day_sales,"salelis")
+            console.log(response.data.net_day_sales,"salelis")
 
             if (response.data.list.length > 0){
                 $("#model-table2 tr:not(:first)").remove(); 
                 $('#sales_status').html('');
 
                 $.each(response.data.list,function(key,value){
+                    $("#model-table2").empty();
                     $('#model-table2').append('<tr><td>'+value.order_no+'</td><td>'+value.customer+'</td><td>'+value.payment_policy+'</td><td  style="text-align: right;">'+parseFloat(value.net_amount).toFixed(3)+'</td><td>'+value.service_type+'</td><td>'+value.salesman+'</td></tr>');
                 })
 
-                $('#total_day_sale').text(parseFloat(response.data.total_day_sales).toFixed(3));
+                $('#net_day_sale').text(parseFloat(response.data.net_day_sales).toFixed(3));
+                $('#gross_day_sale').text(parseFloat(response.data.gross_day_sales).toFixed(3));
+                $('#addition_day').text(parseFloat(response.data.additions).toFixed(3));
+                $('#subtraction_day').text(parseFloat(response.data.subtractions).toFixed(3));
                 $('#sale_day').text(response.data.day);
                 
                 if (response.data.sales_status < 2000){
@@ -171,8 +189,11 @@ function showModal(dd){
                 }
 
             }else{
-                $("#model-table2 tr:not(:first)").remove(); 
-                $('#total_day_sale').text('000.000');
+                $("#model-table2").empty(); 
+                $('#net_day_sale').text('000.000');
+                $('#gross_day_sale').text('000.000');
+                $('#addition_day').text('000.000');
+                $('#subtraction_day').text('000.000');
                 $('#sales_status').html('');
                 $('#sales_status').append('000.000 <i class="fa fa-arrow-down" aria-hidden="true" style="color:#ec6262;"></i>');
                 $('#sale_day').text(response.data.day);
@@ -194,6 +215,7 @@ function monthlysales(){
     //$('.chart_boxDiv').hide()
     axios.get(url+'/api/daily-sales-list/',{ params: { 'sales_month': sales_month, 'datatype':datatype } })
     .then(function (response) {
+        console.log(response,"resol")
         $('.progress-loader').hide()
         $('.progress-loader-graph').hide()
         $('#salesTable').show()
@@ -212,89 +234,33 @@ function monthlysales(){
         })
 
         //refresh table header
-        if (response.data.datatype == 'evaluator'){           
-            $("#salesheaders").empty();
-            $('#salesheaders').append('<th>Date</th><th data-hide="phone,tablet">Day</th><th data-hide="phone,tablet" class="align-right">'+evaluator_names[0]+'</th><th data-hide="phone,tablet" class="align-right">'+evaluator_names[1]+'</th><th data-hide="phone,tablet" class="align-right">'+evaluator_names[2]+'</th><th data-hide="phone,tablet" class="align-right">'+evaluator_names[3]+'</th><th data-hide="phone,tablet" class="align-right">'+evaluator_names[4]+'</th><th data-hide="phone,tablet" class="align-right">'+evaluator_names[5]+'</th><th data-hide="phone,tablet" class="align-right">Others</th><th data-hide="phone,tablet" class="align-right">Total Amount</th> <th class="align-center">Action</th>')
-            
-        }else{
-            $("#salesheaders").empty();
-            $('#salesheaders').append('<th>Date</th><th data-hide="phone,tablet">Day</th><th data-hide="phone,tablet" class="align-right">Detailed Cleaning</th><th data-hide="phone,tablet" class="align-right">Special Care</th><th data-hide="phone,tablet" class="align-right">Kitchen Cleaning</th><th data-hide="phone,tablet" class="align-right">Infection Control</th><th data-hide="phone,tablet" class="align-right">Total Amount</th><th data-hide="phone,tablet" class="align-right">Sales Status</th><th class="align-center">Action</th>')
-           
-        }
-       
+        $("#salesheaders").empty();
+        $('#salesheaders').append('<th>Date</th><th data-hide="phone,tablet">Day</th><th data-hide="phone,tablet" class="align-right">Gross Amount</th><th data-hide="phone,tablet" class="align-right">Subtraction</th><th data-hide="phone,tablet" class="align-right">Addition</th><th data-hide="phone,tablet" class="align-right">Net Sale</th><th data-hide="phone,tablet" class="align-right">Sales Status</th><th class="align-center">Action</th>')
+              
         $('.footable').trigger('footable_resize');
-
-        //monthly evaluator total amount calculation
-        var evaluator1 = 0 ;
-        var evaluator2 = 0 ;
-        var evaluator3 = 0 ;
-        var evaluator4 = 0 ;
-        var evaluator5 = 0 ;
-        var evaluator6 = 0 ;
-        $.each(response.data.list3, function(key,value) { 
-
-            if (response.data.list2[0] in value){
-                evaluator1 += parseFloat(value[""+response.data.list2[0]+""]);
-            }
-
-            if (response.data.list2[1] in value){
-                evaluator2 += parseFloat(value[""+response.data.list2[1]+""]);
-            }
-
-            if (response.data.list2[2] in value){
-                evaluator3 += parseFloat(value[""+response.data.list2[2]+""]);
-            }
-
-            if (response.data.list2[3] in value){
-                evaluator4 += parseFloat(value[""+response.data.list2[3]+""]);
-            }
-
-            if (response.data.list2[4] in value){
-                evaluator5 += parseFloat(value[""+response.data.list2[4]+""]);
-            }
-
-            if (response.data.list2[5] in value){
-                evaluator6 += parseFloat(value[""+response.data.list2[5]+""]);
-            }
-        })
 
         var others = 0;
         //looping through main list and adding items to table body
         $.each(response.data.list, function(key,value) {  
             
-            var salestatus = parseFloat(parseFloat(value.Total) - parseFloat(2000.000)).toFixed(3) ;
+            var salestatus = parseFloat(parseFloat(value.gross_amount) - parseFloat(2000.000)).toFixed(3) ;
 
             //checking service or evauator mode
-            if (response.data.datatype == 'service'){
-                    var salesdate = String(value.Date);
-                if (response.data.todate == value.Date){
-                    $('#dailysaleslist').append('<tr class="sales_rows" bgcolor="#CCFFFF"><td>'+value.Date+'</td><td>'+value.Day+'</td><td class="generalclean align-right">'+parseFloat(value.DetailedCleaning).toFixed(3)+'</td><td class="upholsteryclean align-right">'+parseFloat(value.SpecialCare).toFixed(3)+'</td><td class="kitchenclean align-right">'+parseFloat(value.KitchenCleaning).toFixed(3)+'</td><td class="sterilizationclean align-right">'+parseFloat(value.InfectionControl).toFixed(3)+'</td><td class="totalclean align-right">'+parseFloat(value.Total).toFixed(3)+'</td><td class="salestatus align-right">'+salestatus+'</td> <td data-d="'+salesdate+'" onclick="showModal(this)" class="align-center pointer" style="color:#2e4e85;">Daily Breakdown</td> </tr>')
-                }else{
-                    var salesdate = String(value.Date);
-                    console.log(salesdate,"fpr")
-                    $('#dailysaleslist').append('<tr class="sales_rows"><td>'+value.Date+'</td><td>'+value.Day+'</td><td class="generalclean align-right">'+parseFloat(value.DetailedCleaning).toFixed(3)+'</td><td class="upholsteryclean align-right">'+parseFloat(value.SpecialCare).toFixed(3)+'</td><td class="kitchenclean align-right">'+parseFloat(value.KitchenCleaning).toFixed(3)+'</td><td class="sterilizationclean align-right">'+parseFloat(value.InfectionControl).toFixed(3)+'</td><td class="totalclean align-right">'+parseFloat(value.Total).toFixed(3)+'</td><td class="salestatus align-right">'+salestatus+'</td><td data-d="'+salesdate+'" onclick="showModal(this)" class="align-center pointer" style="color:#2e4e85;">Daily Breakdown</td></tr>')
-                }
+            
+            var salesdate = String(value.Date);
+            if (response.data.todate == value.Date){
+                $('#dailysaleslist').append('<tr class="sales_rows" bgcolor="#CCFFFF"><td>'+value.Date+'</td><td>'+value.Day+'</td><td class="generalclean align-right">'+parseFloat(value.gross_amount).toFixed(3)+'</td><td class="upholsteryclean align-right">'+parseFloat(value.subtractions).toFixed(3)+'</td><td class="kitchenclean align-right">'+parseFloat(value.additions).toFixed(3)+'</td><td class="totalclean align-right">'+parseFloat(value.net_amount).toFixed(3)+'</td><td class="salestatus align-right">'+salestatus+'</td> <td data-d="'+salesdate+'" onclick="showModal(this)" class="align-center pointer" style="color:#2e4e85;">Daily Breakdown</td> </tr>')
             }else{
-
-                others += parseFloat(value.others);
-
-                if (response.data.todate == value.Date){
-                    $('#dailysaleslist').append('<tr class="sales_rows" bgcolor="#CCFFFF"><td>'+value.Date+'</td><td>'+value.Day+'</td><td class="generalclean align-right">'+parseFloat(value[""+response.data.list2[0]+""]).toFixed(3)+'</td><td class="upholsteryclean align-right">'+parseFloat(value[""+response.data.list2[1]+""]).toFixed(3)+'</td><td class="deepclean align-right">'+parseFloat(value[""+response.data.list2[2]+""]).toFixed(3)+'</td><td class="carpetclean align-right">'+parseFloat(value[""+response.data.list2[3]+""]).toFixed(3)+'</td><td class="kitchenclean align-right">'+parseFloat(value[""+response.data.list2[4]+""]).toFixed(3)+'</td><td class="sterilizationclean align-right">'+parseFloat(value[""+response.data.list2[5]+""]).toFixed(3)+'</td><td class="align-right">'+parseFloat(value.others).toFixed(3)+'</td><td class="totalclean align-right">'+parseFloat(value.Total).toFixed(3)+'</td><td class="align-right">Daily BreakDown</td></tr>')
-                }else{
-                    $('#dailysaleslist').append('<tr class="sales_rows"><td>'+value.Date+'</td><td>'+value.Day+'</td><td class="generalclean align-right">'+parseFloat(value[""+response.data.list2[0]+""]).toFixed(3)+'</td><td class="upholsteryclean align-right">'+parseFloat(value[""+response.data.list2[1]+""]).toFixed(3)+'</td><td class="deepclean align-right">'+parseFloat(value[""+response.data.list2[2]+""]).toFixed(3)+'</td><td class="carpetclean align-right">'+parseFloat(value[""+response.data.list2[3]+""]).toFixed(3)+'</td><td class="kitchenclean align-right">'+parseFloat(value[""+response.data.list2[4]+""]).toFixed(3)+'</td><td class="sterilizationclean align-right">'+parseFloat(value[""+response.data.list2[5]+""]).toFixed(3)+'</td><td class="align-right">'+parseFloat(value.others).toFixed(3)+'</td><td class="totalclean align-right">'+parseFloat(value.Total).toFixed(3)+'</td><td class="align-right">Daily BreakDown</td></tr>')
-                }
+                var salesdate = String(value.Date);
+                console.log(salesdate,"fpr")
+                $('#dailysaleslist').append('<tr class="sales_rows"><td>'+value.Date+'</td><td>'+value.Day+'</td><td class="generalclean align-right">'+parseFloat(value.gross_amount).toFixed(3)+'</td><td class="upholsteryclean align-right">'+parseFloat(value.subtractions).toFixed(3)+'</td><td class="kitchenclean align-right">'+parseFloat(value.additions).toFixed(3)+'</td><td class="totalclean align-right">'+parseFloat(value.net_amount).toFixed(3)+'</td><td class="salestatus align-right">'+salestatus+'</td><td data-d="'+salesdate+'" onclick="showModal(this)" class="align-center pointer" style="color:#2e4e85;">Daily Breakdown</td></tr>')
             }
+            
         })
        
       
         //update table total row at bottom
-        $('#dailysaleslist').append('<tr bgcolor="#ececec"><td><b>Total</b></td><td></td><td class="align-right">'+parseFloat(response.data.detailed_cleaning_month).toFixed(3)+'</td><td id="upholsterysum" class="align-right">'+parseFloat(response.data.special_care_month).toFixed(3)+'</td><td id="deepsum" class="align-right">'+parseFloat(response.data.kitchen_cleaning_month).toFixed(3)+'</td><td id="carpetsum" class="align-right">'+parseFloat(response.data.infection_control_month).toFixed(3)+'</td><td id="totalsum" class="align-right">'+parseFloat(response.data.cleaning_amount_month).toFixed(3)+'</td><td id="totalsales" class="align-right">'+parseFloat(response.data.cleaning_amount_month - 52000).toFixed(3)+'</td><td></td></tr>');
-
-        // if (response.data.datatype == 'service'){
-        //     $('#dailysaleslist').append('<tr bgcolor="#ececec"><td><b>Total</b></td><td></td><td class="align-right">'+parseFloat(response.data.generalcleaning_month).toFixed(3)+'</td><td id="upholsterysum" class="align-right">'+parseFloat(response.data.upholsterycleaning_month).toFixed(3)+'</td><td id="deepsum" class="align-right">'+parseFloat(response.data.deepcleaning_month).toFixed(3)+'</td><td id="carpetsum" class="align-right">'+parseFloat(response.data.carpetcleaning_month).toFixed(3)+'</td><td id="kitchensum" class="align-right">'+parseFloat(response.data.kitchencleaning_month).toFixed(3)+'</td><td id="sterilizationsum" class="align-right">'+parseFloat(response.data.sterilization_month).toFixed(3)+'</td><td id="totalsum" class="align-right">'+parseFloat(response.data.cleaning_amount_month).toFixed(3)+'</td><td id="totalsales" class="align-right">'+parseFloat(response.data.cleaning_amount_month - 52000).toFixed(3)+'</td></tr>');
-        // }else{
-        //     $('#dailysaleslist').append('<tr bgcolor="#ececec"><td><b>Total</b></td><td></td><td class="align-right">'+parseFloat(evaluator1).toFixed(3)+'</td><td id="upholsterysum" class="align-right">'+parseFloat(evaluator2).toFixed(3)+'</td><td id="deepsum" class="align-right">'+parseFloat(evaluator3).toFixed(3)+'</td><td id="carpetsum" class="align-right">'+parseFloat(evaluator4).toFixed(3)+'</td><td id="kitchensum" class="align-right">'+parseFloat(evaluator5).toFixed(3)+'</td><td id="sterilizationsum" class="align-right">'+parseFloat(evaluator6).toFixed(3)+'</td><td id="sterilizationsum" class="align-right">'+parseFloat(others).toFixed(3)+'</td><td id="totalsum" class="align-right">'+parseFloat(response.data.cleaning_amount_month).toFixed(3)+'</td></tr>');
-        // }
+        $('#dailysaleslist').append('<tr bgcolor="#ececec"><td><b>Total</b></td><td></td><td class="align-right">'+parseFloat(response.data.gross_amount_month).toFixed(3)+'</td><td id="upholsterysum" class="align-right">'+parseFloat(response.data.subtraction_month).toFixed(3)+'</td><td id="deepsum" class="align-right">'+parseFloat(response.data.addition_month).toFixed(3)+'</td><td id="carpetsum" class="align-right">'+parseFloat(response.data.net_sale_month).toFixed(3)+'</td><td id="totalsales" class="align-right">'+parseFloat(response.data.net_sale_month - 52000).toFixed(3)+'</td><td></td></tr>');
 
         //adding up and down arrows in sales list table and amount color change
         $('.salestatus').each(function(){

@@ -177,11 +177,10 @@ crossorigin="anonymous" />
     <tr id="salesheaders">
     <th>Date</th>
     <th data-hide="phone,tablet">Day</th>
-    <th data-hide="phone,tablet" class="align-right">Detailed Cleaning</th>
-    <th data-hide="phone,tablet" class="align-right">Special Care</th>
-    <th data-hide="phone,tablet" class="align-right">Kitchen Cleaning</th>
-    <th data-hide="phone,tablet" class="align-right">Infection Control</th>
-    <th data-hide="phone,tablet" class="align-right">Total Amount</th>
+    <th data-hide="phone,tablet" class="align-right">Gross Amount</th>
+    <th data-hide="phone,tablet" class="align-right">Subtraction</th>
+    <th data-hide="phone,tablet" class="align-right">Addition</th>
+    <th data-hide="phone,tablet" class="align-right">Net Sale</th>
     <th data-hide="phone,tablet" class="align-right">Sales Status</th>
     </tr>
     </thead>
@@ -216,8 +215,20 @@ crossorigin="anonymous" />
                <div class="col-md-10 text-right m-mt-10">
               <div class="d-flex" style="float: right; margin-right: 10px;">
                 <div class="model-sale-card mr-5 ">
-                  <span class="model-sale-card-head">Total Sales</span><br><br>
-                  <span  class="model-date-sale" id="total_day_sale">000.000</span>
+                  <span class="model-sale-card-head">Gross Sale</span><br><br>
+                  <span  class="model-date-sale" id="gross_day_sale">000.000</span>
+                </div>
+                <div class="model-sale-card mr-5 ">
+                  <span class="model-sale-card-head">Subtraction</span><br><br>
+                  <span  class="model-date-sale" id="subtraction_day">000.000</span>
+                </div>
+                <div class="model-sale-card mr-5 ">
+                  <span class="model-sale-card-head">Addition</span><br><br>
+                  <span  class="model-date-sale" id="addition_day">000.000</span>
+                </div>
+                <div class="model-sale-card mr-5 ">
+                  <span class="model-sale-card-head">Net Sales</span><br><br>
+                  <span  class="model-date-sale" id="net_day_sale">000.000</span>
                 </div>
                 <div class="model-sale-card mr-5 ">
                   <span class="model-sale-card-head">Sale Status  </span><br><br>
