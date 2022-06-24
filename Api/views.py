@@ -1944,11 +1944,31 @@ class DailySalesBreakDownAPI(APIView):
 			order_schedule_count = OrderScheduler.objects.filter(order__order_no=schedule.order.order_no).count()
 
 			#calculating schedule total
-			gross_amount = float(schedule.cleaning_cost) or 0
-			cancelled_amount = float(schedule.order.evaluation.cancelled_amount)/float(order_schedule_count) or 0
-			promocode_amount = float(schedule.order.evaluation.promocode_amount)/float(order_schedule_count) or 0
-			write_off_amount = float(schedule.order.evaluation.writeback_amount)/float(order_schedule_count) or 0
-			fine_amount		 = float(schedule.order.evaluation.fine_amount)/float(order_schedule_count) or 0
+			if schedule.cleaning_cost:
+				gross_amount = float(schedule.cleaning_cost) or 0
+			else:
+				gross_amount = 0
+
+			if schedule.order.evaluation.cancelled_amount:
+				cancelled_amount = float(schedule.order.evaluation.cancelled_amount)/float(order_schedule_count)
+			else:
+				cancelled_amount = 0
+
+			if schedule.order.evaluation.promocode_amount:
+				promocode_amount = float(schedule.order.evaluation.promocode_amount)/float(order_schedule_count)
+			else:
+				promocode_amount = 0
+
+			if schedule.order.evaluation.writeback_amount:
+				write_off_amount = float(schedule.order.evaluation.writeback_amount)/float(order_schedule_count)
+			else:
+				write_off_amount = 0
+
+			if schedule.order.evaluation.fine_amount:
+				fine_amount		 = float(schedule.order.evaluation.fine_amount)/float(order_schedule_count)
+			else:
+				fine_amount		 = 0
+				
 			net_amount 		 = round( float(gross_amount) - ( float(cancelled_amount)+float(write_off_amount)+float(promocode_amount) ) + float(fine_amount), 2)
 
 
