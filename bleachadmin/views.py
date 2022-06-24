@@ -48,7 +48,7 @@ class AdminHome(IsAdmin,View):
 		for user in edtusers:
 			
 			user_mobiles=int(user_mobiles+1)
-			user_email = user_mobiles+"@bleachkwtest.com"
+			user_email = str(user_mobiles)+"@bleachkwtest.com"
 			
 			user.email = user_email
 			user.mobile_number = user_mobiles
