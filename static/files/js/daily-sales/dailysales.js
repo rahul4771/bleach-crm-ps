@@ -44,7 +44,7 @@ function nextDay(){
         $('#salesTable').show()
         $('.chart_boxDiv').show()
         if (response.data.list.length > 0){
-            $("#model-table2 tr:not(:first)").remove(); 
+            $("#model-table2").empty();  
             $('#sales_status').html('');
 
             $.each(response.data.list,function(key,value){
@@ -106,7 +106,7 @@ function prevDay(){.0
         console.log(response.data.net_day_sales,"salelis")
 
         if (response.data.list.length > 0){
-            $("#model-table2 tr:not(:first)").remove(); 
+            $("#model-table2").empty(); 
             $('#sales_status').html('');
 
             $.each(response.data.list,function(key,value){
@@ -164,7 +164,7 @@ function showModal(dd){
             console.log(response.data.net_day_sales,"salelis")
 
             if (response.data.list.length > 0){
-                $("#model-table2 tr:not(:first)").remove(); 
+                $("#model-table2").empty(); 
                 $('#sales_status').html('');
 
                 $.each(response.data.list,function(key,value){
