@@ -1944,7 +1944,7 @@ class DailySalesBreakDownAPI(APIView):
 			order_schedule_count = OrderScheduler.objects.filter(order__order_no=schedule.order.order_no).count()
 
 			#calculating schedule total
-			gross_amount = float(schedule.cleaning_cost)
+			gross_amount = float(schedule.cleaning_cost) or 0
 			cancelled_amount = float(schedule.order.evaluation.cancelled_amount)/float(order_schedule_count) or 0
 			promocode_amount = float(schedule.order.evaluation.promocode_amount)/float(order_schedule_count) or 0
 			write_off_amount = float(schedule.order.evaluation.writeback_amount)/float(order_schedule_count) or 0
