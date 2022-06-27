@@ -3325,6 +3325,8 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 
 		available_slotes = []
 		busy_slotes      = []
+		combined_slots   = []
+
 		#Test on multiple date
 		shift_availability_check = request.data.get('shift_availability_check') 
 		cleaning_datetimes       = request.data.get('cleaning_datetimes')
@@ -3493,15 +3495,33 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 			if total_newcleaners and total_newleaders:
 					if((total_newcleaners.count()-1)>=number_of_cleaners and (total_newleaders.count())>=1):
 						available_slotes.append(datetime.strftime(slote_start_datetime,'%d-%m-%Y %I:%M %p'))	
+
+						combined_slots_dict = {
+							"date" : datetime.strftime(slote_start_datetime,'%d-%m-%Y'),
+							"time" : datetime.strftime(slote_start_datetime,'%I:%M %p'),
+							"is_available" : True
+						}
+
+						combined_slots.append(combined_slots_dict)
+
 					else:
-						busy_slotes.append(datetime.strftime(slote_start_datetime,'%d-%m-%Y %I:%M %p'))
+						busy_slotes.append(datetime.strftime(slote_start_datetime,'%d-%m-%Y %I:%M %p'))0
+
+						combined_slots_dict = {
+							"date" : datetime.strftime(slote_start_datetime,'%d-%m-%Y'),
+							"time" : datetime.strftime(slote_start_datetime,'%I:%M %p'),
+							"is_available" : False
+						}
+						
+						combined_slots.append(combined_slots_dict)
+					
 			else:
 				busy_slotes.append(datetime.strftime(slote_start_datetime,'%d-%m-%Y %I:%M %p'))
 		
 
 		dropdown_slotes['available_slotes'] = available_slotes
 		dropdown_slotes['busy_slotes']      = busy_slotes
-
+		dropdown_slotes['combined_slots']   = combined_slots
 		dropdown_slotes['success']          = True
 		
 		return Response(dropdown_slotes,HTTP_200_OK)
