@@ -8620,6 +8620,11 @@ class CartScheduleAPI(APIView):
 			#CREATING CART schedule
 			cart_schedule = CartSchedule.objects.create(cart=cart,start_at=start_date_time,end_at=end_date_time,no_of_cleaners=request.data.get('no_of_cleaners'),cleaning_hours=request.data.get('cleaning_hours'))
 
+			cart.is_scheduled = True
+			cart.save()
+			
+			response_dict['is_scheduled'] = True
+
 		response_dict['success'] = True
 
 		return Response(response_dict,HTTP_200_OK)
