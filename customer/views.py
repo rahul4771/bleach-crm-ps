@@ -3505,7 +3505,7 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 						combined_slots.append(combined_slots_dict)
 
 					else:
-						busy_slotes.append(datetime.strftime(slote_start_datetime,'%d-%m-%Y %I:%M %p'))0
+						busy_slotes.append(datetime.strftime(slote_start_datetime,'%d-%m-%Y %I:%M %p'))
 
 						combined_slots_dict = {
 							"date" : datetime.strftime(slote_start_datetime,'%d-%m-%Y'),
