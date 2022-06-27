@@ -8415,6 +8415,7 @@ class CartAPI(APIView):
 
 		response_dict['success'] = True
 		response_dict['data'] = cart_services
+		response_dict['is_scheduled'] = cart.is_scheduled
 
 		return Response(response_dict,HTTP_200_OK)
 
@@ -8622,8 +8623,6 @@ class CartScheduleAPI(APIView):
 
 			cart.is_scheduled = True
 			cart.save()
-			
-			response_dict['is_scheduled'] = True
 
 		response_dict['success'] = True
 
