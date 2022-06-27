@@ -924,6 +924,8 @@ class PaymentResponseDebit(View):
 										is_cabinet=cart_service.is_cabinet,is_highprice_facade=cart_service.is_highprice_facade,is_highprice_window=cart_service.is_highprice_window,upholstery_type=cart_service.upholstery_type,vacuuming=cart_service.vacuuming,section_cost=cart_service.total_cost,
 										section_net_cost=cart_service.total_cost,sectiononly_cost=cart_service.total_cost,sectiononly_net_cost=cart_service.total_cost,section_cleanings=len(customer_cart.cart_schedules))
 				
+				evaluation_section_addon = EvaluationSectionAddons.objects.create(evaluation_section=evaluation_section,name=cart_service.addon_name,addon_cost=cart_service.addon_price,quantity=1,addon_net_cost=cart_service.addon_price,size=cart_service.addon_size)
+
 				cart_schedules = [OrderScheduler(order=order,evaluation_details=evaluation_details,order_scheduler_book=evaluation_book,start_at=cart_schedule.start_at,end_at=cart_schedule.end_at,customer_address=customer_cart.customer_address,status='CONFIRMED',no_of_cleaners=cart_schedule.no_of_cleaners,cleaning_hours=cart_schedule.cleaning_hours,hourly_cleaning_duration=cart_schedule.hourly_cleaning_duration) for cart_schedule in customer_cart.cart_schedules]
 				OrderScheduler.objects.bulk_create(cart_schedules) 
 
@@ -8600,22 +8602,23 @@ class CartScheduleAPI(APIView):
 
 		user = Token.objects.get(key=token).user
 
-		#GETTING CLEANING SLOT DETAILS
-		schedule_date           =  request.data.get('date')
-		schedule_time           =  request.data.get('time')
-		
-		start_date_time         =  datetime.strptime(schedule_date+' '+schedule_time,'%d-%m-%Y %I:%M %p')
-		end_date_time           =  start_date_time + timedelta(hours=int(request.data.get('cleaning_hours'))) 	
-		start_time              =  start_date_time.time()
-		end_time                =  end_date_time.time()
+		slots = request.data.get('datetimes')
 
-		try:
-			cart = CustomerCart.objects.get(customer=user)
-		except:
-			cart = CustomerCart.objects.create(customer=user)
+		for slot in slots:
+			#GETTING CLEANING SLOT DETAILS
+			
+			start_date_time         =  datetime.strptime(slot,'%d-%m-%Y %I:%M %p')
+			end_date_time           =  start_date_time + timedelta(hours=int(request.data.get('cleaning_hours'))) 	
+			start_time              =  start_date_time.time()
+			end_time                =  end_date_time.time()
 
-		#CREATING CART schedule
-		cart_schedule = CartSchedule.objects.create(cart=cart,start_at=start_date_time,end_at=end_date_time,no_of_cleaners=request.data.get('no_of_cleaners'),cleaning_hours=request.data.get('cleaning_hours'))
+			try:
+				cart = CustomerCart.objects.get(customer=user)
+			except:
+				cart = CustomerCart.objects.create(customer=user)
+
+			#CREATING CART schedule
+			cart_schedule = CartSchedule.objects.create(cart=cart,start_at=start_date_time,end_at=end_date_time,no_of_cleaners=request.data.get('no_of_cleaners'),cleaning_hours=request.data.get('cleaning_hours'))
 
 		response_dict['success'] = True
 
