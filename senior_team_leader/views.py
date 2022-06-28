@@ -514,8 +514,8 @@ class ClientOrders(IsSeniorTeamLeader,View):
 
 class StlHome(IsSeniorTeamLeader,View):
 	def get(self,request):
-		
-		UserProfile.objects.all().update(bamboo_employee_id=None)
+
+		UserProfile.objects.all().update(bamboo_employee_id=None,xero_account_id=None)
 
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
