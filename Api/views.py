@@ -1061,18 +1061,6 @@ class LeaveScheduleAPI(APIView):
 
 					leave_response = requests.request("PUT", add_leave_url, json=payload, headers=headers)
 
-					# if leave_response:
-
-					# 	url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/time_off/requests/?start="+leave_date+"&end="+leave_date+"&employeeId="+bamboo_employee_id+"&type="+timeOffTypeId+"&status=approved"
-
-					# 	response = requests.request("GET", url, headers=headers)
-					# 	print(response.json(),"jesso")
-
-						
-
-					# 		# leaveschedules = LeaveSchedule.objects.filter(is_active=True,bamboo_leave_id=item['id'])
-					# 		# serializer.save()
-
 				response_dict['success']  = True  
 			else: 
 				errors= serializer.errors   
@@ -5867,4 +5855,36 @@ class EvaluationBookingAPI(APIView):
 		
 		return Response(response_dict,HTTP_200_OK)
 
+class BambooLeaveUpdateAPI(APIView):
+	def get(self,request):
+
+		#save leave to bamboo
+		staff_details = UserProfile.objects.get(id=int(schedule['staff']))
+
+		bamboo_employee_id = staff_details.bamboo_employee_id
+
+		headers = {
+				"Content-Type": "application/json",
+				"Authorization": "Basic MjI4ZmQ2Y2EwNzUwZmRmZWMyYjRhMWJkZjYzMmExODdhNDAxMDg4YTo="
+			}
+
+		if bamboo_employee_id:
+
+			add_leave_url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/employees/"+bamboo_employee_id+"/time_off/request"
+
+			timeOffTypeId = '92'
+
+			payload = {
+				"status": "approved",
+				"start": schedule['leave_date'],
+				"end": schedule['leave_date'],
+				"timeOffTypeId": timeOffTypeId,
+				"amount" : 1
+			}
+
+			print(add_leave_url,payload,"loadss")
+
+			leave_response = requests.request("PUT", add_leave_url, json=payload, headers=headers)
+
+		response_dict['success']  = True
 
