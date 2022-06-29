@@ -8525,6 +8525,16 @@ class CartAPI(APIView):
 			except:
 				cart_service = None
 
+		#RESET CART SCHEDULES
+		if action == 'reset_schedules':
+
+			cart.is_scheduled = False
+			cart.save()
+
+			CartSchedule.objects.filter(cart=cart).delete()
+
+			response_dict['success']  = True
+
 		return Response(response_dict,HTTP_200_OK)
 
 class FindDates(APIView):
