@@ -8435,11 +8435,19 @@ class CartAPI(APIView):
 
 		customer_data = UserProfileShowSerializer(user,many=False).data
 
+		response_data = {
+			'cart_services' : cart_services,
+			'customer' : customer_data,
+			'customer_ip_address' : get_client_ip(request),
+			'cart_id' : cart.id,
+			'is_scheduled' : cart.is_scheduled
+		}
+
 		response_dict['success'] = True
-		response_dict['data'] = cart_services
-		response_dict['customer'] = customer_data
-		response_dict['customer_ip_address'] = get_client_ip(request)
-		response_dict['is_scheduled'] = cart.is_scheduled
+		response_dict['data'] = response_data
+		# response_dict['customer'] = customer_data
+		# response_dict['customer_ip_address'] = get_client_ip(request)
+		# response_dict['is_scheduled'] = cart.is_scheduled
 
 		return Response(response_dict,HTTP_200_OK)
 
