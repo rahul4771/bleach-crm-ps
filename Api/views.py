@@ -12,7 +12,7 @@ from bleachadmin.models import ServicePriceRange,Settings,ServiceProductivity,Se
 from bleachadmin.serializers import ServiceProductivitySerializer
 from Api.models import XeroConnection
 from django.core.mail import send_mail,EmailMultiAlternatives
-from Api.serializers import AreaTypeSerializer,AreaSerializer,GovernorateSerializer,AddressAddEditSerializer,AddressSerializer,ServiceAddOnsSerializer,ServicePriceRangeSerializer,DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
+from Api.serializers import EvaluationDetailsAPISerializer,AreaTypeSerializer,AreaSerializer,GovernorateSerializer,AddressAddEditSerializer,AddressSerializer,ServiceAddOnsSerializer,ServicePriceRangeSerializer,DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
 from bleachinventory.models import QuantityStoreDetails,ExternalCustomer,Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,CheckOutItemUnits,ItemHistory,InventoryAccessory,InventoryFinshedItem,Store
 import re
@@ -5854,6 +5854,22 @@ class EvaluationBookingAPI(APIView):
 			response_dict['Error']          = "Evaluators not Available...Please Change date or Slote !"
 		
 		return Response(response_dict,HTTP_200_OK)
+
+class CustomerBookedEvaluationsAPI(APIView):
+	permission_classes        = (IsAuthenticated,)
+	authentication_classes    = (TokenAuthentication,)
+
+	def get(self,request,token):
+		response_dict = {}
+		
+		user 				= Token.objects.get(key=token).user
+		evaluation_details 	= EvaluationDetails.objects.filter(is_active=True,evaluation__customer=user,evaluation__booking_evaluation__booking_type='EVALUATIONBOOKING')
+		evaluation_details_serializer = EvaluationDetailsAPISerializer(evaluation_details,many=True).data
+
+		response_dict['data'] = evaluation_details_serializer
+
+		return Response(response_dict,HTTP_200_OK)
+
 
 class BambooLeaveUpdateAPI(APIView):
 	def get(self,request):

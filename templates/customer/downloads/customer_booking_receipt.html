@@ -42,21 +42,21 @@
       </div>
       <div>
         <span id="contact-text2">Customer ID</span>
-        <span id="contact-number2">45123768731 </span>
+        <span id="contact-number2">{{booking.evaluation.customer.customer_id|default_if_none:'-'}}</span>
       </div>
       <div>
         <span id="contact-text2">Customer</span>
-        <span id="contact-number2">Sonu George</span>
+        <span id="contact-number2">{{booking.evaluation.customer.name}}</span>
       </div>
       
       <div>
         <span id="contact-text2">Contact No</span>
-        <span id="contact-number2">987654321 </span>
+        <span id="contact-number2">{{booking.evaluation.customer.mobile_number|default_if_none:'-'}}</span>
       </div>
    
       <div>
         <span id="contact-text2">Address </span>
-        <span id="customer-address2">Address AddressAddressAddress </span>
+        <span id="customer-address2">{{evaluation_details.address.apartment}}, {% if evaluation_details.address.floor %}{{evaluation_details.address.floor}} {% else %}{% endif %} {{evaluation_details.address.building}},{{evaluation_details.address.block}}, {{evaluation_details.address.street}},{% if evaluation_details.address.avenue %}{{evaluation_details.address.avenue}} {% else %}{% endif %}<br>{{evaluation_details.address.area.name}}, {{evaluation_details.address.governorate.name}}</span>
       </div><br>
     </div>
  
@@ -68,15 +68,15 @@
       </div>
         <div>
           <span id="contact-text2">Booking ID</span>
-          <span id="contact-number2"> 2342354</span>
+          <span id="contact-number2">{{booking.booking_id}}</span>
         </div>
         <div>
           <span id="contact-text2">Visit Day</span>
-          <span id="contact-number2">12-03-2022</span>
+          <span id="contact-number2">{{evaluation_details.proposed_time|date:'d-m-Y'}}</span>
         </div>
         <div>
           <span id="contact-text2">Visit Time</span>
-          <span id="contact-number2">10.00 AM to 11A M</span>
+          <span id="contact-number2">{{evaluation_details.proposed_time|time:'g:i A'|upper}} - {{evaluation_end_time|time:'g:i A'|upper}}</span>
         </div>       
     </div>
 
@@ -87,7 +87,7 @@
         <span id="cus-head"><b>Instruction For Evaluation</b></span>
       </div>
       <div id="id_instruction">
-        Thank you for your interest in BLEACH® cleaning services. You have safely landed on our ‘Connection Junction’. Here, our professionally trained and prompt customer service team gladly assists you on your journey to a cleaner and healthier surrounding with us.We at BLEACH® take pride in being one of the most comprehensive cleaning services providers in Kuwait. You can Call and WhatsApp us or email us at customercare@bleach-kw.comfor a quick resolution to all your questions and concerns by our 24/7 customer care personnel.
+        {{evaluation_details.attender_note}}
       </div>
     </div>
   </section>

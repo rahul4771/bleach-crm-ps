@@ -169,14 +169,14 @@ class AddonAPISerializer(serializers.ModelSerializer):
         model  = EvaluationSectionAddons
         fields = ('id','name','quantity','addon_net_cost','size')
 
-
-
 class EvaluationDetailsAPISerializer(serializers.ModelSerializer):
+    address            = AddressSerializer(read_only=True)
     evaluator          = UserProfileShowSerializer(read_only=True) 
     evaluation         = EvaluationSerializer(read_only=True)
+    proposed_time      = serializers.DateTimeField(format="%d-%m-%Y %I:%M %p ")
     class Meta:
         model  = EvaluationDetails
-        fields = ('evaluator','evaluation')
+        fields = ('evaluator','evaluation','address','proposed_time','status')
 
 class SectionAPISerializer(serializers.ModelSerializer):
     keynotesections = KeynoteAPISerializer(read_only=True,many=True)

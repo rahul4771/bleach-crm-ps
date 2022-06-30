@@ -1890,7 +1890,9 @@ def customer_booking_html_to_pdf_view(request,booking_id):
 		customer_booking = None
 		evaluation_details = None
 
-	html_string = render_to_string("customer/downloads/customer_booking_receipt.html",{"booking":customer_booking,"evaluation_details":evaluation_details})
+	evaluation_end_time = evaluation_details.proposed_time + datetime.timedelta(hours=1)
+
+	html_string = render_to_string("customer/downloads/customer_booking_receipt.html",{"booking":customer_booking,"evaluation_details":evaluation_details,"evaluation_end_time":evaluation_end_time})
 
 	html     = HTML(string=html_string,base_url=request.build_absolute_uri())
 	main_doc = html.render()
@@ -8662,4 +8664,3 @@ class CartScheduleAPI(APIView):
 		response_dict['success'] = True
 
 		return Response(response_dict,HTTP_200_OK)
-		
