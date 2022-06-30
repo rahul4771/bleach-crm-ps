@@ -66,6 +66,7 @@ class AddressSerializer(serializers.ModelSerializer):
 		read_only_fields =('id',)
 
 class CustomerBookingShowSerializer(serializers.ModelSerializer):
+	booking_date      = serializers.DateTimeField(format="%d-%m-%Y %I:%M %p ")
 	class Meta:
 		model  = CustomerBooking
 		fields = ('booking_id','booking_type','booking_date',)
@@ -97,7 +98,7 @@ class EvaluationDetailsSerializer(serializers.ModelSerializer):
 		read_only_fields = ('id','evaluation')
 
 class CustomerBookingSerializer(serializers.ModelSerializer):
-	evaluation = EvaluationSerializer(read_only=True)
+	evaluation        = EvaluationSerializer(read_only=True)
 	class Meta:
 		model  = CustomerBooking
 		fields = ('evaluation','booking_id','booking_type','booking_date',)
