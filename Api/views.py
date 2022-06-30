@@ -5845,7 +5845,7 @@ class EvaluationBookingAPI(APIView):
 
 			evaluation_details = EvaluationDetails.objects.create(evaluation=evaluation,evaluator=evaluator,attender_note=evaluation_note,proposed_time=converted_proposed_time,address=address)		
 
-			response_dict['booking_id']     = customerbooking.id
+			response_dict['booking_id']     = customerbooking.booking_id
 			response_dict['address']        = AddressSerializer(address,many=False).data
 			response_dict['visit_date_time']= datetime.strftime(evaluation_details.proposed_time,'%d-%m-%Y %I:%M %p')
 			response_dict['evaluation_note']= evaluation_details.attender_note
