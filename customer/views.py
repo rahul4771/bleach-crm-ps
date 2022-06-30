@@ -1886,7 +1886,7 @@ def customer_booking_html_to_pdf_view(request,booking_id):
 	# try:
 	customer_booking = CustomerBooking.objects.get(booking_id=booking_id)
 	evaluation_details = EvaluationDetails.objects.filter(evaluation=customer_booking.evaluation).first()
-	evaluation_end_time = evaluation_details.proposed_time + datetime.timedelta(hours=1)
+	evaluation_end_time = evaluation_details.proposed_time + timedelta(hours=1)
 	# except:
 	# 	customer_booking = None
 	# 	evaluation_details = None
