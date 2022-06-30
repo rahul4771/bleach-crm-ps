@@ -5870,6 +5870,18 @@ class CustomerBookedEvaluationsAPI(APIView):
 
 		return Response(response_dict,HTTP_200_OK)
 
+class CustomerDetailsAPI(APIView):
+	permission_classes        = (IsAuthenticated,)
+	authentication_classes    = (TokenAuthentication,)
+
+	def get(self,request,token):
+		response_dict = {}
+		
+		user 				= Token.objects.get(key=token).user
+
+		response_dict['customer_data'] = UserProfileSerializer(instance=user,many=False).data
+
+		return Response(response_dict,HTTP_200_OK)
 
 class BambooLeaveUpdateAPI(APIView):
 	def get(self,request):
