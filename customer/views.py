@@ -8607,8 +8607,8 @@ class FindDates(APIView):
             counter = 0
             while len(dates) != total_visits:
                 new_dates = list(map(lambda coming_day:
-                                datetime.strftime(current_date.replace(day=coming_day)+relativedelta.relativedelta(months=counter),'%d-%m-%Y') 
-                                if current_date<=current_date.replace(day=coming_day)+relativedelta.relativedelta(months=counter) else None,
+                                datetime.strftime(current_date.replace(day=coming_day)+relativedelta(months=counter),'%d-%m-%Y') 
+                                if current_date<=current_date.replace(day=coming_day)+relativedelta(months=counter) else None,
                                 coming_days)) 
                 new_dates = [new_date for new_date in new_dates if new_date]
                 
