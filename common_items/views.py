@@ -2259,11 +2259,12 @@ class ResourceManagement(IsAuthenticated,View):
 		
 		try:
 			workers_date = datetime.strptime(workers_calendar_date,'%d-%m-%Y')
+			workers_date_start = workers_date.replace(hour=0,minute=0,second=0,microsecond=0)
+			workers_date_end   = workers_date_start+timedelta(1)
 		except:
-			workers_date = timezone.now().date()
-			
-		workers_date_start = workers_date.replace(hour=0,minute=0,second=0)
-		workers_date_end   = workers_date_start+timedelta(1)
+			workers_date = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)
+			workers_date_start = workers_date.date()
+			workers_date_end   = workers_date_start+timedelta(1)
 
 		#time filter
 		try:
