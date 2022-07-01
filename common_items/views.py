@@ -2262,7 +2262,7 @@ class ResourceManagement(IsAuthenticated,View):
 		except:
 			workers_date = timezone.now().date()
 			
-		workers_date_start = workers_date.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
+		workers_date_start = workers_date.replace(hour=0,minute=0,second=0)
 		workers_date_end   = workers_date_start+timedelta(1)
 
 		#time filter
