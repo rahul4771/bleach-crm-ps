@@ -111,11 +111,11 @@ class ApiBasicDetails(APIView):
 			response_dict['success']  = True 
 			response_dict['customer'] = serializer.data    
 		else: 
-		    errors= serializer.errors   
-		    key=tuple(errors.keys())[0] 
-		    error=errors[key]
-		    response_dict['Error']=key +':'+ error[0]
-		    response_dict['Error_List'] = serializer.errors
+			errors= serializer.errors   
+			key=tuple(errors.keys())[0] 
+			error=errors[key]
+			response_dict['Error']=key +':'+ error[0]
+			response_dict['Error_List'] = serializer.errors
 
 		return Response(response_dict,HTTP_200_OK)
 
@@ -2016,11 +2016,12 @@ class DailySalesChartAPI(APIView):
 			cleaning_amount = 0
 
 			if date < todate:
+				print("ramo")
 				orderschedules = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED'))).annotate(no_of_order_visits=Count('order__order_scheduler_order')).aggregate(gross_amount=Coalesce(Sum('cleaning_cost'),0), cancelled_amount=Coalesce(Sum(F('order__evaluation__cancelled_amount')/F('no_of_order_visits'),output_field=FloatField()),0), write_off_amount=Coalesce(Sum(F('order__evaluation__writeback_amount')/F('no_of_order_visits'),output_field=FloatField()),0), promocode_amount=Coalesce(Sum(F('order__evaluation__promocode_amount')/F('no_of_order_visits'),output_field=FloatField()),0), fine_amount=Coalesce(Sum(F('order__evaluation__fine_amount')/F('no_of_order_visits'),output_field=FloatField()),0) )
 			else:
 			 	orderschedules = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED') | Q(work_status='CLEANING_TEAM_ASSIGNED') | Q(work_status='CLEANING_IN_PROGRESS'))).annotate(no_of_order_visits=Count('order__order_scheduler_order')).aggregate(gross_amount=Coalesce(Sum('cleaning_cost'),0), cancelled_amount=Coalesce(Sum(F('order__evaluation__cancelled_amount')/F('no_of_order_visits'),output_field=FloatField()),0), write_off_amount=Coalesce(Sum(F('order__evaluation__writeback_amount')/F('no_of_order_visits'),output_field=FloatField()),0), promocode_amount=Coalesce(Sum(F('order__evaluation__promocode_amount')/F('no_of_order_visits'),output_field=FloatField()),0), fine_amount=Coalesce(Sum(F('order__evaluation__fine_amount')/F('no_of_order_visits'),output_field=FloatField()),0) )
-			
-			
+				
+			print(orderschedules,"selistaro")		
 			list_item = {
 				'date': str(date.date()),
 				'totalamount': round( float(orderschedules['gross_amount']) - ( float(orderschedules['cancelled_amount'])+float(orderschedules['write_off_amount'])+float(orderschedules['promocode_amount']) ) + float(orderschedules['fine_amount']), 2)
@@ -2028,7 +2029,7 @@ class DailySalesChartAPI(APIView):
 
 			saleslist.append(list_item)
 
-				
+		print(saleslist,"selista")		
 		response_dict = {'success':True,'list':saleslist}
 
 		return Response(response_dict,HTTP_200_OK)
@@ -3973,7 +3974,7 @@ class LoginAPI(APIView):
 		
 		get_username  = request.data.get('username')
 		get_password  = request.data.get('password')
-          
+		  
 		user = authenticate(username=get_username,password=get_password)
 		
 		if user:
@@ -3985,7 +3986,7 @@ class LoginAPI(APIView):
 			response_dict['profile_image']       = user.profile_image.url
 		else:
 			response_dict['reason']     = 'Invalid Credentials'
-        
+		
 		return Response(response_dict, HTTP_200_OK)
 
 class TlHomeAPI(APIView):  

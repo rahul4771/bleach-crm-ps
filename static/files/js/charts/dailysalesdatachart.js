@@ -6,7 +6,7 @@ google.load('visualization', '1.0', {
 google.setOnLoadCallback(initialize);
 
 function initialize() {
-    console.log("drax2")
+    console.log("drax2022")
     var chart = new google.visualization.ChartWrapper({
         containerId: 'chart_div'
     });
@@ -30,6 +30,7 @@ function initialize() {
 
     function drawArea() {
         // var date1 = new Date();
+        console.log("resdata")
 
         var sales_month = $('#calendar_month').val();
 
@@ -42,6 +43,8 @@ function initialize() {
         
         axios.get(url+'/api/daily-sales-chart/',{ params: { 'sales_month': sales_month } })
         .then(function (response) {
+
+            console.log(response.data,"resdata")
     
             $.each(response.data.list, function(key,value) {
             var quotations_area = [['Date', 'Total Cleaning Amount','Reference']];
