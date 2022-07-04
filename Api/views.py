@@ -5850,6 +5850,7 @@ class EvaluationBookingAPI(APIView):
 			response_dict['address']        = AddressSerializer(address,many=False).data
 			response_dict['visit_date_time']= datetime.strftime(evaluation_details.proposed_time,'%d-%m-%Y %I:%M %p')
 			response_dict['evaluation_note']= evaluation_details.attender_note
+			response_dict['customer']       = UserProfileSerializer(customer,many=False).data
 			response_dict['success']        = True
 		else:
 			response_dict['Error']          = "Evaluators not Available...Please Change date or Slote !"
