@@ -2591,11 +2591,14 @@ class TeamSerachAPI(APIView):
 		response_dict = {}
 
 		cleaning_date      = datetime.strptime(request.GET.get('cleaning_date'),'%d-%m-%Y')
-		blc                = request.GET.get('blc_no')
-
-
-		cleaning_teams     = CleaningTeam.objects.select_related('order_scheduler__order__evaluation','team_leader').filter(Q(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')&Q(Q(start_at__date=cleaning_date)|Q(start_at__date=cleaning_date)&Q(order_scheduler__order__order_no__icontains=blc)) ))
 		
+		try:
+			blc                = request.GET.get('blc_no')
+			cleaning_teams     = CleaningTeam.objects.select_related('order_scheduler__order__evaluation','team_leader').filter(Q(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')&Q(Q(start_at__date=cleaning_date)|Q(start_at__date=cleaning_date)&Q(order_scheduler__order__order_no__icontains=blc)) ))
+		except:
+			blc                = None
+			cleaning_teams     = CleaningTeam.objects.select_related('order_scheduler__order__evaluation','team_leader').filter(Q(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')&Q(start_at__date=cleaning_date) ))
+
 		teams = []
 		if cleaning_teams:
 			for cleaning_team in cleaning_teams:
