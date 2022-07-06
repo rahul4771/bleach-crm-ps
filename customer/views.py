@@ -52,7 +52,7 @@ from bleach_crm_ps.api_permissions import IsCustomerPermission
 from customer.serilizers import CartServiceShowSerializer,CartServiceSerializer,CartScheduleSerializer,UserProfileSerializer,AddressSerializer,AddressSaveSerializer,EvaluationBookSerializer,EvaluationBookSectionSerializer,EvaluationSectionKeynoteSerializer,EvaluationSerializer,OrderSerializer,EvaluationDetailsSerializer,CustomerBookingSerializer,EvaluationSectionAddonSerializer
 from bleachadmin.serializers import ServiceAddOnsSerializer
 from agent.serializers import UserProfileShowSerializer
-from Api.serializers import OrderScheduleShowSerializer,EvaluationBookAPISerializer,SectionAPISerializer,EvaluationDetailsAPISerializer
+from Api.serializers import ServicePriceRangeSerializer,OrderScheduleShowSerializer,EvaluationBookAPISerializer,SectionAPISerializer,EvaluationDetailsAPISerializer
 
 def get_client_ip(request):
 	x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -8432,7 +8432,13 @@ class CartAPI(APIView):
 		except:
 			cart = CustomerCart.objects.create(customer=user)
 
-		services = CartService.objects.filter(cart=cart)
+		services = CartService.objects.filter(cart=cart).values()
+		
+		for service in services:			
+			service_price_range = ServicePriceRange.objects.filter(service_type__id=int(service['service_type_id']),name=service['size']).values().first()					
+			
+			if service_price_range:
+				service['service_price_range'] = service_price_range
 
 		cart_services = CartServiceShowSerializer(services,many=True).data
 

@@ -3,6 +3,7 @@ from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import ServiceType,Evaluation,EvaluationDetails,EvaluationBook,EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons
 from order.models import Order
 from customer.models import CustomerBooking,CartService,CartSchedule
+from bleachadmin.models import ServicePriceRange
 
 class ServiceTypeSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -103,6 +104,11 @@ class CustomerBookingSerializer(serializers.ModelSerializer):
 		model  = CustomerBooking
 		fields = ('evaluation','booking_id','booking_type','booking_date',)
 
+class ServicePriceRangeShowSerializer(serializers.ModelSerializer):
+    class Meta:
+        model   = ServicePriceRange
+        fields  = ('minimum_area','maximum_area','price','is_newkitchen','is_cabinet','is_highprice_facade','is_highprice_window','upholstery_type')
+
 class CartServiceSerializer(serializers.ModelSerializer):
 	class Meta:
 		model  = CartService
@@ -110,9 +116,10 @@ class CartServiceSerializer(serializers.ModelSerializer):
 
 class CartServiceShowSerializer(serializers.ModelSerializer):
 	service_type = ServiceTypeSerializer(read_only=True)
+	service_price_range = ServicePriceRangeShowSerializer(read_only=True)
 	class Meta:
 		model  = CartService
-		fields = ('id','service_type','section_name','size','unit','addon_name','addon_category','addon_size','addon_price','total_cost')
+		fields = ('id','service_type','service_price_range','section_name','size','unit','addon_name','addon_category','addon_size','addon_price','total_cost')
 
 class CartScheduleSerializer(serializers.ModelSerializer):	
 	class Meta:
