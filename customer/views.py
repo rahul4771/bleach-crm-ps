@@ -8436,7 +8436,8 @@ class CartAPI(APIView):
 		
 		for service in services:			
 			service_price_range = ServicePriceRange.objects.filter(service_type__id=int(service['service_type_id']),name=service['size']).values().first()					
-			
+			service_type = ServiceType.objects.get(id=int(service['service_type_id']))
+			service['service_type'] = service_type
 			if service_price_range:
 				service['service_price_range'] = service_price_range
 
