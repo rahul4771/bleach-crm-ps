@@ -8457,7 +8457,7 @@ class CartAPI(APIView):
 			else:
 				is_new_kitchen = False
 
-			service_price_range = ServicePriceRange.objects.filter(service_type__id=int(service['service_type_id']),name__icontains=service['size'],upholstery_type=upholstery_type,is_highprice_window=is_highprice_window,is_cabinet=is_cabinet,is_newkitchen=is_new_kitchen).values().first()
+			service_price_range = ServicePriceRange.objects.filter(service_type__id=int(service['service_type_id']),name__iexact=service['size'],upholstery_type=upholstery_type,is_highprice_window=is_highprice_window,is_cabinet=is_cabinet,is_newkitchen=is_new_kitchen).values().first()
 			
 			service['service_type'] = service_type
 			if service_price_range:

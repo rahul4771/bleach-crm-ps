@@ -1107,6 +1107,140 @@ class LeaveSchedulePopupAPI(APIView):
 
 		return Response(response_dict,HTTP_200_OK)
 
+class UpdateCRMBambooLeavesAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		response_dict = {'success':False}
+
+		action = request.GET.get('action')
+		
+		todate = date.today()
+		end_date = todate+timedelta(30)
+		print(todate,end_date,"datess")
+
+		if action == 'BAMBOO_TO_CRM':
+			#load bamboo timeoffs to bleach code
+				
+			url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/time_off/requests/?start="+str(todate)+"&end="+str(end_date)+"&status=approved"
+
+			headers = {
+				"Accept": "application/json",
+				"Authorization": "Basic MjI4ZmQ2Y2EwNzUwZmRmZWMyYjRhMWJkZjYzMmExODdhNDAxMDg4YTo="
+			}
+
+			response = requests.request("GET", url, headers=headers)
+			data = response.json()
+
+			
+			for timeoff in data:
+				print(timeoff['type'],timeoff['end'],timeoff['employeeId'],"runtime")
+				timeoff_start = datetime.strptime(timeoff['start'],"%Y-%m-%d")
+				timeoff_end = datetime.strptime(timeoff['end'],"%Y-%m-%d")
+				timeoff_id = timeoff['id']
+
+				datelist = pd.date_range(timeoff_start, timeoff_end)
+				
+				if timeoff['type']['name'] == 'Sick Leave 100%' :
+					leave_type = 'SICK LEAVE'
+				elif timeoff['type']['name'] == 'Off Day' :
+					leave_type = 'WEEKLY OFF'
+				else:
+					leave_type = timeoff['type']['name']
+					leave_type = leave_type.upper()
+
+				print(leave_type,"ltt")
+
+				for timeoffdate in datelist:
+					try:
+						leaveschedule = LeaveSchedule.objects.get(is_active=True,staff__bamboo_employee_id=int(timeoff['employeeId']),bamboo_leave_id=timeoff_id,leave_date=timeoffdate)
+						print(leaveschedule,"lvshes")
+						
+					except:
+						leaveschedule = None
+						
+						try:
+							bleach_employee = UserProfile.objects.get(bamboo_employee_id=int(timeoff['employeeId']),is_active=True)
+							datelist = pd.date_range(timeoff_start, timeoff_end)
+							
+							schedules=[]
+							
+							schedule_dict = {
+								"leave_type" : leave_type,
+								"leave_date" : timeoffdate.date(),
+								"staff"      : bleach_employee.id,
+								"bamboo_leave_id" : timeoff_id
+							}
+							schedules.append(schedule_dict)
+							print(schedules,"sched")
+							
+							for schedule in schedules:
+								serializer = LeaveScheduleSerializer(data=schedule)
+						
+								if serializer.is_valid(): 
+									print("serialval")
+									serializer.save()
+						except:
+							bleach_employee = None
+
+				response_dict['success'] = True
+
+		if action == 'CRM_TO_BAMBOO':
+
+			#load bamboo weekly timeoffs
+				
+			url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/time_off/requests/?start="+str(todate)+"&end="+str(end_date)+"&status=approved&type=92"
+
+			headers = {
+				"Accept": "application/json",
+				"Authorization": "Basic MjI4ZmQ2Y2EwNzUwZmRmZWMyYjRhMWJkZjYzMmExODdhNDAxMDg4YTo="
+			}
+
+			response = requests.request("GET", url, headers=headers)
+			data = response.json()
+
+			for timeoff in data:
+				print(timeoff['type'],timeoff['end'],timeoff['employeeId'],"runtime")
+				timeoff_start = datetime.strptime(timeoff['start'],"%Y-%m-%d")
+				timeoff_end = datetime.strptime(timeoff['end'],"%Y-%m-%d")
+				timeoff_id = timeoff['id']
+
+				datelist = pd.date_range(timeoff_start, timeoff_end)
+
+			leaveschedules = LeaveSchedule.objects.filter(is_active=True,leave_date=timeoffdate,leave_type='WEEKLY_OFF')
+
+			#compare bamboo weekly off leave dates with crm weekly off leave dates and user
+			
+			for leave in leaveschedules:
+
+				bamboo_employee_id = leave.staff.bamboo_employee_id
+
+				headers = {
+						"Content-Type": "application/json",
+						"Authorization": "Basic MjI4ZmQ2Y2EwNzUwZmRmZWMyYjRhMWJkZjYzMmExODdhNDAxMDg4YTo="
+					}
+
+				if bamboo_employee_id:
+
+					add_leave_url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/employees/"+182+"/time_off/request"
+
+					timeOffTypeId = '92'
+
+					payload = {
+						"status": "approved",
+						"start": schedule['leave_date'],
+						"end": schedule['leave_date'],
+						"timeOffTypeId": timeOffTypeId,
+						"amount" : 1
+					}
+
+					print(add_leave_url,payload,"loadss")
+
+					leave_response = requests.request("PUT", add_leave_url, json=payload, headers=headers)
+
+
+		return Response(response_dict,HTTP_200_OK)
 
 #Get Existing Shift and add new shift
 class ShiftScheduleAPI(APIView):
