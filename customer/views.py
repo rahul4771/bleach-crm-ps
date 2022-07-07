@@ -8432,36 +8432,7 @@ class CartAPI(APIView):
 		except:
 			cart = CustomerCart.objects.create(customer=user)
 
-		services = CartService.objects.filter(cart=cart).values()
-		
-		for service in services:	
-			service_type = ServiceType.objects.get(id=int(service['service_type_id']))
-
-			if service['upholstery_type'] == None:
-				upholstery_type = None
-			else:
-				upholstery_type = service['upholstery_type']
-
-			if service['is_highprice_window'] == True:
-				is_highprice_window = True
-			else:
-				is_highprice_window = False
-
-			if service['is_cabinet'] == True:
-				is_cabinet = True
-			else:
-				is_cabinet = False
-
-			if service['new_kitchen'] == True:
-				is_new_kitchen = True
-			else:
-				is_new_kitchen = False
-
-			service_price_range = ServicePriceRange.objects.filter(service_type__id=int(service['service_type_id']),name__iexact=service['size'],upholstery_type=upholstery_type,is_highprice_window=is_highprice_window,is_cabinet=is_cabinet,is_newkitchen=is_new_kitchen).values().first()
-			
-			service['service_type'] = service_type
-			if service_price_range:
-				service['service_price_range'] = service_price_range
+		services = CartService.objects.filter(cart=cart)
 
 		cart_services = CartServiceShowSerializer(services,many=True).data
 
@@ -8501,6 +8472,7 @@ class CartAPI(APIView):
 			#getting service price through productivity id 
 			total_cost = ServicePriceRange.objects.get(id=request.data.get('productivity_id')).price
 
+			service_data['service_price_range'] = request.data.get('productivity_id')
 			service_data['total_cost'] = total_cost
 
 			service_data_serializer = CartServiceSerializer(data=service_data)
@@ -8526,6 +8498,7 @@ class CartAPI(APIView):
 			#getting service price through productivity id 
 			total_cost = ServicePriceRange.objects.get(id=request.data.get('productivity_id')).price
 
+			service_data['service_price_range'] = request.data.get('productivity_id')
 			service_data['total_cost'] = total_cost
 
 			try:

@@ -1,6 +1,7 @@
 from django.db import models
 from evaluator.models import Evaluation,ServiceType
 from user.models import UserProfile,Address
+from bleachadmin.models import ServicePriceRange
 # Create your models here.
 
 BOOKING_CHOICES=(
@@ -70,6 +71,7 @@ class CustomerCart(models.Model):
 class CartService(models.Model):
 	cart				= models.ForeignKey('CustomerCart',blank=False,null=False,on_delete=models.CASCADE,related_name='cart_service')
 	service_type		= models.ForeignKey(ServiceType,blank=True,null=True,related_name='cart_service_type')
+	service_price_range = models.ForeignKey(ServicePriceRange,blank=True,null=True,related_name='cart_service_price_range')
 	cleaning_policy		= models.CharField(max_length=20,blank=True,null=True,choices=CLEANING_CHOICES)
 	area_type	 		= models.CharField(max_length=100,blank=True,null=True)
 	cleaning_method 	= models.CharField(max_length=100,blank=True,null=True)
