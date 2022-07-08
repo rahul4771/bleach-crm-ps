@@ -2717,13 +2717,15 @@ class TeamSerachAPI(APIView):
 		response_dict = {}
 
 		cleaning_date      = datetime.strptime(request.GET.get('cleaning_date'),'%d-%m-%Y')
+		cleaning_date_start= cleaning_date.replace(hour=0,minute=0,second=0,microsecond=0)
+		cleaning_date_end  = cleaning_date_start+timedelta(1)
 		
 		try:
 			blc                = request.GET.get('blc_no')
-			cleaning_teams     = CleaningTeam.objects.select_related('order_scheduler__order__evaluation','team_leader').filter(Q(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')&Q(Q(start_at__date=cleaning_date)&Q(order_scheduler__order__order_no__icontains=blc)) ))
+			cleaning_teams     = CleaningTeam.objects.select_related('order_scheduler__order__evaluation','team_leader').filter(Q(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')&Q(Q(start_at__gte=cleaning_date_start)&Q(start_at__lte=cleaning_date_end)&Q(order_scheduler__order__order_no__icontains=blc)) ))
 		except:
 			blc                = None
-			cleaning_teams     = CleaningTeam.objects.select_related('order_scheduler__order__evaluation','team_leader').filter(Q(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')&Q(start_at__date=cleaning_date) ))
+			cleaning_teams     = CleaningTeam.objects.select_related('order_scheduler__order__evaluation','team_leader').filter(Q(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')&Q(start_at__gte=cleaning_date_start)&Q(start_at__lte=cleaning_date_end) ))
 
 		teams = []
 		if cleaning_teams:
