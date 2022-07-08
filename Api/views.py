@@ -1117,13 +1117,15 @@ class UpdateCRMBambooLeavesAPI(APIView):
 		action = request.GET.get('action')
 		
 		todate = date.today()
-		end_date = todate+timedelta(30)
-		print(todate,end_date,"datess")
+		
+		monthdate1 = datetime(day=1,month=int(todate.month),year=int(todate.year),hour=0,minute=0,second=0,microsecond=0)
+		monthdate2 = datetime(day=1,month=int(todate.month),year=int(todate.year),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)-relativedelta(days=1)
+		print(monthdate1,monthdate2,"datess")
 
 		if action == 'BAMBOO_TO_CRM':
 			#load bamboo timeoffs to bleach code
 				
-			url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/time_off/requests/?start="+str(todate)+"&end="+str(end_date)+"&status=approved"
+			url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/time_off/requests/?start="+datetime.strftime(monthdate1,"%Y-%m-%d")+"&end="+datetime.strftime(monthdate2,"%Y-%m-%d")+"&status=approved"
 
 			headers = {
 				"Accept": "application/json",
@@ -1135,7 +1137,7 @@ class UpdateCRMBambooLeavesAPI(APIView):
 
 			
 			for timeoff in data:
-				print(timeoff['type'],timeoff['end'],timeoff['employeeId'],"runtime")
+
 				timeoff_start = datetime.strptime(timeoff['start'],"%Y-%m-%d")
 				timeoff_end = datetime.strptime(timeoff['end'],"%Y-%m-%d")
 				timeoff_id = timeoff['id']
@@ -1150,12 +1152,9 @@ class UpdateCRMBambooLeavesAPI(APIView):
 					leave_type = timeoff['type']['name']
 					leave_type = leave_type.upper()
 
-				print(leave_type,"ltt")
-
 				for timeoffdate in datelist:
 					try:
 						leaveschedule = LeaveSchedule.objects.get(is_active=True,staff__bamboo_employee_id=int(timeoff['employeeId']),bamboo_leave_id=timeoff_id,leave_date=timeoffdate)
-						print(leaveschedule,"lvshes")
 						
 					except:
 						leaveschedule = None
@@ -1186,29 +1185,10 @@ class UpdateCRMBambooLeavesAPI(APIView):
 
 				response_dict['success'] = True
 
+		#adding weekly offs to bamboo from CRM
 		if action == 'CRM_TO_BAMBOO':
-
-			#load bamboo weekly timeoffs
 				
-			url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/time_off/requests/?start="+str(todate)+"&end="+str(end_date)+"&status=approved&type=92"
-
-			headers = {
-				"Accept": "application/json",
-				"Authorization": "Basic MjI4ZmQ2Y2EwNzUwZmRmZWMyYjRhMWJkZjYzMmExODdhNDAxMDg4YTo="
-			}
-
-			response = requests.request("GET", url, headers=headers)
-			data = response.json()
-
-			for timeoff in data:
-				print(timeoff['type'],timeoff['end'],timeoff['employeeId'],"runtime")
-				timeoff_start = datetime.strptime(timeoff['start'],"%Y-%m-%d")
-				timeoff_end = datetime.strptime(timeoff['end'],"%Y-%m-%d")
-				timeoff_id = timeoff['id']
-
-				datelist = pd.date_range(timeoff_start, timeoff_end)
-
-			leaveschedules = LeaveSchedule.objects.filter(is_active=True,leave_date=timeoffdate,leave_type='WEEKLY_OFF')
+			leaveschedules = LeaveSchedule.objects.filter(is_active=True,leave_date__gte=monthdate1.date(),leave_date__lte=monthdate2.date(),leave_type='WEEKLY OFF')
 
 			#compare bamboo weekly off leave dates with crm weekly off leave dates and user
 			
@@ -1216,29 +1196,41 @@ class UpdateCRMBambooLeavesAPI(APIView):
 
 				bamboo_employee_id = leave.staff.bamboo_employee_id
 
+				#checking if weekly off for the date already exists in bamboo
+				url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/time_off/requests/?employeeId=182&start="+str(leave.leave_date)+"&end="+str(leave.leave_date)+"&status=approved&type=92"
+
 				headers = {
-						"Content-Type": "application/json",
-						"Authorization": "Basic MjI4ZmQ2Y2EwNzUwZmRmZWMyYjRhMWJkZjYzMmExODdhNDAxMDg4YTo="
-					}
+					"Accept": "application/json",
+					"Authorization": "Basic MjI4ZmQ2Y2EwNzUwZmRmZWMyYjRhMWJkZjYzMmExODdhNDAxMDg4YTo="
+				}
 
-				if bamboo_employee_id:
+				response = requests.request("GET", url, headers=headers)
+				data = response.json()
 
-					add_leave_url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/employees/"+182+"/time_off/request"
+				#adding weekly off to bamboo if its not already added
+				if data == [] :
+
+					headers = {
+							"Content-Type": "application/json",
+							"Authorization": "Basic MjI4ZmQ2Y2EwNzUwZmRmZWMyYjRhMWJkZjYzMmExODdhNDAxMDg4YTo="
+						}
+
+
+					add_leave_url = "https://api.bamboohr.com/api/gateway.php/bleachkw/v1/employees/"+str(182)+"/time_off/request"
 
 					timeOffTypeId = '92'
 
 					payload = {
 						"status": "approved",
-						"start": schedule['leave_date'],
-						"end": schedule['leave_date'],
+						"start": leave.leave_date,
+						"end": leave.leave_date,
 						"timeOffTypeId": timeOffTypeId,
 						"amount" : 1
 					}
 
 					print(add_leave_url,payload,"loadss")
 
-					leave_response = requests.request("PUT", add_leave_url, json=payload, headers=headers)
-
+					# leave_response = requests.request("PUT", add_leave_url, json=payload, headers=headers)
 
 		return Response(response_dict,HTTP_200_OK)
 

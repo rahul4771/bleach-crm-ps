@@ -24,6 +24,7 @@ urlpatterns = [
 	url(r'^items-collect/$',views.ItemCollectAPI.as_view(),name='api-items-collect'),
 	url(r'^items-check-in/$',views.ItemsCheckInAPI.as_view(),name='api-items-check-in'),
 	url(r'^leave-scheduler/$',views.LeaveScheduleAPI.as_view(),name='api-leaveschedule'),
+	url(r'^leave-update-bamboo-crm/$',views.UpdateCRMBambooLeavesAPI.as_view(),name='api-leave-update-bamboo-crm'),
 	url(r'^leave-scheduler/popup/$',views.LeaveSchedulePopupAPI.as_view(),name='api-leaveschedulepopup'),
 	url(r'^leave-scheduler-delete/(?P<leave_id>\d+)/$',views.DeleteLeaveSchedule.as_view(),name='api-leaveschedule-delete'),
 	url(r'^shift-scheduler/$',views.ShiftScheduleAPI.as_view(),name='api-shiftschedule'),

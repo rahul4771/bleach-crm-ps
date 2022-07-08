@@ -145,7 +145,7 @@
 <th data-hide="phone">Customer Mobile</th>
 <th data-hide="phone">Service Type</th>
 <th data-hide="phone,tablet">{% if request.user.user_type == 'ADMIN' or request.user.user_type == 'SALESADMIN' %}Callback Status{% else %}Status{% endif %}</th>
-{% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}<th class="align-center" data-hide="phone,tablet">Actions</th>{% endif %}
+{% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR'%}<th class="align-center" data-hide="phone,tablet">Actions</th>{% endif %}
 <th data-hide="phone,tablet">Shortcuts</th>
 </tr>
 </thead>
@@ -188,7 +188,7 @@
       </td>
     {% endif %}
 
-    {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}
+    {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' %}
     <td class="align-center">
 
     <div class="btn-group" id="actionDropdown">
@@ -210,7 +210,7 @@
     {% endif %}
 
     <td class="align-center">
-      <div class="d-flex"><a class="d-flex dropdown-orders" {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}href="{% url 'common_items:client-orderdetails' order.id %}" target="_blank"{% endfor %}{% else %}href="#"{% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/><div class="ml-2 dropdown-text">View Order Details</div></a> <div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="{% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}<div>{{order.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{order.payment_note_by.name|default_if_none:""}}</div>{% endfor %}{% endif %}"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}data-toggle="modal" data-target="#notesModalCenter"{% endif %} {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-note="{{order.payment_notes|default_if_none:""}}" data-noteby="{{order.payment_note_by.name|default_if_none:""}}" data-orderid="{{order.id}}"{% endfor %}{% endif %} data-style="cursor:pointer"/> </div> </div>
+      <div class="d-flex"><a class="d-flex dropdown-orders" {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}href="{% url 'common_items:client-orderdetails' order.id %}" target="_blank"{% endfor %}{% else %}href="#"{% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/><div class="ml-2 dropdown-text">View Order Details</div></a> <div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="{% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}<div>{{order.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{order.payment_note_by.name|default_if_none:""}}</div>{% endfor %}{% endif %}"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' %}data-toggle="modal" data-target="#notesModalCenter"{% endif %} {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-note="{{order.payment_notes|default_if_none:""}}" data-noteby="{{order.payment_note_by.name|default_if_none:""}}" data-orderid="{{order.id}}"{% endfor %}{% endif %} data-style="cursor:pointer"/> </div> </div>
      </td>
 
     </tr>    
@@ -335,7 +335,7 @@
       <th class="text-left" data-hide="phone,tablet">Amount</th>
       <th class="text-left" data-hide="phone,tablet">{% if request.user.user_type == 'ADMIN' or request.user.user_type == 'SALESADMIN' %}Callback Status{% else %}Payment Policy{% endif %}</th>
       {% if payment_type == 'PENDING' %}<th data-hide="phone">Status</th>{% endif %}
-      {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}<th class="align-center" data-hide="phone,tablet">Actions</th>{% endif %}
+      {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' %}<th class="align-center" data-hide="phone,tablet">Actions</th>{% endif %}
       <th class="text-left" data-hide="phone">Shortcuts</th>
       </tr>
       </thead>
@@ -386,7 +386,7 @@
         </td>
         {% endif %}
 
-        {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}
+        {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR'%}
         <td class="text-center">
 
           <div class="btn-group" id="actionDropdown">
@@ -408,7 +408,7 @@
          </td>
          {% endif %}
 
-        <td class="text-left" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> <div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by.name|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}data-toggle="modal" data-target="#notesModalCenter"{% endif %} data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div> </div></td>
+        <td class="text-left" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> <div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by.name|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR'%}data-toggle="modal" data-target="#notesModalCenter"{% endif %} data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div> </div></td>
         </tr>
 
         {% elif invoice.evaluation.payment_method == 'BREAKDOWN' %}
@@ -449,7 +449,7 @@
         {% endif %}</td>
         {% endif %}
         
-        {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}
+        {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR'%}
         <td class="text-center">
 
           <div class="btn-group" id="actionDropdown">
@@ -471,7 +471,7 @@
          </td>
          {% endif %}
 
-        <td class="text-left" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> <div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}data-toggle="modal" data-target="#notesModalCenter"{% endif %} data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div> </div></td>
+        <td class="text-left" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> <div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR'%}data-toggle="modal" data-target="#notesModalCenter"{% endif %} data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div> </div></td>
         </tr>
         {% endif %}
 
@@ -507,7 +507,7 @@
         <td data-label="" class="bold-text"><h3 class="{% if invoice.delaydays >= 14 %}green-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}yellow-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 6 %}orange-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}red-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;</td>
         {% endif %}
 
-        {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}
+        {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR'%}
         <td class="text-center">
 
           <div class="btn-group" id="actionDropdown">
@@ -529,7 +529,7 @@
          </td>
          {% endif %}
         
-        <td class="text-left" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> <div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by.name|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}data-toggle="modal" data-target="#notesModalCenter"{% endif %} data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div> </div></td>
+        <td class="text-left" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> <div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by.name|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR'%}data-toggle="modal" data-target="#notesModalCenter"{% endif %} data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div> </div></td>
         </tr>
         {% endif %}
 
@@ -568,7 +568,7 @@
         <h3 class="{% if invoice.delaydays == 0 %}green-text-h3{% elif invoice.delaydays >= 1 and invoice.delaydays <= 3 %}yellow-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 7 %}orange-text-h3{% elif invoice.delaydays >= 8 %}red-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;</td>
         {% endif %}
 
-        {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}
+        {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR'%}
         <td class="text-center">
 
           <div class="btn-group" id="actionDropdown">
@@ -590,7 +590,7 @@
          </td>
          {% endif %}
 
-        <td class="text-left" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> <div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by.name|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}data-toggle="modal" data-target="#notesModalCenter"{% endif %} data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div> </div></td>
+        <td class="text-left" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> <div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by.name|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR'%}data-toggle="modal" data-target="#notesModalCenter"{% endif %} data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div> </div></td>
         </tr>
         {% endif %}
         
