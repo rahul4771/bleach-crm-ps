@@ -204,7 +204,7 @@ class Address(models.Model):
     street          = models.CharField(max_length=100,blank=False,null=False)
     floor           = models.CharField(max_length=100,blank=True,null=True)
     apartment       = models.CharField(max_length=100,blank=False,null=False)
-    currently_active= models.BooleanField(null=False,blank=True)
+    currently_active= models.BooleanField(null=False,blank=True,default=True)
     
     is_active       = models.BooleanField(null=False,blank=True,default=True)
     created         = models.DateTimeField(auto_now_add=True)
