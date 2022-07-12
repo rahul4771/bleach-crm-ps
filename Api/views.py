@@ -5916,6 +5916,20 @@ class CustomerAddressesAPI(APIView):
 			else:
 				response_dict['message']   = get_error(customer_address_serializer)
 
+		elif action == 'disable_address':
+			address_id = request.data.get('address_id')
+			address    = Address.objects.get(id=address_id)
+			address.currently_active = False
+			address.save()
+			
+			address_serializer = AddressSerializer(address,many=False).data
+
+			response_dict['address'] = address_serializer
+
+			response_dict['success']   = True
+
+			response_dict['message']   = 'Customer Address Disabled Succesfully'
+
 		return Response(response_dict,HTTP_200_OK)
 
 class EvaluationBookingAPI(APIView):

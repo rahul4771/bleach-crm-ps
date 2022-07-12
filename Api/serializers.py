@@ -92,7 +92,7 @@ class AddressSerializer(serializers.ModelSerializer):
     area            = AreaSerializer(read_only=True)
     class Meta: 
         model  = Address 
-        fields = ('id','governorate','location','area','block','avenue','building','street','floor','apartment',) 
+        fields = ('id','governorate','location','area','block','avenue','building','street','floor','apartment','currently_active') 
 
 class AddressAddEditSerializer(serializers.ModelSerializer): 
     
