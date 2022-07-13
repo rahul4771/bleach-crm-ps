@@ -2094,13 +2094,18 @@ class DailySalesBreakDownAPI(APIView):
 			addition_day += float(fine_amount)
 			subtraction_day += round( float(cancelled_amount)+float(write_off_amount)+float(promocode_amount), 2)
 
+			if schedule.evaluation_details.evaluator:
+				salesman = schedule.evaluation_details.evaluator.name
+			else:
+				salesman = schedule.order.evaluation.call_attender.name
+
 			schedule_dict = {
 				'order_no' : schedule.order.order_no,
 				'customer'	: schedule.order.evaluation.customer.name,
-				'payment_policy' : schedule.order.evaluation.payment_method,
-				'net_amount' : net_amount,
+				'schedule_status' : schedule.work_status,
+				'gross_amount' : gross_amount,
 				'service_type' : schedule.order_scheduler_book.service_type.name,
-				'salesman' : schedule.order.evaluation.call_attender.name
+				'salesman' : salesman
 			}
 
 			saleslist.append(schedule_dict)

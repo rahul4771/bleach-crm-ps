@@ -48,7 +48,7 @@ function nextDay(){
             $('#sales_status').html('');
 
             $.each(response.data.list,function(key,value){
-                $('#model-table2').append('<tr><td>'+value.order_no+'</td><td>'+value.customer+'</td><td>'+value.payment_policy+'</td><td  style="text-align: right;">'+parseFloat(value.net_amount).toFixed(3)+'</td><td>'+value.service_type+'</td><td>'+value.salesman+'</td></tr>');
+                $('#model-table2').append('<tr><td>'+value.order_no+'</td><td>'+value.customer+'</td><td  style="text-align: right;">'+parseFloat(value.gross_amount).toFixed(3)+'</td><td>'+value.service_type+'</td><td>'+value.salesman+'</td><td>'+value.schedule_status+'</td></tr>');
             })
 
             $('#net_day_sale').text(parseFloat(response.data.net_day_sales).toFixed(3));
@@ -110,7 +110,7 @@ function prevDay(){.0
             $('#sales_status').html('');
 
             $.each(response.data.list,function(key,value){
-                $('#model-table2').append('<tr><td>'+value.order_no+'</td><td>'+value.customer+'</td><td>'+value.payment_policy+'</td><td  style="text-align: right;">'+parseFloat(value.net_amount).toFixed(3)+'</td><td>'+value.service_type+'</td><td>'+value.salesman+'</td></tr>');
+                $('#model-table2').append('<tr><td>'+value.order_no+'</td><td>'+value.customer+'</td><td  style="text-align: right;">'+parseFloat(value.gross_amount).toFixed(3)+'</td><td>'+value.service_type+'</td><td>'+value.salesman+'</td><td>'+value.schedule_status+'</td></tr>');
             })
 
             $('#net_day_sale').text(parseFloat(response.data.net_day_sales).toFixed(3));
@@ -168,7 +168,7 @@ function showModal(dd){
                 $('#sales_status').html('');
 
                 $.each(response.data.list,function(key,value){
-                    $('#model-table2').append('<tr><td>'+value.order_no+'</td><td>'+value.customer+'</td><td>'+value.payment_policy+'</td><td  style="text-align: right;">'+parseFloat(value.net_amount).toFixed(3)+'</td><td>'+value.service_type+'</td><td>'+value.salesman+'</td></tr>');
+                    $('#model-table2').append('<tr><td>'+value.order_no+'</td><td>'+value.customer+'</td><td  style="text-align: right;">'+parseFloat(value.gross_amount).toFixed(3)+'</td><td>'+value.service_type+'</td><td>'+value.salesman+'</td><td>'+value.schedule_status+'</td></tr>');
                 })
 
                 $('#net_day_sale').text(parseFloat(response.data.net_day_sales).toFixed(3));
