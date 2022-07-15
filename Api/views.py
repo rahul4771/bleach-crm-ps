@@ -2120,6 +2120,7 @@ class DailySalesBreakDownAPI(APIView):
 			else:
 				fine_amount		 = 0
 
+			order_service_cancelled_amount = 0
 			if schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION':
 				if schedule.order.order_status == 'ORDER_CANCELLED':
 					order_service_cancelled_amount = schedule.cleaning_cost
