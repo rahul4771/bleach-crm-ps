@@ -2010,7 +2010,7 @@ class DailySalesAPI(APIView):
 					'net_amount': round( float(orderschedules['gross_amount']) - ( float(orderschedules['cancelled_amount'])+float(orderschedules['write_off_amount'])+float(orderschedules['promocode_amount']) ) + float(orderschedules['fine_amount']), 2)
 				}
 
-			saleslist.append(onetime_list_item)
+			saleslist.append(list_item)
 			
 			#ONETIME CALCULATION
 			# if date < todate:
