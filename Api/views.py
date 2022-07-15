@@ -1995,12 +1995,13 @@ class DailySalesAPI(APIView):
 			start_date_day = date
 			end_date_day   = date+timedelta(1)-timedelta(minutes=1)
 
+			#ONETIME CALCULATION
 			if date < todate:
-				orderschedules = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED'))).annotate(no_of_order_visits=Count('order__order_scheduler_order')).aggregate(gross_amount=Coalesce(Sum('cleaning_cost'),0), cancelled_amount=Coalesce(Sum(F('order__evaluation__cancelled_amount')/F('no_of_order_visits'),output_field=FloatField()),0), write_off_amount=Coalesce(Sum(F('order__evaluation__writeback_amount')/F('no_of_order_visits'),output_field=FloatField()),0), promocode_amount=Coalesce(Sum(F('order__evaluation__promocode_amount')/F('no_of_order_visits'),output_field=FloatField()),0), fine_amount=Coalesce(Sum(F('order__evaluation__fine_amount')/F('no_of_order_visits'),output_field=FloatField()),0) )
+				orderschedules = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order_scheduler_book__cleaning_policy='ONE TIME SERVICE',order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED'))).annotate(no_of_order_visits=Count('order__order_scheduler_order')).aggregate(gross_amount=Coalesce(Sum('cleaning_cost'),0), cancelled_amount=Coalesce(Sum(F('order__evaluation__cancelled_amount')/F('no_of_order_visits'),output_field=FloatField()),0), write_off_amount=Coalesce(Sum(F('order__evaluation__writeback_amount')/F('no_of_order_visits'),output_field=FloatField()),0), promocode_amount=Coalesce(Sum(F('order__evaluation__promocode_amount')/F('no_of_order_visits'),output_field=FloatField()),0), fine_amount=Coalesce(Sum(F('order__evaluation__fine_amount')/F('no_of_order_visits'),output_field=FloatField()),0) )
 			else:
-			 	orderschedules = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED') | Q(work_status='CLEANING_TEAM_ASSIGNED') | Q(work_status='CLEANING_IN_PROGRESS'))).annotate(no_of_order_visits=Count('order__order_scheduler_order')).aggregate(gross_amount=Coalesce(Sum('cleaning_cost'),0), cancelled_amount=Coalesce(Sum(F('order__evaluation__cancelled_amount')/F('no_of_order_visits'),output_field=FloatField()),0), write_off_amount=Coalesce(Sum(F('order__evaluation__writeback_amount')/F('no_of_order_visits'),output_field=FloatField()),0), promocode_amount=Coalesce(Sum(F('order__evaluation__promocode_amount')/F('no_of_order_visits'),output_field=FloatField()),0), fine_amount=Coalesce(Sum(F('order__evaluation__fine_amount')/F('no_of_order_visits'),output_field=FloatField()),0) )
+			 	orderschedules = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order_scheduler_book__cleaning_policy='ONE TIME SERVICE',order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED') | Q(work_status='CLEANING_TEAM_ASSIGNED') | Q(work_status='CLEANING_IN_PROGRESS'))).annotate(no_of_order_visits=Count('order__order_scheduler_order')).aggregate(gross_amount=Coalesce(Sum('cleaning_cost'),0), cancelled_amount=Coalesce(Sum(F('order__evaluation__cancelled_amount')/F('no_of_order_visits'),output_field=FloatField()),0), write_off_amount=Coalesce(Sum(F('order__evaluation__writeback_amount')/F('no_of_order_visits'),output_field=FloatField()),0), promocode_amount=Coalesce(Sum(F('order__evaluation__promocode_amount')/F('no_of_order_visits'),output_field=FloatField()),0), fine_amount=Coalesce(Sum(F('order__evaluation__fine_amount')/F('no_of_order_visits'),output_field=FloatField()),0) )
 			
-			list_item = {
+			onetime_list_item = {
 					'Date': str(date.date()),
 					'Day': date.strftime("%A"),
 					'gross_amount':orderschedules['gross_amount'],
@@ -2009,7 +2010,24 @@ class DailySalesAPI(APIView):
 					'net_amount': round( float(orderschedules['gross_amount']) - ( float(orderschedules['cancelled_amount'])+float(orderschedules['write_off_amount'])+float(orderschedules['promocode_amount']) ) + float(orderschedules['fine_amount']), 2)
 				}
 
-			saleslist.append(list_item)
+			saleslist.append(onetime_list_item)
+
+			#SUBSCRIPTION CALCULATION
+			if date < todate:
+				orderschedules = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order_scheduler_book__cleaning_policy='SUBSCRIPTION',order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED'))).annotate(no_of_order_visits=Count('order__order_scheduler_order')).aggregate(refund_amount = Coalesce(Sum(Case(When(order__cancelled_order__return_amount__gt=0,then=F('order__cancelled_order__return_amount')),default=0,output_field=FloatField())),0), cancelled_service_order_amount=Coalesce(Sum(Case(When(Q( Q(order__order_status='ORDER_CANCELLED') | Q( ~Q(order__order_status='ORDER_CANCELLED') & Q(order_scheduler_book__status='CANCELLED'))) ),default=0,output_field=FloatField())),0), gross_amount=Coalesce(Sum('cleaning_cost'),0), cancelled_amount=Coalesce(Sum(F('order__evaluation__cancelled_amount')/F('no_of_order_visits'),output_field=FloatField()),0), write_off_amount=Coalesce(Sum(F('order__evaluation__writeback_amount')/F('no_of_order_visits'),output_field=FloatField()),0), promocode_amount=Coalesce(Sum(F('order__evaluation__promocode_amount')/F('no_of_order_visits'),output_field=FloatField()),0), fine_amount=Coalesce(Sum(F('order__evaluation__fine_amount')/F('no_of_order_visits'),output_field=FloatField()),0) )
+			else:
+			 	orderschedules = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order_scheduler_book__cleaning_policy='SUBSCRIPTION',order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED') | Q(work_status='CLEANING_TEAM_ASSIGNED') | Q(work_status='CLEANING_IN_PROGRESS'))).annotate(no_of_order_visits=Count('order__order_scheduler_order')).aggregate(refund_amount = Coalesce(Sum(Case(When(order__cancelled_order__return_amount__gt=0,then=F('order__cancelled_order__return_amount')),default=0,output_field=FloatField())),0), cancelled_service_order_amount=Coalesce(Sum(Case(When(Q( Q(order__order_status='ORDER_CANCELLED') | Q( ~Q(order__order_status='ORDER_CANCELLED') & Q(order_scheduler_book__status='CANCELLED'))) ),then=F('cleaning_cost')),default=0,output_field=FloatField()),0), gross_amount=Coalesce(Sum('cleaning_cost'),0), cancelled_amount=Coalesce(Sum(F('order__evaluation__cancelled_amount')/F('no_of_order_visits'),output_field=FloatField()),0), write_off_amount=Coalesce(Sum(F('order__evaluation__writeback_amount')/F('no_of_order_visits'),output_field=FloatField()),0), promocode_amount=Coalesce(Sum(F('order__evaluation__promocode_amount')/F('no_of_order_visits'),output_field=FloatField()),0), fine_amount=Coalesce(Sum(F('order__evaluation__fine_amount')/F('no_of_order_visits'),output_field=FloatField()),0) )
+			
+			subscription_list_item = {
+					'Date': str(date.date()),
+					'Day': date.strftime("%A"),
+					'gross_amount':orderschedules['gross_amount'],
+					'subtractions':round( float(orderschedules['cancelled_amount'])+float(orderschedules['write_off_amount'])+float(orderschedules['promocode_amount'])+float(orderschedules['cancelled_service_order_amount'])+float(orderschedules['refund_amount']), 2),
+					'additions': round(orderschedules['fine_amount'],2),
+					'net_amount': round( float(orderschedules['gross_amount']) - ( float(orderschedules['cancelled_amount'])+float(orderschedules['refund_amount'])+float(orderschedules['cancelled_service_order_amount'])+float(orderschedules['write_off_amount'])+float(orderschedules['promocode_amount']) ) + float(orderschedules['fine_amount']), 2)
+				}
+
+			saleslist.append(subscription_list_item)
 			
 			gross_amount_month += float(orderschedules['gross_amount'])
 			subtraction_month += float(orderschedules['cancelled_amount'])+float(orderschedules['write_off_amount'])+float(orderschedules['promocode_amount'])
@@ -2047,7 +2065,7 @@ class DailySalesBreakDownAPI(APIView):
 		else:
 			orderschedules = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED') | Q(work_status='CLEANING_TEAM_ASSIGNED') | Q(work_status='CLEANING_IN_PROGRESS'))).order_by('end_at')
 			
-		
+
 		saleslist = []
 
 		net_day_sales = 0
@@ -2084,8 +2102,22 @@ class DailySalesBreakDownAPI(APIView):
 				fine_amount		 = float(schedule.order.evaluation.fine_amount)/float(order_schedule_count)
 			else:
 				fine_amount		 = 0
-				
-			net_amount 		 = round( float(gross_amount) - ( float(cancelled_amount)+float(write_off_amount)+float(promocode_amount) ) + float(fine_amount), 2)
+
+			if schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION':
+				if schedule.order.order_status == 'ORDER_CANCELLED':
+					order_service_cancelled_amount = schedule.cleaning_cost
+				else:
+					if schedule.order_scheduler_book.status == 'CANCELLED':
+						order_service_cancelled_amount = schedule.cleaning_cost
+
+			try:
+				refund = CancellOrderAmountHistory.objects.filter(order=schedule.order).first()
+				refund_amount = refund.return_amount
+			except:
+				refund = None
+				refund_amount = 0
+	
+			net_amount 		 = round( float(gross_amount) - ( float(cancelled_amount)+float(refund_amount)+float(order_service_cancelled_amount)+float(write_off_amount)+float(promocode_amount) ) + float(fine_amount), 2)
 
 
 			#calculating all schedules in the date totals

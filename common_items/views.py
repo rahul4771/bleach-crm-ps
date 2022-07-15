@@ -1510,6 +1510,8 @@ class ClientOrderDetails(IsAuthenticated,View):
 					schedule.work_status = 'CLEANING_CANCELLED'
 					schedule.save()
 
+			#add cancelled amount code
+			
 			#delete assigned cleaning team and members
 			CleaningTeam.objects.select_related('order_scheduler__order').filter(order_scheduler__order=order).delete() 
 
