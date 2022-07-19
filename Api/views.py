@@ -2126,6 +2126,7 @@ class DailySalesBreakDownAPI(APIView):
 		gross_day_sales = 0
 		addition_day = 0
 		subtraction_day = 0
+		subtraction_amount = 0
 
 		for schedule in orderschedules:
 			#schedule count of order
@@ -2138,32 +2139,24 @@ class DailySalesBreakDownAPI(APIView):
 				gross_amount = 0
 
 			if schedule.order.evaluation.cancelled_amount:
-				cancelled_amount = float(schedule.order.evaluation.cancelled_amount)/float(order_schedule_count)
+				cancelled_amount = float(schedule.order.evaluation.cancelled_amount)
 			else:
 				cancelled_amount = 0
 
 			if schedule.order.evaluation.promocode_amount:
-				promocode_amount = float(schedule.order.evaluation.promocode_amount)/float(order_schedule_count)
+				promocode_amount = float(schedule.order.evaluation.promocode_amount)
 			else:
 				promocode_amount = 0
 
 			if schedule.order.evaluation.writeback_amount:
-				write_off_amount = float(schedule.order.evaluation.writeback_amount)/float(order_schedule_count)
+				write_off_amount = float(schedule.order.evaluation.writeback_amount)
 			else:
 				write_off_amount = 0
 
 			if schedule.order.evaluation.fine_amount:
-				fine_amount		 = float(schedule.order.evaluation.fine_amount)/float(order_schedule_count)
+				fine_amount		 = float(schedule.order.evaluation.fine_amount)
 			else:
 				fine_amount		 = 0
-
-			order_service_cancelled_amount = 0
-			if schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION':
-				if schedule.order.order_status == 'ORDER_CANCELLED':
-					order_service_cancelled_amount = schedule.cleaning_cost
-				else:
-					if schedule.order_scheduler_book.status == 'CANCELLED':
-						order_service_cancelled_amount = schedule.cleaning_cost
 
 			try:
 				refund = CancellOrderAmountHistory.objects.filter(order=schedule.order).first()
@@ -2171,15 +2164,30 @@ class DailySalesBreakDownAPI(APIView):
 			except:
 				refund = None
 				refund_amount = 0
-	
-			net_amount 		 = round( float(gross_amount) - ( float(cancelled_amount)+float(refund_amount)+float(order_service_cancelled_amount)+float(write_off_amount)+float(promocode_amount) ) + float(fine_amount), 2)
 
+			order_service_cancelled_amount = 0
+
+			if schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION':
+				if schedule.order.order_status == 'ORDER_CANCELLED':
+					order_service_cancelled_amount = schedule.cleaning_cost
+				else:
+					if schedule.order_scheduler_book.status == 'CANCELLED':
+						order_service_cancelled_amount = schedule.cleaning_cost
+						service_schedules_sum = OrderScheduler.objects.filter(order_scheduler_book=schedule.order_scheduler_book).aggregate(service_sum=Sum('cleaning_cost'))['service_sum']
+						order_service_cancelled_amount = float(service_schedules_sum)
+					else:
+						pass
+				subtraction_amount = ( float(schedule.order.evaluation.cancelled_amount)+float(order_service_cancelled_amount)+float(refund_amount)+float(schedule.order.evaluation.writeback_amount)+float(schedule.order.evaluation.promocode_amount) )/float(order_schedule_count) + float(0 if schedule.discount_cost is None else schedule.discount_cost)
+			else:
+				subtraction_amount = ( float(schedule.order.evaluation.cancelled_amount)+float(refund_amount)+float(schedule.order.evaluation.writeback_amount)+float(schedule.order.evaluation.promocode_amount) )/float(order_schedule_count) + float(0 if schedule.discount_cost is None else schedule.discount_cost)
+	
+			net_amount 		 = round( float(gross_amount) - float(subtraction_amount) + float(fine_amount), 2)
 
 			#calculating all schedules in the date totals
 			net_day_sales += float(net_amount)
 			gross_day_sales += float(gross_amount)
 			addition_day += float(fine_amount)
-			subtraction_day += round( float(cancelled_amount)+float(write_off_amount)+float(promocode_amount), 2)
+			subtraction_day += float(subtraction_amount)
 
 			if schedule.evaluation_details.evaluator:
 				salesman = schedule.evaluation_details.evaluator.name
