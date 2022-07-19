@@ -2031,7 +2031,7 @@ class DailySalesAPI(APIView):
 						else:
 							pass
 					
-					subtraction_amount += ( float(schedule.evaluation.cancelled_amount)+float(refund_amount)+float(schedule.evaluation.writeback_amount)+float(order_service_cancelled_amount)+float(schedule.evaluation.promocode_amount) )/float(schedule.no_of_order_visits) + float(schedule.discount_cost)
+					subtraction_amount += ( float(schedule.order.evaluation.cancelled_amount)+float(refund_amount)+float(schedule.order.evaluation.writeback_amount)+float(order_service_cancelled_amount)+float(schedule.order.evaluation.promocode_amount) )/float(schedule.no_of_order_visits) + float(schedule.discount_cost)
 					
 				else:
 					
