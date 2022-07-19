@@ -2025,11 +2025,12 @@ class DailySalesAPI(APIView):
 
 				if schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION':
 					if schedule.order.order_status == 'ORDER_CANCELLED':
-						order_service_cancelled_amount = schedule.cleaning_cost
+						order_schedules_cancelled_sum = OrderScheduler.objects.filter(order_scheduler_book=schedule.order_scheduler_book,work_status='CLEANING_CANCELLED').aggregate(order_sum=Sum('cleaning_cost'))['order_sum']
+						order_service_cancelled_amount = float(order_schedules_cancelled_sum)
 					else:
 						if schedule.order_scheduler_book.status == 'CANCELLED':
-							service_schedules_sum = OrderScheduler.objects.filter(order_scheduler_book=schedule.order_scheduler_book).aggregate(service_sum=Sum('cleaning_cost'))
-							order_service_cancelled_amount = float(service_schedules_sum)
+							service_schedules_cancelled_sum = OrderScheduler.objects.filter(order_scheduler_book=schedule.order_scheduler_book,work_status='CLEANING_CANCELLED').aggregate(service_sum=Sum('cleaning_cost'))['service_sum']
+							order_service_cancelled_amount = float(service_schedules_cancelled_sum)
 						else:
 							pass
 					
@@ -2171,12 +2172,12 @@ class DailySalesBreakDownAPI(APIView):
 
 			if schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION':
 				if schedule.order.order_status == 'ORDER_CANCELLED':
-					order_service_cancelled_amount = schedule.cleaning_cost
+					order_schedules_cancelled_sum = OrderScheduler.objects.filter(order_scheduler_book=schedule.order_scheduler_book,work_status='CLEANING_CANCELLED').aggregate(order_sum=Sum('cleaning_cost'))['order_sum']
+					order_service_cancelled_amount = float(order_schedules_cancelled_sum)
 				else:
 					if schedule.order_scheduler_book.status == 'CANCELLED':
-						order_service_cancelled_amount = schedule.cleaning_cost
-						service_schedules_sum = OrderScheduler.objects.filter(order_scheduler_book=schedule.order_scheduler_book).aggregate(service_sum=Sum('cleaning_cost'))['service_sum']
-						order_service_cancelled_amount = float(service_schedules_sum)
+						service_schedules_cancelled_sum = OrderScheduler.objects.filter(order_scheduler_book=schedule.order_scheduler_book,work_status='CLEANING_CANCELLED').aggregate(service_sum=Sum('cleaning_cost'))['service_sum']
+						order_service_cancelled_amount = float(service_schedules_cancelled_sum)
 					else:
 						pass
 				subtraction_amount = ( float(schedule.order.evaluation.cancelled_amount)+float(order_service_cancelled_amount)+float(refund_amount)+float(schedule.order.evaluation.writeback_amount)+float(schedule.order.evaluation.promocode_amount) )/float(order_schedule_count) + float(0 if schedule.discount_cost is None else schedule.discount_cost)
@@ -2184,6 +2185,8 @@ class DailySalesBreakDownAPI(APIView):
 				subtraction_amount = ( float(schedule.order.evaluation.cancelled_amount)+float(refund_amount)+float(schedule.order.evaluation.writeback_amount)+float(schedule.order.evaluation.promocode_amount) )/float(order_schedule_count) + float(0 if schedule.discount_cost is None else schedule.discount_cost)
 	
 			net_amount 		 = round( float(gross_amount) - float(subtraction_amount) + float(fine_amount), 2)
+
+			print(order_service_cancelled_amount,"oscamt")
 
 			#calculating all schedules in the date totals
 			net_day_sales += float(net_amount)
