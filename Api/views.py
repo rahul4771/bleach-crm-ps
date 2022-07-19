@@ -2021,6 +2021,8 @@ class DailySalesAPI(APIView):
 
 				addition_amount    += float(schedule.order.evaluation.fine_amount)/float(schedule.no_of_order_visits)
 
+				order_service_cancelled_amount = 0
+
 				if schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION':
 					if schedule.order.order_status == 'ORDER_CANCELLED':
 						order_service_cancelled_amount = schedule.cleaning_cost
