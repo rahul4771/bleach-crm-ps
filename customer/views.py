@@ -208,6 +208,29 @@ class Quatation(View):
 					discount_cost_sum          = 0
 					additional_charge_cost_sum = 0
 					count                      = 0
+					
+					
+					#new code
+					# for invoice in order.invoice_evaluation_details:
+					# 	for book in invoice.evaluation_books:
+					# 		schedules = OrderScheduler.objects.filter(is_active=True,order_scheduler_book=book)
+					# 		book_schedules_count = schedules.count()
+
+					# 		for schedule in schedules:
+					# 			count                                += 1
+	
+					# 			#service cost update
+					# 			if count == len(scheduler.order_scheduler_book.bookschedules):
+					# 				scheduler.cleaning_cost           = round(book.total_cost-cleaning_cost_sum,2)
+					# 				cleaning_cost_sum                 = 0
+					# 			else:
+					# 				scheduler.cleaning_cost           = round(book.total_cost/book_schedules_count,2)
+					# 				cleaning_cost_sum                += scheduler.cleaning_cost
+
+					# 			schedule.save()
+					#new code
+					
+					
 					for scheduler in order.orderschedules:
 						count                                += 1
 		

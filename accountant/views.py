@@ -1518,7 +1518,7 @@ def export_users_xls(request):
 	todate            = datetime.strptime(to_date, '%d-%m-%Y')
 
 	prev_date_start   = prevdate.replace(hour=0,minute=0,second=0,microsecond=0)
-	prev_date_end     = prevdate+timedelta(1)
+	prev_date_end     = prev_date_start+timedelta(1)
 	todate_date_start = todate.replace(hour=0,minute=0,second=0,microsecond=0)   #single_date+timedelta(1)
 	todate_date_end   = todate_date_start+timedelta(1)
 
@@ -2431,23 +2431,22 @@ def export_users_xls(request):
 		
 		#total sales
 		response['Content-Disposition'] = 'attachment; filename="SALES_REPORT_'+from_date+'_'+to_date+'.xls"'
-		# orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(prev_date_start,todate_date_end)).filter(Q(Q(work_status = 'CLEANING_TEAM_ASSIGNED') | Q(work_status = 'CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_FULFILLED'))).values_list('order__order_no','end_at','end_at','id','evaluation_details__address__customer__name','order_scheduler_book__estimated_cost','order__amount_paid','evaluation_details__evaluation__payment_way','order_scheduler_book__id','order__remining_amount','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__cleaning_hours','order_scheduler_book__number_of_cleaners','evaluation_details__evaluator__name','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluation__discount','order_scheduler_book__evaluation_details__evaluation__additional_charge').order_by('end_at')
-		# orderschedules = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(prev_date_start,todate_date_end)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED') | Q(work_status='CLEANING_TEAM_ASSIGNED') | Q(work_status='CLEANING_IN_PROGRESS'))).annotate(no_of_order_visits=Count('order__order_scheduler_order'))
-		# print(orderschedules,"schedules_list")
-
+		
 		rows = []
 
 		for date in daterange:
-			#date split for django mysql query
-			date_start   = date.replace(hour=0,minute=0,second=0,microsecond=0)
-			date_end     = date_start+timedelta(1)
+			# print(date,"deyit")
+
+			date_start = date.replace(hour=0,minute=0,second=0,microsecond=0)
+			date_end = date_start+timedelta(1)
+			print(date_start,date_end,"daterr")
 
 			gross_amount = 0
 			subtraction_amount = 0
 			addition_amount = 0
 			list_item = []
 			
-			orderschedules = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__gte=date_start,end_at__lte=date_end).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED') | Q(work_status='CLEANING_TEAM_ASSIGNED') | Q(work_status='CLEANING_IN_PROGRESS'))).annotate(no_of_order_visits=Count('order__order_scheduler_order'))
+			orderschedules = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(date_start,date_end)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED') | Q(work_status='CLEANING_TEAM_ASSIGNED') | Q(work_status='CLEANING_IN_PROGRESS'))).annotate(no_of_order_visits=Count('order__order_scheduler_order'))
 			
 			for schedule in orderschedules:
 				
@@ -2508,32 +2507,46 @@ def export_users_xls(request):
 
 		#individual sales
 		response['Content-Disposition'] = 'attachment; filename="SALES_DETAILS_COMPLETED_'+from_date+'_'+to_date+'.xls"'
-		# orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(prev_date_start,todate_date_end)).filter(Q(Q(work_status='CLEANING_FULFILLED')|Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS'))).values_list('order__order_no','end_at','end_at','id','evaluation_details__address__customer__name','evaluation_details__evaluation__payment_method','order_scheduler_book__total_cost','order__amount_paid','evaluation_details__evaluation__payment_way','order_scheduler_book__id','order__remining_amount','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__cleaning_hours','order_scheduler_book__number_of_cleaners','evaluation_details__evaluator__name','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount').order_by('end_at')
-
+		
+		orderschedules_details = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(prev_date_start,todate_date_end)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED') | Q(work_status='CLEANING_TEAM_ASSIGNED') | Q(work_status='CLEANING_IN_PROGRESS')))
+		
 		
 		#sales details
-		# ws = wb.add_sheet('SALES DETAILS',cell_overwrite_ok = True)
+		ws = wb.add_sheet('SALES DETAILS',cell_overwrite_ok = True)
 	
-		# columns = ['Order No.','Service Date','Service Day','Customer','Payment Policy','Cleaning Policy','Salesman','Gross Amount']
+		columns = ['Order No.','Service Date','Service Day','Customer','Payment Policy','Cleaning Policy','Salesman','Gross Amount']
 		
-		# for col_num in range(len(columns)):
-		# 	ws.write(row_num, col_num, columns[col_num], font_style)
+		for col_num in range(len(columns)):
+			ws.write(row_num, col_num, columns[col_num], font_style)
 
-		# rows = []
+		rows2 = []
+		schedule_list = []
 
-		# for schedule in orderschedules:
+		for schedule in orderschedules_details:
 
-		# 	schedule_list = list(schedule)
+			#calculating schedule total
+			if schedule.cleaning_cost:
+				gross_amount = float(schedule.cleaning_cost) or 0
+			else:
+				gross_amount = 0
 
+			if schedule.evaluation_details.evaluator:
+				salesman = schedule.evaluation_details.evaluator.name
+			else:
+				salesman = schedule.order.evaluation.call_attender.name
+
+			schedule_list = [schedule.order.order_no,str(schedule.end_at.date()),schedule.end_at.strftime("%A"),schedule.order.evaluation.customer.name,schedule.order.evaluation.payment_method,schedule.order_scheduler_book.cleaning_policy,salesman,gross_amount]
 			
-		# 		rows.append(schedule)
+			rows2.append(schedule_list)
 		
-		# rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
+		rows2 = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows2 ]
 
-		# for row in rows:
-		# 	row_num += 1
-		# 	for col_num in range(len(row)):
-		# 		ws.write(row_num, col_num, row[col_num], font_style)
+		print(rows2,"roser")
+
+		for row in rows2:
+			row_num += 1
+			for col_num in range(len(row)):
+				ws.write(row_num, col_num, row[col_num], font_style)
 
 		
 
