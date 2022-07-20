@@ -2447,7 +2447,7 @@ def export_users_xls(request):
 			addition_amount = 0
 			list_item = []
 			
-			orderschedules = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(date_start,date_end)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED') | Q(work_status='CLEANING_TEAM_ASSIGNED') | Q(work_status='CLEANING_IN_PROGRESS'))).annotate(no_of_order_visits=Count('order__order_scheduler_order'))
+			orderschedules = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__gte=date_start,end_at__lte=date_end).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED') | Q(work_status='CLEANING_TEAM_ASSIGNED') | Q(work_status='CLEANING_IN_PROGRESS'))).annotate(no_of_order_visits=Count('order__order_scheduler_order'))
 			
 			for schedule in orderschedules:
 				
