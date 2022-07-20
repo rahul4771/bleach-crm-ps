@@ -2445,8 +2445,14 @@ def export_users_xls(request):
 			addition_amount = 0
 			list_item = []
 			
-			orderschedules = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED') | Q(work_status='CLEANING_TEAM_ASSIGNED') | Q(work_status='CLEANING_IN_PROGRESS'))).annotate(no_of_order_visits=Count('order__order_scheduler_order'))
-			
+			#date setup for getting schedules on specified date
+			todays_date = datetime.now().replace(hour=0,minute=0,second=0,microsecond=0)
+
+			if date < todays_date:
+				orderschedules = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED') )).annotate(no_of_order_visits=Count('order__order_scheduler_order'))
+			else:
+				orderschedules = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED') | Q(work_status='CLEANING_TEAM_ASSIGNED') | Q(work_status='CLEANING_IN_PROGRESS'))).annotate(no_of_order_visits=Count('order__order_scheduler_order'))
+
 			for schedule in orderschedules:
 				
 				try:
@@ -2507,9 +2513,14 @@ def export_users_xls(request):
 		#individual sales
 		response['Content-Disposition'] = 'attachment; filename="SALES_DETAILS_COMPLETED_'+from_date+'_'+to_date+'.xls"'
 		
-		orderschedules_details = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(prev_date_start,todate_date_end)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED') | Q(work_status='CLEANING_TEAM_ASSIGNED') | Q(work_status='CLEANING_IN_PROGRESS')))
-		
-		
+		#date setup for getting schedules on specified date
+		todays_date = datetime.now().replace(hour=0,minute=0,second=0,microsecond=0)
+
+		if date < todays_date:
+			orderschedules_details = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(prev_date_start,todate_date_end)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED') ))
+		else:
+			orderschedules_details = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(prev_date_start,todate_date_end)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED') | Q(work_status='CLEANING_TEAM_ASSIGNED') | Q(work_status='CLEANING_IN_PROGRESS')))
+
 		#sales details
 		ws = wb.add_sheet('SALES DETAILS',cell_overwrite_ok = True)
 	
