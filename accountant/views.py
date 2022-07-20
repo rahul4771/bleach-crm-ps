@@ -2438,8 +2438,7 @@ def export_users_xls(request):
 			# print(date,"deyit")
 
 			date_start = date.replace(hour=0,minute=0,second=0,microsecond=0)
-			date_end = date_start+timedelta(1)
-			print(date_start,date_end,"daterr")
+			date_end = date.replace(hour=23,minute=59,second=59,microsecond=59)
 
 			gross_amount = 0
 			subtraction_amount = 0
