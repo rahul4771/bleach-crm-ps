@@ -2437,15 +2437,15 @@ def export_users_xls(request):
 		for date in daterange:
 			# print(date,"deyit")
 
-			date_start = date.replace(hour=0,minute=0,second=0,microsecond=0)
-			date_end = date.replace(hour=23,minute=59,second=59,microsecond=59)
+			start_date_day = date
+			end_date_day   = date+timedelta(1)-timedelta(minutes=1)
 
 			gross_amount = 0
 			subtraction_amount = 0
 			addition_amount = 0
 			list_item = []
 			
-			orderschedules = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(date_start,date_end)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED') | Q(work_status='CLEANING_TEAM_ASSIGNED') | Q(work_status='CLEANING_IN_PROGRESS'))).annotate(no_of_order_visits=Count('order__order_scheduler_order'))
+			orderschedules = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED') | Q(work_status='CLEANING_TEAM_ASSIGNED') | Q(work_status='CLEANING_IN_PROGRESS'))).annotate(no_of_order_visits=Count('order__order_scheduler_order'))
 			
 			for schedule in orderschedules:
 				
