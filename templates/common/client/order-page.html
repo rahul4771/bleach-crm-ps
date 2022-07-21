@@ -2089,7 +2089,7 @@
                                     <div class="testimonial-group mt-20">
                                         <div class="row">
                                         {% for multi_order_schedule in order.orderschedules %}
-                                        {{multi_order_schedule.cleaning_cost}}, {{multi_order_schedule.discount_cost}},{{multi_order_schedule.additional_charge_cost}}
+                                        <p>cleaning_cost:{{multi_order_schedule.cleaning_cost}}</p> <p>discount:{{multi_order_schedule.discount_cost}}</p> <p>additional charge:{{multi_order_schedule.additional_charge_cost}}</p>
                                         {% if multi_order_schedule.order_scheduler_book == evaluationbook %}
                                         <div style="margin-bottom: 10px;" class="col-md-4 col-xs-12 c-pr5 visit-list" id="id_select_visit{{multi_order_schedule.id}}" onclick="load_cleaning_team('id_select_visit'+{{multi_order_schedule.id}},{{multi_order_schedule.id}},{{evaluationbook.id}})"> 
                                             <div class="cleaning-status-container  pointer ">
