@@ -2214,14 +2214,14 @@ class DailySalesChartAPI(APIView):
 
 			if date < todate:
 				print("ramo")
-				orderschedules = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED'))).annotate(no_of_order_visits=Count('order__order_scheduler_order')).aggregate(gross_amount=Coalesce(Sum('cleaning_cost'),0), cancelled_amount=Coalesce(Sum(F('order__evaluation__cancelled_amount')/F('no_of_order_visits'),output_field=FloatField()),0), write_off_amount=Coalesce(Sum(F('order__evaluation__writeback_amount')/F('no_of_order_visits'),output_field=FloatField()),0), promocode_amount=Coalesce(Sum(F('order__evaluation__promocode_amount')/F('no_of_order_visits'),output_field=FloatField()),0), fine_amount=Coalesce(Sum(F('order__evaluation__fine_amount')/F('no_of_order_visits'),output_field=FloatField()),0) )
+				orderschedules = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED'))).annotate(no_of_order_visits=Count('order__order_scheduler_order')).aggregate(gross_amount=Coalesce(Sum('cleaning_cost'),0) )
 			else:
-			 	orderschedules = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED') | Q(work_status='CLEANING_TEAM_ASSIGNED') | Q(work_status='CLEANING_IN_PROGRESS'))).annotate(no_of_order_visits=Count('order__order_scheduler_order')).aggregate(gross_amount=Coalesce(Sum('cleaning_cost'),0), cancelled_amount=Coalesce(Sum(F('order__evaluation__cancelled_amount')/F('no_of_order_visits'),output_field=FloatField()),0), write_off_amount=Coalesce(Sum(F('order__evaluation__writeback_amount')/F('no_of_order_visits'),output_field=FloatField()),0), promocode_amount=Coalesce(Sum(F('order__evaluation__promocode_amount')/F('no_of_order_visits'),output_field=FloatField()),0), fine_amount=Coalesce(Sum(F('order__evaluation__fine_amount')/F('no_of_order_visits'),output_field=FloatField()),0) )
+			 	orderschedules = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED') | Q(work_status='CLEANING_TEAM_ASSIGNED') | Q(work_status='CLEANING_IN_PROGRESS'))).annotate(no_of_order_visits=Count('order__order_scheduler_order')).aggregate(gross_amount=Coalesce(Sum('cleaning_cost'),0) )
 				
 			# print(orderschedules,"selistaro")		
 			list_item = {
 				'date': str(date.date()),
-				'totalamount': round( float(orderschedules['gross_amount']) - ( float(orderschedules['cancelled_amount'])+float(orderschedules['write_off_amount'])+float(orderschedules['promocode_amount']) ) + float(orderschedules['fine_amount']), 2)
+				'totalamount': round( orderschedules['gross_amount'], 2)
 			}
 
 			saleslist.append(list_item)
