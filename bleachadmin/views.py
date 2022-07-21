@@ -41,62 +41,6 @@ from django.template.loader import render_to_string
 class AdminHome(IsAdmin,View):
 	def get(self,request):
 		
-		
-		#schedule cost live fix code
-		blc_nos = ['BLC20220710075','BLC20220310193','BLC20220410180','BLC20220510236','BLC20220410229','BLC20220310126','BLC20220410244','BLC20220410133','BLC20220410035']
-		
-		for blc in blc_nos:
-			print(blc,"beel")
-			
-			try:
-				order = Order.objects.filter(order_no=blc).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')) .first()
-
-				servicebooks = EvaluationBook.objects.filter(is_active=True,evaluation_details__evaluation=order.evaluation)
-				print(servicebooks,"evbooks")
-
-				if servicebooks:
-					cleaning_cost_sum          = 0
-					total_cleanings            = len(order.orderschedules)
-					discount_cost_sum          = 0
-					additional_charge_cost_sum = 0
-					count2                     = 0
-					
-					#new code
-					
-					for book in servicebooks:
-						book_schedules = OrderScheduler.objects.filter(is_active=True,order_scheduler_book=book)
-						print(book_schedules,"shedul")
-						book_schedules_count = book_schedules.count()
-
-						count                      = 0
-
-						for schedule in book_schedules:
-							count                                += 1
-							count2                               += 1
-							
-							#service cost update
-							if int(count) == int(book_schedules_count):
-								schedule.cleaning_cost           = round(book.total_cost-cleaning_cost_sum,2)
-								cleaning_cost_sum                 = 0
-							else:
-								schedule.cleaning_cost           = round(book.total_cost/book_schedules_count,2)
-								cleaning_cost_sum                += schedule.cleaning_cost
-							
-							#discount and additional cost update	
-							if total_cleanings != count2:
-								schedule.discount_cost           = round(order.evaluation.discount/total_cleanings,2)
-								schedule.additional_charge_cost  = round(order.evaluation.additional_charge/total_cleanings,2)
-								discount_cost_sum                += schedule.discount_cost
-								additional_charge_cost_sum       += schedule.additional_charge_cost
-							else:	
-								schedule.discount_cost           = round(order.evaluation.discount-discount_cost_sum,2)
-								schedule.additional_charge_cost  = round(order.evaluation.additional_charge-additional_charge_cost_sum,2)
-							
-							schedule.save()
-			except:
-				order = None
-		
-		
 		#cleaners and leaders
 		cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER')
 		leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE')
