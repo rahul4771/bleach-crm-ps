@@ -246,35 +246,6 @@ class Quatation(View):
 							schedule.save()
 							
 					#new code
-				
-				# if order.orderschedules:
-				# 	total_cleanings            = len(order.orderschedules)
-				# 	cleaning_cost_sum          = 0
-				# 	discount_cost_sum          = 0
-				# 	additional_charge_cost_sum = 0
-				# 	count                      = 0
-					
-				# 	for scheduler in order.orderschedules:
-				# 		count                                += 1
-		
-						#service cost update
-						# if count == len(scheduler.order_scheduler_book.bookschedules):
-						# 	scheduler.cleaning_cost           = round(scheduler.order_scheduler_book.total_cost-cleaning_cost_sum,2)
-						# 	cleaning_cost_sum                 = 0
-						# else:
-						# 	scheduler.cleaning_cost           = round(scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules),2)
-						# 	cleaning_cost_sum                += scheduler.cleaning_cost
-						#discount and additional cost update	
-						# if total_cleanings != count:
-						# 	scheduler.discount_cost           = round(order.evaluation.discount/total_cleanings,2)
-						# 	scheduler.additional_charge_cost  = round(order.evaluation.additional_charge/total_cleanings,2)
-						# 	discount_cost_sum                += scheduler.discount_cost
-						# 	additional_charge_cost_sum       += scheduler.additional_charge_cost
-						# else:	
-						# 	scheduler.discount_cost           = round(order.evaluation.discount-discount_cost_sum,2)
-						# 	scheduler.additional_charge_cost  = round(order.evaluation.additional_charge-additional_charge_cost_sum,2)
-
-						# scheduler.save()
 
 				#sms and email
 				evaluaation = Evaluation.objects.get(evaluation_id=evaluation_id,customer__username=user_name)
@@ -608,35 +579,51 @@ class SubscriptionQuatation(View):
 				
 				order_update      = Order.objects.filter(order_no=evaluation_id,evaluation__customer__username=user_name).update(order_status='APPROVED_BY_CLIENT',invoice_no=new_invoice_no)
 				
+								
 				#Save Individual cleaning price
-				if order.orderschedules:
-					total_cleanings            = len(order.orderschedules)
-					
+
+				servicebooks = EvaluationBook.objects.filter(is_active=True,evaluation_details__evaluation=order.evaluation)
+				print(servicebooks,"evbooks")
+
+				if servicebooks:
 					cleaning_cost_sum          = 0
+					total_cleanings            = len(order.orderschedules)
 					discount_cost_sum          = 0
 					additional_charge_cost_sum = 0
-					count                      = 0
-					for scheduler in order.orderschedules:
-						count                                += 1
-		
-						#service cost update
-						if count == len(scheduler.order_scheduler_book.bookschedules):
-							scheduler.cleaning_cost           = round(scheduler.order_scheduler_book.total_cost-cleaning_cost_sum,2)
-							cleaning_cost_sum                 = 0
-						else:
-							scheduler.cleaning_cost           = round(scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules),2)
-							cleaning_cost_sum                += scheduler.cleaning_cost
-						#discount and additional cost update	
-						if total_cleanings != count:
-							scheduler.discount_cost           = round(order.evaluation.discount/total_cleanings,2)
-							scheduler.additional_charge_cost  = round(order.evaluation.additional_charge/total_cleanings,2)
-							discount_cost_sum                += scheduler.discount_cost
-							additional_charge_cost_sum       += scheduler.additional_charge_cost
-						else:	
-							scheduler.discount_cost           = round(order.evaluation.discount-discount_cost_sum,2)
-							scheduler.additional_charge_cost  = round(order.evaluation.additional_charge-additional_charge_cost_sum,2)
+					count2                     = 0
+					
+					#new code
+					
+					for book in servicebooks:
+						book_schedules = OrderScheduler.objects.filter(is_active=True,order_scheduler_book=book)
+						
+						book_schedules_count = book_schedules.count()
 
-						scheduler.save()
+						count                      = 0
+
+						for schedule in book_schedules:
+							count                                += 1
+							count2                               += 1
+							
+							#service cost update
+							if int(count) == int(book_schedules_count):
+								schedule.cleaning_cost           = round(book.total_cost-cleaning_cost_sum,2)
+								cleaning_cost_sum                 = 0
+							else:
+								schedule.cleaning_cost           = round(book.total_cost/book_schedules_count,2)
+								cleaning_cost_sum                += schedule.cleaning_cost
+							
+							#discount and additional cost update	
+							if total_cleanings != count2:
+								schedule.discount_cost           = round(order.evaluation.discount/total_cleanings,2)
+								schedule.additional_charge_cost  = round(order.evaluation.additional_charge/total_cleanings,2)
+								discount_cost_sum                += schedule.discount_cost
+								additional_charge_cost_sum       += schedule.additional_charge_cost
+							else:	
+								schedule.discount_cost           = round(order.evaluation.discount-discount_cost_sum,2)
+								schedule.additional_charge_cost  = round(order.evaluation.additional_charge-additional_charge_cost_sum,2)
+							
+							schedule.save()
 
 				###############################################################
 				#If Advance Amount Integrate with Xero

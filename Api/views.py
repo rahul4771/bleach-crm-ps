@@ -2019,7 +2019,7 @@ class DailySalesAPI(APIView):
 				else:
 					gross_amount += 0
 
-				addition_amount    += float(schedule.order.evaluation.fine_amount)/float(schedule.no_of_order_visits)
+				addition_amount    += (float(schedule.order.evaluation.fine_amount)/float(schedule.no_of_order_visits)) + float(schedule.additional_charge_cost)
 
 				order_service_cancelled_amount = 0
 
@@ -2123,7 +2123,7 @@ class DailySalesBreakDownAPI(APIView):
 				write_off_amount = 0
 
 			if schedule.order.evaluation.fine_amount:
-				fine_amount		 = float(schedule.order.evaluation.fine_amount)
+				fine_amount		 = float(schedule.order.evaluation.fine_amount)/float(order_schedule_count)
 			else:
 				fine_amount		 = 0
 
@@ -2150,7 +2150,7 @@ class DailySalesBreakDownAPI(APIView):
 			else:
 				subtraction_amount = ( float(schedule.order.evaluation.cancelled_amount)+float(refund_amount)+float(schedule.order.evaluation.writeback_amount)+float(schedule.order.evaluation.promocode_amount) )/float(order_schedule_count) + float(0 if schedule.discount_cost is None else schedule.discount_cost)
 	
-			net_amount 		 = round( float(gross_amount) - float(subtraction_amount) + float(fine_amount), 2)
+			net_amount 		 = round( float(gross_amount) - float(subtraction_amount) + float(fine_amount) + float(schedule.additional_charge_cost), 2)
 
 			print(order_service_cancelled_amount,"oscamt")
 
