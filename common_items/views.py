@@ -1743,7 +1743,7 @@ class DailySales(IsAuthenticated, View):
 				else:
 					gross_amount += 0
 
-				addition_amount    += (float(schedule.order.evaluation.fine_amount)/float(schedule.no_of_order_visits)) + float(schedule.additional_charge_cost)
+				addition_amount    += (float(schedule.order.evaluation.fine_amount)/float(schedule.no_of_order_visits)) + float(0 if schedule.additional_charge_cost is None else schedule.additional_charge_cost)
 
 				order_service_cancelled_amount = 0
 
