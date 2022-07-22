@@ -2558,7 +2558,39 @@ def export_users_xls(request):
 			for col_num in range(len(row)):
 				ws.write(row_num, col_num, row[col_num], font_style)
 
+	if report_type == 'non_checked_out_schedules':
+		response = HttpResponse(content_type='application/ms-excel')
+		response['Content-Disposition'] = 'attachment; filename="ORDER_SCHEDULES_'+from_date+'_'+to_date+'.xls"'
+
+		wb = xlwt.Workbook(encoding='utf-8')
 		
+		#sales details
+		ws = wb.add_sheet('ORDER SCHEDULES CHECKOUT PENDING',cell_overwrite_ok = True)
+	
+		columns = ['Cleaning Date','BLC No.','Team Leader','Check-In Time']
+		
+		for col_num in range(len(columns)):
+			ws.write(row_num, col_num, columns[col_num], font_style)	
+
+		start_date_day = prev_date_start.replace(hour=0,minute=0,second=0,microsecond=0)
+		end_date_day   = todate_date_end.replace(hour=0,minute=0,second=0,microsecond=0)+timedelta(1)-timedelta(minutes=1)
+		print(start_date_day,end_date_day,"daterrr")
+		cleaningteams = CleaningTeam.objects.filter(is_active=True,check_in__range=(start_date_day,end_date_day),check_out=None)
+
+		rows = []
+		team_data = []
+		for team in cleaningteams:
+			check_in_time = datetime.strftime(team.check_in,'%I:%M %p')
+			team_data = [team.start_at.date(),team.order_scheduler.order.order_no,team.team_leader.name,check_in_time]
+		
+		rows.append(team_data)
+
+		rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
+
+		for row in rows:
+			row_num += 1
+			for col_num in range(len(row)):
+				ws.write(row_num, col_num, str(row[col_num]), font_style)
 
 	if report_type == 'orderhistory':
 		response = HttpResponse(content_type='application/ms-excel')
