@@ -2560,12 +2560,12 @@ def export_users_xls(request):
 
 	if report_type == 'non_checked_out_schedules':
 		response = HttpResponse(content_type='application/ms-excel')
-		response['Content-Disposition'] = 'attachment; filename="ORDER_SCHEDULES_'+from_date+'_'+to_date+'.xls"'
+		response['Content-Disposition'] = 'attachment; filename="CHECKOUT_PENDING_'+from_date+'_'+to_date+'.xls"'
 
 		wb = xlwt.Workbook(encoding='utf-8')
 		
 		#sales details
-		ws = wb.add_sheet('ORDER SCHEDULES CHECKOUT PENDING',cell_overwrite_ok = True)
+		ws = wb.add_sheet('CHECKOUT_PENDING',cell_overwrite_ok = True)
 	
 		columns = ['Cleaning Date','BLC No.','Team Leader','Check-In Time']
 		
