@@ -59,6 +59,7 @@ urlpatterns = [
 	url(r'^governorates/$',views.GovernoratesAPI.as_view(),name='api-governorates'),
 	url(r'^areas/(?P<governorate_id>\d+)/$',views.AreasAPI.as_view(),name='api-areas'),
 	url(r'^location-types/$',views.LocationTypesAPI.as_view(),name='api-location-types'),
+	url(r'^mail-subscription/$',views.SubscriptionMailAPI.as_view(),name='api-mail-subscription'),
 
 	#inventory
 	url(r'^inventory-lines/$',views.InventoryLinesAPI.as_view(),name='api-inventory-lines'),
