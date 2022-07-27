@@ -2516,10 +2516,7 @@ def export_users_xls(request):
 		#date setup for getting schedules on specified date
 		todays_date = datetime.now().replace(hour=0,minute=0,second=0,microsecond=0)
 
-		if date < todays_date:
-			orderschedules_details = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(prev_date_start,todate_date_end)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED') ))
-		else:
-			orderschedules_details = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(prev_date_start,todate_date_end)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED') | Q(work_status='CLEANING_TEAM_ASSIGNED') | Q(work_status='CLEANING_IN_PROGRESS')))
+		orderschedules_details = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(prev_date_start,todate_date_end)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED') | Q(work_status='CLEANING_TEAM_ASSIGNED') | Q(work_status='CLEANING_IN_PROGRESS')))
 
 		#sales details
 		ws = wb.add_sheet('SALES DETAILS',cell_overwrite_ok = True)
@@ -2534,21 +2531,40 @@ def export_users_xls(request):
 
 		for schedule in orderschedules_details:
 
-			#calculating schedule total
-			if schedule.cleaning_cost:
-				gross_amount = float(schedule.cleaning_cost) or 0
-			else:
-				gross_amount = 0
+			if schedule.end_at.date() < todays_date.date() and schedule.work_status == 'CLEANING_CANCELLED' or schedule.work_status == 'CLEANING_FULFILLED':
 
-			if schedule.evaluation_details.evaluator:
-				salesman = schedule.evaluation_details.evaluator.name
-			else:
-				salesman = schedule.order.evaluation.call_attender.name
+				#calculating schedule total
+				if schedule.cleaning_cost:
+					gross_amount = float(schedule.cleaning_cost) or 0
+				else:
+					gross_amount = 0
 
-			schedule_list = [schedule.order.order_no,str(schedule.end_at.date()),schedule.end_at.strftime("%A"),schedule.order.evaluation.customer.name,schedule.order.evaluation.payment_method,schedule.order_scheduler_book.cleaning_policy,salesman,gross_amount]
+				if schedule.evaluation_details.evaluator:
+					salesman = schedule.evaluation_details.evaluator.name
+				else:
+					salesman = schedule.order.evaluation.call_attender.name
+
+				schedule_list = [schedule.order.order_no,str(schedule.end_at.date()),schedule.end_at.strftime("%A"),schedule.order.evaluation.customer.name,schedule.order.evaluation.payment_method,schedule.order_scheduler_book.cleaning_policy,salesman,gross_amount]
+				
+				rows2.append(schedule_list)
 			
-			rows2.append(schedule_list)
+			if schedule.end_at.date() > todays_date.date() and schedule.work_status == 'CLEANING_CANCELLED' or schedule.work_status == 'CLEANING_FULFILLED' or schedule.work_status == 'CLEANING_TEAM_ASSIGNED' or schedule.work_status == 'CLEANING_IN_PROGRESS':
 		
+				#calculating schedule total
+				if schedule.cleaning_cost:
+					gross_amount = float(schedule.cleaning_cost) or 0
+				else:
+					gross_amount = 0
+
+				if schedule.evaluation_details.evaluator:
+					salesman = schedule.evaluation_details.evaluator.name
+				else:
+					salesman = schedule.order.evaluation.call_attender.name
+
+				schedule_list = [schedule.order.order_no,str(schedule.end_at.date()),schedule.end_at.strftime("%A"),schedule.order.evaluation.customer.name,schedule.order.evaluation.payment_method,schedule.order_scheduler_book.cleaning_policy,salesman,gross_amount]
+				
+				rows2.append(schedule_list)
+
 		rows2 = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows2 ]
 
 		print(rows2,"roser")
