@@ -5733,6 +5733,12 @@ class SubscriptionMailAPI(APIView):
 		except:
 			SubscriptionMail.objects.create(customer_email=customer_email)
 			response_data['message'] = 'Thank you for subscribing !'
+
+			#send mail
+			# msg_html = render_to_string('email/soa.html',{"customer":customer,"address":address,"orders":accounts_list,"total_balance":total_balance,"total_credit":total_credit,"total_debit":total_debit})
+			# msg = EmailMultiAlternatives('Bleach Newsletter Subscription', '', 'notification@bleach-kw.com', [customer_email])
+			# msg.attach_alternative(msg_html, "text/html")
+			# msg.send(fail_silently=False)
 		
 		return Response(response_data,HTTP_200_OK)
 
