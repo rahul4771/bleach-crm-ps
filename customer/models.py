@@ -145,5 +145,13 @@ class CartSchedule(models.Model):
 
 	def __str__(self):
 		return self.cart.customer.name+'-'+str(self.start_at)
+
+class SubscriptionMail(models.Model):
+	customer_email     = models.EmailField(max_length=254,null=False,blank=False)
+	subscription_date  = models.DateField(auto_now=False, auto_now_add=True)
 	
-	
+	def __unicode__(self):
+		return str(self.customer_email)
+
+	def __str__(self):
+		return str(self.customer_email)

@@ -7,7 +7,7 @@ from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,Evaluat
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,Reporting,PaybackDiscount,PaybackDiscountDetails,XeroInvoice
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
-from customer.models import CustomerBooking,CustomerCart,CartService,CartSchedule
+from customer.models import SubscriptionMail,CustomerBooking,CustomerCart,CartService,CartSchedule
 from bleachadmin.models import ServicePriceRange,Settings,ServiceProductivity,ServiceAddOns
 from bleachadmin.serializers import ServiceProductivitySerializer
 from Api.models import XeroConnection
@@ -5702,13 +5702,39 @@ class WebsiteInquiryMailAPI(APIView):
 		
 		#send mail
 		msg_html = render_to_string('email/website-inquiry.html',{"customer_organization":customer_organization,"customer_inquiry_type":customer_inquiry_type,"customer_name":customer_name,"customer_contact":customer_contact,"customer_email":customer_email,"customer_message":customer_message})
-		msg = EmailMultiAlternatives('Website - Business Inquiry', '', 'notification@bleach-kw.com', ['rangeen.suresh@bleach-kw.com'])
+		
+		if customer_inquiry_type == 'Career Seekers':
+			msg = EmailMultiAlternatives('Website - Career', '', 'notification@bleach-kw.com', ['rangeen.suresh@bleach-kw.com'])
+		elif customer_inquiry_type == 'Investor Relations':
+			msg = EmailMultiAlternatives('Website - Investor', '', 'notification@bleach-kw.com', ['sonu.george@bleach-kw.com'])
+		elif customer_inquiry_type == 'Media':
+			msg = EmailMultiAlternatives('Website - Media', '', 'notification@bleach-kw.com', ['sonu.george@bleach-kw.com'])
+		elif customer_inquiry_type == 'Partners':
+			msg = EmailMultiAlternatives('Website - Partners', '', 'notification@bleach-kw.com', ['sonu.george@bleach-kw.com'])
+		else:
+			msg = EmailMultiAlternatives('Website - Request For Service', '', 'notification@bleach-kw.com', ['vinayak.muralidharan@bleach-kw.com'])
+
 		msg.attach_alternative(msg_html, "text/html")
 		msg.send(fail_silently=False)
 
 		return Response(HTTP_200_OK)
 
+class SubscriptionMailAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
 
+	def post(self,request):
+		response_data = {}
+		customer_email = request.data.get('customer_email')
+		
+		try:
+			mail_exists = SubscriptionMail.objects.get(customer_email=customer_email)
+			response_data['message'] = 'Email already subscribed !'
+		except:
+			SubscriptionMail.objects.create(customer_email=customer_email)
+			response_data['message'] = 'Thank you for subscribing !'
+		
+		return Response(response_data,HTTP_200_OK)
 
 ### EVALUATION APIS
 
