@@ -144,6 +144,7 @@
 <table class="main-table">
 <tbody>
 {% for order_schedule in assign_order_schedules %}
+{% if order_schedule.cleaning_team_count == 0 %}
 <tr {% if order_schedule.days_left_coming < 0 %}class="red-line"{% elif order_schedule.days_left_coming == 0 %}class="orange-line"{% elif order_schedule.days_left_coming == 1 %}class="yellow-line"{% elif order_schedule.days_left_coming >= 2 %}class="green-line"{% endif %}>
 <td data-label="BLC Number" class="bold-text clickable-row" data-href="{% url 'common_items:client-orderdetails' order_schedule.order.id %}">{{order_schedule.order.evaluation.evaluation_id}}</td>
 <td data-label="Customer">{{order_schedule.order.evaluation.customer.name}}</td>
@@ -154,6 +155,7 @@
 <td class="hide-b">
 <span {% if order_schedule.days_left_coming < 0 %}class="red-bg"{% elif order_schedule.days_left_coming == 0 %}class="orange-bg clickable-row"{% elif order_schedule.days_left_coming == 1 %}class="yellow-bg clickable-row"{% elif order_schedule.days_left_coming >= 2 %}class="green-bg clickable-row"{% endif %} {% if order_schedule.days_left_coming >= 0 %}data-href="{% url 'common_items:assign-cleaningteam' order_schedule.id %}?cleaning_calendar_date={{order_schedule.start_at|date:'d-m-Y'}}"{%endif%}>{% if order_schedule.days_left_coming < 0  %}Expired{%else%}Click to Assign{%endif%}</span></td>
 </tr>
+{% endif %}
 {% endfor %}
 
 {% for follow_up_schedule in assign_followup_schedules %}
