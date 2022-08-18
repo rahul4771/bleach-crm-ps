@@ -14,6 +14,8 @@ from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,Max,Expressi
 from django.db.models.functions import Cast
 from django.db.models import Prefetch
 
+#add the start date and run this command after running invoice_updations command.
+#uncomment payment removal section to delete invoices from xero an reset invoices and comment invoice create section.
 
 class Command(BaseCommand):
     help = 'Automatic Invoice Generations'

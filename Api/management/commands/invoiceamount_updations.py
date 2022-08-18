@@ -14,6 +14,7 @@ from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,Max,Expressi
 from django.db.models.functions import Cast
 from django.db.models import Prefetch
 
+#add the start date and run this command first for invoice generation and payment adding, then run bankchargeadd for adding bank charges and updating payments.
 
 class Command(BaseCommand):
     help = 'Automatic Invoice Generations'
