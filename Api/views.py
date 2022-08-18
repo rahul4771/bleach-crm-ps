@@ -2034,12 +2034,12 @@ class DailySalesAPI(APIView):
 						else:
 							pass
 					
-					subtraction_amount += ( float(schedule.order.evaluation.cancelled_amount)+float(refund_amount)+float(schedule.order.evaluation.writeback_amount)+float(order_service_cancelled_amount)+float(schedule.order.evaluation.promocode_amount) )/float(schedule.no_of_order_visits) + float(schedule.discount_cost)
+					subtraction_amount += ( float(schedule.order.evaluation.cancelled_amount or 0)+float(refund_amount)+float(schedule.order.evaluation.writeback_amount or 0)+float(order_service_cancelled_amount)+float(schedule.order.evaluation.promocode_amount or 0) )/float(schedule.no_of_order_visits) + float(schedule.discount_cost or 0)
 					
 				else:
 					
-					subtraction_amount += ( float(schedule.order.evaluation.cancelled_amount)+float(refund_amount)+float(schedule.order.evaluation.writeback_amount)+float(schedule.order.evaluation.promocode_amount) )/float(schedule.no_of_order_visits) + float(0 if schedule.discount_cost is None else schedule.discount_cost)
-				print(schedule.cleaning_cost,float(schedule.order.evaluation.cancelled_amount),float(refund_amount),float(schedule.order.evaluation.writeback_amount),float(schedule.order.evaluation.promocode_amount),float(schedule.no_of_order_visits),schedule.discount_cost,"printerrr")	
+					subtraction_amount += ( float(schedule.order.evaluation.cancelled_amount or 0)+float(refund_amount)+float(schedule.order.evaluation.writeback_amount or 0)+float(schedule.order.evaluation.promocode_amount or 0) )/float(schedule.no_of_order_visits) + float(schedule.discount_cost or 0)
+				# print(schedule.cleaning_cost,float(schedule.order.evaluation.cancelled_amount),float(refund_amount),float(schedule.order.evaluation.writeback_amount),float(schedule.order.evaluation.promocode_amount),float(schedule.no_of_order_visits),schedule.discount_cost,"printerrr")	
 				
 			list_item = {
 					'Date': str(date.date()),
@@ -2146,9 +2146,9 @@ class DailySalesBreakDownAPI(APIView):
 						order_service_cancelled_amount = float(service_schedules_cancelled_sum)
 					else:
 						pass
-				subtraction_amount = ( float(schedule.order.evaluation.cancelled_amount)+float(order_service_cancelled_amount)+float(refund_amount)+float(schedule.order.evaluation.writeback_amount)+float(schedule.order.evaluation.promocode_amount) )/float(order_schedule_count) + float(0 if schedule.discount_cost is None else schedule.discount_cost)
+				subtraction_amount = ( float(schedule.order.evaluation.cancelled_amount or 0)+float(order_service_cancelled_amount)+float(refund_amount)+float(schedule.order.evaluation.writeback_amount or 0)+float(schedule.order.evaluation.promocode_amount or 0) )/float(order_schedule_count) + float(schedule.discount_cost or 0)
 			else:
-				subtraction_amount = ( float(schedule.order.evaluation.cancelled_amount)+float(refund_amount)+float(schedule.order.evaluation.writeback_amount)+float(schedule.order.evaluation.promocode_amount) )/float(order_schedule_count) + float(0 if schedule.discount_cost is None else schedule.discount_cost)
+				subtraction_amount = ( float(schedule.order.evaluation.cancelled_amount or 0)+float(refund_amount)+float(schedule.order.evaluation.writeback_amount or 0)+float(schedule.order.evaluation.promocode_amount or 0) )/float(order_schedule_count) + float(schedule.discount_cost or 0)
 	
 			net_amount 		 = round( float(gross_amount) - float(subtraction_amount) + float(fine_amount) + float(0 if schedule.additional_charge_cost is None else schedule.additional_charge_cost), 2)
 
