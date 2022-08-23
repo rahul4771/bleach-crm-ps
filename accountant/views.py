@@ -2531,39 +2531,41 @@ def export_users_xls(request):
 
 		for schedule in orderschedules_details:
 
-			if schedule.end_at.date() < todays_date.date() and schedule.work_status == 'CLEANING_CANCELLED' or schedule.work_status == 'CLEANING_FULFILLED':
+			if schedule.end_at.date() < todays_date.date():
+				if schedule.work_status == 'CLEANING_CANCELLED' or schedule.work_status == 'CLEANING_FULFILLED':
 
-				#calculating schedule total
-				if schedule.cleaning_cost:
-					gross_amount = float(schedule.cleaning_cost) or 0
-				else:
-					gross_amount = 0
+					#calculating schedule total
+					if schedule.cleaning_cost:
+						gross_amount = float(schedule.cleaning_cost) or 0
+					else:
+						gross_amount = 0
 
-				if schedule.evaluation_details.evaluator:
-					salesman = schedule.evaluation_details.evaluator.name
-				else:
-					salesman = schedule.order.evaluation.call_attender.name
+					if schedule.evaluation_details.evaluator:
+						salesman = schedule.evaluation_details.evaluator.name
+					else:
+						salesman = schedule.order.evaluation.call_attender.name
 
-				schedule_list = [schedule.order.order_no,str(schedule.end_at.date()),schedule.end_at.strftime("%A"),schedule.order.evaluation.customer.name,schedule.order.evaluation.payment_method,schedule.order_scheduler_book.cleaning_policy,salesman,gross_amount]
-				
-				rows2.append(schedule_list)
+					schedule_list = [schedule.order.order_no,str(schedule.end_at.date()),schedule.end_at.strftime("%A"),schedule.order.evaluation.customer.name,schedule.order.evaluation.payment_method,schedule.order_scheduler_book.cleaning_policy,salesman,gross_amount]
+					
+					rows2.append(schedule_list)
 			
-			if schedule.end_at.date() > todays_date.date() and schedule.work_status == 'CLEANING_CANCELLED' or schedule.work_status == 'CLEANING_FULFILLED' or schedule.work_status == 'CLEANING_TEAM_ASSIGNED' or schedule.work_status == 'CLEANING_IN_PROGRESS':
+			if schedule.end_at.date() > todays_date.date():
+				if schedule.work_status == 'CLEANING_CANCELLED' or schedule.work_status == 'CLEANING_FULFILLED' or schedule.work_status == 'CLEANING_TEAM_ASSIGNED' or schedule.work_status == 'CLEANING_IN_PROGRESS':
 		
-				#calculating schedule total
-				if schedule.cleaning_cost:
-					gross_amount = float(schedule.cleaning_cost) or 0
-				else:
-					gross_amount = 0
+					#calculating schedule total
+					if schedule.cleaning_cost:
+						gross_amount = float(schedule.cleaning_cost) or 0
+					else:
+						gross_amount = 0
 
-				if schedule.evaluation_details.evaluator:
-					salesman = schedule.evaluation_details.evaluator.name
-				else:
-					salesman = schedule.order.evaluation.call_attender.name
+					if schedule.evaluation_details.evaluator:
+						salesman = schedule.evaluation_details.evaluator.name
+					else:
+						salesman = schedule.order.evaluation.call_attender.name
 
-				schedule_list = [schedule.order.order_no,str(schedule.end_at.date()),schedule.end_at.strftime("%A"),schedule.order.evaluation.customer.name,schedule.order.evaluation.payment_method,schedule.order_scheduler_book.cleaning_policy,salesman,gross_amount]
-				
-				rows2.append(schedule_list)
+					schedule_list = [schedule.order.order_no,str(schedule.end_at.date()),schedule.end_at.strftime("%A"),schedule.order.evaluation.customer.name,schedule.order.evaluation.payment_method,schedule.order_scheduler_book.cleaning_policy,salesman,gross_amount]
+					
+					rows2.append(schedule_list)
 
 		rows2 = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows2 ]
 
