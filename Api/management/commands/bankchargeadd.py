@@ -77,8 +77,15 @@ class Command(BaseCommand):
 
         ##Invoice Editing and Payment Add
         #Paid History                                
-        payment_history_date   = datetime.strptime("06-08-2022","%d-%m-%Y").date()
-        payment_histories      = PaymentHistory.objects.select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order').filter(is_active=True,paid_date__gte=payment_history_date,is_xero_marked=False).filter(Q(Q(payment_gateway='CREDITCARD')|Q(payment_gateway='DEBITCARD'))).annotate(total_cleanings_count=Count('order__order_scheduler_order')).prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
+        payment_history_date   = datetime.strptime("01-01-2022","%d-%m-%Y").date()
+        payment_history_end_date   = datetime.strptime("31-03-2022","%d-%m-%Y").date()
+        
+        # payment histories start date only
+        #  payment_histories      = PaymentHistory.objects.select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order').filter(is_active=True,paid_date__gte=payment_history_date,is_xero_marked=False).filter(Q(Q(payment_gateway='CREDITCARD')|Q(payment_gateway='DEBITCARD'))).annotate(total_cleanings_count=Count('order__order_scheduler_order')).prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
+        
+        #payment history date range
+        payment_histories      = PaymentHistory.objects.select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order').filter(Q( Q(is_active=True) & Q(paid_date__gte=payment_history_date) & Q(paid_date__lte=payment_history_end_date) & Q(is_xero_marked=False) )).filter(Q(Q(payment_gateway='CREDITCARD')|Q(payment_gateway='DEBITCARD') )).annotate(total_cleanings_count=Count('order__order_scheduler_order')).prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))        
+
         print(payment_histories.count())  
         for payment_history in payment_histories:
 
