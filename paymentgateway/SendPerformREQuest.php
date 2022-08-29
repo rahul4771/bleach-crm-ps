@@ -86,7 +86,7 @@ Merchant MUST esure that below points in Response URL
 1- Response URL must start with http://
 2- the Response URL SHOULD NOT have any additional paramteres or query string  */
 // $ResponseUrl="https://payment.bleachkw.com/GetHandlerResponse.php";
- $ResponseUrl="http://testpay.bleach-kw.com/GetHandlerResponse.php";
+ $ResponseUrl="https://testpay.bleach-kw.com/GetHandlerResponse.php";
 $ReqResponseUrl="responseURL=".$ResponseUrl;
 
 
@@ -97,7 +97,7 @@ Merchant MUST esure that below points in ErrorURL
 */ 
 
 // $ErrorUrl="https://payment.bleachkw.com/testphp.php";
- $ErrorUrl="http://testpay.bleach-kw.com/testphp.php";
+ $ErrorUrl="https://testpay.bleach-kw.com/testphp.php";
 $ReqErrorUrl="errorURL=".$ErrorUrl;
 
 
