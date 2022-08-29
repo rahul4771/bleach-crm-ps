@@ -32,8 +32,8 @@
 	// $termResourceKey="P287H49DV2GS6E0Z";
 	 $termResourceKey="81G1ZB54MNW8X3J9";
 
-	 echo $ResErrorText ;
-	 echo $ResErrorNo ;
+	 echo "<h4>" . $ResErrorText . "</h4>" ;
+	 echo "<h4>" . $ResErrorNo . "</h4>" ;
 
 /* Merchant (ME) checks, if error number is NOT present,then go for Encryption using required parameters */
 /* NOTE - MERCHANT MUST LOG THE RESPONSE RECEIVED IN LOGS AS PER BEST PRACTICE */	
@@ -44,14 +44,14 @@
 					AND THEN REDIRECT CUSTOMER ON RESULT PAGE*/
 		$ResTranData= $_REQUEST['trandata'];
 
-		echo $ResTranData ;
+		echo "<h4>" . $ResTranData . "</h4>" ;
 
 		if($ResTranData !=null)
 		{
 		//Decryption logice starts
 		$decrytedData=decrypt($ResTranData,$termResourceKey);
 
-		echo $decrytedData ;
+		echo "<h4>" . $decrytedData . "</h4>" ;
 
 		// header("Location: https://my.bleachkw.com/customer/payment/response/?".$decrytedData);
 		// header("Location: http://mytest.bleach-kw.com/customer/payment/response/?".$decrytedData);
