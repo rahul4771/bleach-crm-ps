@@ -8474,7 +8474,7 @@ class CartAPI(APIView):
 		response_dict['success'] = True
 		response_dict['data'] = cart_services
 		response_dict['customer'] = customer_data
-		response_dict['cart_id_value'] = cart.id
+		response_dict['cart_id'] = cart.id
 		response_dict['customer_ip_address'] = get_client_ip(request)
 		response_dict['is_scheduled'] = cart.is_scheduled
 
@@ -8492,7 +8492,7 @@ class CartAPI(APIView):
 		try:
 			cart = CustomerCart.objects.get(customer=user)
 		except:
-			cart = CustomerCart.objects.create(customer=user)
+			cart = CustomerCart.objects.create(customer=user,)
 
 		#ADDING A NEW SERVICE
 		if action == 'add_service':

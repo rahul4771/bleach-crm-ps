@@ -54,8 +54,8 @@
 		echo $decrytedData ;
 
 		// header("Location: https://my.bleachkw.com/customer/payment/response/?".$decrytedData);
-		 header("Location: http://mytest.bleach-kw.com/customer/payment/response/?".$decrytedData);
-                exit();
+		// header("Location: http://mytest.bleach-kw.com/customer/payment/response/?".$decrytedData);
+        //        exit();
 		}
 	}
 	else{
