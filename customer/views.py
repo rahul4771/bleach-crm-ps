@@ -1594,9 +1594,10 @@ class PaymentResponseDebit(View):
 			order.save()
 			
 			#pay and book &&& others
-			pay_and_book = request.POST.get('udf4')
-			if pay_and_book:
-				return(pay_and_book)
+			# pay_and_book = request.POST.get('udf4')
+			# if pay_and_book:
+			if order_status == 'CUSTOMER_BOOKING':
+				return redirect('http://testwww.bleach-kw.com:8080/myorders')
 			else:
 				return redirect('customer:payment-receipt','pvw'+str(evaluation_id_encrypted[0:11])+str(payment_history.id))
 
