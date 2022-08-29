@@ -52,7 +52,7 @@ class NewCustomerOtp(models.Model):
 
 class CustomerCart(models.Model):
 	customer 			= models.ForeignKey(UserProfile,blank=False,null=False,on_delete=models.CASCADE,related_name='cart_customer')
-	cart_id_value	    = models.CharField(max_length=10,blank=False,null=False)
+	cart_id   	    	= models.CharField(max_length=10,blank=False,null=False)
 	customer_address	= models.ForeignKey(Address,blank=True,null=True)
 	total_cost  		= models.CharField(max_length=10,default=0,blank=False,null=False)
 	is_scheduled		= models.BooleanField(default=False)
