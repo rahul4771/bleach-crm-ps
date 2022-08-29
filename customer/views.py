@@ -1663,13 +1663,16 @@ class PaymentReceipt(View):
 		nonduplicate_schedules = []
 		#Remove duplicates for subscription
 		duplicate_schedules    = []
-		for orderschedule in payment_history.order.orderschedules:
-			if orderschedule.order_scheduler_book in duplicate_schedules:
-				pass
-			else:	
-				nonduplicate_schedules.append(orderschedule)	
+		
+		if payment_history.order.orderschedules:
+			for orderschedule in payment_history.order.orderschedules:
+				if orderschedule.order_scheduler_book in duplicate_schedules:
+					pass
+				else:	
+					nonduplicate_schedules.append(orderschedule)	
 
-			duplicate_schedules.append(orderschedule.order_scheduler_book)
+				duplicate_schedules.append(orderschedule.order_scheduler_book)
+
 
 		return render(request,"customer/voucher.html",{'payment_history':payment_history,'nonduplicate_schedules':nonduplicate_schedules,})
 
