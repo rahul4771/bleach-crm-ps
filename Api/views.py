@@ -6129,14 +6129,13 @@ class CustomerBookedOrdersAPI(APIView):
 		
 		user 				= Token.objects.get(key=token).user
 
-		orders 				= Order.objects.filter(is_active=True,evaluation__customer=user).order_by('-id')
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer=user,evaluation__booking_evaluation__booking_type='CLEANINGBOOKING')
 
 		orders_list = []
 
 		for order in orders:
 			evaluation_details = EvaluationDetails.objects.filter(evaluation=order.evaluation,is_active=True).first()
 
-			print(evaluation_details,"evdts")
 			evaluation_books = EvaluationBook.objects.filter(evaluation_details=evaluation_details,is_active=True)
 
 			order_data = {
@@ -6150,8 +6149,6 @@ class CustomerBookedOrdersAPI(APIView):
 			}
 
 			orders_list.append(order_data)
-		
-		# orders_serializer 	= OrderAPISerializer(orders,many=True).data
 
 		response_dict['data'] = orders_list
 
