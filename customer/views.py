@@ -944,7 +944,7 @@ class PaymentResponseDebit(View):
 			else:
 				new_invoice_no 		 = str(timezone.now().year)+'00001'
 
-			order       = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,invoice_no=new_invoice_no,invoice_status='APPROVED_BY_CLIENT',total_amount=customer_cart.total_cost)
+			order       = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,invoice_no=new_invoice_no,invoice_status='APPROVED_BY_CLIENT',total_amount=customer_cart.total_cost,remining_amount=customer_cart.total_cost)
 
 			#Evaluation_details
 			evaluation_details = EvaluationDetails.objects.create(evaluation=evaluation,address=customer_cart.customer_address,total_cost=customer_cart.total_cost)
@@ -8518,7 +8518,12 @@ class CartAPI(APIView):
 
 			if service_data_serializer.is_valid():
 				service = service_data_serializer.save()
-				response_dict['success']  = True
+
+				cart.total_cost += float(total_cost)
+				cart.save()
+
+				response_dict['success']  = True				
+
 			else:
 				errors= service_data_serializer.errors   
 				key=tuple(errors.keys())[0] 
@@ -8543,13 +8548,20 @@ class CartAPI(APIView):
 			try:
 				#getting existing cart service object
 				cart_service = CartService.objects.get(id=request.data.get('cart_service_id'))
+				previous_service_cost = cart_service.total_cost
 
 				#updating cart service details using serializer
 				service_data_serializer = CartServiceSerializer(data=service_data,instance=cart_service)
 
 				if service_data_serializer.is_valid():
 					service = service_data_serializer.save()
-					response_dict['success']  = True 
+
+					cart.total_cost -= float(previous_service_cost)
+					cart.total_cost += float(total_cost)
+					cart.save()
+
+					response_dict['success']  = True					
+
 				else:
 					errors= service_data_serializer.errors   
 					key=tuple(errors.keys())[0] 
@@ -8564,7 +8576,12 @@ class CartAPI(APIView):
 
 			try:
 				cart_service = CartService.objects.get(id=request.data.get('cart_service_id'))
+				service_cost = cart_service.total_cost
 				cart_service.delete()
+
+				cart.total_cost -= float(service_cost)
+				cart.save()
+
 				response_dict['success']  = True
 			except:
 				cart_service = None
