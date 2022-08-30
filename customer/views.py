@@ -8519,8 +8519,8 @@ class CartAPI(APIView):
 			if service_data_serializer.is_valid():
 				service = service_data_serializer.save()
 
-				cart.total_cost += total_cost
-				cart.save()
+				# cart.total_cost += total_cost
+				# cart.save()
 
 				response_dict['success']  = True				
 
@@ -8556,9 +8556,9 @@ class CartAPI(APIView):
 				if service_data_serializer.is_valid():
 					service = service_data_serializer.save()
 
-					cart.total_cost -= previous_service_cost
-					cart.total_cost += total_cost
-					cart.save()
+					# cart.total_cost -= previous_service_cost
+					# cart.total_cost += total_cost
+					# cart.save()
 
 					response_dict['success']  = True					
 
@@ -8579,8 +8579,8 @@ class CartAPI(APIView):
 				service_cost = cart_service.total_cost
 				cart_service.delete()
 
-				cart.total_cost -= service_cost
-				cart.save()
+				# cart.total_cost -= service_cost
+				# cart.save()
 
 				response_dict['success']  = True
 			except:
