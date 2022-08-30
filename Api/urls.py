@@ -56,6 +56,7 @@ urlpatterns = [
 	url(r'^customer-addresses/(?P<token>\w+)/$',views.CustomerAddressesAPI.as_view(),name='api-customer-addresses'),
 	url(r'^customer-details/(?P<token>\w+)/$',views.CustomerDetailsAPI.as_view(),name='api-customer-details'),
 	url(r'^customer-evaluations/(?P<token>\w+)/$',views.CustomerBookedEvaluationsAPI.as_view(),name='api-customer-evaluations'),
+	url(r'^customer-orders/(?P<token>\w+)/$',views.CustomerBookedOrdersAPI.as_view(),name='api-customer-orders'),
 	url(r'^governorates/$',views.GovernoratesAPI.as_view(),name='api-governorates'),
 	url(r'^areas/(?P<governorate_id>\d+)/$',views.AreasAPI.as_view(),name='api-areas'),
 	url(r'^location-types/$',views.LocationTypesAPI.as_view(),name='api-location-types'),

@@ -153,12 +153,6 @@ from senior_team_leader.models import OrderScheduler,FollowUpScheduler,CleaningT
 from agent.serializers import UserProfileShowSerializer,ServiceTypeShowSerializer
 from customer.serilizers import EvaluationSerializer
 
-
-class OrderAPISerializer(serializers.ModelSerializer):
-    class Meta:
-        model  = Order
-        fields = ('order_no','order_status','payment_status')
-
 class KeynoteAPISerializer(serializers.ModelSerializer):
     class Meta:
         model  = EvaluationSectionKeynote
@@ -178,6 +172,13 @@ class EvaluationDetailsAPISerializer(serializers.ModelSerializer):
         model  = EvaluationDetails
         fields = ('evaluator','evaluation','address','proposed_time','status')
 
+class OrderAPISerializer(serializers.ModelSerializer):
+    evaluation__evaluation_details = EvaluationDetailsAPISerializer(read_only=True)
+    # evaluation = EvaluationSerializer(read_only=True)
+    class Meta:
+        model  = Order
+        fields = ('order_no','evaluation__evaluation_details','order_status','payment_status')
+
 class SectionAPISerializer(serializers.ModelSerializer):
     keynotesections = KeynoteAPISerializer(read_only=True,many=True)
     addonsections   = AddonAPISerializer(read_only=True,many=True)
@@ -192,6 +193,17 @@ class EvaluationBookAPISerializer(serializers.ModelSerializer):
     class Meta:
         model = EvaluationBook
         fields = ('cleaning_policy','area_type','location_type','cleaning_method','evaluator_note','service_type','evaluationsection_book')
+
+    def __init__(self, *args, **kwargs):
+        fields_to_remove = kwargs.pop('fields_to_remove', None)
+
+        super(EvaluationBookAPISerializer, self).__init__(*args, **kwargs)
+
+        if fields_to_remove is not None:
+            # Drop any fields that are specified in the `fields_to_remove` argument.
+            not_allowed = set(fields_to_remove)
+            for field_name in not_allowed:
+                self.fields.pop(field_name)
 
 class OrderScheduleShowSerializer(serializers.ModelSerializer):
     class Meta:

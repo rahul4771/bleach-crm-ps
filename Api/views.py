@@ -12,7 +12,7 @@ from bleachadmin.models import ServicePriceRange,Settings,ServiceProductivity,Se
 from bleachadmin.serializers import ServiceProductivitySerializer
 from Api.models import XeroConnection
 from django.core.mail import send_mail,EmailMultiAlternatives
-from Api.serializers import EvaluationDetailsAPISerializer,AreaTypeSerializer,AreaSerializer,GovernorateSerializer,AddressAddEditSerializer,AddressSerializer,ServiceAddOnsSerializer,ServicePriceRangeSerializer,DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
+from Api.serializers import EvaluationBookAPISerializer,OrderAPISerializer,EvaluationDetailsAPISerializer,AreaTypeSerializer,AreaSerializer,GovernorateSerializer,AddressAddEditSerializer,AddressSerializer,ServiceAddOnsSerializer,ServicePriceRangeSerializer,DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
 from bleachinventory.models import QuantityStoreDetails,ExternalCustomer,Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,CheckOutItemUnits,ItemHistory,InventoryAccessory,InventoryFinshedItem,Store
 import re
@@ -6117,6 +6117,43 @@ class CustomerBookedEvaluationsAPI(APIView):
 		evaluation_details_serializer = EvaluationDetailsAPISerializer(evaluation_details,many=True).data
 
 		response_dict['data'] = evaluation_details_serializer
+
+		return Response(response_dict,HTTP_200_OK)
+
+class CustomerBookedOrdersAPI(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request,token):
+		response_dict = {}
+		
+		user 				= Token.objects.get(key=token).user
+
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer=user).order_by('-id')
+
+		orders_list = []
+
+		for order in orders:
+			evaluation_details = EvaluationDetails.objects.filter(evaluation=order.evaluation,is_active=True).first()
+
+			print(evaluation_details,"evdts")
+			evaluation_books = EvaluationBook.objects.filter(evaluation_details=evaluation_details,is_active=True)
+
+			order_data = {
+				'order_no': order.order_no,
+				'order_created_date' : datetime.strftime(order.created,'%d-%m-%Y %I:%M %p'),
+				'estimated_cost' : order.total_amount,
+				'order_status' : order.order_status,
+				'order_address' : AddressSerializer(evaluation_details.address,many=False,read_only=True).data,
+				'order_service_types' : EvaluationBookAPISerializer(evaluation_books,many=True,read_only=True,fields_to_remove=['cleaning_policy','area_type','location_type','cleaning_method','evaluator_note','evaluationsection_book']).data
+
+			}
+
+			orders_list.append(order_data)
+		
+		# orders_serializer 	= OrderAPISerializer(orders,many=True).data
+
+		response_dict['data'] = orders_list
 
 		return Response(response_dict,HTTP_200_OK)
 
