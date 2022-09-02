@@ -6136,7 +6136,7 @@ class CustomerBookedOrdersAPI(APIView):
 		for order in orders:
 			evaluation_details = EvaluationDetails.objects.filter(evaluation=order.evaluation,is_active=True).first()
 
-			evaluation_books = EvaluationBook.objects.filter(evaluation_details=evaluation_details,is_active=True)
+			evaluation_books = EvaluationBook.objects.filter(evaluation_details=evaluation_details,is_active=True).values_list('service_type__name',flat=True)
 
 			order_data = {
 				'order_no': order.order_no,
@@ -6144,7 +6144,7 @@ class CustomerBookedOrdersAPI(APIView):
 				'estimated_cost' : order.total_amount,
 				'order_status' : order.order_status,
 				'order_address' : AddressSerializer(evaluation_details.address,many=False,read_only=True).data,
-				'order_service_types' : EvaluationBookAPISerializer(evaluation_books,many=True,read_only=True,fields_to_remove=['cleaning_policy','area_type','location_type','cleaning_method','evaluator_note','evaluationsection_book']).data
+				'order_service_types' : evaluation_books
 
 			}
 
