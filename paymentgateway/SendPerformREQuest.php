@@ -108,7 +108,7 @@ $ReqUdf1="udf1=".$_POST['evaluation_id'];
 $ReqUdf2="udf2=".$_POST['payment_mode'];
 $ReqUdf3="udf3=".$_POST['order_status'];
 $ReqUdf4="udf4=".$_POST['pay_and_book_url'];
-$ReqUdf5="udf5=Test5";
+$ReqUdf5="udf5=".$_POST['address_id'];
 
 
 /*ME should now do the validations on the amount value set like - 

@@ -944,14 +944,16 @@ class PaymentResponseDebit(View):
 			else:
 				new_invoice_no 		 = str(timezone.now().year)+'00001'
 
-			order       = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,invoice_no=new_invoice_no,invoice_status='APPROVED_BY_CLIENT',total_amount=customer_cart.total_cost,remining_amount=customer_cart.total_cost)
+			order       = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,invoice_no=new_invoice_no,order_status='APPROVED_BY_CLIENT',total_amount=customer_cart.total_cost,remining_amount=customer_cart.total_cost)
 
+			customer_address = Address.objects.get( id=int(request.GET.get('udf5')) )
+			
 			#Evaluation_details
-			evaluation_details = EvaluationDetails.objects.create(evaluation=evaluation,address=customer_cart.customer_address,total_cost=customer_cart.total_cost)
+			evaluation_details = EvaluationDetails.objects.create(evaluation=evaluation,address=customer_address,estimated_cost=customer_cart.total_cost,total_cost=customer_cart.total_cost)
 
 			#Evaluation Books,Sections,Schedules 
 			for cart_service in customer_cart.cart_services:
-				evaluation_book    = EvaluationBook.objects.create(evaluation_details=evaluation_details,cleaning_policy=cart_service.cleaning_policy,area_type=cart_service.area_type,cleaning_method=cart_service.cleaning_method,location_type=cart_service.location_type,estimated_cost=cart_service.total_cost,total_cost=cart_service.total_cost)
+				evaluation_book    = EvaluationBook.objects.create(evaluation_details=evaluation_details,service_type=cart_service.service_type, cleaning_policy=cart_service.cleaning_policy,area_type=cart_service.area_type,cleaning_method=cart_service.cleaning_method,location_type=cart_service.location_type,estimated_cost=cart_service.total_cost,total_cost=cart_service.total_cost)
 				evaluation_section = EvaluationBookSection.objects.create(evaluation_book=evaluation_book,section_name=cart_service.section_name,category=cart_service.category,dirt_level=cart_service.dirt_level,quantity=cart_service.quantity,size=cart_service.size,unit=cart_service.unit,
 										age=cart_service.age,floor=cart_service.floor,apartment=cart_service.apartment,room=cart_service.room,wall_type=cart_service.wall_type,ceiling_type=cart_service.ceiling_type,floor_type=cart_service.floor_type,material=cart_service.material,colour=cart_service.colour,
 										cause_of_stain=cart_service.cause_of_stain,age_of_stain=cart_service.age_of_stain,cement_residue=cart_service.cement_residue,oil_residue=cart_service.oil_residue,hall_size=cart_service.hall_size,window_side=cart_service.window_side,new_kitchen=cart_service.new_kitchen,
@@ -962,6 +964,8 @@ class PaymentResponseDebit(View):
 
 				cart_schedules = [OrderScheduler(order=order,evaluation_details=evaluation_details,order_scheduler_book=evaluation_book,start_at=cart_schedule.start_at,end_at=cart_schedule.end_at,customer_address=customer_cart.customer_address,status='CONFIRMED',no_of_cleaners=cart_schedule.no_of_cleaners,cleaning_hours=cart_schedule.cleaning_hours,hourly_cleaning_duration=cart_schedule.hourly_cleaning_duration) for cart_schedule in customer_cart.cart_schedules]
 				OrderScheduler.objects.bulk_create(cart_schedules) 
+
+				cart_service.delete()
 
 		#Booking From CRM System
 		else:
