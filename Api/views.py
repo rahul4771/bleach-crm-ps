@@ -4,7 +4,7 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
 from user.models import CustomerOTP,UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule,Shift
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons,CleaningMethod,CleaningSection,ServiceType,AreaType
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,Reporting,PaybackDiscount,PaybackDiscountDetails,XeroInvoice
+from order.models import CancellOrderAmountHistory,OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,Reporting,PaybackDiscount,PaybackDiscountDetails,XeroInvoice
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
 from customer.models import SubscriptionMail,CustomerBooking,CustomerCart,CartService,CartSchedule
@@ -12,7 +12,7 @@ from bleachadmin.models import ServicePriceRange,Settings,ServiceProductivity,Se
 from bleachadmin.serializers import ServiceProductivitySerializer
 from Api.models import XeroConnection
 from django.core.mail import send_mail,EmailMultiAlternatives
-from Api.serializers import EvaluationBookAPISerializer,OrderAPISerializer,EvaluationDetailsAPISerializer,AreaTypeSerializer,AreaSerializer,GovernorateSerializer,AddressAddEditSerializer,AddressSerializer,ServiceAddOnsSerializer,ServicePriceRangeSerializer,DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
+from Api.serializers import SectionAPISerializer,EvaluationBookAPISerializer,OrderAPISerializer,EvaluationDetailsAPISerializer,AreaTypeSerializer,AreaSerializer,GovernorateSerializer,AddressAddEditSerializer,AddressSerializer,ServiceAddOnsSerializer,ServicePriceRangeSerializer,DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
 from bleachinventory.models import QuantityStoreDetails,ExternalCustomer,Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,CheckOutItemUnits,ItemHistory,InventoryAccessory,InventoryFinshedItem,Store
 import re
@@ -322,14 +322,16 @@ class PaymentResponseCredit(APIView):
 			else:
 				new_invoice_no 		 = str(timezone.now().year)+'00001'
 
-			order       = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,invoice_no=new_invoice_no,invoice_status='APPROVED_BY_CLIENT',total_amount=customer_cart.total_cost)
+			order       = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,invoice_no=new_invoice_no,order_status='APPROVED_BY_CLIENT',total_amount=customer_cart.total_cost)
 
+			customer_address   = Address.objects.get( id=int(request.POST.get("address_id")) )
+			
 			#Evaluation_details
-			evaluation_details = EvaluationDetails.objects.create(evaluation=evaluation,address=customer_cart.customer_address,total_cost=customer_cart.total_cost)
+			evaluation_details = EvaluationDetails.objects.create(evaluation=evaluation,address=customer_address,estimated_cost=customer_cart.total_cost,total_cost=customer_cart.total_cost)
 
 			#Evaluation Books,Sections,Schedules 
 			for cart_service in customer_cart.cart_services:
-				evaluation_book    = EvaluationBook.objects.create(evaluation_details=evaluation_details,cleaning_policy=cart_service.cleaning_policy,area_type=cart_service.area_type,cleaning_method=cart_service.cleaning_method,location_type=cart_service.location_type,estimated_cost=cart_service.total_cost,total_cost=cart_service.total_cost)
+				evaluation_book    = EvaluationBook.objects.create(evaluation_details=evaluation_details,service_type=cart_service.service_type,cleaning_policy=cart_service.cleaning_policy,area_type=cart_service.area_type,cleaning_method=cart_service.cleaning_method,location_type=cart_service.location_type,estimated_cost=cart_service.total_cost,total_cost=cart_service.total_cost)
 				evaluation_section = EvaluationBookSection.objects.create(evaluation_book=evaluation_book,section_name=cart_service.section_name,category=cart_service.category,dirt_level=cart_service.dirt_level,quantity=cart_service.quantity,size=cart_service.size,unit=cart_service.unit,
 										age=cart_service.age,floor=cart_service.floor,apartment=cart_service.apartment,room=cart_service.room,wall_type=cart_service.wall_type,ceiling_type=cart_service.ceiling_type,floor_type=cart_service.floor_type,material=cart_service.material,colour=cart_service.colour,
 										cause_of_stain=cart_service.cause_of_stain,age_of_stain=cart_service.age_of_stain,cement_residue=cart_service.cement_residue,oil_residue=cart_service.oil_residue,hall_size=cart_service.hall_size,window_side=cart_service.window_side,new_kitchen=cart_service.new_kitchen,
@@ -338,7 +340,7 @@ class PaymentResponseCredit(APIView):
 				
 				evaluation_section_addon = EvaluationSectionAddons.objects.create(evaluation_section=evaluation_section,name=cart_service.addon_name,addon_cost=cart_service.addon_price,quantity=1,addon_net_cost=cart_service.addon_price,size=cart_service.addon_size)
 
-				cart_schedules = [OrderScheduler(order=order,evaluation_details=evaluation_details,order_scheduler_book=evaluation_book,start_at=cart_schedule.start_at,end_at=cart_schedule.end_at,customer_address=customer_cart.customer_address,status='CONFIRMED',no_of_cleaners=cart_schedule.no_of_cleaners,cleaning_hours=cart_schedule.cleaning_hours,hourly_cleaning_duration=cart_schedule.hourly_cleaning_duration) for cart_schedule in customer_cart.cart_schedules]
+				cart_schedules = [OrderScheduler(order=order,evaluation_details=evaluation_details,order_scheduler_book=evaluation_book,start_at=cart_schedule.start_at,end_at=cart_schedule.end_at,customer_address=customer_address,status='CONFIRMED',no_of_cleaners=cart_schedule.no_of_cleaners,cleaning_hours=cart_schedule.cleaning_hours,hourly_cleaning_duration=cart_schedule.hourly_cleaning_duration) for cart_schedule in customer_cart.cart_schedules]
 				OrderScheduler.objects.bulk_create(cart_schedules) 
 
 		#Booking From CRM System
@@ -6139,6 +6141,7 @@ class CustomerBookedOrdersAPI(APIView):
 			evaluation_books = EvaluationBook.objects.filter(evaluation_details=evaluation_details,is_active=True).values_list('service_type__name',flat=True)
 
 			order_data = {
+				'order_id' : order.id,
 				'order_no': order.order_no,
 				'order_created_date' : datetime.strftime(order.created,'%d-%m-%Y %I:%M %p'),
 				'estimated_cost' : order.total_amount,
@@ -6151,6 +6154,50 @@ class CustomerBookedOrdersAPI(APIView):
 			orders_list.append(order_data)
 
 		response_dict['data'] = orders_list
+
+		return Response(response_dict,HTTP_200_OK)
+
+class CustomerBookedOrderDetailsAPI(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request,order_id):
+		response_dict = {}
+		
+		# user 				= Token.objects.get(key=token).user
+
+		order = Order.objects.select_related('evaluation__customer','evaluation__call_attender').prefetch_related(
+			Prefetch('evaluation__booking_evaluation',queryset=CustomerBooking.objects.filter(is_active=True,booking_type='CLEANINGBOOKING'),to_attr='customer_booking'),
+			Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('evaluator','address__governorate','address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').prefetch_related(Prefetch('evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationbookmedias'),Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='evaluationbooksectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='evaluationbooksections')),to_attr='evaluationbooks')),to_attr='evaluationdetails'),
+			Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book','customer_address__area','customer_address__governorate').order_by('start_at').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_team')),to_attr='orderschedules'),
+			Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),
+			Prefetch('feed_backs_order',FeedBack.objects.filter(is_active=True).select_related('question'),to_attr='feedbacks'),
+			Prefetch('cancelled_order',CancellOrderAmountHistory.objects.filter(is_active=True),to_attr='cancelled_order_amount')).annotate(total_paid_amount=Sum('history_order__amount_paid')).get(is_active=True,id=order_id)
+
+		try:
+			booking_id = CustomerBooking.objects.get(is_active=True,evaluation__id=order.evaluation.id,booking_type='CLEANINGBOOKING').booking_id
+		except:
+			booking_id = None
+		
+		evaluation_data = []
+
+		for evaluationdetail in order.evaluation.evaluationdetails:
+			for evaluationbook in evaluationdetail.evaluationbooks:
+				evaluationbook_data = EvaluationBookAPISerializer(evaluationbook,many=False,read_only=True).data			
+
+				evaluation_dict = {
+					'evaluation_book' : evaluationbook_data,
+				}
+
+				evaluation_data.append(evaluation_dict)
+				
+		
+		order_details_data = {
+			'evaluation_details' : evaluation_data,
+			'booking_id' : booking_id
+		}
+
+		response_dict['data'] = order_details_data
 
 		return Response(response_dict,HTTP_200_OK)
 
