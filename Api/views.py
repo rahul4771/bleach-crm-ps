@@ -6185,11 +6185,7 @@ class CustomerBookedOrderDetailsAPI(APIView):
 			for evaluationbook in evaluationdetail.evaluationbooks:
 				evaluationbook_data = EvaluationBookAPISerializer(evaluationbook,many=False,read_only=True).data			
 
-				evaluation_dict = {
-					'evaluation_book' : evaluationbook_data,
-				}
-
-				evaluation_data.append(evaluation_dict)
+				evaluation_data.append(evaluationbook_data)
 				
 		
 		order_details_data = {
