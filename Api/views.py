@@ -343,6 +343,11 @@ class PaymentResponseCredit(APIView):
 				cart_schedules = [OrderScheduler(order=order,evaluation_details=evaluation_details,order_scheduler_book=evaluation_book,start_at=cart_schedule.start_at,end_at=cart_schedule.end_at,customer_address=customer_address,status='CONFIRMED',no_of_cleaners=cart_schedule.no_of_cleaners,cleaning_hours=cart_schedule.cleaning_hours,hourly_cleaning_duration=cart_schedule.hourly_cleaning_duration) for cart_schedule in customer_cart.cart_schedules]
 				OrderScheduler.objects.bulk_create(cart_schedules) 
 
+				cart_service.delete()
+
+			customer_cart.is_scheduled = False
+			customer_cart.save()
+
 		#Booking From CRM System
 		else:
 			try:
@@ -403,6 +408,9 @@ class PaymentResponseCredit(APIView):
 				order.payment_status         = 'COMPLETED'
 				order.payment_completed_date = timezone.now()
 			order.save()
+
+			customer_cart.is_scheduled = False
+			customer_cart.save()
 
 			##########################################################################################
 			#Xero Integration

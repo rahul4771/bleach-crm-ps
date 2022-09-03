@@ -967,6 +967,9 @@ class PaymentResponseDebit(View):
 
 				cart_service.delete()
 
+			customer_cart.is_scheduled = False
+			customer_cart.save()
+
 		#Booking From CRM System
 		else:
 			try:
