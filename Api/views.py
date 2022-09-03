@@ -6131,7 +6131,7 @@ class CustomerBookedOrdersAPI(APIView):
 		
 		user 				= Token.objects.get(key=token).user
 
-		orders 				= Order.objects.filter(is_active=True,evaluation__customer=user,evaluation__booking_evaluation__booking_type='CLEANINGBOOKING')
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer=user,evaluation__booking_evaluation__booking_type='CLEANINGBOOKING').order_by('-id')
 
 		orders_list = []
 
