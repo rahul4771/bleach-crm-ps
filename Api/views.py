@@ -338,7 +338,8 @@ class PaymentResponseCredit(APIView):
 										is_cabinet=cart_service.is_cabinet,is_highprice_facade=cart_service.is_highprice_facade,is_highprice_window=cart_service.is_highprice_window,upholstery_type=cart_service.upholstery_type,vacuuming=cart_service.vacuuming,section_cost=cart_service.total_cost,
 										section_net_cost=cart_service.total_cost,sectiononly_cost=cart_service.total_cost,sectiononly_net_cost=cart_service.total_cost,section_cleanings=len(customer_cart.cart_schedules))
 				
-				evaluation_section_addon = EvaluationSectionAddons.objects.create(evaluation_section=evaluation_section,name=cart_service.addon_name,addon_cost=cart_service.addon_price,quantity=1,addon_net_cost=cart_service.addon_price,size=cart_service.addon_size)
+				if cart_service.addon_name:
+					evaluation_section_addon = EvaluationSectionAddons.objects.create(evaluation_section=evaluation_section,name=cart_service.addon_name,addon_cost=cart_service.addon_price,quantity=1,addon_net_cost=cart_service.addon_price,size=cart_service.addon_size)
 
 				cart_schedules = [OrderScheduler(order=order,evaluation_details=evaluation_details,order_scheduler_book=evaluation_book,start_at=cart_schedule.start_at,end_at=cart_schedule.end_at,customer_address=customer_address,status='CONFIRMED',no_of_cleaners=cart_schedule.no_of_cleaners,cleaning_hours=cart_schedule.cleaning_hours,hourly_cleaning_duration=cart_schedule.hourly_cleaning_duration) for cart_schedule in customer_cart.cart_schedules]
 				OrderScheduler.objects.bulk_create(cart_schedules) 
@@ -6180,7 +6181,7 @@ class CustomerBookedOrderDetailsAPI(APIView):
 			Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book','customer_address__area','customer_address__governorate').order_by('start_at').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_team')),to_attr='orderschedules'),
 			Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),
 			Prefetch('feed_backs_order',FeedBack.objects.filter(is_active=True).select_related('question'),to_attr='feedbacks'),
-			Prefetch('cancelled_order',CancellOrderAmountHistory.objects.filter(is_active=True),to_attr='cancelled_order_amount')).annotate(total_paid_amount=Sum('history_order__amount_paid')).get(is_active=True,id=order_id)
+			Prefetch('cancelled_order',CancellOrderAmountHistory.objects.filter(is_active=True),to_attr='cancelled_order_amount')).annotate(total_paid_amount=Sum('history_order__amount_paid'),cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())) ).get(is_active=True,id=order_id)
 
 		try:
 			booking_id = CustomerBooking.objects.get(is_active=True,evaluation__id=order.evaluation.id,booking_type='CLEANINGBOOKING').booking_id
@@ -6194,11 +6195,25 @@ class CustomerBookedOrderDetailsAPI(APIView):
 				evaluationbook_data = EvaluationBookAPISerializer(evaluationbook,many=False,read_only=True).data			
 
 				evaluation_data.append(evaluationbook_data)
-				
+						
+		# previous visit and upcoming visit		
+		visit_dates = []
+
+		for schedule in order.orderschedules:
+			visit_dates.append(schedule.start_at)
+
+		# target = timezone.now()
+
+		# previous_date = max(datetime.strftime(date,'%d-%m-%Y %I:%M %p') for date in visit_dates if date < target)
+		# upcoming_date = max(datetime.strftime(date,'%d-%m-%Y %I:%M %p') for date in visit_dates if date > target)
 		
 		order_details_data = {
 			'evaluation_details' : evaluation_data,
-			'booking_id' : booking_id
+			'total_visits' : order.cleaning_count,
+			'completed_visits' : order.completed_cleaning_count,
+			'booking_id' : booking_id,
+			# 'previous_visit':previous_date,
+			# 'upcoming_visit':upcoming_date
 		}
 
 		response_dict['data'] = order_details_data
