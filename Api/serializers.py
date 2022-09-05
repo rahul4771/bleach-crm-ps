@@ -2,10 +2,15 @@ from rest_framework import serializers
 
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
 from evaluator.models import Evaluation,EvaluationDetails,AreaType
-from order.models import Promocode
+from order.models import Promocode,FeedBack
 from bleachinventory.models import Line,Segment,Category,Attribute,AttributeValue,BundleItems,InventoryItem,ItemUnit,SupplierItems
 from bleachadmin.models import Settings,ServiceProductivity,ServicePriceRange,Settings,ServiceAddOns
 from senior_team_leader.models import CleaningTeamMember
+
+class FeedBackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model  = FeedBack
+        fields = ('question','rating')
 
 class DiscountSettingSerializer(serializers.ModelSerializer):
     class Meta:

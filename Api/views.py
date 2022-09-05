@@ -12,7 +12,7 @@ from bleachadmin.models import ServicePriceRange,Settings,ServiceProductivity,Se
 from bleachadmin.serializers import ServiceProductivitySerializer
 from Api.models import XeroConnection
 from django.core.mail import send_mail,EmailMultiAlternatives
-from Api.serializers import SectionAPISerializer,EvaluationBookAPISerializer,OrderAPISerializer,EvaluationDetailsAPISerializer,AreaTypeSerializer,AreaSerializer,GovernorateSerializer,AddressAddEditSerializer,AddressSerializer,ServiceAddOnsSerializer,ServicePriceRangeSerializer,DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
+from Api.serializers import FeedBackSerializer,SectionAPISerializer,EvaluationBookAPISerializer,OrderAPISerializer,EvaluationDetailsAPISerializer,AreaTypeSerializer,AreaSerializer,GovernorateSerializer,AddressAddEditSerializer,AddressSerializer,ServiceAddOnsSerializer,ServicePriceRangeSerializer,DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
 from bleachinventory.models import QuantityStoreDetails,ExternalCustomer,Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,CheckOutItemUnits,ItemHistory,InventoryAccessory,InventoryFinshedItem,Store
 import re
@@ -6189,8 +6189,11 @@ class CustomerBookedOrderDetailsAPI(APIView):
 			booking_id = None
 		
 		evaluation_data = []
+		evaluation_info = []
 
 		for evaluationdetail in order.evaluation.evaluationdetails:
+			evaluation = EvaluationSerializer(evaluationdetail.evaluation,many=False,read_only=True,fields_to_remove=['customer','booking_evaluation']).data
+			evaluation_data.append(evaluation)
 			for evaluationbook in evaluationdetail.evaluationbooks:
 				evaluationbook_data = EvaluationBookAPISerializer(evaluationbook,many=False,read_only=True).data			
 
@@ -6202,18 +6205,37 @@ class CustomerBookedOrderDetailsAPI(APIView):
 		for schedule in order.orderschedules:
 			visit_dates.append(schedule.start_at)
 
-		# target = timezone.now()
+		visit_dates = sorted(visit_dates)
 
-		# previous_date = max(datetime.strftime(date,'%d-%m-%Y %I:%M %p') for date in visit_dates if date < target)
-		# upcoming_date = max(datetime.strftime(date,'%d-%m-%Y %I:%M %p') for date in visit_dates if date > target)
+		start_date = datetime.strftime(visit_dates[0],'%d-%m-%Y')
+		end_date = datetime.strftime(visit_dates[-1],'%d-%m-%Y')
+
+		target = timezone.now()
+
+		previous_date = datetime.strftime( min([i for i in visit_dates if i <= target], key=lambda x: abs(x - target)) , '%d-%m-%Y %I:%M %p')
+		upcoming_date = datetime.strftime( min([i for i in visit_dates if i >= target], key=lambda x: abs(x - target)) , '%d-%m-%Y %I:%M %p')
 		
+		####payment
+		payment_type = None
+		for payment in order.paymenthistory:
+			payment_type = payment.payment_gateway
+		
+		###feedback
+		feedbacks = FeedBackSerializer(order.feedbacks,many=True,read_only=True).data
+
 		order_details_data = {
-			'evaluation_details' : evaluation_data,
+			'start_date' : start_date,
+			'end_date' : end_date,
+			'previous_visit':previous_date,
+			'upcoming_visit':upcoming_date,
 			'total_visits' : order.cleaning_count,
 			'completed_visits' : order.completed_cleaning_count,
 			'booking_id' : booking_id,
-			# 'previous_visit':previous_date,
-			# 'upcoming_visit':upcoming_date
+			'evaluation_details' : evaluation_data,
+			'payment_type' : payment_type,
+			'feedbacks' : feedbacks
+			
+			
 		}
 
 		response_dict['data'] = order_details_data

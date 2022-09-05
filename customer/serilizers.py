@@ -78,8 +78,19 @@ class EvaluationSerializer(serializers.ModelSerializer):
 	quatation_approved_date = serializers.DateTimeField(format="%d-%m-%Y %I:%M %p ")
 	class Meta:
 		model  = Evaluation
-		fields = ('customer','quatation_status','quatation_approved_date','payment_method','booking_evaluation','estimated_cost','total_cost','discount')
+		fields = ('customer','quatation_status','quatation_approved_date','payment_method','booking_evaluation','estimated_cost','total_cost','discount','fine_amount','writeback_amount','promocode_amount')
 		read_only_fields = ('estimated_cost','total_cost','discount')
+
+	def __init__(self, *args, **kwargs):
+		fields_to_remove = kwargs.pop('fields_to_remove', None)
+
+		super(EvaluationSerializer, self).__init__(*args, **kwargs)
+
+		if fields_to_remove is not None:
+			# Drop any fields that are specified in the `fields_to_remove` argument.
+			not_allowed = set(fields_to_remove)
+			for field_name in not_allowed:
+				self.fields.pop(field_name)
 
 class OrderSerializer(serializers.ModelSerializer):
 	class Meta:
