@@ -6236,7 +6236,8 @@ class CustomerBookedOrderDetailsAPI(APIView):
 			'evaluation_info' : evaluation_info,
 			'payment_type' : payment_type,
 			'feedbacks' : feedbacks,
-			'order_data' : OrderSerializer(order,many=False,read_only=True).data
+			'order_data' : OrderSerializer(order,many=False,read_only=True).data,
+			'quotationURL' : 'paw'+order.order_no[3:]+''+order.evaluation.customer.username
 			
 		}
 
