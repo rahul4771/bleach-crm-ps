@@ -6234,8 +6234,9 @@ class CustomerBookedOrderDetailsAPI(APIView):
 			'evaluation_details' : evaluation_data,
 			'evaluation_info' : evaluation_info,
 			'payment_type' : payment_type,
-			'feedbacks' : feedbacks
-			
+			'feedbacks' : feedbacks,
+			'order_status' : order.order_status,
+			'BLC_NO' : order.order_no	
 			
 		}
 
