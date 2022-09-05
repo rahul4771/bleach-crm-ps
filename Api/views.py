@@ -6193,7 +6193,7 @@ class CustomerBookedOrderDetailsAPI(APIView):
 
 		for evaluationdetail in order.evaluation.evaluationdetails:
 			evaluation = EvaluationSerializer(evaluationdetail.evaluation,many=False,read_only=True,fields_to_remove=['customer','booking_evaluation']).data
-			evaluation_data.append(evaluation)
+			evaluation_info.append(evaluation)
 			for evaluationbook in evaluationdetail.evaluationbooks:
 				evaluationbook_data = EvaluationBookAPISerializer(evaluationbook,many=False,read_only=True).data			
 
@@ -6212,9 +6212,9 @@ class CustomerBookedOrderDetailsAPI(APIView):
 
 		target = timezone.now()
 
-		previous_date = datetime.strftime( min([i for i in visit_dates if i <= target], key=lambda x: abs(x - target)) , '%d-%m-%Y %I:%M %p')
-		upcoming_date = datetime.strftime( min([i for i in visit_dates if i >= target], key=lambda x: abs(x - target)) , '%d-%m-%Y %I:%M %p')
-		
+		previous_date = datetime.strftime( min(visit_dates, key=lambda x: (x>target, abs(x-target)) ) , '%d-%m-%Y %I:%M %p')
+		upcoming_date = datetime.strftime( min(visit_dates, key=lambda x: (x<target, abs(x-target)) ) , '%d-%m-%Y %I:%M %p')		
+
 		####payment
 		payment_type = None
 		for payment in order.paymenthistory:
@@ -6232,6 +6232,7 @@ class CustomerBookedOrderDetailsAPI(APIView):
 			'completed_visits' : order.completed_cleaning_count,
 			'booking_id' : booking_id,
 			'evaluation_details' : evaluation_data,
+			'evaluation_info' : evaluation_info,
 			'payment_type' : payment_type,
 			'feedbacks' : feedbacks
 			
