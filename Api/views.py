@@ -13,6 +13,7 @@ from bleachadmin.serializers import ServiceProductivitySerializer
 from Api.models import XeroConnection
 from django.core.mail import send_mail,EmailMultiAlternatives
 from Api.serializers import FeedBackSerializer,SectionAPISerializer,EvaluationBookAPISerializer,OrderAPISerializer,EvaluationDetailsAPISerializer,AreaTypeSerializer,AreaSerializer,GovernorateSerializer,AddressAddEditSerializer,AddressSerializer,ServiceAddOnsSerializer,ServicePriceRangeSerializer,DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
+from customer.serilizers import OrderSerializer
 from agent.views import generate_random_username
 from bleachinventory.models import QuantityStoreDetails,ExternalCustomer,Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,CheckOutItemUnits,ItemHistory,InventoryAccessory,InventoryFinshedItem,Store
 import re
@@ -6235,8 +6236,7 @@ class CustomerBookedOrderDetailsAPI(APIView):
 			'evaluation_info' : evaluation_info,
 			'payment_type' : payment_type,
 			'feedbacks' : feedbacks,
-			'order_status' : order.order_status,
-			'BLC_NO' : order.order_no	
+			'order_data' : OrderSerializer(order,many=False,read_only=True).data
 			
 		}
 
