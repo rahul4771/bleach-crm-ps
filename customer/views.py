@@ -906,7 +906,7 @@ class PaymentResponseDebit(View):
 		order_status      = request.GET.get("udf3")
 
 		#Booking through Website - Order Creation
-		if order_status == 'CUSTOMER_BOOKING' and payment_result == 'CAPTURED':
+		if order_status == 'CUSTOMER_BOOKING' :
 			customer_cart = CustomerCart.objects.prefetch_related(Prefetch('cart_service',queryset=CartService.objects.filter(is_active=True),to_attr='cart_services'),Prefetch('cart_schedule',queryset=CartSchedule.objects.filter(is_active=True),to_attr='cart_schedules')).get(id=evaluation_id_encrypted)
 
 			#Evaluation
@@ -1658,7 +1658,10 @@ class PaymentFailedResponse(View):
 		#for back to invoice
 		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate'),to_attr='orderschedules')).get(order_no='BLC'+evaluation_id_encrypted[0:11])
 	
-		return render(request,"customer/paymentfail.html",{'payment_id':payment_id,'evaluation_id_encrypted':evaluation_id_encrypted,'reference_id':reference_id,"order":order})			
+		if order_status == 'CUSTOMER_BOOKING':
+			return redirect('http://testwww.bleach-kw.com:8080/cart')
+		else:
+			return render(request,"customer/paymentfail.html",{'payment_id':payment_id,'evaluation_id_encrypted':evaluation_id_encrypted,'reference_id':reference_id,"order":order})			
 
 class PaymentReceipt(View):
 	def get(self,request,payment_id):

@@ -6229,7 +6229,7 @@ class CustomerBookedOrderDetailsAPI(APIView):
 			'end_date' : end_date,
 			'previous_visit':previous_date,
 			'upcoming_visit':upcoming_date,
-			'total_visits' : order.cleaning_count,
+			'total_visits' : len(order.orderschedules),
 			'completed_visits' : order.completed_cleaning_count,
 			'booking_id' : booking_id,
 			'evaluation_details' : evaluation_data,
