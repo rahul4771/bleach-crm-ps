@@ -944,7 +944,7 @@ class PaymentResponseDebit(View):
 			else:
 				new_invoice_no 		 = str(timezone.now().year)+'00001'
 
-			order       = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,invoice_no=new_invoice_no,order_status='APPROVED_BY_CLIENT',total_amount=customer_cart.total_cost)
+			order       = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,invoice_no=new_invoice_no,order_status='APPROVED_BY_CLIENT',total_amount=customer_cart.total_cost,remining_amount=customer_cart.total_cost)
 
 			customer_address = Address.objects.get( id=int(request.GET.get('udf5')) )
 			
