@@ -8610,6 +8610,8 @@ class CartAPI(APIView):
 
 			cartschedules = CartSchedule.objects.filter(cart=cart)
 
+			CartService.objects.filter(cart=cart).update(total_cost=float(total_cost)/float(len(slots)))
+
 			cart.total_cost = float(cart.total_cost) / float(cartschedules.count())
 			cart.is_scheduled = False
 			cart.save()
@@ -8740,6 +8742,8 @@ class CartScheduleAPI(APIView):
 			#CREATING CART schedule
 			cart_schedule = CartSchedule.objects.create(cart=cart,start_at=start_date_time,end_at=end_date_time,no_of_cleaners=request.data.get('no_of_cleaners'),cleaning_hours=request.data.get('cleaning_hours'))
 		
+		CartService.objects.filter(cart=cart).update(total_cost=float(total_cost)*float(len(slots)))
+
 		cart.is_scheduled = True
 		cart.total_cost = float(cart.total_cost) * float(len(slots))
 		cart.save()
