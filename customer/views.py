@@ -8722,9 +8722,8 @@ class CartScheduleAPI(APIView):
 
 		slots = request.data.get('datetimes')
 
-		slot_counter = 0
 		for slot in slots:
-			slot_counter += 1
+			
 			#GETTING CLEANING SLOT DETAILS
 			
 			start_date_time         =  datetime.strptime(slot,'%d-%m-%Y %I:%M %p')
@@ -8740,5 +8739,6 @@ class CartScheduleAPI(APIView):
 		cart.save()
 
 		response_dict['success'] = True
+		response_dict['updated_cost'] = float(cart.total_cost) * float(len(slots))
 
 		return Response(response_dict,HTTP_200_OK)
