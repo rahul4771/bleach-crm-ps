@@ -968,7 +968,8 @@ class PaymentResponseDebit(View):
 
 				cart_service.delete()
 
-			customer_cart.cart_schedules.delete()
+			for cart_schedule in customer_cart.cart_schedules:
+				cart_schedule.delete()
 
 			customer_cart.is_scheduled = False
 			customer_cart.total_cost = 0
@@ -8614,10 +8615,10 @@ class CartAPI(APIView):
 			cart_services = CartService.objects.filter(cart=cart)
 
 			for service in cart_services:
-				service.total_cost = float(service.total_cost)/float(cartschedules.count())
+				service.total_cost = round(float(service.total_cost)/float(cartschedules.count()),3)
 				service.save()
 
-			cart.total_cost = float(cart.total_cost) / float(cartschedules.count())
+			cart.total_cost = round(float(cart.total_cost) / float(cartschedules.count()),3)
 			cart.is_scheduled = False
 			cart.save()
 
@@ -8751,15 +8752,15 @@ class CartScheduleAPI(APIView):
 		cart_services = CartService.objects.filter(cart=cart)
 
 		for service in cart_services:
-			service.total_cost = float(service.total_cost)*float(len(slots))
+			service.total_cost = round(float(service.total_cost)*float(len(slots)),3)
 			service.save()
 
 		#cart total cost update
 		cart.is_scheduled = True
-		cart.total_cost = float(cart.total_cost) * float(len(slots))
+		cart.total_cost = round(float(cart.total_cost) * float(len(slots)),3)
 		cart.save()
 
 		response_dict['success'] = True
-		response_dict['updated_cost'] = float(cart.total_cost) * float(len(slots))
+		response_dict['updated_cost'] = round(float(cart.total_cost) * float(len(slots)),3)
 
 		return Response(response_dict,HTTP_200_OK)
