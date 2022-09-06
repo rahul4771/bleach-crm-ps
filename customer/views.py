@@ -1644,7 +1644,7 @@ class PaymentResponseDebit(View):
 				pass
 
 
-			return redirect('/customer/payment/failed/?udf1='+evaluation_id_encrypted+'&paymentid='+request.GET.get('paymentid')+'&ref='+request.GET.get('ref'))
+			return redirect('/customer/payment/failed/?udf1='+order.order_no[3:]+''+order.evaluation.customer.username+'&paymentid='+request.GET.get('paymentid')+'&ref='+request.GET.get('ref'))
 
 
 class PaymentFailedResponse(View):
