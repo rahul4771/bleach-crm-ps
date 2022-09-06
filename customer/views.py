@@ -968,7 +968,10 @@ class PaymentResponseDebit(View):
 
 				cart_service.delete()
 
+			customer_cart.cart_schedules.delete()
+
 			customer_cart.is_scheduled = False
+			customer_cart.total_cost = 0
 			customer_cart.save()
 
 		#Booking From CRM System
@@ -8605,10 +8608,13 @@ class CartAPI(APIView):
 		#RESET CART SCHEDULES
 		if action == 'reset_schedules':
 
+			cartschedules = CartSchedule.objects.filter(cart=cart)
+
+			cart.total_cost = float(cart.total_cost) / float(cartschedules.count())
 			cart.is_scheduled = False
 			cart.save()
 
-			CartSchedule.objects.filter(cart=cart).delete()
+			cartschedules.delete()
 
 			response_dict['success']  = True
 
