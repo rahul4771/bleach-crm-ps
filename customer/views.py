@@ -8715,6 +8715,11 @@ class CartScheduleAPI(APIView):
 
 		user = Token.objects.get(key=token).user
 
+		try:
+			cart = CustomerCart.objects.get(customer=user)
+		except:
+			cart = CustomerCart.objects.create(customer=user)
+
 		slots = request.data.get('datetimes')
 
 		for slot in slots:
@@ -8725,16 +8730,12 @@ class CartScheduleAPI(APIView):
 			start_time              =  start_date_time.time()
 			end_time                =  end_date_time.time()
 
-			try:
-				cart = CustomerCart.objects.get(customer=user)
-			except:
-				cart = CustomerCart.objects.create(customer=user)
-
 			#CREATING CART schedule
 			cart_schedule = CartSchedule.objects.create(cart=cart,start_at=start_date_time,end_at=end_date_time,no_of_cleaners=request.data.get('no_of_cleaners'),cleaning_hours=request.data.get('cleaning_hours'))
-
-			cart.is_scheduled = True
-			cart.save()
+		
+		cart.is_scheduled = True
+		cart.total_cost = float(cart.total_cost * len(slots))
+		cart.save()
 
 		response_dict['success'] = True
 
