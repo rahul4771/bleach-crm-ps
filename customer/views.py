@@ -8610,7 +8610,7 @@ class CartAPI(APIView):
 
 			cartschedules = CartSchedule.objects.filter(cart=cart)
 
-			CartService.objects.filter(cart=cart).update(total_cost=float(total_cost)/float(len(slots)))
+			CartService.objects.filter(cart=cart).update(total_cost=float(F('total_cost'))/float(len(slots)))
 
 			cart.total_cost = float(cart.total_cost) / float(cartschedules.count())
 			cart.is_scheduled = False
