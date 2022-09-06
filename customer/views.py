@@ -8722,7 +8722,9 @@ class CartScheduleAPI(APIView):
 
 		slots = request.data.get('datetimes')
 
+		slot_counter = 0
 		for slot in slots:
+			slot_counter += 1
 			#GETTING CLEANING SLOT DETAILS
 			
 			start_date_time         =  datetime.strptime(slot,'%d-%m-%Y %I:%M %p')
@@ -8734,7 +8736,7 @@ class CartScheduleAPI(APIView):
 			cart_schedule = CartSchedule.objects.create(cart=cart,start_at=start_date_time,end_at=end_date_time,no_of_cleaners=request.data.get('no_of_cleaners'),cleaning_hours=request.data.get('cleaning_hours'))
 		
 		cart.is_scheduled = True
-		cart.total_cost = float(cart.total_cost * len(slots))
+		cart.total_cost = float(cart.total_cost * slot_counter)
 		cart.save()
 
 		response_dict['success'] = True
