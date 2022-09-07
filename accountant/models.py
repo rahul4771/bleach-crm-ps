@@ -45,10 +45,10 @@ class PaymentHistory(models.Model):
 	updated    				     = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.order.id)
+		return str(self.order.id)+'-'+str(self.paid_date)
 
 	def __str__(self):
-		return str(self.order.order_no)
+		return str(self.order.order_no)+'-'+str(self.paid_date)
 
 class DailySales(models.Model):
 	sales_date                   = models.DateField(blank=True,null=True)
