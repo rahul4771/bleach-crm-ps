@@ -13,14 +13,14 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,Max,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField,CharField,Prefetch
 from django.db.models.functions import Cast,TruncDate,ExtractMonth,ExtractYear,Concat
 from order.models import OrderScheduler,FollowUpScheduler
-from senior_team_leader.models import CleaningTeam,CleaningTeamMember,FollowUpTeam
+from senior_team_leader.models import CleaningTeam,CleaningTeamMember,FollowUpTeam,FollowUpTeamMember
 from bleachadmin.models import ServicePriceRange
 from evaluator.models import EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons
 import functools
 import operator
 from django.utils import timezone
 import pandas as pd
-
+from itertools import chain
 # Create your views here.
 
 class InventoryHome(IsInventoryAdminUser,View):
@@ -83,19 +83,13 @@ class InventoryHome(IsInventoryAdminUser,View):
 
 		orders = OrderScheduler.objects.filter(id__in=calendar_order_schedules_list).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
 		
-		#followup orders
-		calendar_followup_schedules_list       = []
-		calendar_followup_schedules_duplicates = []
-		calendar_followup_schedules_alls = FollowUpTeam.objects.select_related('team_leader','followup_scheduler__follow_up__investigation__order').filter(followup_scheduler__start_at__gte=order_date_start,followup_scheduler__start_at__lte=order_date_end).filter(Q(followup_scheduler__work_status='CLEANING_TEAM_ASSIGNED')|Q(followup_scheduler__work_status='CLEANING_IN_PROGRESS')|Q(followup_scheduler__work_status='CLEANING_FULFILLED')).annotate(duplicate=Concat('followup_scheduler__start_at','followup_scheduler__follow_up__investigation__order__id','team_leader__id',output_field=CharField()))
+		#followups
 
-		for calendar_followup_schedules_all in calendar_followup_schedules_alls:
-			if not calendar_followup_schedules_alls.duplicate in calendar_followup_schedules_duplicates:
-				calendar_followup_schedules_list.append(calendar_followup_schedules_alls.followup_scheduler.id)
-				calendar_followup_schedules_duplicates.append(calendar_followup_schedules_alls.duplicate)
-
-		followup_orders = FollowUpScheduler.objects.filter(id__in=calendar_followup_schedules_list).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='followup_team')).order_by('-start_at')
+		# followup_orders = FollowUpScheduler.objects.filter(start_at__gte=order_date_start,start_at__lte=order_date_end).filter(Q(work_status='FOLLOW_UP_TEAM_ASSIGNED')|Q(work_status='FOLLOW_UP_CLEANING_IN_PROGRESS')|Q(work_status='FOLLOW_UP_CLEANING_FULFILLED')).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='followup_team')).order_by('-start_at')
 		
-		return render(request,'inventory/home.html',{"items_count":items_count,"recent_items":recent_items,"purchase_items":purchase_items,"orders":orders,"purchase_orders":purchase_orders,"po_count":po_count,"request_orders":request_orders,"ro_count":ro_count,"order_date":order_date,"orders":orders,"followup_orders":followup_orders })
+		# orders = list(chain(cleaning_orders,followup_orders))
+		# print(followup_orders,"followups")
+		return render(request,'inventory/home.html',{"items_count":items_count,"recent_items":recent_items,"purchase_items":purchase_items,"orders":orders,"purchase_orders":purchase_orders,"po_count":po_count,"request_orders":request_orders,"ro_count":ro_count,"order_date":order_date,"orders":orders })
 
 # Category.
 class InventoryCategory(IsInventoryAdminUser,View):
@@ -2398,6 +2392,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 			return redirect('bleach-inventory:inventory-order')
 	
 		return redirect('bleach-inventory:inventory-createcheckout',visit_id)
+
 
 class InventoryPurchaseOrder(IsInventoryAdminUser,View):
 	def get(self,request):

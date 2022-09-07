@@ -1,6 +1,6 @@
 from django.db import models
 from user.models import UserProfile
-from order.models import OrderScheduler
+from order.models import OrderScheduler,FollowUpScheduler
 from datetime import date,datetime,timedelta
 # Create your models here.
 
@@ -417,7 +417,8 @@ class ItemHistory(models.Model):
         return self.item.name+' - '+datetime.strftime(self.created,'%d-%m-%Y')
 
 class CheckOutItems(models.Model):
-    visit                = models.ForeignKey(OrderScheduler,blank=False,null=False,related_name='visit_checkout')
+    visit                = models.ForeignKey(OrderScheduler,blank=True,null=True,related_name='visit_checkout')
+    followup             = models.ForeignKey(FollowUpScheduler,blank=True,null=True,related_name='followup_checkout')
     service_item         = models.ForeignKey(ServiceRecipeItems,blank=True,null=True,related_name='service_item_checkout')
     item                 = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='item_checkout')
     item_unit            = models.ForeignKey(ItemUnit,blank=True,null=True,related_name='item_checkout_unit')

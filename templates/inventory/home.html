@@ -307,63 +307,6 @@
                                             <tr><td></td><td></td><td><img src="{% static 'files/inventory/icons/nodata.png' %}" width="100px" height="100px"></td><td></td><td></td></tr>
                                             {% endfor %}
 
-
-
-                                            {% for order in followup_orders %}
-                                            <tr>
-                                                <td class="inv-blue-border">
-    
-                                                    {{order.followup.investigation.order.order_no}}
-                                                </td>
-                                                <td class="text-center">
-                                                    {% for team in order.followup_team %}
-                                                    {{team.team_leader.name}}
-                                                    {% endfor %}
-                                                </td>
-                                                <td class="text-center">
-                                                    {{order.start_at|date:"d-m-Y g:i A"}}
-                                                </td>
-                                                {% comment %} <td class="text-center">
-                                                    {{order.order_scheduler_book.service_type.name}}
-                                                </td> {% endcomment %}
-                                                <td class="text-center">
-                                                    {{order.work_status}}
-                                                </td>
-    
-                                                <td class="text-center">
-                                                    {% if order.work_status == 'FOLLOW_UP_CLEANING_FULFILLED' %}
-                                                        {% if order.stock_out_items_submitted == True and order.stock_in_initiated == False %}
-                                                            <button onclick="openNavAddStore({{order.id}})" class="btn-p inv-plan-img-btn2 btn-shadow"> <img class="btn-img2"
-                                                                src="{% static 'files/inventory/icons/icon3.png' %}" alt=""> Stock-In
-                                                            </button>
-                                                        {% elif order.stock_out_items_submitted == False %}
-                                                            <a href="/bleach-inventory/createcheckout/{{order.id}}/?stockout=stockout"><button class="btn-p inv-plan-img-btn2 btn-shadow" > <img class="btn-img2 mr-5"
-                                                                src="{% static 'files/inventory/icons/icon4.png' %}" alt="">Stock-out</button></a>
-                                                        {% else %}
-                                                        <button  class="btn-p inv-plan-img-btn2-disabled" disabled> <img class="btn-img2"
-                                                            src="{% static 'files/inventory/icons/icon3.png' %}" alt=""> Completed
-                                                        </button>
-                                                        {% endif %}
-                                                    {% else %}
-                                                    
-                                                        {% if order.stock_out_items_submitted == False %}
-                                                        <a href="/bleach-inventory/createcheckout/{{order.id}}/?stockout=stockout"><button class="btn-p inv-plan-img-btn2 btn-shadow" > <img class="btn-img2 mr-5"
-                                                            src="{% static 'files/inventory/icons/icon4.png' %}" alt="">Stock-out</button></a>
-                                                        {% else %}
-                                                            <button  class="btn-p inv-plan-img-btn2-disabled" disabled> <img class="btn-img2"
-                                                                src="{% static 'files/inventory/icons/icon3.png' %}" alt=""> Stock-out
-                                                            </button>
-                                                        {% endif %}
-
-                                                    {% endif %}
-    
-    
-                                                </td>
-                                            </tr>
-                                            {% empty %}
-                                            <tr><td></td><td></td><td><img src="{% static 'files/inventory/icons/nodata.png' %}" width="100px" height="100px"></td><td></td><td></td></tr>
-                                            {% endfor %}
-
                                             
                                         </tbody>
                                        
