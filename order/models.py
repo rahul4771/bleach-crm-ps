@@ -450,6 +450,11 @@ class FollowUpScheduler(models.Model):
 	customer_address	= models.ForeignKey(Address,blank=True,null=True)
 	work_status 	    = models.CharField(max_length=50,blank=True,null=True,choices=FOLLOWUP_SHEDULER_STATUS)
 	status      		= models.CharField(max_length=50,blank=True,null=True,default='WAITING',choices=SCHEDULER_CHOICES)
+
+	stock_out_items_saved   = models.BooleanField(null=False,blank=True,default=False)
+	stock_out_items_submitted = models.BooleanField(null=False,blank=True,default=False)
+	items_collected       	= models.BooleanField(null=False,blank=True,default=False)
+	stock_in_initiated      = models.BooleanField(null=False,blank=True,default=False)
 	
 	is_active       	= models.BooleanField(null=False,blank=True,default=True)
 	created         	= models.DateTimeField(auto_now_add=True)

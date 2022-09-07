@@ -12,8 +12,8 @@ from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,Max,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField,CharField,Prefetch
 from django.db.models.functions import Cast,TruncDate,ExtractMonth,ExtractYear,Concat
-from order.models import OrderScheduler
-from senior_team_leader.models import CleaningTeam,CleaningTeamMember
+from order.models import OrderScheduler,FollowUpScheduler
+from senior_team_leader.models import CleaningTeam,CleaningTeamMember,FollowUpTeam
 from bleachadmin.models import ServicePriceRange
 from evaluator.models import EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons
 import functools
@@ -69,10 +69,11 @@ class InventoryHome(IsInventoryAdminUser,View):
 
 		teamassign_to_date             = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)
 
+		#cleaning orders
 		calendar_order_schedules_list       = []
 		calendar_order_schedules_duplicates = []
 		calendar_order_schedules_alls = CleaningTeam.objects.select_related('team_leader','order_scheduler__order').filter(order_scheduler__start_at__gte=order_date_start,order_scheduler__start_at__lte=order_date_end).filter(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler__work_status='CLEANING_IN_PROGRESS')|Q(order_scheduler__work_status='CLEANING_FULFILLED')).annotate(duplicate=Concat('order_scheduler__start_at','order_scheduler__order__id','team_leader__id',output_field=CharField()))
-		
+				
 		for calendar_order_schedules_all in calendar_order_schedules_alls:
 			if not calendar_order_schedules_all.duplicate in calendar_order_schedules_duplicates:
 				calendar_order_schedules_list.append(calendar_order_schedules_all.order_scheduler.id)
@@ -82,7 +83,19 @@ class InventoryHome(IsInventoryAdminUser,View):
 
 		orders = OrderScheduler.objects.filter(id__in=calendar_order_schedules_list).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
 		
-		return render(request,'inventory/home.html',{"items_count":items_count,"recent_items":recent_items,"purchase_items":purchase_items,"orders":orders,"purchase_orders":purchase_orders,"po_count":po_count,"request_orders":request_orders,"ro_count":ro_count,"order_date":order_date,"orders":orders})
+		#followup orders
+		calendar_followup_schedules_list       = []
+		calendar_followup_schedules_duplicates = []
+		calendar_followup_schedules_alls = FollowUpTeam.objects.select_related('team_leader','followup_scheduler__follow_up__investigation__order').filter(followup_scheduler__start_at__gte=order_date_start,followup_scheduler__start_at__lte=order_date_end).filter(Q(followup_scheduler__work_status='CLEANING_TEAM_ASSIGNED')|Q(followup_scheduler__work_status='CLEANING_IN_PROGRESS')|Q(followup_scheduler__work_status='CLEANING_FULFILLED')).annotate(duplicate=Concat('followup_scheduler__start_at','followup_scheduler__follow_up__investigation__order__id','team_leader__id',output_field=CharField()))
+
+		for calendar_followup_schedules_all in calendar_followup_schedules_alls:
+			if not calendar_followup_schedules_alls.duplicate in calendar_followup_schedules_duplicates:
+				calendar_followup_schedules_list.append(calendar_followup_schedules_alls.followup_scheduler.id)
+				calendar_followup_schedules_duplicates.append(calendar_followup_schedules_alls.duplicate)
+
+		followup_orders = FollowUpScheduler.objects.filter(id__in=calendar_followup_schedules_list).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='followup_team')).order_by('-start_at')
+		
+		return render(request,'inventory/home.html',{"items_count":items_count,"recent_items":recent_items,"purchase_items":purchase_items,"orders":orders,"purchase_orders":purchase_orders,"po_count":po_count,"request_orders":request_orders,"ro_count":ro_count,"order_date":order_date,"orders":orders,"followup_orders":followup_orders })
 
 # Category.
 class InventoryCategory(IsInventoryAdminUser,View):
