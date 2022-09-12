@@ -255,8 +255,11 @@
                                             {% for order in orders %}
                                             <tr>
                                                 <td class="inv-blue-border">
-    
-                                                    {{order.order.order_no}}
+                                                    {% if order.follow_up %}
+                                                        {{order.follow_up.investigation.order.order_no}}
+                                                    {% else %}
+                                                        {{order.order.order_no}}
+                                                    {% endif %}
                                                 </td>
                                                 <td class="text-center">
                                                     {% for team in order.cleaning_team %}

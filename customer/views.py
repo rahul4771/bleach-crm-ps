@@ -8762,5 +8762,6 @@ class CartScheduleAPI(APIView):
 
 		response_dict['success'] = True
 		response_dict['updated_cost'] = round(float(cart.total_cost) * float(len(slots)),3)
+		response_dict['schedules'] = len(slots)
 
 		return Response(response_dict,HTTP_200_OK)
