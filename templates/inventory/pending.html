@@ -79,12 +79,22 @@
                         
                         <tr>
                             <td class="td-md-width">
-                                {{item.visit.order.order_no}}
+                                {% if item.followup %}
+                                    {{item.followup.follow_up.investigation.order.order_no}}
+                                {% else %}
+                                    {{item.visit.order.order_no}}
+                                {% endif %}
                             </td>
                             <td class="text-center">
-                                {% for team in item.visit.cleaning_team %}
-                                {{team.team_leader.name}}
-                                {% endfor %}
+                                {% if item.followup %}
+                                    {% for team in item.followup.cleaning_team %}
+                                    {{team.team_leader.name}}
+                                    {% endfor %}
+                                {% else %}
+                                    {% for team in item.visit.cleaning_team %}
+                                    {{team.team_leader.name}}
+                                    {% endfor %}
+                                {% endif %}
                             </td>
                             <td class="text-center">
                                 {% if item.item_unit %} {{item.item_unit.unit_code}} {% else %} {% if item.service_item %}{{item.service_item.item.item_code}}{% else %}{{item.item.item_code}}{% endif %} {% endif %}
@@ -97,7 +107,7 @@
                 
                             
                             <td class="text-center">
-                                <button onclick="openNavAddStore({{item.visit.id}})" class="btn-p inv-plan-img-btn2 btn-shadow"> <img class="btn-img2"
+                                <button {% if item.followup %}onclick="openNavAddStore({{item.followup.id}},'followup')"{% else %}onclick="openNavAddStore({{item.visit.id}},'cleaning')"{% endif %} class="btn-p inv-plan-img-btn2 btn-shadow"> <img class="btn-img2"
                                     src="{% static 'files/inventory/icons/icon3.png' %}" alt=""> Stock-In
                                 </button>
                             </td>
@@ -188,6 +198,7 @@
                 <div class="col-md-12">
                     <div class="d-flex">
                         <input type="hidden" name="id_visit" id="visit_id" >
+                        <input type="hidden" name="is_followup" id="is_followup" >
                         <div style="font-weight: 400;" class="inv-check-orderhead order_team">
                             
                         </div>
@@ -446,7 +457,7 @@ function showStores(){
         document.getElementById("id_store_search").style.display="none"
     }
 
-    async function openNavAddStore(visit_id) {
+    async function openNavAddStore(visit_id,followup) {
         $('#items_container').empty();
 
         if (screen.width <= 600) {
@@ -458,12 +469,13 @@ function showStores(){
             document.getElementById("addStore").style.width = "30%";
         }
 
-        axios.get(url+'/api/items-check-in/',{params:{item_user:visit_id}})
+        axios.get(url+'/api/items-check-in/',{params:{item_user:visit_id,followup:followup}})
               .then(function (response) {
                   
                   console.log(response.data,"resp")
                   $('.order_team').text(response.data.order_no+' - '+response.data.team_leader)
                   $('#visit_id').val(response.data.visit_id);
+                  $('#is_followup').val(response.data.followup);
 
                   if (response.data.items_list.length == 0){
                     $('#items_container').append('<tr><td>No items</td></tr>');
@@ -548,6 +560,7 @@ function showStores(){
             'quantities' : item_qtys,
             'visit_id' : $('#visit_id').val(),
             'store_id' : $('#store_id').val(),
+            'followup' : $('#is_followup').val()
         }
 
         axios.post(url+'/api/items-check-in/',formdata)

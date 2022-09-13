@@ -88,11 +88,197 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="col-md-12">
           <div class="inv-order-title">
             <!-- {{visits.order.order_no}} -->
-            {{visit.order.order_no}}
+            {% if visit.follow_up %}
+              {{visit.follow_up.investigation.order.order_no}}
+            {% else %}
+              {{visit.order.order_no}}
+            {% endif %}
           </div>
         </div>
       </div>
         {% for visit in visits %}
+        
+        {% if visit.follow_up %}
+
+        <div class="row av-font mt-20 inv-sep-bg">
+          
+          <div class="col-md-3">
+            
+            <div class="inv-text-normal">
+              {{visit.follow_up.investigation.order_schedule.order_scheduler_book.service_type}}
+            </div>
+            
+            {% if visit.follow_up.investigation.order_schedule.evaluation_details.evaluator %}
+            <div class="mt-10 inv-text-normal">
+              Evaluator Note - {{visit.follow_up.investigation.order_schedule.evaluation_details.evaluator.name}}
+            </div>
+            <div class="inv-evaluation-note">
+              {{visit.follow_up.investigation.order_schedule.evaluation_details.evaluator_note|default_if_none:'-'}}
+            </div>
+            {% else %}
+            <div class="mt-10 inv-text-normal">
+              Attender note - {{visit.follow_up.investigation.order_schedule.evaluation_details.evaluation.call_attender.name}}
+            </div>
+            <div class="inv-evaluation-note">
+              {{visit.follow_up.investigation.order_schedule.evaluation_details.attender_note|default_if_none:'-'}}
+            </div>
+            {% endif %}
+          </div>
+          <div class="col-md-2 m-mt30">
+
+            <ul class="inv-ul">
+              <li><i class="fas fa-check-circle yellow-tick "></i> {{visit.follow_up.investigation.order_schedule.order_scheduler_book.cleaning_method}}</li>
+              <li><i class="fas fa-check-circle yellow-tick "></i> {{visit.follow_up.investigation.order_schedule.order_scheduler_book.area_type}}</li>
+              <li><i class="fas fa-check-circle yellow-tick "></i> {{visit.follow_up.investigation.order_schedule.order_scheduler_book.location_type}}</li>
+              <li><i class="fas fa-check-circle yellow-tick "></i> {{visit.customer_address.customer.name}}</li>
+
+            </ul>
+          </div>
+          <div class="col-md-2 m-mt30">
+
+            <ul class="inv-ul">
+              
+              <li><i class="fas  test-color fa-users c-mr-10"></i> {{visit.follow_up.no_of_cleaners}} cleaner(s)</li>
+              <li><i class="fas  test-color fa-clock-o c-mr-10"></i> {{visit.follow_up.cleaning_hours}} Hours</li>
+              <li><i class="fas  test-color fa-calendar c-mr-10"></i> {{visit.start_at|date:'d-m-Y'}}</li>
+              <li><i class="fas  test-color fa-map-marker c-mr-10"></i>&nbsp;<b>{{visit.customer_address.apartment}}</b>: {% if visit.customer_address.floor %}{{visit.customer_address.floor}}, {% else %}{% endif %} {{visit.customer_address.building}}, {{visit.customer_address.block}}, {{visit.customer_address.street}},<br> {% if visit.customer_address.avenue %}{{visit.customer_address.avenue}}, {% else %}{% endif %} {{visit.customer_address.area.name}}, {{visit.customer_address.governorate.name}}</li>
+
+
+
+            </ul>
+          </div>
+          <div class="col-md-5 m-mt30">
+
+            <ul class="inv-ul">
+              <li>Cleaning Agent <br></li>
+              <li class="mt-5 inv-team-head">{% for teamleader in visit.cleaning_team %} {{teamleader.team_leader.name}} {% endfor %}</li>
+            
+              <li  class="mt-10">Cleaners</li>
+              <li class="mt-5 inv-team-head">
+              {% for cleaning in visit.cleaning_team %}
+              {% for cleaner in cleaning.team_members %}
+                {% if forloop.last %}{{cleaner.member.name}}{% else %}{{cleaner.member.name}},{% endif %}
+              {% endfor %}
+              {% endfor %}
+              </li>
+
+            </ul>
+          </div>
+        </div>
+
+        {% for section in visit.follow_up.investigation.order_schedule.order_scheduler_book.sections %}
+
+        <div class="row mt-20 inv-sep-line">
+          <div class="col-md-12 pl-0">
+           <div class="inv-check-section">
+             <div class="d-flex ">
+               <div class="inv-check-section-head">
+                 Section {{forloop.counter}} : {{section.section_name}}
+                 
+               </div>
+               <div id="id_sec_item_{{forloop.counter}}" style="margin-left: 20px;">
+               <p class="inv-section-in">
+                 Size : <span class="red2-text inv-section-in">
+                 {{section.size}} 
+                 </span>
+               </p>
+               </div>
+               <div class="right-pos">
+                 <button class="inv-normal-btn" data-toggle="collapse" data-target="#demo{{forloop.counter}}" id="id_section_btn_{{forloop.counter}}" onclick="showOf({{forloop.counter}})">
+                   <i style="color: #000000 !important;" class="fa fa-chevron-right action-icon" aria-hidden="true"></i>
+                 </button>
+ 
+               </div>
+             </div>
+             <div id="demo{{forloop.counter}}" class="row mt-10 collapse ">
+               <div class="col-md-6 c-right-border">
+                <div class="order-details-content">
+                  <div class="row c-mb-3">
+                      <div class="col-md-6 col-xs-6 mb-10">
+                          <div class="order-details-key">Size</div> 
+                          <div class="c-text order-details-value">
+                          {{section.size}} 
+                            {% if section.evaluation_book.service_type.name == 'Upholstery Cleaning' %}                                 
+                              {% for price_range in price_ranges %}
+                              {% if price_range.name == section.size and price_range.service_type == section.evaluation_book.service_type and price_range.upholstery_type == section.upholstery_type %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}} Seater){% endif %}
+                              {% endfor %}
+                            
+                            {% else %}
+                              
+                              {% for price_range in price_ranges %}
+                              {% if price_range.name == section.size and price_range.service_type == section.evaluation_book.service_type and section.evaluation_book.service_type.name != 'Mattress Cleaning' and price_range.is_newkitchen == section.new_kitchen and price_range.is_cabinet == section.is_cabinet and price_range.is_highprice_facade == section.is_highprice_facade and price_range.is_highprice_window == section.is_highprice_window %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}} Sqm){% endif %}
+                              {{evaluationbook.service_type.name}}
+                              {% endfor %}
+                    
+                            {% endif %}
+                             </div>
+                      </div>
+                      <div class="col-md-6 col-xs-6 mb-10">
+                          <div class="order-details-key">Wall Type</div> 
+                          <div class="c-text order-details-value">{{section.wall_type|default_if_none:'-'}}</div>
+                      </div>
+                      <div class="col-md-6 col-xs-6 mb-10">
+                          <div class="order-details-key">Celling Type</div> 
+                          <div class="c-text order-details-value">{{section.ceiling_type|default_if_none:'-'}}</div>
+                      </div>
+                      <div class="col-md-6 col-xs-6 mb-10">
+                          <div class="order-details-key">Floor Type</div> 
+                          <div class="c-text order-details-value">{{section.floor_type|default_if_none:'-'}}</div>
+                      </div>
+                      <div class="col-md-6 col-xs-6 mb-10">
+                          <div class="order-details-key">Cost</div> 
+                          <div class="c-text order-details-value">{{section.section_cost|floatformat:'3'}} KD</div>
+                      </div>
+                  </div>
+              </div>
+                 
+ 
+ 
+               </div>
+               <div class="col-md-6 m-mt-10">
+                 {% for keynote in section.keynotes %}
+                 <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p></div></div>
+                 {% endfor %}
+ 
+               </div>
+               <div class="col-md-12 mt-10">
+                 {% if section.sectionaddons %}
+                 <div class="av-font mt-20" style="font-size: 18px;">
+                   Add-ons
+                 </div>
+                 {% endif %}
+                 <div class="row mt-10">
+                  
+                   {% for addon in section.sectionaddons%}
+                   <div class="col-md-3 mt-10">
+                    <div class="addon-card">
+                      <div class="addon-title av-font">{{addon.name}}</div> 
+                        <div class="row">
+                          <div class="col-md-6 addon-details mt-10">
+                            <div>
+
+                            </div> 
+                            <div class="addon-qty av-font">Qty : {{addon.quantity}}</div>
+                          </div> 
+                          <div class="col-md-6 mt-10">
+                            <div class="addon-price av-font">{{addon.addon_net_cost|floatformat:3}} KD</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {% endfor %}
+                  </div>
+               </div>
+ 
+             </div>
+           </div>
+          </div>
+         </div>
+
+          {% endfor %}
+
+        {% else %}
+
         <div class="row av-font mt-20 inv-sep-bg">
           
           <div class="col-md-3">
@@ -269,10 +455,13 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
          </div>
 
           {% endfor %}
+
+        {% endif %}
         {% endfor %}
         <div class="row mt-20">
           <div class="col-md-3 ">
               <div class="model-input-name required-field">Store{{store.name}}</div>
+              <input type="hidden" id="is_followup" name="followup" value="{{request.GET.followup}}" >
               <input autocomplete="off" class="store_id" type="hidden" id="store_id" name="store_id" value="1" >
 
               <div style="position: relative;">
@@ -330,7 +519,8 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
                 {% else %}
                 <input type="hidden" name="action" value="save_checkout_list">
                 {% endif %}
-      
+                
+                <input type="hidden" name="followup_check" value="{{request.GET.followup}}">
               
                 <tbody id="id_table">
 
@@ -884,7 +1074,7 @@ function hideselectedoptions(){
       var quantity = $('#id_qty').val();
       console.log(item_id,visit_id,"po")
     
-      var result = await _get('api/inventory-checkout-item-add/?user_id='+{{request.user.id}}+'&item_id='+item_id+'&visit_id='+visit_id+'&quantity='+quantity+'&unit_id='+$('#id_pro_sel3').val()+'&edit_item_id='+edit_item_id+'&store_id='+store_id);
+      var result = await _get('api/inventory-checkout-item-add/?user_id='+{{request.user.id}}+'&item_id='+item_id+'&visit_id='+visit_id+'&quantity='+quantity+'&unit_id='+$('#id_pro_sel3').val()+'&edit_item_id='+edit_item_id+'&store_id='+store_id+'&followup='+$('#is_followup').val());
         if(result.status == 200){
           console.log(result.data.success,"resss")
           if (result.data.success == true){
@@ -964,7 +1154,7 @@ function hideselectedoptions(){
       var quantity = $('#edit_id_qty').val();
       console.log(visit_id,quantity,"po")
     
-      var result = await _get('api/inventory-checkout-item-edit/??user_id='+{{request.user.id}}+'&checkout_item_id='+checkout_item_id+'&visit_id='+visit_id+'&quantity='+quantity+'&unit_id='+$('#inventory_item_unit_id').val()+'&edit_item_id='+edit_item_id);
+      var result = await _get('api/inventory-checkout-item-edit/??user_id='+{{request.user.id}}+'&checkout_item_id='+checkout_item_id+'&visit_id='+visit_id+'&quantity='+quantity+'&unit_id='+$('#inventory_item_unit_id').val()+'&edit_item_id='+edit_item_id+'&followup='+$('#is_followup').val());
         if(result.status == 200){
           console.log(result.data.success,"resss")
           if (result.data.success == true){
@@ -1389,10 +1579,10 @@ var products = [];
             
             console.log(visit_id,"po")
           
-            var result = await _get('api/inventory-checkout-item-delete/?visit_id='+visit_id);
+            var result = await _get('api/inventory-checkout-item-delete/?visit_id='+visit_id+'&followup='+$('#is_followup').val());
               if(result.status == 200){
                 
-                window.location='/bleach-inventory/createcheckout/'+visit_id+'/?stockout=stockout';
+                window.location='/bleach-inventory/createcheckout/'+visit_id+'/?stockout=stockout&followup='+$('#is_followup').val();
                 
                 showNotification('List Reset !','success')
                 
@@ -1735,7 +1925,7 @@ function showOf(id){
 function set_params_go(args)
     {
     var url='{% url 'bleach-inventory:inventory-createcheckout' visit.id %}';
-    var params={store_id:$('#store_id').val(),
+    var params={store_id:$('#store_id').val(),followup:$('#is_followup').val(),
     };
     for(key in args) 
         params[key]=args[key];

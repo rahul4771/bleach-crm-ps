@@ -4526,17 +4526,27 @@ class CheckOutItemAdd(APIView):
 		quantity = request.GET.get('quantity')
 		unit_id = request.GET.get('unit_id')
 		user_id = request.GET.get('user_id')
+		followup = request.GET.get('followup')
 		
 		store_id = request.GET.get('store_id')
 		store = Store.objects.get(id=store_id)
 
-		print(service_item,visit_id,"vis")
-		visit = OrderScheduler.objects.get(id=int(visit_id))
+		print(followup,service_item,visit_id,"vis")
+
+		if followup == 'followup':
+			visit = FollowUpScheduler.objects.get(id=int(visit_id))
+		else:
+			visit = OrderScheduler.objects.get(id=int(visit_id))
 
 		item = InventoryItem.objects.get(id=int(service_item))
 
 		combined_checkout_items_id_list = []
-		checkout_items_id_list1 = CheckOutItems.objects.filter(visit=visit)
+
+		if followup == 'followup':
+			checkout_items_id_list1 = CheckOutItems.objects.filter(followup=visit)
+		else:
+			checkout_items_id_list1 = CheckOutItems.objects.filter(visit=visit)
+
 		for checkout_item in checkout_items_id_list1:
 			if checkout_item.service_item:
 				combined_checkout_items_id_list.append(int(checkout_item.service_item.item.id))
@@ -4554,10 +4564,17 @@ class CheckOutItemAdd(APIView):
 
 				if unit_id:
 					itemunit = ItemUnit.objects.get(id=int(unit_id),is_available=True)
-					checkout_item = CheckOutItems.objects.create(visit=visit,item=item,units=1,item_unit=itemunit)
+
+					if followup == 'followup':
+						checkout_item = CheckOutItems.objects.create(followup=visit,item=item,units=1,item_unit=itemunit)
+					else:
+						checkout_item = CheckOutItems.objects.create(visit=visit,item=item,units=1,item_unit=itemunit)
 					response_dict['message'] = 'Item Added'
 				else:
-					checkout_item = CheckOutItems.objects.create(visit=visit,item=item,units=quantity)
+					if followup == 'followup':
+						checkout_item = CheckOutItems.objects.create(followup=visit,item=item,units=quantity)
+					else:
+						checkout_item = CheckOutItems.objects.create(visit=visit,item=item,units=quantity)
 
 					#updating itemhistory and store quantity in case of submitted check-out
 					if visit.stock_out_items_submitted == True:
@@ -4577,16 +4594,28 @@ class CheckOutItemAdd(APIView):
 							inventory_item.total_quantity = float(inventory_item.total_quantity) - float(quantity)
 							inventory_item.save()
 
-							ItemHistory.objects.create(
-							item = checkout_item.item,
-							quantity = quantity,
-							item_action='STOCK OUT',
-							quantity_location=store,
-							item_remark=checkout_item.visit.order.order_no,
-							purchase_date= date.today(),
-							added_by = UserProfile.objects.get(id=user_id)
-							
-							)
+							if followup == 'followup':
+								ItemHistory.objects.create(
+								item = checkout_item.item,
+								quantity = quantity,
+								item_action='STOCK OUT',
+								quantity_location=store,
+								item_remark=checkout_item.followup.follow_up.investigation.order.order_no,
+								purchase_date= date.today(),
+								added_by = UserProfile.objects.get(id=user_id)
+								
+								)
+							else:
+								ItemHistory.objects.create(
+								item = checkout_item.item,
+								quantity = quantity,
+								item_action='STOCK OUT',
+								quantity_location=store,
+								item_remark=checkout_item.visit.order.order_no,
+								purchase_date= date.today(),
+								added_by = UserProfile.objects.get(id=user_id)
+								
+								)
 
 							response_dict['message'] = 'Item Added'
 						else:
@@ -4630,20 +4659,32 @@ class CheckOutItemEdit(APIView):
 		quantity = request.GET.get('quantity')
 		unit_id = request.GET.get('unit_id')
 		user_id = request.GET.get('user_id')
+		followup = request.GET.get('followup')
 
 		print(visit_id,quantity,"vis")
-		visit = OrderScheduler.objects.get(id=int(visit_id))
+		if followup == 'followup':
+			visit = FollowUpScheduler.objects.get(id=int(visit_id))
+		else:
+			visit = OrderScheduler.objects.get(id=int(visit_id))
 
 		if checkout_item_id:
 			if unit_id:
 				itemunit = ItemUnit.objects.get(id=int(unit_id),is_available=True)
 				
-				checkout_item = CheckOutItems.objects.get(id=int(checkout_item_id),visit=visit)
+				if followup == 'followup':
+					checkout_item = CheckOutItems.objects.get(id=int(checkout_item_id),followup=visit)
+				else:
+					checkout_item = CheckOutItems.objects.get(id=int(checkout_item_id),visit=visit)
+
 				checkout_item.item_unit = itemunit
 				checkout_item.units = 1
 				checkout_item.save()
 			else:
-				checkout_item = CheckOutItems.objects.get(id=int(checkout_item_id),visit=visit)
+				if followup == 'followup':
+					checkout_item = CheckOutItems.objects.get(id=int(checkout_item_id),followup=visit)
+				else:
+					checkout_item = CheckOutItems.objects.get(id=int(checkout_item_id),visit=visit)
+
 				current_quantity = checkout_item.units
 				checkout_item.units = quantity
 				checkout_item.save()
@@ -4798,12 +4839,18 @@ class CheckOutItemDelete(APIView):
 		checkout_item = request.GET.get('item_id')
 
 		visit_id = request.GET.get('visit_id') #for resetting recipe list
+		followup = request.GET.get('followup')
 		
 		deleted_items_list = []
 
 		if visit_id:
 			checkout_items = CheckOutItems.objects.filter(visit__id=int(visit_id)).delete()
-			visit = OrderScheduler.objects.get(id=int(visit_id))
+
+			if followup == 'followup':
+				visit = FollowUpScheduler.objects.get(id=int(visit_id))
+			else:
+				visit = OrderScheduler.objects.get(id=int(visit_id))
+
 			visit.stock_out_items_saved = False
 			visit.save()
 		else:
@@ -4952,20 +4999,28 @@ class ItemsCheckInAPI(APIView):
 		response_dict = {'success':True}
 
 		visit_id    = request.GET.get('item_user')
+		followup    = request.GET.get('followup')
 
-		print(visit_id,"lpo")
+		print(visit_id,followup,"lpo")
 
-		visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(visit_id))
+		if followup == 'followup':
+			visit = FollowUpScheduler.objects.prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(visit_id))
+			item_order_no = visit.follow_up.investigation.order.order_no
+		else:
+			visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(visit_id))
+			item_order_no = visit.order.order_no
 
 		team_leader = None
 		for team in visit.cleaning_team:
 			team_leader = team.team_leader.name
 			response_dict['team_leader'] = team_leader
 
-		return_items = CheckOutItems.objects.filter(is_checked_in=False,visit=visit)
+		if followup == 'followup':
+			return_items = CheckOutItems.objects.filter(is_checked_in=False,followup=visit)			
+		else:
+			return_items = CheckOutItems.objects.filter(is_checked_in=False,visit=visit)			
 
 		items_list = []
-		item_order_no = visit.order.order_no
 		item_visit_id = visit.id
 
 		for item in return_items:
@@ -5011,6 +5066,7 @@ class ItemsCheckInAPI(APIView):
 		response_dict['items_list'] = items_list
 		response_dict['order_no'] = item_order_no
 		response_dict['visit_id'] = item_visit_id
+		response_dict['followup'] = followup
 
 		print(items_list,"ret")
 
@@ -5025,6 +5081,7 @@ class ItemsCheckInAPI(APIView):
 		store = Store.objects.get(id=int(store_id))
 		inventory_user = UserProfile.objects.get(id=int(user_id))
 		visit_id = request.data.get('visit_id')
+		followup = request.data.get('followup')
 		print(item_quantities,"qts")
 
 		count = 0
@@ -5032,12 +5089,19 @@ class ItemsCheckInAPI(APIView):
 		
 		for item_id in item_ids:
 			checkin_item = CheckOutItems.objects.prefetch_related(Prefetch('checkoutitem',CheckOutItemUnits.objects.all(),to_attr="checkin_item_units")).get(id=int(item_id),is_checked_in=False)
-			checkout_visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(checkin_item.visit.id))
+			
+			if checkin_item.followup:
+				checkout_visit = FollowUpScheduler.objects.prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(checkin_item.followup.id))
+			else:
+				checkout_visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(checkin_item.visit.id))
 
 			for team in checkout_visit.cleaning_team:
 				team_leader = team.team_leader
 
-			visits = OrderScheduler.objects.filter(order__order_no=checkout_visit.order.order_no,start_at=checkout_visit.start_at,cleaning_team_order_scheduler__team_leader=team_leader)
+			if checkin_item.followup:
+				visits = FollowUpScheduler.objects.filter(follow_up__investigation__order__order_no=checkout_visit.follow_up.investigation.order.order_no,start_at=checkout_visit.start_at,followupteam_followupschedule__team_leader=team_leader)
+			else:
+				visits = OrderScheduler.objects.filter(order__order_no=checkout_visit.order.order_no,start_at=checkout_visit.start_at,cleaning_team_order_scheduler__team_leader=team_leader)
 
 			print(item_quantities[count],"iom")
 			checkin_item.is_checked_in = True
@@ -5092,15 +5156,26 @@ class ItemsCheckInAPI(APIView):
 					quantity = float(item_quantities[count])
 					)
 
-				ItemHistory.objects.create(
-				item = inventoryitem,
-				quantity = item_quantities[count],
-				item_action='STOCK IN',
-				quantity_location=store,
-				item_remark=checkin_item.visit.order.order_no,
-				purchase_date= date.today(),
-				added_by = team_leader
-				)
+				if checkin_item.followup:
+					ItemHistory.objects.create(
+					item = inventoryitem,
+					quantity = item_quantities[count],
+					item_action='STOCK IN',
+					quantity_location=store,
+					item_remark=checkin_item.followup.follow_up.investigation.order.order_no,
+					purchase_date= date.today(),
+					added_by = team_leader
+					)
+				else:
+					ItemHistory.objects.create(
+					item = inventoryitem,
+					quantity = item_quantities[count],
+					item_action='STOCK IN',
+					quantity_location=store,
+					item_remark=checkin_item.visit.order.order_no,
+					purchase_date= date.today(),
+					added_by = team_leader
+					)
 
 				count += 1
 
@@ -5120,15 +5195,26 @@ class ItemsCheckInAPI(APIView):
 					quantity = float(item_quantities[count])
 					)
 
-				ItemHistory.objects.create(
-				item = inventoryitem,
-				quantity = item_quantities[count],
-				item_action='STOCK IN',
-				quantity_location=store,
-				item_remark=checkin_item.visit.order.order_no,
-				purchase_date= date.today(),
-				added_by = team_leader
-				)
+				if checkin_item.followup:
+					ItemHistory.objects.create(
+					item = inventoryitem,
+					quantity = item_quantities[count],
+					item_action='STOCK IN',
+					quantity_location=store,
+					item_remark=checkin_item.followup.follow_up.investigation.order.order_no,
+					purchase_date= date.today(),
+					added_by = team_leader
+					)
+				else:
+					ItemHistory.objects.create(
+					item = inventoryitem,
+					quantity = item_quantities[count],
+					item_action='STOCK IN',
+					quantity_location=store,
+					item_remark=checkin_item.visit.order.order_no,
+					purchase_date= date.today(),
+					added_by = team_leader
+					)
 
 				count += 1
 
@@ -5139,12 +5225,18 @@ class ItemsCheckInAPI(APIView):
 				visit.save()
 
 		#saving check in status if items are empty
-		checkout_visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(visit_id))
+		if followup == 'followup':
+			checkout_visit = FollowUpScheduler.objects.prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(visit_id))
+		else:
+			checkout_visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(id=int(visit_id))
 		
 		for team in checkout_visit.cleaning_team:
 			team_leader = team.team_leader
 
-		visits = OrderScheduler.objects.filter(order__order_no=checkout_visit.order.order_no,start_at=checkout_visit.start_at,cleaning_team_order_scheduler__team_leader=team_leader)
+		if followup == 'followup':
+			visits = FollowUpScheduler.objects.filter(follow_up__investigation__order__order_no=checkout_visit.follow_up.investigation.order.order_no,start_at=checkout_visit.start_at,followupteam_followupschedule__team_leader=team_leader)
+		else:
+			visits = OrderScheduler.objects.filter(order__order_no=checkout_visit.order.order_no,start_at=checkout_visit.start_at,cleaning_team_order_scheduler__team_leader=team_leader)
 
 		for visit in visits:
 			visit.stock_in_initiated = True

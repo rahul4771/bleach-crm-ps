@@ -82,7 +82,7 @@ class InventoryHome(IsInventoryAdminUser,View):
 		print(calendar_order_schedules_list,calendar_order_schedules_duplicates,calendar_order_schedules_alls,"datass")
 
 		cleaning_orders = OrderScheduler.objects.filter(id__in=calendar_order_schedules_list).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
-		followup_orders = FollowUpScheduler.objects.filter(start_at__gte=order_date_start,start_at__lte=order_date_end).filter(Q(work_status='FOLLOW_UP_TEAM_ASSIGNED')|Q(work_status='FOLLOW_UP_CLEANING_IN_PROGRESS')|Q(work_status='FOLLOW_UP_CLEANING_FULFILLED')).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='followup_team')).order_by('-start_at')
+		followup_orders = FollowUpScheduler.objects.filter(start_at__gte=order_date_start,start_at__lte=order_date_end).filter(Q(work_status='FOLLOW_UP_TEAM_ASSIGNED')|Q(work_status='FOLLOW_UP_CLEANING_IN_PROGRESS')|Q(work_status='FOLLOW_UP_CLEANING_FULFILLED')).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
 		
 		orders = list(chain(cleaning_orders,followup_orders))
 		# print(followup_orders,"followups")
@@ -1889,9 +1889,13 @@ class InventoryOrder(IsInventoryAdminUser,View):
 				calendar_order_schedules_duplicates.append(calendar_order_schedules_all.duplicate)
 		
 		if search:
-			orders = OrderScheduler.objects.filter(id__in=calendar_order_schedules_list).filter(Q(order_scheduler_book__service_type__icontains=search)|Q(cleaning_team_order_scheduler__team_leader__name__icontains=search)).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
+			cleaning_orders = OrderScheduler.objects.filter(id__in=calendar_order_schedules_list).filter(Q(order_scheduler_book__service_type__icontains=search)|Q(cleaning_team_order_scheduler__team_leader__name__icontains=search)).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
+			followup_orders = FollowUpScheduler.objects.filter(start_at__gte=order_date_start,start_at__lte=order_date_end).filter(Q(follow_up__investigation__order_schedule__order_scheduler_book__service_type__icontains=search)|Q(followupteam_followupschedule__team_leader__name__icontains=search)).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
 		else:
-			orders = OrderScheduler.objects.filter(id__in=calendar_order_schedules_list).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
+			cleaning_orders = OrderScheduler.objects.filter(id__in=calendar_order_schedules_list).select_related('order__evaluation__customer','customer_address','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
+			followup_orders = FollowUpScheduler.objects.filter(start_at__gte=order_date_start,start_at__lte=order_date_end).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
+
+		orders = list(chain(cleaning_orders,followup_orders))
 
 		#PAGINATION ORDERS
 		no_of_entries = request.GET.get('no_of_entries')
@@ -1930,10 +1934,14 @@ class PendingItems(IsInventoryAdminUser,View):
 		search = request.GET.get('search')
 
 		if search:
-			checkout_items = CheckOutItems.objects.filter(is_checked_in=False,visit__stock_in_initiated=True).filter(Q(service_item__item__is_reusable=True)|Q(item__is_reusable=True)).filter(Q(visit__order__order_no__icontains=search)|Q(is_collected_by__name__icontains=search)|Q(service_item__item__name__icontains=search)|Q(item__name__icontains=search)|Q(service_item__item__item_code__icontains=search)|Q(item__item_code__icontains=search)).select_related('visit').prefetch_related(Prefetch('visit__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team'))
+			checkout_items_cleaning = CheckOutItems.objects.filter(is_checked_in=False,visit__stock_in_initiated=True).filter(Q(service_item__item__is_reusable=True)|Q(item__is_reusable=True)).filter(Q(visit__order__order_no__icontains=search)|Q(is_collected_by__name__icontains=search)|Q(service_item__item__name__icontains=search)|Q(item__name__icontains=search)|Q(service_item__item__item_code__icontains=search)|Q(item__item_code__icontains=search)).select_related('visit').prefetch_related(Prefetch('visit__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team'))
+			checkout_items_followup = CheckOutItems.objects.filter(is_checked_in=False,followup__stock_in_initiated=True).filter(Q(service_item__item__is_reusable=True)|Q(item__is_reusable=True)).filter(Q(followup__follow_up__investigation__order__order_no__icontains=search)|Q(is_collected_by__name__icontains=search)|Q(service_item__item__name__icontains=search)|Q(item__name__icontains=search)|Q(service_item__item__item_code__icontains=search)|Q(item__item_code__icontains=search)).select_related('followup').prefetch_related(Prefetch('followup__followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='cleaning_team'))
 		else:
-			checkout_items = CheckOutItems.objects.filter(is_checked_in=False,visit__stock_in_initiated=True).filter(Q(service_item__item__is_reusable=True)|Q(item__is_reusable=True)).select_related('visit').prefetch_related(Prefetch('visit__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team'))
+			checkout_items_cleaning = CheckOutItems.objects.filter(is_checked_in=False,visit__stock_in_initiated=True).filter(Q(service_item__item__is_reusable=True)|Q(item__is_reusable=True)).select_related('visit').prefetch_related(Prefetch('visit__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team'))
+			checkout_items_followup = CheckOutItems.objects.filter(is_checked_in=False,followup__stock_in_initiated=True).filter(Q(service_item__item__is_reusable=True)|Q(item__is_reusable=True)).select_related('followup').prefetch_related(Prefetch('followup__followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='cleaning_team'))
 		
+		checkout_items = list(chain(checkout_items_cleaning,checkout_items_followup))
+
 		#PAGINATION ITEMS
 		no_of_entries = request.GET.get('no_of_entries')
 		if not no_of_entries:
@@ -2349,9 +2357,9 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 		return render(request,'inventory/createCheckout.html',{"store":store,"max_area":max_area,"cleaners":cleaners,"stock_out":stock_out,"price_ranges":price_ranges,"visit":checkout_visit,"visits":visits,"items":items,"check_out_items":check_out_items})
 
 	def post(self,request,visit_id):
-		followup = request.GET.get('followup')
+		followup = request.POST.get('followup_check')
 
-		if followup:
+		if followup == 'followup':
 			checkout_visit = FollowUpScheduler.objects.select_related('follow_up__investigation__order_schedule__order_scheduler_book').prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team'),Prefetch('follow_up__investigation__order_schedule__order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections')).get(id=int(visit_id))
 			followup = True	
 		else:
@@ -2362,7 +2370,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 			team_leader = team.team_leader
 
 		if followup == True:
-			visits = FollowUpScheduler.objects.filter(follow_up__investigation__order__order_no=checkout_visit.order.order_no,start_at=checkout_visit.start_at,followupteam_followupschedule__team_leader=team_leader)
+			visits = FollowUpScheduler.objects.filter(follow_up__investigation__order__order_no=checkout_visit.follow_up.investigation.order.order_no,start_at=checkout_visit.start_at,followupteam_followupschedule__team_leader=team_leader)
 		else:
 			visits = OrderScheduler.objects.filter(order__order_no=checkout_visit.order.order_no,start_at=checkout_visit.start_at,cleaning_team_order_scheduler__team_leader=team_leader)
 		
