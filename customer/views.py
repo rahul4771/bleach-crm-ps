@@ -8501,6 +8501,7 @@ class CartAPI(APIView):
 		response_dict['data'] = cart_services
 		response_dict['customer'] = customer_data
 		response_dict['cart_id'] = cart.id
+		response_dict['no_of_visits'] = cart.no_of_visits
 		response_dict['customer_ip_address'] = get_client_ip(request)
 		response_dict['is_scheduled'] = cart.is_scheduled
 
@@ -8620,6 +8621,7 @@ class CartAPI(APIView):
 
 			cart.total_cost = round(float(cart.total_cost) / float(cartschedules.count()),3)
 			cart.is_scheduled = False
+			cart.no_of_visits = 0
 			cart.save()
 
 			cartschedules.delete()
@@ -8757,6 +8759,7 @@ class CartScheduleAPI(APIView):
 
 		#cart total cost update
 		cart.is_scheduled = True
+		cart.no_of_visits = len(slots)
 		cart.total_cost = round(float(cart.total_cost) * float(len(slots)),3)
 		cart.save()
 

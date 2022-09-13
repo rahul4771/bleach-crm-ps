@@ -436,10 +436,16 @@ class CheckOutItems(models.Model):
     created              = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        return str(self.visit.order.order_no)
+        if self.visit:
+            return str(self.visit.order.order_no)
+        else:
+            return str(self.followup.follow_up.investigation.order.order_no)
 
     def __str__(self):
-        return self.visit.order.order_no
+        if self.visit:
+            return self.visit.order.order_no
+        else:
+            return self.followup.follow_up.investigation.order.order_no
 
 class CheckOutItemUnits(models.Model):
     checkout_item        = models.ForeignKey(CheckOutItems,blank=True,null=True,related_name='checkoutitem')

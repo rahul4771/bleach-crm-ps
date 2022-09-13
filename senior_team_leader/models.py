@@ -142,10 +142,10 @@ class FollowUpTeam(models.Model):
 	updated            = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.team_leader.name)
+		return str(self.team_leader.name)+'-'+str(self.followup_scheduler.follow_up.investigation.order.order_no)
 
 	def __str__(self):
-		return self.team_leader.name
+		return self.team_leader.name+'-'+self.followup_scheduler.follow_up.investigation.order.order_no
 
 #For Tracking Medias Uploaded by Followup Team Leader on Site
 

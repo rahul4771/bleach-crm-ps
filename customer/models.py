@@ -56,6 +56,7 @@ class CustomerCart(models.Model):
 	customer_address	= models.ForeignKey(Address,blank=True,null=True)
 	total_cost  		= models.CharField(max_length=10,default=0,blank=False,null=False)
 	is_scheduled		= models.BooleanField(default=False)
+	no_of_visits		= models.IntegerField(default=0,null=False,blank=False)
 	
 
 	is_active    		= models.BooleanField(null=False,blank=True,default=True)

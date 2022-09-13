@@ -434,10 +434,10 @@ class FollowUp(models.Model):
 		super(FollowUp, self).save(*args, **kwargs)
 	
 	def __unicode__(self):
-		return str(self.ticket_no)
+		return str(self.ticket_no)+'-'+str(self.investigation.order.order_no)
 
 	def __str__(self):
-		return str(self.ticket_no)
+		return str(self.ticket_no)+'-'+str(self.investigation.order.order_no)
 
 #Devide an Followup into a number of Schedules.This is to handle multiple days cleaning,multiple address cleaning Subscription Cleaning etc...
 
@@ -461,10 +461,10 @@ class FollowUpScheduler(models.Model):
 	updated         	= models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.id)
+		return str(self.follow_up.investigation.order.order_no)
 
 	def __str__(self):
-		return str(self.id)
+		return str(self.follow_up.investigation.order.order_no)
 
 class FollowUpSection(models.Model):
 	follow_up 			= models.ForeignKey('FollowUp',blank=False,null=False,related_name='follow_up_of_section')
