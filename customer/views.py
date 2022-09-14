@@ -745,18 +745,18 @@ class EditCustomerProfile(View):
 		response_dict = {'success':False}
 
 		customer_id = request.data.get('id')
-        customer    = UserProfile.objects.get(id=user_id,is_active=True)
-    
-        customer_edit_serializer     = UserProfileEditSerializer(instance=customer,data=request.data)
+		customer    = UserProfile.objects.get(id=user_id,is_active=True)
+
+		customer_edit_serializer     = UserProfileEditSerializer(instance=customer,data=request.data)
 
 		if customer_edit_serializer.is_valid():
-            customer_edit_serializer.save()
-            
-            response_dict['success']   = True
-            response_dict['message']   = 'Customer Profile Updated Succesfully'
+			customer_edit_serializer.save()
+			
+			response_dict['success']   = True
+			response_dict['message']   = 'Customer Profile Updated Succesfully'
 
-        else:
-            response_dict['message']   = get_error(customer_edit_serializer)
+		else:
+			response_dict['message']   = get_error(customer_edit_serializer)
 
 		return Response(response_dict, HTTP_200_OK)
 
