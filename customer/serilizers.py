@@ -19,7 +19,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class UserProfileEditSerializer(serializers.ModelSerializer):
     class Meta:
         model  = UserProfile
-        fields = ('name','gender','email','nationality','customer_type','company','job_title','mobile_number','sms_preference','is_whatsapp','is_email','is_sms')
+        fields = ('id','name','gender','email','nationality','customer_type','company','job_title','mobile_number','sms_preference','is_whatsapp','is_email','is_sms')
 
 class AddressSaveSerializer(serializers.ModelSerializer): 
 	class Meta:

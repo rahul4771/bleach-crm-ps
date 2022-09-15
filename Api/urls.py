@@ -3,6 +3,8 @@ from Api import views
 
 urlpatterns = [
 
+	url(r'countries/$',views.CountriesAPI.as_view(),name='countries'),
+
 	url(r'^checkslote/$',views.ApiCheckSlote.as_view(),name='api-checkslote'),
 	url(r'^basicdetails/$',views.ApiBasicDetails.as_view(),name='api-basicdetails'),
 	url(r'^callback-status-update/$',views.CallbackStatusUpdate.as_view(),name='api-callback-status-update'),
@@ -41,6 +43,9 @@ urlpatterns = [
 	url(r'^soa-mail/$',views.SOAMailAPI.as_view(),name='api-soa-mail'),
 	url(r'^invoice-mail-sms/$',views.InvoiceSMSMailAPI.as_view(),name='api-invoice-mail'),
 	url(r'^website-inquiry-mail/$',views.WebsiteInquiryMailAPI.as_view(),name='api-website-inquiry-mail'),
+
+	#smstest
+	url(r'^sms-test/$',views.SmstestAPI.as_view(),name='api-sms-test'),
 
 	url(r'^payment/response/credit/$',views.PaymentResponseCredit.as_view(),name='api-responsecredit'),
 	url(r'^daily-sales-list/$',views.DailySalesAPI.as_view(),name='api-daily-sales'),

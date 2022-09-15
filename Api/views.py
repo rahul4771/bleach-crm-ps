@@ -43,9 +43,18 @@ from rest_framework.status import HTTP_200_OK
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication 
 from rest_framework.authtoken.models import Token
-
+from django_countries import countries
 from agent.serializers import UserProfileShowSerializer
 
+class CountriesAPI(APIView):
+    permission_classes     = (AllowAny,)
+    authentication_classes = ()
+
+    def get(self,request):
+        response_dict = {'success':False}
+        response_dict['countries'] = list(countries)
+        response_dict['success'] = True
+        return Response(response_dict, HTTP_200_OK)
 
 # Create your views here.
 class ApiCheckSlote(APIView):
@@ -6382,4 +6391,28 @@ class BambooLeaveUpdateAPI(APIView):
 			leave_response = requests.request("PUT", add_leave_url, json=payload, headers=headers)
 
 		response_dict['success']  = True
+
+class SmstestAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		response_dict = {}
+
+		url = "https://smsapi.future-club.com/fccsms.aspx"
+		message = "Dear Customer, this is a bleach sms test. "
+
+		querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"96510001034","M":message,"IID":"1468","L":"L"}
+		
+		headers = {
+			'cache-control': "no-cache"
+		}
+
+		response = requests.request("GET", url, headers=headers, params=querystring)
+
+		print(response.text)
+
+		response_dict['message'] = response.text
+
+		return Response(response_dict,HTTP_200_OK)
 
