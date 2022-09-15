@@ -742,7 +742,7 @@ class SubscriptionQuatation(View):
 
 class EditCustomerProfile(APIView):
 	permission_classes     = (IsAuthenticated,)
-    authentication_classes = (TokenAuthentication,)
+	authentication_classes = (TokenAuthentication,)
 
 	def get(self,request):
 		customer_id = request.GET.get('customer_id')
