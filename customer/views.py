@@ -748,7 +748,7 @@ class EditCustomerProfile(APIView):
 		response_dict = {'success':False}
 
 		customer_id = request.data.get('id')
-		customer    = UserProfile.objects.get(id=user_id,is_active=True)
+		customer    = UserProfile.objects.get(id=customer_id,is_active=True)
 
 		customer_edit_serializer     = UserProfileEditSerializer(instance=customer,data=request.data)
 
