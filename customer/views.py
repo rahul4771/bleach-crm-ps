@@ -744,13 +744,6 @@ class EditCustomerProfile(APIView):
 	permission_classes     = (IsAuthenticated,)
 	authentication_classes = (TokenAuthentication,)
 
-	def get(self,request):
-		customer_id = request.GET.get('customer_id')
-		customer    = UserProfile.objects.get(id=user_id,is_active=True)
-		customer_serializer = UserProfileEditSerializer(instance=customer,read_only=True,many=False).data
-		response_dict = {'data':customer_serializer}
-		return Response(response_dict, HTTP_200_OK)
-
 	def post(self,request):
 		response_dict = {'success':False}
 

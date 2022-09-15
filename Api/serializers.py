@@ -20,7 +20,7 @@ class DiscountSettingSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model  = UserProfile
-        fields = ('id','name','gender','email','nationality','customer_type','company','job_title','mobile_number','phone_number','sms_preference','is_whatsapp','is_email','is_sms')   
+        fields = ('id','name','gender','email','nationality','date_day','date_month','date_year','customer_type','company','job_title','mobile_number','phone_number','sms_preference','is_whatsapp','is_email','is_sms')   
     
     def __init__(self,*args,**kwargs):
         super(UserProfileSerializer, self).__init__(*args, **kwargs)
