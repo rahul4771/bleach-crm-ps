@@ -5914,8 +5914,20 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 		except:
 			CustomerOTP.objects.create(mobile_number=customer_mobile,otp=customer_otp)
 
+		#otp sms
+		url = "https://smsapi.future-club.com/fccsms.aspx"
+
+		message = "Dear Customer, your OTP for login is "+customer_otp+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+
+		querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+customer_mobile+"","M":message,"IID":"1468","L":"L"}
+
+		headers = {
+			'cache-control': "no-cache"
+		}
+
+		response = requests.request("GET", url, headers=headers, params=querystring)
+
 		response_dict['customer_mobile'] = customer_mobile
-		response_dict['customer_otp'] = customer_otp
 
 		return Response(response_dict,HTTP_200_OK)
 
@@ -6213,6 +6225,47 @@ class EvaluationBookingAPI(APIView):
 			response_dict['evaluation_note']= evaluation_details.attender_note
 			response_dict['customer']       = UserProfileSerializer(customer,many=False).data
 			response_dict['success']        = True
+
+			#evaluation appoinment sms
+			if evaluator.gender == 'MALE':
+				title = 'Mr.'
+			else:
+				title = 'Ms.'
+
+			#address check for floor,avenue None
+			if address.floor == None and address.avenue == None:
+				address_list = [address.apartment, address.street, address.building, address.block, address.area.name, address.governorate.name]
+			
+			elif address.floor == None:
+				address_list = [address.apartment, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+			
+			elif address.avenue == None:
+				address_list = [address.apartment, address.floor, address.street, address.building, address.block, address.area.name, address.governorate.name]
+			
+			else:
+				address_list = [address.apartment, address.floor, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+
+			separator = ", "
+
+			url = "https://smsapi.future-club.com/fccsms.aspx"
+
+			if customer.sms_preference == 'ENGLISH':
+
+				message = "Dear Customer , We have confirmed your Evaluation Appointment. "+ title +" "+evaluator.name+" will be visiting you on "+datetime.strftime(evaluation_details.proposed_time,'%d-%m-%Y %I:%M %p')+" at  "+ separator.join(address_list) +". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+
+				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+
+			else:
+
+				message = "عزيزينا العميل تم تأكيد موعد المعاينة الخاص بك.  "+ title +" "+evaluator.name+" سيقوم بالزيارة في "+datetime.strftime(evaluation_details.proposed_time,'%d-%m-%Y %I:%M %p')+" في "+ separator.join(address_list)+" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+  شكراً لاختياركم بليتش لخدمات التنظيف"
+
+				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+			
+			headers = {
+				'cache-control': "no-cache"
+			}
+
+			response = requests.request("GET", url, headers=headers, params=querystring)
 		else:
 			response_dict['Error']          = "Evaluators not Available...Please Change date or Slote !"
 		
