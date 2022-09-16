@@ -5961,7 +5961,7 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 				customer = UserProfile.objects.get(is_active=True,user_type='CUSTOMER',mobile_number=int(customer_mobile))
 				
 				response_dict['existing_customer'] = True
-				response_dict['customer'] = UserProfileSerializer(instance=customer,many=False).data
+				response_dict['customer'] = UserProfileSerializer(instance=customer,many=False,fields_to_remove=['date_day','date_month']).data
 
 				#generating a password using customer name and mobile
 				customer_password = str(customer.username)[:4]+'_'+str(customer.mobile_number)[:4]
@@ -5992,7 +5992,7 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 
 				customer_data['mobile_number'] = customer_mobile
 				
-				serializer = UserProfileSerializer(data=customer_data)
+				serializer = UserProfileSerializer(data=customer_data,fields_to_remove=['date_day','date_month'])
 
 				if serializer.is_valid():   
 					customer = serializer.save(username=generate_random_username(),user_type='CUSTOMER')

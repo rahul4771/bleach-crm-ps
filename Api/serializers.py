@@ -29,7 +29,18 @@ class UserProfileSerializer(serializers.ModelSerializer):
         self.fields['gender'].required        = True
         self.fields['email'].required         = True
         self.fields['mobile_number'].required = True
-        self.fields['nationality'].required   = True  
+        self.fields['nationality'].required   = True 
+
+    def __init__(self, *args, **kwargs):
+        fields_to_remove = kwargs.pop('fields_to_remove', None)
+
+        super(UserProfileSerializer, self).__init__(*args, **kwargs)
+
+        if fields_to_remove is not None:
+            # Drop any fields that are specified in the `fields_to_remove` argument.
+            not_allowed = set(fields_to_remove)
+            for field_name in not_allowed:
+                self.fields.pop(field_name)
 
 class UsersListSerializer(serializers.ModelSerializer):
     photo_url = serializers.SerializerMethodField()
