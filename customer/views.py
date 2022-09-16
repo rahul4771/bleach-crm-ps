@@ -49,7 +49,7 @@ from rest_framework import status
 from rest_framework.authentication import TokenAuthentication 
 from rest_framework.authtoken.models import Token
 from bleach_crm_ps.api_permissions import IsCustomerPermission
-from customer.serilizers import CartServiceShowSerializer,CartServiceSerializer,CartScheduleSerializer,UserProfileSerializer,AddressSerializer,AddressSaveSerializer,EvaluationBookSerializer,EvaluationBookSectionSerializer,EvaluationSectionKeynoteSerializer,EvaluationSerializer,OrderSerializer,EvaluationDetailsSerializer,CustomerBookingSerializer,EvaluationSectionAddonSerializer
+from customer.serilizers import UserProfileEditSerializer,CartServiceShowSerializer,CartServiceSerializer,CartScheduleSerializer,UserProfileSerializer,AddressSerializer,AddressSaveSerializer,EvaluationBookSerializer,EvaluationBookSectionSerializer,EvaluationSectionKeynoteSerializer,EvaluationSerializer,OrderSerializer,EvaluationDetailsSerializer,CustomerBookingSerializer,EvaluationSectionAddonSerializer
 from bleachadmin.serializers import ServiceAddOnsSerializer
 from agent.serializers import UserProfileShowSerializer
 from Api.serializers import ServicePriceRangeSerializer,OrderScheduleShowSerializer,EvaluationBookAPISerializer,SectionAPISerializer,EvaluationDetailsAPISerializer
@@ -739,6 +739,30 @@ class SubscriptionQuatation(View):
 				return redirect('customer:subscriptionquatation',evaluation_id_encrypted)
 
 		return redirect('customer:subscriptionquatation',evaluation_id_encrypted)
+
+class EditCustomerProfile(APIView):
+	permission_classes     = (IsAuthenticated,)
+	authentication_classes = (TokenAuthentication,)
+
+	def post(self,request):
+		response_dict = {'success':False}
+
+		customer_id = request.data.get('id')
+		customer    = UserProfile.objects.get(id=customer_id,is_active=True)
+
+		customer_edit_serializer     = UserProfileEditSerializer(instance=customer,data=request.data)
+
+		if customer_edit_serializer.is_valid():
+			customer_edit_serializer.save()
+			
+			response_dict['success']   = True
+			response_dict['message']   = 'Customer Profile Updated Succesfully'
+
+		else:
+			response_dict['message']   = get_error(customer_edit_serializer)
+
+		return Response(response_dict, HTTP_200_OK)
+
 class BleachCustomerInvoice(View):
 	def get(self,request,evaluation_id):
 
@@ -3397,12 +3421,20 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 			team_leaders_scheduled      = []
 			team_members_scheduled      = []
 
-			slote_start_datetime 			  = datetime.strptime(cleaning_datetime,'%d-%m-%Y %I:%M %p')
-			slote_end_datetime                = slote_start_datetime+timedelta(hours=cleaning_hours)
-			slote_start_time 			      = slote_start_datetime.time()
-			slote_end_time                    = slote_end_datetime.time()
-			start_at_date                     = slote_start_datetime.date()
-			end_at_date                       = slote_end_datetime.date()
+			if shift_availability_check == 'before':
+				slote_start_datetime 			  = datetime.strptime(cleaning_datetime,'%d-%m-%Y %I:%M %p')
+				slote_end_datetime                = datetime.strptime(cleaning_datetime,'%d-%m-%Y %I:%M %p')
+				slote_start_time 			      = slote_start_datetime.time()
+				slote_end_time                    = slote_end_datetime.time()
+				start_at_date                     = slote_start_datetime.date()
+				end_at_date                       = slote_end_datetime.date()
+			else:
+				slote_start_datetime 			  = datetime.strptime(cleaning_datetime,'%d-%m-%Y %I:%M %p')
+				slote_end_datetime                = slote_start_datetime+timedelta(hours=cleaning_hours)
+				slote_start_time 			      = slote_start_datetime.time()
+				slote_end_time                    = slote_end_datetime.time()
+				start_at_date                     = slote_start_datetime.date()
+				end_at_date                       = slote_end_datetime.date()
 
 			#absent cleaners and leaders	
 			absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(leave_date=start_at_date)|Q(leave_date=end_at_date)).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)

@@ -16,6 +16,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
 		fields = ('id','name','gender','email','mobile_number','date_day','date_month','date_year','sms_preference')	
 		read_only_fields =('id',)
 
+class UserProfileEditSerializer(serializers.ModelSerializer):
+    class Meta:
+        model  = UserProfile
+        fields = ('id','name','gender','email','nationality','customer_type','date_day','date_month','date_year','company','job_title','mobile_number','sms_preference','is_whatsapp','is_email','is_sms')
+
 class AddressSaveSerializer(serializers.ModelSerializer): 
 	class Meta:
 		model  = Address
