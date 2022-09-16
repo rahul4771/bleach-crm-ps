@@ -6123,7 +6123,7 @@ class CustomerAddressesAPI(APIView):
 
 			for address in customer_addresses:
 				address['customer'] = customer_id
-				
+				address['currently_active'] = True
 				address_serializer = AddressAddEditSerializer(data=address,context={'user':request.user})
 
 				if address_serializer.is_valid():
