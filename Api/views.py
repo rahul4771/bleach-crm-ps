@@ -5927,8 +5927,9 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 			}
 
 			response = requests.request("GET", url, headers=headers, params=querystring)
+			response_dict['sms_status'] = response.text
 		except:
-			response_dict['sms_error'] = 'You have entered an invalid mobile number. Please Try again.'
+			response_dict['sms_status'] = 'You have entered an invalid mobile number. Please Try again.'
 
 		response_dict['customer_mobile'] = customer_mobile
 
