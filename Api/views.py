@@ -5917,7 +5917,7 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 		#otp sms
 		url = "https://smsapi.future-club.com/fccsms.aspx"
 
-		message = "Dear Customer, your OTP for login is "+customer_otp+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+		message = "Dear Customer, your OTP for login is "+str(customer_otp)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 
 		querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+customer_mobile+"","M":message,"IID":"1468","L":"L"}
 
