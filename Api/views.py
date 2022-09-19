@@ -5817,15 +5817,15 @@ class WebsiteInquiryMailAPI(APIView):
 		msg_html = render_to_string('email/website-inquiry.html',{"customer_organization":customer_organization,"customer_inquiry_type":customer_inquiry_type,"customer_name":customer_name,"customer_contact":customer_contact,"customer_email":customer_email,"customer_message":customer_message})
 		
 		if customer_inquiry_type == 'Career Seekers':
-			msg = EmailMultiAlternatives('Website - Career', '', 'notification@bleach-kw.com', ['rangeen.suresh@bleach-kw.com'])
+			msg = EmailMultiAlternatives('Website - Career', '', 'notification@bleach-kw.com', ['recruitment@bleach-kw.com'])
 		elif customer_inquiry_type == 'Investor Relations':
-			msg = EmailMultiAlternatives('Website - Investor', '', 'notification@bleach-kw.com', ['sonu.george@bleach-kw.com'])
+			msg = EmailMultiAlternatives('Website - Investor', '', 'notification@bleach-kw.com', ['info@bleach-kw.com'])
 		elif customer_inquiry_type == 'Media':
-			msg = EmailMultiAlternatives('Website - Media', '', 'notification@bleach-kw.com', ['sonu.george@bleach-kw.com'])
+			msg = EmailMultiAlternatives('Website - Media', '', 'notification@bleach-kw.com', ['info@bleach-kw.com'])
 		elif customer_inquiry_type == 'Partners':
-			msg = EmailMultiAlternatives('Website - Partners', '', 'notification@bleach-kw.com', ['sonu.george@bleach-kw.com'])
+			msg = EmailMultiAlternatives('Website - Partners', '', 'notification@bleach-kw.com', ['info@bleach-kw.com'])
 		else:
-			msg = EmailMultiAlternatives('Website - Request For Service', '', 'notification@bleach-kw.com', ['vinayak.muralidharan@bleach-kw.com'])
+			msg = EmailMultiAlternatives('Website - Request For Service', '', 'notification@bleach-kw.com', ['customercare@bleach-kw.com'])
 
 		msg.attach_alternative(msg_html, "text/html")
 		msg.send(fail_silently=False)
@@ -5914,22 +5914,22 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 		except:
 			CustomerOTP.objects.create(mobile_number=customer_mobile,otp=customer_otp)
 
-		try:
-			#otp sms
-			url = "https://smsapi.future-club.com/fccsms.aspx"
+		# try:
+		# 	#otp sms
+		# 	url = "https://smsapi.future-club.com/fccsms.aspx"
 
-			message = "Dear Customer, your OTP for login is "+str(customer_otp)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+		# 	message = "Dear Customer, your OTP for login is "+str(customer_otp)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 
-			querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+customer_mobile+"","M":message,"IID":"1468","L":"L"}
+		# 	querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+customer_mobile+"","M":message,"IID":"1468","L":"L"}
 
-			headers = {
-				'cache-control': "no-cache"
-			}
+		# 	headers = {
+		# 		'cache-control': "no-cache"
+		# 	}
 
-			response = requests.request("GET", url, headers=headers, params=querystring)
-			response_dict['sms_status'] = response.text
-		except:
-			response_dict['sms_status'] = 'You have entered an invalid mobile number. Please Try again.'
+		# 	response = requests.request("GET", url, headers=headers, params=querystring)
+		# 	response_dict['sms_status'] = response.text
+		# except:
+		# 	response_dict['sms_status'] = 'You have entered an invalid mobile number. Please Try again.'
 
 		response_dict['customer_mobile'] = customer_mobile
 
