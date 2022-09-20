@@ -1716,7 +1716,8 @@
                             {% if request.user.user_type == 'ADMIN' or request.user.user_type == 'TECHNICALSUPERVISOR' or request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'TEAMINCHARGE'  %}
                                 
                             {% elif request.user.user_type == 'AGENT' %}
-                                {% if evaluationdetail.evaluator == None and request.user.id == order.evaluation.call_attender.id %}
+                                {% comment %} {% if evaluationdetail.evaluator == None and request.user.id == order.evaluation.call_attender.id %} {% endcomment %}
+                                {% comment %} ABOVE IS the condition to allow the agent to edit only his orders {% endcomment %}
                                 <div class="order-edit">
                                     <img class="pointer" v-if="!edit" 
                                     data-service="{{evaluationbook.service_type.name}}" onclick="editService(this)"
@@ -1726,7 +1727,7 @@
                                     <input name="paid" type="button" @click="edit = false" class="done-button" value="Done"
                                         id="done">
                                 </div>
-                                {% endif %}
+                                {% comment %} {% endif %} {% endcomment %}
                             
                             {% elif request.user.user_type == 'EVALUATOR' %}
                                 {% if evaluationdetail.evaluator.id == request.user.id or request.user.id == order.evaluation.call_attender.id %}
