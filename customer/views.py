@@ -3360,14 +3360,11 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 	def post(self,request):
 		dropdown_slotes  = {}
 
-		try:
-			number_of_cleaners  = int(request.data.get('number_of_cleaners'))-1
-		except:
-			number_of_cleaners  = 0
+		number_of_cleaners  = int(request.data.get('number_of_cleaners'))-1
 
 		cleaning_hours      = float(request.data.get('cleaning_hours'))
-		service_types       = request.data.get('service_types')
-			 
+
+		service_types       = request.data.get('service_types')			 
 
 		#count total cleaners and total leaders
 		total_cleaners = UserProfile.objects.filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
@@ -3419,6 +3416,7 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 		combined_slots   = []
 
 		#Test on multiple date
+		shift_availability_check = request.data.get('shift_availability_check') 
 		policy = request.data.get('policy') 
 		cleaning_datetimes       = request.data.get('cleaning_datetimes')
 		
