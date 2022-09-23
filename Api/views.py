@@ -5926,7 +5926,14 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 		}
 
 		response = requests.request("GET", url, headers=headers, params=querystring)
-		response_dict['sms_status'] = response.text
+		
+		sms_response = response.text
+		message_code = sms_response[:2]
+
+		if message_code == "00":
+			response_dict['sms_status'] = "success"
+		else:
+			response_dict['sms_status'] = "false"
 
 		response_dict['customer_mobile'] = customer_mobile
 
@@ -6454,17 +6461,13 @@ class SmstestAPI(APIView):
 		response_dict = {}
 
 		#Test on multiple date
-		policy = request.data.get('shift_availability_check') 
-		cleaning_datetimes = request.data.get('cleaning_datetimes')	
+		senten = "39 Messages to certain destinations are not allowed to be send"
+		message_code = senten[:2]
 
-		for cleaning_datetime in cleaning_datetimes:
-			slote_start_datetime 			  = datetime.strptime(cleaning_datetime[0]+' '+cleaning_datetime[1],'%d-%m-%Y %I:%M %p')
-			slote_end_datetime                = datetime.strptime(cleaning_datetime[0]+' '+cleaning_datetime[2],'%d-%m-%Y %I:%M %p')
-			slote_start_time 			      = slote_start_datetime.time()
-			slote_end_time                    = slote_end_datetime.time()
-			start_at_date                     = slote_start_datetime.date()
-			end_at_date                       = slote_end_datetime.date()
-
-			print(slote_start_datetime, slote_end_datetime, slote_start_time, slote_end_time, start_at_date, end_at_date,"cldt")
+		if message_code == "39":
+			response_dict['status'] = "success"
+		else:
+			response_dict['status'] = "false"
+		
 		return Response(response_dict,HTTP_200_OK)
 
