@@ -3359,10 +3359,12 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 
 	def post(self,request):
 		dropdown_slotes  = {}
+
 		number_of_cleaners  = int(request.data.get('number_of_cleaners'))-1
+
 		cleaning_hours      = float(request.data.get('cleaning_hours'))
-		service_types       = request.data.get('service_types')
-			 
+
+		service_types       = request.data.get('service_types')			 
 
 		#count total cleaners and total leaders
 		total_cleaners = UserProfile.objects.filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
@@ -3415,26 +3417,27 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 
 		#Test on multiple date
 		shift_availability_check = request.data.get('shift_availability_check') 
+		# policy = request.data.get('policy') 
 		cleaning_datetimes       = request.data.get('cleaning_datetimes')
 		
 		for cleaning_datetime in cleaning_datetimes:
 			team_leaders_scheduled      = []
 			team_members_scheduled      = []
 
-			if shift_availability_check == 'before':
-				slote_start_datetime 			  = datetime.strptime(cleaning_datetime,'%d-%m-%Y %I:%M %p')
-				slote_end_datetime                = datetime.strptime(cleaning_datetime,'%d-%m-%Y %I:%M %p')
-				slote_start_time 			      = slote_start_datetime.time()
-				slote_end_time                    = slote_end_datetime.time()
-				start_at_date                     = slote_start_datetime.date()
-				end_at_date                       = slote_end_datetime.date()
-			else:
-				slote_start_datetime 			  = datetime.strptime(cleaning_datetime,'%d-%m-%Y %I:%M %p')
-				slote_end_datetime                = slote_start_datetime+timedelta(hours=cleaning_hours)
-				slote_start_time 			      = slote_start_datetime.time()
-				slote_end_time                    = slote_end_datetime.time()
-				start_at_date                     = slote_start_datetime.date()
-				end_at_date                       = slote_end_datetime.date()
+			# if policy == 'onetime':
+			# 	slote_start_datetime 			  = datetime.strptime(cleaning_datetime[0]+' '+cleaning_datetime[1],'%d-%m-%Y %I:%M %p')
+			# 	slote_end_datetime                = datetime.strptime(cleaning_datetime[0]+' '+cleaning_datetime[2],'%d-%m-%Y %I:%M %p')
+			# 	slote_start_time 			      = slote_start_datetime.time()
+			# 	slote_end_time                    = slote_end_datetime.time()
+			# 	start_at_date                     = slote_start_datetime.date()
+			# 	end_at_date                       = slote_end_datetime.date()
+			# else:
+			slote_start_datetime 			  = datetime.strptime(cleaning_datetime,'%d-%m-%Y %I:%M %p')
+			slote_end_datetime                = slote_start_datetime+timedelta(hours=cleaning_hours)
+			slote_start_time 			      = slote_start_datetime.time()
+			slote_end_time                    = slote_end_datetime.time()
+			start_at_date                     = slote_start_datetime.date()
+			end_at_date                       = slote_end_datetime.date()
 
 			#absent cleaners and leaders	
 			absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(leave_date=start_at_date)|Q(leave_date=end_at_date)).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)

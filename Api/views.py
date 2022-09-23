@@ -5914,22 +5914,19 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 		except:
 			CustomerOTP.objects.create(mobile_number=customer_mobile,otp=customer_otp)
 
-		# try:
-		# 	#otp sms
-		# 	url = "https://smsapi.future-club.com/fccsms.aspx"
+		#otp sms
+		url = "https://smsapi.future-club.com/fccsms.aspx"
 
-		# 	message = "Dear Customer, your OTP for login is "+str(customer_otp)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+		message = "Dear Customer, your OTP for login is "+str(customer_otp)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 
-		# 	querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+customer_mobile+"","M":message,"IID":"1468","L":"L"}
+		querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+customer_mobile+"","M":message,"IID":"1468","L":"L"}
 
-		# 	headers = {
-		# 		'cache-control': "no-cache"
-		# 	}
+		headers = {
+			'cache-control': "no-cache"
+		}
 
-		# 	response = requests.request("GET", url, headers=headers, params=querystring)
-		# 	response_dict['sms_status'] = response.text
-		# except:
-		# 	response_dict['sms_status'] = 'You have entered an invalid mobile number. Please Try again.'
+		response = requests.request("GET", url, headers=headers, params=querystring)
+		response_dict['sms_status'] = response.text
 
 		response_dict['customer_mobile'] = customer_mobile
 
@@ -6453,23 +6450,21 @@ class SmstestAPI(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
 
-	def get(self,request):
+	def post(self,request):
 		response_dict = {}
 
-		url = "https://smsapi.future-club.com/fccsms.aspx"
-		message = "Dear Customer, this is a bleach sms test. "
+		#Test on multiple date
+		policy = request.data.get('shift_availability_check') 
+		cleaning_datetimes = request.data.get('cleaning_datetimes')	
 
-		querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"96510001034","M":message,"IID":"1468","L":"L"}
-		
-		headers = {
-			'cache-control': "no-cache"
-		}
+		for cleaning_datetime in cleaning_datetimes:
+			slote_start_datetime 			  = datetime.strptime(cleaning_datetime[0]+' '+cleaning_datetime[1],'%d-%m-%Y %I:%M %p')
+			slote_end_datetime                = datetime.strptime(cleaning_datetime[0]+' '+cleaning_datetime[2],'%d-%m-%Y %I:%M %p')
+			slote_start_time 			      = slote_start_datetime.time()
+			slote_end_time                    = slote_end_datetime.time()
+			start_at_date                     = slote_start_datetime.date()
+			end_at_date                       = slote_end_datetime.date()
 
-		response = requests.request("GET", url, headers=headers, params=querystring)
-
-		print(response.text)
-
-		response_dict['message'] = response.text
-
+			print(slote_start_datetime, slote_end_datetime, slote_start_time, slote_end_time, start_at_date, end_at_date,"cldt")
 		return Response(response_dict,HTTP_200_OK)
 
