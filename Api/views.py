@@ -6453,23 +6453,21 @@ class SmstestAPI(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
 
-	def get(self,request):
+	def post(self,request):
 		response_dict = {}
 
-		url = "https://smsapi.future-club.com/fccsms.aspx"
-		message = "Dear Customer, this is a bleach sms test. "
+		#Test on multiple date
+		policy = request.data.get('shift_availability_check') 
+		cleaning_datetimes = request.data.get('cleaning_datetimes')	
 
-		querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"96510001034","M":message,"IID":"1468","L":"L"}
-		
-		headers = {
-			'cache-control': "no-cache"
-		}
+		for cleaning_datetime in cleaning_datetimes:
+			slote_start_datetime 			  = datetime.strptime(cleaning_datetime[0]+' '+cleaning_datetime[1],'%d-%m-%Y %I:%M %p')
+			slote_end_datetime                = datetime.strptime(cleaning_datetime[0]+' '+cleaning_datetime[2],'%d-%m-%Y %I:%M %p')
+			slote_start_time 			      = slote_start_datetime.time()
+			slote_end_time                    = slote_end_datetime.time()
+			start_at_date                     = slote_start_datetime.date()
+			end_at_date                       = slote_end_datetime.date()
 
-		response = requests.request("GET", url, headers=headers, params=querystring)
-
-		print(response.text)
-
-		response_dict['message'] = response.text
-
+			print(slote_start_datetime, slote_end_datetime, slote_start_time, slote_end_time, start_at_date, end_at_date,"cldt")
 		return Response(response_dict,HTTP_200_OK)
 
