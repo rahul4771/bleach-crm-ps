@@ -3359,7 +3359,12 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 
 	def post(self,request):
 		dropdown_slotes  = {}
-		number_of_cleaners  = int(request.data.get('number_of_cleaners'))-1
+
+		try:
+			number_of_cleaners  = int(request.data.get('number_of_cleaners'))-1
+		except:
+			number_of_cleaners  = 0
+
 		cleaning_hours      = float(request.data.get('cleaning_hours'))
 		service_types       = request.data.get('service_types')
 			 
