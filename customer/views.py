@@ -8584,7 +8584,7 @@ class CartAPI(APIView):
 			service_data['cart'] = cart.id
 
 			#getting service price through productivity id 
-			if service_data['floors']:
+			if service_data['floors'] != '':
 				total_cost = 0
 			else:
 				total_cost = ServicePriceRange.objects.get(id=request.data.get('productivity_id')).price
