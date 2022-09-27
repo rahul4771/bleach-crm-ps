@@ -8605,7 +8605,7 @@ class CartAPI(APIView):
 
 					for floor in service_data['floors']:
 						
-						section_cost = ServicePriceRange.objects.get(id=request.data.get('productivity_id')).price
+						section_cost = ServicePriceRange.objects.get(id=int(floor['productivity_id'])).price
 
 						CartServiceFloor.objects.create(
 							cartService=service,section_name = floor['section_name'], size= floor['size'], unit=floor['unit'], 
