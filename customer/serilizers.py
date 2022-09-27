@@ -2,7 +2,7 @@ from rest_framework import serializers
 from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import ServiceType,Evaluation,EvaluationDetails,EvaluationBook,EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons
 from order.models import Order
-from customer.models import CustomerBooking,CartService,CartSchedule
+from customer.models import CustomerBooking,CartService,CartSchedule,CartServiceFloor
 from bleachadmin.models import ServicePriceRange
 
 class ServiceTypeSerializer(serializers.ModelSerializer):
