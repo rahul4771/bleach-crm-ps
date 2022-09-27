@@ -130,12 +130,19 @@ class CartServiceSerializer(serializers.ModelSerializer):
 		model  = CartService
 		fields = ('cart','service_type','service_price_range','cleaning_policy','area_type','cleaning_method','location_type','section_name','category','dirt_level','quantity','size','unit','age','floor','apartment','room','wall_type','ceiling_type','floor_type','material','colour','cause_of_stain','age_of_stain','cement_residue','oil_residue','hall_size','window_side','new_kitchen','is_cabinet','is_highprice_facade','is_highprice_window','upholstery_type','vacuuming','total_cost','addon_name','addon_category','addon_size','addon_price','addon_productivity')
 
+class CartServiceFloorShowSerializer(serializers.ModelSerializer):
+	service_price_range = ServicePriceRangeShowSerializer(read_only=True)
+	class Meta:
+		model   = CartServiceFloor
+		fields  = ('id','section_name','size','unit','service_price_range','wall_type','ceiling_type','floor_type','bathrooms','windows','rooms','section_cost')
+
 class CartServiceShowSerializer(serializers.ModelSerializer):
 	service_type = ServiceTypeSerializer(read_only=True)
 	service_price_range = ServicePriceRangeShowSerializer(read_only=True)
+	cart_service_floor = CartServiceFloorShowSerializer(read_only=True,many=True)
 	class Meta:
 		model  = CartService
-		fields = ('id','service_type','service_price_range','section_name','size','unit','addon_name','addon_category','addon_size','addon_price','total_cost')
+		fields = ('id','service_type','cart_service_floor','service_price_range','section_name','size','unit','addon_name','addon_category','addon_size','addon_price','total_cost')
 
 class CartScheduleSerializer(serializers.ModelSerializer):	
 	class Meta:

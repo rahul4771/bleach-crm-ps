@@ -133,6 +133,7 @@ class CartServiceFloor(models.Model):
 	section_name 		= models.CharField(max_length=100,blank=False,null=False)
 	size        		= models.CharField(max_length=100,blank=True,null=True)
 	unit        		= models.CharField(max_length=100,blank=True,null=True)
+	service_price_range = models.ForeignKey(ServicePriceRange,blank=True,null=True,related_name='cart_service_floor_price_range')
 	
 	bathrooms       	= models.CharField(max_length=100,blank=True,null=True)
 	windows   			= models.CharField(max_length=100,blank=True,null=True)

@@ -931,7 +931,7 @@ class PaymentResponseDebit(View):
 
 		#Booking through Website - Order Creation
 		if order_status == 'CUSTOMER_BOOKING' :
-			customer_cart = CustomerCart.objects.prefetch_related(Prefetch('cart_service',queryset=CartService.objects.filter(is_active=True).prefetch_related(Prefetch('cart_service_floor'),queryset=CartServiceFloor.objects.all(),to_attr='cart_service_floors'),to_attr='cart_services'),Prefetch('cart_schedule',queryset=CartSchedule.objects.filter(is_active=True),to_attr='cart_schedules')).get(id=evaluation_id_encrypted)
+			customer_cart = CustomerCart.objects.prefetch_related(Prefetch('cart_service',queryset=CartService.objects.filter(is_active=True).prefetch_related(Prefetch('cart_service_floor',queryset=CartServiceFloor.objects.all(),to_attr='cart_service_floors')),to_attr='cart_services'),Prefetch('cart_schedule',queryset=CartSchedule.objects.filter(is_active=True),to_attr='cart_schedules')).get(id=evaluation_id_encrypted)
 
 			#Evaluation
 			tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
@@ -8605,10 +8605,11 @@ class CartAPI(APIView):
 
 					for floor in service_data['floors']:
 						
-						section_cost = ServicePriceRange.objects.get(id=int(floor['productivity_id'])).price
+						service_price_range = ServicePriceRange.objects.get(id=int(floor['productivity_id']))
+						section_cost = service_price_range.price
 
 						CartServiceFloor.objects.create(
-							cartService=service,section_name = floor['section_name'], size= floor['size'], unit=floor['unit'], 
+							cartService=service,section_name = floor['section_name'], service_price_range=service_price_range,size= floor['size'], unit=floor['unit'], 
 							bathrooms=floor['bathrooms'],rooms=floor['rooms'],windows=floor['windows'],wall_type=floor['wall_type'],
 							ceiling_type=floor['ceiling_type'], floor_type=floor['floor_type'],section_cost=section_cost
 						)
