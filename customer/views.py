@@ -8584,15 +8584,13 @@ class CartAPI(APIView):
 			service_data['cart'] = cart.id
 
 			#getting service price through productivity id 
-			if service_data['floors'] != '':
+			if 'floors' in service_data:
 				total_cost = 0
 			else:
 				total_cost = ServicePriceRange.objects.get(id=request.data.get('productivity_id')).price
 
 			service_data['service_price_range'] = request.data.get('productivity_id')
 			service_data['total_cost'] = total_cost
-
-			print(service_data['floors'],"serv data")
 
 			service_data_serializer = CartServiceSerializer(data=service_data)
 
@@ -8601,7 +8599,7 @@ class CartAPI(APIView):
 				service = service_data_serializer.save()
 
 				#adding floor data
-				if service_data['floors']:
+				if 'floors' in service_data:
 
 					for floor in service_data['floors']:
 						
