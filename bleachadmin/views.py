@@ -2179,11 +2179,11 @@ def SalesTargetDaily(request):
 	for evaluator in evaluators_sales_target:
 		
 		if date_or_month == 'Month':
-			total_sales_approved = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,created__range=(monthdate1,monthdate2),evaluation__quatation_status='APPROVED')
-			total_sales_submitted = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,created__range=(monthdate1,monthdate2))
+			total_sales_approved = Order.objects.filter( Q(evaluation__evaluation_details__evaluator=evaluator) | Q(Q(evaluation__evaluation_details__evaluator=None)&Q(evaluation__call_attender=evaluator)) ).filter(created__range=(monthdate1,monthdate2),evaluation__quatation_status='APPROVED')
+			total_sales_submitted = Order.objects.filter( Q(evaluation__evaluation_details__evaluator=evaluator) | Q(Q(evaluation__evaluation_details__evaluator=None)&Q(evaluation__call_attender=evaluator)) ).filter(created__range=(monthdate1,monthdate2))
 		else:
-			total_sales_approved = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,created__range=(target_date_start,target_date_end),evaluation__quatation_status='APPROVED')
-			total_sales_submitted = Order.objects.filter(evaluation__evaluation_details__evaluator=evaluator,created__range=(target_date_start,target_date_end))
+			total_sales_approved = Order.objects.filter( Q(evaluation__evaluation_details__evaluator=evaluator) | Q(Q(evaluation__evaluation_details__evaluator=None)&Q(evaluation__call_attender=evaluator)) ).filter(created__range=(target_date_start,target_date_end),evaluation__quatation_status='APPROVED')
+			total_sales_submitted = Order.objects.filter( Q(evaluation__evaluation_details__evaluator=evaluator) | Q(Q(evaluation__evaluation_details__evaluator=None)&Q(evaluation__call_attender=evaluator)) ).filter(created__range=(target_date_start,target_date_end))
 
 		total_sales_approved_amount = total_sales_approved.aggregate(Sum('evaluation__total_cost')).get('evaluation__total_cost__sum', 0.0)
 		total_sales_approved_count = total_sales_approved.count()
