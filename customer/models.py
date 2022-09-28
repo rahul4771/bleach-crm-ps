@@ -128,6 +128,28 @@ class CartService(models.Model):
 	def __str__(self):
 		return self.cart.customer.name+'-'+self.service_type.name
 
+class CartServiceFloor(models.Model):
+	cartService			= models.ForeignKey('CartService',blank=False,null=False,on_delete=models.CASCADE,related_name='cart_service_floor')
+	section_name 		= models.CharField(max_length=100,blank=False,null=False)
+	size        		= models.CharField(max_length=100,blank=True,null=True)
+	unit        		= models.CharField(max_length=100,blank=True,null=True)
+	service_price_range = models.ForeignKey(ServicePriceRange,blank=True,null=True,related_name='cart_service_floor_price_range')
+	
+	bathrooms       	= models.CharField(max_length=100,blank=True,null=True)
+	windows   			= models.CharField(max_length=100,blank=True,null=True)
+	rooms        		= models.CharField(max_length=100,blank=True,null=True)
+	
+	wall_type   		= models.CharField(max_length=100,blank=True,null=True)
+	ceiling_type		= models.CharField(max_length=100,blank=True,null=True)
+	floor_type  		= models.CharField(max_length=100,blank=True,null=True)
+	section_cost        = models.FloatField(blank=True,null=True,default=0)
+	
+	def __unicode__(self):
+		return str(self.cartService.cart.customer.name+'-'+self.cartService.service_type.name)
+
+	def __str__(self):
+		return self.cartService.cart.customer.name+'-'+self.cartService.service_type.name
+
 class CartSchedule(models.Model):
 	cart					= models.ForeignKey('CustomerCart',blank=False,null=False,on_delete=models.CASCADE,related_name='cart_schedule')
 	start_at		   	 	= models.DateTimeField(blank=True,null=True)
