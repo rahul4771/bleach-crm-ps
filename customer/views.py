@@ -1627,7 +1627,7 @@ class PaymentResponseDebit(View):
 			# pay_and_book = request.POST.get('udf4')
 			# if pay_and_book:
 			if order_status == 'CUSTOMER_BOOKING':
-				return redirect('http://testwww.bleach-kw.com:8080/myorders')
+				return redirect('http://testwww.bleach-kw.com:8080/my/orders')
 				# return(pay_and_book)
 			else:
 				return redirect('customer:payment-receipt','pvw'+str(evaluation_id_encrypted[0:11])+str(payment_history.id))
@@ -1653,7 +1653,7 @@ class PaymentResponseDebit(View):
 			# pay_and_book = request.POST.get('udf4')
 			# if pay_and_book:
 			if order_status == 'CUSTOMER_BOOKING':
-				return redirect('http://testwww.bleach-kw.com:8080/myorders')
+				return redirect('http://testwww.bleach-kw.com:8080/my/orders')
 			else:
 				return redirect('customer:payment-receipt','pvw'+str(evaluation_id_encrypted[0:11])+str(payment_history.id))
 
