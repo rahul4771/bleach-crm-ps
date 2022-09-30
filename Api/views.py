@@ -6415,6 +6415,7 @@ class CustomerBookedOrderDetailsAPI(APIView):
 		order_details_data = {
 			'start_date' : start_date,
 			'end_date' : end_date,
+			'start_time':datetime.strftime(order.orderschedules[0].start_at, '%I:%M %p')
 			'previous_visit':previous_date,
 			'upcoming_visit':upcoming_date,
 			'total_visits' : len(order.orderschedules),
