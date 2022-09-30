@@ -5959,6 +5959,7 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 		# 	response_dict['sms_status'] = "false"
 
 		response_dict['customer_mobile'] = customer_mobile
+		response_dict['customer_otp'] = customer_otp
 
 		return Response(response_dict,HTTP_200_OK)
 
