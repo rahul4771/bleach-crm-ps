@@ -987,12 +987,11 @@ class PaymentResponseDebit(View):
 						section_net_cost=floor.section_cost,sectiononly_cost=floor.section_cost,sectiononly_net_cost=floor.section_cost,section_cleanings=len(customer_cart.cart_schedules))
 						
 						keynotes_list = []
-						keynotes_list.append(
-							EvaluationSectionKeynote(evaluation_section=evaluationbooksection,sub_area="bathrooms",quantity=floor.bathrooms),
-							EvaluationSectionKeynote(evaluation_section=evaluationbooksection,sub_area="rooms",quantity=floor.rooms),
-							EvaluationSectionKeynote(evaluation_section=evaluationbooksection,sub_area="windows",quantity=floor.windows)
-						)
 
+						keynotes_list.append(EvaluationSectionKeynote(evaluation_section=evaluationbooksection,sub_area="bathrooms",quantity=floor.bathrooms))
+						keynotes_list.append(EvaluationSectionKeynote(evaluation_section=evaluationbooksection,sub_area="windows",quantity=floor.windows))
+						keynotes_list.append(EvaluationSectionKeynote(evaluation_section=evaluationbooksection,sub_area="rooms",quantity=floor.rooms))
+						
 						EvaluationSectionKeynote.objects.bulk_create(keynotes_list)
 
 						floor.delete()
@@ -1628,7 +1627,7 @@ class PaymentResponseDebit(View):
 			# pay_and_book = request.POST.get('udf4')
 			# if pay_and_book:
 			if order_status == 'CUSTOMER_BOOKING':
-				return redirect('http://testwww.bleach-kw.com:8080/myorders')
+				return redirect('http://testwww.bleach-kw.com:8080/my/orders')
 				# return(pay_and_book)
 			else:
 				return redirect('customer:payment-receipt','pvw'+str(evaluation_id_encrypted[0:11])+str(payment_history.id))
@@ -1654,7 +1653,7 @@ class PaymentResponseDebit(View):
 			# pay_and_book = request.POST.get('udf4')
 			# if pay_and_book:
 			if order_status == 'CUSTOMER_BOOKING':
-				return redirect('http://testwww.bleach-kw.com:8080/myorders')
+				return redirect('http://testwww.bleach-kw.com:8080/my/orders')
 			else:
 				return redirect('customer:payment-receipt','pvw'+str(evaluation_id_encrypted[0:11])+str(payment_history.id))
 

@@ -295,7 +295,7 @@ class PaymentResponseCredit(APIView):
 
 		#Booking through Website - Order Creation
 		if order_status == 'CUSTOMER_BOOKING' and payment_result == 'ACCEPT':
-			customer_cart = CustomerCart.objects.prefetch_related(Prefetch('cart_service',queryset=CartService.objects.filter(is_active=True),to_attr='cart_services'),Prefetch('cart_schedule',queryset=CartSchedule.objects.filter(is_active=True),to_attr='cart_schedules')).get(cart_id_value=evaluation_id)
+			customer_cart = CustomerCart.objects.prefetch_related(Prefetch('cart_service',queryset=CartService.objects.filter(is_active=True).prefetch_related(Prefetch('cart_service_floor',queryset=CartServiceFloor.objects.all(),to_attr='cart_service_floors')),to_attr='cart_services'),Prefetch('cart_schedule',queryset=CartSchedule.objects.filter(is_active=True),to_attr='cart_schedules')).get(cart_id_value=evaluation_id)
 
 			#Evaluation
 			tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
@@ -342,11 +342,29 @@ class PaymentResponseCredit(APIView):
 			#Evaluation Books,Sections,Schedules 
 			for cart_service in customer_cart.cart_services:
 				evaluation_book    = EvaluationBook.objects.create(evaluation_details=evaluation_details,service_type=cart_service.service_type,cleaning_policy=cart_service.cleaning_policy,area_type=cart_service.area_type,cleaning_method=cart_service.cleaning_method,location_type=cart_service.location_type,estimated_cost=cart_service.total_cost,total_cost=cart_service.total_cost)
-				evaluation_section = EvaluationBookSection.objects.create(evaluation_book=evaluation_book,section_name=cart_service.section_name,category=cart_service.category,dirt_level=cart_service.dirt_level,quantity=cart_service.quantity,size=cart_service.size,unit=cart_service.unit,
-										age=cart_service.age,floor=cart_service.floor,apartment=cart_service.apartment,room=cart_service.room,wall_type=cart_service.wall_type,ceiling_type=cart_service.ceiling_type,floor_type=cart_service.floor_type,material=cart_service.material,colour=cart_service.colour,
-										cause_of_stain=cart_service.cause_of_stain,age_of_stain=cart_service.age_of_stain,cement_residue=cart_service.cement_residue,oil_residue=cart_service.oil_residue,hall_size=cart_service.hall_size,window_side=cart_service.window_side,new_kitchen=cart_service.new_kitchen,
-										is_cabinet=cart_service.is_cabinet,is_highprice_facade=cart_service.is_highprice_facade,is_highprice_window=cart_service.is_highprice_window,upholstery_type=cart_service.upholstery_type,vacuuming=cart_service.vacuuming,section_cost=cart_service.total_cost,
-										section_net_cost=cart_service.total_cost,sectiononly_cost=cart_service.total_cost,sectiononly_net_cost=cart_service.total_cost,section_cleanings=len(customer_cart.cart_schedules))
+				
+				if cart_service.cart_service_floors:
+					
+					for floor in cart_service.cart_service_floors:
+						
+						evaluationbooksection = EvaluationBookSection.objects.create(evaluation_book=evaluation_book,section_name=floor.section_name,size=floor.size,unit=floor.unit,wall_type=floor.wall_type,floor_type=floor.floor_type,ceiling_type=floor.ceiling_type,section_cost=floor.section_cost,
+						section_net_cost=floor.section_cost,sectiononly_cost=floor.section_cost,sectiononly_net_cost=floor.section_cost,section_cleanings=len(customer_cart.cart_schedules))
+						
+						keynotes_list = []
+
+						keynotes_list.append(EvaluationSectionKeynote(evaluation_section=evaluationbooksection,sub_area="bathrooms",quantity=floor.bathrooms))
+						keynotes_list.append(EvaluationSectionKeynote(evaluation_section=evaluationbooksection,sub_area="windows",quantity=floor.windows))
+						keynotes_list.append(EvaluationSectionKeynote(evaluation_section=evaluationbooksection,sub_area="rooms",quantity=floor.rooms))
+						
+						EvaluationSectionKeynote.objects.bulk_create(keynotes_list)
+
+						floor.delete()
+				else:
+					evaluation_section = EvaluationBookSection.objects.create(evaluation_book=evaluation_book,section_name=cart_service.section_name,category=cart_service.category,dirt_level=cart_service.dirt_level,quantity=cart_service.quantity,size=cart_service.size,unit=cart_service.unit,
+											age=cart_service.age,floor=cart_service.floor,apartment=cart_service.apartment,room=cart_service.room,wall_type=cart_service.wall_type,ceiling_type=cart_service.ceiling_type,floor_type=cart_service.floor_type,material=cart_service.material,colour=cart_service.colour,
+											cause_of_stain=cart_service.cause_of_stain,age_of_stain=cart_service.age_of_stain,cement_residue=cart_service.cement_residue,oil_residue=cart_service.oil_residue,hall_size=cart_service.hall_size,window_side=cart_service.window_side,new_kitchen=cart_service.new_kitchen,
+											is_cabinet=cart_service.is_cabinet,is_highprice_facade=cart_service.is_highprice_facade,is_highprice_window=cart_service.is_highprice_window,upholstery_type=cart_service.upholstery_type,vacuuming=cart_service.vacuuming,section_cost=cart_service.total_cost,
+											section_net_cost=cart_service.total_cost,sectiononly_cost=cart_service.total_cost,sectiononly_net_cost=cart_service.total_cost,section_cleanings=len(customer_cart.cart_schedules))
 				
 				if cart_service.addon_name:
 					evaluation_section_addon = EvaluationSectionAddons.objects.create(evaluation_section=evaluation_section,name=cart_service.addon_name,addon_cost=cart_service.addon_price,quantity=1,addon_net_cost=cart_service.addon_price,size=cart_service.addon_size)
@@ -356,7 +374,11 @@ class PaymentResponseCredit(APIView):
 
 				cart_service.delete()
 
+			for cart_schedule in customer_cart.cart_schedules:
+				cart_schedule.delete()
+
 			customer_cart.is_scheduled = False
+			customer_cart.total_cost = 0
 			customer_cart.save()
 
 		#Booking From CRM System
@@ -419,9 +441,6 @@ class PaymentResponseCredit(APIView):
 				order.payment_status         = 'COMPLETED'
 				order.payment_completed_date = timezone.now()
 			order.save()
-
-			customer_cart.is_scheduled = False
-			customer_cart.save()
 
 			##########################################################################################
 			#Xero Integration
@@ -5914,6 +5933,9 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 		except:
 			CustomerOTP.objects.create(mobile_number=customer_mobile,otp=customer_otp)
 
+		
+		# live_response = requests.request("POST", "https://my.bleachkw.com/api/sms-test/", headers=headers, data={"customer_mobile":customer_mobile,"customer_otp":customer_otp})
+		
 		#otp sms
 		url = "https://smsapi.future-club.com/fccsms.aspx"
 
@@ -6460,14 +6482,23 @@ class SmstestAPI(APIView):
 	def post(self,request):
 		response_dict = {}
 
-		#Test on multiple date
-		senten = "39 Messages to certain destinations are not allowed to be send"
-		message_code = senten[:2]
+		customer_mobile = request.data.get('customer_mobile')
+		customer_otp = request.data.get('customer_otp')
+		
+		#otp sms
+		url = "https://smsapi.future-club.com/fccsms.aspx"
 
-		if message_code == "39":
-			response_dict['status'] = "success"
-		else:
-			response_dict['status'] = "false"
+		message = "Dear Customer, your OTP for login is "+str(customer_otp)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+
+		querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+customer_mobile+"","M":message,"IID":"1468","L":"L"}
+
+		headers = {
+			'cache-control': "no-cache"
+		}
+
+		response = requests.request("GET", url, headers=headers, params=querystring)
+		
+		response_dict['sms_response'] = response.text
 		
 		return Response(response_dict,HTTP_200_OK)
 
