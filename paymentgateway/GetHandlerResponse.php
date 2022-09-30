@@ -29,8 +29,8 @@
 	$Resudf5      = $_REQUEST['udf5'];               //UDF5
 	
 	//Below Terminal resource Key is used to decrypt the response sent from Payment Gateway.
-	 $termResourceKey="P287H49DV2GS6E0Z";
-	// $termResourceKey="81G1ZB54MNW8X3J9";
+	// $termResourceKey="P287H49DV2GS6E0Z";
+	 $termResourceKey="81G1ZB54MNW8X3J9";
 
 	 echo "<h4>" . $ResErrorText . "</h4>" ;
 	 echo "<h4>" . $ResErrorNo . "</h4>" ;
@@ -53,14 +53,14 @@
 
 		echo "<h4>" . $decrytedData . "</h4>" ;
 
-		 header("Location: https://my.bleachkw.com/customer/payment/response/?".$decrytedData);
-		// header("Location: http://mytest.bleach-kw.com/customer/payment/response/?".$decrytedData);
+		// header("Location: https://my.bleachkw.com/customer/payment/response/?".$decrytedData);
+		 header("Location: http://mytest.bleach-kw.com/customer/payment/response/?".$decrytedData);
                 exit();
 		}
 	}
 	else{
-			 header("Location: https://my.bleachkw.com/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
-			// header("Location: http://mytest.bleach-kw.com/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
+			// header("Location: https://my.bleachkw.com/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
+			 header("Location: http://mytest.bleach-kw.com/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
 			exit();
 	}
 	  

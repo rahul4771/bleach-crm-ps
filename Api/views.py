@@ -5934,28 +5934,28 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 			CustomerOTP.objects.create(mobile_number=customer_mobile,otp=customer_otp)
 
 		
-		# live_response = requests.request("POST", "https://my.bleachkw.com/api/sms-test/", headers=headers, data={"customer_mobile":customer_mobile,"customer_otp":customer_otp})
+		live_response = requests.post("https://my.bleachkw.com/api/sms-test/", data={"customer_mobile":customer_mobile,"customer_otp":customer_otp})
 		
 		#otp sms
-		url = "https://smsapi.future-club.com/fccsms.aspx"
+		# url = "https://smsapi.future-club.com/fccsms.aspx"
 
-		message = "Dear Customer, your OTP for login is "+str(customer_otp)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+		# message = "Dear Customer, your OTP for login is "+str(customer_otp)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 
-		querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+customer_mobile+"","M":message,"IID":"1468","L":"L"}
+		# querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+customer_mobile+"","M":message,"IID":"1468","L":"L"}
 
-		headers = {
-			'cache-control': "no-cache"
-		}
+		# headers = {
+		# 	'cache-control': "no-cache"
+		# }
 
-		response = requests.request("GET", url, headers=headers, params=querystring)
+		# response = requests.request("GET", url, headers=headers, params=querystring)
 		
-		sms_response = response.text
-		message_code = sms_response[:2]
-
-		if message_code == "00":
-			response_dict['sms_status'] = "success"
-		else:
-			response_dict['sms_status'] = "false"
+		# sms_response = response.text
+		# message_code = sms_response[:2]
+		response_dict['liv_resp'] = live_response
+		# if message_code == "00":
+		# 	response_dict['sms_status'] = "success"
+		# else:
+		# 	response_dict['sms_status'] = "false"
 
 		response_dict['customer_mobile'] = customer_mobile
 
