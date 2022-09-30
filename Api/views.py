@@ -5933,6 +5933,9 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 		except:
 			CustomerOTP.objects.create(mobile_number=customer_mobile,otp=customer_otp)
 
+		
+		# live_response = requests.request("POST", "https://my.bleachkw.com/api/sms-test/", headers=headers, data={"customer_mobile":customer_mobile,"customer_otp":customer_otp})
+		
 		#otp sms
 		url = "https://smsapi.future-club.com/fccsms.aspx"
 
@@ -6479,14 +6482,23 @@ class SmstestAPI(APIView):
 	def post(self,request):
 		response_dict = {}
 
-		#Test on multiple date
-		senten = "39 Messages to certain destinations are not allowed to be send"
-		message_code = senten[:2]
+		customer_mobile = request.data.get('customer_mobile')
+		customer_otp = request.data.get('customer_otp')
+		
+		#otp sms
+		url = "https://smsapi.future-club.com/fccsms.aspx"
 
-		if message_code == "39":
-			response_dict['status'] = "success"
-		else:
-			response_dict['status'] = "false"
+		message = "Dear Customer, your OTP for login is "+str(customer_otp)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+
+		querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+customer_mobile+"","M":message,"IID":"1468","L":"L"}
+
+		headers = {
+			'cache-control': "no-cache"
+		}
+
+		response = requests.request("GET", url, headers=headers, params=querystring)
+		
+		response_dict['sms_response'] = response.text
 		
 		return Response(response_dict,HTTP_200_OK)
 
