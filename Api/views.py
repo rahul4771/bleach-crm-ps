@@ -5951,9 +5951,10 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 		
 		# sms_response = response.text
 		# message_code = sms_response[:2]
-		response_dict['liv_resp'] = live_response
+		response_dict['liv_resp'] = re.findall(r'\d+', live_response)[0]
+
 		# if message_code == "00":
-		# 	response_dict['sms_status'] = "success"
+		response_dict['sms_status'] = "success"
 		# else:
 		# 	response_dict['sms_status'] = "false"
 
