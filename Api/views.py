@@ -2476,14 +2476,13 @@ class CheckInAPI(APIView):
 
 		team_id        = request.data.get('team_id')
 		check_in_notes = request.data.get('check_in_notes')
-
 		
 		print(request.data,"reqdata2")
 
 		try:
 			cleaning_team_detail = CleaningTeam.objects.select_related('order_scheduler__order').get(is_active=True,id=team_id)
 		except:	
-			cleaning_team_detail = None
+		 	cleaning_team_detail = None
 
 		if not cleaning_team_detail.check_in:
 			cleaning_team_detail.check_in                    = timezone.now()
