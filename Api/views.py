@@ -2476,14 +2476,13 @@ class CheckInAPI(APIView):
 
 		team_id        = request.data.get('team_id')
 		check_in_notes = request.data.get('check_in_notes')
-
 		
 		print(request.data,"reqdata2")
 
 		try:
 			cleaning_team_detail = CleaningTeam.objects.select_related('order_scheduler__order').get(is_active=True,id=team_id)
 		except:	
-			cleaning_team_detail = None
+		 	cleaning_team_detail = None
 
 		if not cleaning_team_detail.check_in:
 			cleaning_team_detail.check_in                    = timezone.now()
@@ -5934,30 +5933,34 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 			CustomerOTP.objects.create(mobile_number=customer_mobile,otp=customer_otp)
 
 		
-		# live_response = requests.request("POST", "https://my.bleachkw.com/api/sms-test/", headers=headers, data={"customer_mobile":customer_mobile,"customer_otp":customer_otp})
+		live_response = requests.post("https://my.bleachkw.com/api/sms-test/", data={"customer_mobile":customer_mobile,"customer_otp":customer_otp})
 		
 		#otp sms
-		url = "https://smsapi.future-club.com/fccsms.aspx"
+		# url = "https://smsapi.future-club.com/fccsms.aspx"
 
-		message = "Dear Customer, your OTP for login is "+str(customer_otp)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+		# message = "Dear Customer, your OTP for login is "+str(customer_otp)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 
-		querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+customer_mobile+"","M":message,"IID":"1468","L":"L"}
+		# querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+customer_mobile+"","M":message,"IID":"1468","L":"L"}
 
-		headers = {
-			'cache-control': "no-cache"
-		}
+		# headers = {
+		# 	'cache-control': "no-cache"
+		# }
 
-		response = requests.request("GET", url, headers=headers, params=querystring)
+		# response = requests.request("GET", url, headers=headers, params=querystring)
 		
-		sms_response = response.text
-		message_code = sms_response[:2]
+		# sms_response = response.text
+		# message_code = sms_response[:2]
+		response_str = live_response.text.split()
+
+		message_code = re.findall(r'\d+', response_str[0])[0]
 
 		if message_code == "00":
 			response_dict['sms_status'] = "success"
 		else:
-			response_dict['sms_status'] = "false"
+		 	response_dict['sms_status'] = "false"
 
 		response_dict['customer_mobile'] = customer_mobile
+		response_dict['customer_otp'] = customer_otp
 
 		return Response(response_dict,HTTP_200_OK)
 
@@ -6411,6 +6414,7 @@ class CustomerBookedOrderDetailsAPI(APIView):
 		order_details_data = {
 			'start_date' : start_date,
 			'end_date' : end_date,
+			'start_time':datetime.strftime(order.orderschedules[0].start_at, '%I:%M %p'),
 			'previous_visit':previous_date,
 			'upcoming_visit':upcoming_date,
 			'total_visits' : len(order.orderschedules),

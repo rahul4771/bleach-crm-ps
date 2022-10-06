@@ -8834,6 +8834,7 @@ class CartScheduleAPI(APIView):
 
 		for service in cart_services:
 			service.total_cost = round(float(service.total_cost)*float(len(slots)),3)
+			service.cleaning_policy = request.data.get('cleaning_policy')
 			service.save()
 
 		#cart total cost update

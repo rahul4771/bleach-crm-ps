@@ -156,30 +156,23 @@ const app = new Vue({
       
     };
      
+    
     if (this.imageData.length > 0){
+      
       for (var value of this.form_data.values()) {
         console.log(value);
      }
-        axios.post(
-          form_url, this.form_data,{headers:{
-            'content-type':'multipart/form-data',
-            'boundary':'----WebKitFormBoundary7MA4YWxkTrZu0gW'
-            }}
         
-       )
-       .then((response) => {
-         
-         console.log(response)
-         if (response.data.success == true){
-          window.location.href='/tl/dashboard/?my_cleaning_calendar_date='+response.data.cleaning_date+'';
-         }
-       
-        
-       })
-        .catch((error) => {
-         console.log(error,"rok");
-       
-       });
+     fetch(form_url,{
+      method:"POST",
+      body:this.form_data
+     }).then(response => response.json())
+     .then(data => {
+        if (data.success == true){
+           window.location.href='/tl/dashboard/?my_cleaning_calendar_date='+data.cleaning_date+'';
+           }
+     })
+     .catch(error => console.log(error,"errro"))
 
       }else{
         alert("Please add before cleaning images !")
@@ -247,25 +240,21 @@ const app = new Vue({
     };
      
     if (this.imageData.length > 0){
+      
       for (var value of this.form_data.values()) {
         console.log(value);
      }
-     axios.post(form_url,this.form_data,{headers:{
-      'content-type':'multipart/form-data',
-      'boundary':'----WebKitFormBoundary7MA4YWxkTrZu0gW'
-      }}).then((response) => {
-         
-         console.log(response)
-         if (response.data.success == true){
-          window.location.href='/tl/dashboard/?my_cleaning_calendar_date='+response.data.cleaning_date+'';
-         }
-       
-        
-       })
-        .catch((error) => {
-         console.log(error,"rok");
-       
-       });
+
+     fetch(form_url,{
+      method:"POST",
+      body:this.form_data
+     }).then(response => response.json())
+     .then(data => {
+        if (data.success == true){
+           window.location.href='/tl/dashboard/?my_cleaning_calendar_date='+data.cleaning_date+'';
+           }
+     })
+     .catch(error => console.log(error,"errro"))
 
       }else{
         alert("Please add before cleaning images !")
