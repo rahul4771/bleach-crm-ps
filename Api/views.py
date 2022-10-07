@@ -5960,7 +5960,6 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 		 	response_dict['sms_status'] = "false"
 
 		response_dict['customer_mobile'] = customer_mobile
-		response_dict['customer_otp'] = customer_otp
 
 		return Response(response_dict,HTTP_200_OK)
 
@@ -5977,7 +5976,7 @@ class EvaluationBookingCustomerOtpVerificationAPI(APIView):
 		try:
 			session_otp = CustomerOTP.objects.get(mobile_number=customer_mobile,otp=customer_otp)
 			saved_otp = session_otp.otp
-			print(session_otp,"otopp")
+			
 		except:
 			session_otp = None
 			saved_otp = False
