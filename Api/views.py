@@ -4222,6 +4222,12 @@ class LoginAPI(APIView):
 			t, c= Token.objects.get_or_create(user=user)
 			response_dict['success']             = True
 			response_dict['token']               = t.key
+
+			try:
+				cart = CustomerCart.objects.get(customer=user)
+				response_dict['cart_items_count'] = CartService.objects.filter(cart=cart).count()
+			except:
+				cart = None
 			
 			response_dict['name']                = user.name
 			response_dict['profile_image']       = user.profile_image.url
