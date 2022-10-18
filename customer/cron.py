@@ -7,7 +7,7 @@ from django.db.models import Prefetch,Q
 import requests
 import random
 from datetime import datetime
-
+from django.core.management import call_command
 from Api.serializers import LeaveScheduleSerializer
 import pandas as pd
 from user.models import LeaveSchedule,UserProfile,Governorate
@@ -147,4 +147,11 @@ def deletetimeoffsbamboo():
 		except:
 			leaveschedules = None
 
+def invoice_amount_updations():
+	print("inv amt upd")
+	call_command('invoiceamount_updations')
+
+def bank_charge_add():
+	print("bank charge add")
+	call_command('bankchargeadd')
 	
