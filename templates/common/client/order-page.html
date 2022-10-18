@@ -3526,15 +3526,26 @@
                                 <a  href="{% url 'booking-officer:cancell-book' order.evaluation.id %}" target="_blank" ><button class="sent-button" type="button" id="bookingofficer-redirect" style="display: none;">Yes</button></a>
 
                             {% else %} 
+                            <div class="row" style="justify-content: center;">
+                                <div class="col-md-12 col-offset-3 text-center">
+                                    <input type="checkbox" class="form-check-input service-checkbox" id="exampleCheck1" v-model="all_val" @change="checkAll()">
+                                    <label class="form-check-label service-checkbox-label" for="exampleCheck1">All</label>
+                                </div>
+                                <div class="col-md-12 col-offset-3 text-center" v-for="(service,serindex) in services_options" v-bind:key="serindex">
+                                    <input type="checkbox" class="form-check-input service-checkbox" id="exampleCheck1" v-model="services_list" :value="service" @change="removeAll()">
+                                    <label class="form-check-label service-checkbox-label" for="exampleCheck1"><% service.name %></label>
+                                </div>
+                               
+                            </div>
                             <form method="post" action="" enctype= "multipart/form-data" id="duplicate_form_id" class="text-center" >{% csrf_token %}
                                 <input type="hidden" name="evaluation" id="evaluation_id" value="{{order.evaluation.id}}">
                                 <input type="hidden" name="action_type" value="cancell_order">
-                                
                                
                                 <button class="sent-button mt-20" type="submit">Yes</button>       
                                 <button data-dismiss="modal" class="view-button mt-20">Cancel</button>
                          </form>
-                       
+                         <button v-else class="sent-button mt-20" type="submit" @click="bookingofficerCancelServiceOrder()" >Yes</button>
+                        <button data-dismiss="modal" class="view-button" v-if="!all_val">Cancel</button>
 
 
                             {% endif %}
@@ -3571,6 +3582,17 @@
                                 <a  href="{% url 'bleach_salesadmin:cancell-book' order.evaluation.id %}" target="_blank" ><button class="sent-button" type="button" id="salesadmin-redirect" style="display: none;">Yes</button></a> 
                                 
                                 {% else %}
+                                <div class="row" style="justify-content: center;">
+                                    <div class="col-md-12 col-offset-3 text-center">
+                                        <input type="checkbox" class="form-check-input service-checkbox" id="exampleCheck1" v-model="all_val" @change="checkAll()">
+                                        <label class="form-check-label service-checkbox-label" for="exampleCheck1">All</label>
+                                    </div>
+                                    <div class="col-md-12 col-offset-3 text-center" v-for="(service,serindex) in services_options" v-bind:key="serindex">
+                                        <input type="checkbox" class="form-check-input service-checkbox" id="exampleCheck1" v-model="services_list" :value="service" @change="removeAll()">
+                                        <label class="form-check-label service-checkbox-label" for="exampleCheck1"><% service.name %></label>
+                                    </div>
+                                   
+                                </div>
                                 <form method="post" action="" enctype= "multipart/form-data" id="duplicate_form_id" class="text-center" v-if="all_val">{% csrf_token %}
                                     <input type="hidden" name="evaluation" id="evaluation_id" value="{{order.evaluation.id}}">
                                     <input type="hidden" name="action_type" value="cancell_order">
