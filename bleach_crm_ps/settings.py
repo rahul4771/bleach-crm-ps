@@ -123,6 +123,8 @@ AUTH_PASSWORD_VALIDATORS = [
 CRONJOBS = [ 
     ('0 0 * * *', 'customer.cron.loadtimeoffsbamboo', '>> ' + os.path.join(BASE_DIR,'log/debug7.log' + ' 2>&1 ')),
     ('0 0 * * *', 'customer.cron.deletetimeoffsbamboo', '>> ' + os.path.join(BASE_DIR,'log/debug8.log' + ' 2>&1 ')),
+    ('0/1 16 * * * /usr/bin/python3 invoiceamount_updations.py', '>> ' + os.path.join(BASE_DIR,'log/debug144.log' + ' 2>&1 ')),
+    ('0/1 17 * * * /usr/bin/python3 bankchargeadd.py', '>> ' + os.path.join(BASE_DIR,'log/debug146.log' + ' 2>&1 ')),
     ('0 0 * * *', 'customer.cron.quotationexpiry'),
     ('*/10 * * * *', 'customer.cron.booking_expiry'),
 ]
@@ -177,6 +179,6 @@ EMAIL_PORT          = 587
 EMAIL_HOST_USER     = 'notification@bleach-kw.com'
 EMAIL_HOST_PASSWORD = 'Nuc34502'
 
-LOGIN_URL='login'
+LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 LOGOUT_REDIRECT_URL= 'login'
