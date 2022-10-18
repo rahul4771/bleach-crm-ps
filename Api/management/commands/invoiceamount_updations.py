@@ -7,7 +7,7 @@ from order.models import Order,OrderScheduler,XeroInvoice
 from Api.models import XeroConnection
 from accountant.models import PaymentHistory
 from user.models import UserProfile
-import time
+
 from django.utils import timezone
 from datetime import timedelta,date,datetime
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,Max,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField,CharField
@@ -48,8 +48,8 @@ class Command(BaseCommand):
                                             }
 
         #Paid History                                
-        payment_history_date   = datetime.strptime("01-01-2022","%d-%m-%Y").date()
-        payment_history_end_date   = datetime.strptime("31-08-2022","%d-%m-%Y").date()
+        payment_history_date   = datetime.strptime("01-08-2022","%d-%m-%Y").date()
+        payment_history_end_date   = datetime.strptime("20-10-2022","%d-%m-%Y").date()
         
         #payment history start date
         # payment_histories      = PaymentHistory.objects.select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order').filter(is_active=True,paid_date__gte=payment_history_date,is_xero_marked=False).annotate(total_cleanings_count=Count('order__order_scheduler_order')).prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
@@ -58,8 +58,6 @@ class Command(BaseCommand):
         payment_histories      = PaymentHistory.objects.select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order').filter(Q( Q(is_active=True) & Q(paid_date__gte=payment_history_date) & Q(paid_date__lte=payment_history_end_date) & Q(is_xero_marked=False) )).annotate(total_cleanings_count=Count('order__order_scheduler_order')).prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))        
         
         for payment_history in payment_histories:
-
-            time.sleep(1)
 
             ##Xero Contact
             if not payment_history.order.evaluation.customer.xero_account_id:
