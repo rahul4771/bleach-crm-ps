@@ -3531,9 +3531,7 @@
                                 <input type="hidden" name="action_type" value="cancell_order">
                                 
                                
-                                <button class="sent-button mt-20" type="submit">Yes</button>
-                               
-        
+                                <button class="sent-button mt-20" type="submit">Yes</button>       
                                 <button data-dismiss="modal" class="view-button mt-20">Cancel</button>
                          </form>
                        
@@ -3578,11 +3576,11 @@
                                     <input type="hidden" name="action_type" value="cancell_order">
                                     
                                    
-                                    <button class="sent-button mt-20" type="submit">Yes</button>
-                                   
-            
+                                    <button class="sent-button mt-20" type="submit">Yes</button>          
                                     <button data-dismiss="modal" class="view-button mt-20">Cancel</button>
                              </form><!--Content ends here-->
+                             <button v-else class="sent-button mt-20" type="submit" @click="salesadminCancelServiceOrder()">Yes</button>
+                             <button data-dismiss="modal" class="view-button" v-if="!all_val">Cancel</button>
                             <!-- <a href="{% url 'bleach_salesadmin:cancell-order' order.id %}" target="_blank" ><button class="sent-button" type="button" style="display: none;">Yes</button></a> -->
                             {% endif %}
 
