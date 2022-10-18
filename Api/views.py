@@ -5933,7 +5933,7 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 			CustomerOTP.objects.create(mobile_number=customer_mobile,otp=customer_otp)
 
 		
-		live_response = requests.post("https://my.bleachkw.com/api/sms-test/", data={"customer_mobile":customer_mobile,"customer_otp":customer_otp})
+		# live_response = requests.post("https://my.bleachkw.com/api/sms-test/", data={"customer_mobile":customer_mobile,"customer_otp":customer_otp})
 		
 		#otp sms
 		# url = "https://smsapi.future-club.com/fccsms.aspx"
@@ -5950,14 +5950,14 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 		
 		# sms_response = response.text
 		# message_code = sms_response[:2]
-		response_str = live_response.text.split()
+		# response_str = live_response.text.split()
 
-		message_code = re.findall(r'\d+', response_str[0])[0]
+		# message_code = re.findall(r'\d+', response_str[0])[0]
 
-		if message_code == "00":
-			response_dict['sms_status'] = "success"
-		else:
-		 	response_dict['sms_status'] = "false"
+		# if message_code == "00":
+		response_dict['sms_status'] = "success"
+		# else:
+		#  	response_dict['sms_status'] = "false"
 
 		response_dict['customer_mobile'] = customer_mobile
 

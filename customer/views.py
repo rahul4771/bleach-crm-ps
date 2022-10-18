@@ -8554,6 +8554,7 @@ class CartAPI(APIView):
 		response_dict['data'] = cart_services
 		response_dict['customer'] = customer_data
 		response_dict['cart_id'] = cart.id
+		response_dict['cart_items_count'] = services.count()
 		response_dict['no_of_visits'] = cart.no_of_visits
 		response_dict['customer_ip_address'] = get_client_ip(request)
 		response_dict['is_scheduled'] = cart.is_scheduled
