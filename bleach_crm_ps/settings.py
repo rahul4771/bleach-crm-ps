@@ -123,8 +123,10 @@ AUTH_PASSWORD_VALIDATORS = [
 CRONJOBS = [ 
     ('0 0 * * *', 'customer.cron.loadtimeoffsbamboo', '>> ' + os.path.join(BASE_DIR,'log/debug7.log' + ' 2>&1 ')),
     ('0 0 * * *', 'customer.cron.deletetimeoffsbamboo', '>> ' + os.path.join(BASE_DIR,'log/debug8.log' + ' 2>&1 ')),
-    ('*/1 * * * * /usr/bin/python3 /home/project/bleach-crm-ps/Api/management/commands/invoiceamount_updations.py', '>> ' + os.path.join(BASE_DIR,'log/debug144.log' + ' 2>&1 ')),
-    ('*/1 * * * * /usr/bin/python3 /home/project/bleach-crm-ps/Api/management/commands/bankchargeadd.py', '>> ' + os.path.join(BASE_DIR,'log/debug146.log' + ' 2>&1 ')),
+    ('*/1 * * * *', 'customer.cron.invoice_amount_updations', '>> ' + os.path.join(BASE_DIR,'log/debug9.log' + ' 2>&1 ')),
+    ('*/1 * * * *', 'customer.cron.bank_charge_add', '>> ' + os.path.join(BASE_DIR,'log/debug10.log' + ' 2>&1 ')),
+    # ('*/1 * * * *', '/usr/bin/python3 /home/project/bleach-crm-ps/Api/management/commands/invoiceamount_updations.py', '>> ' + os.path.join(BASE_DIR,'log/debug144.log' + ' 2>&1 ')),
+    # ('*/1 * * * * /usr/bin/python3 /home/project/bleach-crm-ps/Api/management/commands/bankchargeadd.py', '>> ' + os.path.join(BASE_DIR,'log/debug146.log' + ' 2>&1 ')),
     ('0 0 * * *', 'customer.cron.quotationexpiry'),
     ('*/10 * * * *', 'customer.cron.booking_expiry'),
 ]
