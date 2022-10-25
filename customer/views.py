@@ -8877,14 +8877,16 @@ class CartScheduleAPI(APIView):
 		cart_services = CartService.objects.filter(cart=cart)
 
 		for service in cart_services:
-			service.total_cost = round(float(service.total_cost)*float(len(slots)),3)
+			if slots:
+				service.total_cost = round(float(service.total_cost)*float(len(slots)),3)
 			service.cleaning_policy = request.data.get('cleaning_policy')
 			service.save()
 
 		#cart total cost update
 		cart.is_scheduled = True
 		cart.no_of_visits = len(slots)
-		cart.total_cost = round(float(cart.total_cost) * float(len(slots)),3)
+		if slots:
+			cart.total_cost = round(float(cart.total_cost) * float(len(slots)),3)
 		cart.save()
 
 		response_dict['success'] = True
