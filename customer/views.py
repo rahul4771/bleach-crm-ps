@@ -8890,6 +8890,9 @@ class CartScheduleAPI(APIView):
 		cart.save()
 
 		response_dict['success'] = True
-		response_dict['updated_cost'] = round(float(cart.total_cost) * float(len(slots)),3)
+		if slots:
+			response_dict['updated_cost'] = round(float(cart.total_cost) * float(len(slots)),3)
+		else:
+			response_dict['updated_cost'] = cart.total_cost
 
 		return Response(response_dict,HTTP_200_OK)
