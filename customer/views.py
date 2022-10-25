@@ -994,7 +994,7 @@ class PaymentResponseDebit(View):
 						
 						EvaluationSectionKeynote.objects.bulk_create(keynotes_list)
 
-						# floor.delete()
+						floor.delete()
 				else:
 					evaluation_section = EvaluationBookSection.objects.create(evaluation_book=evaluation_book,section_name=cart_service.section_name,category=cart_service.category,dirt_level=cart_service.dirt_level,quantity=cart_service.quantity,size=cart_service.size,unit=cart_service.unit,
 											age=cart_service.age,floor=cart_service.floor,apartment=cart_service.apartment,room=cart_service.room,wall_type=cart_service.wall_type,ceiling_type=cart_service.ceiling_type,floor_type=cart_service.floor_type,material=cart_service.material,colour=cart_service.colour,
@@ -1008,14 +1008,14 @@ class PaymentResponseDebit(View):
 				cart_schedules = [OrderScheduler(order=order,evaluation_details=evaluation_details,order_scheduler_book=evaluation_book,start_at=cart_schedule.start_at,end_at=cart_schedule.end_at,customer_address=customer_address,status='CONFIRMED',no_of_cleaners=cart_schedule.no_of_cleaners,cleaning_hours=cart_schedule.cleaning_hours,hourly_cleaning_duration=cart_schedule.hourly_cleaning_duration) for cart_schedule in customer_cart.cart_schedules]
 				OrderScheduler.objects.bulk_create(cart_schedules) 
 
-			# 	cart_service.delete()				
+				cart_service.delete()				
 
-			# for cart_schedule in customer_cart.cart_schedules:
-			# 	cart_schedule.delete()
+			for cart_schedule in customer_cart.cart_schedules:
+				cart_schedule.delete()
 
-			# customer_cart.is_scheduled = False
-			# customer_cart.total_cost = 0
-			# customer_cart.save()
+			customer_cart.is_scheduled = False
+			customer_cart.total_cost = 0
+			customer_cart.save()
 
 		#Booking From CRM System
 		else:
@@ -1622,23 +1622,6 @@ class PaymentResponseDebit(View):
 				closing_order	= Order.objects.get(is_active=True,order_no=evaluation_id)
 				closing_order.order_status = 'ORDER_CLOSED'
 				closing_order.save()
-				
-			#deleting temporary data in customer booking
-			# customer_cart = CustomerCart.objects.prefetch_related(Prefetch('cart_service',queryset=CartService.objects.filter(is_active=True).prefetch_related(Prefetch('cart_service_floor',queryset=CartServiceFloor.objects.all(),to_attr='cart_service_floors')),to_attr='cart_services'),Prefetch('cart_schedule',queryset=CartSchedule.objects.filter(is_active=True),to_attr='cart_schedules')).get(id=evaluation_id_encrypted)
-
-			# for cart_service in customer_cart.cart_services:
-			# 	if cart_service.cart_service_floors:
-			# 		for floor in cart_service.cart_service_floors:
-			# 			floor.delete()
-						
-			# 	cart_service.delete()
-
-			# for cart_schedule in customer_cart.cart_schedules:
-			# 	cart_schedule.delete()
-
-			# customer_cart.is_scheduled = False
-			# customer_cart.total_cost = 0
-			# customer_cart.save()
 
 			#pay and book &&& others
 			# pay_and_book = request.POST.get('udf4')
@@ -1665,23 +1648,6 @@ class PaymentResponseDebit(View):
 			order.remining_amount  = 0
 			order.amount_paid     += amount_paid
 			order.save()
-
-			#deleting temporary data in customer booking
-			# customer_cart = CustomerCart.objects.prefetch_related(Prefetch('cart_service',queryset=CartService.objects.filter(is_active=True).prefetch_related(Prefetch('cart_service_floor',queryset=CartServiceFloor.objects.all(),to_attr='cart_service_floors')),to_attr='cart_services'),Prefetch('cart_schedule',queryset=CartSchedule.objects.filter(is_active=True),to_attr='cart_schedules')).get(id=evaluation_id_encrypted)
-
-			# for cart_service in customer_cart.cart_services:
-			# 	if cart_service.cart_service_floors:
-			# 		for floor in cart_service.cart_service_floors:
-			# 			floor.delete()
-						
-			# 	cart_service.delete()
-
-			# for cart_schedule in customer_cart.cart_schedules:
-			# 	cart_schedule.delete()
-
-			# customer_cart.is_scheduled = False
-			# customer_cart.total_cost = 0
-			# customer_cart.save()
 			
 			#pay and book &&& others
 			# pay_and_book = request.POST.get('udf4')
