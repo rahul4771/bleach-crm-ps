@@ -5939,7 +5939,7 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 			CustomerOTP.objects.create(mobile_number=customer_mobile,otp=customer_otp)
 
 		
-		# live_response = requests.post("https://my.bleachkw.com/api/sms-test/", data={"customer_mobile":customer_mobile,"customer_otp":customer_otp})
+		live_response = requests.post("https://my.bleachkw.com/api/sms-test/", data={"customer_mobile":customer_mobile,"customer_otp":customer_otp})
 		
 		#otp sms
 		# url = "https://smsapi.future-club.com/fccsms.aspx"
