@@ -6394,11 +6394,22 @@ class CustomerBookedOrderDetailsAPI(APIView):
 				evaluation_data.append(evaluationbook_data)
 						
 		# previous visit and upcoming visit		
+		completed_visit_dates = []
+		pending_visit_dates = []
 		visit_dates = []
 
 		for schedule in order.orderschedules:
+			if schedule.status == 'CLEANING_FULFILLED':
+				completed_visit_dates.append(schedule.start_at)
+			elif schedule.status == 'CLEANING_TEAM_ASSIGNED' or schedule.status == None:
+				pending_visit_dates.append(schedule.start_at)
+			else:
+				pass
+			
 			visit_dates.append(schedule.start_at)
 
+		completed_visit_dates = sorted(completed_visit_dates)
+		pending_visit_dates = sorted(pending_visit_dates)
 		visit_dates = sorted(visit_dates)
 
 		start_date = datetime.strftime(visit_dates[0],'%d-%m-%Y')
@@ -6406,8 +6417,8 @@ class CustomerBookedOrderDetailsAPI(APIView):
 
 		target = timezone.now()
 
-		previous_date = datetime.strftime( min(visit_dates, key=lambda x: (x>target, abs(x-target)) ) , '%d-%m-%Y %I:%M %p')
-		upcoming_date = datetime.strftime( min(visit_dates, key=lambda x: (x<target, abs(x-target)) ) , '%d-%m-%Y %I:%M %p')		
+		previous_date = datetime.strftime( min(completed_visit_dates, key=lambda x: (x>target, abs(x-target)) ) , '%d-%m-%Y %I:%M %p')
+		upcoming_date = datetime.strftime( min(pending_visit_dates, key=lambda x: (x<target, abs(x-target)) ) , '%d-%m-%Y %I:%M %p')		
 
 		####payment
 		payment_type = None
@@ -6417,9 +6428,15 @@ class CustomerBookedOrderDetailsAPI(APIView):
 		###feedback
 		feedbacks = FeedBackSerializer(order.feedbacks,many=True,read_only=True).data
 
+		if order.evaluation.payment_method == 'SUBSCRIPTION':
+			policy = 'Subscription'
+		else:
+			policy = 'One Time Service'
+
 		order_details_data = {
 			'start_date' : start_date,
 			'end_date' : end_date,
+			'policy' : policy,
 			'start_time':datetime.strftime(order.orderschedules[0].start_at, '%I:%M %p'),
 			'previous_visit':previous_date,
 			'upcoming_visit':upcoming_date,
