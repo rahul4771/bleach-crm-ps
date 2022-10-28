@@ -6417,9 +6417,16 @@ class CustomerBookedOrderDetailsAPI(APIView):
 
 		target = timezone.now()
 
-		previous_date = datetime.strftime( min(completed_visit_dates, key=lambda x: (x>target, abs(x-target)) ) , '%d-%m-%Y %I:%M %p')
-		upcoming_date = datetime.strftime( min(pending_visit_dates, key=lambda x: (x<target, abs(x-target)) ) , '%d-%m-%Y %I:%M %p')		
+		if len(completed_visit_dates) > 0:
+			previous_date = datetime.strftime( min(completed_visit_dates, key=lambda x: (x>target, abs(x-target)) ) , '%d-%m-%Y %I:%M %p')
+		else:
+			previous_date = '-'
 
+		if len(pending_visit_dates) > 0:
+			upcoming_date = datetime.strftime( min(pending_visit_dates, key=lambda x: (x<target, abs(x-target)) ) , '%d-%m-%Y %I:%M %p')		
+		else:
+			upcoming_date = '-'
+			
 		####payment
 		payment_type = None
 		for payment in order.paymenthistory:
