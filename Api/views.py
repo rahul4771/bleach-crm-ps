@@ -6401,7 +6401,7 @@ class CustomerBookedOrderDetailsAPI(APIView):
 		for schedule in order.orderschedules:
 			if schedule.status == 'CLEANING_FULFILLED':
 				completed_visit_dates.append(schedule.start_at)
-			elif schedule.status == 'CLEANING_TEAM_ASSIGNED' or schedule.status == None:
+			elif schedule.status != 'CLEANING_IN_PROGRESS' or schedule.status != 'CLEANING_CANCELLED':
 				pending_visit_dates.append(schedule.start_at)
 			else:
 				pass
