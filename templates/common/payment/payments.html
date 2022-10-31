@@ -1034,6 +1034,7 @@
       <option value="employeecommission">EMPLOYEE COMMISSION</option>
       {% if request.user.user_type == 'ADMIN' and request.user.username == 'superuser' %}
       <option value="due_payments">DUE PAYMENTS</option>
+      <option value="xeroinvoices">XERO INVOICES</option>
       {% endif %}
       {% comment %} <option value="allsalesdetails">SALES REPORT (ALL JOBS)</option> {% endcomment %}
       </select>
