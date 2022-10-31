@@ -182,17 +182,22 @@ class Command(BaseCommand):
                                                     ).json()
                 try:
                     created_invoice = create_invoice['Status']
+                    print("inv created")
                 except:
                     created_invoice = None
+                    print("inv not created")
                 
                 if created_invoice == 'OK':
+                    print("inv created ok")
                     try:
+                        print("inv created ok")
                         update_xero_invoice                  = XeroInvoice.objects.get(order=payment_history.order,invoice_no=InvoiceNumber)
                         update_xero_invoice.amount           = Amount
                         update_xero_invoice.xero_marked_date = timezone.now().date()
                         update_xero_invoice.payment_policy   = payment_policy
                         update_xero_invoice.save()
                     except:
+                        print("inv not created")
                         XeroInvoice.objects.create(order=payment_history.order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 
             if payment_method == 'POSTPAID':
