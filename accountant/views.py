@@ -1560,7 +1560,7 @@ def export_users_xls(request):
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
 
-		xeroinvoices = XeroInvoice.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end),is_paid=True).values_list('paid_date','order__order_no', 'payment_policy','amount').order_by('-id')
+		xeroinvoices = XeroInvoice.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end),is_paid=True).values_list('xero_marked_date','order__order_no', 'payment_policy','amount').order_by('-id')
 
 		xeroinvoices = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in xeroinvoices ]
 
