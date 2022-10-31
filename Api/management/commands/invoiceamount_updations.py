@@ -49,7 +49,7 @@ class Command(BaseCommand):
 
         #Paid History                                
         payment_history_date   = datetime.strptime("06-08-2022","%d-%m-%Y").date()
-        payment_history_end_date   = datetime.strptime("15-08-2022","%d-%m-%Y").date()
+        payment_history_end_date   = datetime.strptime("30-08-2022","%d-%m-%Y").date()
         
         # payment_history_date = date.today() - timedelta(31)
         # payment_history_end_date = date.today()
