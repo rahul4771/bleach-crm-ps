@@ -22,30 +22,30 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
     
         #Xero Integration
-        # xero          = XeroConnection.objects.first()
-        # #Update Access Token and Refresh Token
-        # header                      = {
-        #                                 'Authorization': 'Basic '+xero.client_encoded,
-        #                                 'Content-Type': 'application/x-www-form-urlencoded'
-        #                                     }
-        # body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
-        # token_response              = requests.post('https://identity.xero.com/connect/token',
-        #                                         data=body,
-        #                                         headers=header 
-        #                                     ).json()
-        # access_token                = token_response['access_token']
-        # refresh_token               = token_response['refresh_token']
+        xero          = XeroConnection.objects.first()
+        #Update Access Token and Refresh Token
+        header                      = {
+                                        'Authorization': 'Basic '+xero.client_encoded,
+                                        'Content-Type': 'application/x-www-form-urlencoded'
+                                            }
+        body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
+        token_response              = requests.post('https://identity.xero.com/connect/token',
+                                                data=body,
+                                                headers=header 
+                                            ).json()
+        access_token                = token_response['access_token']
+        refresh_token               = token_response['refresh_token']
 
-        # xero.access_token  = access_token
-        # xero.refresh_token = refresh_token
-        # xero.save()
+        xero.access_token  = access_token
+        xero.refresh_token = refresh_token
+        xero.save()
 
-        # header                      = {
-        #                                 'xero-tenant-id': xero.tenant_id,
-        #                                 'Authorization': 'Bearer '+access_token,
-        #                                 'Accept': 'application/json',
-        #                                 'Content-Type': 'application/json'
-        #                                     }
+        header                      = {
+                                        'xero-tenant-id': xero.tenant_id,
+                                        'Authorization': 'Bearer '+access_token,
+                                        'Accept': 'application/json',
+                                        'Content-Type': 'application/json'
+                                            }
 
         #Paid History                                
         payment_history_date   = datetime.strptime("01-08-2022","%d-%m-%Y").date()
