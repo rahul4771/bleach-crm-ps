@@ -48,13 +48,13 @@ class Command(BaseCommand):
                                             }
 
         #Paid History                                
-        payment_history_date   = datetime.strptime("01-08-2022","%d-%m-%Y").date()
-        payment_history_end_date   = datetime.strptime("20-10-2022","%d-%m-%Y").date()
+        payment_history_date   = datetime.strptime("06-08-2022","%d-%m-%Y").date()
+        payment_history_end_date   = datetime.strptime("15-08-2022","%d-%m-%Y").date()
         
         # payment_history_date = date.today() - timedelta(31)
         # payment_history_end_date = date.today()
 
-        print(payment_history_date,payment_history_end_date,"dates")
+        # print(payment_history_date,payment_history_end_date,"dates")
         
         #payment history start date
         # payment_histories      = PaymentHistory.objects.select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order').filter(is_active=True,paid_date__gte=payment_history_date,is_xero_marked=False).annotate(total_cleanings_count=Count('order__order_scheduler_order')).prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
