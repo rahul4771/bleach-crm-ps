@@ -77,8 +77,8 @@ class Command(BaseCommand):
 
         ##Invoice Editing and Payment Add
         #Paid History                                
-        payment_history_date   = datetime.strptime("01-08-2022","%d-%m-%Y").date()
-        payment_history_end_date   = datetime.strptime("20-10-2022","%d-%m-%Y").date()
+        payment_history_date   = datetime.strptime("06-08-2022","%d-%m-%Y").date()
+        payment_history_end_date   = datetime.strptime("15-08-2022","%d-%m-%Y").date()
 
         # payment_history_date = date.today() - timedelta(31)
         # payment_history_end_date = date.today()
