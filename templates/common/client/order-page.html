@@ -3621,11 +3621,9 @@
                         </div>
                         <form method="post" action="" enctype= "multipart/form-data" id="duplicate_form_id" class="text-center" v-if="all_val">{% csrf_token %}
                             <input type="hidden" name="evaluation" id="evaluation_id" value="{{order.evaluation.id}}">
-                            <input type="hidden" name="action_type" value="cancell_order">
-                            
+                            <input type="hidden" name="action_type" value="cancell_order">                           
                            
-                            <button class="sent-button mt-20" type="submit">Yes</button>
-                           
+                            <button class="sent-button mt-20" type="submit">Yes</button>                          
     
                             <button data-dismiss="modal" class="view-button mt-20">Cancel</button>
                      </form><!--Content ends here-->

@@ -5939,7 +5939,7 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 			CustomerOTP.objects.create(mobile_number=customer_mobile,otp=customer_otp)
 
 		
-		# live_response = requests.post("https://my.bleachkw.com/api/sms-test/", data={"customer_mobile":customer_mobile,"customer_otp":customer_otp})
+		live_response = requests.post("https://my.bleachkw.com/api/sms-test/", data={"customer_mobile":customer_mobile,"customer_otp":customer_otp})
 		
 		#otp sms
 		# url = "https://smsapi.future-club.com/fccsms.aspx"
@@ -5956,14 +5956,15 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 		
 		# sms_response = response.text
 		# message_code = sms_response[:2]
-		# response_str = live_response.text.split()
+		
+		response_str = live_response.text.split()
 
-		# message_code = re.findall(r'\d+', response_str[0])[0]
+		message_code = re.findall(r'\d+', response_str[0])[0]
 
-		# if message_code == "00":
-		response_dict['sms_status'] = "success"
-		# else:
-		#  	response_dict['sms_status'] = "false"
+		if message_code == "00":
+			response_dict['sms_status'] = "success"
+		else:
+		 	response_dict['sms_status'] = "false"
 
 		response_dict['customer_mobile'] = customer_mobile
 
@@ -6393,11 +6394,22 @@ class CustomerBookedOrderDetailsAPI(APIView):
 				evaluation_data.append(evaluationbook_data)
 						
 		# previous visit and upcoming visit		
+		completed_visit_dates = []
+		pending_visit_dates = []
 		visit_dates = []
 
 		for schedule in order.orderschedules:
+			if schedule.status == 'CLEANING_FULFILLED':
+				completed_visit_dates.append(schedule.start_at)
+			elif schedule.status == 'CLEANING_TEAM_ASSIGNED' or schedule.status == None:
+				pending_visit_dates.append(schedule.start_at)
+			else:
+				pass
+			
 			visit_dates.append(schedule.start_at)
 
+		completed_visit_dates = sorted(completed_visit_dates)
+		pending_visit_dates = sorted(pending_visit_dates)
 		visit_dates = sorted(visit_dates)
 
 		start_date = datetime.strftime(visit_dates[0],'%d-%m-%Y')
@@ -6405,9 +6417,16 @@ class CustomerBookedOrderDetailsAPI(APIView):
 
 		target = timezone.now()
 
-		previous_date = datetime.strftime( min(visit_dates, key=lambda x: (x>target, abs(x-target)) ) , '%d-%m-%Y %I:%M %p')
-		upcoming_date = datetime.strftime( min(visit_dates, key=lambda x: (x<target, abs(x-target)) ) , '%d-%m-%Y %I:%M %p')		
+		if len(completed_visit_dates) > 0:
+			previous_date = datetime.strftime( min(completed_visit_dates, key=lambda x: (x>target, abs(x-target)) ) , '%d-%m-%Y %I:%M %p')
+		else:
+			previous_date = '-'
 
+		if len(pending_visit_dates) > 0:
+			upcoming_date = datetime.strftime( min(pending_visit_dates, key=lambda x: (x<target, abs(x-target)) ) , '%d-%m-%Y %I:%M %p')		
+		else:
+			upcoming_date = '-'
+			
 		####payment
 		payment_type = None
 		for payment in order.paymenthistory:
@@ -6416,9 +6435,15 @@ class CustomerBookedOrderDetailsAPI(APIView):
 		###feedback
 		feedbacks = FeedBackSerializer(order.feedbacks,many=True,read_only=True).data
 
+		if order.evaluation.payment_method == 'SUBSCRIPTION':
+			policy = 'Subscription'
+		else:
+			policy = 'One Time Service'
+
 		order_details_data = {
 			'start_date' : start_date,
 			'end_date' : end_date,
+			'policy' : policy,
 			'start_time':datetime.strftime(order.orderschedules[0].start_at, '%I:%M %p'),
 			'previous_visit':previous_date,
 			'upcoming_visit':upcoming_date,

@@ -994,7 +994,7 @@ class PaymentResponseDebit(View):
 						
 						EvaluationSectionKeynote.objects.bulk_create(keynotes_list)
 
-						floor.delete()
+						# floor.delete()
 				else:
 					evaluation_section = EvaluationBookSection.objects.create(evaluation_book=evaluation_book,section_name=cart_service.section_name,category=cart_service.category,dirt_level=cart_service.dirt_level,quantity=cart_service.quantity,size=cart_service.size,unit=cart_service.unit,
 											age=cart_service.age,floor=cart_service.floor,apartment=cart_service.apartment,room=cart_service.room,wall_type=cart_service.wall_type,ceiling_type=cart_service.ceiling_type,floor_type=cart_service.floor_type,material=cart_service.material,colour=cart_service.colour,
@@ -1008,14 +1008,14 @@ class PaymentResponseDebit(View):
 				cart_schedules = [OrderScheduler(order=order,evaluation_details=evaluation_details,order_scheduler_book=evaluation_book,start_at=cart_schedule.start_at,end_at=cart_schedule.end_at,customer_address=customer_address,status='CONFIRMED',no_of_cleaners=cart_schedule.no_of_cleaners,cleaning_hours=cart_schedule.cleaning_hours,hourly_cleaning_duration=cart_schedule.hourly_cleaning_duration) for cart_schedule in customer_cart.cart_schedules]
 				OrderScheduler.objects.bulk_create(cart_schedules) 
 
-				cart_service.delete()				
+			# 	cart_service.delete()				
 
-			for cart_schedule in customer_cart.cart_schedules:
-				cart_schedule.delete()
+			# for cart_schedule in customer_cart.cart_schedules:
+			# 	cart_schedule.delete()
 
-			customer_cart.is_scheduled = False
-			customer_cart.total_cost = 0
-			customer_cart.save()
+			# customer_cart.is_scheduled = False
+			# customer_cart.total_cost = 0
+			# customer_cart.save()
 
 		#Booking From CRM System
 		else:
@@ -1614,7 +1614,6 @@ class PaymentResponseDebit(View):
 				print(response.text)
 			else:
 				pass
-
 			
 			####to close order
 			order_closing_check = Order.objects.select_related('evaluation__customer').filter(is_active=True,order_no=evaluation_id,payment_status='COMPLETED').order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(Q( Q(cleaning_count=F('completed_cleaning_count')) & Q(followup_count=F('completed_followup_count')) & ~Q(cleaning_count=0) ) )
@@ -1622,7 +1621,23 @@ class PaymentResponseDebit(View):
 				closing_order	= Order.objects.get(is_active=True,order_no=evaluation_id)
 				closing_order.order_status = 'ORDER_CLOSED'
 				closing_order.save()
-				
+
+			#customer booking temp data clearing
+			customer_cart = CustomerCart.objects.prefetch_related(Prefetch('cart_service',queryset=CartService.objects.filter(is_active=True).prefetch_related(Prefetch('cart_service_floor',queryset=CartServiceFloor.objects.all(),to_attr='cart_service_floors')),to_attr='cart_services'),Prefetch('cart_schedule',queryset=CartSchedule.objects.filter(is_active=True),to_attr='cart_schedules')).get(id=evaluation_id_encrypted)
+			for cart_service in customer_cart.cart_services:
+				if cart_service.cart_service_floors:
+					for floor in cart_service.cart_service_floors:
+						floor.delete()
+
+				cart_service.delete()	
+
+			for cart_schedule in customer_cart.cart_schedules:
+				cart_schedule.delete()
+
+			customer_cart.is_scheduled = False
+			customer_cart.total_cost = 0
+			customer_cart.save()
+
 			#pay and book &&& others
 			# pay_and_book = request.POST.get('udf4')
 			# if pay_and_book:
@@ -1648,6 +1663,22 @@ class PaymentResponseDebit(View):
 			order.remining_amount  = 0
 			order.amount_paid     += amount_paid
 			order.save()
+
+			#customer booking temp data clearing
+			customer_cart = CustomerCart.objects.prefetch_related(Prefetch('cart_service',queryset=CartService.objects.filter(is_active=True).prefetch_related(Prefetch('cart_service_floor',queryset=CartServiceFloor.objects.all(),to_attr='cart_service_floors')),to_attr='cart_services'),Prefetch('cart_schedule',queryset=CartSchedule.objects.filter(is_active=True),to_attr='cart_schedules')).get(id=evaluation_id_encrypted)
+			for cart_service in customer_cart.cart_services:
+				if cart_service.cart_service_floors:
+					for floor in cart_service.cart_service_floors:
+						floor.delete()
+						
+				cart_service.delete()	
+
+			for cart_schedule in customer_cart.cart_schedules:
+				cart_schedule.delete()
+
+			customer_cart.is_scheduled = False
+			customer_cart.total_cost = 0
+			customer_cart.save()
 			
 			#pay and book &&& others
 			# pay_and_book = request.POST.get('udf4')
@@ -1688,7 +1719,6 @@ class PaymentResponseDebit(View):
 				print(response.text)
 			else:
 				pass
-
 
 			return redirect('/customer/payment/failed/?udf1='+order.order_no[3:]+''+order.evaluation.customer.username+'&paymentid='+request.GET.get('paymentid')+'&ref='+request.GET.get('ref'))
 
@@ -8695,16 +8725,26 @@ class CartAPI(APIView):
 			#service total cost update
 			cart_services = CartService.objects.filter(cart=cart)
 
-			for service in cart_services:
-				service.total_cost = round(float(service.total_cost)/float(cartschedules.count()),3)
-				service.save()
+			if cartschedules:
+				for service in cart_services:
+					service.total_cost = round(float(service.total_cost)/float(cartschedules.count()),3)
+					service.save()
 
-			cart.total_cost = round(float(cart.total_cost) / float(cartschedules.count()),3)
-			cart.is_scheduled = False
-			cart.no_of_visits = 0
-			cart.save()
+				cart.total_cost = round(float(cart.total_cost) / float(cartschedules.count()),3)
+				cart.is_scheduled = False
+				cart.no_of_visits = 0
+				cart.save()
 
-			cartschedules.delete()
+				cartschedules.delete()
+			else:
+				for service in cart_services:
+					service.total_cost = service.total_cost
+					service.save()
+
+				cart.total_cost = cart.total_cost
+				cart.is_scheduled = False
+				cart.no_of_visits = 0
+				cart.save()
 
 			response_dict['success']  = True
 
@@ -8834,17 +8874,22 @@ class CartScheduleAPI(APIView):
 		cart_services = CartService.objects.filter(cart=cart)
 
 		for service in cart_services:
-			service.total_cost = round(float(service.total_cost)*float(len(slots)),3)
+			if slots:
+				service.total_cost = round(float(service.total_cost)*float(len(slots)),3)
 			service.cleaning_policy = request.data.get('cleaning_policy')
 			service.save()
 
 		#cart total cost update
 		cart.is_scheduled = True
 		cart.no_of_visits = len(slots)
-		cart.total_cost = round(float(cart.total_cost) * float(len(slots)),3)
+		if slots:
+			cart.total_cost = round(float(cart.total_cost) * float(len(slots)),3)
 		cart.save()
 
 		response_dict['success'] = True
-		response_dict['updated_cost'] = round(float(cart.total_cost) * float(len(slots)),3)
+		if slots:
+			response_dict['updated_cost'] = round(float(cart.total_cost) * float(len(slots)),3)
+		else:
+			response_dict['updated_cost'] = cart.total_cost
 
 		return Response(response_dict,HTTP_200_OK)

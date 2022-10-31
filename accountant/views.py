@@ -190,7 +190,6 @@ def GetFineCollectOrderInfo(request):
 class AccountantHome(IsAccountant,View):
 	def get(self,request):
 
-
 		#Payment Details
 		search                  = request.GET.get('search')
 
