@@ -1555,7 +1555,7 @@ def export_users_xls(request):
 		wb = xlwt.Workbook(encoding='utf-8')
 		ws = wb.add_sheet('XeroInvoices')
 
-		columns = ['Date','BLC','Invoice No.','Payment Policy','Paid Amount']
+		columns = ['Date','BLC','Payment Policy','Paid Amount']
 
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
