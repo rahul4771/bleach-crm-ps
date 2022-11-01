@@ -1573,7 +1573,7 @@ def export_users_xls(request):
 
 		paymenthistories = PaymentHistory.objects.filter(is_active=True,paid_date__range=(prev_date_start,todate_date_end)).values_list('paid_date','order__order_no', 'payment_mode','amount_paid').order_by('paid_date')
 
-		xeroinvoices = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in paymenthistories ]
+		paymenthistories = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in paymenthistories ]
 
 		for row in paymenthistories:
 			row_num2 += 1
