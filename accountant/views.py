@@ -1544,14 +1544,6 @@ def export_users_xls(request):
 		response = HttpResponse(content_type='application/ms-excel')
 		response['Content-Disposition'] = 'attachment; filename="System xeroInvoices.xls"'
 
-		row_num = 0
-
-		font_style = xlwt.XFStyle()
-		font_style.font.bold = True
-
-		# Sheet body, remaining rows
-		font_style = xlwt.XFStyle()
-
 		wb = xlwt.Workbook(encoding='utf-8')
 		ws = wb.add_sheet('XeroInvoices')
 
@@ -1568,6 +1560,22 @@ def export_users_xls(request):
 			row_num += 1
 			for col_num in range(len(row)):
 				ws.write(row_num, col_num, row[col_num], font_style)
+
+		ws = wb.add_sheet('PaymentHistories')
+
+		columns2 = ['Paid Date','BLC','Payment Mode','Paid Amount']
+
+		for col_num in range(len(columns2)):
+			ws.write(row_num2, col_num, columns[col_num], font_style)
+
+		paymenthistories = PaymentHistory.objects.filter(is_active=True,paid_date__range=(prev_date_start,todate_date_end)).values_list('paid_date','order__order_no', 'payment_mode','amount_paid').order_by('paid_date')
+
+		xeroinvoices = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in paymenthistories ]
+
+		for row in paymenthistories:
+			row_num2 += 1
+			for col_num in range(len(row)):
+				ws.write(row_num2, col_num, row[col_num], font_style)
 	
 	if report_type == 'employeecommission':
 
