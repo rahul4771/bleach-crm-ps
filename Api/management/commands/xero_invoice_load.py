@@ -57,7 +57,7 @@ class Command(BaseCommand):
                                             "Accept": "application/json",
                                                 }
 
-            invoices =  requests.request("GET", 'https://api.xero.com/api.xro/2.0/Invoices/?where=Date=DateTime(2022, 08, 06) AND Reference="'+payment_history.order.order_no+'"', headers=header2).json()
+            invoices =  requests.request("GET", 'https://api.xero.com/api.xro/2.0/Invoices/?where=Date=DateTime(2022, 08, 06) AND Reference="BLC20220810029"', headers=header2).json()
             print(invoices,"invcs")
             payment_method    = payment_history.order.evaluation.payment_method
             
@@ -111,7 +111,14 @@ class Command(BaseCommand):
 
                             ##Invoice Line Item 
                             LineItems                 = []
-                            
+                            LineItems.append({
+                                "Description":"ONE TIME SERVICE",
+                                "Quantity":"1",
+                                "UnitAmount":Amount,
+                                "AccountCode":1207004,
+                                "TaxType":"NONE"
+                                            }
+                                )
                             LineItems.append({
                                 "Description":"BANK CHARGE",
                                 "Quantity":"1",
@@ -136,9 +143,7 @@ class Command(BaseCommand):
                                                                 "Status":"AUTHORISED",
                                                                 "LineItems":LineItems
                                                                 }
-                            
-                            print(invoice_data,"inv data")
-
+                            print(invoice_data,"inv")
                             ##xero Create Invoice
                             header                      = {
                                                             'xero-tenant-id': xero.tenant_id,
@@ -152,7 +157,7 @@ class Command(BaseCommand):
                                                                     headers=header 
                                                                 ).json()
                             
-                            print(create_invoice['Status'],"stats")
+                            print(create_invoice,"stats")
                             
                             try:
                                 created_invoice = create_invoice['Status']
@@ -833,6 +838,8 @@ class Command(BaseCommand):
                                                         "LineItems":LineItems
                                                         }
                     
+                    print(invoice_data,"creating!!")
+
                     ##xero Create Invoice
                     header                      = {
                                                     'xero-tenant-id': xero.tenant_id,
