@@ -47,6 +47,7 @@ class Command(BaseCommand):
             access_token                = token_response['access_token']
             refresh_token               = token_response['refresh_token']
 
+            print(access_token,refresh_token,"tokens")
             xero.access_token  = access_token
             xero.refresh_token = refresh_token
             xero.save()
