@@ -71,10 +71,29 @@ class Command(BaseCommand):
 
                     print(float(payment_history.amount_paid),float(invoice['SubTotal']),"amt")
 
-                    print(invoice['Payments'],"payments")
-
                     #paid invoices bank charge adding
                     if invoice['Status'] == 'PAID' and float(payment_history.amount_paid) == float(invoice['SubTotal']):
+
+                        if invoice['Payments']:
+
+                            #Payment Removal
+
+                            data     = requests.get('https://api.xero.com/api.xro/2.0/Payments?where=Reference=="'+payment_history.transaction_id+'"',
+                                                                                headers=header 
+                                                                            ).json()
+                            payments = data['Payments']
+                            for payment in payments:
+                                print(payment['PaymentID'])
+                                body = {"Status":"DELETED"}
+                                delete_payment = requests.post('https://api.xero.com/api.xro/2.0/Payments/'+payment['PaymentID'],
+                                                                                json=body,
+                                                                                headers=header 
+                                                                            ).json()
+                                print(delete_payment)
+                            
+                            if delete_payment['Status'] == 'OK':
+                                payment_history.is_xero_marked = False
+                                payment_history.save()
 
                         ##Xero Contact
                         if not payment_history.order.evaluation.customer.xero_account_id:
@@ -401,6 +420,47 @@ class Command(BaseCommand):
                                 except:
                                     XeroInvoice.objects.create(order=payment_history.order,invoice_no=invoice['InvoiceNumber'],amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
                         
+                        #xero payment update
+                        try:
+                            xero_invoice        = XeroInvoice.objects.get(invoice_no=invoice['InvoiceNumber'])
+                        except:
+                            xero_invoice        = None 
+
+                        payment_date        = payment_history.paid_date.date()
+                        payment_date_string = datetime.strftime(payment_date,'%Y-%m-%d')
+                        amount_paid         = payment_history.amount_paid
+
+                        if xero_invoice:
+                            payment_data = {
+                                        "Invoice":{
+                                            "InvoiceNumber":xero_invoice.invoice_no
+                                        },
+                                        "Account":{
+                                            "Code":"1201023"
+                                        },
+                                        "Date":payment_date_string,
+                                        "Amount":float(amount_paid)-BankCharge,
+                                        "Reference":payment_history.transaction_id
+                                        }
+
+                            update_payment          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
+                                                                json=payment_data,
+                                                                headers=header 
+                                                            ).json()
+
+                            print(update_payment)
+                            try:
+                                created_payment = update_payment['Status']
+                            except:
+                                created_payment = None
+
+                            if created_payment == 'OK':
+                                xero_invoice.is_paid   = True
+                                xero_invoice.paid_date = payment_date
+                                xero_invoice.save()
+                        
+                                payment_history.is_xero_marked = True
+                                payment_history.save()
                     ##########################################################################################################
 
                     # INVOICE NOT PAID - UPDATING PAYMENT WITH BANK CHARGES
