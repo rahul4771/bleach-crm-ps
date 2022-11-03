@@ -57,7 +57,7 @@ class Command(BaseCommand):
                                             "Accept": "application/json",
                                                 }
 
-            invoices =  requests.request("GET", 'https://api.xero.com/api.xro/2.0/Invoices/?where=Date=DateTime('+payment_history.paid_date.year+', '+payment_history.paid_date.month+', '+payment_history.paid_date.day+') AND Reference="'+payment_history.order.order_no+'"', headers=header2).json()
+            invoices =  requests.request("GET", 'https://api.xero.com/api.xro/2.0/Invoices/?where=Date=DateTime('+str(payment_history.paid_date.year)+', '+str(payment_history.paid_date.month)+', '+str(payment_history.paid_date.day)+') AND Reference="'+payment_history.order.order_no+'"', headers=header2).json()
             print(invoices,"invcs")
             payment_method    = payment_history.order.evaluation.payment_method
             
