@@ -78,6 +78,7 @@ class Command(BaseCommand):
                         print(payment_history.transaction_id,"payment")
 
                         #Xero Integration
+                        xero          = XeroConnection.objects.first()
                         #Update Access Token and Refresh Token
                         header                      = {
                                                         'Authorization': 'Basic '+xero.client_encoded,
@@ -94,6 +95,14 @@ class Command(BaseCommand):
                         xero.access_token  = access_token
                         xero.refresh_token = refresh_token
                         xero.save()
+
+
+                        header                      = {
+                                                                        'xero-tenant-id': xero.tenant_id,
+                                                                        'Authorization': 'Bearer '+access_token,
+                                                                        'Accept': 'application/json',
+                                                                        'Content-Type': 'application/json'
+                                                                            }
 
                         data     = requests.get('https://api.xero.com/api.xro/2.0/Payments?where=Reference=="'+payment_history.transaction_id+'"',
                                                                             headers=header 
