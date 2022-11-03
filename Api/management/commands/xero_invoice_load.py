@@ -137,6 +137,8 @@ class Command(BaseCommand):
                                                                 "LineItems":LineItems
                                                                 }
                             
+                            print(invoice_data,"inv data")
+
                             ##xero Create Invoice
                             header                      = {
                                                             'xero-tenant-id': xero.tenant_id,
