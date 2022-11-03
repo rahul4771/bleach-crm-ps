@@ -69,6 +69,10 @@ class Command(BaseCommand):
 
                     #CASE 1A
 
+                    print(float(payment_history.amount_paid),float(invoice['SubTotal']),"amt")
+
+                    print(invoice['Payments'],"payments")
+
                     #paid invoices bank charge adding
                     if invoice['Status'] == 'PAID' and float(payment_history.amount_paid) == float(invoice['SubTotal']):
 
