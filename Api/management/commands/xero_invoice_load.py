@@ -111,14 +111,7 @@ class Command(BaseCommand):
 
                             ##Invoice Line Item 
                             LineItems                 = []
-                            LineItems.append({
-                                "Description":"ONE TIME SERVICE",
-                                "Quantity":"1",
-                                "UnitAmount":Amount,
-                                "AccountCode":1207004,
-                                "TaxType":"NONE"
-                                            }
-                                )
+                            
                             LineItems.append({
                                 "Description":"BANK CHARGE",
                                 "Quantity":"1",
@@ -156,6 +149,9 @@ class Command(BaseCommand):
                                                                     json=invoice_data,
                                                                     headers=header 
                                                                 ).json()
+                            
+                            print(create_invoice['Status'],"stats")
+                            
                             try:
                                 created_invoice = create_invoice['Status']
                             except:
