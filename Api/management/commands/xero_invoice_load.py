@@ -25,11 +25,8 @@ class Command(BaseCommand):
         paymentdate_start = paymentdate.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=pytz.UTC)
         paymentdate_end = paymentdate_start + timedelta(1)
 
-        print(paymentdate_start,paymentdate_end,"dates")
         # payment_histories = PaymentHistory.objects.filter(is_active=True,paid_date__range=(paymentdate_start,paymentdate_end))
-        payment_histories      = PaymentHistory.objects.select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order').filter(Q( Q(is_active=True) & Q(paid_date__gte=paymentdate_start) & Q(paid_date__lte=paymentdate_end) )).annotate(total_cleanings_count=Count('order__order_scheduler_order')).prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))        
-
-        print(payment_histories,"payments")
+        payment_histories      = PaymentHistory.objects.select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order').filter(Q( Q(is_active=True) & Q(paid_date__gte=paymentdate_start) & Q(paid_date__lte=paymentdate_end) )).annotate(total_cleanings_count=Count('order__order_scheduler_order')).prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
 
         #ITERATING SYSTEM PAYMENTS
         for payment_history in payment_histories:
@@ -49,7 +46,6 @@ class Command(BaseCommand):
             access_token                = token_response['access_token']
             refresh_token               = token_response['refresh_token']
 
-            print(access_token,refresh_token,"tokens")
             xero.access_token  = access_token
             xero.refresh_token = refresh_token
             xero.save()
@@ -64,8 +60,6 @@ class Command(BaseCommand):
             invoices =  requests.request("GET", 'https://api.xero.com/api.xro/2.0/Invoices/?where=Date=DateTime(2022, 08, 06) AND Reference="'+payment_history.order.order_no+'"', headers=header2).json()
             print(invoices,"invcs")
             payment_method    = payment_history.order.evaluation.payment_method
-            print(payment_method,"Payment Method")
-
             
             #CASE 1
 
@@ -167,15 +161,19 @@ class Command(BaseCommand):
                             except:
                                 created_invoice = None   
                             
+                            print(created_invoice,"crinv")
+
                             if created_invoice == 'OK':
                                 
                                 try: 
+                                    print("crinvop")
                                     update_xero_invoice                  = XeroInvoice.objects.get(order=payment_history.order,invoice_no=invoice['InvoiceNumber'])
                                     update_xero_invoice.amount           = Amount
                                     update_xero_invoice.xero_marked_date = timezone.now().date()
                                     update_xero_invoice.payment_policy   = payment_policy
                                     update_xero_invoice.save()
                                 except:
+                                    print(created_invoice,"crinvip")
                                     XeroInvoice.objects.create(order=payment_history.order,invoice_no=invoice['InvoiceNumber'],amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 
                         if payment_method == 'POSTPAID':
