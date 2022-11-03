@@ -23,7 +23,7 @@ class Command(BaseCommand):
         #getting crm payments
         paymentdate = datetime.strptime('06-08-2022','%d-%m-%Y')
         paymentdate_start = paymentdate.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=pytz.UTC)
-        paymentdate_end = paymentdate_start + timedelta(1)
+        paymentdate_end = paymentdate_start + timedelta(9)
 
         # payment_histories = PaymentHistory.objects.filter(is_active=True,paid_date__range=(paymentdate_start,paymentdate_end))
         payment_histories      = PaymentHistory.objects.select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order').filter(Q( Q(is_active=True) & Q(paid_date__gte=paymentdate_start) & Q(paid_date__lte=paymentdate_end) )).annotate(total_cleanings_count=Count('order__order_scheduler_order')).prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
@@ -57,7 +57,7 @@ class Command(BaseCommand):
                                             "Accept": "application/json",
                                                 }
 
-            invoices =  requests.request("GET", 'https://api.xero.com/api.xro/2.0/Invoices/?where=Date=DateTime(2022, 08, 06) AND Reference="'+payment_history.order.order_no+'"', headers=header2).json()
+            invoices =  requests.request("GET", 'https://api.xero.com/api.xro/2.0/Invoices/?where=Date=DateTime('+payment_history.paid_date.year+', '+payment_history.paid_date.month+', '+payment_history.paid_date.day+') AND Reference="'+payment_history.order.order_no+'"', headers=header2).json()
             print(invoices,"invcs")
             payment_method    = payment_history.order.evaluation.payment_method
             
