@@ -784,7 +784,7 @@ class Command(BaseCommand):
                         if payment_method == 'SUBSCRIPTION':
                             
                             #exceptional condition check for subscription debit card
-                            if invoice['DueAmount'] == 0.25 and float(invoice['AmountPaid'])+float(invoice['DueAmount']) == float(payment_history.amount_paid) and payment_history.payment_gateway == 'DEBITCARD':
+                            if invoice['AmountDue'] == 0.25 and float(invoice['AmountPaid'])+float(invoice['AmountDue']) == float(payment_history.amount_paid) and payment_history.payment_gateway == 'DEBITCARD':
 
                                 #Payment Removal
 
