@@ -18,14 +18,21 @@ from django.db.models import Prefetch
 class Command(BaseCommand):
     help = 'Xero Invoice Load'
 
+    def add_arguments(self,parser):
+        parser.add_argument('start_date',type=str, help="start date")
+        parser.add_argument('day_count',type=int, help="number of days")
+
     def handle(self, *args, **kwargs):
+        
+        start_date = kwargs['start_date']
+        day_count = kwargs['day_count']
 
         #getting crm payments
-        paymentdate = datetime.strptime('27-08-2022','%d-%m-%Y')
+        paymentdate = datetime.strptime(start_date,'%d-%m-%Y')
         paymentdate_start = paymentdate.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=pytz.UTC)
-        paymentdate_end = paymentdate_start + timedelta(15)
+        paymentdate_end = paymentdate_start + timedelta(day_count)
 
-        # payment_histories = PaymentHistory.objects.filter(is_active=True,paid_date__range=(paymentdate_start,paymentdate_end))
+        payment_histories = PaymentHistory.objects.filter(is_active=True,paid_date__range=(paymentdate_start,paymentdate_end))
         payment_histories      = PaymentHistory.objects.select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order').filter(Q( Q(is_active=True) & Q(paid_date__gte=paymentdate_start) & Q(paid_date__lte=paymentdate_end) )).annotate(total_cleanings_count=Count('order__order_scheduler_order')).prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
 
         #ITERATING SYSTEM PAYMENTS
@@ -81,9 +88,6 @@ class Command(BaseCommand):
                                                                         'Accept': 'application/json',
                                                                         'Content-Type': 'application/json'
                                                                             }
-                        
-
-                        print()
 
                         if payment_history.transaction_id:
                             data     = requests.get('https://api.xero.com/api.xro/2.0/Payments?where=Reference=="'+str(payment_history.transaction_id)+'"',
@@ -445,7 +449,7 @@ class Command(BaseCommand):
                             if payment_history.transaction_id:
                                 transaction_id = payment_history.transaction_id
                             else:
-                                transaction_id = 0000000
+                                transaction_id = payment_history.payment_mode
                             
                             if xero_invoice:
                                 payment_data = {
@@ -779,6 +783,43 @@ class Command(BaseCommand):
 
                         if payment_method == 'SUBSCRIPTION':
 
+                            #debit card xero amount check
+                            xero_total_amount = float(invoice['AmountPaid'])+float(invoice['DueAmount'])
+                            
+                            #exceptional condition check for subscription debit card
+                            if invoice['DueAmount'] == 0.25 and float(xero_total_amount) == float(payment_history.amount_paid) and payment_history.payment_gateway == 'DEBITCARD':
+
+                                #Payment Removal
+
+                                header                      = {
+                                                                                'xero-tenant-id': xero.tenant_id,
+                                                                                'Authorization': 'Bearer '+access_token,
+                                                                                'Accept': 'application/json',
+                                                                                'Content-Type': 'application/json'
+                                                                                    }
+
+                                if payment_history.transaction_id:
+                                    data     = requests.get('https://api.xero.com/api.xro/2.0/Payments?where=Reference=="'+str(payment_history.transaction_id)+'"',
+                                                                                    headers=header 
+                                                                                ).json()
+
+                                    payments = data['Payments']
+                                    for payment in payments:
+                                        body = {"Status":"DELETED"}
+                                        delete_payment = requests.post('https://api.xero.com/api.xro/2.0/Payments/'+payment['PaymentID'],
+                                                                                        json=body,
+                                                                                        headers=header 
+                                                                                    ).json()
+                                else:
+                                    print(payment_history.order.order_no,"no transaction id")
+                                    pass
+                                
+                                if delete_payment['Status'] == 'OK':
+                                    payment_history.is_xero_marked = False
+                                    payment_history.save()
+                                    print(payment_history.order.order_no,"subscription xero payment deleted")
+
+                            
                             if payment_history.payment_gateway == 'DEBITCARD':
                                 BankCharge = .250
                             elif payment_history.payment_gateway == 'CREDITCARD':
@@ -843,7 +884,7 @@ class Command(BaseCommand):
                                 created_invoice = None
                             
                             if created_invoice == 'OK':
-                                print(payment_history.order.order_no,"invoice bank charge updated")
+                                print(payment_history.order.order_no,"invoice bank charge updated subscription")
                                 try:
                                     update_xero_invoice                  = XeroInvoice.objects.get(order=payment_history.order,invoice_no=invoice['InvoiceNumber'])
                                     update_xero_invoice.amount           = Amount
