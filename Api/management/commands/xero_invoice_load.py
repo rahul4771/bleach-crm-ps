@@ -496,24 +496,24 @@ class Command(BaseCommand):
                     # INVOICE NOT PAID - UPDATING PAYMENT WITH BANK CHARGES
                     elif invoice['Status'] == 'AUTHORISED':
                         
-                        #Xero Integration
-                        xero          = XeroConnection.objects.first()
-                        #Update Access Token and Refresh Token
-                        header                      = {
-                                                        'Authorization': 'Basic '+xero.client_encoded,
-                                                        'Content-Type': 'application/x-www-form-urlencoded'
-                                                            }
-                        body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
-                        token_response              = requests.post('https://identity.xero.com/connect/token',
-                                                                data=body,
-                                                                headers=header 
-                                                            ).json()
-                        access_token                = token_response['access_token']
-                        refresh_token               = token_response['refresh_token']
+                        # #Xero Integration
+                        # xero          = XeroConnection.objects.first()
+                        # #Update Access Token and Refresh Token
+                        # header                      = {
+                        #                                 'Authorization': 'Basic '+xero.client_encoded,
+                        #                                 'Content-Type': 'application/x-www-form-urlencoded'
+                        #                                     }
+                        # body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
+                        # token_response              = requests.post('https://identity.xero.com/connect/token',
+                        #                                         data=body,
+                        #                                         headers=header 
+                        #                                     ).json()
+                        # access_token                = token_response['access_token']
+                        # refresh_token               = token_response['refresh_token']
 
-                        xero.access_token  = access_token
-                        xero.refresh_token = refresh_token
-                        xero.save()
+                        # xero.access_token  = access_token
+                        # xero.refresh_token = refresh_token
+                        # xero.save()
 
                         ##Xero Contact
                         if not payment_history.order.evaluation.customer.xero_account_id:
@@ -954,24 +954,24 @@ class Command(BaseCommand):
             #if invoice does not exist on xero - create invoice, add bank charge, update payment
             else:                                           
                 print("create new invoice")
-                #Xero Integration
-                xero          = XeroConnection.objects.first()
-                #Update Access Token and Refresh Token
-                header                      = {
-                                                'Authorization': 'Basic '+xero.client_encoded,
-                                                'Content-Type': 'application/x-www-form-urlencoded'
-                                                    }
-                body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
-                token_response              = requests.post('https://identity.xero.com/connect/token',
-                                                        data=body,
-                                                        headers=header 
-                                                    ).json()
-                access_token                = token_response['access_token']
-                refresh_token               = token_response['refresh_token']
+                # #Xero Integration
+                # xero          = XeroConnection.objects.first()
+                # #Update Access Token and Refresh Token
+                # header                      = {
+                #                                 'Authorization': 'Basic '+xero.client_encoded,
+                #                                 'Content-Type': 'application/x-www-form-urlencoded'
+                #                                     }
+                # body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
+                # token_response              = requests.post('https://identity.xero.com/connect/token',
+                #                                         data=body,
+                #                                         headers=header 
+                #                                     ).json()
+                # access_token                = token_response['access_token']
+                # refresh_token               = token_response['refresh_token']
 
-                xero.access_token  = access_token
-                xero.refresh_token = refresh_token
-                xero.save()
+                # xero.access_token  = access_token
+                # xero.refresh_token = refresh_token
+                # xero.save()
                 
                 ##Xero Contact
                 if not payment_history.order.evaluation.customer.xero_account_id:
