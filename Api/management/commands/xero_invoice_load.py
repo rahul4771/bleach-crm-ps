@@ -1065,8 +1065,8 @@ class Command(BaseCommand):
                                                             headers=header 
                                                         ).json()
                     
-                    if create_invoice['ValidationErrors']['Message'] == 'Invoice # must be unique.':
-                        print(create_invoice['Elements']['InvoiceNumber'],"invoice num")
+                    print(create_invoice['ValidationErrors'])
+                    print(type(create_invoice['ValidationErrors']))
                         
                     try:
                         created_invoice = create_invoice['Status']
