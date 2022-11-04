@@ -30,7 +30,7 @@ class Command(BaseCommand):
 
         #ITERATING SYSTEM PAYMENTS
         for payment_history in payment_histories:
-            print(payment_history.paid_date,"payment date")
+            print(payment_history.paid_date.day,payment_history.paid_date.month,"payment date")
 
             #Xero Integration
             xero          = XeroConnection.objects.first()
@@ -81,27 +81,25 @@ class Command(BaseCommand):
                                                                         'Accept': 'application/json',
                                                                         'Content-Type': 'application/json'
                                                                             }
-
                         
-                        try:
-                            transaction_id = payment_history.transaction_id
 
-                            data     = requests.get('https://api.xero.com/api.xro/2.0/Payments?where=Reference=="'+payment_history.transaction_id+'"',
+                        print()
+
+                        if payment_history.transaction_id:
+                            data     = requests.get('https://api.xero.com/api.xro/2.0/Payments?where=Reference=="'+str(payment_history.transaction_id)+'"',
                                                                             headers=header 
                                                                         ).json()
 
                             payments = data['Payments']
                             for payment in payments:
-                                # print(payment['PaymentID'])
                                 body = {"Status":"DELETED"}
                                 delete_payment = requests.post('https://api.xero.com/api.xro/2.0/Payments/'+payment['PaymentID'],
                                                                                 json=body,
                                                                                 headers=header 
                                                                             ).json()
-                        except:
-                            print(payment_history.order.order_no,"transaction id missing")
-                            transaction_id = None
-                            delete_payment = None
+                        else:
+                            print(payment_history.order.order_no,"no transaction id")
+                            pass
                         
                         if delete_payment['Status'] == 'OK':
                             payment_history.is_xero_marked = False
