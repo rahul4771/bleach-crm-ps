@@ -37,7 +37,7 @@ class Command(BaseCommand):
 
         #ITERATING SYSTEM PAYMENTS
         for payment_history in payment_histories:
-            print(payment_history.paid_date.day,payment_history.paid_date.month,"payment date")
+            print(payment_history.paid_date.day,payment_history.paid_date.month,payment_history.order.order_no,"payment date")
 
             #Xero Integration
             xero          = XeroConnection.objects.first()
@@ -953,7 +953,7 @@ class Command(BaseCommand):
             
             #if invoice does not exist on xero - create invoice, add bank charge, update payment
             else:                                           
-
+                print("create new invoice")
                 #Xero Integration
                 xero          = XeroConnection.objects.first()
                 #Update Access Token and Refresh Token
@@ -1002,6 +1002,7 @@ class Command(BaseCommand):
                 
                 
                 if payment_method == 'PREPAID':
+                    print("create new invoice1")
 
                     if payment_history.payment_gateway == 'DEBITCARD':
                         BankCharge = .250
@@ -1157,6 +1158,7 @@ class Command(BaseCommand):
                             XeroInvoice.objects.create(order=payment_history.order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 
                 if payment_method == 'BREAKDOWN':
+                    print("create new invoice")
                     breakdown_histories = PaymentHistory.objects.prefetch_related('order__order_scheduler_order').filter(order=payment_history.order).annotate(total_cleanings_count=Count('order__order_scheduler_order')).prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
                     breakdown_counter      = 1
                     for breakdown_history in breakdown_histories:
@@ -1280,6 +1282,7 @@ class Command(BaseCommand):
                         breakdown_counter += 1
 
                 if payment_method == 'SUBSCRIPTION':
+                    print("create new invoice3")
                     subscription_histories = PaymentHistory.objects.filter(order=payment_history.order)
                     subscription_counter   = 0
                     for subscription_history in subscription_histories:
