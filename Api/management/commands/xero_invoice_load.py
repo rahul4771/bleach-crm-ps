@@ -82,25 +82,26 @@ class Command(BaseCommand):
                                                                         'Content-Type': 'application/json'
                                                                             }
 
-                        if payment_history.transaction_id:
-                            transaction_id = payment_history.transaction_id
-                        else:
-                            transaction_id = 000000
                         
-                        data     = requests.get('https://api.xero.com/api.xro/2.0/Payments?where=Reference=="'+payment_history.transaction_id+'"',
-                                                                            headers=header 
-                                                                        ).json()
-                        # print(data,"deta")
+                        try:
+                            transaction_id = payment_history.transaction_id
 
-                        payments = data['Payments']
-                        for payment in payments:
-                            # print(payment['PaymentID'])
-                            body = {"Status":"DELETED"}
-                            delete_payment = requests.post('https://api.xero.com/api.xro/2.0/Payments/'+payment['PaymentID'],
-                                                                            json=body,
+                            data     = requests.get('https://api.xero.com/api.xro/2.0/Payments?where=Reference=="'+payment_history.transaction_id+'"',
                                                                             headers=header 
                                                                         ).json()
-                            # print(delete_payment)
+
+                            payments = data['Payments']
+                            for payment in payments:
+                                # print(payment['PaymentID'])
+                                body = {"Status":"DELETED"}
+                                delete_payment = requests.post('https://api.xero.com/api.xro/2.0/Payments/'+payment['PaymentID'],
+                                                                                json=body,
+                                                                                headers=header 
+                                                                            ).json()
+                        except:
+                            print(payment_history.order.order_no,"transaction id missing")
+                            transaction_id = None
+                            delete_payment = None
                         
                         if delete_payment['Status'] == 'OK':
                             payment_history.is_xero_marked = False
