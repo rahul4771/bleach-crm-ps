@@ -30,7 +30,7 @@ class Command(BaseCommand):
 
         #ITERATING SYSTEM PAYMENTS
         for payment_history in payment_histories:
-            print(paymentdate_start,"payment date")
+            print(payment_history.paid_date,"payment date")
 
             #Xero Integration
             xero          = XeroConnection.objects.first()
@@ -917,6 +917,25 @@ class Command(BaseCommand):
             #if invoice does not exist on xero - create invoice, add bank charge, update payment
             else:                                           
 
+                #Xero Integration
+                xero          = XeroConnection.objects.first()
+                #Update Access Token and Refresh Token
+                header                      = {
+                                                'Authorization': 'Basic '+xero.client_encoded,
+                                                'Content-Type': 'application/x-www-form-urlencoded'
+                                                    }
+                body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
+                token_response              = requests.post('https://identity.xero.com/connect/token',
+                                                        data=body,
+                                                        headers=header 
+                                                    ).json()
+                access_token                = token_response['access_token']
+                refresh_token               = token_response['refresh_token']
+
+                xero.access_token  = access_token
+                xero.refresh_token = refresh_token
+                xero.save()
+                
                 ##Xero Contact
                 if not payment_history.order.evaluation.customer.xero_account_id:
                     ##Xero Create Customer ID and Save
