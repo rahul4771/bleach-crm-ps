@@ -21,7 +21,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
 
         #getting crm payments
-        paymentdate = datetime.strptime('15-08-2022','%d-%m-%Y')
+        paymentdate = datetime.strptime('22-08-2022','%d-%m-%Y')
         paymentdate_start = paymentdate.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=pytz.UTC)
         paymentdate_end = paymentdate_start + timedelta(15)
 
