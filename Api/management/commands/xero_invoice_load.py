@@ -782,12 +782,9 @@ class Command(BaseCommand):
                                     XeroInvoice.objects.create(order=payment_history.order,invoice_no=invoice['InvoiceNumber'],amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 
                         if payment_method == 'SUBSCRIPTION':
-
-                            #debit card xero amount check
-                            xero_total_amount = float(invoice['AmountPaid'])+float(invoice['DueAmount'])
                             
                             #exceptional condition check for subscription debit card
-                            if invoice['DueAmount'] == 0.25 and float(xero_total_amount) == float(payment_history.amount_paid) and payment_history.payment_gateway == 'DEBITCARD':
+                            if invoice['DueAmount'] == 0.25 and float(invoice['AmountPaid'])+float(invoice['DueAmount']) == float(payment_history.amount_paid) and payment_history.payment_gateway == 'DEBITCARD':
 
                                 #Payment Removal
 

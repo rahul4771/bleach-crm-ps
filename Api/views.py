@@ -6540,7 +6540,7 @@ class SmstestAPI(APIView):
 class DownloadFile(APIView):
 	def get(self, request):
 		query = request.GET.get('file_type')
-		if query == 'cp_engish':
+		if query == 'cp_english':
 			file = '/home/pdf/tmp/downloads/BLEACH_Company_Profile_English.pdf'
 		elif query == 'cp_arabic':
 			file = '/home/pdf/tmp/downloads/BLEACH_Company_Profile_Arabic.pdf'
