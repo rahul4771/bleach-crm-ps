@@ -6536,3 +6536,21 @@ class SmstestAPI(APIView):
 		
 		return Response(response_dict,HTTP_200_OK)
 
+
+class DownloadFile(APIView):
+	def get(self, request):
+		query = request.GET.get('file_type')
+		if query == 'cp_engish':
+			file = '/home/pdf/tmp/downloads/BLEACH_Company_Profile_English.pdf'
+		elif query == 'cp_arabic':
+			file = '/home/pdf/tmp/downloads/BLEACH_Company_Profile_Arabic.pdf'
+		elif query == 'brochure_english':
+			file = '/home/pdf/tmp/downloads/BLEACH_Brochure_English.pdf'
+		elif query == 'brochure_arabic':
+			file = '/home/pdf/tmp/downloads/BLEACH_Brochure_Arabic.pdf'
+		else:
+			file = ''
+		with open(file, 'rb') as f:
+			response = HttpResponse(f.read(), content_type="application/pdf")
+			response['Content-Disposition'] = 'inline;filename=' + file[24:]
+			return response
