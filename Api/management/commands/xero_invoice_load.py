@@ -1065,8 +1065,8 @@ class Command(BaseCommand):
                                                             headers=header 
                                                         ).json()
                     
-                    print(create_invoice['ValidationErrors'])
-                    print(type(create_invoice['ValidationErrors']))
+                    print(create_invoice,"/n/n")
+
                         
                     try:
                         created_invoice = create_invoice['Status']
