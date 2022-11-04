@@ -18,9 +18,9 @@ from django.db.models import Prefetch
 class Command(BaseCommand):
     help = 'Xero Invoice Load'
 
-    def add_arguments(self,parser):
-        parser.add_argument('start_date',type=str, help="start date")
-        parser.add_argument('day_count',type=int, help="number of days")
+    # def add_arguments(self,parser):
+    #     parser.add_argument('start_date',type=str, help="start date")
+    #     parser.add_argument('day_count',type=int, help="number of days")
 
     def handle(self, *args, **kwargs):
         
