@@ -1369,8 +1369,6 @@ class Command(BaseCommand):
                 except:
                     xero_invoice        = None 
 
-                print(xero_invoice.invoice_no,"inv no")
-
                 payment_date        = payment_history.paid_date.date()
                 payment_date_string = datetime.strftime(payment_date,'%Y-%m-%d')
                 amount_paid         = payment_history.amount_paid
