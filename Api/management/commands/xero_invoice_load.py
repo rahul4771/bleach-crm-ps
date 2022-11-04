@@ -1051,6 +1051,10 @@ class Command(BaseCommand):
                                                         "LineItems":LineItems
                                                         }
 
+                    print(invoice_data,"inv data")
+
+                    print(xero.tenant_id,access_token,"tokns")
+                    
                     ##xero Create Invoice
                     header                      = {
                                                     'xero-tenant-id': xero.tenant_id,
@@ -1063,6 +1067,9 @@ class Command(BaseCommand):
                                                             json=invoice_data,
                                                             headers=header 
                                                         ).json()
+                    
+                    print(create_invoice['Status'],"stats")
+                    
                     try:
                         created_invoice = create_invoice['Status']
                     except:
