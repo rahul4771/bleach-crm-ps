@@ -1068,11 +1068,11 @@ class Command(BaseCommand):
                                                             headers=header 
                                                         ).json()
                     
-                    print(create_invoice['Status'],"stats")
-                    
                     try:
                         created_invoice = create_invoice['Status']
+                        print("works")
                     except:
+                        print("nope")
                         created_invoice = None   
                     
                     if created_invoice == 'OK':
