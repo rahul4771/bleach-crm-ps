@@ -21,7 +21,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
 
         #getting crm payments
-        paymentdate = datetime.strptime('01-08-2022','%d-%m-%Y')
+        paymentdate = datetime.strptime('08-08-2022','%d-%m-%Y')
         paymentdate_start = paymentdate.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=pytz.UTC)
         paymentdate_end = paymentdate_start + timedelta(30)
 
@@ -1330,6 +1330,8 @@ class Command(BaseCommand):
                     xero_invoice        = XeroInvoice.objects.get(invoice_no=InvoiceNumber)
                 except:
                     xero_invoice        = None 
+
+                print(xero_invoice.invoice_no,"inv no")
 
                 payment_date        = payment_history.paid_date.date()
                 payment_date_string = datetime.strftime(payment_date,'%Y-%m-%d')
