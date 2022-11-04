@@ -1051,9 +1051,6 @@ class Command(BaseCommand):
                                                         "LineItems":LineItems
                                                         }
 
-                    print(invoice_data,"inv data")
-
-                    print(xero.tenant_id,access_token,"tokns")
                     
                     ##xero Create Invoice
                     header                      = {
@@ -1068,7 +1065,9 @@ class Command(BaseCommand):
                                                             headers=header 
                                                         ).json()
                     
-                    print(create_invoice,"crinv")
+                    if create_invoice['ValidationErrors']['Message'] == 'Invoice # must be unique.':
+                        print(create_invoice['Elements']['InvoiceNumber'],"invoice num")
+                        
                     try:
                         created_invoice = create_invoice['Status']
                         print("works")
