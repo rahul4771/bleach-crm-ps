@@ -30,6 +30,7 @@ class Command(BaseCommand):
 
         #ITERATING SYSTEM PAYMENTS
         for payment_history in payment_histories:
+            print(paymentdate_start,"payment date")
 
             #Xero Integration
             xero          = XeroConnection.objects.first()
@@ -73,8 +74,6 @@ class Command(BaseCommand):
                     if invoice['Status'] == 'PAID' and float(payment_history.amount_paid) == float(invoice['SubTotal']) and payment_history.payment_mode == 'ONLINECREDIT':
 
                         #Payment Removal
-                        
-                        print("condition1")
 
                         header                      = {
                                                                         'xero-tenant-id': xero.tenant_id,
@@ -106,6 +105,7 @@ class Command(BaseCommand):
                         if delete_payment['Status'] == 'OK':
                             payment_history.is_xero_marked = False
                             payment_history.save()
+                            print(payment_history.order.order_no,"payment deleted")
 
                             ##Xero Contact
                             if not payment_history.order.evaluation.customer.xero_account_id:
@@ -200,14 +200,12 @@ class Command(BaseCommand):
                                 if created_invoice == 'OK':
                                     print(payment_history.order.order_no,"condition1 inv updated")
                                     try: 
-                                        print("crinvop")
                                         update_xero_invoice                  = XeroInvoice.objects.get(order=payment_history.order,invoice_no=invoice['InvoiceNumber'])
                                         update_xero_invoice.amount           = Amount
                                         update_xero_invoice.xero_marked_date = timezone.now().date()
                                         update_xero_invoice.payment_policy   = payment_policy
                                         update_xero_invoice.save()
                                     except:
-                                        print(created_invoice,"crinvip")
                                         XeroInvoice.objects.create(order=payment_history.order,invoice_no=invoice['InvoiceNumber'],amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 
                             if payment_method == 'POSTPAID':
@@ -482,7 +480,7 @@ class Command(BaseCommand):
                                     created_payment = None
 
                                 if created_payment == 'OK':
-                                    print("condition1 payment updated")
+                                    print(payment_history.order.order_no,"condition1 payment updated")
                                     xero_invoice.is_paid   = True
                                     xero_invoice.paid_date = payment_date
                                     xero_invoice.save()
@@ -606,7 +604,7 @@ class Command(BaseCommand):
                                 created_invoice = None   
                             
                             if created_invoice == 'OK':
-                                
+                                print(payment_history.order.order_no,"invoice bank charge updated")
                                 try:
                                     update_xero_invoice                  = XeroInvoice.objects.get(order=payment_history.order,invoice_no=invoice['InvoiceNumber'])
                                     update_xero_invoice.amount           = Amount
@@ -681,6 +679,7 @@ class Command(BaseCommand):
                                 created_invoice = None
                             
                             if created_invoice == 'OK':
+                                print(payment_history.order.order_no,"invoice bank charge updated")
                                 try:
                                     update_xero_invoice                  = XeroInvoice.objects.get(order=payment_history.order,invoice_no=invoice['InvoiceNumber'])
                                     update_xero_invoice.amount           = Amount
@@ -769,6 +768,7 @@ class Command(BaseCommand):
                                 created_invoice = None
                             
                             if created_invoice == 'OK':
+                                print(payment_history.order.order_no,"invoice bank charge updated")
                                 try:
                                     update_xero_invoice                  = XeroInvoice.objects.get(order=payment_history.order,invoice_no=invoice['InvoiceNumber'])
                                     update_xero_invoice.amount           = Amount
@@ -844,6 +844,7 @@ class Command(BaseCommand):
                                 created_invoice = None
                             
                             if created_invoice == 'OK':
+                                print(payment_history.order.order_no,"invoice bank charge updated")
                                 try:
                                     update_xero_invoice                  = XeroInvoice.objects.get(order=payment_history.order,invoice_no=invoice['InvoiceNumber'])
                                     update_xero_invoice.amount           = Amount
@@ -894,13 +895,14 @@ class Command(BaseCommand):
                                                                 headers=header 
                                                             ).json()
 
-                            print(update_payment)
+                            
                             try:
                                 created_payment = update_payment['Status']
                             except:
                                 created_payment = None
 
                             if created_payment == 'OK':
+                                print(payment_history.order.order_no,"invoice payment updated")
                                 xero_invoice.is_paid   = True
                                 xero_invoice.paid_date = payment_date
                                 xero_invoice.save()
@@ -913,7 +915,6 @@ class Command(BaseCommand):
             
             #if invoice does not exist on xero - create invoice, add bank charge, update payment
             else:                                           
-                print("not exist")
 
                 ##Xero Contact
                 if not payment_history.order.evaluation.customer.xero_account_id:
@@ -1010,16 +1011,16 @@ class Command(BaseCommand):
                         created_invoice = None   
                     
                     if created_invoice == 'OK':
-                        
+                        print(payment_history.order.order_no,"invoice created and bank charge updated")
                         try:
-                            print("inv created ok")
+                            
                             update_xero_invoice                  = XeroInvoice.objects.get(order=payment_history.order,invoice_no=InvoiceNumber)
                             update_xero_invoice.amount           = Amount
                             update_xero_invoice.xero_marked_date = timezone.now().date()
                             update_xero_invoice.payment_policy   = payment_policy
                             update_xero_invoice.save()
                         except:
-                            print("inv not created")
+                            
                             XeroInvoice.objects.create(order=payment_history.order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 
                 if payment_method == 'POSTPAID':
@@ -1088,6 +1089,7 @@ class Command(BaseCommand):
                         created_invoice = None
                     
                     if created_invoice == 'OK':
+                        print(payment_history.order.order_no,"invoice created and bank charge updated")
                         try:
                             update_xero_invoice                  = XeroInvoice.objects.get(order=payment_history.order,invoice_no=InvoiceNumber)
                             update_xero_invoice.amount           = Amount
@@ -1208,6 +1210,7 @@ class Command(BaseCommand):
                                 created_invoice = None
                             
                             if created_invoice == 'OK':
+                                print(payment_history.order.order_no,"invoice created and bank charge updated")
                                 try:
                                     update_xero_invoice                  = XeroInvoice.objects.get(order=payment_history.order,invoice_no=InvoiceNumber)
                                     update_xero_invoice.amount           = Amount
@@ -1290,6 +1293,7 @@ class Command(BaseCommand):
                                 created_invoice = None
                             
                             if created_invoice == 'OK':
+                                print(payment_history.order.order_no,"invoice created and bank charge updated")
                                 try:
                                     update_xero_invoice                  = XeroInvoice.objects.get(order=payment_history.order,invoice_no=InvoiceNumber)
                                     update_xero_invoice.amount           = Amount
@@ -1343,13 +1347,14 @@ class Command(BaseCommand):
                                                         headers=header 
                                                     ).json()
 
-                    print(update_payment)
+                    
                     try:
                         created_payment = update_payment['Status']
                     except:
                         created_payment = None
 
                     if created_payment == 'OK':
+                        print(payment_history.order.order_no,"invoice payment updated")
                         xero_invoice.is_paid   = True
                         xero_invoice.paid_date = payment_date
                         xero_invoice.save()
