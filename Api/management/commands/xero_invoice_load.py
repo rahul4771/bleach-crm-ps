@@ -1068,6 +1068,7 @@ class Command(BaseCommand):
                                                             headers=header 
                                                         ).json()
                     
+                    print(create_invoice,"crinv")
                     try:
                         created_invoice = create_invoice['Status']
                         print("works")
