@@ -123,8 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
 CRONJOBS = [ 
     ('0 0 * * *', 'customer.cron.loadtimeoffsbamboo', '>> ' + os.path.join(BASE_DIR,'log/debug7.log' + ' 2>&1 ')),
     ('0 0 * * *', 'customer.cron.deletetimeoffsbamboo', '>> ' + os.path.join(BASE_DIR,'log/debug8.log' + ' 2>&1 ')),
-    # ('*/1 0 * * *', 'customer.cron.invoice_amount_updations', '>> ' + os.path.join(BASE_DIR,'log/debug9.log' + ' 2>&1 ')),
-    # ('*/1 1 * * *', 'customer.cron.bank_charge_add', '>> ' + os.path.join(BASE_DIR,'log/debug10.log' + ' 2>&1 ')),
+    ('35 19 * * fri', 'customer.cron.xero_updations', '>> ' + os.path.join(BASE_DIR,'log/xero_debug.log' + ' 2>&1 ')),
     ('0 0 * * *', 'customer.cron.quotationexpiry'),
     ('*/10 * * * *', 'customer.cron.booking_expiry'),
 ]

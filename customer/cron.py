@@ -147,11 +147,6 @@ def deletetimeoffsbamboo():
 		except:
 			leaveschedules = None
 
-def invoice_amount_updations():
-	print("inv amt upd")
-	call_command('invoiceamount_updations')
-
-def bank_charge_add():
-	print("bank charge add")
-	call_command('bankchargeadd')
+def xero_updations():
+	call_command('xero_invoice_load')
 	

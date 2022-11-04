@@ -24,20 +24,20 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         
-        start_date = kwargs['start_date']
-        day_count = kwargs['day_count']
+        # start_date = kwargs['start_date']
+        # day_count = kwargs['day_count']
 
         #getting crm payments
-        paymentdate = datetime.strptime(start_date,'%d-%m-%Y')
+        paymentdate = datetime.strptime("01-01-2022",'%d-%m-%Y')
         paymentdate_start = paymentdate.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=pytz.UTC)
-        paymentdate_end = paymentdate_start + timedelta(day_count)
+        paymentdate_end = paymentdate_start + timedelta(5)
 
         payment_histories = PaymentHistory.objects.filter(is_active=True,paid_date__range=(paymentdate_start,paymentdate_end))
         payment_histories      = PaymentHistory.objects.select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order').filter(Q( Q(is_active=True) & Q(paid_date__gte=paymentdate_start) & Q(paid_date__lte=paymentdate_end) )).annotate(total_cleanings_count=Count('order__order_scheduler_order')).prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
 
         #ITERATING SYSTEM PAYMENTS
         for payment_history in payment_histories:
-            print(payment_history.paid_date.day,payment_history.paid_date.month,payment_history.order.order_no,"payment date")
+            print(payment_history.paid_date.day,payment_history.paid_date.month,"payment date")
 
             #Xero Integration
             xero          = XeroConnection.objects.first()
@@ -66,7 +66,7 @@ class Command(BaseCommand):
                                                 }
 
             invoices =  requests.request("GET", 'https://api.xero.com/api.xro/2.0/Invoices/?where=Date=DateTime('+str(payment_history.paid_date.year)+', '+str(payment_history.paid_date.month)+', '+str(payment_history.paid_date.day)+') AND Reference="'+str(payment_history.order.order_no)+'"', headers=header).json()
-            # print(invoices,"invcs")
+            
             payment_method    = payment_history.order.evaluation.payment_method
 
             #CASE 1
@@ -74,7 +74,6 @@ class Command(BaseCommand):
             #if invoice exists in xero
             if invoices['Invoices']:
                 for invoice in invoices['Invoices']:
-                    print(invoice['Reference'],"checking")
 
                     #CASE 1A
 
@@ -182,7 +181,7 @@ class Command(BaseCommand):
                                                                     "Status":"AUTHORISED",
                                                                     "LineItems":LineItems
                                                                     }
-                                # print(invoice_data,"inv")
+                                
                                 ##xero Create Invoice
                                 header                      = {
                                                                 'xero-tenant-id': xero.tenant_id,
@@ -202,7 +201,7 @@ class Command(BaseCommand):
                                     created_invoice = None   
 
                                 if created_invoice == 'OK':
-                                    print(payment_history.order.order_no,"condition1 inv updated")
+                                    print(payment_history.order.order_no,"invoice updated with bank charge")
                                     try: 
                                         update_xero_invoice                  = XeroInvoice.objects.get(order=payment_history.order,invoice_no=invoice['InvoiceNumber'])
                                         update_xero_invoice.amount           = Amount
@@ -274,7 +273,7 @@ class Command(BaseCommand):
                                     created_invoice = None
                                 
                                 if created_invoice == 'OK':
-                                    print(payment_history.order.order_no,"condition1 inv updated postpaid")
+                                    print(payment_history.order.order_no,"invoice updated with bank charge")
                                     try:
                                         update_xero_invoice                  = XeroInvoice.objects.get(order=payment_history.order,invoice_no=invoice['InvoiceNumber'])
                                         update_xero_invoice.amount           = Amount
@@ -356,7 +355,7 @@ class Command(BaseCommand):
                                     created_invoice = None
                                 
                                 if created_invoice == 'OK':
-                                    print(payment_history.order.order_no,"condition1 inv updated brkdown")
+                                    print(payment_history.order.order_no,"invoice updated with bank charge")
                                     try:
                                         update_xero_invoice                  = XeroInvoice.objects.get(order=payment_history.order,invoice_no=invoice['InvoiceNumber'])
                                         update_xero_invoice.amount           = Amount
@@ -427,7 +426,7 @@ class Command(BaseCommand):
                                     created_invoice = None
                                 
                                 if created_invoice == 'OK':
-                                    print(payment_history.order.order_no,"condition1 inv updated subscription")
+                                    print(payment_history.order.order_no,"invoice updated with bank charge")
                                     try:
                                         update_xero_invoice                  = XeroInvoice.objects.get(order=payment_history.order,invoice_no=invoice['InvoiceNumber'])
                                         update_xero_invoice.amount           = Amount
@@ -496,7 +495,7 @@ class Command(BaseCommand):
                     # INVOICE NOT PAID - UPDATING PAYMENT WITH BANK CHARGES
                     elif invoice['Status'] == 'AUTHORISED':
                         
-                        # #Xero Integration
+                        #Xero Integration
                         # xero          = XeroConnection.objects.first()
                         # #Update Access Token and Refresh Token
                         # header                      = {
@@ -953,8 +952,8 @@ class Command(BaseCommand):
             
             #if invoice does not exist on xero - create invoice, add bank charge, update payment
             else:                                           
-                print("create new invoice")
-                # #Xero Integration
+                
+                #Xero Integration
                 # xero          = XeroConnection.objects.first()
                 # #Update Access Token and Refresh Token
                 # header                      = {
@@ -1002,7 +1001,6 @@ class Command(BaseCommand):
                 
                 
                 if payment_method == 'PREPAID':
-                    print("create new invoice1")
 
                     if payment_history.payment_gateway == 'DEBITCARD':
                         BankCharge = .250
@@ -1064,15 +1062,12 @@ class Command(BaseCommand):
                                                             json=invoice_data,
                                                             headers=header 
                                                         ).json()
-                    
-                    print(create_invoice,"/n/n")
-
                         
                     try:
                         created_invoice = create_invoice['Status']
-                        print("works")
+                        
                     except:
-                        print("nope")
+                        
                         created_invoice = None   
                     
                     if created_invoice == 'OK':
@@ -1165,7 +1160,7 @@ class Command(BaseCommand):
                             XeroInvoice.objects.create(order=payment_history.order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 
                 if payment_method == 'BREAKDOWN':
-                    print("create new invoice")
+                    
                     breakdown_histories = PaymentHistory.objects.prefetch_related('order__order_scheduler_order').filter(order=payment_history.order).annotate(total_cleanings_count=Count('order__order_scheduler_order')).prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
                     breakdown_counter      = 1
                     for breakdown_history in breakdown_histories:
@@ -1289,7 +1284,7 @@ class Command(BaseCommand):
                         breakdown_counter += 1
 
                 if payment_method == 'SUBSCRIPTION':
-                    print("create new invoice3")
+                    
                     subscription_histories = PaymentHistory.objects.filter(order=payment_history.order)
                     subscription_counter   = 0
                     for subscription_history in subscription_histories:
