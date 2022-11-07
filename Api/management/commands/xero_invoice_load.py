@@ -42,7 +42,7 @@ class Command(BaseCommand):
             
             time.sleep(5)
 
-            print(payment_history.paid_date.day,payment_history.paid_date.month,"payment date")
+            print(payment_history.paid_date.day,payment_history.paid_date.month,payment_history.paid_date.year,"transaction date")
 
             #Xero Integration
             xero          = XeroConnection.objects.first()
@@ -488,7 +488,7 @@ class Command(BaseCommand):
                                     created_payment = None
 
                                 if created_payment == 'OK':
-                                    print(payment_history.order.order_no,"condition1 payment updated")
+                                    print(payment_history.order.order_no,"payment updated")
                                     xero_invoice.is_paid   = True
                                     xero_invoice.paid_date = payment_date
                                     xero_invoice.save()
