@@ -9,6 +9,8 @@ from Api.models import XeroConnection
 from accountant.models import PaymentHistory
 from user.models import UserProfile
 
+import time
+
 from django.utils import timezone
 from datetime import timedelta,date,datetime
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,Max,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField,CharField
@@ -38,6 +40,8 @@ class Command(BaseCommand):
         #ITERATING SYSTEM PAYMENTS
         for payment_history in payment_histories:
             
+            time.sleep(10)
+
             print(payment_history.paid_date.day,payment_history.paid_date.month,"payment date")
 
             #Xero Integration
