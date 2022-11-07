@@ -18,25 +18,26 @@ from django.db.models import Prefetch
 class Command(BaseCommand):
     help = 'Xero Invoice Load'
 
-    # def add_arguments(self,parser):
-    #     parser.add_argument('start_date',type=str, help="start date")
-    #     parser.add_argument('day_count',type=int, help="number of days")
+    def add_arguments(self,parser):
+        parser.add_argument('start_date',type=str, help="start date")
+        parser.add_argument('day_count',type=int, help="number of days")
 
     def handle(self, *args, **kwargs):
         
-        # start_date = kwargs['start_date']
-        # day_count = kwargs['day_count']
+        start_date = kwargs['start_date']
+        day_count = kwargs['day_count']
 
         #getting crm payments
-        paymentdate = datetime.strptime("01-01-2022",'%d-%m-%Y')
+        paymentdate = datetime.strptime(start_date,'%d-%m-%Y')
         paymentdate_start = paymentdate.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=pytz.UTC)
-        paymentdate_end = paymentdate_start + timedelta(5)
+        paymentdate_end = paymentdate_start + timedelta(day_count)
 
         payment_histories = PaymentHistory.objects.filter(is_active=True,paid_date__range=(paymentdate_start,paymentdate_end))
         payment_histories      = PaymentHistory.objects.select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order').filter(Q( Q(is_active=True) & Q(paid_date__gte=paymentdate_start) & Q(paid_date__lte=paymentdate_end) )).annotate(total_cleanings_count=Count('order__order_scheduler_order')).prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
 
         #ITERATING SYSTEM PAYMENTS
         for payment_history in payment_histories:
+            
             print(payment_history.paid_date.day,payment_history.paid_date.month,"payment date")
 
             #Xero Integration
