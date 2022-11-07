@@ -40,7 +40,7 @@ class Command(BaseCommand):
         #ITERATING SYSTEM PAYMENTS
         for payment_history in payment_histories:
             
-            time.sleep(10)
+            time.sleep(5)
 
             print(payment_history.paid_date.day,payment_history.paid_date.month,"payment date")
 
