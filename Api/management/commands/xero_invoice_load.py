@@ -30,13 +30,13 @@ class Command(BaseCommand):
         # day_count = kwargs['day_count']
 
         #getting crm payments
-        paymentdate = datetime.now()
-        paymentdate_start = paymentdate.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=pytz.UTC) - timedelta(7)
-        paymentdate_end = paymentdate.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=pytz.UTC) - timedelta(1)
+        # paymentdate = datetime.now()
+        # paymentdate_start = paymentdate.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=pytz.UTC) - timedelta(7)
+        # paymentdate_end = paymentdate.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=pytz.UTC) - timedelta(1)
         
-        # paymentdate = datetime.strptime("01-08-2022","%d-%m-%Y")
-        # paymentdate_start = paymentdate.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=pytz.UTC)
-        # paymentdate_end = paymentdate_start + timedelta(31)      
+        paymentdate = datetime.strptime("01-01-2022","%d-%m-%Y")
+        paymentdate_start = paymentdate.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=pytz.UTC)
+        paymentdate_end = paymentdate_start + timedelta(305)      
 
         payment_histories = PaymentHistory.objects.filter(is_active=True,paid_date__range=(paymentdate_start,paymentdate_end))
         payment_histories      = PaymentHistory.objects.select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order').filter(Q( Q(is_active=True) & Q(paid_date__gte=paymentdate_start) & Q(paid_date__lte=paymentdate_end) )).annotate(total_cleanings_count=Count('order__order_scheduler_order')).prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
@@ -503,25 +503,6 @@ class Command(BaseCommand):
 
                     # INVOICE NOT PAID - UPDATING PAYMENT WITH BANK CHARGES
                     elif invoice['Status'] == 'AUTHORISED':
-                        
-                        #Xero Integration
-                        # xero          = XeroConnection.objects.first()
-                        # #Update Access Token and Refresh Token
-                        # header                      = {
-                        #                                 'Authorization': 'Basic '+xero.client_encoded,
-                        #                                 'Content-Type': 'application/x-www-form-urlencoded'
-                        #                                     }
-                        # body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
-                        # token_response              = requests.post('https://identity.xero.com/connect/token',
-                        #                                         data=body,
-                        #                                         headers=header 
-                        #                                     ).json()
-                        # access_token                = token_response['access_token']
-                        # refresh_token               = token_response['refresh_token']
-
-                        # xero.access_token  = access_token
-                        # xero.refresh_token = refresh_token
-                        # xero.save()
 
                         ##Xero Contact
                         if not payment_history.order.evaluation.customer.xero_account_id:
@@ -961,25 +942,6 @@ class Command(BaseCommand):
             
             #if invoice does not exist on xero - create invoice, add bank charge, update payment
             else:                                           
-                
-                #Xero Integration
-                # xero          = XeroConnection.objects.first()
-                # #Update Access Token and Refresh Token
-                # header                      = {
-                #                                 'Authorization': 'Basic '+xero.client_encoded,
-                #                                 'Content-Type': 'application/x-www-form-urlencoded'
-                #                                     }
-                # body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
-                # token_response              = requests.post('https://identity.xero.com/connect/token',
-                #                                         data=body,
-                #                                         headers=header 
-                #                                     ).json()
-                # access_token                = token_response['access_token']
-                # refresh_token               = token_response['refresh_token']
-
-                # xero.access_token  = access_token
-                # xero.refresh_token = refresh_token
-                # xero.save()
                 
                 ##Xero Contact
                 if not payment_history.order.evaluation.customer.xero_account_id:
