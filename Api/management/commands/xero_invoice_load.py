@@ -36,7 +36,7 @@ class Command(BaseCommand):
         
         paymentdate = datetime.strptime("01-01-2022","%d-%m-%Y")
         paymentdate_start = paymentdate.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=pytz.UTC)
-        paymentdate_end = paymentdate_start + timedelta(2)
+        paymentdate_end = paymentdate_start + timedelta(10)
 
         # paymentdate = datetime.strptime(start_date,"%d-%m-%Y")
         # paymentdate_start = paymentdate.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=pytz.UTC)
