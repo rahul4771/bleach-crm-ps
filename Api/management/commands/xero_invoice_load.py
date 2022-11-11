@@ -54,6 +54,8 @@ class Command(BaseCommand):
 
             #Xero Integration
             xero          = XeroConnection.objects.first()
+
+            print(xero,"xero")
             #Update Access Token and Refresh Token
             header                      = {
                                             'Authorization': 'Basic '+xero.client_encoded,
@@ -70,6 +72,8 @@ class Command(BaseCommand):
             xero.access_token  = access_token
             xero.refresh_token = refresh_token
             xero.save()
+
+            print(access_token,refresh_token,"rfr")
 
             ##xero Create Invoice
             header                     = {
