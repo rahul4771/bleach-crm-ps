@@ -36,28 +36,20 @@ class Command(BaseCommand):
         
         paymentdate = datetime.strptime("01-01-2022","%d-%m-%Y")
         paymentdate_start = paymentdate.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=pytz.UTC)
-        paymentdate_end = paymentdate_start + timedelta(10)
-
-        # paymentdate = datetime.strptime(start_date,"%d-%m-%Y")
-        # paymentdate_start = paymentdate.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=pytz.UTC)
-        # paymentdate_end = paymentdate_start + timedelta(day_count)     
+        paymentdate_end = paymentdate_start + timedelta(305)    
 
         # payment_histories = PaymentHistory.objects.filter(is_active=True,paid_date__range=(paymentdate_start,paymentdate_end))
         payment_histories      = PaymentHistory.objects.select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order').filter(Q( Q(is_active=True) & Q(paid_date__gte=paymentdate_start) & Q(paid_date__lte=paymentdate_end) )).annotate(total_cleanings_count=Count('order__order_scheduler_order')).prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
 
-        print(payment_histories,"phist")
-
         #ITERATING SYSTEM PAYMENTS
         for payment_history in payment_histories:
             
-            # time.sleep(5)
-            print(payment_history,"phistory")
+            time.sleep(5)
 
             print(payment_history.paid_date.day,payment_history.paid_date.month,payment_history.paid_date.year,"transaction date")
 
             #Xero Integration
             xero          = XeroConnection.objects.first()
-
             #Update Access Token and Refresh Token
             header                      = {
                                             'Authorization': 'Basic '+xero.client_encoded,
