@@ -224,6 +224,6 @@ class Command(BaseCommand):
                                             "Accept": "application/json",
                                                 }
 
-            invoice =  requests.request("GET", 'https://api.xero.com/api.xro/2.0/Invoices/?where=InvoiceNumber="'+str(invoice_number)+'"', headers=header).json()
+            invoice =  requests.request("GET", 'https://api.xero.com/api.xro/2.0/Invoices/?where=Reference="'+str(invoice_number)+'"', headers=header).json()
 
             print(invoices['Invoices'],"inv check")
