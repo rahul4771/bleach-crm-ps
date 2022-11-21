@@ -196,22 +196,9 @@ class Command(BaseCommand):
         #     ]
 
         # invoice_nos = ','.join(str(item) for item in invoice_numbers)
-            
-            
         
-        paymentdate = datetime.strptime("01-01-2022","%d-%m-%Y")
-        paymentdate_start = paymentdate.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=pytz.UTC)
-        paymentdate_end = paymentdate_start + timedelta(10)    
-
-        # payment_histories = PaymentHistory.objects.filter(is_active=True,paid_date__range=(paymentdate_start,paymentdate_end))
-        payment_histories      = PaymentHistory.objects.select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order').filter(Q( Q(is_active=True) & Q(paid_date__gte=paymentdate_start) & Q(paid_date__lte=paymentdate_end) )).annotate(total_cleanings_count=Count('order__order_scheduler_order')).prefetch_related(Prefetch('order__order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
-
-        #ITERATING SYSTEM PAYMENTS
-        for payment_history in payment_histories:
-            
-            time.sleep(5)
-
-            print(payment_history.paid_date.day,payment_history.paid_date.month,payment_history.paid_date.year,"transaction date")
+        for invoice_number in invoice_numbers:
+        # time.sleep(5)
 
             #Xero Integration
             xero          = XeroConnection.objects.first()
@@ -239,44 +226,10 @@ class Command(BaseCommand):
                                             "Accept": "application/json",
                                                 }
 
-            invoices =  requests.request("GET", 'https://api.xero.com/api.xro/2.0/Invoices/?where=Date=DateTime('+str(payment_history.paid_date.year)+', '+str(payment_history.paid_date.month)+', '+str(payment_history.paid_date.day)+') AND Reference="'+str(payment_history.order.order_no)+'"', headers=header).json()
-        
-        
-        
-        
-        # for invoice_number in invoice_numbers:
-        # # time.sleep(5)
-
-        #     #Xero Integration
-        #     xero          = XeroConnection.objects.first()
-        #     #Update Access Token and Refresh Token
-        #     header                      = {
-        #                                     'Authorization': 'Basic '+xero.client_encoded,
-        #                                     'Content-Type': 'application/x-www-form-urlencoded'
-        #                                         }
-        #     body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
-        #     token_response              = requests.post('https://identity.xero.com/connect/token',
-        #                                             data=body,
-        #                                             headers=header 
-        #                                         ).json()
-        #     access_token                = token_response['access_token']
-        #     refresh_token               = token_response['refresh_token']
-
-        #     xero.access_token  = access_token
-        #     xero.refresh_token = refresh_token
-        #     xero.save()
-
-        #     ##xero Create Invoice
-        #     header                     = {
-        #                                     'xero-tenant-id': xero.tenant_id,
-        #                                     'Authorization': 'Bearer '+access_token,
-        #                                     "Accept": "application/json",
-        #                                         }
-
-        #     print('https://api.xero.com/api.xro/2.0/Invoices/'+str(invoice_number)+'',"urlss")
+            print('https://api.xero.com/api.xro/2.0/Invoices/'+str(invoice_number)+'',"urlss")
             
-        #     # invoices =  requests.request("GET", 'https://api.xero.com/api.xro/2.0/Invoices/?InvoiceNumbers='+invoice_nos+'', headers=header).json()
+            # invoices =  requests.request("GET", 'https://api.xero.com/api.xro/2.0/Invoices/?InvoiceNumbers='+invoice_nos+'', headers=header).json()
 
-        #     invoices =  requests.request("GET", 'https://api.xero.com/api.xro/2.0/Invoices/'+str(invoice_number)+'', headers=header).json()
+            invoices =  requests.request("GET", 'https://api.xero.com/api.xro/2.0/Invoices/'+str(invoice_number)+'', headers=header)
 
             print(invoices,"inv check")
