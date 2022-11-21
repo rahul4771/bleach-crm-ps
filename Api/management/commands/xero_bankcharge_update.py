@@ -192,37 +192,38 @@ class Command(BaseCommand):
                 202203223
             ]
 
-        invoice_nos = ', '.join(str(item) for item in invoice_numbers)
+        # invoice_nos = ', '.join(str(item) for item in invoice_numbers)
             
             
+        for invoice_number in invoice_numbers:
         # time.sleep(5)
 
-        #Xero Integration
-        xero          = XeroConnection.objects.first()
-        #Update Access Token and Refresh Token
-        header                      = {
-                                        'Authorization': 'Basic '+xero.client_encoded,
-                                        'Content-Type': 'application/x-www-form-urlencoded'
-                                            }
-        body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
-        token_response              = requests.post('https://identity.xero.com/connect/token',
-                                                data=body,
-                                                headers=header 
-                                            ).json()
-        access_token                = token_response['access_token']
-        refresh_token               = token_response['refresh_token']
+            #Xero Integration
+            xero          = XeroConnection.objects.first()
+            #Update Access Token and Refresh Token
+            header                      = {
+                                            'Authorization': 'Basic '+xero.client_encoded,
+                                            'Content-Type': 'application/x-www-form-urlencoded'
+                                                }
+            body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
+            token_response              = requests.post('https://identity.xero.com/connect/token',
+                                                    data=body,
+                                                    headers=header 
+                                                ).json()
+            access_token                = token_response['access_token']
+            refresh_token               = token_response['refresh_token']
 
-        xero.access_token  = access_token
-        xero.refresh_token = refresh_token
-        xero.save()
+            xero.access_token  = access_token
+            xero.refresh_token = refresh_token
+            xero.save()
 
-        ##xero Create Invoice
-        header                     = {
-                                        'xero-tenant-id': xero.tenant_id,
-                                        'Authorization': 'Bearer '+access_token,
-                                        "Accept": "application/json",
-                                            }
+            ##xero Create Invoice
+            header                     = {
+                                            'xero-tenant-id': xero.tenant_id,
+                                            'Authorization': 'Bearer '+access_token,
+                                            "Accept": "application/json",
+                                                }
 
-        invoices =  requests.request("GET", 'https://api.xero.com/api.xro/2.0/Invoices/?InvoiceNumbers="'+str(invoice_nos)+'"', headers=header).json()
+            invoices =  requests.request("GET", 'https://api.xero.com/api.xro/2.0/Invoices/?InvoiceNumbers="'+str(invoice_number)+'"', headers=header).json()
 
-        print(invoices['Invoices'],"inv check")
+            print(invoices['Invoices'],"inv check")
