@@ -226,10 +226,7 @@ class Command(BaseCommand):
                                             "Accept": "application/json",
                                                 }
 
-            print('https://api.xero.com/api.xro/2.0/Invoices/'+str(invoice_number)+'',"urlss")
-            
-            # invoices =  requests.request("GET", 'https://api.xero.com/api.xro/2.0/Invoices/?InvoiceNumbers='+invoice_nos+'', headers=header).json()
-
             invoices =  requests.request("GET", 'https://api.xero.com/api.xro/2.0/Invoices/'+str(invoice_number)+'', headers=header)
 
-            print(invoices.getHeaders(),"inv check")
+            print(invoices,"inv check")
+            print(invoices['Retry-After'],"inv check")
