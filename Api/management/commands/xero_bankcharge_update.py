@@ -198,7 +198,7 @@ class Command(BaseCommand):
         # invoice_nos = ','.join(str(item) for item in invoice_numbers)
         
         for invoice_number in invoice_numbers:
-        # time.sleep(5)
+            time.sleep(5)
 
             #Xero Integration
             xero          = XeroConnection.objects.first()
@@ -232,4 +232,4 @@ class Command(BaseCommand):
 
             invoices =  requests.request("GET", 'https://api.xero.com/api.xro/2.0/Invoices/'+str(invoice_number)+'', headers=header)
 
-            print(invoices,"inv check")
+            print(invoices.getHeaders(),"inv check")
