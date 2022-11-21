@@ -227,10 +227,10 @@ class Command(BaseCommand):
                                             "Accept": "application/json",
                                                 }
 
-            print('https://api.xero.com/api.xro/2.0/Invoices/'+invoice_number+'',"urlss")
+            print('https://api.xero.com/api.xro/2.0/Invoices/'+str(invoice_number)+'',"urlss")
             
             # invoices =  requests.request("GET", 'https://api.xero.com/api.xro/2.0/Invoices/?InvoiceNumbers='+invoice_nos+'', headers=header).json()
 
-            invoices =  requests.request("GET", 'https://api.xero.com/api.xro/2.0/Invoices/'+invoice_number+'', headers=header).json()
+            invoices =  requests.request("GET", 'https://api.xero.com/api.xro/2.0/Invoices/'+str(invoice_number)+'', headers=header).json()
 
             print(invoices,"inv check")
