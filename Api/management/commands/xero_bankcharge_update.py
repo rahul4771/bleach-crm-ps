@@ -70,7 +70,7 @@ class Command(BaseCommand):
 
             invoices =  requests.request("GET", 'https://api.xero.com/api.xro/2.0/Invoices/'+str(invoice_number)+'', headers=header).json()
 
-            # print(invoices['Invoices'],"inv check")
+            print(invoices['Invoices'],"inv check")
 
             for invoice in invoices['Invoices']:
 
