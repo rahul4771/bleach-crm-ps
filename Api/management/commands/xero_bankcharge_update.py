@@ -233,7 +233,7 @@ class Command(BaseCommand):
             for invoice in invoices['Invoices']:
 
                 print(invoice['Date'])
-                print(invoice['DueDateString'])
+                print(invoice['DueDateString'].strftime('%Y-%m-%d'))
                 print(invoice['DueDate'])
 
                 #Payment Removal
