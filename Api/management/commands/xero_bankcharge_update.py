@@ -22,8 +22,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
 
-        invoice_numbers = [ 
-                202203140, 
+        invoice_numbers = [  
                 202203142, 
                 202203146, 
                 202203148, 
@@ -32,7 +31,8 @@ class Command(BaseCommand):
                 202203213, 
                 202203202, 
                 202203224, 
-                202203223
+                202203223,
+                202104867
             ]
 
         # invoice_nos = ','.join(str(item) for item in invoice_numbers)
