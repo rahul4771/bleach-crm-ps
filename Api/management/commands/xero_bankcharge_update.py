@@ -23,7 +23,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
 
         invoice_numbers = [   
-                202104867,
+               "202200480A",202200535,"202201096A",202201105,202201043,202201456,"202201544A",202201654,202201653,"202202599E","202202029C",202203192,202203217,"202202599M"
             ]
 
         # invoice_nos = ','.join(str(item) for item in invoice_numbers)
@@ -125,8 +125,18 @@ class Command(BaseCommand):
                         payment_history.order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
                         payment_history.order.evaluation.customer.save()
 
-                    BankCharge = .250
-                    # BankCharge = float(payment_history.order.evaluation.total_cost)*.025
+                    # BankCharge = .250
+                    payment_policy = payment_history.order.evaluation.payment_method
+                    
+                    if payment_policy == 'PREPAID' or payment_policy == 'POSTPAID':
+                        BankCharge = float(payment_history.order.evaluation.total_cost)*.025
+                    elif payment_policy == 'BREAKDOWN':
+                        if invoice['InvoiceNumber'][-1] == 'A':
+                            BankCharge = float(payment_history.order.evaluation.before_cleaning_amount)*.025
+                        else:
+                            BankCharge = float(payment_history.order.evaluation.after_cleaning_amount)*.025
+                    else:
+                        BankCharge = float(payment_history.amount_paid)*.025
 
                     Amount = invoice['SubTotal']
 
@@ -149,7 +159,7 @@ class Command(BaseCommand):
                                     }
                         )
 
-                    payment_policy = payment_history.order.evaluation.payment_method
+                    
 
                     invoice_data              = 	{
                                                         "Type":"ACCREC",
