@@ -256,7 +256,7 @@ class Command(BaseCommand):
                     #                                                     headers=header 
                     #                                                 ).json()
 
-                    payment_history = PaymentHistory.objects.filer(transaction_id=payment['Reference']).first()
+                    payment_history = PaymentHistory.objects.filter(transaction_id=payment['Reference']).first()
 
                 print(payment_history,"phistory")
                 
