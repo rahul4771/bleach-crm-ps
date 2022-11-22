@@ -232,7 +232,10 @@ class Command(BaseCommand):
 
             for invoice in invoices['Invoices']:
 
-                print(invoice['SubTotal'],"total")
+                print(invoice['Date'])
+                print(invoice['DueDateString'])
+                print(invoice['DueDate'])
+
                 #Payment Removal
 
                 header                      = {
@@ -299,7 +302,7 @@ class Command(BaseCommand):
                 #                                         "DueDate":(payment_history.order.created+timedelta(days=14)).strftime('%Y-%m-%d'),
                 #                                         "LineAmountTypes":"NoTax",
                 #                                         "InvoiceNumber":invoice['InvoiceNumber'],
-                #                                         "Reference":payment_history.order.order_no,
+                #                                         "Reference":invoice['Reference'],
                 #                                         "Status":"AUTHORISED",
                 #                                         "LineItems":LineItems
                 #                                         }
