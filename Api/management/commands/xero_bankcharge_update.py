@@ -23,7 +23,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
 
         invoice_numbers = [   
-               "202200480A",202200535,"202201096A",202201105,202201043,202201456,"202201544A",202201654,202201653,"202202599E","202202029C",202203192,202203217,"202202599M"
+               202200535,"202201096A",202201105,202201043,202201456,"202201544A",202201654,202201653,"202202599E","202202029C",202203192,202203217,"202202599M"
             ]
 
         # invoice_nos = ','.join(str(item) for item in invoice_numbers)
@@ -75,185 +75,188 @@ class Command(BaseCommand):
                                                                 'Content-Type': 'application/json'
                                                                     }
 
-                for payment in invoice['Payments']:
-                
-                    data     = requests.get('https://api.xero.com/api.xro/2.0/Payments?where=Reference=="'+str(payment['Reference'])+'"',
-                                                                    headers=header 
-                                                                ).json()
-
-                    payments = data['Payments']
-                    for payment in payments:
-                        body = {"Status":"DELETED"}
-                        delete_payment = requests.post('https://api.xero.com/api.xro/2.0/Payments/'+payment['PaymentID'],
-                                                                        json=body,
+                if invoice['Payments']:
+                    for payment in invoice['Payments']:
+                    
+                        data     = requests.get('https://api.xero.com/api.xro/2.0/Payments?where=Reference=="'+str(payment['Reference'])+'"',
                                                                         headers=header 
                                                                     ).json()
 
-                    payment_history = PaymentHistory.objects.filter(transaction_id=payment['Reference']).first()
+                        payments = data['Payments']
+                        for payment in payments:
+                            body = {"Status":"DELETED"}
+                            delete_payment = requests.post('https://api.xero.com/api.xro/2.0/Payments/'+payment['PaymentID'],
+                                                                            json=body,
+                                                                            headers=header 
+                                                                        ).json()
 
-                print(payment_history.order.order_no,"payment history")
-                
-                if delete_payment['Status'] == 'OK':
-                    payment_history.is_xero_marked = False
-                    payment_history.save()
-                    print(invoice['Reference'],"payment deleted")
+                        payment_history = PaymentHistory.objects.filter(transaction_id=payment['Reference']).first()
 
-                    ##Xero Contact
-                    if not payment_history.order.evaluation.customer.xero_account_id:
-                        ##Xero Create Customer ID and Save
-                        contact_data                = {
-                                                        "Name":payment_history.order.evaluation.customer.name,
-                                                        "ContactNumber":payment_history.order.evaluation.customer.mobile_number,
-                                                        "EmailAddress":payment_history.order.evaluation.customer.email,
-                                                        "ContactStatus":"ACTIVE",
-                                                        "IsCustomer":True,
-                                                        "DefaultCurrency":"KWD"
-                                                                    }
-                                                        
+                    print(payment_history.order.order_no,"payment history")
+                    
+                    if delete_payment['Status'] == 'OK':
+                        payment_history.is_xero_marked = False
+                        payment_history.save()
+                        print(invoice['Reference'],"payment deleted")
+
+                        ##Xero Contact
+                        if not payment_history.order.evaluation.customer.xero_account_id:
+                            ##Xero Create Customer ID and Save
+                            contact_data                = {
+                                                            "Name":payment_history.order.evaluation.customer.name,
+                                                            "ContactNumber":payment_history.order.evaluation.customer.mobile_number,
+                                                            "EmailAddress":payment_history.order.evaluation.customer.email,
+                                                            "ContactStatus":"ACTIVE",
+                                                            "IsCustomer":True,
+                                                            "DefaultCurrency":"KWD"
+                                                                        }
+                                                            
+                            header                      = {
+                                                        'xero-tenant-id': xero.tenant_id,
+                                                        'Authorization': 'Bearer '+access_token,
+                                                        'Accept': 'application/json',
+                                                        'Content-Type': 'application/json'
+                                                            }
+
+                            create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
+                                                                    json=contact_data,
+                                                                    headers=header 
+                                                                ).json()
+
+                            payment_history.order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
+                            payment_history.order.evaluation.customer.save()
+
+                        # BankCharge = .250
+                        payment_policy = payment_history.order.evaluation.payment_method
+                        
+                        if payment_policy == 'PREPAID' or payment_policy == 'POSTPAID':
+                            BankCharge = float(payment_history.order.evaluation.total_cost)*.025
+                        elif payment_policy == 'BREAKDOWN':
+                            if invoice['InvoiceNumber'][-1] == 'A':
+                                BankCharge = float(payment_history.order.evaluation.before_cleaning_amount)*.025
+                            else:
+                                BankCharge = float(payment_history.order.evaluation.after_cleaning_amount)*.025
+                        else:
+                            BankCharge = float(payment_history.amount_paid)*.025
+
+                        Amount = invoice['SubTotal']
+
+                        ##Invoice Line Item 
+                        LineItems                 = []
+                        LineItems.append({
+                            "Description":"ONE TIME SERVICE",
+                            "Quantity":"1",
+                            "UnitAmount":Amount,
+                            "AccountCode":1207004,
+                            "TaxType":"NONE"
+                                        }
+                            )
+                        LineItems.append({
+                            "Description":"BANK CHARGE",
+                            "Quantity":"1",
+                            "UnitAmount":-BankCharge,
+                            "AccountCode":3202014,
+                            "TaxType":"NONE"
+                                        }
+                            )
+
+                        
+
+                        invoice_data              = 	{
+                                                            "Type":"ACCREC",
+                                                            "Contact":{
+                                                                "ContactID":payment_history.order.evaluation.customer.xero_account_id
+                                                            },
+                                                            "Date":datetime.strptime(''+invoice['DateString']+'', '%Y-%m-%dT%H:%M:%S').strftime('%Y-%m-%d'),
+                                                            "DueDate":datetime.strptime(''+invoice['DueDateString']+'', '%Y-%m-%dT%H:%M:%S').strftime('%Y-%m-%d'),
+                                                            "LineAmountTypes":"NoTax",
+                                                            "InvoiceNumber":invoice['InvoiceNumber'],
+                                                            "Reference":invoice['Reference'],
+                                                            "Status":"AUTHORISED",
+                                                            "LineItems":LineItems
+                                                            }
+                        
+                        ##xero Create Invoice
                         header                      = {
-                                                    'xero-tenant-id': xero.tenant_id,
-                                                    'Authorization': 'Bearer '+access_token,
-                                                    'Accept': 'application/json',
-                                                    'Content-Type': 'application/json'
-                                                        }
+                                                        'xero-tenant-id': xero.tenant_id,
+                                                        'Authorization': 'Bearer '+access_token,
+                                                        'Accept': 'application/json',
+                                                        'Content-Type': 'application/json'
+                                                            }
 
-                        create_contact             = requests.post('https://api.xero.com/api.xro/2.0/Contacts/',
-                                                                json=contact_data,
+                        create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+                                                                json=invoice_data,
+                                                                headers=header 
+                                                            ).json()
+                        
+                        try:
+                            created_invoice = create_invoice['Status']
+                        except:
+                            created_invoice = None   
+
+                        if created_invoice == 'OK':
+                            print(payment_history.order.order_no,"invoice updated with bank charge")
+                            try: 
+                                update_xero_invoice                  = XeroInvoice.objects.get(order=payment_history.order,invoice_no=invoice['InvoiceNumber'])
+                                update_xero_invoice.amount           = Amount
+                                update_xero_invoice.xero_marked_date = timezone.now().date()
+                                update_xero_invoice.payment_policy   = payment_policy
+                                update_xero_invoice.save()
+                            except:
+                                XeroInvoice.objects.create(order=payment_history.order,invoice_no=invoice['InvoiceNumber'],amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
+
+                        #xero payment update
+                        try:
+                            xero_invoice        = XeroInvoice.objects.get(invoice_no=invoice['InvoiceNumber'])
+                        except:
+                            xero_invoice        = None 
+
+                        payment_date        = payment_history.paid_date.date()
+                        payment_date_string = datetime.strftime(payment_date,'%Y-%m-%d')
+                        amount_paid         = payment_history.amount_paid
+
+                        if payment_history.transaction_id:
+                            transaction_id = payment_history.transaction_id
+                        else:
+                            transaction_id = payment_history.payment_mode
+                        
+                        if xero_invoice:
+                            payment_data = {
+                                        "Invoice":{
+                                            "InvoiceNumber":xero_invoice.invoice_no
+                                        },
+                                        "Account":{
+                                            "Code":"1201023"
+                                        },
+                                        "Date":payment_date_string,
+                                        "Amount":float(amount_paid)-BankCharge,
+                                        "Reference":transaction_id
+                                        }
+
+                            header                      = {
+                                                        'xero-tenant-id': xero.tenant_id,
+                                                        'Authorization': 'Bearer '+access_token,
+                                                        'Accept': 'application/json',
+                                                        'Content-Type': 'application/json'
+                                                            }
+                            
+                            update_payment          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
+                                                                json=payment_data,
                                                                 headers=header 
                                                             ).json()
 
-                        payment_history.order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
-                        payment_history.order.evaluation.customer.save()
+                            try:
+                                created_payment = update_payment['Status']
+                            except:
+                                created_payment = None
 
-                    # BankCharge = .250
-                    payment_policy = payment_history.order.evaluation.payment_method
-                    
-                    if payment_policy == 'PREPAID' or payment_policy == 'POSTPAID':
-                        BankCharge = float(payment_history.order.evaluation.total_cost)*.025
-                    elif payment_policy == 'BREAKDOWN':
-                        if invoice['InvoiceNumber'][-1] == 'A':
-                            BankCharge = float(payment_history.order.evaluation.before_cleaning_amount)*.025
-                        else:
-                            BankCharge = float(payment_history.order.evaluation.after_cleaning_amount)*.025
-                    else:
-                        BankCharge = float(payment_history.amount_paid)*.025
-
-                    Amount = invoice['SubTotal']
-
-                    ##Invoice Line Item 
-                    LineItems                 = []
-                    LineItems.append({
-                        "Description":"ONE TIME SERVICE",
-                        "Quantity":"1",
-                        "UnitAmount":Amount,
-                        "AccountCode":1207004,
-                        "TaxType":"NONE"
-                                    }
-                        )
-                    LineItems.append({
-                        "Description":"BANK CHARGE",
-                        "Quantity":"1",
-                        "UnitAmount":-BankCharge,
-                        "AccountCode":3202014,
-                        "TaxType":"NONE"
-                                    }
-                        )
-
-                    
-
-                    invoice_data              = 	{
-                                                        "Type":"ACCREC",
-                                                        "Contact":{
-                                                            "ContactID":payment_history.order.evaluation.customer.xero_account_id
-                                                        },
-                                                        "Date":datetime.strptime(''+invoice['DateString']+'', '%Y-%m-%dT%H:%M:%S').strftime('%Y-%m-%d'),
-                                                        "DueDate":datetime.strptime(''+invoice['DueDateString']+'', '%Y-%m-%dT%H:%M:%S').strftime('%Y-%m-%d'),
-                                                        "LineAmountTypes":"NoTax",
-                                                        "InvoiceNumber":invoice['InvoiceNumber'],
-                                                        "Reference":invoice['Reference'],
-                                                        "Status":"AUTHORISED",
-                                                        "LineItems":LineItems
-                                                        }
-                    
-                    ##xero Create Invoice
-                    header                      = {
-                                                    'xero-tenant-id': xero.tenant_id,
-                                                    'Authorization': 'Bearer '+access_token,
-                                                    'Accept': 'application/json',
-                                                    'Content-Type': 'application/json'
-                                                        }
-
-                    create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
-                                                            json=invoice_data,
-                                                            headers=header 
-                                                        ).json()
-                    
-                    try:
-                        created_invoice = create_invoice['Status']
-                    except:
-                        created_invoice = None   
-
-                    if created_invoice == 'OK':
-                        print(payment_history.order.order_no,"invoice updated with bank charge")
-                        try: 
-                            update_xero_invoice                  = XeroInvoice.objects.get(order=payment_history.order,invoice_no=invoice['InvoiceNumber'])
-                            update_xero_invoice.amount           = Amount
-                            update_xero_invoice.xero_marked_date = timezone.now().date()
-                            update_xero_invoice.payment_policy   = payment_policy
-                            update_xero_invoice.save()
-                        except:
-                            XeroInvoice.objects.create(order=payment_history.order,invoice_no=invoice['InvoiceNumber'],amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
-
-                    #xero payment update
-                    try:
-                        xero_invoice        = XeroInvoice.objects.get(invoice_no=invoice['InvoiceNumber'])
-                    except:
-                        xero_invoice        = None 
-
-                    payment_date        = payment_history.paid_date.date()
-                    payment_date_string = datetime.strftime(payment_date,'%Y-%m-%d')
-                    amount_paid         = payment_history.amount_paid
-
-                    if payment_history.transaction_id:
-                        transaction_id = payment_history.transaction_id
-                    else:
-                        transaction_id = payment_history.payment_mode
-                    
-                    if xero_invoice:
-                        payment_data = {
-                                    "Invoice":{
-                                        "InvoiceNumber":xero_invoice.invoice_no
-                                    },
-                                    "Account":{
-                                        "Code":"1201023"
-                                    },
-                                    "Date":payment_date_string,
-                                    "Amount":float(amount_paid)-BankCharge,
-                                    "Reference":transaction_id
-                                    }
-
-                        header                      = {
-                                                    'xero-tenant-id': xero.tenant_id,
-                                                    'Authorization': 'Bearer '+access_token,
-                                                    'Accept': 'application/json',
-                                                    'Content-Type': 'application/json'
-                                                        }
+                            if created_payment == 'OK':
+                                print(payment_history.order.order_no,"payment updated")
+                                xero_invoice.is_paid   = True
+                                xero_invoice.paid_date = payment_date
+                                xero_invoice.save()
                         
-                        update_payment          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
-                                                            json=payment_data,
-                                                            headers=header 
-                                                        ).json()
-
-                        try:
-                            created_payment = update_payment['Status']
-                        except:
-                            created_payment = None
-
-                        if created_payment == 'OK':
-                            print(payment_history.order.order_no,"payment updated")
-                            xero_invoice.is_paid   = True
-                            xero_invoice.paid_date = payment_date
-                            xero_invoice.save()
-                    
-                            payment_history.is_xero_marked = True
-                            payment_history.save()
+                                payment_history.is_xero_marked = True
+                                payment_history.save()
+                else:
+                    print(invoice['Reference'],"no payments")
