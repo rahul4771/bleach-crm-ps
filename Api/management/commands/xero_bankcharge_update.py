@@ -23,7 +23,6 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
 
         invoice_numbers = [  
-                202203142, 
                 202203146, 
                 202203148, 
                 202203173, 
