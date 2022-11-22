@@ -234,6 +234,7 @@ class Command(BaseCommand):
 
                 print(invoice['Date'])
                 print(datetime(invoice['DueDateString']).strftime('%Y-%m-%d'))
+                datetime.strptime(''+invoice['DateString']+'', '%Y-%m-%d').strftime('%Y-%m-%d')
                 print(invoice['DueDate'])
 
                 #Payment Removal
