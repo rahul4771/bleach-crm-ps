@@ -6516,25 +6516,23 @@ class SmstestAPI(APIView):
 	def post(self,request):
 		response_dict = {}
 
-		CartService.objects.all().delete()
-
-		# customer_mobile = request.data.get('customer_mobile')
-		# customer_otp = request.data.get('customer_otp')
+		customer_mobile = request.data.get('customer_mobile')
+		customer_otp = request.data.get('customer_otp')
 		
-		# #otp sms
-		# url = "https://smsapi.future-club.com/fccsms.aspx"
+		#otp sms
+		url = "https://smsapi.future-club.com/fccsms.aspx"
 
-		# message = "Dear Customer, your OTP for login is "+str(customer_otp)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+		message = "Dear Customer, your OTP for login is "+str(customer_otp)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 
-		# querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+customer_mobile+"","M":message,"IID":"1468","L":"L"}
+		querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+customer_mobile+"","M":message,"IID":"1468","L":"L"}
 
-		# headers = {
-		# 	'cache-control': "no-cache"
-		# }
+		headers = {
+			'cache-control': "no-cache"
+		}
 
-		# response = requests.request("GET", url, headers=headers, params=querystring)
+		response = requests.request("GET", url, headers=headers, params=querystring)
 		
-		# response_dict['sms_response'] = response.text
+		response_dict['sms_response'] = response.text
 		
 		return Response(response_dict,HTTP_200_OK)
 
