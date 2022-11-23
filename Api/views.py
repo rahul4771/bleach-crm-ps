@@ -6516,8 +6516,7 @@ class SmstestAPI(APIView):
 	def post(self,request):
 		response_dict = {}
 
-		cart = CustomerCart.objects.get(customer__email="testSlots1234@gmail.com")
-		cart.delete()
+		CartService.objects.all().delete()
 
 		# customer_mobile = request.data.get('customer_mobile')
 		# customer_otp = request.data.get('customer_otp')
