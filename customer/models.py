@@ -123,12 +123,10 @@ class CartService(models.Model):
 	updated      		= models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.cart.customer.name)
-		# +'-'+self.service_type.name
+		return str(self.cart)
 
 	def __str__(self):
-		return self.cart.customer.name
-		#+'-'+self.service_type.name
+		return self.cart	
 
 class CartServiceFloor(models.Model):
 	cartService			= models.ForeignKey('CartService',blank=False,null=False,on_delete=models.CASCADE,related_name='cart_service_floor')
@@ -147,10 +145,10 @@ class CartServiceFloor(models.Model):
 	section_cost        = models.FloatField(blank=True,null=True,default=0)
 	
 	def __unicode__(self):
-		return str(self.cartService.cart.customer.name+'-'+self.cartService.service_type.name)
+		return str(self.cartService.cart)
 
 	def __str__(self):
-		return self.cartService.cart.customer.name+'-'+self.cartService.service_type.name
+		return self.cartService.cart
 
 class CartSchedule(models.Model):
 	cart					= models.ForeignKey('CustomerCart',blank=False,null=False,on_delete=models.CASCADE,related_name='cart_schedule')
