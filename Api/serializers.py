@@ -395,7 +395,7 @@ class ServiceAddOnsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model   = ServiceAddOns
-        fields  = ('service_type','price','category','name','size','productivity','category_updated','category_updated_maximum','category_updated_minimum')
+        fields  = ('id','service_type','price','category','name','size','productivity_id','productivity','category_updated','category_updated_maximum','category_updated_minimum')
 
     
 

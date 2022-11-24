@@ -8615,7 +8615,9 @@ class CartAPI(APIView):
 
 			#getting service price through productivity id 
 			if 'floors' in service_data:
-				total_cost = 0
+				total_cost = 0			
+			elif 'addon_price' in service_data:
+				total_cost = ServiceAddOns.objects.get(id=request.data.get('productivity_id')).price
 			else:
 				total_cost = ServicePriceRange.objects.get(id=request.data.get('productivity_id')).price
 
@@ -8660,47 +8662,47 @@ class CartAPI(APIView):
 				response_dict['Error_List'] = service_data_serializer.errors
 
 		#UPDATING EXISTING SERVICE
-		if action == 'edit_service':
+		# if action == 'edit_service':
 
-			#saving service details through serializer
-			service_data = request.data.get('service_data')
+		# 	#saving service details through serializer
+		# 	service_data = request.data.get('service_data')
 
-			service_data['cart'] = cart.id
+		# 	service_data['cart'] = cart.id
 
-			#getting service price through productivity id 
-			total_cost = ServicePriceRange.objects.get(id=request.data.get('productivity_id')).price
+		# 	#getting service price through productivity id 
+		# 	total_cost = ServicePriceRange.objects.get(id=request.data.get('productivity_id')).price
 
-			service_data['service_price_range'] = request.data.get('productivity_id')
-			service_data['total_cost'] = total_cost
+		# 	service_data['service_price_range'] = request.data.get('productivity_id')
+		# 	service_data['total_cost'] = total_cost
 
-			try:
-				#getting existing cart service object
-				cart_service = CartService.objects.get(id=request.data.get('cart_service_id'))
-				previous_service_cost = cart_service.total_cost
+		# 	try:
+		# 		#getting existing cart service object
+		# 		cart_service = CartService.objects.get(id=request.data.get('cart_service_id'))
+		# 		previous_service_cost = cart_service.total_cost
 
-				#updating cart service details using serializer
-				service_data_serializer = CartServiceSerializer(data=service_data,instance=cart_service)
+		# 		#updating cart service details using serializer
+		# 		service_data_serializer = CartServiceSerializer(data=service_data,instance=cart_service)
 
-				if service_data_serializer.is_valid():
-					service = service_data_serializer.save()
+		# 		if service_data_serializer.is_valid():
+		# 			service = service_data_serializer.save()
 						
-					service.total_cost = total_cost
-					service.save()
+		# 			service.total_cost = total_cost
+		# 			service.save()
 
-					cart.total_cost = float(cart.total_cost) - float(previous_service_cost)
-					cart.total_cost = float(cart.total_cost) + float(total_cost)
-					cart.save()
+		# 			cart.total_cost = float(cart.total_cost) - float(previous_service_cost)
+		# 			cart.total_cost = float(cart.total_cost) + float(total_cost)
+		# 			cart.save()
 
-					response_dict['success']  = True					
+		# 			response_dict['success']  = True					
 
-				else:
-					errors= service_data_serializer.errors   
-					key=tuple(errors.keys())[0] 
-					error=errors[key]
-					response_dict['Error']=key +':'+ error[0]
-					response_dict['Error_List'] = service_data_serializer.errors
-			except:
-				cart_service = None
+		# 		else:
+		# 			errors= service_data_serializer.errors   
+		# 			key=tuple(errors.keys())[0] 
+		# 			error=errors[key]
+		# 			response_dict['Error']=key +':'+ error[0]
+		# 			response_dict['Error_List'] = service_data_serializer.errors
+		# 	except:
+		# 		cart_service = None
 
 		#DELETE SERVICE
 		if action == 'delete_service':
