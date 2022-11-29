@@ -8598,6 +8598,8 @@ class CartAPI(APIView):
 		response_dict['no_of_visits'] = cart.no_of_visits
 		response_dict['customer_ip_address'] = get_client_ip(request)
 		response_dict['is_scheduled'] = cart.is_scheduled
+		response_dict['discount_amount'] = cart.cart_discount
+		response_dict['cart_final_cost'] = cart.final_cost
 
 		return Response(response_dict,HTTP_200_OK)
 
