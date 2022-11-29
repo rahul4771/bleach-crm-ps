@@ -1005,7 +1005,7 @@ class PaymentResponseDebit(View):
 				if cart_service.addon_name:
 					evaluation_section_addon = EvaluationSectionAddons.objects.create(evaluation_section=evaluation_section,name=cart_service.addon_name,addon_cost=cart_service.addon_price,quantity=1,addon_net_cost=cart_service.addon_price,size=cart_service.addon_size)
 
-				cart_schedules = [OrderScheduler(order=order,evaluation_details=evaluation_details,order_scheduler_book=evaluation_book,start_at=cart_schedule.start_at,end_at=cart_schedule.end_at,customer_address=customer_address,status='CONFIRMED',no_of_cleaners=cart_schedule.no_of_cleaners,cleaning_hours=cart_schedule.cleaning_hours,hourly_cleaning_duration=cart_schedule.hourly_cleaning_duration) for cart_schedule in customer_cart.cart_schedules]
+				cart_schedules = [OrderScheduler(order=order,evaluation_details=evaluation_details,order_scart.total_costcheduler_book=evaluation_book,start_at=cart_schedule.start_at,end_at=cart_schedule.end_at,customer_address=customer_address,status='CONFIRMED',no_of_cleaners=cart_schedule.no_of_cleaners,cleaning_hours=cart_schedule.cleaning_hours,hourly_cleaning_duration=cart_schedule.hourly_cleaning_duration) for cart_schedule in customer_cart.cart_schedules]
 				OrderScheduler.objects.bulk_create(cart_schedules) 
 
 			# 	cart_service.delete()				
@@ -1636,6 +1636,8 @@ class PaymentResponseDebit(View):
 
 			customer_cart.is_scheduled = False
 			customer_cart.total_cost = 0
+			customer_cart.cart_discount = 0
+			customer_cart.final_cost = 0
 			customer_cart.save()
 
 			#pay and book &&& others
@@ -1678,6 +1680,8 @@ class PaymentResponseDebit(View):
 
 			customer_cart.is_scheduled = False
 			customer_cart.total_cost = 0
+			customer_cart.cart_discount = 0
+			customer_cart.final_cost = 0
 			customer_cart.save()
 			
 			#pay and book &&& others
@@ -8574,9 +8578,10 @@ class CartAPI(APIView):
 		except:
 			cart = CustomerCart.objects.create(customer=user)
 
-		#discount calculation
+		#cart discount calculation - 15% of cost upto 75KD
 		discount_amount = float(cart.total_cost) * (15/100)
-		cart.total_cost = round(float(cart.total_cost) - float(discount_amount if discount_amount <= 75 else 75),3)
+		cart.cart_discount = round(discount_amount,3)
+		cart.final_cost = round(float(cart.total_cost) - float(discount_amount if discount_amount <= 75 else 75),3)
 		cart.save()
 
 		services = CartService.objects.filter(cart=cart)

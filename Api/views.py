@@ -379,6 +379,8 @@ class PaymentResponseCredit(APIView):
 
 			customer_cart.is_scheduled = False
 			customer_cart.total_cost = 0
+			customer_cart.cart_discount = 0
+			customer_cart.final_cost = 0
 			customer_cart.save()
 
 		#Booking From CRM System
