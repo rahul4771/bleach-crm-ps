@@ -8574,6 +8574,11 @@ class CartAPI(APIView):
 		except:
 			cart = CustomerCart.objects.create(customer=user)
 
+		#discount calculation
+		discount_amount = float(cart.total_cost) * (15/100)
+		cart.total_cost = round(float(cart.total_cost) - float(discount_amount if discount_amount <= 75 else 75),3)
+		cart.save()
+
 		services = CartService.objects.filter(cart=cart)
 
 		cart_services = CartServiceShowSerializer(services,many=True).data
