@@ -3148,8 +3148,6 @@ class GetServiceProductivity(APIView):
 			service_addons       = ServiceAddOns.objects.select_related('service_type').filter(service_type__name=service_type)
 			for addon in service_addons:
 				service_productivity[''+addon.name+''] = addon.productivity
-				
-		elif service_type         == 'Kitchen Appliances':
 		else:
 			serviceproductivity = ServiceProductivity.objects.select_related('service_type').get(service_type__name=service_type)
 			service_productivity['perhour_cleaning'] = serviceproductivity.perhour_cleaning
