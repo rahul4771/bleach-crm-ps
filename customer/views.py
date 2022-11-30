@@ -8889,7 +8889,10 @@ class CartScheduleAPI(APIView):
 
 		for service in cart_services:
 			if slots:
-				service.total_cost = round(float(service.total_cost)*float(len(slots)),3)
+				if request.data.get('cleaning_policy') == 'SUBSCRIPTION':
+					service.total_cost = round(float(service.total_cost)*float(len(slots)),3)
+				else:
+					service.total_cost = service.total_cost
 			service.cleaning_policy = request.data.get('cleaning_policy')
 			service.save()
 
@@ -8897,12 +8900,18 @@ class CartScheduleAPI(APIView):
 		cart.is_scheduled = True
 		cart.no_of_visits = len(slots)
 		if slots:
-			cart.total_cost = round(float(cart.total_cost) * float(len(slots)),3)
+			if request.data.get('cleaning_policy') == 'SUBSCRIPTION':
+				cart.total_cost = round(float(cart.total_cost) * float(len(slots)),3)
+			else:
+				cart.total_cost = cart.total_cost
 		cart.save()
 
 		response_dict['success'] = True
 		if slots:
-			response_dict['updated_cost'] = round(float(cart.total_cost) * float(len(slots)),3)
+			if request.data.get('cleaning_policy') == 'SUBSCRIPTION':
+				response_dict['updated_cost'] = round(float(cart.total_cost) * float(len(slots)),3)
+			else:
+				response_dict['updated_cost'] = cart.total_cost
 		else:
 			response_dict['updated_cost'] = cart.total_cost
 
