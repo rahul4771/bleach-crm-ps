@@ -3146,7 +3146,7 @@ class GetServiceProductivity(APIView):
 				service_productivity['max_cleaners']     = serviceproductivity.max_cleaners
 
 		elif service_type         == 'Kitchen Appliances':
-			service_addons       = ServiceAddOns.objects.select_related('service_type').filter(service_type__name=service_type)
+			service_addons       = ServiceAddOns.objects.select_related('service_type').filter(service_type__name='Kitchen Cleaning')
 			for addon in service_addons:
 				service_productivity[''+addon.name+''] = addon.productivity
 
