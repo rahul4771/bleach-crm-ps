@@ -942,7 +942,7 @@ class PaymentResponseDebit(View):
 			else:
 				evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
 				tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
-			evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=int(tracking_no)+1,customer=customer_cart.customer,estimated_cost=customer_cart.total_cost,total_cost=customer_cart.total_cost,payment_method='PREPAID',payment_way='ONLINE',quatation_status='APPROVED',quatation_approved_date=timezone.now(),quatation_expiry_date=timezone.now()+timedelta(14))
+			evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=int(tracking_no)+1,customer=customer_cart.customer,estimated_cost=customer_cart.total_cost,discount=customer_cart.cart_discount,total_cost=customer_cart.final_cost,payment_method='PREPAID',payment_way='ONLINE',quatation_status='APPROVED',quatation_approved_date=timezone.now(),quatation_expiry_date=timezone.now()+timedelta(14))
 			
 			#Booking Number
 			booking_id               = CustomerBooking.objects.filter(is_active=True).aggregate(t=Max('booking_id'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
@@ -968,7 +968,7 @@ class PaymentResponseDebit(View):
 			else:
 				new_invoice_no 		 = str(timezone.now().year)+'00001'
 
-			order       = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,invoice_no=new_invoice_no,order_status='APPROVED_BY_CLIENT',total_amount=customer_cart.total_cost,remining_amount=customer_cart.total_cost)
+			order       = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,invoice_no=new_invoice_no,order_status='APPROVED_BY_CLIENT',total_amount=customer_cart.final_cost,remining_amount=customer_cart.final_cost)
 
 			customer_address = Address.objects.get( id=int(request.GET.get('udf5')) )
 			
@@ -1004,7 +1004,7 @@ class PaymentResponseDebit(View):
 				
 				if cart_service.addon_name:
 					evaluation_section_addon = EvaluationSectionAddons.objects.create(evaluation_section=evaluation_section,name=cart_service.addon_name,addon_cost=cart_service.addon_price,quantity=1,addon_net_cost=cart_service.addon_price,size=cart_service.addon_size)
-
+				
 				cart_schedules = [OrderScheduler(order=order,evaluation_details=evaluation_details,order_scheduler_book=evaluation_book,start_at=cart_schedule.start_at,end_at=cart_schedule.end_at,customer_address=customer_address,status='CONFIRMED',no_of_cleaners=cart_schedule.no_of_cleaners,cleaning_hours=cart_schedule.cleaning_hours,hourly_cleaning_duration=cart_schedule.hourly_cleaning_duration) for cart_schedule in customer_cart.cart_schedules]
 				OrderScheduler.objects.bulk_create(cart_schedules) 
 
@@ -1083,509 +1083,509 @@ class PaymentResponseDebit(View):
 
 			##########################################################################################
 			#Xero Integration
-			xero          = XeroConnection.objects.first()
-			#Update Access Token and Refresh Token
-			header                      = {
-											'Authorization': 'Basic '+xero.client_encoded,
-											'Content-Type': 'application/x-www-form-urlencoded'
-												}
-			body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
-			token_response              = requests.post('https://identity.xero.com/connect/token',
-													data=body,
-													headers=header 
-												).json()
-			access_token                = token_response['access_token']
-			refresh_token               = token_response['refresh_token']
+			# xero          = XeroConnection.objects.first()
+			# #Update Access Token and Refresh Token
+			# header                      = {
+			# 								'Authorization': 'Basic '+xero.client_encoded,
+			# 								'Content-Type': 'application/x-www-form-urlencoded'
+			# 									}
+			# body                        = {"grant_type":"refresh_token","refresh_token":xero.refresh_token}
+			# token_response              = requests.post('https://identity.xero.com/connect/token',
+			# 										data=body,
+			# 										headers=header 
+			# 									).json()
+			# access_token                = token_response['access_token']
+			# refresh_token               = token_response['refresh_token']
 
-			xero.access_token  = access_token
-			xero.refresh_token = refresh_token
-			xero.save()
+			# xero.access_token  = access_token
+			# xero.refresh_token = refresh_token
+			# xero.save()
 
-			header                      = {
-											'xero-tenant-id': xero.tenant_id,
-											'Authorization': 'Bearer '+access_token,
-											'Accept': 'application/json',
-											'Content-Type': 'application/json'
-												}
+			# header                      = {
+			# 								'xero-tenant-id': xero.tenant_id,
+			# 								'Authorization': 'Bearer '+access_token,
+			# 								'Accept': 'application/json',
+			# 								'Content-Type': 'application/json'
+			# 									}
 
 			
-			#payment policy setup
-			if payment_mode == 'postpaid':
-				payment_policy = 'POSTPAID'
-			elif payment_mode == 'prepaid':
-				payment_policy = 'PREPAID'
-			elif payment_mode == 'before_cleaning':
-				payment_policy = 'BEFORE CLEANING'
-			elif payment_mode == 'after_cleaning':
-				payment_policy = 'AFTER CLEANING'
-			elif payment_mode == 'subscription':
-				payment_policy = 'SUBSCRIPTION'
+			# #payment policy setup
+			# if payment_mode == 'postpaid':
+			# 	payment_policy = 'POSTPAID'
+			# elif payment_mode == 'prepaid':
+			# 	payment_policy = 'PREPAID'
+			# elif payment_mode == 'before_cleaning':
+			# 	payment_policy = 'BEFORE CLEANING'
+			# elif payment_mode == 'after_cleaning':
+			# 	payment_policy = 'AFTER CLEANING'
+			# elif payment_mode == 'subscription':
+			# 	payment_policy = 'SUBSCRIPTION'
 
-			#Invoice Authorize
-			if payment_policy == 'PREPAID':
-				BankCharge = .250
-				Amount     = float(order.evaluation.total_cost)  
-				##Invoice Line Item 
-				LineItems                 = []
-				LineItems.append({
-					"Description":"ONE TIME SERVICE",
-					"Quantity":"1",
-					"UnitAmount":Amount,
-					"AccountCode":1207004,
-					"TaxType":"NONE"
-								}
-					)
-				LineItems.append({
-					"Description":"BANK CHARGE",
-					"Quantity":"1",
-					"UnitAmount":-BankCharge,
-					"AccountCode":3202014,
-					"TaxType":"NONE"
-								}
-					)
-				InvoiceNumber  = order.invoice_no
+			# #Invoice Authorize
+			# if payment_policy == 'PREPAID':
+			# 	BankCharge = .250
+			# 	Amount     = float(order.evaluation.total_cost)  
+			# 	##Invoice Line Item 
+			# 	LineItems                 = []
+			# 	LineItems.append({
+			# 		"Description":"ONE TIME SERVICE",
+			# 		"Quantity":"1",
+			# 		"UnitAmount":Amount,
+			# 		"AccountCode":1207004,
+			# 		"TaxType":"NONE"
+			# 					}
+			# 		)
+			# 	LineItems.append({
+			# 		"Description":"BANK CHARGE",
+			# 		"Quantity":"1",
+			# 		"UnitAmount":-BankCharge,
+			# 		"AccountCode":3202014,
+			# 		"TaxType":"NONE"
+			# 					}
+			# 		)
+			# 	InvoiceNumber  = order.invoice_no
 
-				invoice_data        = 	{
-									"Type":"ACCREC",
-									"LineAmountTypes":"NoTax",
-									"InvoiceNumber":InvoiceNumber,
-									"Reference":order.order_no,
-									"Status":"AUTHORISED",
-									"LineItems":LineItems
-								}
+			# 	invoice_data        = 	{
+			# 						"Type":"ACCREC",
+			# 						"LineAmountTypes":"NoTax",
+			# 						"InvoiceNumber":InvoiceNumber,
+			# 						"Reference":order.order_no,
+			# 						"Status":"AUTHORISED",
+			# 						"LineItems":LineItems
+			# 					}
 
-				##xero Create Invoice
-				header                      = {
-												'xero-tenant-id': xero.tenant_id,
-												'Authorization': 'Bearer '+access_token,
-												'Accept': 'application/json',
-												'Content-Type': 'application/json'
-													}
+			# 	##xero Create Invoice
+			# 	header                      = {
+			# 									'xero-tenant-id': xero.tenant_id,
+			# 									'Authorization': 'Bearer '+access_token,
+			# 									'Accept': 'application/json',
+			# 									'Content-Type': 'application/json'
+			# 										}
 
-				create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
-														json=invoice_data,
-														headers=header 
-													).json()
+			# 	create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+			# 											json=invoice_data,
+			# 											headers=header 
+			# 										).json()
 				
-				try:
-					created_invoice = create_invoice['Status']
-				except:
-					created_invoice = None
+			# 	try:
+			# 		created_invoice = create_invoice['Status']
+			# 	except:
+			# 		created_invoice = None
 				
-				if created_invoice == 'OK':
-					try:
-						update_xero_invoice                  = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
-						update_xero_invoice.amount           = Amount
-						update_xero_invoice.xero_marked_date = timezone.now().date()
-						update_xero_invoice.payment_policy   = payment_policy
-						update_xero_invoice.save()
-					except:
-						XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
+			# 	if created_invoice == 'OK':
+			# 		try:
+			# 			update_xero_invoice                  = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
+			# 			update_xero_invoice.amount           = Amount
+			# 			update_xero_invoice.xero_marked_date = timezone.now().date()
+			# 			update_xero_invoice.payment_policy   = payment_policy
+			# 			update_xero_invoice.save()
+			# 		except:
+			# 			XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 				
-				#Delete Unwanted invoice
-				InvoiceNumber  = order.invoice_no+'A'
+			# 	#Delete Unwanted invoice
+			# 	InvoiceNumber  = order.invoice_no+'A'
 
-				invoice_data        = 	{
-									"Type":"ACCREC",
-									"LineAmountTypes":"NoTax",
-									"InvoiceNumber":InvoiceNumber,
-									"Reference":order.order_no,
-									"Status":"DELETED"
-								}
+			# 	invoice_data        = 	{
+			# 						"Type":"ACCREC",
+			# 						"LineAmountTypes":"NoTax",
+			# 						"InvoiceNumber":InvoiceNumber,
+			# 						"Reference":order.order_no,
+			# 						"Status":"DELETED"
+			# 					}
 
-				##xero Delete Invoice
-				header                      = {
-												'xero-tenant-id': xero.tenant_id,
-												'Authorization': 'Bearer '+access_token,
-												'Accept': 'application/json',
-												'Content-Type': 'application/json'
-													}
+			# 	##xero Delete Invoice
+			# 	header                      = {
+			# 									'xero-tenant-id': xero.tenant_id,
+			# 									'Authorization': 'Bearer '+access_token,
+			# 									'Accept': 'application/json',
+			# 									'Content-Type': 'application/json'
+			# 										}
 
-				delete_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
-														json=invoice_data,
-														headers=header 
-													).json()
+			# 	delete_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+			# 											json=invoice_data,
+			# 											headers=header 
+			# 										).json()
 
-			if payment_policy == 'BEFORE CLEANING':
-				#Before Invoice
-				BankCharge = .250
-				Amount     = float(order.evaluation.before_cleaning_amount) 
-				##Invoice Line Item 
-				LineItems                 = []
-				LineItems.append({
-					"Description":"ONE TIME SERVICE",
-					"Quantity":"1",
-					"UnitAmount":Amount,
-					"AccountCode":1207004,
-					"TaxType":"NONE"
-								}
-					)
-				LineItems.append({
-					"Description":"BANK CHARGE",
-					"Quantity":"1",
-					"UnitAmount":-BankCharge,
-					"AccountCode":3202014,
-					"TaxType":"NONE"
-								}
-					)
-				InvoiceNumber  = order.invoice_no+'A'
+			# if payment_policy == 'BEFORE CLEANING':
+			# 	#Before Invoice
+			# 	BankCharge = .250
+			# 	Amount     = float(order.evaluation.before_cleaning_amount) 
+			# 	##Invoice Line Item 
+			# 	LineItems                 = []
+			# 	LineItems.append({
+			# 		"Description":"ONE TIME SERVICE",
+			# 		"Quantity":"1",
+			# 		"UnitAmount":Amount,
+			# 		"AccountCode":1207004,
+			# 		"TaxType":"NONE"
+			# 					}
+			# 		)
+			# 	LineItems.append({
+			# 		"Description":"BANK CHARGE",
+			# 		"Quantity":"1",
+			# 		"UnitAmount":-BankCharge,
+			# 		"AccountCode":3202014,
+			# 		"TaxType":"NONE"
+			# 					}
+			# 		)
+			# 	InvoiceNumber  = order.invoice_no+'A'
 
-				invoice_data        = 	{
-									"Type":"ACCREC",
-									"LineAmountTypes":"NoTax",
-									"InvoiceNumber":InvoiceNumber,
-									"Reference":order.order_no,
-									"Status":"AUTHORISED",
-									"LineItems":LineItems
-								}
+			# 	invoice_data        = 	{
+			# 						"Type":"ACCREC",
+			# 						"LineAmountTypes":"NoTax",
+			# 						"InvoiceNumber":InvoiceNumber,
+			# 						"Reference":order.order_no,
+			# 						"Status":"AUTHORISED",
+			# 						"LineItems":LineItems
+			# 					}
 
-				##xero Create Invoice
-				header                      = {
-												'xero-tenant-id': xero.tenant_id,
-												'Authorization': 'Bearer '+access_token,
-												'Accept': 'application/json',
-												'Content-Type': 'application/json'
-													}
+			# 	##xero Create Invoice
+			# 	header                      = {
+			# 									'xero-tenant-id': xero.tenant_id,
+			# 									'Authorization': 'Bearer '+access_token,
+			# 									'Accept': 'application/json',
+			# 									'Content-Type': 'application/json'
+			# 										}
 
-				create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
-														json=invoice_data,
-														headers=header 
-													).json()
+			# 	create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+			# 											json=invoice_data,
+			# 											headers=header 
+			# 										).json()
 				
-				try:
-					created_invoice = create_invoice['Status']
-				except:
-					created_invoice = None
+			# 	try:
+			# 		created_invoice = create_invoice['Status']
+			# 	except:
+			# 		created_invoice = None
 				
-				if created_invoice == 'OK':
-					try:
-						update_xero_invoice                  = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
-						update_xero_invoice.amount           = Amount
-						update_xero_invoice.xero_marked_date = timezone.now().date()
-						update_xero_invoice.payment_policy   = payment_policy
-						update_xero_invoice.save()
-					except:
-						XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
+			# 	if created_invoice == 'OK':
+			# 		try:
+			# 			update_xero_invoice                  = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
+			# 			update_xero_invoice.amount           = Amount
+			# 			update_xero_invoice.xero_marked_date = timezone.now().date()
+			# 			update_xero_invoice.payment_policy   = payment_policy
+			# 			update_xero_invoice.save()
+			# 		except:
+			# 			XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 				
-				#Delete Unwanted invoice
-				InvoiceNumber  = order.invoice_no
+			# 	#Delete Unwanted invoice
+			# 	InvoiceNumber  = order.invoice_no
 
-				invoice_data        = 	{
-									"Type":"ACCREC",
-									"LineAmountTypes":"NoTax",
-									"InvoiceNumber":InvoiceNumber,
-									"Reference":order.order_no,
-									"Status":"DELETED"
-								}
-				##xero Delete Invoice
-				header                      = {
-												'xero-tenant-id': xero.tenant_id,
-												'Authorization': 'Bearer '+access_token,
-												'Accept': 'application/json',
-												'Content-Type': 'application/json'
-													}
+			# 	invoice_data        = 	{
+			# 						"Type":"ACCREC",
+			# 						"LineAmountTypes":"NoTax",
+			# 						"InvoiceNumber":InvoiceNumber,
+			# 						"Reference":order.order_no,
+			# 						"Status":"DELETED"
+			# 					}
+			# 	##xero Delete Invoice
+			# 	header                      = {
+			# 									'xero-tenant-id': xero.tenant_id,
+			# 									'Authorization': 'Bearer '+access_token,
+			# 									'Accept': 'application/json',
+			# 									'Content-Type': 'application/json'
+			# 										}
 
-				delete_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
-														json=invoice_data,
-														headers=header 
-													).json()
+			# 	delete_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+			# 											json=invoice_data,
+			# 											headers=header 
+			# 										).json()
 
-			if payment_policy == 'AFTER CLEANING':
-				#Before Invoice
-				BankCharge = .250
-				Amount     = float(order.evaluation.after_cleaning_amount)
-				##Invoice Line Item 
-				LineItems                 = []
-				LineItems.append({
-					"Description":"ONE TIME SERVICE",
-					"Quantity":"1",
-					"UnitAmount":Amount,
-					"AccountCode":1207004,
-					"TaxType":"NONE"
-								}
-					)
-				LineItems.append({
-					"Description":"BANK CHARGE",
-					"Quantity":"1",
-					"UnitAmount":-BankCharge,
-					"AccountCode":3202014,
-					"TaxType":"NONE"
-								}
-					)
-				InvoiceNumber  = order.invoice_no+'B'
+			# if payment_policy == 'AFTER CLEANING':
+			# 	#Before Invoice
+			# 	BankCharge = .250
+			# 	Amount     = float(order.evaluation.after_cleaning_amount)
+			# 	##Invoice Line Item 
+			# 	LineItems                 = []
+			# 	LineItems.append({
+			# 		"Description":"ONE TIME SERVICE",
+			# 		"Quantity":"1",
+			# 		"UnitAmount":Amount,
+			# 		"AccountCode":1207004,
+			# 		"TaxType":"NONE"
+			# 					}
+			# 		)
+			# 	LineItems.append({
+			# 		"Description":"BANK CHARGE",
+			# 		"Quantity":"1",
+			# 		"UnitAmount":-BankCharge,
+			# 		"AccountCode":3202014,
+			# 		"TaxType":"NONE"
+			# 					}
+			# 		)
+			# 	InvoiceNumber  = order.invoice_no+'B'
 
-				invoice_data   = 	{
-									"Type":"ACCREC",
-									"LineAmountTypes":"NoTax",
-									"InvoiceNumber":InvoiceNumber,
-									"Reference":order.order_no,
-									"Status":"AUTHORISED",
-									"LineItems":LineItems
-								}
+			# 	invoice_data   = 	{
+			# 						"Type":"ACCREC",
+			# 						"LineAmountTypes":"NoTax",
+			# 						"InvoiceNumber":InvoiceNumber,
+			# 						"Reference":order.order_no,
+			# 						"Status":"AUTHORISED",
+			# 						"LineItems":LineItems
+			# 					}
 
-				##xero Create Invoice
-				header                      = {
-												'xero-tenant-id': xero.tenant_id,
-												'Authorization': 'Bearer '+access_token,
-												'Accept': 'application/json',
-												'Content-Type': 'application/json'
-													}
+			# 	##xero Create Invoice
+			# 	header                      = {
+			# 									'xero-tenant-id': xero.tenant_id,
+			# 									'Authorization': 'Bearer '+access_token,
+			# 									'Accept': 'application/json',
+			# 									'Content-Type': 'application/json'
+			# 										}
 
-				create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
-														json=invoice_data,
-														headers=header 
-													).json()
+			# 	create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+			# 											json=invoice_data,
+			# 											headers=header 
+			# 										).json()
 				
-				try:
-					created_invoice = create_invoice['Status']
-				except:
-					created_invoice = None
+			# 	try:
+			# 		created_invoice = create_invoice['Status']
+			# 	except:
+			# 		created_invoice = None
 				
-				if created_invoice == 'OK':
-					try:
-						update_xero_invoice                  = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
-						update_xero_invoice.amount           = Amount
-						update_xero_invoice.xero_marked_date = timezone.now().date()
-						update_xero_invoice.payment_policy   = payment_policy
-						update_xero_invoice.save()
-					except:
-						XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
+			# 	if created_invoice == 'OK':
+			# 		try:
+			# 			update_xero_invoice                  = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
+			# 			update_xero_invoice.amount           = Amount
+			# 			update_xero_invoice.xero_marked_date = timezone.now().date()
+			# 			update_xero_invoice.payment_policy   = payment_policy
+			# 			update_xero_invoice.save()
+			# 		except:
+			# 			XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 			
-			if payment_policy == 'POSTPAID':
-				BankCharge = .250
-				Amount     = float(order.evaluation.total_cost) 
-				##Invoice Line Item 
-				LineItems                 = []
-				LineItems.append({
-					"Description":"ONE TIME SERVICE",
-					"Quantity":"1",
-					"UnitAmount":Amount,
-					"AccountCode":1207004,
-					"TaxType":"NONE"
-								}
-					)
-				LineItems.append({
-					"Description":"BANK CHARGE",
-					"Quantity":"1",
-					"UnitAmount":-BankCharge,
-					"AccountCode":3202014,
-					"TaxType":"NONE"
-								}
-					)
-				InvoiceNumber  = order.invoice_no
+			# if payment_policy == 'POSTPAID':
+			# 	BankCharge = .250
+			# 	Amount     = float(order.evaluation.total_cost) 
+			# 	##Invoice Line Item 
+			# 	LineItems                 = []
+			# 	LineItems.append({
+			# 		"Description":"ONE TIME SERVICE",
+			# 		"Quantity":"1",
+			# 		"UnitAmount":Amount,
+			# 		"AccountCode":1207004,
+			# 		"TaxType":"NONE"
+			# 					}
+			# 		)
+			# 	LineItems.append({
+			# 		"Description":"BANK CHARGE",
+			# 		"Quantity":"1",
+			# 		"UnitAmount":-BankCharge,
+			# 		"AccountCode":3202014,
+			# 		"TaxType":"NONE"
+			# 					}
+			# 		)
+			# 	InvoiceNumber  = order.invoice_no
 
-				invoice_data        = 	{
-									"Type":"ACCREC",
-									"LineAmountTypes":"NoTax",
-									"InvoiceNumber":InvoiceNumber,
-									"Reference":order.order_no,
-									"Status":"AUTHORISED",
-									"LineItems":LineItems
-								}
+			# 	invoice_data        = 	{
+			# 						"Type":"ACCREC",
+			# 						"LineAmountTypes":"NoTax",
+			# 						"InvoiceNumber":InvoiceNumber,
+			# 						"Reference":order.order_no,
+			# 						"Status":"AUTHORISED",
+			# 						"LineItems":LineItems
+			# 					}
 
-				##xero Create Invoice
-				header                      = {
-												'xero-tenant-id': xero.tenant_id,
-												'Authorization': 'Bearer '+access_token,
-												'Accept': 'application/json',
-												'Content-Type': 'application/json'
-													}
+			# 	##xero Create Invoice
+			# 	header                      = {
+			# 									'xero-tenant-id': xero.tenant_id,
+			# 									'Authorization': 'Bearer '+access_token,
+			# 									'Accept': 'application/json',
+			# 									'Content-Type': 'application/json'
+			# 										}
 
-				create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
-														json=invoice_data,
-														headers=header 
-													).json()
+			# 	create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+			# 											json=invoice_data,
+			# 											headers=header 
+			# 										).json()
 				
-				try:
-					created_invoice = create_invoice['Status']
-				except:
-					created_invoice = None
+			# 	try:
+			# 		created_invoice = create_invoice['Status']
+			# 	except:
+			# 		created_invoice = None
 				
-				if created_invoice == 'OK':
-					try:
-						update_xero_invoice                  = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
-						update_xero_invoice.amount           = Amount
-						update_xero_invoice.xero_marked_date = timezone.now().date()
-						update_xero_invoice.payment_policy   = payment_policy
-						update_xero_invoice.save()
-					except:
-						XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
+			# 	if created_invoice == 'OK':
+			# 		try:
+			# 			update_xero_invoice                  = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
+			# 			update_xero_invoice.amount           = Amount
+			# 			update_xero_invoice.xero_marked_date = timezone.now().date()
+			# 			update_xero_invoice.payment_policy   = payment_policy
+			# 			update_xero_invoice.save()
+			# 		except:
+			# 			XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 				
-				#Delete Unwanted invoice
-				InvoiceNumber  = order.invoice_no+'A'
+			# 	#Delete Unwanted invoice
+			# 	InvoiceNumber  = order.invoice_no+'A'
 
-				invoice_data        = 	{
-									"Type":"ACCREC",
-									"LineAmountTypes":"NoTax",
-									"InvoiceNumber":InvoiceNumber,
-									"Reference":order.order_no,
-									"Status":"DELETED"
-								}
-				##xero Delete Invoice
-				header                      = {
-												'xero-tenant-id': xero.tenant_id,
-												'Authorization': 'Bearer '+access_token,
-												'Accept': 'application/json',
-												'Content-Type': 'application/json'
-													}
+			# 	invoice_data        = 	{
+			# 						"Type":"ACCREC",
+			# 						"LineAmountTypes":"NoTax",
+			# 						"InvoiceNumber":InvoiceNumber,
+			# 						"Reference":order.order_no,
+			# 						"Status":"DELETED"
+			# 					}
+			# 	##xero Delete Invoice
+			# 	header                      = {
+			# 									'xero-tenant-id': xero.tenant_id,
+			# 									'Authorization': 'Bearer '+access_token,
+			# 									'Accept': 'application/json',
+			# 									'Content-Type': 'application/json'
+			# 										}
 
-				delete_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
-														json=invoice_data,
-														headers=header 
-													).json()
+			# 	delete_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+			# 											json=invoice_data,
+			# 											headers=header 
+			# 										).json()
 
-			if payment_policy == 'SUBSCRIPTION':
-				try:
-					xero_invoice  = XeroInvoice.objects.filter(order=order,payment_policy=payment_policy,is_paid=False).last()
-				except:
-					xero_invoice  = None
+			# if payment_policy == 'SUBSCRIPTION':
+			# 	try:
+			# 		xero_invoice  = XeroInvoice.objects.filter(order=order,payment_policy=payment_policy,is_paid=False).last()
+			# 	except:
+			# 		xero_invoice  = None
 				
-				if xero_invoice:
-					BankCharge = .250
-					Amount     = float(order.subscription_topay) 
-					##Invoice Line Item 
-					LineItems                 = []
-					LineItems.append({
-						"Description":"ONE TIME SERVICE",
-						"Quantity":"1",
-						"UnitAmount":Amount,
-						"AccountCode":1207004,
-						"TaxType":"NONE"
-									}
-						)
-					LineItems.append({
-						"Description":"BANK CHARGE",
-						"Quantity":"1",
-						"UnitAmount":-BankCharge,
-						"AccountCode":3202014,
-						"TaxType":"NONE"
-									}
-						)
-					InvoiceNumber       = xero_invoice.invoice_no
+			# 	if xero_invoice:
+			# 		BankCharge = .250
+			# 		Amount     = float(order.subscription_topay) 
+			# 		##Invoice Line Item 
+			# 		LineItems                 = []
+			# 		LineItems.append({
+			# 			"Description":"ONE TIME SERVICE",
+			# 			"Quantity":"1",
+			# 			"UnitAmount":Amount,
+			# 			"AccountCode":1207004,
+			# 			"TaxType":"NONE"
+			# 						}
+			# 			)
+			# 		LineItems.append({
+			# 			"Description":"BANK CHARGE",
+			# 			"Quantity":"1",
+			# 			"UnitAmount":-BankCharge,
+			# 			"AccountCode":3202014,
+			# 			"TaxType":"NONE"
+			# 						}
+			# 			)
+			# 		InvoiceNumber       = xero_invoice.invoice_no
 
-					invoice_data        = 	{
-										"Type":"ACCREC",
-										"LineAmountTypes":"NoTax",
-										"InvoiceNumber":InvoiceNumber,
-										"Reference":order.order_no,
-										"Status":"AUTHORISED",
-										"LineItems":LineItems
-									}
+			# 		invoice_data        = 	{
+			# 							"Type":"ACCREC",
+			# 							"LineAmountTypes":"NoTax",
+			# 							"InvoiceNumber":InvoiceNumber,
+			# 							"Reference":order.order_no,
+			# 							"Status":"AUTHORISED",
+			# 							"LineItems":LineItems
+			# 						}
 
-					##xero Create Invoice
-					header                      = {
-													'xero-tenant-id': xero.tenant_id,
-													'Authorization': 'Bearer '+access_token,
-													'Accept': 'application/json',
-													'Content-Type': 'application/json'
-														}
+			# 		##xero Create Invoice
+			# 		header                      = {
+			# 										'xero-tenant-id': xero.tenant_id,
+			# 										'Authorization': 'Bearer '+access_token,
+			# 										'Accept': 'application/json',
+			# 										'Content-Type': 'application/json'
+			# 											}
 
-					create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
-															json=invoice_data,
-															headers=header 
-														).json()
+			# 		create_invoice              = requests.post('https://api.xero.com/api.xro/2.0/Invoices/',
+			# 												json=invoice_data,
+			# 												headers=header 
+			# 											).json()
 					
-					try:
-						created_invoice = create_invoice['Status']
-					except:
-						created_invoice = None
+			# 		try:
+			# 			created_invoice = create_invoice['Status']
+			# 		except:
+			# 			created_invoice = None
 					
-					if created_invoice == 'OK':
-						try:
-							update_xero_invoice                  = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
-							update_xero_invoice.amount           = Amount
-							update_xero_invoice.xero_marked_date = timezone.now().date()
-							update_xero_invoice.payment_policy   = payment_policy
-							update_xero_invoice.save()
-						except:
-							XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
+			# 		if created_invoice == 'OK':
+			# 			try:
+			# 				update_xero_invoice                  = XeroInvoice.objects.get(order=order,invoice_no=InvoiceNumber)
+			# 				update_xero_invoice.amount           = Amount
+			# 				update_xero_invoice.xero_marked_date = timezone.now().date()
+			# 				update_xero_invoice.payment_policy   = payment_policy
+			# 				update_xero_invoice.save()
+			# 			except:
+			# 				XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 				
 				
-			#Payment Add 
-			payment_date        = timezone.now().date()
-			payment_date_string = datetime.strftime(payment_date,'%Y-%m-%d')
+			# #Payment Add 
+			# payment_date        = timezone.now().date()
+			# payment_date_string = datetime.strftime(payment_date,'%Y-%m-%d')
 
-			if payment_policy == 'PREPAID' or payment_policy == 'POSTPAID' or payment_policy == 'BEFORE CLEANING' or payment_policy == 'AFTER CLEANING':
+			# if payment_policy == 'PREPAID' or payment_policy == 'POSTPAID' or payment_policy == 'BEFORE CLEANING' or payment_policy == 'AFTER CLEANING':
 				
-				try:
-					xero_invoice = XeroInvoice.objects.get(order=order,payment_policy=payment_policy)
-				except:
-					xero_invoice = None
+			# 	try:
+			# 		xero_invoice = XeroInvoice.objects.get(order=order,payment_policy=payment_policy)
+			# 	except:
+			# 		xero_invoice = None
 
-				if xero_invoice:
-					bank_charge  = .250
+			# 	if xero_invoice:
+			# 		bank_charge  = .250
 
-					#Payment Update
-					payment_data = {
-								"Invoice":{
-									"InvoiceNumber":xero_invoice.invoice_no
-								},
-								"Account":{
-									"Code":"1201023"
-								},
-								"Date":payment_date_string,
-								"Amount":float(amount_paid)-bank_charge,
-								"Reference":payment_history.transaction_id
-								}
+			# 		#Payment Update
+			# 		payment_data = {
+			# 					"Invoice":{
+			# 						"InvoiceNumber":xero_invoice.invoice_no
+			# 					},
+			# 					"Account":{
+			# 						"Code":"1201023"
+			# 					},
+			# 					"Date":payment_date_string,
+			# 					"Amount":float(amount_paid)-bank_charge,
+			# 					"Reference":payment_history.transaction_id
+			# 					}
 
-					update_payment          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
-														json=payment_data,
-														headers=header 
-													).json()
+			# 		update_payment          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
+			# 											json=payment_data,
+			# 											headers=header 
+			# 										).json()
 
 
-					try:
-						created_payment = update_payment['Status']
-					except:
-						created_payment = None
+			# 		try:
+			# 			created_payment = update_payment['Status']
+			# 		except:
+			# 			created_payment = None
 
-					if created_payment == 'OK':
-						xero_invoice.is_paid   = True
-						xero_invoice.paid_date = payment_date
-						xero_invoice.save()
+			# 		if created_payment == 'OK':
+			# 			xero_invoice.is_paid   = True
+			# 			xero_invoice.paid_date = payment_date
+			# 			xero_invoice.save()
 
-						payment_history.is_xero_marked = True
-						payment_history.save()
+			# 			payment_history.is_xero_marked = True
+			# 			payment_history.save()
 
-			if payment_policy == 'SUBSCRIPTION':
-				try:
-					xero_invoice = XeroInvoice.objects.filter(order=order,payment_policy=payment_policy,is_paid=False).last()
-				except:
-					xero_invoice = None
+			# if payment_policy == 'SUBSCRIPTION':
+			# 	try:
+			# 		xero_invoice = XeroInvoice.objects.filter(order=order,payment_policy=payment_policy,is_paid=False).last()
+			# 	except:
+			# 		xero_invoice = None
 
-				if xero_invoice:
-					bank_charge  = .250
+			# 	if xero_invoice:
+			# 		bank_charge  = .250
 					
-					#Payment Update
-					payment_data = {
-								"Invoice":{
-									"InvoiceNumber":xero_invoice.invoice_no
-								},
-								"Account":{
-									"Code":"1201023"
-								},
-								"Date":payment_date_string,
-								"Amount":float(amount_paid)-bank_charge,
-								"Reference":payment_history.transaction_id
-								}
+			# 		#Payment Update
+			# 		payment_data = {
+			# 					"Invoice":{
+			# 						"InvoiceNumber":xero_invoice.invoice_no
+			# 					},
+			# 					"Account":{
+			# 						"Code":"1201023"
+			# 					},
+			# 					"Date":payment_date_string,
+			# 					"Amount":float(amount_paid)-bank_charge,
+			# 					"Reference":payment_history.transaction_id
+			# 					}
 
-					update_payment          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
-														json=payment_data,
-														headers=header 
-													).json()
+			# 		update_payment          = requests.put('https://api.xero.com/api.xro/2.0/Payments',
+			# 											json=payment_data,
+			# 											headers=header 
+			# 										).json()
 
-					try:
-						created_payment = update_payment['Status']
-					except:
-						created_payment = None
+			# 		try:
+			# 			created_payment = update_payment['Status']
+			# 		except:
+			# 			created_payment = None
 
-					if created_payment == 'OK':
-						xero_invoice.is_paid   = True
-						xero_invoice.paid_date = payment_date
-						xero_invoice.save()
+			# 		if created_payment == 'OK':
+			# 			xero_invoice.is_paid   = True
+			# 			xero_invoice.paid_date = payment_date
+			# 			xero_invoice.save()
 						
-						payment_history.is_xero_marked = True
-						payment_history.save()
+			# 			payment_history.is_xero_marked = True
+			# 			payment_history.save()
 
 				########################################################################################
 
@@ -1636,6 +1636,8 @@ class PaymentResponseDebit(View):
 
 			customer_cart.is_scheduled = False
 			customer_cart.total_cost = 0
+			customer_cart.cart_discount = 0
+			customer_cart.final_cost = 0
 			customer_cart.save()
 
 			#pay and book &&& others
@@ -1678,6 +1680,8 @@ class PaymentResponseDebit(View):
 
 			customer_cart.is_scheduled = False
 			customer_cart.total_cost = 0
+			customer_cart.cart_discount = 0
+			customer_cart.final_cost = 0
 			customer_cart.save()
 			
 			#pay and book &&& others
@@ -3140,6 +3144,22 @@ class GetServiceProductivity(APIView):
 				service_productivity['min_hours'] 		 = serviceproductivity.min_hours
 				service_productivity['min_cleaners']     = serviceproductivity.min_cleaners
 				service_productivity['max_cleaners']     = serviceproductivity.max_cleaners
+
+		elif service_type         == 'Kitchen Appliances':
+			
+			addon_name         = request.GET.get('addon_name')
+			addon_category     = request.GET.get('addon_category',None)
+			if addon_category == 'null':
+				addon_category     = None
+
+			service_addon       = ServiceAddOns.objects.get(service_type__name='Kitchen Cleaning',name__iexact=addon_name,category__iexact=addon_category)
+			
+			service_productivity[''+service_addon.name+''] = service_addon.productivity
+			service_productivity['addon_category'] = service_addon.category
+			service_productivity['max_hours'] 		 = 8
+			service_productivity['min_hours'] 		 = 2
+			service_productivity['min_cleaners']     = 1
+			service_productivity['max_cleaners']     = 10
 		else:
 			serviceproductivity = ServiceProductivity.objects.select_related('service_type').get(service_type__name=service_type)
 			service_productivity['perhour_cleaning'] = serviceproductivity.perhour_cleaning
@@ -8574,6 +8594,12 @@ class CartAPI(APIView):
 		except:
 			cart = CustomerCart.objects.create(customer=user)
 
+		#cart discount calculation - 15% of cost upto 75KD
+		discount_amount = float(cart.total_cost) * (15/100)
+		cart.cart_discount = round(discount_amount if discount_amount <= 75 else 75,3)
+		cart.final_cost = round(float(cart.total_cost) - float(discount_amount if discount_amount <= 75 else 75),3)
+		cart.save()
+
 		services = CartService.objects.filter(cart=cart)
 
 		cart_services = CartServiceShowSerializer(services,many=True).data
@@ -8588,6 +8614,8 @@ class CartAPI(APIView):
 		response_dict['no_of_visits'] = cart.no_of_visits
 		response_dict['customer_ip_address'] = get_client_ip(request)
 		response_dict['is_scheduled'] = cart.is_scheduled
+		response_dict['discount_amount'] = cart.cart_discount
+		response_dict['cart_final_cost'] = cart.final_cost
 
 		return Response(response_dict,HTTP_200_OK)
 
@@ -8615,7 +8643,9 @@ class CartAPI(APIView):
 
 			#getting service price through productivity id 
 			if 'floors' in service_data:
-				total_cost = 0
+				total_cost = 0			
+			elif 'addon_price' in service_data:
+				total_cost = ServiceAddOns.objects.get(id=request.data.get('productivity_id')).price
 			else:
 				total_cost = ServicePriceRange.objects.get(id=request.data.get('productivity_id')).price
 
@@ -8660,47 +8690,47 @@ class CartAPI(APIView):
 				response_dict['Error_List'] = service_data_serializer.errors
 
 		#UPDATING EXISTING SERVICE
-		if action == 'edit_service':
+		# if action == 'edit_service':
 
-			#saving service details through serializer
-			service_data = request.data.get('service_data')
+		# 	#saving service details through serializer
+		# 	service_data = request.data.get('service_data')
 
-			service_data['cart'] = cart.id
+		# 	service_data['cart'] = cart.id
 
-			#getting service price through productivity id 
-			total_cost = ServicePriceRange.objects.get(id=request.data.get('productivity_id')).price
+		# 	#getting service price through productivity id 
+		# 	total_cost = ServicePriceRange.objects.get(id=request.data.get('productivity_id')).price
 
-			service_data['service_price_range'] = request.data.get('productivity_id')
-			service_data['total_cost'] = total_cost
+		# 	service_data['service_price_range'] = request.data.get('productivity_id')
+		# 	service_data['total_cost'] = total_cost
 
-			try:
-				#getting existing cart service object
-				cart_service = CartService.objects.get(id=request.data.get('cart_service_id'))
-				previous_service_cost = cart_service.total_cost
+		# 	try:
+		# 		#getting existing cart service object
+		# 		cart_service = CartService.objects.get(id=request.data.get('cart_service_id'))
+		# 		previous_service_cost = cart_service.total_cost
 
-				#updating cart service details using serializer
-				service_data_serializer = CartServiceSerializer(data=service_data,instance=cart_service)
+		# 		#updating cart service details using serializer
+		# 		service_data_serializer = CartServiceSerializer(data=service_data,instance=cart_service)
 
-				if service_data_serializer.is_valid():
-					service = service_data_serializer.save()
+		# 		if service_data_serializer.is_valid():
+		# 			service = service_data_serializer.save()
 						
-					service.total_cost = total_cost
-					service.save()
+		# 			service.total_cost = total_cost
+		# 			service.save()
 
-					cart.total_cost = float(cart.total_cost) - float(previous_service_cost)
-					cart.total_cost = float(cart.total_cost) + float(total_cost)
-					cart.save()
+		# 			cart.total_cost = float(cart.total_cost) - float(previous_service_cost)
+		# 			cart.total_cost = float(cart.total_cost) + float(total_cost)
+		# 			cart.save()
 
-					response_dict['success']  = True					
+		# 			response_dict['success']  = True					
 
-				else:
-					errors= service_data_serializer.errors   
-					key=tuple(errors.keys())[0] 
-					error=errors[key]
-					response_dict['Error']=key +':'+ error[0]
-					response_dict['Error_List'] = service_data_serializer.errors
-			except:
-				cart_service = None
+		# 		else:
+		# 			errors= service_data_serializer.errors   
+		# 			key=tuple(errors.keys())[0] 
+		# 			error=errors[key]
+		# 			response_dict['Error']=key +':'+ error[0]
+		# 			response_dict['Error_List'] = service_data_serializer.errors
+		# 	except:
+		# 		cart_service = None
 
 		#DELETE SERVICE
 		if action == 'delete_service':
@@ -8875,7 +8905,10 @@ class CartScheduleAPI(APIView):
 
 		for service in cart_services:
 			if slots:
-				service.total_cost = round(float(service.total_cost)*float(len(slots)),3)
+				if request.data.get('cleaning_policy') == 'SUBSCRIPTION':
+					service.total_cost = round(float(service.total_cost)*float(len(slots)),3)
+				else:
+					service.total_cost = service.total_cost
 			service.cleaning_policy = request.data.get('cleaning_policy')
 			service.save()
 
@@ -8883,12 +8916,18 @@ class CartScheduleAPI(APIView):
 		cart.is_scheduled = True
 		cart.no_of_visits = len(slots)
 		if slots:
-			cart.total_cost = round(float(cart.total_cost) * float(len(slots)),3)
+			if request.data.get('cleaning_policy') == 'SUBSCRIPTION':
+				cart.total_cost = round(float(cart.total_cost) * float(len(slots)),3)
+			else:
+				cart.total_cost = cart.total_cost
 		cart.save()
 
 		response_dict['success'] = True
 		if slots:
-			response_dict['updated_cost'] = round(float(cart.total_cost) * float(len(slots)),3)
+			if request.data.get('cleaning_policy') == 'SUBSCRIPTION':
+				response_dict['updated_cost'] = round(float(cart.total_cost) * float(len(slots)),3)
+			else:
+				response_dict['updated_cost'] = cart.total_cost
 		else:
 			response_dict['updated_cost'] = cart.total_cost
 

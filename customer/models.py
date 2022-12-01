@@ -55,6 +55,8 @@ class CustomerCart(models.Model):
 	cart_id_value		= models.CharField(max_length=10,blank=False,null=False)
 	customer_address	= models.ForeignKey(Address,blank=True,null=True)
 	total_cost  		= models.CharField(max_length=10,default=0,blank=False,null=False)
+	cart_discount		= models.CharField(max_length=10,default=0,blank=False,null=False)
+	final_cost			= models.CharField(max_length=10,default=0,blank=False,null=False)
 	is_scheduled		= models.BooleanField(default=False)
 	no_of_visits		= models.IntegerField(default=0,null=False,blank=False)
 	
@@ -123,10 +125,16 @@ class CartService(models.Model):
 	updated      		= models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.cart.customer.name+'-'+self.service_type.name)
+		if self.service_type:
+			return str(self.cart.customer.name+'-'+self.service_type.name)
+		else:
+			return str(self.cart.customer.name)
 
 	def __str__(self):
-		return self.cart.customer.name+'-'+self.service_type.name
+		if self.service_type:
+			return self.cart.customer.name+'-'+self.service_type.name
+		else:
+			return self.cart.customer.name
 
 class CartServiceFloor(models.Model):
 	cartService			= models.ForeignKey('CartService',blank=False,null=False,on_delete=models.CASCADE,related_name='cart_service_floor')
@@ -145,10 +153,16 @@ class CartServiceFloor(models.Model):
 	section_cost        = models.FloatField(blank=True,null=True,default=0)
 	
 	def __unicode__(self):
-		return str(self.cartService.cart.customer.name+'-'+self.cartService.service_type.name)
+		if self.cartService.service_type:
+			return str(self.cartService.cart.customer.name+'-'+self.cartService.service_type.name)
+		else:
+			return str(self.cartService.cart.customer.name)
 
 	def __str__(self):
-		return self.cartService.cart.customer.name+'-'+self.cartService.service_type.name
+		if self.cartService.service_type:
+			return self.cartService.cart.customer.name+'-'+self.cartService.service_type.name
+		else:
+			return self.cartService.cart.customer.name
 
 class CartSchedule(models.Model):
 	cart					= models.ForeignKey('CustomerCart',blank=False,null=False,on_delete=models.CASCADE,related_name='cart_schedule')

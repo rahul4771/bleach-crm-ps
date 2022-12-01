@@ -306,7 +306,7 @@ class PaymentResponseCredit(APIView):
 			else:
 				evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
 				tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
-			evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=int(tracking_no)+1,customer=customer_cart.customer,estimated_cost=customer_cart.total_cost,total_cost=customer_cart.total_cost,payment_method='PREPAID',payment_way='ONLINE',quatation_status='APPROVED',quatation_approved_date=timezone.now(),quatation_expiry_date=timezone.now()+timedelta(14))
+			evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=int(tracking_no)+1,customer=customer_cart.customer,estimated_cost=customer_cart.total_cost,discount=customer_cart.cart_discount,total_cost=customer_cart.final_cost,payment_method='PREPAID',payment_way='ONLINE',quatation_status='APPROVED',quatation_approved_date=timezone.now(),quatation_expiry_date=timezone.now()+timedelta(14))
 
 			#Booking Number
 			booking_id               = CustomerBooking.objects.filter(is_active=True).aggregate(t=Max('booking_id'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
@@ -332,7 +332,7 @@ class PaymentResponseCredit(APIView):
 			else:
 				new_invoice_no 		 = str(timezone.now().year)+'00001'
 
-			order       = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,invoice_no=new_invoice_no,order_status='APPROVED_BY_CLIENT',total_amount=customer_cart.total_cost,remining_amount=customer_cart.total_cost)
+			order       = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,invoice_no=new_invoice_no,order_status='APPROVED_BY_CLIENT',total_amount=customer_cart.final_cost,remining_amount=customer_cart.final_cost)
 
 			customer_address   = Address.objects.get( id=int(request.POST.get("address_id")) )
 			
@@ -379,6 +379,8 @@ class PaymentResponseCredit(APIView):
 
 			customer_cart.is_scheduled = False
 			customer_cart.total_cost = 0
+			customer_cart.cart_discount = 0
+			customer_cart.final_cost = 0
 			customer_cart.save()
 
 		#Booking From CRM System
@@ -6455,6 +6457,8 @@ class CustomerBookedOrderDetailsAPI(APIView):
 			'payment_type' : payment_type,
 			'feedbacks' : feedbacks,
 			'order_data' : OrderSerializer(order,many=False,read_only=True).data,
+			'discount' : order.evaluation.discount,
+			'net_amount' : order.evaluation.total_cost,
 			'quotationURL' : 'paw'+order.order_no[3:]+''+order.evaluation.customer.username
 			
 		}
