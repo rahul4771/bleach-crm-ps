@@ -314,20 +314,30 @@
 
                   <div class="d-md-flex d-print-flex">
                     <div class="p-2">
-                      Size : <span class="inv-text-bold">{{section.size}} 
-                        {% if orderschedule.order_scheduler_book.service_type.name == 'Upholstery Cleaning' %}
-                                                       
-                        {% for price_range in price_ranges %}
-                        {% if price_range.name == section.size and price_range.service_type == orderschedule.order_scheduler_book.service_type and price_range.upholstery_type == section.upholstery_type %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}} Seater){% endif %}
-                        {% endfor %}
-                          
+                      Size : <span class="inv-text-bold">
+                        {% if section.size %}
+                          {{section.size}} 
+                          {% if orderschedule.order_scheduler_book.service_type.name == 'Upholstery Cleaning' %}
+                                                        
+                          {% for price_range in price_ranges %}
+                          {% if price_range.name == section.size and price_range.service_type == orderschedule.order_scheduler_book.service_type and price_range.upholstery_type == section.upholstery_type %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}} Seater){% endif %}
+                          {% endfor %}
+                            
+                          {% else %}
+                              
+                          {% for price_range in price_ranges %}
+                          {% if price_range.name == section.size and price_range.service_type == orderschedule.order_scheduler_book.service_type and orderschedule.order_scheduler_book.service_type.name != 'Mattress Cleaning' and price_range.is_newkitchen == section.new_kitchen and price_range.is_cabinet == section.is_cabinet and price_range.is_highprice_facade == section.is_highprice_facade and price_range.is_highprice_window == section.is_highprice_window %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}} Sqm){% endif %}
+                          {% endfor %}
+                              
+                          {% endif %}
                         {% else %}
-                            
-                        {% for price_range in price_ranges %}
-                        {% if price_range.name == section.size and price_range.service_type == orderschedule.order_scheduler_book.service_type and orderschedule.order_scheduler_book.service_type.name != 'Mattress Cleaning' and price_range.is_newkitchen == section.new_kitchen and price_range.is_cabinet == section.is_cabinet and price_range.is_highprice_facade == section.is_highprice_facade and price_range.is_highprice_window == section.is_highprice_window %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}} Sqm){% endif %}
-                        {% endfor %}
-                            
-                        {% endif %}</span>
+                          {% if section.sectionaddons %}
+                              {% for addon in section.sectionaddons %}
+                                {% if addon.size %}{{addon.size}}{% else %}Regular{% endif %}
+                              {% endfor %}
+                          {% endif %}
+                        {% endif %}
+                        </span>
                     </div>
                     <div class="p-2">
                       Visit : <span class="inv-text-bold">{% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}</span>
@@ -520,6 +530,7 @@
                                 Size
                               </div>
                               <div class="qt-details-value">
+                              {% if section.size %}
                                 {{section.size}} 
                                 {% if orderschedule.order_scheduler_book.service_type.name == 'Upholstery Cleaning' %}
                                                        
@@ -534,6 +545,13 @@
                                 {% endfor %}
                                     
                                 {% endif %}
+                              {% else %}
+                                {% if section.sectionaddons %}
+                                  {% for addon in section.sectionaddons %}
+                                    {% if addon.size %}{{addon.size}}{% else %}Regular{% endif %}
+                                  {% endfor %}
+                                {% endif %}
+                              {% endif %}
                               </div>
                             </div>
 
@@ -551,7 +569,7 @@
                         </div>
                         
                         <!-- Addon listing -->
-                        {% if section.sectionaddons %}
+                        {% comment %} {% if section.sectionaddons %}
                         {% for addon in section.sectionaddons %}
                         
                         <div class="col-md-4">
@@ -583,7 +601,7 @@
                           </div>
                         </div>
                         {% endfor %}
-                        {% endif %}
+                        {% endif %} {% endcomment %}
                         <!-- Addon listing -->
                         
                         <div class="col-md-4 offset-md-8">
