@@ -144,6 +144,11 @@ class CartServiceShowSerializer(serializers.ModelSerializer):
 		model  = CartService
 		fields = ('id','service_type','cart_service_floor','service_price_range','section_name','size','unit','addon_name','addon_category','addon_size','addon_price','total_cost')
 
+	def to_representation(self, data):
+		data = super(CartServiceShowSerializer, self).to_representation(data)
+		data['service_type'] = {'name':'Kitchen Appliances'} if data.get('addon_name') != None else data.get('service_type')
+		return data
+
 class CartScheduleSerializer(serializers.ModelSerializer):	
 	class Meta:
 		model  = CartSchedule
