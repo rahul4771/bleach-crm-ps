@@ -3149,8 +3149,10 @@ class GetServiceProductivity(APIView):
 			
 			addon_name         = request.GET.get('addon_name')
 			addon_category     = request.GET.get('addon_category',None)
+			if addon_category == 'null':
+				addon_category     = None
 
-			service_addon       = ServiceAddOns.objects.select_related('service_type').filter(service_type__name='Kitchen Cleaning',name=addon_name,category=addon_category).first()
+			service_addon       = ServiceAddOns.objects.get(service_type__name='Kitchen Cleaning',name__iexact=addon_name,category__iexact=addon_category)
 			
 			service_productivity[''+service_addon.name+''] = service_addon.productivity
 			service_productivity['addon_category'] = service_addon.category
