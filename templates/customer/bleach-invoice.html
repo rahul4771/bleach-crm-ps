@@ -297,7 +297,7 @@
                               
                           {% endif %}
                         {% else %}
-                          {% if section.sectionaddons %}
+                          {% if book_section.sectionaddons %}
                             {% for addon in section.sectionaddons %}
                               {% if addon.size %}{{addon.size}}{% else %}Regular{% endif %}
                             {% endfor %}
@@ -515,7 +515,7 @@
                                   {% endif %}
                                 {% else %}
                                 
-                                  {% if section.sectionaddons %}
+                                  {% if book_section.sectionaddons %}
                                     {% for addon in section.sectionaddons %}
                                       {% if addon.size %}{{addon.size}}{% else %}Regular{% endif %}
                                     {% endfor %}
