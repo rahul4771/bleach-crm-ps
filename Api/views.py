@@ -45,6 +45,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
 from django_countries import countries
 from agent.serializers import UserProfileShowSerializer
+import pytz
 
 class CountriesAPI(APIView):
     permission_classes     = (AllowAny,)
@@ -6404,9 +6405,9 @@ class CustomerBookedOrderDetailsAPI(APIView):
 
 		for schedule in order.orderschedules:
 			if schedule.status == 'CLEANING_FULFILLED':
-				completed_visit_dates.append(schedule.start_at)
+				completed_visit_dates.append(schedule.start_at.replace(tzinfo=pytz.utc)+timedelta(hours=3))
 			elif schedule.status != 'CLEANING_IN_PROGRESS' or schedule.status != 'CLEANING_CANCELLED':
-				pending_visit_dates.append(schedule.start_at)
+				pending_visit_dates.append(schedule.start_at.replace(tzinfo=pytz.utc)+timedelta(hours=3))
 			else:
 				pass
 			
@@ -6419,7 +6420,7 @@ class CustomerBookedOrderDetailsAPI(APIView):
 		start_date = datetime.strftime(visit_dates[0],'%d-%m-%Y')
 		end_date = datetime.strftime(visit_dates[-1],'%d-%m-%Y')
 
-		target = timezone.now()
+		target = datetime.now().replace(tzinfo=pytz.utc)+timedelta(hours=3)
 
 		if len(completed_visit_dates) > 0:
 			previous_date = datetime.strftime( min(completed_visit_dates, key=lambda x: (x>target, abs(x-target)) ) , '%d-%m-%Y %I:%M %p')
@@ -6427,7 +6428,7 @@ class CustomerBookedOrderDetailsAPI(APIView):
 			previous_date = '-'
 
 		if len(pending_visit_dates) > 0:
-			upcoming_date = datetime.strftime( min(pending_visit_dates, key=lambda x: (x<target, abs(x-target)) ) , '%d-%m-%Y %I:%M %p')		
+			upcoming_date = datetime.strftime( min(pending_visit_dates, key=lambda x: (x<target, abs(x-target)) ) , '%d-%m-%Y %I:%M %p')	
 		else:
 			upcoming_date = '-'
 			
@@ -6448,7 +6449,7 @@ class CustomerBookedOrderDetailsAPI(APIView):
 			'start_date' : start_date,
 			'end_date' : end_date,
 			'policy' : policy,
-			'start_time':datetime.strftime(order.orderschedules[0].start_at, '%I:%M %p'),
+			'start_time':datetime.strftime(order.orderschedules[0].start_at+timedelta(hours=3),'%I:%M %p'),
 			'previous_visit':previous_date,
 			'upcoming_visit':upcoming_date,
 			'total_visits' : len(order.orderschedules),
