@@ -45,6 +45,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
 from django_countries import countries
 from agent.serializers import UserProfileShowSerializer
+import pytz
 
 class CountriesAPI(APIView):
     permission_classes     = (AllowAny,)
@@ -6404,9 +6405,9 @@ class CustomerBookedOrderDetailsAPI(APIView):
 
 		for schedule in order.orderschedules:
 			if schedule.status == 'CLEANING_FULFILLED':
-				completed_visit_dates.append(schedule.start_at)
+				completed_visit_dates.append(schedule.start_at.replace(tzinfo=pytz.utc))
 			elif schedule.status != 'CLEANING_IN_PROGRESS' or schedule.status != 'CLEANING_CANCELLED':
-				pending_visit_dates.append(schedule.start_at)
+				pending_visit_dates.append(schedule.start_at.replace(tzinfo=pytz.utc))
 			else:
 				pass
 			
@@ -6419,7 +6420,7 @@ class CustomerBookedOrderDetailsAPI(APIView):
 		start_date = datetime.strftime(visit_dates[0],'%d-%m-%Y')
 		end_date = datetime.strftime(visit_dates[-1],'%d-%m-%Y')
 
-		target = timezone.now()
+		target = timezone.now().replace(tzinfo=pytz.utc)
 
 		if len(completed_visit_dates) > 0:
 			previous_date = datetime.strftime( min(completed_visit_dates, key=lambda x: (x>target, abs(x-target)) ) , '%d-%m-%Y %I:%M %p')
