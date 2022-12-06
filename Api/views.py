@@ -6423,12 +6423,12 @@ class CustomerBookedOrderDetailsAPI(APIView):
 		target = timezone.now()
 
 		if len(completed_visit_dates) > 0:
-			previous_date = datetime.strftime( min(completed_visit_dates, key=lambda x: (x>target, abs(x-target)) ) , '%d-%m-%Y %I:%M %p').replace(tzinfo=pytz.utc)
+			previous_date = datetime.strftime( min(completed_visit_dates, key=lambda x: (x>target, abs(x-target)) ) , '%d-%m-%Y %I:%M %p')
 		else:
 			previous_date = '-'
 
 		if len(pending_visit_dates) > 0:
-			upcoming_date = datetime.strftime( min(pending_visit_dates, key=lambda x: (x<target, abs(x-target)) ) , '%d-%m-%Y %I:%M %p').replace(tzinfo=pytz.utc)	
+			upcoming_date = datetime.strftime( min(pending_visit_dates, key=lambda x: (x<target, abs(x-target)) ) , '%d-%m-%Y %I:%M %p')	
 		else:
 			upcoming_date = '-'
 			
