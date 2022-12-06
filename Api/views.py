@@ -6422,8 +6422,6 @@ class CustomerBookedOrderDetailsAPI(APIView):
 
 		target = datetime.now().replace(tzinfo=pytz.utc)+timedelta(hours=3)
 
-		print(target,"tar")
-
 		if len(completed_visit_dates) > 0:
 			previous_date = datetime.strftime( min(completed_visit_dates, key=lambda x: (x>target, abs(x-target)) ) , '%d-%m-%Y %I:%M %p')
 		else:
