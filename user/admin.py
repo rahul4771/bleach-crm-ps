@@ -35,6 +35,9 @@ class CustomUserAdmin(UserAdmin):
         ),
     )
 
+    search_fields = ['name', 'username', 'mobile_number']
+    list_display = ('username', 'name', 'mobile_number')
+
     form      = CustomUserChangeForm 
     add_form  = CustomUserCreationForm
 
