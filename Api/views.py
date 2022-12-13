@@ -284,7 +284,7 @@ class CallbackStatusUpdate(APIView):
 
 
 class PaymentResponseCredit(APIView):
-	permission_classes  	=   (AllowAny,)
+	permission_classes  	= (AllowAny,)
 	authentication_classes  = ()
 
 	def post(self,request):

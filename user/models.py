@@ -157,10 +157,16 @@ class UserProfile(AbstractUser):
     objects=CustomUserManager()
 
     def __unicode__(self):
-    	return str(self.username)
+    	if self.mobile_number:
+            return str(self.mobile_number)
+        else:
+            return str(self.username)
 
     def __str__(self):
-    	return self.username
+    	if self.mobile_number:
+            return self.mobile_number
+        else:
+            return self.username
 
 class Governorate(models.Model):
     name            = models.CharField(max_length=100,blank=False,null=False)
