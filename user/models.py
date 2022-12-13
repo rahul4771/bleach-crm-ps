@@ -157,13 +157,13 @@ class UserProfile(AbstractUser):
     objects=CustomUserManager()
 
     def __unicode__(self):
-    	if self.mobile_number:
+        if self.mobile_number:
             return str(self.mobile_number)
         else:
             return str(self.username)
 
     def __str__(self):
-    	if self.mobile_number:
+        if self.mobile_number:
             return self.mobile_number
         else:
             return self.username
