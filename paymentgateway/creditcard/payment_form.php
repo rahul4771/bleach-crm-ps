@@ -14,16 +14,18 @@
     </div>
     <div class="loader"></div>
 </div>
-<!-- <form id="payment_form" action="http://testpay.bleach-kw.com/creditcard/payment_confirmation.php" method="post">  -->
-<form id="payment_form" action="https://payment.bleachkw.com/creditcard/payment_confirmation.php" method="post">
+<form id="payment_form" action="http://testpay.bleach-kw.com/creditcard/payment_confirmation.php" method="post">
+<!--<form id="payment_form" action="https://payment.bleachkw.com/creditcard/payment_confirmation.php" method="post"> -->
     <!-- live credentials -->
-    <input type="hidden" name="access_key" value="40f69905769b3935b51533269564bfe2">
-    <input type="hidden" name="profile_id" value="32FF6F1C-41F3-4CF1-A91C-A1039EF0845C">
+    <!--<input type="hidden" name="access_key" value="40f69905769b3935b51533269564bfe2">
+    <input type="hidden" name="profile_id" value="32FF6F1C-41F3-4CF1-A91C-A1039EF0845C">-->
     <!-- live credentials -->
 
     <!-- <input type="hidden" name="access_key" value="dc9b55c60e193d98a5861569b4c40d6b">
     <input type="hidden" name="profile_id" value="340591FC-E863-4714-81A5-FFC0D7B5D9A7"> -->
 
+    <input type="hidden" name="access_key" value="07f3b97fdaab3de0b496c077473626a7">
+    <input type="hidden" name="profile_id" value="71ECE0D7-9E00-4D78-B542-1BE04804E32C">
 
     <!--new test credentials -->
     <!-- <input type="hidden" name="access_key" value="0a161d342d163c12b02b5bbe4f818874">
