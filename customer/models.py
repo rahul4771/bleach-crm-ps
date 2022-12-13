@@ -31,11 +31,17 @@ class CustomerBooking(models.Model):
 	updated      = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.booking_id)
+		if self.evaluation:
+			return str(self.booking_id)-str(self.booking_type)-str(self.evaluation.evaluation_id)
+		else:
+			return str(self.booking_id)-str(self.booking_type)
 
 	def __str__(self):
-		return self.booking_id
-
+		if self.evaluation:
+			return self.booking_id+'-'+self.booking_type+'-'+self.evaluation.evaluation_id
+		else:
+			return self.booking_id+'-'+self.booking_type
+			
 class NewCustomerOtp(models.Model):
 	mobile_number= models.CharField(max_length=10,blank=True,null=True) 
 	customer_otp = models.CharField(max_length=100,blank=True,null=True)
