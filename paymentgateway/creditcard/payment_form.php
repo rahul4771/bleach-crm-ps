@@ -14,7 +14,7 @@
     </div>
     <div class="loader"></div>
 </div>
-<form id="payment_form" action="http://testpay.bleach-kw.com/creditcard/payment_confirmation.php" method="post">
+<form id="payment_form" action="https://testpay.bleach-kw.com/creditcard/payment_confirmation.php" method="post">
 <!--<form id="payment_form" action="https://payment.bleachkw.com/creditcard/payment_confirmation.php" method="post"> -->
     <!-- live credentials -->
     <!--<input type="hidden" name="access_key" value="40f69905769b3935b51533269564bfe2">
