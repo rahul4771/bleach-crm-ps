@@ -294,6 +294,8 @@ class PaymentResponseCredit(APIView):
 		order_status   = request.POST.get("req_merchant_defined_data3")
 		payment_result = request.POST.get('decision')
 
+		print(evaluation_id,payment_mode,amount_paid,order_status,payment_result,"testtt")
+
 		#Booking through Website - Order Creation
 		if order_status == 'CUSTOMER_BOOKING' and payment_result == 'ACCEPT':
 			customer_cart = CustomerCart.objects.prefetch_related(Prefetch('cart_service',queryset=CartService.objects.filter(is_active=True).prefetch_related(Prefetch('cart_service_floor',queryset=CartServiceFloor.objects.all(),to_attr='cart_service_floors')),to_attr='cart_services'),Prefetch('cart_schedule',queryset=CartSchedule.objects.filter(is_active=True),to_attr='cart_schedules')).get(cart_id_value=evaluation_id)
