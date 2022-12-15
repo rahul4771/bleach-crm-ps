@@ -338,9 +338,11 @@
             <span class="lv-month-select" id="lv-month-select">JANUARY 2021</span>
            
            
-            {% comment %} <br>
+            {% if request.user.username == 'superuser' %}
+            <br>
             <button onclick="CRM_BAMBOO_UPDATE()" >CRM -> BAMBOO</button>
-            <button onclick="BAMBOO_CRM_UPDATE()">BAMBOO -> CRM</button> {% endcomment %}
+            <button onclick="BAMBOO_CRM_UPDATE()">BAMBOO -> CRM</button>
+            {% endif %}
             
             {% if request.user.user_type == 'ADMIN' %}
             {% else %}
