@@ -51,9 +51,8 @@ import logging
 
 # credit card test logging
 logging.basicConfig(
-    level=logging.DEBUG,
-    format="{asctime} {levelname:<8} {message}",
-    style='{',
+    level=logging.INFO,
+    format='%(message)s',
     filename=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),'log/django_terminal.log'),
     filemode='a'
 )
@@ -305,9 +304,9 @@ class PaymentResponseCredit(APIView):
 		order_status   = request.POST.get("req_merchant_defined_data3")
 		payment_result = request.POST.get('decision')
 
-		print(evaluation_id,payment_mode,amount_paid,order_status,payment_result,"testtt",flush=True)
-		logging.warning(evaluation_id,payment_mode,amount_paid,order_status,payment_result,"testtt")
-		logging.warning(request.POST.get('address_id'),"addressss")
+		logger = logging.getLogger()
+		logger.info(evaluation_id,payment_mode,amount_paid,order_status,payment_result,"testtt")
+		logger.info(request.POST.get('address_id'),"addressss")
 
 		#Booking through Website - Order Creation
 		if order_status == 'CUSTOMER_BOOKING' and payment_result == 'ACCEPT':
