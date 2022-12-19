@@ -7,7 +7,7 @@ from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,Evaluat
 from order.models import CancellOrderAmountHistory,OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,Reporting,PaybackDiscount,PaybackDiscountDetails,XeroInvoice
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
-from customer.models import SubscriptionMail,CustomerBooking,CustomerCart,CartService,CartSchedule
+from customer.models import SubscriptionMail,CustomerBooking,CustomerCart,CartService,CartSchedule,CartServiceFloor
 from bleachadmin.models import ServicePriceRange,Settings,ServiceProductivity,ServiceAddOns
 from bleachadmin.serializers import ServiceProductivitySerializer
 from Api.models import XeroConnection
