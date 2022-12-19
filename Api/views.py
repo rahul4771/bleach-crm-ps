@@ -50,12 +50,14 @@ import os
 import logging
 
 # credit card test logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(message)s',
-    filename=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),'log/django_terminal.log'),
-    filemode='a'
-)
+# logging.basicConfig(
+#     level=logging.INFO,
+#     format='%(message)s',
+#     filename=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),'log/django_terminal22.log'),
+#     filemode='a'
+# )
+
+logging.basicConfig(filename='myapp.log', level=logging.INFO)
 
 class CountriesAPI(APIView):
     permission_classes     = (AllowAny,)
@@ -304,9 +306,11 @@ class PaymentResponseCredit(APIView):
 		order_status   = request.POST.get("req_merchant_defined_data3")
 		payment_result = request.POST.get('decision')
 
-		logger = logging.getLogger()
-		logger.info(evaluation_id,payment_mode,amount_paid,order_status,payment_result,"testtt")
-		logger.info(request.POST.get('address_id'),"addressss")
+		logging.info(evaluation_id,payment_mode,amount_paid,order_status,payment_result,"testtt")
+		logging.info(request.POST.get('address_id'),"addressss")
+
+		logging.info('Started')
+		logging.info('Finished')
 
 		#Booking through Website - Order Creation
 		if order_status == 'CUSTOMER_BOOKING' and payment_result == 'ACCEPT':
@@ -6157,6 +6161,10 @@ class CustomerAddressesAPI(APIView):
 		addresses = Address.objects.filter(customer__id=int(customer_id))
 
 		address_serializer = AddressSerializer(addresses,many=True).data
+
+		logging.info('Started')
+		logging.info('Started')
+		logging.info(user,'Finished')
 
 		response_dict['addresses'] = address_serializer
 		response_dict['customer_id'] = customer_id
