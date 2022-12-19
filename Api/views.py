@@ -6159,7 +6159,7 @@ class CustomerAddressesAPI(APIView):
 
 		address_serializer = AddressSerializer(addresses,many=True).data
 
-		datad = {'slotusername': f"{user.name}"}
+		datad = {'slotusername': user.name}
 
 		logging.info('Started')
 		logging.info('Started')
