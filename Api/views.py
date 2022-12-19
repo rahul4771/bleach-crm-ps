@@ -46,8 +46,17 @@ from rest_framework.authtoken.models import Token
 from django_countries import countries
 from agent.serializers import UserProfileShowSerializer
 import pytz
-
+import os
 import logging
+
+# credit card test logging
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="{asctime} {levelname:<8} {message}",
+    style='{',
+    filename=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),'log/django_terminal.log'),
+    filemode='a'
+)
 
 class CountriesAPI(APIView):
     permission_classes     = (AllowAny,)
@@ -297,7 +306,7 @@ class PaymentResponseCredit(APIView):
 		payment_result = request.POST.get('decision')
 
 		print(evaluation_id,payment_mode,amount_paid,order_status,payment_result,"testtt",flush=True)
-		logging.debug(evaluation_id,payment_mode,amount_paid,order_status,payment_result,"testtt")
+		logging.info(evaluation_id,payment_mode,amount_paid,order_status,payment_result,"testtt")
 
 		#Booking through Website - Order Creation
 		if order_status == 'CUSTOMER_BOOKING' and payment_result == 'ACCEPT':
