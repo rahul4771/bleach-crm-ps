@@ -50,13 +50,6 @@ import os
 import logging
 
 # credit card test logging
-# logging.basicConfig(
-#     level=logging.INFO,
-#     format='%(message)s',
-#     filename=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),'log/django_terminal22.log'),
-#     filemode='a'
-# )
-
 logging.basicConfig(filename=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),'log/django_terminal22.log'), level=logging.INFO)
 
 class CountriesAPI(APIView):
@@ -306,8 +299,12 @@ class PaymentResponseCredit(APIView):
 		order_status   = request.POST.get("req_merchant_defined_data3")
 		payment_result = request.POST.get('decision')
 
-		logging.info(evaluation_id,payment_mode,amount_paid,order_status,payment_result,"testtt")
-		logging.info(request.POST.get('address_id'),"addressss")
+		logging.info(evaluation_id)
+		logging.info(payment_mode)
+		logging.info(amount_paid)
+		logging.info(order_status)
+		logging.info(payment_result)
+		logging.info(request.POST.get('address_id'))
 
 		#Booking through Website - Order Creation
 		if order_status == 'CUSTOMER_BOOKING' and payment_result == 'ACCEPT':
@@ -6158,12 +6155,6 @@ class CustomerAddressesAPI(APIView):
 		addresses = Address.objects.filter(customer__id=int(customer_id))
 
 		address_serializer = AddressSerializer(addresses,many=True).data
-
-		datad = {'slotusername': user.name}
-
-		logging.info('Started')
-		logging.info('Started')
-		logging.info('Finished',extra=datad)
 
 		response_dict['addresses'] = address_serializer
 		response_dict['customer_id'] = customer_id
