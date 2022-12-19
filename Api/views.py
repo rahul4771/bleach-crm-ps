@@ -306,8 +306,8 @@ class PaymentResponseCredit(APIView):
 		payment_result = request.POST.get('decision')
 
 		print(evaluation_id,payment_mode,amount_paid,order_status,payment_result,"testtt",flush=True)
-		logging.critical(evaluation_id,payment_mode,amount_paid,order_status,payment_result,"testtt")
-		logging.critical(request.POST.get('address_id'),"addressss")
+		logging.warning(evaluation_id,payment_mode,amount_paid,order_status,payment_result,"testtt")
+		logging.warning(request.POST.get('address_id'),"addressss")
 
 		#Booking through Website - Order Creation
 		if order_status == 'CUSTOMER_BOOKING' and payment_result == 'ACCEPT':
