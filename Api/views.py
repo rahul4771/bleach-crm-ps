@@ -306,7 +306,8 @@ class PaymentResponseCredit(APIView):
 		payment_result = request.POST.get('decision')
 
 		print(evaluation_id,payment_mode,amount_paid,order_status,payment_result,"testtt",flush=True)
-		logging.info(evaluation_id,payment_mode,amount_paid,order_status,payment_result,"testtt")
+		logging.critical(evaluation_id,payment_mode,amount_paid,order_status,payment_result,"testtt")
+		logging.critical(request.POST.get('address_id'),"addressss")
 
 		#Booking through Website - Order Creation
 		if order_status == 'CUSTOMER_BOOKING' and payment_result == 'ACCEPT':
@@ -349,7 +350,7 @@ class PaymentResponseCredit(APIView):
 
 			order       = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,invoice_no=new_invoice_no,order_status='APPROVED_BY_CLIENT',total_amount=customer_cart.final_cost,remining_amount=customer_cart.final_cost)
 
-			customer_address   = Address.objects.get( id=int(request.POST.get("address_id")) )
+			customer_address   = Address.objects.get( id=int(request.POST.get('address_id')) )
 			
 			#Evaluation_details
 			evaluation_details = EvaluationDetails.objects.create(evaluation=evaluation,address=customer_address,estimated_cost=customer_cart.total_cost,total_cost=customer_cart.total_cost)
