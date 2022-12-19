@@ -294,7 +294,7 @@ class PaymentResponseCredit(APIView):
 		order_status   = request.POST.get("req_merchant_defined_data3")
 		payment_result = request.POST.get('decision')
 
-		print(evaluation_id,payment_mode,amount_paid,order_status,payment_result,"testtt")
+		print(evaluation_id,payment_mode,amount_paid,order_status,payment_result,"testtt",flush=True)
 
 		#Booking through Website - Order Creation
 		if order_status == 'CUSTOMER_BOOKING' and payment_result == 'ACCEPT':
