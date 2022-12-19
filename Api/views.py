@@ -47,6 +47,8 @@ from django_countries import countries
 from agent.serializers import UserProfileShowSerializer
 import pytz
 
+import logging
+
 class CountriesAPI(APIView):
     permission_classes     = (AllowAny,)
     authentication_classes = ()
@@ -295,6 +297,7 @@ class PaymentResponseCredit(APIView):
 		payment_result = request.POST.get('decision')
 
 		print(evaluation_id,payment_mode,amount_paid,order_status,payment_result,"testtt",flush=True)
+		logging.debug(evaluation_id,payment_mode,amount_paid,order_status,payment_result,"testtt")
 
 		#Booking through Website - Order Creation
 		if order_status == 'CUSTOMER_BOOKING' and payment_result == 'ACCEPT':
