@@ -6159,9 +6159,11 @@ class CustomerAddressesAPI(APIView):
 
 		address_serializer = AddressSerializer(addresses,many=True).data
 
+		datad = {'name': f"{user.name}"}
+
 		logging.info('Started')
 		logging.info('Started')
-		logging.info('Finished',extra=user)
+		logging.info('Finished',extra=datad)
 
 		response_dict['addresses'] = address_serializer
 		response_dict['customer_id'] = customer_id
