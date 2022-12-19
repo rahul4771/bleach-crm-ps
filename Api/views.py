@@ -57,7 +57,7 @@ import logging
 #     filemode='a'
 # )
 
-logging.basicConfig(filename='myapp.log', level=logging.INFO)
+logging.basicConfig(filename=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),'log/django_terminal22.log'), level=logging.INFO)
 
 class CountriesAPI(APIView):
     permission_classes     = (AllowAny,)
