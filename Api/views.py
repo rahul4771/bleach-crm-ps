@@ -304,7 +304,7 @@ class PaymentResponseCredit(APIView):
 		logging.info(amount_paid)
 		logging.info(order_status)
 		logging.info(payment_result)
-		logging.info(request.POST.get('req_merchant_defined_data8'))
+		logging.info(request.POST.get('req_merchant_defined_data13'))
 
 		#Booking through Website - Order Creation
 		if order_status == 'CUSTOMER_BOOKING' and payment_result == 'ACCEPT':
@@ -347,7 +347,7 @@ class PaymentResponseCredit(APIView):
 
 			order       = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,invoice_no=new_invoice_no,order_status='APPROVED_BY_CLIENT',total_amount=customer_cart.final_cost,remining_amount=customer_cart.final_cost)
 
-			customer_address   = Address.objects.get( id=int(request.POST.get('req_merchant_defined_data8')) )
+			customer_address   = Address.objects.get( id=int(request.POST.get('req_merchant_defined_data13')) )
 			
 			#Evaluation_details
 			evaluation_details = EvaluationDetails.objects.create(evaluation=evaluation,address=customer_address,estimated_cost=customer_cart.total_cost,total_cost=customer_cart.total_cost)
