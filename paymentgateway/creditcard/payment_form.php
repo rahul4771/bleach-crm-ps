@@ -25,7 +25,7 @@
     <input type="hidden" name="profile_id" value="71ECE0D7-9E00-4D78-B542-1BE04804E32C">
 
     <input type="hidden" name="transaction_uuid" value="<?php echo uniqid() ?>">
-    <input type="hidden" name="signed_field_names" value="access_key,profile_id,merchant_id,transaction_uuid,signed_field_names,unsigned_field_names,signed_date_time,locale,transaction_type,reference_number,amount,currency,bill_to_forename,bill_to_surname,bill_to_email,bill_to_phone,bill_to_address_country,bill_to_address_city,bill_to_address_line1,merchant_defined_data1,merchant_defined_data2,merchant_defined_data3,merchant_defined_data4,merchant_defined_data5,merchant_defined_data7,merchant_defined_data20,customer_ip_address">
+    <input type="hidden" name="signed_field_names" value="access_key,profile_id,merchant_id,transaction_uuid,signed_field_names,unsigned_field_names,signed_date_time,locale,transaction_type,reference_number,amount,currency,bill_to_forename,bill_to_surname,bill_to_email,bill_to_phone,bill_to_address_country,bill_to_address_city,bill_to_address_line1,merchant_defined_data1,merchant_defined_data2,merchant_defined_data3,merchant_defined_data4,merchant_defined_data5,merchant_defined_data7,merchant_defined_data20,merchant_defined_data13,customer_ip_address">
     <input type="hidden" name="unsigned_field_names">
     <input type="hidden" name="signed_date_time" value="<?php echo gmdate("Y-m-d\TH:i:s\Z"); ?>">
     <input type="hidden" name="locale" value="en">
