@@ -51,9 +51,11 @@
             <input type="hidden" name="merchant_defined_data4" value="<?php echo htmlspecialchars($_GET['merchant_defined_data4']);?>">
             <input type="hidden" name="merchant_defined_data5" value="<?php echo htmlspecialchars($_GET['merchant_defined_data5']);?>">
             <input type="hidden" name="merchant_defined_data7" value="<?php echo htmlspecialchars($_GET['merchant_defined_data7']);?>">
-            <input type="hidden" name="merchant_defined_data8" value="<?php echo htmlspecialchars($_GET['merchant_defined_data8']);?>">
+            <!-- <input type="hidden" name="merchant_defined_data8" value="<?php echo htmlspecialchars($_GET['merchant_defined_data8']);?>"> -->
             <input type="hidden" name="merchant_defined_data20" value="<?php echo htmlspecialchars($_GET['merchant_defined_data20']);?>">
+            <input type="hidden" name="merchant_defined_data8" value="<?php echo htmlspecialchars($_GET['merchant_defined_data8']);?>">
             <input type="hidden" name="customer_ip_address" value="<?php echo htmlspecialchars($_GET['customer_ip_address']);?>">
+            <input type="hidden" name="address_id" value="<?php echo htmlspecialchars($_GET['address_id']);?>">
         </div>
     </fieldset>
     <input type="submit" id="submitbtn" name="submitbtn" value="Submit"/>
