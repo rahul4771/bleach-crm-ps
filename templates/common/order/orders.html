@@ -580,7 +580,7 @@
         class="evaluating-line"
         {%endif%}>{{booked_evaluation.evaluation_id}}</td>   
 
-    <td>{{booked_evaluation.customer.name|default_if_none:''}}</td>
+    <td>{{booked_evaluation.details_evaluation}}{{booked_evaluation.customer.name|default_if_none:''}}</td>
     <td>{% for evaluation_detail in booked_evaluation.details_evaluation %}{{evaluation_detail.address.area.name}}<br>{% endfor %}</td>
     <td>{% for evaluation_detail in booked_evaluation.details_evaluation %}
      {% for evaluation_book in evaluation_detail.evaluation_book %}
