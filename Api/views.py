@@ -7,7 +7,7 @@ from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,Evaluat
 from order.models import CancellOrderAmountHistory,OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,Reporting,PaybackDiscount,PaybackDiscountDetails,XeroInvoice
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
-from customer.models import SubscriptionMail,CustomerBooking,CustomerCart,CartService,CartSchedule
+from customer.models import SubscriptionMail,CustomerBooking,CustomerCart,CartService,CartSchedule,CartServiceFloor
 from bleachadmin.models import ServicePriceRange,Settings,ServiceProductivity,ServiceAddOns
 from bleachadmin.serializers import ServiceProductivitySerializer
 from Api.models import XeroConnection
@@ -46,6 +46,11 @@ from rest_framework.authtoken.models import Token
 from django_countries import countries
 from agent.serializers import UserProfileShowSerializer
 import pytz
+import os
+import logging
+
+# credit card test logging
+logging.basicConfig(filename=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),'log/django_terminal22.log'), level=logging.INFO)
 
 class CountriesAPI(APIView):
     permission_classes     = (AllowAny,)
@@ -294,11 +299,16 @@ class PaymentResponseCredit(APIView):
 		order_status   = request.POST.get("req_merchant_defined_data3")
 		payment_result = request.POST.get('decision')
 
-		print(evaluation_id,payment_mode,amount_paid,order_status,payment_result,"testtt")
+		logging.info(evaluation_id)
+		logging.info(payment_mode)
+		logging.info(amount_paid)
+		logging.info(order_status)
+		logging.info(payment_result)
+		logging.info(request.POST.get('req_merchant_defined_data13'))
 
 		#Booking through Website - Order Creation
 		if order_status == 'CUSTOMER_BOOKING' and payment_result == 'ACCEPT':
-			customer_cart = CustomerCart.objects.prefetch_related(Prefetch('cart_service',queryset=CartService.objects.filter(is_active=True).prefetch_related(Prefetch('cart_service_floor',queryset=CartServiceFloor.objects.all(),to_attr='cart_service_floors')),to_attr='cart_services'),Prefetch('cart_schedule',queryset=CartSchedule.objects.filter(is_active=True),to_attr='cart_schedules')).get(cart_id_value=evaluation_id)
+			customer_cart = CustomerCart.objects.prefetch_related(Prefetch('cart_service',queryset=CartService.objects.filter(is_active=True).prefetch_related(Prefetch('cart_service_floor',queryset=CartServiceFloor.objects.all(),to_attr='cart_service_floors')),to_attr='cart_services'),Prefetch('cart_schedule',queryset=CartSchedule.objects.filter(is_active=True),to_attr='cart_schedules')).get(id=evaluation_id)
 
 			#Evaluation
 			tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
@@ -337,7 +347,7 @@ class PaymentResponseCredit(APIView):
 
 			order       = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,invoice_no=new_invoice_no,order_status='APPROVED_BY_CLIENT',total_amount=customer_cart.final_cost,remining_amount=customer_cart.final_cost)
 
-			customer_address   = Address.objects.get( id=int(request.POST.get("address_id")) )
+			customer_address   = Address.objects.get( id=int(request.POST.get('req_merchant_defined_data13')) )
 			
 			#Evaluation_details
 			evaluation_details = EvaluationDetails.objects.create(evaluation=evaluation,address=customer_address,estimated_cost=customer_cart.total_cost,total_cost=customer_cart.total_cost)
@@ -411,7 +421,7 @@ class PaymentResponseCredit(APIView):
 			#payment calculations
 			if payment_mode == 'subscription':
 				order.amount_paid      += amount_paid
-				order.remining_amount   = order.remining_amount-amount_paid
+				order.remining_amount   = float(order.remining_amount)-float(amount_paid)
 				order.subscription_topay= 0
 				order.is_advance        = False
 				#to check payment completed
@@ -422,26 +432,26 @@ class PaymentResponseCredit(APIView):
 			elif payment_mode == 'before_cleaning' and order.preamount_paid != order.evaluation.before_cleaning_amount:
 				order.preamount_paid   = amount_paid
 				order.amount_paid      = amount_paid
-				order.remining_amount  = order.remining_amount-amount_paid
+				order.remining_amount  = float(order.remining_amount)-float(amount_paid)
 
 			elif payment_mode == 'after_cleaning' and order.postamount_paid != order.evaluation.after_cleaning_amount:
 				order.postamount_paid   += amount_paid
 				order.amount_paid       += amount_paid
-				order.remining_amount    = order.remining_amount-amount_paid
+				order.remining_amount    = float(order.remining_amount)-float(amount_paid)
 
 				order.payment_status         = 'COMPLETED'
 				order.payment_completed_date = timezone.now()
 
 			elif payment_mode == 'prepaid' and order.amount_paid != order.total_amount:
 				order.amount_paid     += amount_paid
-				order.remining_amount  = order.remining_amount-amount_paid					
+				order.remining_amount  = float(order.remining_amount)-float(amount_paid)					
 
 				order.payment_status         = 'COMPLETED'
 				order.payment_completed_date = timezone.now()
 
 			elif payment_mode == 'postpaid' and order.amount_paid != order.total_amount:
 				order.amount_paid      += amount_paid
-				order.remining_amount  = order.remining_amount-amount_paid
+				order.remining_amount  = float(order.remining_amount)-float(amount_paid)
 
 				order.payment_status         = 'COMPLETED'
 				order.payment_completed_date = timezone.now()
@@ -6346,7 +6356,10 @@ class CustomerBookedOrdersAPI(APIView):
 		orders_list = []
 
 		for order in orders:
+			logging.info(order)
 			evaluation_details = EvaluationDetails.objects.filter(evaluation=order.evaluation,is_active=True).first()
+
+			logging.info(evaluation_details)
 
 			evaluation_books = EvaluationBook.objects.filter(evaluation_details=evaluation_details,is_active=True).values_list('service_type__name',flat=True)
 
