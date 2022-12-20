@@ -304,7 +304,7 @@ class PaymentResponseCredit(APIView):
 		logging.info(amount_paid)
 		logging.info(order_status)
 		logging.info(payment_result)
-		logging.info(request.POST.get('address_id'))
+		logging.info(request.POST.get('req_merchant_defined_data13'))
 
 		#Booking through Website - Order Creation
 		if order_status == 'CUSTOMER_BOOKING' and payment_result == 'ACCEPT':
