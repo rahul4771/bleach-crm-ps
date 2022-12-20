@@ -6353,12 +6353,13 @@ class CustomerBookedOrdersAPI(APIView):
 
 		orders 				= Order.objects.filter(is_active=True,evaluation__customer=user,evaluation__booking_evaluation__booking_type='CLEANINGBOOKING').order_by('-id')
 
-		logging.info(orders)
-
 		orders_list = []
 
 		for order in orders:
+			logging.info(order)
 			evaluation_details = EvaluationDetails.objects.filter(evaluation=order.evaluation,is_active=True).first()
+
+			logging.info(evaluation_details)
 
 			evaluation_books = EvaluationBook.objects.filter(evaluation_details=evaluation_details,is_active=True).values_list('service_type__name',flat=True)
 
