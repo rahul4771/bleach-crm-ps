@@ -581,10 +581,10 @@
         {%endif%}>{{booked_evaluation.evaluation_id}}</td>   
 
     <td>{{booked_evaluation.details_evaluation}}{{booked_evaluation.customer.name|default_if_none:''}}</td>
-    <td>{% for evaluation_detail in booked_evaluation.details_evaluation %}{{evaluation_detail.address.area.name}}<br>{% endfor %}</td>
+    <td>{% for booked_evaluation_detail in booked_evaluation.details_evaluation %}{{booked_evaluation_detail.address.area.name}}<br>{% endfor %}</td>
     <td>{% for evaluation_detail in booked_evaluation.details_evaluation %}
-     {% for evaluation_book in evaluation_detail.evaluation_book %}
-     {{evaluation_book.service_type.name}},
+     {% for booked_evaluation_book in evaluation_detail.evaluation_book %}
+     {{booked_evaluation_book.service_type.name}},
      {% endfor %}
      <br> 
      {% endfor %}</td>
