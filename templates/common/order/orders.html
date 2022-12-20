@@ -551,12 +551,12 @@
 </tr>
 </thead>
 <tbody>
-    {% for evaluation in bookings %}
+    {% for booked_evaluation in bookings %}
     <tr>
-    <td {% if evaluation.quatation_status == 'APPROVED' %}
-        {% for order in evaluation.evaluationorder %}
+    <td {% if booked_evaluation.quatation_status == 'APPROVED' %}
+        {% for order in booked_evaluation.evaluationorder %}
       
-        {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
+        {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.booked_evaluation.payment_method == 'POSTPAID' or order.booked_evaluation.payment_method == 'SUBSCRIPTION' %}
         {% if order.order_status == 'APPROVED_BY_CLIENT' %}
         class="approved-line"
         {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
@@ -573,28 +573,28 @@
         {% endif %}
         {% endfor %}
 
-        {% elif evaluation.quatation_status == 'REJECTED' %}class="rejected-line"
-        {% elif evaluation.quatation_status == 'PENDING' %}class="pending-line"
-        {% elif evaluation.quatation_status == 'EXPIRED' %}class="expired-line"
+        {% elif booked_evaluation.quatation_status == 'REJECTED' %}class="rejected-line"
+        {% elif booked_evaluation.quatation_status == 'PENDING' %}class="pending-line"
+        {% elif booked_evaluation.quatation_status == 'EXPIRED' %}class="expired-line"
         {% else %}
         class="evaluating-line"
-        {%endif%}>{{evaluation.evaluation_id}}</td>   
+        {%endif%}>{{booked_evaluation.evaluation_id}}</td>   
 
-    <td>{{evaluation.customer.name|default_if_none:''}}</td>
-    <td>{% for evaluation_detail in evaluation.details_evaluation %}{{evaluation_detail.address.area.name}}<br>{% endfor %}</td>
-    <td>{% for evaluation_detail in evaluation.details_evaluation %}
+    <td>{{booked_evaluation.customer.name|default_if_none:''}}</td>
+    <td>{% for evaluation_detail in booked_evaluation.details_evaluation %}{{evaluation_detail.address.area.name}}<br>{% endfor %}</td>
+    <td>{% for evaluation_detail in booked_evaluation.details_evaluation %}
      {% for evaluation_book in evaluation_detail.evaluation_book %}
      {{evaluation_book.service_type.name}},
      {% endfor %}
      <br> 
      {% endfor %}</td>
-    {% comment %} <td>{{evaluation.customer.mobile_number|default_if_none:''}}</td> {% endcomment %}
-    <td>{% if evaluation.quatation_status == 'APPROVED' %}
+    {% comment %} <td>{{booked_evaluation.customer.mobile_number|default_if_none:''}}</td> {% endcomment %}
+    <td>{% if booked_evaluation.quatation_status == 'APPROVED' %}
 
 
-        {% for order in evaluation.evaluationorder %}
+        {% for order in booked_evaluation.evaluationorder %}
       
-        {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
+        {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.booked_evaluation.payment_method == 'POSTPAID' or order.booked_evaluation.payment_method == 'SUBSCRIPTION' %}
         {% if order.order_status == 'APPROVED_BY_CLIENT' %}
         <div class="d-flex "><div class="round-marker approved-status-bg"></div><span>Approved</span></div>
         {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
@@ -611,9 +611,9 @@
         {% endif %}
         {% endfor %}
 
-        {% elif evaluation.quatation_status == 'REJECTED' %}<div  class="d-flex "><div class="round-marker rejected-status-bg"></div><span>Rejected</span></div>
-        {% elif evaluation.quatation_status == 'PENDING' %}<div  class="d-flex "><div class="round-marker pending-status-bg"></div><span>Pending</span></div>
-        {% elif evaluation.quatation_status == 'EXPIRED' %}<div  class="d-flex "><div class="round-marker expired-status-bg"></div><span>Expired</span></div>
+        {% elif booked_evaluation.quatation_status == 'REJECTED' %}<div  class="d-flex "><div class="round-marker rejected-status-bg"></div><span>Rejected</span></div>
+        {% elif booked_evaluation.quatation_status == 'PENDING' %}<div  class="d-flex "><div class="round-marker pending-status-bg"></div><span>Pending</span></div>
+        {% elif booked_evaluation.quatation_status == 'EXPIRED' %}<div  class="d-flex "><div class="round-marker expired-status-bg"></div><span>Expired</span></div>
         {% else %}
         <div data-href="#" class="d-flex "><div class="round-marker clickable-row evaluating-status-bg"></div><span>Evaluating</span></div>
         {%endif%}
@@ -627,17 +627,17 @@
           <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
         </div>
         <div class="dropdown-menu" id="dropdown-menu-orders">
-          {% if evaluation.quatation_status == 'APPROVED' %}<div class="d-flex dropdown-orders clickable-row" data-href="/customer/quatation/download/{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}"><img src="{% static 'files/images/DownloadQuotation.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">Download Quotation</div></div>{% endif %}
+          {% if booked_evaluation.quatation_status == 'APPROVED' %}<div class="d-flex dropdown-orders clickable-row" data-href="/customer/quatation/download/{{booked_evaluation.evaluation_id|slice:'3:'}}{{booked_evaluation.customer.username}}"><img src="{% static 'files/images/DownloadQuotation.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">Download Quotation</div></div>{% endif %}
           
-          {% if evaluation.quatation_status == 'APPROVED' or evaluation.quatation_status == 'PENDING' %}
-          {% if evaluation.payment_method == 'SUBSCRIPTION' %}
-          <a class="d-flex dropdown-orders" href="/customer/subscription/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/ViewQuotation.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Quotation</div></a>
+          {% if booked_evaluation.quatation_status == 'APPROVED' or booked_evaluation.quatation_status == 'PENDING' %}
+          {% if booked_evaluation.payment_method == 'SUBSCRIPTION' %}
+          <a class="d-flex dropdown-orders" href="/customer/subscription/quatation/paw{{booked_evaluation.evaluation_id|slice:'3:'}}{{booked_evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/ViewQuotation.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Quotation</div></a>
           {% else %}
-          <a class="d-flex dropdown-orders" href="/customer/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/ViewQuotation.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Quotation</div></a>
+          <a class="d-flex dropdown-orders" href="/customer/quatation/paw{{booked_evaluation.evaluation_id|slice:'3:'}}{{booked_evaluation.customer.username}}" target="_blank"><img src="{% static 'files/images/ViewQuotation.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Quotation</div></a>
           {% endif %}
           {% endif %}
           
-          <a class="d-flex dropdown-orders" {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %} href="{% url 'common_items:client-orderdetails' order.id %}" {% endfor %}{% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a>
+          <a class="d-flex dropdown-orders" {% if booked_evaluation.evaluationorder %}{% for order in booked_evaluation.evaluationorder %} href="{% url 'common_items:client-orderdetails' order.id %}" {% endfor %}{% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a>
           
         </div>
       </div>
