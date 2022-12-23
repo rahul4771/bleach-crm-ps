@@ -2738,10 +2738,11 @@
                                                                 </button>
                                                                 {% endif %}
                                                             {% elif order.evaluation.quatation_status == 'APPROVED' %} 
-                                                                {% if order.payment_status != 'COMPLETED' or order.preamount_paid == 0 or order.booked_evaluation.payment_method != 'POSTPAID' or order.booked_evaluation.payment_method != 'SUBSCRIPTION' %}
-                                                                    <button class="model-close ml-10" >
-                                                                        <img  class="policy-time-edit pointer" src="{% static 'files/icons/edit.png' %}" data-amount_before_cleaning="{{order.evaluation.before_cleaning_amount}}" data-amount_after_cleaning="{{order.evaluation.after_cleaning_amount}}" data-discount="{{order.evaluation.discount}}" data-payment_method="{{order.evaluation.payment_method}}" data-total_amount="{{order.evaluation.estimated_cost}}" data-final_amount="{{order.evaluation.total_cost}}" data-additional_charge="{{order.evaluation.additional_charge|default_if_none:'0'}}" data-cancelled_amount="{{order.evaluation.cancelled_amount|default_if_none:'0'}}" onclick="openPaymentEdit(this)">
-                                                                    </button>
+                                                                {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.booked_evaluation.payment_method == 'POSTPAID' or order.booked_evaluation.payment_method == 'SUBSCRIPTION' %}
+                                                                {% else %}
+                                                                <button class="model-close ml-10" >
+                                                                            <img  class="policy-time-edit pointer" src="{% static 'files/icons/edit.png' %}" data-amount_before_cleaning="{{order.evaluation.before_cleaning_amount}}" data-amount_after_cleaning="{{order.evaluation.after_cleaning_amount}}" data-discount="{{order.evaluation.discount}}" data-payment_method="{{order.evaluation.payment_method}}" data-total_amount="{{order.evaluation.estimated_cost}}" data-final_amount="{{order.evaluation.total_cost}}" data-additional_charge="{{order.evaluation.additional_charge|default_if_none:'0'}}" data-cancelled_amount="{{order.evaluation.cancelled_amount|default_if_none:'0'}}" onclick="openPaymentEdit(this)">
+                                                                        </button>
                                                                 {% endif %}
                                                             {% endif %}
 
