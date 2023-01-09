@@ -2848,6 +2848,7 @@ class NewEnquiry(IsAuthenticated,View):
 					floor_text = address_form_save.floor
 					street_text = address_form_save.street
 					avenue_text = address_form_save.avenue
+					building_text = address_form_save.building
 
 					is_block = block_text.find("Block")
 					is_street = street_text.find("Street")
@@ -2882,6 +2883,17 @@ class NewEnquiry(IsAuthenticated,View):
 						block_text += ' '
 						block_text += 'Block'
 						address_form_save.block = block_text
+					else:
+						pass
+
+					if building_text:
+						is_building = building_text.fing("Building")
+						if is_building == -1 :
+							building_text += ' '
+							building_text += 'Building'
+							address_form_save.building = building_text
+						else:
+							pass
 					else:
 						pass
 
@@ -3052,6 +3064,7 @@ class ExistingEnquiry(IsAuthenticated,View):
 				floor_text = address_form_save.floor
 				street_text = address_form_save.street
 				avenue_text = address_form_save.avenue
+				building_text = address_form_save.building
 
 				is_block = block_text.find("Block")
 				is_street = street_text.find("Street")
@@ -3086,6 +3099,17 @@ class ExistingEnquiry(IsAuthenticated,View):
 					block_text += ' '
 					block_text += 'Block'
 					address_form_save.block = block_text
+				else:
+					pass
+
+				if building_text:
+					is_building = building_text.fing("Building")
+					if is_building == -1 :
+						building_text += ' '
+						building_text += 'Building'
+						address_form_save.building = building_text
+					else:
+						pass
 				else:
 					pass
 
@@ -3121,6 +3145,7 @@ class ExistingEnquiry(IsAuthenticated,View):
 				floor_text = address_form_save.floor
 				street_text = address_form_save.street
 				avenue_text = address_form_save.avenue
+				building_text = address_form_save.building
 
 				is_block = block_text.find("Block")
 				is_street = street_text.find("Street")
@@ -3155,6 +3180,17 @@ class ExistingEnquiry(IsAuthenticated,View):
 					block_text += ' '
 					block_text += 'Block'
 					address_form_save.block = block_text
+				else:
+					pass
+
+				if building_text:
+					is_building = building_text.fing("Building")
+					if is_building == -1 :
+						building_text += ' '
+						building_text += 'Building'
+						address_form_save.building = building_text
+					else:
+						pass
 				else:
 					pass
 
