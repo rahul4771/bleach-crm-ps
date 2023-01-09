@@ -2887,7 +2887,7 @@ class NewEnquiry(IsAuthenticated,View):
 						pass
 
 					if building_text:
-						is_building = building_text.fing("Building")
+						is_building = building_text.find("Building")
 						if is_building == -1 :
 							building_text += ' '
 							building_text += 'Building'
@@ -3103,7 +3103,7 @@ class ExistingEnquiry(IsAuthenticated,View):
 					pass
 
 				if building_text:
-					is_building = building_text.fing("Building")
+					is_building = building_text.find("Building")
 					if is_building == -1 :
 						building_text += ' '
 						building_text += 'Building'
@@ -3184,7 +3184,7 @@ class ExistingEnquiry(IsAuthenticated,View):
 					pass
 
 				if building_text:
-					is_building = building_text.fing("Building")
+					is_building = building_text.find("Building")
 					if is_building == -1 :
 						building_text += ' '
 						building_text += 'Building'
