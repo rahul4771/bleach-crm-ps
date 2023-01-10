@@ -39,7 +39,7 @@ class Command(BaseCommand):
         df = pd.DataFrame(system_users)
         df = df[['bamboo_employee_id', 'name']]
 
-        with pd.ExcelWriter('C:/Users/RGN/Documents/crm_system_users.xls') as writer:
+        with pd.ExcelWriter('/home/pdf/tmp/crm_system_users.xls') as writer:
             df.to_excel(writer,sheet_name='crm system users')
 
         print(system_users,"dataframe")
