@@ -1539,7 +1539,7 @@ def export_users_xls(request):
 
 	# Sheet body, remaining rows
 	font_style = xlwt.XFStyle()
-
+	
 	if report_type == 'xeroinvoices':
 		response = HttpResponse(content_type='application/ms-excel')
 		response['Content-Disposition'] = 'attachment; filename="System xeroInvoices.xls"'
