@@ -2,6 +2,7 @@ import requests
 import json
 from django.core.management.base import BaseCommand
 from order.models import Order,OrderScheduler
+from django.db.models import Prefetch
 
 class Command(BaseCommand):
     help = 'Order Status Update'
@@ -103,7 +104,7 @@ class Command(BaseCommand):
             'BLC20230110109'
         ]
 
-        system_orders = Order.objects.filter(order_no__in=listed_orders).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),'orderschedules')).annotate(total_cleanings_count=Count('order_scheduler_order'), completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), cancelled_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_CANCELLED',then=1),default=0,output_field=IntegerField())) )
+        system_orders = Order.objects.filter(order_no__in=listed_orders).annotate(total_cleanings_count=Count('order_scheduler_order'), completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), cancelled_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_CANCELLED',then=1),default=0,output_field=IntegerField())) )
 
         for order in system_orders:
             print(order.total_cleanings_count,order.completed_cleanings_count,order.cancelled_cleanings_count)
