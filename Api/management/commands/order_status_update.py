@@ -109,6 +109,6 @@ class Command(BaseCommand):
 
         count = 0
         for order in system_orders:
-            if order.payment_status == 'COMPLETED' and int(order.total_cleanings_count) == int(order.completed_cleanings_count)+int(order.cancelled_cleanings_count)
+            if order.payment_status == 'COMPLETED' and int(order.total_cleanings_count) == int(order.completed_cleanings_count)+int(order.cancelled_cleanings_count) :
                 count += 1
                 print(count,order.order_no,order.total_cleanings_count,order.completed_cleanings_count,order.cancelled_cleanings_count)
