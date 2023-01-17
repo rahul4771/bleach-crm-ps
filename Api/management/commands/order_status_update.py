@@ -108,4 +108,4 @@ class Command(BaseCommand):
         system_orders = Order.objects.filter(order_no__in=listed_orders).annotate(total_cleanings_count=Count('order_scheduler_order'), completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), cancelled_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_CANCELLED',then=1),default=0,output_field=IntegerField())) )
 
         for order in system_orders:
-            print(order.total_cleanings_count,order.completed_cleanings_count,order.cancelled_cleanings_count)
+            print(order.order_no,order.total_cleanings_count,order.completed_cleanings_count,order.cancelled_cleanings_count)
