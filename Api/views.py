@@ -46,11 +46,6 @@ from rest_framework.authtoken.models import Token
 from django_countries import countries
 from agent.serializers import UserProfileShowSerializer
 import pytz
-import os
-import logging
-
-# credit card test logging
-logging.basicConfig(filename=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),'log/django_terminal22.log'), level=logging.INFO)
 
 class CountriesAPI(APIView):
     permission_classes     = (AllowAny,)
@@ -298,13 +293,6 @@ class PaymentResponseCredit(APIView):
 		amount_paid    = float(request.POST.get('req_amount'))
 		order_status   = request.POST.get("req_merchant_defined_data3")
 		payment_result = request.POST.get('decision')
-
-		logging.info(evaluation_id)
-		logging.info(payment_mode)
-		logging.info(amount_paid)
-		logging.info(order_status)
-		logging.info(payment_result)
-		logging.info(request.POST.get('req_merchant_defined_data13'))
 
 		#Booking through Website - Order Creation
 		if order_status == 'CUSTOMER_BOOKING' and payment_result == 'ACCEPT':
@@ -6356,11 +6344,8 @@ class CustomerBookedOrdersAPI(APIView):
 		orders_list = []
 
 		for order in orders:
-			logging.info(order)
+			
 			evaluation_details = EvaluationDetails.objects.filter(evaluation=order.evaluation,is_active=True).first()
-
-			logging.info(evaluation_details)
-
 			evaluation_books = EvaluationBook.objects.filter(evaluation_details=evaluation_details,is_active=True).values_list('service_type__name',flat=True)
 
 			order_data = {
