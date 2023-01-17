@@ -3,7 +3,7 @@ import json
 from django.core.management.base import BaseCommand
 from order.models import Order,OrderScheduler
 from django.db.models import Prefetch
-from django.db.models import Q,Sum,When,Case,Value,F,Func,Count
+from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,IntegerField
 
 class Command(BaseCommand):
     help = 'Order Status Update'
