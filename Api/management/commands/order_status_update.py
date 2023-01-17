@@ -2,11 +2,6 @@ import requests
 import json
 from django.core.management.base import BaseCommand
 from order.models import Order,OrderScheduler
-import os
-import logging
-
-# credit card test logging
-logging.basicConfig(filename=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),'log/order_status_updates.log'), level=logging.INFO)
 
 class Command(BaseCommand):
     help = 'Order Status Update'
@@ -110,4 +105,4 @@ class Command(BaseCommand):
 
         system_orders = Order.objects.filter(order_no__in=listed_orders)
 
-        logging.info(system_orders)
+        print(system_orders)
