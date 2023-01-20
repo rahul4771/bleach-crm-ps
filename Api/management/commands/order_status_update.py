@@ -39,26 +39,27 @@ class Command(BaseCommand):
         count = 0
 
         for order in system_orders:
-            if order.payment_status == 'COMPLETED' :
-                count += 1
-                schedules = OrderScheduler.objects.filter(Q(order=order) & Q( Q(work_status='CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_TEAM_ASSIGNED') ))
+            # if order.payment_status == 'COMPLETED' :
+            #     count += 1
+            #     schedules = OrderScheduler.objects.filter(Q(order=order) & Q( Q(work_status='CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_TEAM_ASSIGNED') ))
 
-                for schedule in schedules:
-                    cleaning_team = CleaningTeam.objects.filter(order_scheduler=schedule)
+            #     for schedule in schedules:
+            #         cleaning_team = CleaningTeam.objects.filter(order_scheduler=schedule)
                     
-                    for team in cleaning_team:
-                        if team.check_in == None:
-                            team.check_in = datetime.now()
-                        if team.check_out == None:
-                            team.check_out = datetime.now()
-                        team.save()
-                        print(team.check_in,team.check_out,"team")
+            #         for team in cleaning_team:
+            #             if team.check_in == None:
+            #                 team.check_in = datetime.now()
+            #             if team.check_out == None:
+            #                 team.check_out = datetime.now()
+            #             team.save()
+            #             print(team.check_in,team.check_out,"team")
                     
-                    schedule.work_status = 'CLEANING_FULFILLED'
-                    schedule.save()
-                    print(schedule.work_status,"schedule")
+            #         schedule.work_status = 'CLEANING_FULFILLED'
+            #         schedule.save()
+            #         print(schedule.work_status,"schedule")
 
-                order.order_status = 'ORDER_CLOSED'
-                order.save()
-                print(count,order.order_no,order.order_status,"order")
+            #     order.order_status = 'ORDER_CLOSED'
+            #     order.save()
+            count += 1
+            print(count,order.order_no,order.order_status,"order")
                         
