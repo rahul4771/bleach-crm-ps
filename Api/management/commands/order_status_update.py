@@ -47,9 +47,9 @@ class Command(BaseCommand):
                         cleaning_team = CleaningTeam.objects.filter(order_scheduler=schedule,check_out=None)
                         
                         for team in cleaning_team:
-                            print(team.check_in,team.check_out,"team")
+                            print(order.order_no,team.check_in,team.check_out,"team")
 
-                    print(schedule.work_status,"schedule")
+                    print(order.order_no,schedule.work_status,"schedule")
                 
                 count += 1
                 print(count,order.order_no,order.order_status,"order")
