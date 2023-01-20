@@ -36,21 +36,28 @@ class Command(BaseCommand):
         system_orders = Order.objects.filter(order_no__in=listed_orders)
 
         count = 0
-        count2 = 0
+
         for order in system_orders:
-            count2 += 1
-            print(count2,"cou2")
             if order.payment_status == 'COMPLETED' :
                 count += 1
-                print(count,order.order_no,order.order_status,"order")
-                # order.order_status = 'ORDER_CLOSED'
-                # order.save()
                 schedules = OrderScheduler.objects.filter(Q(order=order) & Q( Q(work_status='CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_TEAM_ASSIGNED') ))
 
                 for schedule in schedules:
-                    print(order.order_no,schedule.work_status,"schedule")
-                    if schedule.work_status == 'CLEANING_IN_PROGRESS':
-                        cleaning_team = CleaningTeam.objects.filter(order_scheduler=schedule,check_out=None)
+                    cleaning_team = CleaningTeam.objects.filter(order_scheduler=schedule)
+                    
+                    for team in cleaning_team:
+                        if team.check_in == None:
+                            team.check_in = datetime.now()
+                        if team.check_out == None:
+                            team.check_out = datetime.now()
+                        team.save()
+                        print(team.check_in,team.check_out,"team")
+                    
+                    schedule.work_status = 'CLEANING_FULFILLED'
+                    schedule.save()
+                    print(schedule.work_status,"schedule")
+
+                order.order_status = 'ORDER_CLOSED'
+                order.save()
+                print(count,order.order_no,order.order_status,"order")
                         
-                        for team in cleaning_team:
-                            print(order.order_no,team.check_in,team.check_out,"team")
