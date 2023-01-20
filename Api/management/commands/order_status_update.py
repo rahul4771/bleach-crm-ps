@@ -33,14 +33,14 @@ class Command(BaseCommand):
             'BLC20220710090'
         ]
 
-        system_orders = Order.objects.filter(order_no__in=listed_orders).annotate(total_cleanings_count=Count('order_scheduler_order'), completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), cancelled_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_CANCELLED',then=1),default=0,output_field=IntegerField())) )
+        system_orders = Order.objects.filter(order_no__in=listed_orders)
 
         count = 0
         for order in system_orders:
             if order.payment_status == 'COMPLETED' :
                 # order.order_status = 'ORDER_CLOSED'
                 # order.save()
-                schedules = OrderScheduler.objects.filter(Q(work_status='CLEANING_IN_PROGRESS')&Q(work_status='CLEANING_TEAM_ASSIGNED'))
+                schedules = OrderScheduler.objects.filter(Q(order=order) & Q( Q(work_status='CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_TEAM_ASSIGNED') ))
 
                 for schedule in schedules:
                     if schedule.work_status == 'CLEANING_IN_PROGRESS':
