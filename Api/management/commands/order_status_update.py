@@ -38,6 +38,8 @@ class Command(BaseCommand):
         count = 0
         for order in system_orders:
             if order.payment_status == 'COMPLETED' :
+                count += 1
+                print(count,order.order_no,order.order_status,"order")
                 # order.order_status = 'ORDER_CLOSED'
                 # order.save()
                 schedules = OrderScheduler.objects.filter(Q(order=order) & Q( Q(work_status='CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_TEAM_ASSIGNED') ))
@@ -48,8 +50,3 @@ class Command(BaseCommand):
                         
                         for team in cleaning_team:
                             print(order.order_no,team.check_in,team.check_out,"team")
-
-                    print(order.order_no,schedule.work_status,"schedule")
-                
-                count += 1
-                print(count,order.order_no,order.order_status,"order")
