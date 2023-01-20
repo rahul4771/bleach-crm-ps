@@ -47,9 +47,8 @@ class Command(BaseCommand):
                 # order.save()
                 schedules = OrderScheduler.objects.filter(Q(order=order) & Q( Q(work_status='CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_TEAM_ASSIGNED') ))
 
-                print(order.order_no,schedule.work_status,"schedule")
-
                 for schedule in schedules:
+                    print(order.order_no,schedule.work_status,"schedule")
                     if schedule.work_status == 'CLEANING_IN_PROGRESS':
                         cleaning_team = CleaningTeam.objects.filter(order_scheduler=schedule,check_out=None)
                         
