@@ -2167,7 +2167,7 @@ def statement_of_account(request,client_id):
 						details = payment.payment_gateway
 
 					accounts_list.append({
-							"date":payment.created.date(),
+							"date":payment.paid_date.date(),
 							"invoice_no":payment.payment_mode,
 							"details":details,
 							"amount":"",
@@ -2286,7 +2286,7 @@ def statement_of_account(request,client_id):
 						details = payment.payment_gateway
 
 					accounts_list.append({
-							"date":payment.created.date(),
+							"date":payment.paid_date.date(),
 							"invoice_no":payment.payment_mode,
 							"details":details,
 							"amount":"",
