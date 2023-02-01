@@ -87,11 +87,11 @@
             <table id="soa_table2">
               <tr class="invoice-table">
                 <th style="width: 40%;">Service /<br> خدمات</th>
-                <th>Size / بحجم</th>
+                <th>Size /<br> بحجم</th>
               
-                <th>Visit / زيارة</th>
-                <th>Unit Price / سعر الوحدة</th>
-                <th>Net Price / السعر الصافي</th>
+                <th>Visit /<br> زيارة</th>
+                <th>Unit Price /<br> سعر الوحدة</th>
+                <th>Net Price /<br> السعر الصافي</th>
               </tr>
 
 
@@ -166,9 +166,9 @@
               {% endfor %}
            
 
-              <tr class="invoice-table">
-                <td colspan="4"> Sub Total / الإجمالي الجزئي</td>
-                <td style="text-align: right;">{{order.evaluation.estimated_cost|floatformat:'3'}} KD</td>
+              <tr>
+                <td colspan="4" class="invoice-table"> Sub Total / الإجمالي الجزئي</td>
+                <td style="text-align: right;" class="invoice-table">{{order.evaluation.estimated_cost|floatformat:'3'}} KD</td>
               </tr>
             </table>
 
