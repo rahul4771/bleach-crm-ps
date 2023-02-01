@@ -85,7 +85,7 @@
           <section id="table_section">
 
             <table id="soa_table2">
-              <tr>
+              <tr class="invoice-table">
                 <th style="width: 40%;">Service / خدمات</th>
                 <th>Size / بحجم</th>
               
@@ -184,7 +184,7 @@
           Payment Before Service / دفع قبل الخدمة
         </span>
         <span id="paymenttime-amount">
-          <b>{{order.evaluation.before_cleaning_amount|floatformat:'3'}}</b> KD
+          {{order.evaluation.before_cleaning_amount|floatformat:'3'}} KD
         </span>
       </div>
       <div>
@@ -192,7 +192,7 @@
           Payment After Service / دفع بعد الخدمة
         </span>
         <span id="paymenttime-amount">
-          <b>{{order.evaluation.after_cleaning_amount|floatformat:'3'}}</b> KD
+          {{order.evaluation.after_cleaning_amount|floatformat:'3'}} KD
         </span>
       </div>
     </section>
@@ -205,7 +205,7 @@
           Payment Before Service / دفع قبل الخدمة
         </span>
         <span id="paymenttime-amount">
-          <b>{{order.total_amount|floatformat:"3"}}</b> KD
+          {{order.total_amount|floatformat:"3"}} KD
         </span>
       </div>
     </section>
@@ -218,7 +218,7 @@
           Payment After Service / دفع بعد الخدمة
         </span>
         <span id="paymenttime-amount">
-          <b>{{order.total_amount|floatformat:"3"}}</b> KD
+          {{order.total_amount|floatformat:"3"}} KD
         </span>
       </div>
     </section>
@@ -227,20 +227,20 @@
     <section id="total-section">
       <div>
         <span id="paymenttime">
-          <b>Sub Total / الإجمالي الجزئي</b>
+          Sub Total / الإجمالي الجزئي
         </span>
         <span id="paymenttime-amount">
-          <b>{{order.evaluation.estimated_cost|floatformat:'3'}}</b>
+          {{order.evaluation.estimated_cost|floatformat:'3'}}
         </span>
       </div>
       
       {% if order.evaluation.discount != 0 %}
       <div>
         <span id="paymenttime">
-          <b>Discount / الخصم</b>
+          Discount / الخصم
         </span>
         <span id="paymenttime-amount">
-          <b>-{{order.evaluation.discount|floatformat:"3"}}</b>
+          -{{order.evaluation.discount|floatformat:"3"}}
         </span>
       </div>
       {% endif %}
@@ -248,10 +248,10 @@
       {% if order.evaluation.additional_charge != 0 %}
       <div>
         <span id="paymenttime">
-          <b>Extra Charge(s) / رسوم اضافية</b>
+          Extra Charge(s) / رسوم اضافية
         </span>
         <span id="paymenttime-amount">
-          <b>{{order.evaluation.additional_charge|floatformat:"3"}}</b>
+          {{order.evaluation.additional_charge|floatformat:"3"}}
         </span>
       </div>
       {% endif %}
@@ -259,10 +259,10 @@
       {% if order.evaluation.credit_amount != 0 %}
       <div>
         <span id="paymenttime">
-          <b>Credit Added</b>
+          Credit Added
         </span>
         <span id="paymenttime-amount">
-          <b>-{{order.evaluation.credit_amount|floatformat:"3"}}}</b>
+          -{{order.evaluation.credit_amount|floatformat:"3"}}}
         </span>
       </div>
       {% endif %}
@@ -270,10 +270,10 @@
       {% if order.evaluation.fine_amount != 0 %}
       <div>
         <span id="paymenttime">
-          <b>Fine / غرامة</b>
+          Fine / غرامة
         </span>
         <span id="paymenttime-amount">
-          <b>-{{order.evaluation.fine_amount|floatformat:'3'}}</b>
+          -{{order.evaluation.fine_amount|floatformat:'3'}}
         </span>
       </div>
       {% endif %}
@@ -281,10 +281,10 @@
       {% if order.evaluation.writeback_amount != 0 %}
       <div>
         <span id="paymenttime">
-          <b>Write-Off / إلغاء</b>
+          Write-Off / إلغاء
         </span>
         <span id="paymenttime-amount">
-          <b>-{{order.evaluation.writeback_amount|floatformat:'3'}}</b>
+          -{{order.evaluation.writeback_amount|floatformat:'3'}}
         </span>
       </div>
       {% endif %}
@@ -292,10 +292,10 @@
       {% if order.evaluation.is_promocode_applied == True %}
       <div>
         <span id="paymenttime">
-          <b>Coupon Added</b>
+          Coupon Added
         </span>
         <span id="paymenttime-amount">
-          <b>-{{order.evaluation.promocode_amount|floatformat:"3"}}</b>
+          -{{order.evaluation.promocode_amount|floatformat:"3"}}
         </span>
       </div>
       {% endif %}
@@ -303,28 +303,28 @@
 
       <div>
         <span id="paymenttime">
-          <b>Total / الإجمالي</b>
+          Total / الإجمالي
         </span>
         <span id="paymenttime-amount">
-          <b>{{order.total_amount|floatformat:"3"}}</b>
+          {{order.total_amount|floatformat:"3"}}
         </span>
       </div>
       
       <div>
         <span id="paymenttime">
-          <b>Paid till date / دفعت حتى الآن</b>
+          Paid till date / دفعت حتى الآن
         </span>
         <span id="paymenttime-amount">
-          <b>{{order.amount_paid|floatformat:'3'}}</b>
+          {{order.amount_paid|floatformat:'3'}}
         </span>
       </div>
   
       <div>
-        <span id=paymenttime">
-          <b>Balance till date</b>
+        <span id="paymenttime">
+          Balance till date
         </span>
         <span id="paymenttime-amount">
-          <b>{{order.remining_amount|floatformat:'3'}}</b>
+          {{order.remining_amount|floatformat:'3'}}
         </span>
       </div>
     </section>

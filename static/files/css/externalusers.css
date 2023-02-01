@@ -434,6 +434,10 @@ table th, table td {
   clear: both;
 }
 
+.invoice-table{
+  font-size:14px;
+}
+
 .recipt-info{
 text-align: right;
 
@@ -827,21 +831,21 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
 #customer-name{
   font-family: AvenirLTStd !important;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 14px;
   float: right;
   right: 0;
 
 }
 #address-text{
   font-family: AvenirLTStd !important;
-  font-size: 16px;
+  font-size: 14px;
   display: inline-block;
 
 }
 #customer-address{
   font-family: AvenirLTStd !important;
   text-align: right;
-  font-size: 16px;
+  font-size: 14px;
   float: right;
   right: 0;
   width: 250px;
@@ -856,7 +860,7 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
 }
 #contact-text{
   font-family: AvenirLTStd !important;
-  font-size: 16px;
+  font-size: 14px;
   display: inline-block;
 }
 #id_instruction{
@@ -877,7 +881,7 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
 }
 #contact-number{
   text-align: right;
-  font-size: 16px;
+  font-size: 14px;
   float: right;
   right: 0;
   font-family: AvenirLTStd !important;
