@@ -321,7 +321,7 @@
   
       <div>
         <span id="paymenttime">
-          Balance till date
+          Balance / الرصيد
         </span>
         <span id="paymenttime-amount">
           {{order.remining_amount|floatformat:'3'}}
@@ -332,7 +332,7 @@
     {% if order.remining_amount == 0 %}
     {% else %}
     <section id="final-section">
-      <span id="total_id">Payable Amount</span>
+      <span id="total_id">Current Payment / الدفع الحالي</span>
                {% if order.evaluation.payment_method == 'BREAKDOWN' %}
                   {% if order.evaluation.before_cleaning_amount != order.preamount_paid %}
                     <h1 id="total_amount">
