@@ -86,7 +86,7 @@
 
             <table id="soa_table2">
               <tr class="invoice-table">
-                <th style="width: 40%;">Service / خدمات</th>
+                <th style="width: 40%;">Service /<br> خدمات</th>
                 <th>Size / بحجم</th>
               
                 <th>Visit / زيارة</th>
@@ -99,7 +99,7 @@
               {% for evaluation_book in evaluation_detail.evaluationbooks %}
               {% for book_section in evaluation_book.booksections %}
               {% if book_section.evaluation_book.service_type.name != 'Kitchen Appliances' %}
-              <tr>
+              <tr class="invoice-table">
                 <td>
                   {{evaluation_book.service_type}} - {{book_section.section_name}}
                   <div class="d-flex mb-10" > {% if evaluation_book.status == 'CANCELLED' %} <div class="status-dot cancel-chip-bg"></div> <div class="ml-2">Cancelled</div> {% endif %}</div>
@@ -137,7 +137,7 @@
               {% if book_section.sectionaddons %}
               {% for addon in book_section.sectionaddons %}
               <!-- ADDONS BEGINS HERE -->
-              <tr>
+              <tr class="invoice-table">
                 <td>
                   {{book_section.section_name}} - {{addon.name}} (x{{addon.quantity|default_if_none:'1'}})
                   <div class="d-flex mb-10" > {% if evaluation_book.status == 'CANCELLED' %} <div class="status-dot cancel-chip-bg"></div> <div class="ml-2">Cancelled</div> {% endif %}</div>
@@ -166,7 +166,7 @@
               {% endfor %}
            
 
-              <tr>
+              <tr class="invoice-table">
                 <td colspan="4"> Sub Total / الإجمالي الجزئي</td>
                 <td style="text-align: right;">{{order.evaluation.estimated_cost|floatformat:'3'}} KD</td>
               </tr>

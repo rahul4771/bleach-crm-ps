@@ -435,6 +435,7 @@ table th, table td {
 }
 
 .invoice-table{
+  font-family: AvenirLTStd !important;
   font-size:14px;
 }
 
