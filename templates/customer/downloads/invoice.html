@@ -29,7 +29,7 @@
 
   <div id="container">
     <section>
-       <h1 id="qu-text">INVOICE</h1>
+       <h1 id="qu-text">INVOICE / الفاتورة</h1>
     </section>
 
 
@@ -39,20 +39,20 @@
             {% if forloop.first %}              
             <div id="left_id">
               <div>
-                <span id="contact-text">Customer</span>
+                <span id="contact-text">Customer / العميل</span>
                 <span id="customer-name">{{evaluation_detail.evaluation.customer.name}}</span>
               </div>
               
               <div>
-                <span id="contact-text">Contact No</span>
+                <span id="contact-text">Contact No. / رقم الاتصال</span>
                 <span id="contact-number">{{evaluation_detail.evaluation.customer.mobile_number}}</span>
               </div>
               <div>
-                <span id="contact-text">Email</span>
+                <span id="contact-text">Email / إيميل</span>
                 <span id="contact-number">{{evaluation_detail.evaluation.customer.email}}</span>
               </div>
               <div>
-                <span id="address-text">Address </span>
+                <span id="address-text">Address / العنوان</span>
                 <span id="customer-address">{{evaluation_detail.address.apartment}}, {% if evaluation_detail.address.floor %}{{evaluation_detail.address.floor}} {% else %}{% endif %} {{evaluation_detail.address.building}},{{evaluation_detail.address.block}}, {{evaluation_detail.address.street}},{% if evaluation_detail.address.avenue %}{{evaluation_detail.address.avenue}} {% else %}{% endif %}<br>{{evaluation_detail.address.area.name}}, {{evaluation_detail.address.governorate.name}}</span>
               </div><br>
             </div>
@@ -62,19 +62,19 @@
             <div id="right_id">
               
                 <div>
-                  <span id="contact-text">Invoice Number</span>
+                  <span id="contact-text">Invoice Number / رقم الفاتورة</span>
                   <span id="contact-number"> <b>INV{{order.invoice_no}}</b> </span>
                 </div>
                 <div>
-                  <span id="contact-text">Invoice Date</span>
+                  <span id="contact-text">Invoice Date / تاريخ الفاتورة</span>
                   <span id="contact-number">{{order.evaluation.created|date:'d-m-Y'}}</span>
                 </div>
                 <div>
-                  <span id="contact-text">Payment Policy</span>
+                  <span id="contact-text">Payment Policy / سياسة الدفع</span>
                   <span id="contact-number">{{order.evaluation.payment_method}}</span>
                 </div>
                 <div>
-                  <span id="contact-text">Order Number</span>
+                  <span id="contact-text">Order Number / رقم الطلب</span>
                   <span id="contact-number">{{order.evaluation.evaluation_id}}</span>
                 </div>
             </div>
@@ -86,12 +86,12 @@
 
             <table id="soa_table2">
               <tr>
-                <th style="width: 40%;">Service</th>
-                <th>Size</th>
+                <th style="width: 40%;">Service / خدمات</th>
+                <th>Size / بحجم</th>
               
-                <th>Visit</th>
-                <th>Unit Price</th>
-                <th>Net Price</th>
+                <th>Visit / زيارة</th>
+                <th>Unit Price / سعر الوحدة</th>
+                <th>Net Price / السعر الصافي</th>
               </tr>
 
 
@@ -167,7 +167,7 @@
            
 
               <tr>
-                <td colspan="4"> Sub Total</td>
+                <td colspan="4"> Sub Total / الإجمالي الجزئي</td>
                 <td style="text-align: right;">{{order.evaluation.estimated_cost|floatformat:'3'}} KD</td>
               </tr>
             </table>
@@ -176,12 +176,12 @@
 
           {% if order.evaluation.payment_method == 'BREAKDOWN' %}
     <section id="paymentmode-sec">
-      <span> BREAKDOWN Payment Mode</span>
+      <span> BREAKDOWN / الدفعات</span>
     </section>
     <section id="lastsection">
       <div>
         <span id="paymenttime">
-          Payment Before Cleaning
+          Payment Before Service / دفع قبل الخدمة
         </span>
         <span id="paymenttime-amount">
           <b>{{order.evaluation.before_cleaning_amount|floatformat:'3'}}</b> KD
@@ -189,7 +189,7 @@
       </div>
       <div>
         <span id="paymenttime">
-          Payment After Cleaning
+          Payment After Service / دفع بعد الخدمة
         </span>
         <span id="paymenttime-amount">
           <b>{{order.evaluation.after_cleaning_amount|floatformat:'3'}}</b> KD
@@ -202,7 +202,7 @@
     <section id="lastsection">
       <div>
         <span id="paymenttime">
-          Payment Before Cleaning
+          Payment Before Service / دفع قبل الخدمة
         </span>
         <span id="paymenttime-amount">
           <b>{{order.total_amount|floatformat:"3"}}</b> KD
@@ -215,7 +215,7 @@
     <section id="lastsection">
       <div>
         <span id="paymenttime">
-          Payment After Cleaning
+          Payment After Service / دفع بعد الخدمة
         </span>
         <span id="paymenttime-amount">
           <b>{{order.total_amount|floatformat:"3"}}</b> KD
@@ -227,7 +227,7 @@
     <section id="total-section">
       <div>
         <span id="paymenttime">
-          <b>Sub Total</b>
+          <b>Sub Total / الإجمالي الجزئي</b>
         </span>
         <span id="paymenttime-amount">
           <b>{{order.evaluation.estimated_cost|floatformat:'3'}}</b>
@@ -237,7 +237,7 @@
       {% if order.evaluation.discount != 0 %}
       <div>
         <span id="paymenttime">
-          <b>Discount</b>
+          <b>Discount / الخصم</b>
         </span>
         <span id="paymenttime-amount">
           <b>-{{order.evaluation.discount|floatformat:"3"}}</b>
@@ -248,7 +248,7 @@
       {% if order.evaluation.additional_charge != 0 %}
       <div>
         <span id="paymenttime">
-          <b>Additional Charge(s)</b>
+          <b>Extra Charge(s) / رسوم اضافية</b>
         </span>
         <span id="paymenttime-amount">
           <b>{{order.evaluation.additional_charge|floatformat:"3"}}</b>
@@ -270,7 +270,7 @@
       {% if order.evaluation.fine_amount != 0 %}
       <div>
         <span id="paymenttime">
-          <b>Fine</b>
+          <b>Fine / غرامة</b>
         </span>
         <span id="paymenttime-amount">
           <b>-{{order.evaluation.fine_amount|floatformat:'3'}}</b>
@@ -281,7 +281,7 @@
       {% if order.evaluation.writeback_amount != 0 %}
       <div>
         <span id="paymenttime">
-          <b>Write-Off Amount</b>
+          <b>Write-Off / إلغاء</b>
         </span>
         <span id="paymenttime-amount">
           <b>-{{order.evaluation.writeback_amount|floatformat:'3'}}</b>
@@ -303,7 +303,7 @@
 
       <div>
         <span id="paymenttime">
-          <b>Total</b>
+          <b>Total / الإجمالي</b>
         </span>
         <span id="paymenttime-amount">
           <b>{{order.total_amount|floatformat:"3"}}</b>
@@ -312,7 +312,7 @@
       
       <div>
         <span id="paymenttime">
-          <b>Paid till date</b>
+          <b>Paid till date / دفعت حتى الآن</b>
         </span>
         <span id="paymenttime-amount">
           <b>{{order.amount_paid|floatformat:'3'}}</b>
