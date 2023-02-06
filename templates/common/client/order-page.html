@@ -2934,6 +2934,8 @@
                                         </div>
                                     </div>
 
+                                    
+                                    
                                     {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN' %}
                                     <div class="col-md-3" style="margin-top: -38px;">
 
@@ -3229,7 +3231,6 @@
                                 {% endif %}
                             <!--resubmit end here -->
     
-    
                             <!--cancell order-->
                                 {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'SALESADMIN' %}
                                     {% if order.order_status != 'ORDER_CLOSED'  %}
@@ -3270,6 +3271,23 @@
                             {% endif %}
                             <!--rise ticket end here -->
 
+                            {% elif request.user.user_type == 'ADMIN' %}
+                            <!--close order-->
+                                {% if order.order_status != 'ORDER_CLOSED' and order.remining_amount == 0 and order.cleaning_count == order.completed_cancelled_cleaning_count  %}
+                                    <div class="c-button-div">
+                                        <button data-toggle="modal" data-target="#closeOrderModel" class="side-buttons">
+                                            <div class="row">
+                                                <div class="col-xs-4 text-right">
+                                                    <img class="button-icons" src="{% static 'files/icons/close.png' %}">
+                                                </div>
+                                                <div class="col-xs-6 text-left mpl-0">
+                                                    Close Order
+                                                </div>
+                                            </div>
+                                        </button>
+                                    </div>
+                                {% endif %}                            
+                            <!--close order end here --> 
 
                             {% endif %}
                             <!--right-bgwrapper-->
@@ -3780,6 +3798,48 @@
     </div>
 </div>
 <!-- Modal Add Resubmit -->
+
+<!-- Modal close order-->
+<div class="modal fade bd-example-modal-lg" id="closeOrderModel" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog cancel-model cancel-order-border" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="d-flex cl-modal-icons">
+                        <button data-dismiss="modal" class="model-close">
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="cancel-model-content">
+                        <h1>Do you want to close this order?</h1>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <div class="cancel-model-content">
+                        <form method="POST" action="">{% csrf_token %}
+                            <input type="hidden" name="action_type" value="close_order" />
+                            <button class="sent-button" type="submit" >Yes</button>
+                        </form>
+                        <button data-dismiss="modal" class="view-button">Cancel</button>
+                        
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal close order -->
 
 <!--Rise Ticket-->
 <div class="modal fade bd-example-modal-lg" id="raiseTicketModel" tabindex="-1" role="dialog"
