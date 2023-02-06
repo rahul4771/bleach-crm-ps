@@ -3273,7 +3273,7 @@
 
                             {% elif request.user.user_type == 'ADMIN' %}
                             <!--close order-->
-                                {% if order.order_status != 'ORDER_CLOSED' and order.remining_amount == 0 and order.cleaning_count == order.completed_cancelled_cleaning_count  %}
+                                {% if order.order_status != 'ORDER_CLOSED' and order.remining_amount == 0 and total_visits == completed_cancelled_visits  %}
                                     <div class="c-button-div">
                                         <button data-toggle="modal" data-target="#closeOrderModel" class="side-buttons">
                                             <div class="row">
