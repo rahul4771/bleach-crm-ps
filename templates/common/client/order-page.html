@@ -3271,7 +3271,7 @@
                             {% endif %}
                             <!--rise ticket end here -->
 
-                            {% elif request.user.user_type == 'ADMIN' %}
+                            {% elif request.user.user_type == 'ADMIN' or request.user.user_type == 'SALESADMIN' %}
                             <!--close order-->
                                 {% if order.order_status != 'ORDER_CLOSED' and order.remining_amount == 0 and total_visits == completed_cancelled_visits  %}
                                     <div class="c-button-div">
