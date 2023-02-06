@@ -1458,9 +1458,11 @@ class ClientOrderDetails(IsAuthenticated,View):
 			Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book','customer_address__area','customer_address__governorate').order_by('start_at').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_team'),Prefetch('investigations_orderschedule',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr='investigationmedias'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True),to_attr='paybackdiscounts'),Prefetch('buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.filter(is_active=True),to_attr='buybackpromocodegift'),Prefetch('followup_investigation',queryset = FollowUp.objects.filter(is_active=True).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.filter(is_active=True),to_attr='followupmembers')),to_attr='followupteams')),to_attr='follow_up_schedules')),to_attr='followups')),to_attr='investigations')),to_attr='orderschedules'),
 			Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),
 			Prefetch('feed_backs_order',FeedBack.objects.filter(is_active=True).select_related('question'),to_attr='feedbacks'),
-			Prefetch('cancelled_order',CancellOrderAmountHistory.objects.filter(is_active=True),to_attr='cancelled_order_amount')).annotate(total_paid_amount=Sum('history_order__amount_paid')).annotate(cleaning_count=Count('order_scheduler_order'),completed_cancelled_cleaning_count=Sum(Case(When(Q(Q(order_scheduler_order__work_status='CLEANING_CANCELLED')|Q(order_scheduler_order__work_status='CLEANING_FULFILLED')),then=1),default=0,output_field=IntegerField()))).get(is_active=True,id=order_id)
+			Prefetch('cancelled_order',CancellOrderAmountHistory.objects.filter(is_active=True),to_attr='cancelled_order_amount')).annotate(total_paid_amount=Sum('history_order__amount_paid')).get(is_active=True,id=order_id)
 
-			# cleaning_count=Count('order_scheduler_order'),completed_cancelled_cleaning_count=Sum(Case(When(Q(Q(order_scheduler_order__work_status='CLEANING_CANCELLED')|Q(order_scheduler_order__work_status='CLEANING_FULFILLED')),then=1),default=0,output_field=IntegerField()))
+		schedules = OrderScheduler.objects.filter(order__id=order_id,is_active=True)
+		total_visit_count = schedules.count()
+		completed_and_cancelled_count = schedules.filter(Q(work_status='CLEANING_FULFILLED')|Q(work_status='CLEANING_CANCELLED')).count()
 
 		try:
 			booking_id = CustomerBooking.objects.get(is_active=True,evaluation__id=order.evaluation.id,booking_type='CLEANINGBOOKING').booking_id
@@ -1497,7 +1499,7 @@ class ClientOrderDetails(IsAuthenticated,View):
 
 		price_ranges = ServicePriceRange.objects.filter(is_active=True)
 
-		return render(request,"common/client/order-page.html",{"invoice":invoice,"booking_id":booking_id,"order":order,"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"average_feedback":average_feedback,"price_ranges":price_ranges})
+		return render(request,"common/client/order-page.html",{"invoice":invoice,"booking_id":booking_id,"order":order,"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"average_feedback":average_feedback,"price_ranges":price_ranges,"total_visits":total_visit_count,"completed_cancelled_visits":completed_and_cancelled_count})
 
 	def post(self,request,order_id):
 		action = request.POST.get('action_type')
