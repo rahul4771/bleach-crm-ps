@@ -3271,9 +3271,27 @@
                             {% endif %}
                             <!--rise ticket end here -->
                             
+                            {% if request.user.user_type == 'SALESADMIN' %}
+                            <!--close order SALESADMIN-->
+                                {% if order.order_status != 'ORDER_CLOSED' and order.remining_amount == 0 and total_visits == completed_cancelled_visits  %}
+                                    <div class="c-button-div">
+                                        <button data-toggle="modal" data-target="#closeOrderModel" class="side-buttons">
+                                            <div class="row">
+                                                <div class="col-xs-4 text-right">
+                                                    <img class="button-icons" src="{% static 'files/icons/close.png' %}">
+                                                </div>
+                                                <div class="col-xs-6 text-left mpl-0">
+                                                    Close Order
+                                                </div>
+                                            </div>
+                                        </button>
+                                    </div>
+                                {% endif %}                            
+                            <!--close order end here --> 
+                            {% endif %}
 
                             {% elif request.user.user_type == 'ADMIN' %}
-                            <!--close order-->
+                            <!--close order ADMIN-->
                                 {% if order.order_status != 'ORDER_CLOSED' and order.remining_amount == 0 and total_visits == completed_cancelled_visits  %}
                                     <div class="c-button-div">
                                         <button data-toggle="modal" data-target="#closeOrderModel" class="side-buttons">
