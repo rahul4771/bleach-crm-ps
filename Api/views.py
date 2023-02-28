@@ -1052,7 +1052,7 @@ class LeaveScheduleAPI(APIView):
 
 		#creating month range and getting start date and end date for occupied members query
 		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
-		monthdate2 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)-relativedelta(days=1)
+		monthdate2 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
 
 		occupied_members           = CleaningTeamMember.objects.select_related('team__order_scheduler').filter( Q (Q(is_active=True) & Q(Q(start_at__gte=monthdate1)&Q(end_at__lte=monthdate2)) ) )
 		occupied_member_serializer = OccupiedMembersSerializer(occupied_members,many=True).data
@@ -1162,7 +1162,7 @@ class UpdateCRMBambooLeavesAPI(APIView):
 		todate = date.today()
 		
 		monthdate1 = datetime(day=1,month=int(todate.month),year=int(todate.year),hour=0,minute=0,second=0,microsecond=0)
-		monthdate2 = datetime(day=1,month=int(todate.month),year=int(todate.year),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)-relativedelta(days=1)
+		monthdate2 = datetime(day=1,month=int(todate.month),year=int(todate.year),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
 		print(monthdate1,monthdate2,"datess")
 
 		if action == 'BAMBOO_TO_CRM':
