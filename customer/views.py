@@ -8597,14 +8597,14 @@ class CartAPI(APIView):
 			cart = CustomerCart.objects.create(customer=user)
 
 		#cart discount calculation - 15% of cost upto 75KD
-		discount_amount = float(cart.total_cost) * (15/100)
-		cart.cart_discount = round(discount_amount if discount_amount <= 75 else 75,3)
-		cart.final_cost = round(float(cart.total_cost) - float(discount_amount if discount_amount <= 75 else 75),3)
-		cart.save()
-
-		# cart.cart_discount = 0
-		# cart.final_cost = float(cart.total_cost)
+		# discount_amount = float(cart.total_cost) * (15/100)
+		# cart.cart_discount = round(discount_amount if discount_amount <= 75 else 75,3)
+		# cart.final_cost = round(float(cart.total_cost) - float(discount_amount if discount_amount <= 75 else 75),3)
 		# cart.save()
+
+		cart.cart_discount = 0
+		cart.final_cost = float(cart.total_cost)
+		cart.save()
 
 		services = CartService.objects.filter(cart=cart)
 
