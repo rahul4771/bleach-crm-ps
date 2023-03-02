@@ -8607,39 +8607,10 @@ class CartAPI(APIView):
 		# cart.cart_discount = round(discount_amount if discount_amount <= 75 else 75,3)
 		# cart.final_cost = round(float(cart.total_cost) - float(discount_amount if discount_amount <= 75 else 75),3)
 		# cart.save()
-
-		promo_code = request.GET.get('promo_code')
-		if promo_code:
-			promocode = Promocode.objects.filter(promocode=promo_code,is_active=True).first()
-			
-			#checking if promocode usage count is completed or date expired
-			if promocode.total_usage == promocode.total_used or promocode.expiry_date <= date.today() :
-				response_dict['message'] = 'PromoCode Expired'
-			else:
-				if promocode.percentage:
-					percentage = promocode.percentage
-					cart_amount = cart.total_cost
-					promocode_amount = float(promocode.percentage/100) * float(cart_amount)
-
-					if promocode.percentage_upto_price and promocode_amount > promocode.percentage_upto_price:
-						promocode_amount = promocode.percentage_upto_price
-
-				elif promocode.price:
-					promocode_amount = promocode.price
-
-				else:
-					promocode_amount = 0
-
-				cart.cart_discount = 0
-				cart.promocode = promo_code
-				cart.promocode_amount = promocode_amount
-				cart.final_cost = 0 if float(promocode_amount) >= float(cart.total_cost) else float(cart.total_cost)-float(promocode_amount)
-				cart.save()
-				response_dict['message'] = 'PromoCode Applied'
-		else:
-			cart.cart_discount = 0
-			cart.final_cost = float(cart.total_cost)
-			cart.save()
+		
+		# cart.cart_discount = 0
+		# cart.final_cost = float(cart.total_cost)
+		# cart.save()
 
 		services = CartService.objects.filter(cart=cart)
 
@@ -8673,6 +8644,35 @@ class CartAPI(APIView):
 			cart = CustomerCart.objects.get(customer=user)
 		except:
 			cart = CustomerCart.objects.create(customer=user,)
+
+		#APPLY PROMOCODE TO CART TOTAL
+		if action == 'apply_promocode':	
+			promocode = Promocode.objects.filter(promocode=request.data.get('promo_code'),is_active=True).first()
+			
+			#checking if promocode usage count is completed or date expired
+			if promocode.total_usage == promocode.total_used or promocode.expiry_date <= date.today() :
+				response_dict['message'] = 'PromoCode Expired'
+			else:
+				if promocode.percentage:
+					percentage = promocode.percentage
+					cart_amount = cart.total_cost
+					promocode_amount = float(promocode.percentage/100) * float(cart_amount)
+
+					if promocode.percentage_upto_price and promocode_amount > promocode.percentage_upto_price:
+						promocode_amount = promocode.percentage_upto_price
+
+				elif promocode.price:
+					promocode_amount = promocode.price
+
+				else:
+					promocode_amount = 0
+
+				cart.cart_discount = 0
+				cart.promocode = promo_code
+				cart.promocode_amount = promocode_amount
+				cart.final_cost = 0 if float(promocode_amount) >= float(cart.total_cost) else float(cart.total_cost)-float(promocode_amount)
+				cart.save()
+				response_dict['message'] = 'PromoCode Applied'
 
 		#ADDING A NEW SERVICE
 		if action == 'add_service':
