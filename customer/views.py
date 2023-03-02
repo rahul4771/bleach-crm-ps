@@ -8669,7 +8669,7 @@ class CartAPI(APIView):
 					promocode_amount = 0
 
 				cart.cart_discount = 0
-				cart.promocode = promo_code
+				cart.promocode = request.data.get('promo_code')
 				cart.promocode_amount = promocode_amount
 				cart.final_cost = 0 if float(promocode_amount) >= float(cart.total_cost) else float(cart.total_cost)-float(promocode_amount)
 				cart.save()
