@@ -307,7 +307,17 @@ class PaymentResponseCredit(APIView):
 			else:
 				evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
 				tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
-			evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=int(tracking_no)+1,customer=customer_cart.customer,estimated_cost=customer_cart.total_cost,discount=customer_cart.cart_discount,total_cost=customer_cart.final_cost,payment_method='PREPAID',payment_way='ONLINE',quatation_status='APPROVED',quatation_approved_date=timezone.now(),quatation_expiry_date=timezone.now()+timedelta(14))
+
+			if customer_cart.promocode:
+				promocode = Promocode.objects.filter(promocode=customer_cart.promocode,is_active=True).first()
+				promocode.total_used += 1
+				promocode.save()
+
+				is_promocode_applied = True
+			else:
+				is_promocode_applied = False
+
+			evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=int(tracking_no)+1,customer=customer_cart.customer,estimated_cost=customer_cart.total_cost,discount=customer_cart.cart_discount,promocode_amount=customer_cart.promocode_amount,is_promocode_applied=is_promocode_applied,total_cost=customer_cart.final_cost,payment_method='PREPAID',payment_way='ONLINE',quatation_status='APPROVED',quatation_approved_date=timezone.now(),quatation_expiry_date=timezone.now()+timedelta(14))
 
 			#Booking Number
 			booking_id               = CustomerBooking.objects.filter(is_active=True).aggregate(t=Max('booking_id'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
@@ -381,6 +391,8 @@ class PaymentResponseCredit(APIView):
 			customer_cart.is_scheduled = False
 			customer_cart.total_cost = 0
 			customer_cart.cart_discount = 0
+			customer_cart.promocode = None
+			customer_cart.promocode_amount = 0
 			customer_cart.final_cost = 0
 			customer_cart.save()
 
@@ -5944,7 +5956,7 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 			CustomerOTP.objects.create(mobile_number=customer_mobile,otp=customer_otp)
 
 		
-		# live_response = requests.post("https://my.bleachkw.com/api/sms-test/", data={"customer_mobile":customer_mobile,"customer_otp":customer_otp})
+		live_response = requests.post("https://my.bleachkw.com/api/sms-test/", data={"customer_mobile":customer_mobile,"customer_otp":customer_otp})
 		
 		#otp sms
 		# url = "https://smsapi.future-club.com/fccsms.aspx"
@@ -5962,16 +5974,15 @@ class EvaluationBookingCustomerOtpGenerationAPI(APIView):
 		# sms_response = response.text
 		# message_code = sms_response[:2]
 		
-		# response_str = live_response.text.split()
+		response_str = live_response.text.split()
 
-		# message_code = re.findall(r'\d+', response_str[0])[0]
+		message_code = re.findall(r'\d+', response_str[0])[0]
 
-		# if message_code == "00":
-		# 	response_dict['sms_status'] = "success"
-		# else:
-		#  	response_dict['sms_status'] = "false"
+		if message_code == "00":
+			response_dict['sms_status'] = "success"
+		else:
+		 	response_dict['sms_status'] = "false"
 
-		response_dict['sms_status'] = "success"
 		response_dict['customer_mobile'] = customer_mobile
 
 		return Response(response_dict,HTTP_200_OK)
