@@ -8618,6 +8618,10 @@ class CartAPI(APIView):
 
 		customer_data = UserProfileShowSerializer(user,many=False).data
 
+		if cart.promocode:
+			promocode = Promocode.objects.filter(promocode=cart.promocode,is_active=True).first()
+			response_dict['promocode_notes'] = cart.promocode_amount if promocode.price elif promocode.percentage_upto_price str(cart.promocode_amount+' ('+promocode.percentage+'% upto '+promocode.percentage_upto_price+')') else str(cart.promocode_amount+' ('+promocode.percentage+'% )')
+
 		response_dict['success'] = True
 		response_dict['data'] = cart_services
 		response_dict['customer'] = customer_data
