@@ -1650,6 +1650,7 @@ class PaymentResponseDebit(View):
 			# if pay_and_book:
 			if order_status == 'CUSTOMER_BOOKING':
 				return redirect('http://testwww.bleach-kw.com:8080/my/orders')
+				# return redirect('https://www.bleach-kw.com/my/orders')
 				# return(pay_and_book)
 			else:
 				return redirect('customer:payment-receipt','pvw'+str(evaluation_id_encrypted[0:11])+str(payment_history.id))
@@ -1697,6 +1698,7 @@ class PaymentResponseDebit(View):
 			# if pay_and_book:
 			if order_status == 'CUSTOMER_BOOKING':
 				return redirect('http://testwww.bleach-kw.com:8080/my/orders')
+				# return redirect('https://www.bleach-kw.com/my/orders')
 			else:
 				return redirect('customer:payment-receipt','pvw'+str(evaluation_id_encrypted[0:11])+str(payment_history.id))
 
