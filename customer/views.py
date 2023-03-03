@@ -8685,6 +8685,8 @@ class CartAPI(APIView):
 			cart.final_cost = float(cart.final_cost)+float(cart.promocode_amount)
 			cart.promocode_amount = 0
 			cart.save()
+			response_dict['success']  = True
+			response_dict['message']  = 'PromoCode removed'
 
 		#ADDING A NEW SERVICE
 		if action == 'add_service':
