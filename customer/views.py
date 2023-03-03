@@ -8682,7 +8682,7 @@ class CartAPI(APIView):
 		#remove promocode
 		if action == 'remove_promocode':
 			cart.promocode = None
-			cart.final_cost += float(cart.promocode_amount)
+			cart.final_cost = float(cart.final_cost)+float(cart.promocode_amount)
 			cart.promocode_amount = 0
 			cart.save()
 
