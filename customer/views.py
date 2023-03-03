@@ -39,6 +39,7 @@ from itertools import chain
 from agent.views import generate_random_username
 
 import requests
+import logging
 
 #restframe work 
 from rest_framework.views import APIView
@@ -53,6 +54,8 @@ from customer.serilizers import UserProfileEditSerializer,CartServiceShowSeriali
 from bleachadmin.serializers import ServiceAddOnsSerializer
 from agent.serializers import UserProfileShowSerializer
 from Api.serializers import ServicePriceRangeSerializer,OrderScheduleShowSerializer,EvaluationBookAPISerializer,SectionAPISerializer,EvaluationDetailsAPISerializer
+
+logger = logging.getLogger(__name__)
 
 def get_client_ip(request):
 	x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -924,17 +927,19 @@ class PaymentResponseDebit(View):
 		evaluation_id = 'BLC'+evaluation_id_encrypted[0:11]
 		user_name     =  evaluation_id_encrypted[11:]
 
-		amount_paid       = float(request.GET.get("amt"))
+		c       = float(request.GET.get("amt"))
 		payment_result    = request.GET.get("result")
 		payment_mode      = request.GET.get("udf2")
 		order_status      = request.GET.get("udf3")
 
-		print(evaluation_id_encrypted,amount_paid,order_status,"testdat")
+		logger.info(evaluation_id_encrypted)
+		logger.info(amount_paid)
+		logger.info(order_status)
 
 		#Booking through Website - Order Creation
 		if order_status == 'CUSTOMER_BOOKING' :
 			customer_cart = CustomerCart.objects.prefetch_related(Prefetch('cart_service',queryset=CartService.objects.filter(is_active=True).prefetch_related(Prefetch('cart_service_floor',queryset=CartServiceFloor.objects.all(),to_attr='cart_service_floors')),to_attr='cart_services'),Prefetch('cart_schedule',queryset=CartSchedule.objects.filter(is_active=True),to_attr='cart_schedules')).get(id=int(evaluation_id_encrypted))
-			print(customer_cart.total_cost,"totcost")
+			logger.info("customer booking")
 
 			#Evaluation
 			tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
