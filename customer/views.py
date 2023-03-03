@@ -8735,6 +8735,32 @@ class CartAPI(APIView):
 				cart.total_cost = float(cart.total_cost)+float(total_cost)
 				cart.save()
 
+				#updating promocode amount and final cost
+				if cart.promocode:
+					promocode = Promocode.objects.filter(promocode=cart.promocode,is_active=True).first()
+					
+					#checking if promocode usage count is completed or date expired
+					if promocode.total_usage == promocode.total_used or promocode.expiry_date <= date.today() :
+						response_dict['message'] = 'PromoCode Expired'
+					else:
+						if promocode.percentage:
+							percentage = promocode.percentage
+							cart_amount = cart.total_cost
+							promocode_amount = float(promocode.percentage/100) * float(cart_amount)
+
+							if promocode.percentage_upto_price and promocode_amount > promocode.percentage_upto_price:
+								promocode_amount = promocode.percentage_upto_price
+
+						elif promocode.price:
+							promocode_amount = promocode.price
+
+						else:
+							promocode_amount = 0
+
+						cart.promocode_amount = promocode_amount
+						cart.final_cost = 0 if float(promocode_amount) >= float(cart.total_cost) else float(cart.total_cost)-float(promocode_amount)
+						cart.save()
+
 				response_dict['success']  = True				
 
 			else:
@@ -8797,6 +8823,32 @@ class CartAPI(APIView):
 
 				cart.total_cost = float(cart.total_cost) - float(service_cost)
 				cart.save()
+
+				#updating promocode amount and final cost
+				if cart.promocode:
+					promocode = Promocode.objects.filter(promocode=cart.promocode,is_active=True).first()
+					
+					#checking if promocode usage count is completed or date expired
+					if promocode.total_usage == promocode.total_used or promocode.expiry_date <= date.today() :
+						response_dict['message'] = 'PromoCode Expired'
+					else:
+						if promocode.percentage:
+							percentage = promocode.percentage
+							cart_amount = cart.total_cost
+							promocode_amount = float(promocode.percentage/100) * float(cart_amount)
+
+							if promocode.percentage_upto_price and promocode_amount > promocode.percentage_upto_price:
+								promocode_amount = promocode.percentage_upto_price
+
+						elif promocode.price:
+							promocode_amount = promocode.price
+
+						else:
+							promocode_amount = 0
+
+						cart.promocode_amount = promocode_amount
+						cart.final_cost = 0 if float(promocode_amount) >= float(cart.total_cost) else float(cart.total_cost)-float(promocode_amount)
+						cart.save()
 
 				response_dict['success']  = True
 			except:
