@@ -980,6 +980,13 @@ class PaymentResponseDebit(View):
 
 			order       = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,invoice_no=new_invoice_no,order_status='APPROVED_BY_CLIENT',total_amount=customer_cart.final_cost,remining_amount=customer_cart.final_cost)
 
+			if amount_paid == 0:
+				order.amount_paid       = 0
+				order.remining_amount   = 0			
+				order.payment_status         = 'COMPLETED'
+				order.payment_completed_date = timezone.now()
+				order.save()
+
 			customer_address = Address.objects.get( id=int(request.GET.get('udf5')) )
 			
 			#Evaluation_details
