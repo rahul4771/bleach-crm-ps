@@ -8623,11 +8623,11 @@ class CartAPI(APIView):
 			
 			if promocode.percentage:
 				if promocode.percentage_upto_price:
-					response_dict['promocode_notes'] = str(cart.promocode_amount+' KD ('+promocode.percentage+'% upto '+promocode.percentage_upto_price+' KD)')
+					response_dict['promocode_notes'] = str(cart.promocode_amount)+' KD ('+str(promocode.percentage)+'% upto '+str(promocode.percentage_upto_price)+' KD)'
 				else:
-					response_dict['promocode_notes'] = str(cart.promocode_amount+' KD ('+promocode.percentage+'% )')
+					response_dict['promocode_notes'] = str(cart.promocode_amount)+' KD ('+str(promocode.percentage)+'% )'
 			else:
-				response_dict['promocode_notes'] = str(cart.promocode_amount+' KD')
+				response_dict['promocode_notes'] = str(cart.promocode_amount)+' KD'
 
 		response_dict['success'] = True
 		response_dict['data'] = cart_services
