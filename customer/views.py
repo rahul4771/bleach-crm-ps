@@ -8620,7 +8620,14 @@ class CartAPI(APIView):
 
 		if cart.promocode:
 			promocode = Promocode.objects.filter(promocode=cart.promocode,is_active=True).first()
-			response_dict['promocode_notes'] = cart.promocode_amount if promocode.price elif promocode.percentage_upto_price str(cart.promocode_amount+' ('+promocode.percentage+'% upto '+promocode.percentage_upto_price+')') else str(cart.promocode_amount+' ('+promocode.percentage+'% )')
+			
+			if promocode.percentage:
+				if promocode.percentage_upto_price:
+					response_dict['promocode_notes'] = str(cart.promocode_amount+' ('+promocode.percentage+'% upto '+promocode.percentage_upto_price+')')
+				else:
+					response_dict['promocode_notes'] = str(cart.promocode_amount+' ('+promocode.percentage+'% )')
+			else:
+				response_dict['promocode_notes'] = cart.promocode_amount
 
 		response_dict['success'] = True
 		response_dict['data'] = cart_services
