@@ -136,7 +136,6 @@ LOGGING = {
         'file': {
             'class': 'logging.FileHandler',
             'filename': os.path.join(BASE_DIR,'log/debugbooking.log'),
-            'formatter': 'verbose'
         },
     },
     'loggers': {
