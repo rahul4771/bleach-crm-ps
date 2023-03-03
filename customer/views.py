@@ -929,11 +929,13 @@ class PaymentResponseDebit(View):
 		payment_mode      = request.GET.get("udf2")
 		order_status      = request.GET.get("udf3")
 
+		print(evaluation_id_encrypted,amount_paid,order_status,"testdat")
+
 		#Booking through Website - Order Creation
 		if order_status == 'CUSTOMER_BOOKING' :
 			customer_cart = CustomerCart.objects.prefetch_related(Prefetch('cart_service',queryset=CartService.objects.filter(is_active=True).prefetch_related(Prefetch('cart_service_floor',queryset=CartServiceFloor.objects.all(),to_attr='cart_service_floors')),to_attr='cart_services'),Prefetch('cart_schedule',queryset=CartSchedule.objects.filter(is_active=True),to_attr='cart_schedules')).get(id=int(evaluation_id_encrypted))
 			print(customer_cart.total_cost,"totcost")
-			
+
 			#Evaluation
 			tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
 			current_blc_starting = int(str(timezone.now().year)+str(timezone.now().month).zfill(2))				
