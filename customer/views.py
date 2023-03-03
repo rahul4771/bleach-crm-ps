@@ -927,7 +927,7 @@ class PaymentResponseDebit(View):
 		evaluation_id = 'BLC'+evaluation_id_encrypted[0:11]
 		user_name     =  evaluation_id_encrypted[11:]
 
-		c       = float(request.GET.get("amt"))
+		amount_paid       = float(request.GET.get("amt"))
 		payment_result    = request.GET.get("result")
 		payment_mode      = request.GET.get("udf2")
 		order_status      = request.GET.get("udf3")
