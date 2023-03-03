@@ -8608,9 +8608,9 @@ class CartAPI(APIView):
 		# cart.final_cost = round(float(cart.total_cost) - float(discount_amount if discount_amount <= 75 else 75),3)
 		# cart.save()
 		
-		# cart.cart_discount = 0
-		# cart.final_cost = float(cart.total_cost)
-		# cart.save()
+		cart.cart_discount = 0
+		cart.final_cost = float(cart.total_cost)-float(cart.promocode_amount)
+		cart.save()
 
 		services = CartService.objects.filter(cart=cart)
 
