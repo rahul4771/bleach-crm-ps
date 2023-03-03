@@ -8628,6 +8628,7 @@ class CartAPI(APIView):
 		response_dict['is_scheduled'] = cart.is_scheduled
 		response_dict['discount_amount'] = cart.cart_discount
 		response_dict['cart_final_cost'] = cart.final_cost
+		response_dict['promocode'] = cart.promocode if cart.promocode else None
 
 		return Response(response_dict,HTTP_200_OK)
 
@@ -8647,36 +8648,43 @@ class CartAPI(APIView):
 
 		#APPLY PROMOCODE TO CART TOTAL
 		if action == 'apply_promocode':
-			# try:
-			promocode = Promocode.objects.filter(promocode=request.data.get('promo_code'),is_active=True).first()
-			
-			#checking if promocode usage count is completed or date expired
-			if promocode.total_usage == promocode.total_used or promocode.expiry_date <= date.today() :
-				response_dict['message'] = 'PromoCode Expired'
-			else:
-				if promocode.percentage:
-					percentage = promocode.percentage
-					cart_amount = cart.total_cost
-					promocode_amount = float(promocode.percentage/100) * float(cart_amount)
-
-					if promocode.percentage_upto_price and promocode_amount > promocode.percentage_upto_price:
-						promocode_amount = promocode.percentage_upto_price
-
-				elif promocode.price:
-					promocode_amount = promocode.price
-
+			try:
+				promocode = Promocode.objects.filter(promocode=request.data.get('promo_code'),is_active=True).first()
+				
+				#checking if promocode usage count is completed or date expired
+				if promocode.total_usage == promocode.total_used or promocode.expiry_date <= date.today() :
+					response_dict['message'] = 'PromoCode Expired'
 				else:
-					promocode_amount = 0
+					if promocode.percentage:
+						percentage = promocode.percentage
+						cart_amount = cart.total_cost
+						promocode_amount = float(promocode.percentage/100) * float(cart_amount)
 
-				cart.cart_discount = 0
-				cart.promocode = request.data.get('promo_code')
-				cart.promocode_amount = promocode_amount
-				cart.final_cost = 0 if float(promocode_amount) >= float(cart.total_cost) else float(cart.total_cost)-float(promocode_amount)
-				cart.save()
-				response_dict['message'] = 'PromoCode Applied'
-				response_dict['success']  = True
-			# except:
-			# 	response_dict['message'] = 'PromoCode Does Not Exist'
+						if promocode.percentage_upto_price and promocode_amount > promocode.percentage_upto_price:
+							promocode_amount = promocode.percentage_upto_price
+
+					elif promocode.price:
+						promocode_amount = promocode.price
+
+					else:
+						promocode_amount = 0
+
+					cart.cart_discount = 0
+					cart.promocode = request.data.get('promo_code')
+					cart.promocode_amount = promocode_amount
+					cart.final_cost = 0 if float(promocode_amount) >= float(cart.total_cost) else float(cart.total_cost)-float(promocode_amount)
+					cart.save()
+					response_dict['message'] = 'PromoCode Applied'
+					response_dict['success']  = True
+			except:
+				response_dict['message'] = 'PromoCode Does Not Exist'
+
+		#remove promocode
+		if action == 'remove_promocode':
+			cart.promocode = None
+			cart.final_cost += float(cart.promocode_amount)
+			cart.promocode_amount = 0
+			cart.save()
 
 		#ADDING A NEW SERVICE
 		if action == 'add_service':
