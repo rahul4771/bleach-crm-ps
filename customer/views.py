@@ -8725,8 +8725,13 @@ class CartAPI(APIView):
 
 					cart.cart_discount = 0
 					cart.promocode = request.data.get('promo_code')
-					cart.promocode_amount = float(promocode_amount)-float(cart.total_cost) if float(promocode_amount) >= float(cart.total_cost) else float(promocode_amount)
-					cart.final_cost = 0 if float(promocode_amount) >= float(cart.total_cost) else float(cart.total_cost)-float(promocode_amount)
+
+					if float(promocode_amount) >= float(cart.total_cost):
+						cart.promocode_amount = float(cart.total_cost)
+						cart.final_cost = 0
+					else:
+						cart.promocode_amount = float(promocode_amount)
+						cart.final_cost = float(cart.total_cost)-float(promocode_amount)
 					cart.save()
 					response_dict['message'] = 'PromoCode Applied'
 					response_dict['success']  = True
@@ -8811,8 +8816,13 @@ class CartAPI(APIView):
 						else:
 							promocode_amount = 0
 
-						cart.promocode_amount = promocode_amount
-						cart.final_cost = 0 if float(promocode_amount) >= float(cart.total_cost) else float(cart.total_cost)-float(promocode_amount)
+						if float(promocode_amount) >= float(cart.total_cost):
+							cart.promocode_amount = float(cart.total_cost)
+							cart.final_cost = 0
+						else:
+							cart.promocode_amount = float(promocode_amount)
+							cart.final_cost = float(cart.total_cost)-float(promocode_amount)
+
 						cart.save()
 
 				response_dict['success']  = True				
@@ -8899,9 +8909,14 @@ class CartAPI(APIView):
 
 						else:
 							promocode_amount = 0
+							
+						if float(promocode_amount) >= float(cart.total_cost):
+							cart.promocode_amount = float(cart.total_cost)
+							cart.final_cost = 0
+						else:
+							cart.promocode_amount = float(promocode_amount)
+							cart.final_cost = float(cart.total_cost)-float(promocode_amount)
 
-						cart.promocode_amount = promocode_amount
-						cart.final_cost = 0 if float(promocode_amount) >= float(cart.total_cost) else float(cart.total_cost)-float(promocode_amount)
 						cart.save()
 
 				response_dict['success']  = True
