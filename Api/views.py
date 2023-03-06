@@ -6536,21 +6536,31 @@ class SmstestAPI(APIView):
 	def post(self,request):
 		response_dict = {}
 
-		customer_mobile = request.data.get('customer_mobile')
-		customer_otp = request.data.get('customer_otp')
+		# customer_mobile = request.data.get('customer_mobile')
+		# customer_otp = request.data.get('customer_otp')
 		
 		#otp sms
-		url = "https://smsapi.future-club.com/fccsms.aspx"
+		# url = "https://smsapi.future-club.com/fccsms.aspx"
 
-		message = "Dear Customer, your OTP for login is "+str(customer_otp)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+		# message = "Dear Customer, your OTP for login is "+str(customer_otp)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 
-		querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+customer_mobile+"","M":message,"IID":"1468","L":"L"}
+		# querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+customer_mobile+"","M":message,"IID":"1468","L":"L"}
+
+		# headers = {
+		# 	'cache-control': "no-cache"
+		# }
+
+		url = "https://smsapi.future-club.com/mqsmsapi/fccsmsmq.aspx"
+
+		message = "Dear Customer, your OTP for login is. For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+
+		querystring = {"UID":"userSlots","S":"SLOTS","G":"96520030045","M":message,"IID":"2356","L":"L"}
 
 		headers = {
 			'cache-control': "no-cache"
 		}
 
-		response = requests.request("GET", url, headers=headers, params=querystring)
+		response = requests.request("GET", url, headers=headers, params=querystring,verify=False)
 		
 		response_dict['sms_response'] = response.text
 		
