@@ -6473,6 +6473,7 @@ class CustomerBookedOrderDetailsAPI(APIView):
 			'feedbacks' : feedbacks,
 			'order_data' : OrderSerializer(order,many=False,read_only=True).data,
 			'discount' : order.evaluation.discount,
+			'gross_amount':order.evaluation.estimated_cost,
 			'net_amount' : order.evaluation.total_cost,
 			'quotationURL' : 'paw'+order.order_no[3:]+''+order.evaluation.customer.username
 			
