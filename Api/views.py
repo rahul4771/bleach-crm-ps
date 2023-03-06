@@ -6554,7 +6554,7 @@ class SmstestAPI(APIView):
 
 		message = "Dear Customer, your OTP for login is. For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 
-		querystring = {"UID":"userSlots","S":"SLOTS","G":"96520030045","M":message,"IID":"2356","L":"L"}
+		querystring = {"UID":"userSlots","S":"SLOTS","G":"96520030045","M":message,"L":"L"}
 
 		headers = {
 			'cache-control': "no-cache"
