@@ -15,8 +15,8 @@
         </div>
         <div class="loader"></div>
     </div>   
- <!-- <form id="payment_confirmation" action="https://secureacceptance.cybersource.com/pay" method="post"/> -->
-<form id="payment_confirmation" action="https://testsecureacceptance.cybersource.com/pay" method="post"/>
+ <form id="payment_confirmation" action="https://secureacceptance.cybersource.com/pay" method="post"/>
+<!-- <form id="payment_confirmation" action="https://testsecureacceptance.cybersource.com/pay" method="post"/> -->
 
 <?php
     foreach($_REQUEST as $name => $value) {
