@@ -17,7 +17,7 @@
 <!-- <form id="payment_form" action="https://testpay.bleach-kw.com/creditcard/payment_confirmation.php" method="post"> -->
 <form id="payment_form" action="https://payment.bleachkw.com/creditcard/payment_confirmation.php" method="post">
     <!-- live credentials -->
-    <input type="hidden" name="access_key" value="40f69905769b3935b51533269564bfe2">
+    <input type="hidden" name="access_key" value="ba5cdc94a7e03d1a88a39e60cac87c88">
     <input type="hidden" name="profile_id" value="32FF6F1C-41F3-4CF1-A91C-A1039EF0845C">
     <!-- live credentials -->
 
