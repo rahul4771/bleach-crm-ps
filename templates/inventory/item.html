@@ -385,7 +385,7 @@
                         <div class="d-flex">
                             <div class="mb-10 inv-item-head-sub-2" >Attributes</div>
                             <div class="edit-div" style="position: relative;margin-left: 20px;">
-                                {% if request.user.user_type != 'INVUSER' %}
+                                {% if request.user.user_type != 'INVUSER' or request.user.user_type != 'STOCKCONTROLLER' %}
                                 <img id="id_editButton" onclick="editItemDetials()" class="inv-edit-img"
                                 src="{% static 'files/icons/edit.png' %}">
                                 {% endif %}
@@ -1368,7 +1368,6 @@
 
     </div>
 
-    {% if request.user.user_type != 'STOCKCONTROLLER' %}
     <div id="editExtra" class="inv-sidedrawer">
 
         <div class="inv-sidedrawer-inner">
@@ -1445,7 +1444,6 @@
                         <button  onclick="closeExtraEdit()" class="view-button">Cancel</button>
         </div>
     </div>
-    {% endif %}
 
     <div class="modal fade" id="imgModel" role="dialog">
         <div class="modal-dialog cancel-model " style="border: none !important;" role="document">
