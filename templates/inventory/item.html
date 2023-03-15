@@ -110,7 +110,7 @@
               
                 <form method="POST" id="itemdetailsform" action="">{% csrf_token %}
                 <input type="hidden" name="action" value="edit_item_details" />
-                {% if request.user.user_type != 'INVUSER' %}
+                {% if request.user.user_type != 'INVUSER' or request.user.user_type != 'STOCKCONTROLLER' %}
                 <div class="row">
                   <div class="col-md-12" style="position: relative;">
                     <div class="d-flex">
@@ -419,7 +419,7 @@
                        
                        
                             <div class="row m-0">
-                                {% if inventory_item.item_type == 'ASSETS' and request.user.user_type != 'INVUSER' %}
+                                {% if inventory_item.item_type == 'ASSETS' and request.user.user_type != 'INVUSER' or request.user.user_type != 'STOCKCONTROLLER' %}
                                 <div class="col-md-12">
                                     <div class="mb-10 inv-item-head-sub-2 d-flex" >
                                         Accessories
@@ -1367,6 +1367,8 @@
         
 
     </div>
+
+    {% if request.user.user_type != 'STOCKCONTROLLER' %}
     <div id="editExtra" class="inv-sidedrawer">
 
         <div class="inv-sidedrawer-inner">
@@ -1443,6 +1445,7 @@
                         <button  onclick="closeExtraEdit()" class="view-button">Cancel</button>
         </div>
     </div>
+    {% endif %}
 
     <div class="modal fade" id="imgModel" role="dialog">
         <div class="modal-dialog cancel-model " style="border: none !important;" role="document">
