@@ -98,6 +98,7 @@ class Store(models.Model):
     address             = models.TextField(max_length=1000,blank=False,null=False)
     contact             = models.CharField(max_length=50,blank=False,null=False)
     status              = models.BooleanField(default=True,blank=False,null=False)
+    is_default          = models.BooleanField(default=False,blank=False,null=False)
 
     def __unicode__(self):
         return str(self.store_name)

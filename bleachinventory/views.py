@@ -1983,8 +1983,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 		try:
 			store = Store.objects.get(id=int(store_id))
 		except:
-			store = Store.objects.get(id=1)
-			# store = Store.objects.get(store_name='Alrai')
+			store = Store.objects.filter(is_default=True).first()
 		
 		if followup:
 			checkout_visit = FollowUpScheduler.objects.select_related('follow_up__investigation__order_schedule__order_scheduler_book').prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team'),Prefetch('follow_up__investigation__order_schedule__order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections')).get(id=int(visit_id))
