@@ -445,7 +445,7 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" type="button" onclick="formvalidation()">Submit</button>
+            <button class="sent-button" type="button" id="po_add_unit_btn" onclick="formvalidation()">Submit</button>
             </form>
                         <button data-dismiss="modal" onclick="closeNavAddBundle()" class="view-button">Cancel</button>
         </div>
@@ -510,7 +510,7 @@
              
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" type="submit" >Submit</button>
+            <button class="sent-button" id="po_add_qty_btn" type="submit" >Submit</button>
             <button type="button" data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
         </div>
     </div>
@@ -769,6 +769,15 @@ $('#id_no_expiry').click(function(){
     }
 })
 
+const qtysubmitBtn = document.getElementById("po_add_qty_btn");
+qtysubmitBtn.addEventListener("click", () => {
+    qtysubmitBtn.disabled = true;
+});
+
+const unitsubmitBtn = document.getElementById("po_add_unit_btn");
+unitsubmitBtn.addEventListener("click", () => {
+    unitsubmitBtn.disabled = true;
+});
 
 function closeProductShow(d){
         console.log(d);
