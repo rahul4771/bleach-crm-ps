@@ -473,7 +473,7 @@
             </div>
             <hr>
 
-            <form method="POST" action="">{% csrf_token %}
+            <form id="add_qty_form" method="POST" action="">{% csrf_token %}
             <input type="hidden" name="action" id="order_item_action" value="add_quantity_to_inventory" />
                        
             <div class="row mt-20">
@@ -510,7 +510,7 @@
              
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" id="po_add_qty_btn" type="submit" >Submit</button>
+            <button class="sent-button" id="po_add_qty_btn" onclick="addqtyformvalidation()" >Submit</button>
             <button type="button" data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
         </div>
     </div>
@@ -769,16 +769,6 @@ $('#id_no_expiry').click(function(){
     }
 })
 
-const qtysubmitBtn = document.getElementById("po_add_qty_btn");
-qtysubmitBtn.addEventListener("click", () => {
-    qtysubmitBtn.disabled = true;
-});
-
-const unitsubmitBtn = document.getElementById("po_add_unit_btn");
-unitsubmitBtn.addEventListener("click", () => {
-    unitsubmitBtn.disabled = true;
-});
-
 function closeProductShow(d){
         console.log(d);
         var proId = $(d).attr("data-pro")
@@ -896,8 +886,19 @@ function formvalidation(){
         }else if ($('input[name=unit_price]').val() == ''){
             $('input[name=unit_price]').addClass('red-border-input');
         }else{
+            document.getElementById("po_add_unit_btn").disabled = true;
             $('#myform').submit();
         }
+}
+
+function addqtyformvalidation(){
+
+    if (document.getElementById("store-name").value.trim() === ""){
+        document.getElementById("store-name").classList.add("red-border-input");
+    }else{
+        document.getElementById("po_add_qty_btn").disabled = true;
+        $('#add_qty_form').submit();
+    }
 }
 
 function set_params_go(args)
