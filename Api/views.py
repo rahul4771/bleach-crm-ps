@@ -2218,8 +2218,10 @@ class DailySalesBreakDownAPI(APIView):
 
 			if schedule.evaluation_details.evaluator:
 				salesman = schedule.evaluation_details.evaluator.name
-			else:
+			elif schedule.evaluation_details.evaluator == None and schedule.order.evaluation.call_attender:
 				salesman = schedule.order.evaluation.call_attender.name
+			else:
+				salesman = 'CUSTOMER'
 
 			schedule_dict = {
 				'order_no' : schedule.order.order_no,
