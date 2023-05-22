@@ -1030,7 +1030,7 @@ class PaymentResponseDebit(View):
 											section_net_cost=cart_service.total_cost,sectiononly_cost=cart_service.total_cost,sectiononly_net_cost=cart_service.total_cost,section_cleanings=len(customer_cart.cart_schedules))
 				
 				if cart_service.addon_name:
-					evaluation_section_addon = EvaluationSectionAddons.objects.create(evaluation_section=evaluation_section,name=cart_service.addon_name,addon_cost=cart_service.addon_price,quantity=1,addon_net_cost=cart_service.addon_price,size=cart_service.addon_size)
+					EvaluationSectionAddons.objects.create(evaluation_section=evaluation_section,name=cart_service.addon_name,addon_cost=cart_service.addon_price,quantity=1,addon_net_cost=cart_service.addon_price,size=cart_service.addon_size)
 				
 				cleaning_cost_sum          = 0
 				total_cleanings            = len(customer_cart.cart_schedules)
@@ -1043,10 +1043,10 @@ class PaymentResponseDebit(View):
 					#schedule cleaning cost calculation
 					if int(count) == int(total_cleanings):
 						cleaning_cost           = round(evaluation_book.total_cost-cleaning_cost_sum,2)
-						cleaning_cost_sum                = 0
+						cleaning_cost_sum       = 0
 					else:
 						cleaning_cost           = round(evaluation_book.total_cost/total_cleanings,2)
-						cleaning_cost_sum                += cleaning_cost
+						cleaning_cost_sum       += float(cleaning_cost)
 
 					cart_schedules.append(OrderScheduler(order=order,evaluation_details=evaluation_details,order_scheduler_book=evaluation_book,start_at=cart_schedule.start_at,end_at=cart_schedule.end_at,customer_address=customer_address,status='CONFIRMED',no_of_cleaners=cart_schedule.no_of_cleaners,cleaning_hours=cart_schedule.cleaning_hours,hourly_cleaning_duration=cart_schedule.hourly_cleaning_duration,cleaning_cost=cleaning_cost))
 
