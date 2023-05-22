@@ -16,8 +16,9 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
 
         # bookings = Evaluation.objects.filter(is_active=True,booking_evaluation__is_active=True,created__gte=datetime.strptime('01-12-2022','%d-%m-%Y').replace(tzinfo=pytz.utc))
-        schedules = OrderScheduler.objects.filter(order__order_no='BLC20230510001').only('cleaning_cost')
-        print(schedules,"scheds")
+        schedules = OrderScheduler.objects.filter(order__order_no='BLC20230510001').only('order_scheduler_book','cleaning_cost')
+        for schedule in schedules:
+            print(schedule.order_scheduler_book.service_type.name,schedule.order_scheduler_book.total_cost,schedule.cleaning_cost,"scheds")
         
 
         
