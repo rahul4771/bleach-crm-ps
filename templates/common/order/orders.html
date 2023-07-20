@@ -331,8 +331,10 @@
           <div  class="d-flex "><div class="round-marker completed-status-bg"></div><span>Completed</span></div>
           {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
           <div  class="d-flex "><div class="round-marker cancel-in-progress-status-bg"></div><span>Cancel in Progress</span></div>
-          {% else %}
+          {% elif order.order_status == 'ORDER_CANCELLED' %}
           <div  class="d-flex "><div class="round-marker cancelled-status-bg"></div><span>Order Cancelled</span></div>
+          {% else %}
+          <div  class="d-flex "><div class="round-marker"></div><span></span></div>
           {% endif %}
         {% else %}
           {% if order.order_status == 'CANCEL_IN_PROGRESS' %}

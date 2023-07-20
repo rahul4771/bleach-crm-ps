@@ -1531,8 +1531,10 @@
                     <div class="order-status completed-status-bg">Order closed</div>
                     {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
                     <div class="order-status cancel-in-progress-status-bg">Cancel in progress</div>
-                    {% else %}
+                    {% elif order.order_status == 'ORDER_CANCELLED' %}
                     <div class="order-status cancelled-status-bg">Cancelled</div>
+                    {% else %}
+                    <div class="order-status"></div>
                     {% endif %}
                 {% else %}
                     {% if order.order_status == 'CANCEL_IN_PROGRESS' %}
