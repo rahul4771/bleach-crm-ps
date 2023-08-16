@@ -390,7 +390,7 @@ let app = new Vue({
         //     this.chair_size = [];
         //     this.sofa_size = [];
         //     for(var i=0;i<this.service_productivity.length;i++){
-        //       if(this.service_productivity[i].upholstery_type == "CHAIR"){
+        //       if(this.service_productivity[i].upholstery_type == "CURTAIN"){
         //         this.chair_size.push(this.service_productivity[i]);
         //       }
         //       if(this.service_productivity[i].upholstery_type == "SOFA"){
@@ -398,7 +398,7 @@ let app = new Vue({
         //         this.sofa_size.push(this.service_productivity[i]);
         //       }
         //     }
-        //     if(this.editSectionData.upholstery_type == 'CHAIR'){
+        //     if(this.editSectionData.upholstery_type == 'CURTAIN'){
         //       for(var i =0;i<this.chair_size.length; i++){
         //         if(this.chair_size[i].name == size){
         //           this.editSectionData.size = this.chair_size[i];
@@ -475,7 +475,7 @@ let app = new Vue({
         this.cleaningsections[this.edit_section_active_index].section_name = this.editSectionData.section_name;
         this.cleaningsections[this.edit_section_active_index].age = this.editSectionData.age;
         // if(this.service_type =='Upholstery Cleaning'){
-        //   if(this.editSectionData.upholstery_type == 'CHAIR'){
+        //   if(this.editSectionData.upholstery_type == 'CURTAIN'){
         //     this.cleaningsections[this.edit_section_active_index].size = this.editSectionData.size.name;
         //   }
         //   if(this.editSectionData.upholstery_type == 'SOFA'){

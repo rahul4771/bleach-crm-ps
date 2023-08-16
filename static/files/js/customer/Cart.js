@@ -335,7 +335,7 @@ $(document).ready(function(){
     },
     color: ["Blue", "Yellow", "Orange", "Red", "Black", "White"],
     material: ["Material 1", "Material 2", "Material 3", "Material 4"],
-    upholsteryType: ["SOFA", "CHAIR"],
+    upholsteryType: ["SOFA", "CURTAIN"],
     upholsterySize1: ["Small", "Medium", "Large", "Xtra Large"],
     upholsterySize2: ["Small", "Medium", "Large"],
     upholsterySize3: ["Small", "Medium", "Large"],
@@ -2240,7 +2240,7 @@ $(document).ready(function(){
                   if(this.multiServicesBill[j].bill[i].section.type=='SOFA'){
                     this.sofa_size=this.sofa_size+ parseInt(this.multiServicesBill[j].bill[i].section.size.max_size)
                   }
-                  if(this.multiServicesBill[j].bill[i].section.type=='CHAIR'){
+                  if(this.multiServicesBill[j].bill[i].section.type=='CURTAIN'){
                     this.chair_size=this.chair_size+ parseInt(this.multiServicesBill[j].bill[i].section.size.max_size)
                   }
             }
@@ -2809,11 +2809,11 @@ $(document).ready(function(){
       var max_size_val=[]
       if (this.serviceType == "Upholstery Cleaning") {
         console.log("service test passed");
-       /* if (this.otherService.type == "CHAIR") {
+       /* if (this.otherService.type == "CURTAIN") {
           for (var item = 0; item < this.sizeData.length; item++) {
             console.log("type test passed");
            
-            if (this.sizeData[item].upholstery_type == "CHAIR") {
+            if (this.sizeData[item].upholstery_type == "CURTAIN") {
                max_size_data.push(this.sizeData[item].max_size)
                max_size_val.push(this.sizeData[item])
               if (
@@ -2842,7 +2842,7 @@ $(document).ready(function(){
                   cost: current_cost,
                   max_size:size,
                   min_size:size,
-                  upholstery_type: "CHAIR",
+                  upholstery_type: "CURTAIN",
                   combinedSize:size+' Seater'
   
                 }
@@ -3823,7 +3823,7 @@ $(document).ready(function(){
                 chair_productivity = data["sofa_perhour_cleaning"];
              for(var b=0;b<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;b++){
                
-               if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].upholstery_type=='CHAIR'){
+               if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].upholstery_type=='CURTAIN'){
                
                
                  chair_size=chair_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size.max_size)   
@@ -4770,13 +4770,13 @@ async rearrangeSize(){
              //this.sections[j].size=this.this.sections[j].size.split(" ")[0]
              
            }
-           else if(this.multiServicesBill[i].bill[j].upholstery_type=='CHAIR'){
-             type="CHAIR"
-             this.multiServicesBill[i].bill[j].upholstery_type="CHAIR"
+           else if(this.multiServicesBill[i].bill[j].upholstery_type=='CURTAIN'){
+             type="CURTAIN"
+             this.multiServicesBill[i].bill[j].upholstery_type="CURTAIN"
              for(var p in productivity){
         
       
-              if(productivity[p].name==this.multiServicesBill[i].bill[j].size && productivity[p].upholstery_type=='CHAIR'){
+              if(productivity[p].name==this.multiServicesBill[i].bill[j].size && productivity[p].upholstery_type=='CURTAIN'){
                 this.multiServicesBill[i].bill[j].size=productivity[p]
               }
             

@@ -3133,7 +3133,7 @@ class GetServiceSizePrice(APIView):
 				service_price_range_dict['upholstery_type']     = service_price_range.upholstery_type
 				if service_price_range.upholstery_type == 'SOFA':
 					service_price_range_dict['unit_price'] = service_price_range.unit_price
-				elif service_price_range.upholstery_type == 'CHAIR':
+				elif service_price_range.upholstery_type == 'CURTAIN':
 					service_price_range_dict['unit_price'] = service_price_range.unit_price
 				else:
 					pass

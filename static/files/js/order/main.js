@@ -947,7 +947,7 @@ const app = new Vue({
           break
         }
        }
-       else if(this.service_items[i].upholstery_type=='CHAIR'){
+       else if(this.service_items[i].upholstery_type=='CURTAIN'){
         this.sizeissue=false
        }
        else{
@@ -2673,7 +2673,7 @@ setTimeout(function() {
             for(var i in size){
               this.service_size.push(size[i])
               size[i].combined_size=size[i].name+' ( '+size[i].min_size+' sq.m - '+size[i].max_size+' sq.m )'
-              if(size[i].upholstery_type=='CHAIR'){
+              if(size[i].upholstery_type=='CURTAIN'){
                 
 
                 this.chair_size.push(size[i])
@@ -2739,13 +2739,13 @@ setTimeout(function() {
                 this.sections[j].upholstery_type="SOFA"
               }
               else{
-                type="CHAIR"
-                this.sections[j].upholstery_type="CHAIR"
+                type="CURTAIN"
+                this.sections[j].upholstery_type="CURTAIN"
               }
               console.log("type is"+type)
-              if(type=="CHAIR"){
+              if(type=="CURTAIN"){
                 for(var i=0;i<this.service_size.length;i++){
-                  if(this.service_size[i].upholstery_type=="CHAIR" && this.sections[j].size==this.service_size[i].name){
+                  if(this.service_size[i].upholstery_type=="CURTAIN" && this.sections[j].size==this.service_size[i].name){
                     
                     this.sections[j].size=this.service_size[i]
                    

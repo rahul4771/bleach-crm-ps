@@ -1274,7 +1274,7 @@ width="1000"
               v-model="otherService.size"
             ></v-text-field>
              <v-select
-                 v-if="otherService.type == 'CHAIR'"
+                 v-if="otherService.type == 'CURTAIN'"
                   :items="upholsterySize"
                   item-text="combinedSize"
                   return-object
@@ -2819,7 +2819,7 @@ Fill all the details of the Buildings  to proceed
                           <v-text-field v-if="otherService.type == 'SOFA'" label="Size ( Seaters )" type="number"
                             :rules="[v => !!v || 'Size is required']" required v-model="otherService.size">
                           </v-text-field>
-                          <v-select v-if="otherService.type == 'CHAIR'" :items="upholsterySize" item-text="combinedSize"
+                          <v-select v-if="otherService.type == 'CURTAIN'" :items="upholsterySize" item-text="combinedSize"
                             return-object label="Size" :rules="[v => !!v || 'Size is required']" required
                             v-model="otherService.size" :attach="true"></v-select>
 

@@ -123,7 +123,7 @@
                                   <div class="productivity-card-sub">
                                         {% for service_productivity in service_productivities %}
                                         {% if service_productivity.service_type == service_type %}
-                                        {% if not service_productivity.is_newkitchen and not service_productivity.is_cabinet and not service_productivity.is_highprice_facade and not service_productivity.is_highprice_window and service_productivity.upholstery_type != 'CHAIR' and service_productivity.upholstery_type != 'CURTAIN' %}
+                                        {% if not service_productivity.is_newkitchen and not service_productivity.is_cabinet and not service_productivity.is_highprice_facade and not service_productivity.is_highprice_window and service_productivity.upholstery_type != 'CURTAIN' and service_productivity.upholstery_type != 'CURTAIN' %}
                                         <div class="productivity-sub-top" id="productivityhead_{{service_type.id}}1">
                                             <div class="productivity-sub-top-item-left">
                                               Productivity
@@ -143,7 +143,7 @@
                                         
                                         {% for service_productivity in service_productivities %}
                                         {% if service_productivity.service_type == service_type %}
-                                        {% if not service_price_range.is_cabinet and service_productivity.is_newkitchen or service_productivity.is_highprice_facade or service_productivity.is_highprice_window or service_productivity.upholstery_type == 'CHAIR' %}
+                                        {% if not service_price_range.is_cabinet and service_productivity.is_newkitchen or service_productivity.is_highprice_facade or service_productivity.is_highprice_window or service_productivity.upholstery_type == 'CURTAIN' %}
                                         <div class="productivity-sub-top" id="productivityhead_{{service_type.id}}2" style="display: none;">
                                             <div class="productivity-sub-top-item-left">
                                               Productivity
@@ -208,7 +208,7 @@
                                   <div class="productivity-tab">
                                       <button id="normal_button_id_{{service_type.id}}" class="productivity-tab-item productivity-tab-border"  onclick="viewNormal({{service_type.id}})">{% if service_type.name == 'Upholstery Cleaning' %}Sofa{% elif service_type.name == 'Window Cleaning' %}Old Window{% elif service_type.name == 'Facade Cleaning' %}Old Facade{%elif service_type.name == 'Kitchen Cleaning'%}Old Kitchen{% else %}Normal{% endif %}</button>
                                       {% if service_type.name == 'Upholstery Cleaning' or service_type.name == 'Kitchen Cleaning' or service_type.name == 'Facade Cleaning' or service_type.name == 'Window Cleaning' %}
-                                      <button id="special_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewSpecial({{service_type.id}})">{% if service_type.name == 'Upholstery Cleaning' %}Chair{% elif service_type.name == 'Window Cleaning' %}New Window{% elif service_type.name == 'Facade Cleaning' %}New Facade{%elif service_type.name == 'Kitchen Cleaning'%}New Kitchen{% endif %}</button>
+                                      <button id="special_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewSpecial({{service_type.id}})">{% if service_type.name == 'Upholstery Cleaning' %}Curtain{% elif service_type.name == 'Window Cleaning' %}New Window{% elif service_type.name == 'Facade Cleaning' %}New Facade{%elif service_type.name == 'Kitchen Cleaning'%}New Kitchen{% endif %}</button>
                                       {% endif %}
                                       {% if service_type.name == 'Kitchen Cleaning' %}
                                       <button id="veryspecial_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewVerySpecial({{service_type.id}})">{% if service_type.name == 'Kitchen Cleaning' %}Old Kitchen (with cabinet){% endif %}</button>
@@ -221,7 +221,7 @@
                                   <div id="normal_id_{{service_type.id}}" class="productivity-card-content"> <!--normal-->
                                   {% for service_price_range in service_price_ranges %}
                                   {% if service_price_range.service_type == service_type %}
-                                  {% if not service_price_range.is_newkitchen and not service_price_range.is_cabinet and not service_price_range.is_highprice_facade and not service_price_range.is_highprice_window and service_price_range.upholstery_type != 'CHAIR' and service_price_range.upholstery_type != 'CURTAIN' %}
+                                  {% if not service_price_range.is_newkitchen and not service_price_range.is_cabinet and not service_price_range.is_highprice_facade and not service_price_range.is_highprice_window and service_price_range.upholstery_type != 'CURTAIN' and service_price_range.upholstery_type != 'CURTAIN' %}
                                   <div class="row productivity-card-items">
                                         <div class="col-md-3 productivity-card-items-1">
                                             {{service_price_range.name}}
@@ -250,7 +250,7 @@
                                   <div id="special_id_{{service_type.id}}" class="productivity-card-content none-div"> <!--Special-->
                                   {% for service_price_range in service_price_ranges %}
                                   {% if service_price_range.service_type == service_type %}
-                                  {% if not service_price_range.is_cabinet and service_price_range.is_newkitchen or service_price_range.is_highprice_facade or service_price_range.is_highprice_window or service_price_range.upholstery_type == 'CHAIR' %}
+                                  {% if not service_price_range.is_cabinet and service_price_range.is_newkitchen or service_price_range.is_highprice_facade or service_price_range.is_highprice_window or service_price_range.upholstery_type == 'CURTAIN' %}
                                   <div class="row productivity-card-items">
                                         <div class="col-md-3 productivity-card-items-1">
                                             {{service_price_range.name}}
@@ -531,7 +531,7 @@
                     <label > Upholstery Type</label>
                     <select name="upholstery_type" id="edit_upholstery_type_id" class="textBox model-text-border">
                         <option value="SOFA">SOFA</option>
-                        <option value="CHAIR">CHAIR</option>
+                        <option value="CURTAIN">CURTAIN</option>
                     </select>
                 </div>
 
@@ -611,7 +611,7 @@
                         <label > Upholstery Type</label>
                         <select name="upholstery_type" id="add_upholstery_type_id" class="textBox model-text-border">
                             <option value="SOFA" selected>SOFA</option>
-                            <option value="CHAIR">CHAIR</option>
+                            <option value="CURTAIN">CURTAIN</option>
                         </select>
                     </div>
     

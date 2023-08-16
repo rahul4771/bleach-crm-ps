@@ -964,8 +964,8 @@ class AvailabilityCleaningCallendar(APIView):
 			elif 'Upholstery Cleaning' in service_types:
 				productivities                      = ServiceProductivity.objects.filter(service_type__name__in=service_types)
 				for productivity in productivities:
-					if productivity.upholstery_type == 'CHAIR':
-						response_dict['Chair Cleaning'] = str(hours*float(productivity.perhour_cleaning)*total_cleaners)+' Chairs'
+					if productivity.upholstery_type == 'CURTAIN':
+						response_dict['C Cleaning'] = str(hours*float(productivity.perhour_cleaning)*total_cleaners)+' Curtains'
 					elif productivity.upholstery_type == 'SOFA':
 						response_dict['Sofa Cleaning'] = str(hours*float(productivity.perhour_cleaning)*total_cleaners)+' Sofas'
 			

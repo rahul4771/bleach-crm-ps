@@ -642,7 +642,7 @@
                     v-model="editSectionData.upholstery_type"
                     placeholder="Select Upholstery Type"
                     
-                    :options="['SOFA','CHAIR']"
+                    :options="['SOFA','CURTAIN']"
 
                     :multiple="false"
                     :taggable="false"
@@ -940,7 +940,7 @@
                   
                         
                  </div>
-                 <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning' && editSectionData.upholstery_type=='CHAIR' ">
+                 <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning' && editSectionData.upholstery_type=='CURTAIN' ">
                     
                     <div class=" bold-text common-label required-field"> <label>Size</label></div>
                     <multiselect
