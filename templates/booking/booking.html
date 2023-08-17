@@ -1144,6 +1144,11 @@ width="1000"
             class="col-md-12"
             v-if="serviceType == 'Upholstery Cleaning'"
           >
+          
+          <v-card-title class="headline primary text-white">
+            <% dialogmsg + " " + upholsteryType %>
+          </v-card-title>
+
             <v-select
               :items="upholsteryType"
               label="Select the type of Upholstery"
