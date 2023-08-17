@@ -85,8 +85,8 @@ $ReqAction="action=1";
 Merchant MUST esure that below points in Response URL
 1- Response URL must start with http://
 2- the Response URL SHOULD NOT have any additional paramteres or query string  */
-$ResponseUrl="https://payment.bleachkw.com/GetHandlerResponse.php";
-//  $ResponseUrl="https://testpay.bleach-kw.com/GetHandlerResponse.php";
+// $ResponseUrl="https://payment.bleachkw.com/GetHandlerResponse.php";
+  $ResponseUrl="https://testpay.bleach-kw.com/GetHandlerResponse.php";
 $ReqResponseUrl="responseURL=".$ResponseUrl;
 
 
@@ -96,8 +96,8 @@ Merchant MUST esure that below points in ErrorURL
 2- the error url SHOULD NOT have any additional paramteres or query string
 */ 
 
-$ErrorUrl="https://payment.bleachkw.com/testphp.php";
-//  $ErrorUrl="https://testpay.bleach-kw.com/testphp.php";
+//$ErrorUrl="https://payment.bleachkw.com/testphp.php";
+  $ErrorUrl="https://testpay.bleach-kw.com/testphp.php";
 $ReqErrorUrl="errorURL=".$ErrorUrl;
 
 
@@ -130,8 +130,8 @@ $param=$ReqTranportalId."&".$ReqTranportalPassword."&".$ReqAction."&".$ReqLangid
 	/*Terminal Resource Key is generated while creating terminal, And this the Key that is used for encryting 
 	  the request/response from Merchant To PG and vice Versa*/
 	  
-	$termResourceKey="P287H49DV2GS6E0Z";
-	//  $termResourceKey="81G1ZB54MNW8X3J9";
+	//$termResourceKey="P287H49DV2GS6E0Z";
+	  $termResourceKey="81G1ZB54MNW8X3J9";
 	$param=encryptAES($param,$termResourceKey)."&tranportalId=".$TranportalId."&responseURL=".$ResponseUrl."&errorURL=".$ErrorUrl;
 
 //==============================Encryption LOGIC CODE End=================================================================================
@@ -142,8 +142,8 @@ Now creating a connection and sending request
 Note - In PHP header function is used for redirecting request
 *********UNCOMMENT THE BELOW REDIRECTION CODE TO CONNECT TO EITHER TEST OR PRODUCTION*********
 */
-//  header("Location: https://kpaytest.com.kw/kpg/PaymentHTTP.htm?param=paymentInit"."&trandata=".$param); /* send request and redirect to TEST */
-header("Location: https://www.kpay.com.kw/kpg/PaymentHTTP.htm?param=paymentInit"."&trandata=".$param); /* send request and redirect to PRODUCTION */
+  header("Location: https://kpaytest.com.kw/kpg/PaymentHTTP.htm?param=paymentInit"."&trandata=".$param); /* send request and redirect to TEST */
+//header("Location: https://www.kpay.com.kw/kpg/PaymentHTTP.htm?param=paymentInit"."&trandata=".$param); /* send request and redirect to PRODUCTION */
 exit();
 
 //AES Encryption Method Starts
