@@ -1144,10 +1144,10 @@ width="1000"
             class="col-md-12"
             v-if="serviceType == 'Upholstery Cleaning'"
           >
-          
-          <v-card-title class="headline primary text-white">
+          Hi
+          <span>
             <% dialogmsg + " " + upholsteryType %>
-          </v-card-title>
+          </span>
 
             <v-select
               :items="upholsteryType"
@@ -2740,6 +2740,11 @@ Fill all the details of the Buildings  to proceed
                     serviceType == 'Outdoor Cleaning') 
                   
                 ">
+                
+                Hi
+              <span>
+                <% dialogmsg + " " + upholsteryType %>
+              </span>
 
                         <div class="col-md-12" v-if="serviceType == 'Upholstery Cleaning'">
                           <v-select :items="upholsteryType" label="Select the type of Upholstery"
