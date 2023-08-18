@@ -123,7 +123,7 @@
                                   <div class="productivity-card-sub">
                                         {% for service_productivity in service_productivities %}
                                         {% if service_productivity.service_type == service_type %}
-                                        {% if not service_productivity.is_newkitchen and not service_productivity.is_cabinet and not service_productivity.is_highprice_facade and not service_productivity.is_highprice_window and service_productivity.upholstery_type != 'CURTAIN' and service_productivity.upholstery_type != 'CURTAIN' %}
+                                        {% if not service_productivity.is_newkitchen and not service_productivity.is_cabinet and not service_productivity.is_highprice_facade and not service_productivity.is_highprice_window and service_productivity.upholstery_type != 'CURTAIN' %}
                                         <div class="productivity-sub-top" id="productivityhead_{{service_type.id}}1">
                                             <div class="productivity-sub-top-item-left">
                                               Productivity
@@ -221,7 +221,7 @@
                                   <div id="normal_id_{{service_type.id}}" class="productivity-card-content"> <!--normal-->
                                   {% for service_price_range in service_price_ranges %}
                                   {% if service_price_range.service_type == service_type %}
-                                  {% if not service_price_range.is_newkitchen and not service_price_range.is_cabinet and not service_price_range.is_highprice_facade and not service_price_range.is_highprice_window and service_price_range.upholstery_type != 'CURTAIN' and service_price_range.upholstery_type != 'CURTAIN' %}
+                                  {% if not service_price_range.is_newkitchen and not service_price_range.is_cabinet and not service_price_range.is_highprice_facade and not service_price_range.is_highprice_window and service_price_range.upholstery_type != 'CURTAIN' %}
                                   <div class="row productivity-card-items">
                                         <div class="col-md-3 productivity-card-items-1">
                                             {{service_price_range.name}}
