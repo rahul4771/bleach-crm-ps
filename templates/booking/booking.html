@@ -1144,10 +1144,6 @@ width="1000"
             class="col-md-12"
             v-if="serviceType == 'Upholstery Cleaning'"
           >
-          Hi
-          <span>
-            <% dialogmsg + " " + upholsteryType %>
-          </span>
 
             <v-select
               :items="upholsteryType"
@@ -1279,7 +1275,7 @@ width="1000"
             required
               v-model="otherService.size"
             ></v-text-field>
-             <!-- <v-select
+             <v-select
                  v-if="otherService.type == 'CURTAIN'"
                   :items="upholsterySize"
                   item-text="combinedSize"
@@ -1288,15 +1284,15 @@ width="1000"
                   :rules="[v => !!v || 'Size is required']"
                 required
                   v-model="otherService.size"
-                ></v-select> -->
-            <v-text-field
+                ></v-select>
+            <!-- <v-text-field
               v-if="otherService.type == 'CURTAIN'"
               label="Size ( SQM )"
               type="number"
               :rules="[v => !!v || 'Size is required']"
             required
               v-model="otherService.size"
-            ></v-text-field>
+            ></v-text-field> -->
           </div>
          
           <div class="col-md-6" v-else>
@@ -2740,11 +2736,6 @@ Fill all the details of the Buildings  to proceed
                     serviceType == 'Outdoor Cleaning') 
                   
                 ">
-                
-                Hi
-              <span>
-                <% dialogmsg + " " + upholsteryType %>
-              </span>
 
                         <div class="col-md-12" v-if="serviceType == 'Upholstery Cleaning'">
                           <v-select :items="upholsteryType" label="Select the type of Upholstery"
@@ -2830,13 +2821,13 @@ Fill all the details of the Buildings  to proceed
                           <v-text-field v-if="otherService.type == 'SOFA'" label="Size ( Seaters )" type="number"
                             :rules="[v => !!v || 'Size is required']" required v-model="otherService.size">
                           </v-text-field>
-                          <!-- <v-select v-if="otherService.type == 'CURTAIN'" :items="upholsterySize" item-text="combinedSize"
+                          <v-select v-if="otherService.type == 'CURTAIN'" :items="upholsterySize" item-text="combinedSize"
                             return-object label="Size" :rules="[v => !!v || 'Size is required']" required
-                            v-model="otherService.size" :attach="true"></v-select> -->
+                            v-model="otherService.size" :attach="true"></v-select>
 
-                          <v-text-field v-if="otherService.type == 'CURTAIN'" label="Size ( SQM )" type="number"
+                          <!-- <v-text-field v-if="otherService.type == 'CURTAIN'" label="Size ( SQM )" type="number"
                             :rules="[v => !!v || 'Size is required']" required v-model="otherService.size">
-                          </v-text-field>
+                          </v-text-field> -->
                         </div>
                         <div class="col-md-6" v-else>
                           <div v-if="serviceType == 'Kitchen Cleaning'">
