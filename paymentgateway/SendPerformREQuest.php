@@ -41,8 +41,8 @@ of merchant from the bank, merchant MUST ensure that Tranportal ID is never pass
 browser by any means. Merchant MUST ensure that Tranportal ID is stored in secure environment & 
 securely at merchant end. Tranportal Id is referred as id. Tranportal ID for test and production will be 
 different, please contact bank for test and production Tranportal ID*/
-$TranportalId="306201";
-//  $TranportalId="248101";
+//$TranportalId="306201";
+  $TranportalId="248101";
 $ReqTranportalId="id=".$TranportalId;
 
 /* to pass Tranportal password provided by the bank to merchant. Tranportal password is sensitive 
@@ -51,8 +51,8 @@ to customer browser by any means. Merchant MUST ensure that Tranportal password 
 environment & securely at merchant end. Tranportal password is referred as password. Tranportal 
 password for test and production will be different, please contact bank for test and production
 Tranportal password */
-$pass="DbzXGVY0";
-//  $pass="248101pg";
+//$pass="DbzXGVY0";
+  $pass="248101pg";
 $ReqTranportalPassword="password=".$pass;
 
 /* Transaction Amount that will be send to payment gateway by merchant for processing
