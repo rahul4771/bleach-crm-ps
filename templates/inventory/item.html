@@ -110,7 +110,7 @@
               
                 <form method="POST" id="itemdetailsform" action="">{% csrf_token %}
                 <input type="hidden" name="action" value="edit_item_details" />
-                {% if request.user.user_type != 'INVUSER' and request.user.user_type != 'STOCKCONTROLLER' %}
+                {% if request.user.user_type != 'INVUSER' or request.user.user_type != 'STOCKCONTROLLER' %}
                 <div class="row">
                   <div class="col-md-12" style="position: relative;">
                     <div class="d-flex">
