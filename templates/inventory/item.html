@@ -118,7 +118,7 @@
                            
                         <div class="right-pos m-mt-10 mr-20">
                             {% comment %} <button class="inv-blue-btn" onclick="openNavAdd('add')"> <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Bundle </button> {% endcomment %}
-                            <button class="inv-blue-btn" type="button" onclick="openNavAddBundle('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>{% if inventory_item.item_add_type == 'unit' %}Add Unit{% elif request.user.username == 'kchand' and (inventory_item.item_type == 'RAW MATERIALS' or inventory_item.item_type == 'FINISHED GOODS') %}Add Quantity{% else %}Add Quantity{% endif %} </button>
+                            <button class="inv-blue-btn" type="button" onclick="openNavAddBundle('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>{% if inventory_item.item_add_type == 'unit' %}Add Unit{% elif (inventory_item.item_type == 'RAW MATERIALS' or inventory_item.item_type == 'FINISHED GOODS') and request.user.username == 'kchand' %}Add Quantity{% else %}Add Quantity{% endif %} </button>
                         </div>
                     </div>
                     <div class="edit-div ml-10 mt-5" style="position: relative;">
