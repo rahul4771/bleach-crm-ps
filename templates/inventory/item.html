@@ -118,7 +118,7 @@
                            
                         <div class="right-pos m-mt-10 mr-20">
                             {% comment %} <button class="inv-blue-btn" onclick="openNavAdd('add')"> <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Bundle </button> {% endcomment %}
-                            <button class="inv-blue-btn" type="button" onclick="openNavAddBundle('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>{% if inventory_item.item_add_type == 'unit' %}Add Unit{% elif inventory_item.item_type == 'RAW MATERIALS' or inventory_item.item_type == 'FINISHED GOODS' %}Add Quantity{% else %}Add Quantity{% endif %} </button>
+                            <button class="inv-blue-btn" type="button" onclick="openNavAddBundle('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>{% if inventory_item.item_add_type == 'unit' %}Add Unit{% else %}Add Quantity{% endif %} </button>
                         </div>
                     </div>
                     <div class="edit-div ml-10 mt-5" style="position: relative;">
@@ -130,6 +130,27 @@
                 </div>
                   </div>
                 </div>
+                {% elif request.user.username == 'kchand' %}
+                    {% if inventory_item.item_type == 'RAW MATERIALS' or inventory_item.item_type == 'FINISHED GOODS' %}
+                        <div class="row">
+                            <div class="col-md-12" style="position: relative;">
+                            <div class="d-flex">
+                            <div class="d-flex d-grid " style="margin-left:auto">
+                                    
+                                <div class="right-pos m-mt-10 mr-20">
+                                    <button class="inv-blue-btn" type="button" onclick="openNavAddBundle('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Quantity</button>
+                                </div>
+                            </div>
+                            <div class="edit-div ml-10 mt-5" style="position: relative;">
+        
+                                <img id="id_editButton" onclick="editItemData()" class="inv-edit-img"
+                                src="{% static 'files/icons/edit.png' %}">
+                                <button id="id_editDone" class="inv-blue-btn inv-hide" type="button" onclick="doneEdit()">Done </button>
+                            </div>
+                        </div>
+                            </div>
+                        </div>
+                    {% endif %}
                 {% endif %}
 
                 <div class="row mt-40">
