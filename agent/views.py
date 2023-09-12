@@ -867,7 +867,7 @@ class AvailabilityCleaningCallendar(APIView):
 
 		#count total cleaners and total leaders
 		total_cleaners = UserProfile.objects.filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
-		total_leaders  = UserProfile.objects.filter(user_type='TEAMINCHARGE')
+		total_leaders  = UserProfile.objects.filter(user_type='TEAMINCHARGE',is_active=True)
 		for service_type in service_types:
 			if service_type == 'General Cleaning':
 				total_cleaners 	= total_cleaners.filter(is_general_skill=True)
