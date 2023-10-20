@@ -129,7 +129,7 @@ class Command(BaseCommand):
 
         for item in items:
             inventoryitem = InventoryItem.objects.filter(item_code__exact=item['Item Code']).first()
-            inventoryitem.update(total_quantity=item['Store Actual SOH'])
+            inventoryitem.total_quantity=item['Store Actual SOH']
             inventoryitem.save()
 
             QuantityStoreDetails.objects.filter(quantity_item=inventoryitem,item_store__store_name__exact='Warehouse').update(quantity=item['Store Actual SOH'])
