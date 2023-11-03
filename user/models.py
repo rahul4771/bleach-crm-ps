@@ -199,9 +199,9 @@ class Area(models.Model):
 
 
 class Address(models.Model):
-    customer        = models.ForeignKey('UserProfile',blank=False,null=False,related_name='address_customer')
-    governorate     = models.ForeignKey('Governorate',blank=False,null=False,related_name='address_governorate')
-    area            = models.ForeignKey('Area',blank=False,null=False,related_name='address_area')
+    customer        = models.ForeignKey('UserProfile',blank=False,null=False,related_name='address_customer',on_delete=models.CASCADE)
+    governorate     = models.ForeignKey('Governorate',blank=False,null=False,related_name='address_governorate',on_delete=models.CASCADE)
+    area            = models.ForeignKey('Area',blank=False,null=False,related_name='address_area',on_delete=models.CASCADE)
     location        = models.CharField(max_length=100,blank=False,null=False)
     gps_location    = models.TextField(max_length=500,blank=True,null=True)
     block           = models.CharField(max_length=100,blank=False,null=False)
