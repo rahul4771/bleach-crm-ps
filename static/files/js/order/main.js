@@ -150,22 +150,22 @@ if(app.service_type=='Window Cleaning'){
   console.log("section is "+JSON.stringify(app.sections[index-1]))
   app.sectionData=app.sections[index-1]
   
-  //if(app.sections[index-1].size){
-  //app.editSectionData.size=app.sections[index-1].size
-  //app.editSectionData.size['combined_size']=app.sections[index-1].size.name+' ('+app.sections[index-1].size.min_size+' sq.m - '+app.sections[index-1].size.max_size+' sq.m )'
-  //}
-
   if(app.sections[index-1].size){
-    app.editSectionData.size=app.sections[index-1].size
-    console.log("service_size",app.service_size)
-    console.log(app.sections[index-1].size,"app section size")
-    var foundObject = app.service_size.find(function(obj) {
-      console.log(obj.name,"obj name")
-      return obj.name === app.sections[index-1].size;
-  });
-  console.log(foundObject,"found object")
-    app.editSectionData.size['combined_size']=foundObject.name+' ('+foundObject.min_size+' sq.m - '+foundObject.max_size+' sq.m )'
-    }
+  app.editSectionData.size=app.sections[index-1].size
+  app.editSectionData.size['combined_size']=app.sections[index-1].size.name+' ('+app.sections[index-1].size.min_size+' sq.m - '+app.sections[index-1].size.max_size+' sq.m )'
+  }
+
+  // if(app.sections[index-1].size){
+  //   app.editSectionData.size=app.sections[index-1].size
+  //   console.log("service_size",app.service_size)
+  //   console.log(app.sections[index-1].size,"app section size")
+  //   var foundObject = app.service_size.find(function(obj) {
+  //     console.log(obj.name,"obj name")
+  //     return obj.name === app.sections[index-1].size;
+  // });
+  // console.log(foundObject,"found object")
+  //   app.editSectionData.size['combined_size']=foundObject.name+' ('+foundObject.min_size+' sq.m - '+foundObject.max_size+' sq.m )'
+  //   }
 
   if(app.sections[index-1].upholstery_type){
     app.editSectionData.upholstery_type=app.sections[index-1].upholstery_type
