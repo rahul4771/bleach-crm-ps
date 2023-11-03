@@ -186,7 +186,7 @@ class Governorate(models.Model):
 class Area(models.Model):        
     name            = models.CharField(max_length=100,blank=False,null=False)
     name_arabic     = models.CharField(max_length=100,blank=False,null=False)
-    governorate     = models.ForeignKey('Governorate',blank=False,null=False)
+    governorate     = models.ForeignKey('Governorate',blank=False,null=False,on_delete=models.CASCADE)
     is_active       = models.BooleanField(null=False,blank=True,default=True)
     created         = models.DateTimeField(auto_now_add=True)
     updated         = models.DateTimeField(auto_now=True)
@@ -200,8 +200,8 @@ class Area(models.Model):
 
 class Address(models.Model):
     customer        = models.ForeignKey('UserProfile',blank=False,null=False,related_name='address_customer')
-    governorate     = models.ForeignKey('Governorate',blank=False,null=False)
-    area            = models.ForeignKey('Area',blank=False,null=False)
+    governorate     = models.ForeignKey('Governorate',blank=False,null=False,related_name='address_governorate')
+    area            = models.ForeignKey('Area',blank=False,null=False,related_name='address_area')
     location        = models.CharField(max_length=100,blank=False,null=False)
     gps_location    = models.TextField(max_length=500,blank=True,null=True)
     block           = models.CharField(max_length=100,blank=False,null=False)
