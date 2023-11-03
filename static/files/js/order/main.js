@@ -158,7 +158,9 @@ if(app.service_type=='Window Cleaning'){
   if(app.sections[index-1].size){
     app.editSectionData.size=app.sections[index-1].size
     console.log("service_size",app.service_size)
+    console.log(app.sections[index-1].size,"app section size")
     var foundObject = app.service_size.find(function(obj) {
+      console.log(obj.name,"obj name")
       return obj.name === app.sections[index-1].size;
   });
   console.log(foundObject,"found object")
