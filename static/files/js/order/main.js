@@ -2708,7 +2708,7 @@ setTimeout(function() {
             for(var j=0;j<this.sections.length;j++){
              
               for(var i=0;i<this.service_size.length;i++){
-                if(parseInt(this.sections[j].size)){
+                if(parseInt(this.sections[j].size) != NaN){
                   var section_size=parseInt(this.sections[j].size)
                   if(section_size<=this.service_size[i].max_size && section_size>=this.service_size[i].min_size){
                     this.sections[j].size=this.service_size[i]
