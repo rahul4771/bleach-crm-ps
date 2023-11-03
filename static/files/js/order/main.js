@@ -2712,15 +2712,19 @@ setTimeout(function() {
                   var section_size=parseInt(this.sections[j].size)
                   if(section_size<=this.service_size[i].max_size && section_size>=this.service_size[i].min_size){
                     this.sections[j].size=this.service_size[i]
+                    console.log(this.sections[j].size,"if size char")
+                    console.log(parseInt(this.sections[j].size),"if int char")
                    
                   }
                 }
                 else{
                   if(this.service_size[i].name==this.sections[j].size){
                     this.sections[j].size=this.service_size[i]
+                    console.log(this.sections[j].size,"else size char")
                    
                   }
                 }
+                
                 
               }
             }
