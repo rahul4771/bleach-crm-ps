@@ -150,8 +150,8 @@ if(app.service_type=='Window Cleaning'){
   console.log("section is "+JSON.stringify(app.sections[index-1]))
   app.sectionData=app.sections[index-1]
   if(app.sections[index-1].size){
-  app.editSectionData.size=app.sections[index-1].size
-  app.editSectionData.size['combined_size']=app.sections[index-1].size.name+' ('+app.sections[index-1].size.min_size+' sq.m - '+app.sections[index-1].size.max_size+' sq.m )'
+  //app.editSectionData.size=app.sections[index-1].size
+  //app.editSectionData.size['combined_size']=app.sections[index-1].size.name+' ('+app.sections[index-1].size.min_size+' sq.m - '+app.sections[index-1].size.max_size+' sq.m )'
   }
   if(app.sections[index-1].upholstery_type){
     app.editSectionData.upholstery_type=app.sections[index-1].upholstery_type
