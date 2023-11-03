@@ -241,7 +241,7 @@ class Address(models.Model):
         return return_string    
 
 class LeaveSchedule(models.Model):
-    staff           = models.ForeignKey('UserProfile',blank=False,null=False,related_name='leave_staff')
+    staff           = models.ForeignKey('UserProfile',blank=False,null=False,related_name='leave_staff',on_delete=models.CASCADE)
     leave_date      = models.DateField(blank=False,null=False)
     leave_type      = models.CharField(max_length=50,blank=False,null=False,choices=LEAVE_TYPES)
     bamboo_leave_id = models.CharField(max_length=10,blank=True,null=True)
@@ -255,7 +255,7 @@ class LeaveSchedule(models.Model):
     	return self.staff.username+str(self.leave_date)
 
 class ShiftSchedule(models.Model):
-    staff           = models.ForeignKey('UserProfile',blank=False,null=False,related_name='shift_staff')
+    staff           = models.ForeignKey('UserProfile',blank=False,null=False,related_name='shift_staff',on_delete=models.CASCADE)
     
     shift_date      = models.DateField(blank=False,null=False)
     
