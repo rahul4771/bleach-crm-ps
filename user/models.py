@@ -149,7 +149,7 @@ class UserProfile(AbstractUser):
     bamboo_employee_id          = models.CharField(max_length=20,blank=True,null=True)
 
 
-    created_by      = models.ForeignKey('self',blank=True,null=True)
+    created_by      = models.ForeignKey('self',blank=True,null=True,on_delete=models.SET_NULL)
     is_active       = models.BooleanField(null=False,blank=True,default=True)
     created         = models.DateTimeField(auto_now_add=True)
     updated         = models.DateTimeField(auto_now=True)
