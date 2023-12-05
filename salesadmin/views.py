@@ -187,7 +187,7 @@ class AdminHome(IsSalesAdmin,View):
 			When(cancel_order_amount_history__gt=0, then=True),
 			default=False,
 			output_field=BooleanField()
-    	)).filter(order_status="CANCEL_IN_PROGRESS",has_related_items=True).select_related('evaluation__customer').prefetch_related('order_scheduler_order__order_scheduler_book')
+    	)).filter(order_status="CANCEL_IN_PROGRESS",has_related_items=False).select_related('evaluation__customer').prefetch_related('order_scheduler_order__order_scheduler_book')
 		
 		for cancell_in_progress_order in cancell_in_progress_orders:
 			cleaning_price = 0
