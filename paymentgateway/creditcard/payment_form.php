@@ -14,15 +14,15 @@
     </div>
     <div class="loader"></div>
 </div>
-<!-- <form id="payment_form" action="https://testpay.bleach-kw.com/creditcard/payment_confirmation.php" method="post"> -->
-<form id="payment_form" action="https://payment.bleachkw.com/creditcard/payment_confirmation.php" method="post">
+<form id="payment_form" action="https://testpay.bleach-kw.com/creditcard/payment_confirmation.php" method="post">
+<!-- <form id="payment_form" action="https://payment.bleachkw.com/creditcard/payment_confirmation.php" method="post"> -->
     <!-- live credentials -->
-    <input type="hidden" name="access_key" value="ba5cdc94a7e03d1a88a39e60cac87c88">
-    <input type="hidden" name="profile_id" value="32FF6F1C-41F3-4CF1-A91C-A1039EF0845C">
+    <!-- <input type="hidden" name="access_key" value="ba5cdc94a7e03d1a88a39e60cac87c88"> -->
+    <!-- <input type="hidden" name="profile_id" value="32FF6F1C-41F3-4CF1-A91C-A1039EF0845C"> -->
     <!-- live credentials -->
 
-    <!-- <input type="hidden" name="access_key" value="07f3b97fdaab3de0b496c077473626a7">
-    <input type="hidden" name="profile_id" value="71ECE0D7-9E00-4D78-B542-1BE04804E32C"> -->
+     <input type="hidden" name="access_key" value="07f3b97fdaab3de0b496c077473626a7">
+    <input type="hidden" name="profile_id" value="71ECE0D7-9E00-4D78-B542-1BE04804E32C">
 
     <input type="hidden" name="transaction_uuid" value="<?php echo uniqid() ?>">
     <input type="hidden" name="signed_field_names" value="access_key,profile_id,merchant_id,transaction_uuid,signed_field_names,unsigned_field_names,signed_date_time,locale,transaction_type,reference_number,amount,currency,bill_to_forename,bill_to_surname,bill_to_email,bill_to_phone,bill_to_address_country,bill_to_address_city,bill_to_address_line1,merchant_defined_data1,merchant_defined_data2,merchant_defined_data3,merchant_defined_data4,merchant_defined_data5,merchant_defined_data7,merchant_defined_data20,merchant_defined_data13,customer_ip_address">
