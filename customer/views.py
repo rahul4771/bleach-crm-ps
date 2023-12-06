@@ -734,7 +734,7 @@ class SubscriptionQuatation(View):
 					# 		XeroInvoice.objects.create(order=order,invoice_no=InvoiceNumber,amount=Amount,xero_marked_date=timezone.now().date(),payment_policy=payment_policy)
 
 					###################################################################
-				return redirect('customer:subscriptioninvoice',evaluation_id_encrypted)
+					return redirect('customer:subscriptioninvoice',evaluation_id_encrypted)
 			
 			else:
 				messages.error(request,"Please Read Terms & Conditions and Agree")
