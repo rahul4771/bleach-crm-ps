@@ -4305,6 +4305,7 @@ $('input[name="radio"]').click(function(){
         document.getElementById("evalution-note"+book_id+"").style.maxHeight = "none";
         document.getElementById("id_see"+book_id+"").style.display = "none";
         document.getElementById("id_see_less"+book_id+"").style.display = "block";
+        console.log("running 1")
     }
 
     function seeless(book_id) {
@@ -4334,7 +4335,8 @@ $('input[name="radio"]').click(function(){
                         $(".showmore2{{evaluationbook2.id}}").fadeOut();
                         $("#showmore{{evaluationbook2.id}}").fadeOut();
                     }
-                    {% endfor %}               
+                    {% endfor %}   
+                    console.log("running2")            
                         } 
 
                 else 
