@@ -1898,7 +1898,7 @@
                                 
                                 <!-- Service Details Part2 Starts -->
                                {% for section in evaluationbook.evaluationbooksections %}                               
-                                <div class="showmore1{{evaluationbook.id}}" style="display: none;"
+                                <div class="showmore1{{evaluationbook.id}}" 
                                     class="order-container-main order-clean-section">
 
                                     <!-- Section edit condition starts here -->
@@ -2140,7 +2140,7 @@
 
                                 
                                 <!-- service details part3 starts here -->
-                                <div class="showmore2{{evaluationbook.id}}" style="display: none;"
+                                <div class="showmore2{{evaluationbook.id}}" 
                                     class="order-container-main order-clean-section">
                                     <!-- Cleaning Visit List starts here -->
                                     <div class="order-clean-section-header c-mb-10 d-flex">
@@ -4327,8 +4327,6 @@ $('input[name="radio"]').click(function(){
                         $("#showmore{{evaluationbook2.id}}").fadeIn();
                         $(".showmore1{{evaluationbook2.id}}").fadeIn();
                         $(".showmore2{{evaluationbook2.id}}").fadeIn();
-                        $(".showmore1{{evaluationbook2.id}}").css({"display":"block"});
-                        $(".showmore2{{evaluationbook2.id}}").css({"display":"block"});
                     }
                     else{
                         $("#show{{evaluationbook2.id}}").text("Show More");
