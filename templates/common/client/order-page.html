@@ -4327,23 +4327,25 @@ $('input[name="radio"]').click(function(){
                         $("#showmore{{evaluationbook2.id}}").fadeIn();
                         $(".showmore1{{evaluationbook2.id}}").fadeIn();
                         $(".showmore2{{evaluationbook2.id}}").fadeIn();
+                        $(".showmore1{{evaluationbook2.id}}").style("display","block");
+                        $(".showmore2{{evaluationbook2.id}}").style("display","block");
                     }
-                    // else{
-                    //     $("#show{{evaluationbook2.id}}").text("Show More");
-                    //     $(".showmore1{{evaluationbook2.id}}").fadeOut();
-                    //     $(".showmore2{{evaluationbook2.id}}").fadeOut();
-                    //     $("#showmore{{evaluationbook2.id}}").fadeOut();
-                    // }
+                    else{
+                        $("#show{{evaluationbook2.id}}").text("Show More");
+                        $(".showmore1{{evaluationbook2.id}}").fadeOut();
+                        $(".showmore2{{evaluationbook2.id}}").fadeOut();
+                        $("#showmore{{evaluationbook2.id}}").fadeOut();
+                    }
                     {% endfor %}               
                         } 
 
-                // else 
-                //         {
-                //     $("#show{{evaluationbook.id}}").text("Show More");
-                //     $(".showmore1{{evaluationbook.id}}").fadeOut();
-                //     $(".showmore2{{evaluationbook.id}}").fadeOut();
-                //     $("#showmore{{evaluationbook.id}}").fadeOut();
-                //         }
+                else 
+                        {
+                    $("#show{{evaluationbook.id}}").text("Show More");
+                    $(".showmore1{{evaluationbook.id}}").fadeOut();
+                    $(".showmore2{{evaluationbook.id}}").fadeOut();
+                    $("#showmore{{evaluationbook.id}}").fadeOut();
+                        }
 
         });
 
