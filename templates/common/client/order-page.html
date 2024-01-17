@@ -4315,91 +4315,51 @@ $('input[name="radio"]').click(function(){
 
 
     //order details tab expand and hide
-    // $(document).ready(function () {
-    //     {% for evaluationdetail in order.evaluation.evaluationdetails %}
-    //     {% for evaluationbook in evaluationdetail.evaluationbooks %}
-    //     $("#show{{evaluationbook.id}}").click(function () {    
-    //             if ($("#show{{evaluationbook.id}}").text() == "Show More") 
-    //                     {
-    //                 {% for evaluationbook2 in evaluationdetail.evaluationbooks %}
-    //                 if("{{evaluationbook.id}}" == "{{evaluationbook2.id}}"){
-    //                     $("#show{{evaluationbook2.id}}").text("");
-    //                     $("#showmore{{evaluationbook2.id}}").fadeIn();
-    //                     $(".showmore1{{evaluationbook2.id}}").fadeIn();
-    //                     $(".showmore2{{evaluationbook2.id}}").fadeIn();
-    //                 }else{
-    //                     $("#show{{evaluationbook2.id}}").text("Show More");
-    //                     $(".showmore1{{evaluationbook2.id}}").fadeOut();
-    //                     $(".showmore2{{evaluationbook2.id}}").fadeOut();
-    //                     $("#showmore{{evaluationbook2.id}}").fadeOut();
-    //                 }
-    //                 {% endfor %}               
-    //                     } 
-
-    //             else 
-    //                     {
-    //                 $("#show{{evaluationbook.id}}").text("Show More");
-    //                 $(".showmore1{{evaluationbook.id}}").fadeOut();
-    //                 $(".showmore2{{evaluationbook.id}}").fadeOut();
-    //                 $("#showmore{{evaluationbook.id}}").fadeOut();
-    //                     }
-
-    //     });
-
-
-    //     $("#showless{{evaluationbook.id}}").click(function () {
-
-    //         $("#show{{evaluationbook.id}}").text("Show More");
-    //         $(".showmore1{{evaluationbook.id}}").fadeOut();
-    //         $(".showmore2{{evaluationbook.id}}").fadeOut();
-    //         $("#showmore{{evaluationbook.id}}").fadeOut();
-
-
-    //     });
-
-    //     {% endfor %}
-    //     {% endfor %}
-    // });
-
     $(document).ready(function () {
-    {% for evaluationdetail in order.evaluation.evaluationdetails %}
+        {% for evaluationdetail in order.evaluation.evaluationdetails %}
         {% for evaluationbook in evaluationdetail.evaluationbooks %}
-            $("#show{{evaluationbook.id}}").click(function () {
-                var currentId = "{{evaluationbook.id}}";
-                var showMoreButton = $("#show" + currentId);
-
-                if (showMoreButton.text() === "Show More") {
+        $("#show{{evaluationbook.id}}").click(function () {    
+                if ($("#show{{evaluationbook.id}}").text() == "Show More") 
+                        {
                     {% for evaluationbook2 in evaluationdetail.evaluationbooks %}
-                        if ("{{evaluationbook.id}}" === "{{evaluationbook2.id}}") {
-                            $("#show{{evaluationbook2.id}}").text("");
-                            $("#showmore{{evaluationbook2.id}}").fadeIn();
-                            $(".showmore1{{evaluationbook2.id}}").fadeIn();
-                            $(".showmore2{{evaluationbook2.id}}").fadeIn();
-                        } else {
-                            $("#show{{evaluationbook2.id}}").text("Show More");
-                            $(".showmore1{{evaluationbook2.id}}").fadeOut();
-                            $(".showmore2{{evaluationbook2.id}}").fadeOut();
-                            $("#showmore{{evaluationbook2.id}}").fadeOut();
-                        }
-                    {% endfor %}
-                } else {
-                    showMoreButton.text("Show More");
-                    $(".showmore1" + currentId).fadeOut();
-                    $(".showmore2" + currentId).fadeOut();
-                    $("#showmore" + currentId).fadeOut();
-                }
-            });
+                    if("{{evaluationbook.id}}" == "{{evaluationbook2.id}}"){
+                        $("#show{{evaluationbook2.id}}").text("");
+                        $("#showmore{{evaluationbook2.id}}").fadeIn();
+                        $(".showmore1{{evaluationbook2.id}}").fadeIn();
+                        $(".showmore2{{evaluationbook2.id}}").fadeIn();
+                    }else{
+                        $("#show{{evaluationbook2.id}}").text("Show More");
+                        $(".showmore1{{evaluationbook2.id}}").fadeOut();
+                        $(".showmore2{{evaluationbook2.id}}").fadeOut();
+                        $("#showmore{{evaluationbook2.id}}").fadeOut();
+                    }
+                    {% endfor %}               
+                        } 
 
-            $("#showless{{evaluationbook.id}}").click(function () {
-                var currentId = "{{evaluationbook.id}}";
-                $("#show{{currentId}}").text("Show More");
-                $(".showmore1{{currentId}}").fadeOut();
-                $(".showmore2{{currentId}}").fadeOut();
-                $("#showmore{{currentId}}").fadeOut();
-            });
+                else 
+                        {
+                    $("#show{{evaluationbook.id}}").text("Show More");
+                    $(".showmore1{{evaluationbook.id}}").fadeOut();
+                    $(".showmore2{{evaluationbook.id}}").fadeOut();
+                    $("#showmore{{evaluationbook.id}}").fadeOut();
+                        }
+
+        });
+
+
+        $("#showless{{evaluationbook.id}}").click(function () {
+
+            $("#show{{evaluationbook.id}}").text("Show More");
+            $(".showmore1{{evaluationbook.id}}").fadeOut();
+            $(".showmore2{{evaluationbook.id}}").fadeOut();
+            $("#showmore{{evaluationbook.id}}").fadeOut();
+
+
+        });
+
         {% endfor %}
-    {% endfor %}
-});
+        {% endfor %}
+    });
 
 //total amount for payment policy edit adjustment
 total_cost = parseFloat("{{order.evaluation.total_cost}}")
