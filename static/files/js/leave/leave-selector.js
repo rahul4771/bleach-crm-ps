@@ -189,7 +189,7 @@ function previousMonth(){
 function reCalc(){
     $('.day-head').remove();
     $('.lv-rows').remove();
-    var noOfDays = DateTime.local(2021, currentMonth).daysInMonth;
+    var noOfDays = DateTime.local(currentYear, currentMonth).daysInMonth;
 //var noOfWeek=noOfDays/7;
 
 for (var k=1;k<=noOfDays;k++){

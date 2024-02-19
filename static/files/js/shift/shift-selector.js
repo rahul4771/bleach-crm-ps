@@ -155,7 +155,7 @@ for(var i=0;i<resourceList.length;i++){
     selectedDates.push({name:'',dates:[]})
 }
 
-var noOfDays = DateTime.local(2021, currentMonth).daysInMonth;
+var noOfDays = DateTime.local(currentYear, currentMonth).daysInMonth;
 
 var found=false;
 //var noOfWeek=noOfDays/7;
@@ -320,7 +320,7 @@ function resetShift(){
 function reCalcShift(){
     $('.day-head').remove();
     $('.lv-rows').remove();
-    var noOfDays = DateTime.local(2021, currentMonth).daysInMonth;
+    var noOfDays = DateTime.local(currentYear, currentMonth).daysInMonth;
 //var noOfWeek=noOfDays/7;
 
 for (var k=1;k<=noOfDays;k++){
