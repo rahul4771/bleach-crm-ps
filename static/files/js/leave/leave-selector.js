@@ -41,7 +41,7 @@ for(var i=0;i<resourceList.length;i++){
     selectedDates.push({name:'',dates:[]})
 }
 
-var noOfDays = DateTime.local(2021, currentMonth).daysInMonth;
+var noOfDays = DateTime.local(currentYear, currentMonth).daysInMonth;
 
 var found=false;
 //var noOfWeek=noOfDays/7;
