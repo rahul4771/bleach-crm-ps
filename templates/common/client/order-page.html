@@ -2229,11 +2229,11 @@
                                             {% if request.user.user_type == 'SALESADMIN' or request.user.user_type == 'BOOKINGOFFICER' %}
                                                 {% if order.evaluation.payment_method != 'SUBSCRIPTION' %}
                                                 <div class="text-right" style="margin-bottom: 10px;" v-if="edit">
-                                                    {% if not order.orderschedules %}
                                                     <button style="box-shadow: none !important;" type="submit" class="view-button view-btn"  onclick="openCleaningDate(this)" data-evaluation_book_id="{{evaluationbook.id}}" data-service="{{evaluationbook.service_type.name}}" {% for schedule in order.orderschedules %}{% if forloop.first %} data-no_of_cleaners="{{ schedule.no_of_cleaners|default_if_none:'0' }}" {% endif %} {% endfor %} data-cleaning_hours="{{evaluationbook.cleaning_hours}}"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="">  Add Visit(s)</button>
-                                                {% else %}
-                                                    {# No content will be displayed here #}
-                                                    {% endif %}
+                                                </div>
+                                                {% elif not order.orderschedules and order.evaluation.quatation_status == 'APPROVED' %}
+                                                <div class="text-right" style="margin-bottom: 10px;" v-if="edit">
+                                                    <button style="box-shadow: none !important;" type="submit" class="view-button view-btn"  onclick="openCleaningDate(this)" data-evaluation_book_id="{{evaluationbook.id}}" data-service="{{evaluationbook.service_type.name}}" {% for schedule in order.orderschedules %}{% if forloop.first %} data-no_of_cleaners="{{ schedule.no_of_cleaners|default_if_none:'0' }}" {% endif %} {% endfor %} data-cleaning_hours="{{evaluationbook.cleaning_hours}}"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="">  Add Visit(s)</button>
                                                 </div>
                                                 {% endif %}
                                             {% endif %}
