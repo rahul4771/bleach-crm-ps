@@ -8123,10 +8123,10 @@ class EditOrderDetails(APIView):
 
 			OrderScheduler.objects.create(order=order,evaluation_details=evaluation_book.evaluation_details,order_scheduler_book=evaluation_book,start_at=start_at,end_at=end_at,customer_address=evaluation_book.evaluation_details.address,status='CONFIRMED',no_of_cleaners=no_of_cleaners)
 			
-			if order.quatation_status != 'PENDING':
-				order.quatation_status = 'PENDING'
-				order.save()
-				
+			if order.evaluation.quatation_status != 'PENDING':
+				order.evaluation.quatation_status = 'PENDING'
+				order.evaluation.save()
+
 			response_dict['success']  = True
 
 		elif action == 'edit_cleaning':
