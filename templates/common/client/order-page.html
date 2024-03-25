@@ -2599,7 +2599,7 @@
                     <div class="row">
                         <button class="sent-button mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
                     </div>
-                {% elif (request.user.user_type == 'AGENT' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'BOOKINGOFFICER') and order.orderschedules|length == 0 %}
+                {% elif request.user.user_type in ['AGENT', 'EVALUATOR', 'BOOKINGOFFICER'] and not order.orderschedules %}
                     <div class="row">
                         <button class="sent-button mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
                     </div>
