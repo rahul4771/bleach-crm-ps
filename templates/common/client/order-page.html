@@ -2604,10 +2604,12 @@
 
                     {% endif %}
 
-                    {% if request.user.user_type in ('BOOKINGOFFICER', 'AGENT', 'EVALUATOR') and not order.orderschedules %}
-                    <div class="row">
-                        <button class="sent-button mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
-                    </div>
+                    {% if request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'AGENT' or request.user.user_type == 'EVALUATOR' %}
+                        {% if not order.orderschedules %}
+                            <div class="row">
+                                <button class="sent-button mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
+                            </div>
+                        {% endif %}
                     {% endif %}
 
                 {% elif order.evaluation.quatation_status == 'PENDING' %}
