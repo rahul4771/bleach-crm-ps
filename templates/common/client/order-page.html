@@ -2604,7 +2604,7 @@
 
                     {% endif %}
 
-                    {% if request.user.user_type in ['BOOKINGOFFICER', 'AGENT', 'EVALUATOR'] and not order.orderschedules %}
+                    {% if request.user.user_type in ('BOOKINGOFFICER', 'AGENT', 'EVALUATOR') and not order.orderschedules %}
                     <div class="row">
                         <button class="sent-button mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
                     </div>
