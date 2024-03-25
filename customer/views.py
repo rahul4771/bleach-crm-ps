@@ -7102,6 +7102,8 @@ class AddDeleteService(APIView):
 			#Evaluation cost updation
 			evaluation.total_cost     += request.data.get('total_cost')
 			evaluation.estimated_cost += request.data.get('estimated_cost')
+			if evaluation.quatation_status == 'APPROVED':
+				evaluation.quatation_status = 'PENDING'
 			evaluation.save()
 
 			#order cost updation
