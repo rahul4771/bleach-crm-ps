@@ -91,7 +91,7 @@ class Command(BaseCommand):
                                                         headers=header 
                                                     ).json()
 
-                print(create_contact,"create contact")
+                print(create_contact,"create contactss")
 
                 payment_history.order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
                 payment_history.order.evaluation.customer.save()
@@ -144,6 +144,7 @@ class Command(BaseCommand):
                                                         json=invoice_data,
                                                         headers=header 
                                                     ).json()
+                print(create_invoice,"crt invoice")
                 try:
                     created_invoice = create_invoice['Status']
                 except:
