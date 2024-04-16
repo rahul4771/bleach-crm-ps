@@ -100,7 +100,7 @@ class Command(BaseCommand):
             payment_method    = payment_history.order.evaluation.payment_method
             print(payment_method,"Payment Method")
             print(payment_history.order.order_no, "order no")
-            print(payment_history.order.evaluation.customer.name, "Customer")
+            print(payment_history.order.evaluation.customer, "Customer")
             
             if payment_method == 'PREPAID':
                 Amount = payment_history.order.evaluation.total_cost 
