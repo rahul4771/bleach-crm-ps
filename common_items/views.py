@@ -1765,11 +1765,11 @@ class DailySales(IsAuthenticated, View):
 
 				if schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION':
 					if schedule.order.order_status == 'ORDER_CANCELLED':
-						order_schedules_cancelled_sum = OrderScheduler.objects.filter(order_scheduler_book=schedule.order_scheduler_book,work_status='CLEANING_CANCELLED').aggregate(order_sum=Sum('cleaning_cost'))['order_sum']
+						order_schedules_cancelled_sum = OrderScheduler.objects.filter(order_scheduler_book=schedule.order_scheduler_book,work_status='CLEANING_CANCELLED').aggregate(order_sum=Sum('cleaning_cost'))['order_sum'] or 0
 						order_service_cancelled_amount = float(order_schedules_cancelled_sum)
 					else:
 						if schedule.order_scheduler_book.status == 'CANCELLED':
-							service_schedules_cancelled_sum = OrderScheduler.objects.filter(order_scheduler_book=schedule.order_scheduler_book,work_status='CLEANING_CANCELLED').aggregate(service_sum=Sum('cleaning_cost'))['service_sum']
+							service_schedules_cancelled_sum = OrderScheduler.objects.filter(order_scheduler_book=schedule.order_scheduler_book,work_status='CLEANING_CANCELLED').aggregate(service_sum=Sum('cleaning_cost'))['service_sum'] or 0
 							order_service_cancelled_amount = float(service_schedules_cancelled_sum)
 						else:
 							pass
