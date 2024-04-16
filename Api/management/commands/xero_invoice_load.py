@@ -870,7 +870,7 @@ class Command(BaseCommand):
                                                                     headers=header 
                                                                 ).json()
                             try:
-                                created_invoice = c['Status']
+                                created_invoice = create_invoice['Status']
                             except:
                                 created_invoice = None
                             
