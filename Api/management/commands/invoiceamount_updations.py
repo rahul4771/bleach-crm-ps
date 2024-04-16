@@ -88,6 +88,8 @@ class Command(BaseCommand):
                                                         headers=header 
                                                     ).json()
 
+                print(create_contact,"create contact")
+
                 payment_history.order.evaluation.customer.xero_account_id = ((create_contact['Contacts'])[0])['ContactID']
                 payment_history.order.evaluation.customer.save()
 
