@@ -33,6 +33,9 @@ class Command(BaseCommand):
                                                 data=body,
                                                 headers=header 
                                             ).json()
+        
+        print(token_response,"token")
+
         access_token                = token_response['access_token']
         refresh_token               = token_response['refresh_token']
 
