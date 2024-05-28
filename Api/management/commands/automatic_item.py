@@ -12,7 +12,7 @@ class Command(BaseCommand):
                 old_quantity = item.total_quantity
 
                 # Only proceed if count_val is not zero and if the values are different
-                if old_quantity != count_val:
+                if float(old_quantity) != float(count_val):
                     print(f"item name - {item.name} - old quantity: {old_quantity} || updated quantity: {item.total_quantity}")
                     item.total_quantity = count_val
                     item.save()
