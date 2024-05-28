@@ -9,7 +9,7 @@ class Command(BaseCommand):
         for item in any_item:
             if item.item_add_type == 'quantity':
                 store_counts = QuantityStoreDetails.objects.filter(quantity_item__name=item.name)
-                count_val = store_counts.aggregate(total_quantity=models.Sum('quantity'))['total_quantity'] or 0
+                count_val = store_counts.aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
             old_quantity = item.total_quantity
             item.total_quantity = count_val
             item.save()
