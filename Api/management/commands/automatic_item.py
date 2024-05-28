@@ -17,4 +17,4 @@ class Command(BaseCommand):
                     item.total_quantity = count_val
                     item.save()
                 else:
-                    pass
+                    print("already updated!!")
