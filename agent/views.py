@@ -916,7 +916,7 @@ class AvailabilityCleaningCallendar(APIView):
 				total_leaders 	= total_leaders.filter(is_outdoor_skill=True)
 			else:
 				total_cleaners = UserProfile.objects.none()
-                total_leaders = UserProfile.objects.none()
+				total_leaders = UserProfile.objects.none()
 
 		#(8 to 22 logic applied)
 		if (leavestart_at_datetime1 <= cleaning_datetime_start and leaveend_at_datetime1 > cleaning_datetime_start) or (leavestart_at_datetime2 < cleaning_datetime_end and leaveend_at_datetime2 >= cleaning_datetime_end):		
