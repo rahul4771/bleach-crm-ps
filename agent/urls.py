@@ -5,7 +5,7 @@ urlpatterns = [
 
 
 
-	url(r'^cleaningcallendar$',views.CleaningCallendar.as_view(),name='cleaning-callendar'),
+	url(r'^cleaningcallendar/$',views.CleaningCallendar.as_view(),name='cleaning-callendar'),
 	url(r'^cleaningcallendar/availability/$',views.AvailabilityCleaningCallendar.as_view(),name='cleaning-callendar-availability'),#New logic applied 8 to 22 logic
 	url(r'^cleaningcallendar/cleaning/popup/$',views.CleaningCallendarCleaningPopup.as_view(),name='cleaning-callendar-cleaningpopup'),
 	url(r'^cleaningcallendar/cleaning/edit/slotes/$',views.CleaningPopupMultipleServiceCleaningSlotes.as_view(),name='cleaning-callendar-cleaningedit-slotes'),#New logic applied 8-22 logic
