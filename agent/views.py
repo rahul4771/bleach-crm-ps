@@ -832,6 +832,12 @@ class AvailabilityCleaningCallendar(APIView):
 				active_cleaners2 	= active_cleaners2.filter(member__is_outdoor_skill=True)
 				new_absent_cleaners = new_absent_cleaners.filter(is_outdoor_skill=True)
 				new_absent_leaders  = new_absent_leaders.filter(is_outdoor_skill=True)
+			else:
+				new_absent_cleaners = UserProfile.objects.none()
+				new_absent_leaders = UserProfile.objects.none()
+
+				active_cleaners1 = CleaningTeamMember.objects.none()
+				active_cleaners2 = FollowUpTeamMember.objects.none()
 
 		new_absent_cleaners = new_absent_cleaners.values_list('id',flat=True)
 		new_absent_leaders  = new_absent_leaders.values_list('id',flat=True)
@@ -908,6 +914,9 @@ class AvailabilityCleaningCallendar(APIView):
 			elif service_type == 'Outdoor Cleaning':
 				total_cleaners 	= total_cleaners.filter(is_outdoor_skill=True)
 				total_leaders 	= total_leaders.filter(is_outdoor_skill=True)
+			else:
+				total_cleaners = UserProfile.objects.none()
+                total_leaders = UserProfile.objects.none()
 
 		#(8 to 22 logic applied)
 		if (leavestart_at_datetime1 <= cleaning_datetime_start and leaveend_at_datetime1 > cleaning_datetime_start) or (leavestart_at_datetime2 < cleaning_datetime_end and leaveend_at_datetime2 >= cleaning_datetime_end):		
