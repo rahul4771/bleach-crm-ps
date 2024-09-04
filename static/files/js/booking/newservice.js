@@ -3533,6 +3533,7 @@ $(document).ready(function(){
           }
           else{
              if(item=='Infection Control'){
+             console.log("new service, infection");
             /*     for(var i=0;i<this.services.length;i++){
            if(this.services[i].name=='Sterilization'){
                this.infectionControlServices.push(this.services[i])
