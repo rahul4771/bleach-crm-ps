@@ -708,11 +708,11 @@ current_service:''
 
           }
           if(totalcost){
-            console.log("added amount is "+totalcost)
+            console.log("added amount if  is "+totalcost)
             return totalcost
           }
           else{
-            console.log("added amount is "+totalcost)
+            console.log("added amount else is "+totalcost)
             return 0
           }
         //}

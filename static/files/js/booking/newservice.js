@@ -731,11 +731,11 @@ $(document).ready(function(){
   
             }
             if(totalcost){
-              console.log("added amount is "+totalcost)
+              console.log("added amount if service is "+totalcost)
               return totalcost
             }
             else{
-              console.log("added amount is "+totalcost)
+              console.log("added amount else serfcie is "+totalcost)
               return 0
             }
           }
