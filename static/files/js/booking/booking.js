@@ -216,7 +216,7 @@ const app=new Vue({
   serviceSize: {},
   cartItems:[],
   selectedSlot: [],
-  categories:['Detailed Cleaning','Special Care','Kitchen Cleaning','Infection Control'],
+  categories:['Detailed Cleaning','Special Care','Kitchen Cleaning','Pest Control'],
   area_types:[],
   location_types: [
     "Post Construction",
