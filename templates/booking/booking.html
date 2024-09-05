@@ -1837,9 +1837,9 @@ width="1000"
                 </div>
                 <div class="row m-0" v-if="serviceType">
                   <div class="col-md-4 mt-2" id="field-location-type"
-                    v-if="serviceType=='General Cleaning' || serviceType=='Hourly Cleaning' || serviceType=='Sterilization'||serviceType=='Deep Cleaning' || serviceType=='Window Cleaning' || serviceType=='Kitchen Cleaning'">
+                    v-if="serviceType=='General Cleaning' || serviceType=='Hourly Cleaning' || serviceType=='Sterilization'||serviceType=='Deep Cleaning' || serviceType=='Window Cleaning' || serviceType=='Kitchen Cleaning' || serviceType=='Pest Control'">
                     <v-select :items="location_types2" v-model="location_type" label="Location Type"
-                      v-if="serviceType=='General Cleaning' ||  serviceType=='Hourly Cleaning'|| serviceType=='Sterilization'">
+                      v-if="serviceType=='General Cleaning' ||  serviceType=='Hourly Cleaning'|| serviceType=='Sterilization' || serviceType=='Pest Control'">
                     </v-select>
                     <v-select
                       v-if="serviceType=='Deep Cleaning' || serviceType=='Window Cleaning' || serviceType=='Kitchen Cleaning'"
@@ -1855,7 +1855,8 @@ width="1000"
                     serviceType=='Hourly Cleaning'||
                     serviceType == 'Deep Cleaning' ||
                     serviceType == 'Sterilization' ||
-                    serviceType == 'Storage Area'
+                    serviceType == 'Storage Area'  ||
+                    serviceType == 'Pest Control'
                   ">
                     <v-select :items="buildings" v-model="temp_no_of_building" label="No of Building"
                       v-on:change="setBuilding()" >
