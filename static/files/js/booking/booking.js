@@ -3484,7 +3484,7 @@ this.infectionControlServices=[]
     
         }
         else{
-           if(item=='Infection Control'){
+           if(item=='Pest Control'){
                     console.log("infection dsdsdsdsd");
           /*     for(var i=0;i<this.services.length;i++){
          if(this.services[i].name=='Sterilization'){
