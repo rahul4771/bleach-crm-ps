@@ -1871,7 +1871,8 @@ width="1000"
                   serviceType=='Hourly Cleaning'||
                   serviceType == 'Deep Cleaning' ||
                   serviceType == 'Sterilization' ||
-                  serviceType == 'Storage Area'
+                  serviceType == 'Storage Area'  ||
+                  serviceType == 'Pest Control'
                 ">
                   <div class="col-md-12">
                     <v-tabs v-model="tab">
@@ -2599,7 +2600,8 @@ width="1000"
                           serviceType=='Hourly Cleaning' ||
                           serviceType == 'Deep Cleaning' ||
                           serviceType == 'Storage Area' ||
-                          serviceType == 'Sterilization'
+                          serviceType == 'Sterilization' ||
+                          serviceType == 'Pest Control'
                         ">
                        
                           <div v-if="building[index - 1].completed && floorCompleted" class="text-center">
