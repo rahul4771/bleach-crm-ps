@@ -5844,7 +5844,7 @@ class ServicePriceRangeAPI(APIView):
 		service_price_range_serializer = ServicePriceRangeSerializer(service_price_ranges,many=True).data
 		sorted_service_price_ranges = sorted(
 			service_price_range_serializer,
-			key=lambda x: (x['unit_price'] is None, x['unit_price'])
+			key=lambda x: (x['price'] is None, x['price'])
 		)
 		response_dict["service_price_ranges"]=sorted_service_price_ranges
 		return Response(response_dict,HTTP_200_OK)
