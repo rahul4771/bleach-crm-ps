@@ -5837,7 +5837,7 @@ class ServicePriceRangeAPI(APIView):
 		response_dict = {}
 
 		try:
-			service_price_ranges = ServicePriceRange.objects.filter(is_active=True,service_type__name__icontains=cleaning_type)
+			service_price_ranges = ServicePriceRange.objects.filter(is_active=True,service_type__name__icontains=cleaning_type).order_by('unit_price')
 		except:
 			service_price_ranges = None
 
