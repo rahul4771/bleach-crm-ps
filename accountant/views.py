@@ -2582,7 +2582,7 @@ def export_users_xls(request):
 					if schedule.evaluation_details.evaluator:
 						salesman = schedule.evaluation_details.evaluator.name
 					else:
-						salesman = schedule.order.evaluation.call_attender.name
+						salesman = schedule.order.evaluation.call_attender.name if schedule.order.evaluation.call_attender else ""
 
 					schedule_list = [schedule.order.order_no,str(schedule.end_at.date()),schedule.end_at.strftime("%A"),schedule.order.evaluation.customer.name,schedule.order.evaluation.payment_method,schedule.order_scheduler_book.cleaning_policy,salesman,gross_amount]
 					
