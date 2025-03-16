@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from order.models import OrderScheduler, Order
 from evaluator.models import EvaluationDetails, EvaluationBook
 from user.models import Address
+from evaluator.models import Evaluation
 
 class Command(BaseCommand):
     help = "Create OrderScheduler entries"
@@ -10,8 +11,9 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         try:
             # Fetch required objects
-            order = Order.objects.get(order_no='BLC20250310227')
-            evaluation_details = EvaluationDetails.objects.get(evaluation=order)
+            evaluation = Evaluation.objects.get(evaluation_id='BLC20250310227')
+            order = Order.objects.get(evaluation__evaluation_id='BLC20250310227')
+            evaluation_details = EvaluationDetails.objects.get(evaluation=evaluation)
             customer_address = Address.objects.get(id=8187)
             order_scheduler_books = EvaluationBook.objects.filter(id__in=[17054, 17055, 17056, 17057])
 
