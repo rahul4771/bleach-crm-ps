@@ -16,144 +16,144 @@ from django.db.models import Prefetch
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,Max,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField,CharField
 # Create your views here.
 
-# def quotation_data(request):
-#     data = []
-#     dom = request.GET.get('dom',None)
-#     prevdate  = request.GET.get('fromdate', None)
-#     todate  = request.GET.get('todate', None)
-#     print(prevdate,todate,"pop")
-    
-#     if dom == 'Month':
-#         month,year = prevdate.split("/")
-#         month2,year2 = todate.split("/")
-
-#         monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
-#         monthdate2 = datetime(day=1,month=int(month2),year=int(year2),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
-#         print(monthdate1,monthdate2,"mod")
-
-#         quotes = Order.objects.filter(is_active=True,evaluation__quatation_status__isnull=False,created__range=(monthdate1,monthdate2))
-#         quotations = quotes.dates('created','month').distinct() #.values('created').annotate(month=Month('created')).values('month').annotate(count=Count('pk'))
-
-#         for month in quotations:
-#             month_start = datetime(day=1,month=month.month,year=month.year,hour=0,minute=0,second=0,microsecond=0)
-#             month_end = datetime(day=1,month=month.month,year=month.year,hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
-#             submitted_quotes = Order.objects.filter(is_active=True,evaluation__quatation_status__isnull=False,created__range=(month_start,month_end)).count()
-#             approved_quotes = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',created__range=(month_start,month_end)).count()
-#             # submitted_total = submitted_quotes.aggregate(total=Count("pk")).get("total")
-#             # approved_total = approved_quotes.aggregate(total2=Count("pk")).get("total2")
-#             print(month.month, submitted_quotes, approved_quotes,'dats')
-#             qt_dict = {
-#             "date" : month.month,
-#             "submitted_qt" : submitted_quotes,
-#             "approved_qt" : approved_quotes
-#             }
-#             data.append(qt_dict)
-
-#     else:
-#         print("kab")
-#         try:
-#             prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
-#             todate = datetime.strptime(todate, '%Y-%m-%d')
-#         except:
-#             todate = date.today() - timedelta(days=1)
-#             prevdate = todate - timedelta(days=30)
-#         print(prevdate,todate,"testdt")
-#         daterange = pd.date_range(prevdate, todate)
-
-#         for single_date in daterange:
-#             quotation_date_start  = single_date.replace(hour=0,minute=0,second=0,microsecond=0)
-#             quotation_date_end    = single_date+timedelta(1)	
-            
-#             submitted_qtns = Order.objects.filter(is_active=True,evaluation__quatation_status__isnull=False,created__range=(quotation_date_start,quotation_date_end)).count()
-#             approved_qtns = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',created__range=(quotation_date_start,quotation_date_end)).count()
-#             print(submitted_qtns,approved_qtns,"qtc")
-
-#             qt_dict = {
-#                 "date" : single_date,
-#                 "submitted_qt" : submitted_qtns,
-#                 "approved_qt" : approved_qtns
-#             }
-#             data.append(qt_dict)
-
-#     return JsonResponse(data,safe=False)
-
 def quotation_data(request):
     data = []
-    dom = request.GET.get('dom', None)
-    prevdate = request.GET.get('fromdate', None)
-    todate = request.GET.get('todate', None)
+    dom = request.GET.get('dom',None)
+    prevdate  = request.GET.get('fromdate', None)
+    todate  = request.GET.get('todate', None)
+    print(prevdate,todate,"pop")
+    
+    if dom == 'Month':
+        month,year = prevdate.split("/")
+        month2,year2 = todate.split("/")
 
-    try:
-        if dom == 'Month':
-            month, year = prevdate.split("/")
-            month2, year2 = todate.split("/")
+        monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
+        monthdate2 = datetime(day=1,month=int(month2),year=int(year2),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+        print(monthdate1,monthdate2,"mod")
 
-            monthdate1 = datetime(day=1, month=int(month), year=int(year))
-            monthdate2 = datetime(day=1, month=int(month2), year=int(year2)) + relativedelta(months=1)
+        quotes = Order.objects.filter(is_active=True,evaluation__quatation_status__isnull=False,created__range=(monthdate1,monthdate2))
+        quotations = quotes.dates('created','month').distinct() #.values('created').annotate(month=Month('created')).values('month').annotate(count=Count('pk'))
 
-            # Fetch data in one query
-            quotes = (
-                Order.objects.filter(
-                    is_active=True, evaluation__quatation_status__isnull=False, created__range=(monthdate1, monthdate2)
-                )
-                .annotate(month=Count('pk'))
-                .values('created__month')
-                .annotate(
-                    submitted_qt=Count('pk'),
-                    approved_qt=Count('pk', filter=Q(evaluation__quatation_status='APPROVED'))
-                )
-            )
+        for month in quotations:
+            month_start = datetime(day=1,month=month.month,year=month.year,hour=0,minute=0,second=0,microsecond=0)
+            month_end = datetime(day=1,month=month.month,year=month.year,hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
+            submitted_quotes = Order.objects.filter(is_active=True,evaluation__quatation_status__isnull=False,created__range=(month_start,month_end)).count()
+            approved_quotes = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',created__range=(month_start,month_end)).count()
+            # submitted_total = submitted_quotes.aggregate(total=Count("pk")).get("total")
+            # approved_total = approved_quotes.aggregate(total2=Count("pk")).get("total2")
+            print(month.month, submitted_quotes, approved_quotes,'dats')
+            qt_dict = {
+            "date" : month.month,
+            "submitted_qt" : submitted_quotes,
+            "approved_qt" : approved_quotes
+            }
+            data.append(qt_dict)
 
-            # Convert to structured data
-            data = [
-                {
-                    "date": quote["created__month"],
-                    "submitted_qt": quote["submitted_qt"],
-                    "approved_qt": quote["approved_qt"],
-                }
-                for quote in quotes
-            ]
+    else:
+        print("kab")
+        try:
+            prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
+            todate = datetime.strptime(todate, '%Y-%m-%d')
+        except:
+            todate = date.today() - timedelta(days=1)
+            prevdate = todate - timedelta(days=30)
+        print(prevdate,todate,"testdt")
+        daterange = pd.date_range(prevdate, todate)
 
-        else:
-            try:
-                prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
-                todate = datetime.strptime(todate, '%Y-%m-%d')
-            except:
-                todate = datetime.today() - timedelta(days=1)
-                prevdate = todate - timedelta(days=30)
+        for single_date in daterange:
+            quotation_date_start  = single_date.replace(hour=0,minute=0,second=0,microsecond=0)
+            quotation_date_end    = single_date+timedelta(1)	
+            
+            submitted_qtns = Order.objects.filter(is_active=True,evaluation__quatation_status__isnull=False,created__range=(quotation_date_start,quotation_date_end)).count()
+            approved_qtns = Order.objects.filter(is_active=True,evaluation__quatation_status='APPROVED',created__range=(quotation_date_start,quotation_date_end)).count()
+            print(submitted_qtns,approved_qtns,"qtc")
 
-            # Use date range
-            daterange = pd.date_range(prevdate, todate)
+            qt_dict = {
+                "date" : single_date,
+                "submitted_qt" : submitted_qtns,
+                "approved_qt" : approved_qtns
+            }
+            data.append(qt_dict)
 
-            # Fetch all data at once
-            quotes = (
-                Order.objects.filter(
-                    is_active=True, evaluation__quatation_status__isnull=False, created__range=(prevdate, todate)
-                )
-                .annotate(day=Count('pk'))
-                .values('created__date')
-                .annotate(
-                    submitted_qt=Count('pk'),
-                    approved_qt=Count('pk', filter=Q(evaluation__quatation_status='APPROVED'))
-                )
-            )
+    return JsonResponse(data,safe=False)
 
-            # Convert to structured data
-            quote_dict = {quote["created__date"]: quote for quote in quotes}
+# def quotation_data(request):
+#     data = []
+#     dom = request.GET.get('dom', None)
+#     prevdate = request.GET.get('fromdate', None)
+#     todate = request.GET.get('todate', None)
 
-            for single_date in daterange:
-                data.append(
-                    {
-                        "date": single_date.strftime('%Y-%m-%d'),
-                        "submitted_qt": quote_dict.get(single_date.date(), {}).get("submitted_qt", 0),
-                        "approved_qt": quote_dict.get(single_date.date(), {}).get("approved_qt", 0),
-                    }
-                )
+#     try:
+#         if dom == 'Month':
+#             month, year = prevdate.split("/")
+#             month2, year2 = todate.split("/")
 
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
+#             monthdate1 = datetime(day=1, month=int(month), year=int(year))
+#             monthdate2 = datetime(day=1, month=int(month2), year=int(year2)) + relativedelta(months=1)
 
-    return JsonResponse(data, safe=False)
+#             # Fetch data in one query
+#             quotes = (
+#                 Order.objects.filter(
+#                     is_active=True, evaluation__quatation_status__isnull=False, created__range=(monthdate1, monthdate2)
+#                 )
+#                 .annotate(month=Count('pk'))
+#                 .values('created__month')
+#                 .annotate(
+#                     submitted_qt=Count('pk'),
+#                     approved_qt=Count('pk', filter=Q(evaluation__quatation_status='APPROVED'))
+#                 )
+#             )
+
+#             # Convert to structured data
+#             data = [
+#                 {
+#                     "date": quote["created__month"],
+#                     "submitted_qt": quote["submitted_qt"],
+#                     "approved_qt": quote["approved_qt"],
+#                 }
+#                 for quote in quotes
+#             ]
+
+#         else:
+#             try:
+#                 prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
+#                 todate = datetime.strptime(todate, '%Y-%m-%d')
+#             except:
+#                 todate = datetime.today() - timedelta(days=1)
+#                 prevdate = todate - timedelta(days=30)
+
+#             # Use date range
+#             daterange = pd.date_range(prevdate, todate)
+
+#             # Fetch all data at once
+#             quotes = (
+#                 Order.objects.filter(
+#                     is_active=True, evaluation__quatation_status__isnull=False, created__range=(prevdate, todate)
+#                 )
+#                 .annotate(day=Count('pk'))
+#                 .values('created__date')
+#                 .annotate(
+#                     submitted_qt=Count('pk'),
+#                     approved_qt=Count('pk', filter=Q(evaluation__quatation_status='APPROVED'))
+#                 )
+#             )
+
+#             # Convert to structured data
+#             quote_dict = {quote["created__date"]: quote for quote in quotes}
+
+#             for single_date in daterange:
+#                 data.append(
+#                     {
+#                         "date": single_date.strftime('%Y-%m-%d'),
+#                         "submitted_qt": quote_dict.get(single_date.date(), {}).get("submitted_qt", 0),
+#                         "approved_qt": quote_dict.get(single_date.date(), {}).get("approved_qt", 0),
+#                     }
+#                 )
+
+#     except Exception as e:
+#         return JsonResponse({"error": str(e)}, status=500)
+
+#     return JsonResponse(data, safe=False)
 
 #for onetime , subscription based charts
 def quotation_data_policy(request):
