@@ -3489,180 +3489,360 @@ class MakeQuatationBase(IsAuthenticated,View):
 
 		return redirect('common_items:makequatation1',enquiry_id,evaluation.id)
 
-class MakeQuatationPhase1(IsAuthenticated,View):
+# class MakeQuatationPhase1(IsAuthenticated,View):
 
-	def get(self,request,enquiry_id,evaluation_id):
-		enquiry_user    	  = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(id=enquiry_id)
+# 	def get(self,request,enquiry_id,evaluation_id):
+# 		enquiry_user    	  = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(id=enquiry_id)
 		
-		try:
-			evaluation = Evaluation.objects.prefetch_related(Prefetch('booking_evaluation',queryset=CustomerBooking.objects.filter(is_active=True),to_attr='bookings')).get(id=evaluation_id)
-		except:
-			evaluation = None		
+# 		try:
+# 			evaluation = Evaluation.objects.prefetch_related(Prefetch('booking_evaluation',queryset=CustomerBooking.objects.filter(is_active=True),to_attr='bookings')).get(id=evaluation_id)
+# 		except:
+# 			evaluation = None		
 	
-		try:
-			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True,cleaning_policy='SUBSCRIPTION'),to_attr='evaluationbooks'))
-		except:
-			evaluation_details = None
+# 		try:
+# 			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True,cleaning_policy='SUBSCRIPTION'),to_attr='evaluationbooks'))
+# 		except:
+# 			evaluation_details = None
 
-		#allow submition	
-		evaluation_details_count          = evaluation_details.count()
-		evaluation_details_completed_count= evaluation_details.filter(status='EVALUATED').count()
-		if evaluation_details_count==evaluation_details_completed_count:
-			allow_submit = True
-		else:
-			allow_submit = False				
+# 		#allow submition	
+# 		evaluation_details_count          = evaluation_details.count()
+# 		evaluation_details_completed_count= evaluation_details.filter(status='EVALUATED').count()
+# 		if evaluation_details_count==evaluation_details_completed_count:
+# 			allow_submit = True
+# 		else:
+# 			allow_submit = False				
 
-		return render(request,'common/enquiry/phase1quatation.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit})	
+# 		return render(request,'common/enquiry/phase1quatation.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit})	
 
-	def post(self,request,enquiry_id,evaluation_id):
+# 	def post(self,request,enquiry_id,evaluation_id):
 		
-		action = request.POST.get('action_type',None)
-		if action == 'cancel' :
-			evaluation_detail_id =request.POST.get('evaluation_detail')
-			cancel_reason = request.POST.get('cancellation_reason')
-			evaluation_detail = EvaluationDetails.objects.filter(id=int(evaluation_detail_id)).first()
-			evaluation_detail.status = 'CANCELLED'
-			evaluation_detail.evaluation_cancel_reason = cancel_reason
-			evaluation_detail.save()
-			messages.success(request,"Evaluation Cancelled !!")
-			return redirect('common_items:makequatation1', enquiry_id,evaluation_id)
+# 		action = request.POST.get('action_type',None)
+# 		if action == 'cancel' :
+# 			evaluation_detail_id =request.POST.get('evaluation_detail')
+# 			cancel_reason = request.POST.get('cancellation_reason')
+# 			evaluation_detail = EvaluationDetails.objects.filter(id=int(evaluation_detail_id)).first()
+# 			evaluation_detail.status = 'CANCELLED'
+# 			evaluation_detail.evaluation_cancel_reason = cancel_reason
+# 			evaluation_detail.save()
+# 			messages.success(request,"Evaluation Cancelled !!")
+# 			return redirect('common_items:makequatation1', enquiry_id,evaluation_id)
 
 
-        ###SUBMIT QUATATION
-		payment_method          = request.POST.get('payment_method')
-		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0.000)
-		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0.000)
-		discount                = float(request.POST.get('discount')or 0.000)
-		additional_charge       = float(request.POST.get('additional_charge')or 0.000)
-		total_cost              = float(request.POST.get('total_amount')or 0.000)
-		evaluator_note          = request.POST.get('evaluator_note')
+#         ###SUBMIT QUATATION
+# 		payment_method          = request.POST.get('payment_method')
+# 		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0.000)
+# 		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0.000)
+# 		discount                = float(request.POST.get('discount')or 0.000)
+# 		additional_charge       = float(request.POST.get('additional_charge')or 0.000)
+# 		total_cost              = float(request.POST.get('total_amount')or 0.000)
+# 		evaluator_note          = request.POST.get('evaluator_note')
 
 
-		#update payment method
-		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount,total_cost=total_cost,discount=discount,additional_charge=additional_charge,evaluator_note=evaluator_note)
+# 		#update payment method
+# 		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount,total_cost=total_cost,discount=discount,additional_charge=additional_charge,evaluator_note=evaluator_note)
 
-		##advance payment check
-		is_advance              = request.POST.get('is_advance')
-		if is_advance:
-			subscription_topay      = request.POST.get('subscription_topay')
-			Order.objects.filter(evaluation__id=evaluation_id,is_active=True).update(total_amount=total_cost,remining_amount=total_cost,subscription_topay=subscription_topay,is_advance=True,subscription_topay_date=timezone.now())
-		else:
-			Order.objects.filter(evaluation__id=evaluation_id,is_active=True).update(total_amount=total_cost,remining_amount=total_cost)
+# 		##advance payment check
+# 		is_advance              = request.POST.get('is_advance')
+# 		if is_advance:
+# 			subscription_topay      = request.POST.get('subscription_topay')
+# 			Order.objects.filter(evaluation__id=evaluation_id,is_active=True).update(total_amount=total_cost,remining_amount=total_cost,subscription_topay=subscription_topay,is_advance=True,subscription_topay_date=timezone.now())
+# 		else:
+# 			Order.objects.filter(evaluation__id=evaluation_id,is_active=True).update(total_amount=total_cost,remining_amount=total_cost)
 
-		#sms integration
-		order             = Order.objects.filter(evaluation__id=evaluation_id,is_active=True).prefetch_related(Prefetch('evaluation__booking_evaluation',queryset=CustomerBooking.objects.filter(is_active=True,booking_type='CLEANINGBOOKING'),to_attr='customerbooking')).first()
-		evaluation        = order.evaluation
-		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
+# 		#sms integration
+# 		order             = Order.objects.filter(evaluation__id=evaluation_id,is_active=True).prefetch_related(Prefetch('evaluation__booking_evaluation',queryset=CustomerBooking.objects.filter(is_active=True,booking_type='CLEANINGBOOKING'),to_attr='customerbooking')).first()
+# 		evaluation        = order.evaluation
+# 		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
 		
-		if evaluationdetails.evaluator:
-			evaluator = evaluationdetails.evaluator.name
-		else:
-			evaluator = evaluation.call_attender.name
+# 		if evaluationdetails.evaluator:
+# 			evaluator = evaluationdetails.evaluator.name
+# 		else:
+# 			evaluator = evaluation.call_attender.name
 
-		evaluationbooks = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections'))
-		evaluationbook  = evaluationbooks.first()
-		language        = evaluation.customer.sms_preference
+# 		evaluationbooks = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections'))
+# 		evaluationbook  = evaluationbooks.first()
+# 		language        = evaluation.customer.sms_preference
 
-		messages.success(request,"Quotation Submitted Succesfully")	
+# 		messages.success(request,"Quotation Submitted Succesfully")	
 		
-		address = evaluationdetails.address
+# 		address = evaluationdetails.address
 
-		#address check for floor,avenue None
-		if address.floor == None and address.avenue == None:
-			address_list = [address.apartment, address.street, address.building, address.block, address.area.name, address.governorate.name]
+# 		#address check for floor,avenue None
+# 		if address.floor == None and address.avenue == None:
+# 			address_list = [address.apartment, address.street, address.building, address.block, address.area.name, address.governorate.name]
 		
-		elif address.floor == None:
-			address_list = [address.apartment, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+# 		elif address.floor == None:
+# 			address_list = [address.apartment, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
 		
-		elif address.avenue == None:
-			address_list = [address.apartment, address.floor, address.street, address.building, address.block, address.area.name, address.governorate.name]
+# 		elif address.avenue == None:
+# 			address_list = [address.apartment, address.floor, address.street, address.building, address.block, address.area.name, address.governorate.name]
 		
-		else:
-			address_list = [address.apartment, address.floor, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+# 		else:
+# 			address_list = [address.apartment, address.floor, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
 
-		separator = ", "
+# 		separator = ", "
 
-		#SEPERATE MSG FOR LET CUSTOMER BOOKING AND DIRECT BOOKING
-		if evaluation.customer.is_sms == True:
+# 		#SEPERATE MSG FOR LET CUSTOMER BOOKING AND DIRECT BOOKING
+# 		if evaluation.customer.is_sms == True:
 
-			if evaluation.customerbooking:
+# 			if evaluation.customerbooking:
 
-				url     = "https://smsapi.future-club.com/fccsms.aspx"
+# 				url     = "https://smsapi.future-club.com/fccsms.aspx"
 
-				sms_url = "https://my.bleachkw.com/customer/booking/invoice/paw"+str(evaluation.evaluation_id [3:14])+str(evaluation.customer.username)
+# 				sms_url = "https://my.bleachkw.com/customer/booking/invoice/paw"+str(evaluation.evaluation_id [3:14])+str(evaluation.customer.username)
 
-				if language == 'ENGLISH':
+# 				if language == 'ENGLISH':
 
-					message = "Dear Customer , We have completed your Site Evaluation.You can Book your Slote through "+sms_url+".For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+# 					message = "Dear Customer , We have completed your Site Evaluation.You can Book your Slote through "+sms_url+".For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 
-					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+# 					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
 
-				else:
+# 				else:
 
-					message = "عزيزي العميل ، لقد أكملنا تقييم الموقع الخاص بك.يمكنك حجز الكسلان الخاص بك من خلال "+sms_url+". للحصول على أي مساعدة يرجى الاتصال بنا على +9651882707. شكرا لاختيارك بليتش الكويت."
+# 					message = "عزيزي العميل ، لقد أكملنا تقييم الموقع الخاص بك.يمكنك حجز الكسلان الخاص بك من خلال "+sms_url+". للحصول على أي مساعدة يرجى الاتصال بنا على +9651882707. شكرا لاختيارك بليتش الكويت."
 
-					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+# 					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
 				
-				headers = {
-					'cache-control': "no-cache"
-				}
+# 				headers = {
+# 					'cache-control': "no-cache"
+# 				}
 
-				response = requests.request("GET", url, headers=headers, params=querystring)
+# 				response = requests.request("GET", url, headers=headers, params=querystring)
 
-			else:
-				messages.success(request,"Direct BOOKED")
+# 			else:
+# 				messages.success(request,"Direct BOOKED")
 
-				url = "https://smsapi.future-club.com/fccsms.aspx"
+# 				url = "https://smsapi.future-club.com/fccsms.aspx"
 
-				if evaluation.payment_method == 'SUBSCRIPTION':
-					smsurl = "https://my.bleachkw.com/customer/subscription/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
-				else:
-					smsurl = "https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
+# 				if evaluation.payment_method == 'SUBSCRIPTION':
+# 					smsurl = "https://my.bleachkw.com/customer/subscription/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
+# 				else:
+# 					smsurl = "https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
 
-				if language == 'ENGLISH':
-					print(str(evaluation.id),str(evaluation.evaluation_id),str(evaluation.total_cost),str(evaluation.quatation_expiry_date),str(evaluation.customer.username),str(evaluation.tracking_no),"trerr")
+# 				if language == 'ENGLISH':
+# 					print(str(evaluation.id),str(evaluation.evaluation_id),str(evaluation.total_cost),str(evaluation.quatation_expiry_date),str(evaluation.customer.username),str(evaluation.tracking_no),"trerr")
 
-					message = "Dear Customer, Please find the Quotation against the cleaning at "+separator.join(address_list)+" here "+smsurl+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
+# 					message = "Dear Customer, Please find the Quotation against the cleaning at "+separator.join(address_list)+" here "+smsurl+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
 
-					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+# 					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
 				
-				else:
-					message = "عزيزنا العميل نرجوا الاطلاع على عرض سعر خدمات التنظيف المطلوبة في "+separator.join(address_list)+" "+smsurl+"  لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
+# 				else:
+# 					message = "عزيزنا العميل نرجوا الاطلاع على عرض سعر خدمات التنظيف المطلوبة في "+separator.join(address_list)+" "+smsurl+"  لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
 
-					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+# 					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
 
-				headers = {
-					'cache-control': "no-cache"
-				}
+# 				headers = {
+# 					'cache-control': "no-cache"
+# 				}
 				
-				response = requests.request("GET", url, headers=headers, params=querystring)
+# 				response = requests.request("GET", url, headers=headers, params=querystring)
 
-		else:
-			pass
+# 		else:
+# 			pass
 
 
 
-		#Different Email FOR LET CUSTOMER BOOKING AND DIRECT BOOKING
-		if evaluation.customer.is_email == True :
-			price_ranges 		= ServicePriceRange.objects.filter(is_active=True)
-			if evaluation.customerbooking:				
-				msg_html = render_to_string('email/invoice.html',{"invoice":order,"address_list":separator.join(address_list),"evaluationbooks":evaluationbooks,"price_ranges":price_ranges})
-				msg = EmailMultiAlternatives('Bleach Invoice', '', 'notification@bleach-kw.com', [evaluation.customer.email])
-				msg.attach_alternative(msg_html, "text/html")
-				msg.send(fail_silently=False)
-			else:
-				msg_html = render_to_string('email/quatation.html',{"evaluator":evaluator,"evaluation":evaluation,"evaluationbooks":evaluationbooks,"address_list":separator.join(address_list),"price_ranges":price_ranges})
-				msg = EmailMultiAlternatives('Bleach Quotation', '', 'notification@bleach-kw.com', [evaluation.customer.email])
-				msg.attach_alternative(msg_html, "text/html")
-				msg.send(fail_silently=False)
+# 		#Different Email FOR LET CUSTOMER BOOKING AND DIRECT BOOKING
+# 		if evaluation.customer.is_email == True :
+# 			price_ranges 		= ServicePriceRange.objects.filter(is_active=True)
+# 			if evaluation.customerbooking:				
+# 				msg_html = render_to_string('email/invoice.html',{"invoice":order,"address_list":separator.join(address_list),"evaluationbooks":evaluationbooks,"price_ranges":price_ranges})
+# 				msg = EmailMultiAlternatives('Bleach Invoice', '', 'notification@bleach-kw.com', [evaluation.customer.email])
+# 				msg.attach_alternative(msg_html, "text/html")
+# 				msg.send(fail_silently=False)
+# 			else:
+# 				msg_html = render_to_string('email/quatation.html',{"evaluator":evaluator,"evaluation":evaluation,"evaluationbooks":evaluationbooks,"address_list":separator.join(address_list),"price_ranges":price_ranges})
+# 				msg = EmailMultiAlternatives('Bleach Quotation', '', 'notification@bleach-kw.com', [evaluation.customer.email])
+# 				msg.attach_alternative(msg_html, "text/html")
+# 				msg.send(fail_silently=False)
 				
 		
-		if request.user.user_type == 'AGENT':
-			return redirect('agent:agentdash-board')
-		elif request.user.user_type == 'EVALUATOR':
-			return redirect('evaluator:evaluatordash-board')
-		else:
-			return redirect('booking-officer:bookingofficerdash-board')
+# 		if request.user.user_type == 'AGENT':
+# 			return redirect('agent:agentdash-board')
+# 		elif request.user.user_type == 'EVALUATOR':
+# 			return redirect('evaluator:evaluatordash-board')
+# 		else:
+# 			return redirect('booking-officer:bookingofficerdash-board')
+
+class MakeQuatationPhase1(IsAuthenticated,View):
+	
+    def get(self, request, enquiry_id, evaluation_id):
+        enquiry_user = UserProfile.objects.prefetch_related(
+            Prefetch(
+                'address_customer',
+                queryset=Address.objects.filter(is_active=True).select_related('area', 'governorate'),
+                to_attr='customer_addresses'
+            )
+        ).get(id=enquiry_id)
+
+        evaluation = Evaluation.objects.filter(id=evaluation_id).prefetch_related(
+            Prefetch(
+                'booking_evaluation',
+                queryset=CustomerBooking.objects.filter(is_active=True),
+                to_attr='bookings'
+            )
+        ).first()
+
+        evaluation_details = EvaluationDetails.objects.filter(
+            is_active=True, evaluation=evaluation
+        ).prefetch_related(
+            Prefetch(
+                'evaluation_book_evaluation_details',
+                queryset=EvaluationBook.objects.filter(is_active=True, cleaning_policy='SUBSCRIPTION'),
+                to_attr='evaluationbooks'
+            )
+        )
+
+        evaluation_details_count = evaluation_details.count()
+        evaluation_details_completed_count = evaluation_details.filter(status='EVALUATED').count()
+        allow_submit = evaluation_details_count == evaluation_details_completed_count
+
+        return render(request, 'common/enquiry/phase1quatation.html', {
+            'enquiry_user': enquiry_user,
+            'evaluation': evaluation,
+            'evaluation_details': evaluation_details,
+            'allow_submit': allow_submit
+        })
+
+    def post(self, request, enquiry_id, evaluation_id):
+        action = request.POST.get('action_type')
+
+        if action == 'cancel':
+            evaluation_detail_id = request.POST.get('evaluation_detail')
+            cancel_reason = request.POST.get('cancellation_reason')
+
+            EvaluationDetails.objects.filter(id=evaluation_detail_id).update(
+                status='CANCELLED',
+                evaluation_cancel_reason=cancel_reason
+            )
+
+            messages.success(request, "Evaluation Cancelled !!")
+            return redirect('common_items:makequatation1', enquiry_id, evaluation_id)
+
+        evaluation_data = {
+            "payment_method": request.POST.get('payment_method'),
+            "quatation_status": 'PENDING',
+            "before_cleaning_amount": float(request.POST.get('before_cleaning_amount') or 0.000),
+            "after_cleaning_amount": float(request.POST.get('after_cleaning_amount') or 0.000),
+            "discount": float(request.POST.get('discount') or 0.000),
+            "additional_charge": float(request.POST.get('additional_charge') or 0.000),
+            "total_cost": float(request.POST.get('total_amount') or 0.000),
+            "evaluator_note": request.POST.get('evaluator_note'),
+        }
+
+        Evaluation.objects.filter(id=evaluation_id, is_active=True).update(**evaluation_data)
+
+        is_advance = request.POST.get('is_advance')
+        order_update_data = {
+            "total_amount": evaluation_data["total_cost"],
+            "remining_amount": evaluation_data["total_cost"],
+        }
+        if is_advance:
+            order_update_data.update({
+                "subscription_topay": request.POST.get('subscription_topay'),
+                "is_advance": True,
+                "subscription_topay_date": timezone.now()
+            })
+
+        Order.objects.filter(evaluation__id=evaluation_id, is_active=True).update(**order_update_data)
+
+        order = Order.objects.filter(evaluation__id=evaluation_id, is_active=True).select_related(
+            'evaluation'
+        ).prefetch_related(
+            Prefetch(
+                'evaluation__booking_evaluation',
+                queryset=CustomerBooking.objects.filter(is_active=True, booking_type='CLEANINGBOOKING'),
+                to_attr='customerbooking'
+            )
+        ).first()
+
+        evaluation = order.evaluation
+        evaluation_details = EvaluationDetails.objects.filter(evaluation=evaluation).select_related(
+            'evaluator', 'address'
+        ).first()
+
+        evaluator = evaluation_details.evaluator.name if evaluation_details.evaluator else evaluation.call_attender.name
+
+        evaluation_books = EvaluationBook.objects.filter(evaluation_details=evaluation_details).prefetch_related(
+            Prefetch(
+                'evaluationsection_book',
+                queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(
+                    Prefetch('addonsections', queryset=EvaluationSectionAddons.objects.filter(is_active=True), to_attr='sectionaddons')
+                ),
+                to_attr='sections'
+            )
+        )
+
+        if evaluation.customer.is_sms:
+            url = "https://smsapi.future-club.com/fccsms.aspx"
+
+            if evaluation.customerbooking:
+                sms_url = f"https://my.bleachkw.com/customer/booking/invoice/paw{evaluation.evaluation_id[3:14]}{evaluation.customer.username}"
+            else:
+                sms_url = (
+                    f"https://my.bleachkw.com/customer/subscription/quatation/paw{evaluation.tracking_no}{evaluation.customer.username}"
+                    if evaluation.payment_method == 'SUBSCRIPTION'
+                    else f"https://my.bleachkw.com/customer/quatation/paw{evaluation.tracking_no}{evaluation.customer.username}"
+                )
+
+            address_list = [
+                value for value in [
+                    evaluation_details.address.apartment,
+                    evaluation_details.address.floor,
+                    evaluation_details.address.street,
+                    evaluation_details.address.building,
+                    evaluation_details.address.avenue,
+                    evaluation_details.address.block,
+                    evaluation_details.address.area.name,
+                    evaluation_details.address.governorate.name
+                ] if value is not None
+            ]
+            separator = ", "
+
+            message = (
+                f"Dear Customer, Please find the Quotation against the cleaning at {separator.join(address_list)} here {sms_url}. "
+                "For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+            ) if evaluation.customer.sms_preference == "ENGLISH" else (
+                f"عزيزنا العميل نرجوا الاطلاع على عرض سعر خدمات التنظيف المطلوبة في {separator.join(address_list)} {sms_url} "
+                "لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
+            )
+
+            querystring = {
+                "UID": "Blkusr",
+                "P": "lckw33",
+                "S": "BLEACH",
+                "G": f"965{evaluation.customer.mobile_number}",
+                "M": message,
+                "IID": "1468",
+                "L": "L" if evaluation.customer.sms_preference == "ENGLISH" else "A"
+            }
+
+            requests.get(url, params=querystring, headers={'cache-control': "no-cache"})
+
+        if evaluation.customer.is_email:
+            price_ranges = ServicePriceRange.objects.filter(is_active=True)
+            email_template = "email/quatation.html" if not evaluation.customerbooking else "email/invoice.html"
+
+            msg_html = render_to_string(email_template, {
+                "evaluator": evaluator,
+                "evaluation": evaluation,
+                "evaluationbooks": evaluation_books,
+                "address_list": separator.join(address_list),
+                "price_ranges": price_ranges
+            })
+
+            msg = EmailMultiAlternatives('Bleach Quotation', '', 'notification@bleach-kw.com', [evaluation.customer.email])
+            msg.attach_alternative(msg_html, "text/html")
+            msg.send(fail_silently=False)
+
+        messages.success(request, "Quotation Submitted Successfully")
+
+        user_redirect_map = {
+            'AGENT': 'agent:agentdash-board',
+            'EVALUATOR': 'evaluator:evaluatordash-board',
+            'BOOKING_OFFICER': 'booking-officer:bookingofficerdash-board'
+        }
+        return redirect(user_redirect_map.get(request.user.user_type, 'booking-officer:bookingofficerdash-board'))
 
 class MakeQuatationPhase2(IsAuthenticated,View):
 	service_formset_define    = formset_factory(QuatationServiceForm)
