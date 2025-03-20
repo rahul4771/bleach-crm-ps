@@ -10131,12 +10131,11 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
                                 ceiling_type=sections_dict[key]['ceiling_type'],
                                 cement_residue=sections_dict[key]['cement_residue'],
                                 section_cost=sections_dict[key]['section_cost'],
-                                sectiononly_cost=sections_dict[key]['sectiononly_cost'],
-                                sectiononly_net_cost=sections_dict[key]['sectiononly_net_cost'],
-                                section_net_cost=sections_dict[key]['section_net_cost'],
-                                section_cleanings=len(schedules_dict),
-                                #section_net_cost=section_save_serializer.validated_data['section_cost'] * len(schedules_dict)
-                            )
+								sectiononly_cost=sections_dict[key]['sectiononly_cost'],
+								sectiononly_net_cost=sections_dict[key]['sectiononly_net_cost'],
+								section_cleanings=len(schedules_dict),
+								section_net_cost=section_save_serializer.validated_data['section_cost'] * len(schedules_dict)  # Corrected assignment
+							)
                         else:
                             section = EvaluationBookSection(
                                 evaluation_book=saved_service,
