@@ -4283,7 +4283,7 @@ class GetAvailableCleanersGroupSubscription(APIView):
 			cleaning_datetime_start      = datetime.strptime(subscription_detail['cleaning_datetime_start'],'%d-%m-%Y %I:%M %p')
 			cleaning_datetime_end        = datetime.strptime(subscription_detail['cleaning_datetime_end'],'%d-%m-%Y %I:%M %p')
 			
-			team_leaders_scheduled      = []
+			
 			team_members_scheduled      = []
 			#absent cleaners and leaders
 			cleaning_date1   = cleaning_datetime_start.date()
