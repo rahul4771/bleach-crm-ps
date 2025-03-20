@@ -1,4 +1,4 @@
-django==1.11.17
+django==3.0
 django-countries==6.1.2
 tzlocal
 pillow

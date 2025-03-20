@@ -3356,13 +3356,11 @@ class GetMultipleServiceCleaningSlotes(APIView):
         dropdown_slotes['slotes'] = available_slotes
         return Response(dropdown_slotes, HTTP_200_OK)
 
-
 from itertools import islice
 from concurrent.futures import ThreadPoolExecutor
 from django.db.models import Q
 
-
-class GetMultipleServiceDateCleaningSlotes(APIView):
+class GetMultipleServiceDateCleaningSlotes(APIView):  
     permission_classes = (AllowAny,)
     authentication_classes = ()
 
@@ -3747,7 +3745,7 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 
 
 
-class GetMultipleServiceDateCleaningSlotesAutofix(APIView):  
+class GetMultipleServiceDateCleaningSlotesAutofix(APIView):
 	permission_classes        = (AllowAny,)
 	authentication_classes    = ()
 
