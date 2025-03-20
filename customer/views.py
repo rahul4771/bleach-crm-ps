@@ -10135,7 +10135,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
                                 sectiononly_net_cost=sections_dict[key]['sectiononly_net_cost'],
                                 section_net_cost=sections_dict[key]['section_net_cost'],
                                 section_cleanings=len(schedules_dict),
-                                section_net_cost=section_save_serializer.validated_data['section_cost'] * len(schedules_dict)
+                                #section_net_cost=section_save_serializer.validated_data['section_cost'] * len(schedules_dict)
                             )
                         else:
                             section = EvaluationBookSection(
