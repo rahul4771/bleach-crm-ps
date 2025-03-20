@@ -9263,6 +9263,10 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
                 slote_start_datetime = datetime.strptime(cleaning_datetime, '%d-%m-%Y %I:%M %p')
                 slote_end_datetime = slote_start_datetime + timedelta(hours=cleaning_hours)
 
+            # Ensure datetime objects are offset-aware
+            slote_start_datetime = timezone.make_aware(slote_start_datetime)
+            slote_end_datetime = timezone.make_aware(slote_end_datetime)
+
             start_at_date = slote_start_datetime.date()
             end_at_date = slote_end_datetime.date()
 
@@ -9454,6 +9458,10 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
                 slote_start_datetime = datetime.strptime(cleaning_datetime, '%d-%m-%Y %I:%M %p')
                 slote_end_datetime = slote_start_datetime + timedelta(hours=cleaning_hours)
 
+            # Ensure datetime objects are offset-aware
+            slote_start_datetime = timezone.make_aware(slote_start_datetime)
+            slote_end_datetime = timezone.make_aware(slote_end_datetime)
+
             slote_start_time = slote_start_datetime.time()
             slote_end_time = slote_end_datetime.time()
             start_at_date = slote_start_datetime.date()
@@ -9487,20 +9495,25 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 
                             # Check shift1
                             if shift.shift1_start_at is not None and shift.shift1_end_at is not None:
-                                if (shift.shift1_start_at <= slote_start_time and shift.shift1_end_at >= slote_start_time) and \
-                                   (shift.shift1_start_at <= slote_end_time and shift.shift1_end_at >= slote_end_time):
+                                shift1_start_time = shift.shift1_start_at.time()
+                                shift1_end_time = shift.shift1_end_at.time()
+
+                                if (shift1_start_time <= slote_start_time and shift1_end_time >= slote_start_time) and \
+                                   (shift1_start_time <= slote_end_time and shift1_end_time >= slote_end_time):
                                     shift_covers = True
 
                             # Check shift2
                             if shift.shift2_start_at is not None and shift.shift2_end_at is not None:
-                                if (shift.shift2_start_at <= slote_start_time and shift.shift2_end_at >= slote_start_time) and \
-                                   (shift.shift2_start_at <= slote_end_time and shift.shift2_end_at >= slote_end_time):
+                                shift2_start_time = shift.shift2_start_at.time()
+                                shift2_end_time = shift.shift2_end_at.time()
+
+                                if (shift2_start_time <= slote_start_time and shift2_end_time >= slote_start_time) and \
+                                   (shift2_start_time <= slote_end_time and shift2_end_time >= slote_end_time):
                                     shift_covers = True
 
                             # Check shift3
                             if hasattr(shift, 'shift3_start_at') and hasattr(shift, 'shift3_end_at'):
                                 if shift.shift3_start_at is not None and shift.shift3_end_at is not None:
-                                    # Extract time components from shift3_start_at and shift3_end_at
                                     shift3_start_time = shift.shift3_start_at.time()
                                     shift3_end_time = shift.shift3_end_at.time()
 
@@ -9624,18 +9637,26 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 
             # Check active cleaners for this slot
             for cleaner in active_cleaners:
-                if (cleaner.start_at >= slote_start_datetime and cleaner.start_at < slote_end_datetime) or \
-                   (cleaner.end_at > slote_start_datetime and cleaner.end_at <= slote_end_datetime) or \
-                   (cleaner.start_at <= slote_start_datetime and cleaner.end_at >= slote_end_datetime):
+                # Ensure cleaner.start_at and cleaner.end_at are offset-aware
+                cleaner_start_at = timezone.make_aware(cleaner.start_at) if not timezone.is_aware(cleaner.start_at) else cleaner.start_at
+                cleaner_end_at = timezone.make_aware(cleaner.end_at) if not timezone.is_aware(cleaner.end_at) else cleaner.end_at
+
+                if (cleaner_start_at >= slote_start_datetime and cleaner_start_at < slote_end_datetime) or \
+                   (cleaner_end_at > slote_start_datetime and cleaner_end_at <= slote_end_datetime) or \
+                   (cleaner_start_at <= slote_start_datetime and cleaner_end_at >= slote_end_datetime):
                     team_members_scheduled.append(cleaner.member.id)
                     if cleaner.member.user_type == 'TEAMINCHARGE':
                         team_leaders_scheduled.append(cleaner.member.id)
 
             # Check active followups for this slot
             for followup in active_followups:
-                if (followup.start_at >= slote_start_datetime and followup.start_at < slote_end_datetime) or \
-                   (followup.end_at > slote_start_datetime and followup.end_at <= slote_end_datetime) or \
-                   (followup.start_at <= slote_start_datetime and followup.end_at >= slote_end_datetime):
+                # Ensure followup.start_at and followup.end_at are offset-aware
+                followup_start_at = timezone.make_aware(followup.start_at) if not timezone.is_aware(followup.start_at) else followup.start_at
+                followup_end_at = timezone.make_aware(followup.end_at) if not timezone.is_aware(followup.end_at) else followup.end_at
+
+                if (followup_start_at >= slote_start_datetime and followup_start_at < slote_end_datetime) or \
+                   (followup_end_at > slote_start_datetime and followup_end_at <= slote_end_datetime) or \
+                   (followup_start_at <= slote_start_datetime and followup_end_at >= slote_end_datetime):
                     team_members_scheduled.append(followup.member.id)
                     if followup.member.user_type == 'TEAMINCHARGE':
                         team_leaders_scheduled.append(followup.member.id)
