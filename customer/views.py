@@ -10209,7 +10209,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
                         for key2 in addons_dict.keys():
                             addons_save_serializer = EvaluationSectionAddonSerializer(data=addons_dict[key2])
                             if addons_save_serializer.is_valid():
-                                addon = EvaluationSectionAddon(
+                                addon = EvaluationSectionAddons(
                                     evaluation_section=sections[int(key)],
                                     **addons_dict[key2]
                                 )
@@ -10225,7 +10225,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
                                 return Response(response_dict, HTTP_200_OK)
 
                 # Bulk create add-ons
-                EvaluationSectionAddon.objects.bulk_create(addons)
+                EvaluationSectionAddons.objects.bulk_create(addons)
 
             response_dict['evaluation_book_ids'] = service_dict
             response_dict['success'] = True
