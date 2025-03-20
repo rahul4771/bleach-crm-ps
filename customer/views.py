@@ -9006,9 +9006,9 @@ class CartScheduleAPI(APIView):
 
 
 
-# from itertools import islice
-# from concurrent.futures import ThreadPoolExecutor
-# from django.db.models import Q
+from itertools import islice
+from concurrent.futures import ThreadPoolExecutor
+from django.db.models import Q
 
 # class GetMultipleServiceDateCleaningSlotes(APIView):  
 #     permission_classes = (AllowAny,)
