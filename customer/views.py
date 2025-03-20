@@ -3597,25 +3597,31 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
                         if date in shift_data:
                             for shift in shift_data[date]['schedules']:
                                 # Check if shift overlaps with slot time
-                                shift1_overlaps = (shift.shift1_start_at <= slote_start_time and 
-                                                 shift.shift1_end_at >= slote_start_time and
-                                                 shift.shift1_start_at <= slote_end_time and 
-                                                 shift.shift1_end_at >= slote_end_time)
-                                
-                                shift2_overlaps = (shift.shift2_start_at <= slote_start_time and 
-                                                 shift.shift2_end_at >= slote_start_time and
-                                                 shift.shift2_start_at <= slote_end_time and 
-                                                 shift.shift2_end_at >= slote_end_time)
-                                
-                                shift3_overlaps = (shift.shift3_start_at <= slote_start_datetime and 
-                                                 shift.shift3_end_at >= slote_start_datetime and
-                                                 shift.shift3_start_at <= slote_end_datetime and 
-                                                 shift.shift3_end_at >= slote_end_datetime)
-                                
-                                if shift1_overlaps or shift2_overlaps or shift3_overlaps:
-                                    if shift.staff.user_type == 'TEAMINCHARGE':
-                                        shift_leaders.add(shift.staff.id)
-                                    shift_cleaners.add(shift.staff.id)
+								shift1_overlaps = (shift.shift1_start_at is not None and 
+												shift.shift1_end_at is not None and
+												shift.shift1_start_at <= slote_start_time and 
+												shift.shift1_end_at >= slote_start_time and
+												shift.shift1_start_at <= slote_end_time and 
+												shift.shift1_end_at >= slote_end_time)
+
+								shift2_overlaps = (shift.shift2_start_at is not None and 
+												shift.shift2_end_at is not None and
+												shift.shift2_start_at <= slote_start_time and 
+												shift.shift2_end_at >= slote_start_time and
+												shift.shift2_start_at <= slote_end_time and 
+												shift.shift2_end_at >= slote_end_time)
+
+								shift3_overlaps = (shift.shift3_start_at is not None and 
+												shift.shift3_end_at is not None and
+												shift.shift3_start_at <= slote_start_datetime and 
+												shift.shift3_end_at >= slote_start_datetime and
+												shift.shift3_start_at <= slote_end_datetime and 
+												shift.shift3_end_at >= slote_end_datetime)
+
+								if shift1_overlaps or shift2_overlaps or shift3_overlaps:
+									if shift.staff.user_type == 'TEAMINCHARGE':
+										shift_leaders.add(shift.staff.id)
+									shift_cleaners.add(shift.staff.id)
                     
                     # Get universal shift staff
                     super_shift_cleaners = set()
