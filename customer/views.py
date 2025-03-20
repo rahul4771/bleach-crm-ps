@@ -9721,7 +9721,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
             response_dict = {'success': False}
 
             # Multiple services #count total cleaners and total leaders for availability
-            total_cleaners = UserProfile.objects.filter(Q(user_type='CLEANER') | Q(user_type='TEAMINCHARGE')
+            total_cleaners = UserProfile.objects.filter(Q(user_type='CLEANER') | Q(user_type='TEAMINCHARGE'))
             total_leaders = UserProfile.objects.filter(user_type='TEAMINCHARGE')
 
             services = request.data.get("service_details")
