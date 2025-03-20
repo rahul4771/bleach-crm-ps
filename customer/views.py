@@ -9253,8 +9253,12 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
         # Process all dates and create a mapping
         for cleaning_datetime in cleaning_datetimes:
             if policy == 'onetime':
-                slote_start_datetime = datetime.strptime(cleaning_datetime[0] + ' ' + cleaning_datetime[1], '%d-%m-%Y %I:%M %p')
-                slote_end_datetime = datetime.strptime(cleaning_datetime[0] + ' ' + cleaning_datetime[2], '%d-%m-%Y %I:%M %p')
+                slote_start_datetime = datetime.strptime(
+                    cleaning_datetime[0] + ' ' + cleaning_datetime[1], '%d-%m-%Y %I:%M %p'
+                )
+                slote_end_datetime = datetime.strptime(
+                    cleaning_datetime[0] + ' ' + cleaning_datetime[2], '%d-%m-%Y %I:%M %p'
+                )
             else:
                 slote_start_datetime = datetime.strptime(cleaning_datetime, '%d-%m-%Y %I:%M %p')
                 slote_end_datetime = slote_start_datetime + timedelta(hours=cleaning_hours)
@@ -9440,8 +9444,12 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 
         for cleaning_datetime in cleaning_datetimes:
             if policy == 'onetime':
-                slote_start_datetime = datetime.strptime(cleaning_datetime[0] + ' ' + cleaning_datetime[1], '%d-%m-%Y %I:%M %p')
-                slote_end_datetime = datetime.strptime(cleaning_datetime[0] + ' ' + cleaning_datetime[2], '%d-%m-%Y %I:%M %p')
+                slote_start_datetime = datetime.strptime(
+                    cleaning_datetime[0] + ' ' + cleaning_datetime[1], '%d-%m-%Y %I:%M %p'
+                )
+                slote_end_datetime = datetime.strptime(
+                    cleaning_datetime[0] + ' ' + cleaning_datetime[2], '%d-%m-%Y %I:%M %p'
+                )
             else:
                 slote_start_datetime = datetime.strptime(cleaning_datetime, '%d-%m-%Y %I:%M %p')
                 slote_end_datetime = slote_start_datetime + timedelta(hours=cleaning_hours)
@@ -9492,8 +9500,12 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
                             # Check shift3
                             if hasattr(shift, 'shift3_start_at') and hasattr(shift, 'shift3_end_at'):
                                 if shift.shift3_start_at is not None and shift.shift3_end_at is not None:
-                                    if (shift.shift3_start_at <= slote_start_time and shift.shift3_end_at >= slote_start_time) and \
-                                       (shift.shift3_start_at <= slote_end_time and shift.shift3_end_at >= slote_end_time):
+                                    # Extract time components from shift3_start_at and shift3_end_at
+                                    shift3_start_time = shift.shift3_start_at.time()
+                                    shift3_end_time = shift.shift3_end_at.time()
+
+                                    if (shift3_start_time <= slote_start_time and shift3_end_time >= slote_start_time) and \
+                                       (shift3_start_time <= slote_end_time and shift3_end_time >= slote_end_time):
                                         shift_covers = True
 
                             if shift_covers:
@@ -9524,11 +9536,15 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 
                 if (leavestart_at_datetime1 <= slote_start_datetime and leaveend_at_datetime1 > slote_start_datetime) or \
                    (leavestart_at_datetime2 < slote_end_datetime and leaveend_at_datetime2 >= slote_end_datetime):
-                    total_newcleaners = total_cleaners.filter(Q(Q(id__in=shift_cleaners) | Q(id__in=super_shift_cleaners))).exclude(id__in=absent_cleaners)
-                    total_newleaders = total_leaders.filter(Q(Q(id__in=shift_leaders) | Q(id__in=super_shift_leaders))).exclude(id__in=absent_leaders)
+                    total_newcleaners = total_cleaners.filter(
+                        Q(Q(id__in=shift_cleaners) | Q(id__in=super_shift_cleaners))).exclude(id__in=absent_cleaners)
+                    total_newleaders = total_leaders.filter(
+                        Q(Q(id__in=shift_leaders) | Q(id__in=super_shift_leaders))).exclude(id__in=absent_leaders)
                 else:
-                    total_newcleaners = total_cleaners.filter(Q(Q(id__in=shift_cleaners) | Q(id__in=super_shift_cleaners)))
-                    total_newleaders = total_leaders.filter(Q(Q(id__in=shift_leaders) | Q(id__in=super_shift_leaders)))
+                    total_newcleaners = total_cleaners.filter(
+                        Q(Q(id__in=shift_cleaners) | Q(id__in=super_shift_cleaners)))
+                    total_newleaders = total_leaders.filter(
+                        Q(Q(id__in=shift_leaders) | Q(id__in=super_shift_leaders)))
 
                 new_absent_cleaners = UserProfile.objects.filter(id__in=absent_cleaners).filter(
                     Q(Q(id__in=shift_cleaners) | Q(id__in=super_shift_cleaners))
