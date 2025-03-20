@@ -3255,237 +3255,6 @@ class GetServiceAddOns(APIView):
 
 
 
-# class GetMultipleServiceCleaningSlotes(APIView):  
-# 	permission_classes        = (AllowAny,)
-# 	authentication_classes    = ()
-
-# 	def post(self,request):
-# 		dropdown_slotes  = {}
-
-# 		cleaning_date       = datetime.strptime(request.data.get('cleaning_date'),'%d-%m-%Y')
-# 		number_of_cleaners  = int(request.data.get('number_of_cleaners'))-1
-# 		service_types       = request.data.get('service_types')
-# 		gender              = request.data.get('gender')
-
-# 		#count total cleaners and total leaders
-# 		if gender:
-# 			total_cleaners = UserProfile.objects.filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))&Q(gender=gender))
-# 			total_leaders  = UserProfile.objects.filter(user_type='TEAMINCHARGE',gender=gender)
-# 		else:
-# 			total_cleaners = UserProfile.objects.filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
-# 			total_leaders  = UserProfile.objects.filter(user_type='TEAMINCHARGE')
-
-# 		for service_type in service_types:
-# 			if service_type == 'General Cleaning':
-# 				total_cleaners 	= total_cleaners.filter(is_general_skill=True)
-# 				total_leaders 	= total_leaders.filter(is_general_skill=True)
-# 			elif service_type == 'Deep Cleaning':
-# 				total_cleaners 	= total_cleaners.filter(is_deep_skill=True)
-# 				total_leaders 	= total_leaders.filter(is_deep_skill=True)
-# 			elif service_type == 'Upholstery Cleaning':
-# 				total_cleaners 	= total_cleaners.filter(is_upholstery_skill=True)
-# 				total_leaders 	= total_leaders.filter(is_upholstery_skill=True)
-# 			elif service_type == 'Kitchen Cleaning':
-# 				total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
-# 				total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
-# 			elif service_type == 'Kitchen Appliances':
-# 				total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
-# 				total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
-# 			elif service_type == 'Carpet Cleaning':
-# 				total_cleaners 	= total_cleaners.filter(is_carpet_skill=True)
-# 				total_leaders 	= total_leaders.filter(is_carpet_skill=True)
-# 			elif service_type == 'Sterilization':
-# 				total_cleaners 	= total_cleaners.filter(is_sterilization_skill=True)
-# 				total_leaders 	= total_leaders.filter(is_sterilization_skill=True)
-# 			elif service_type == 'Mattress Cleaning':
-# 				total_cleaners 	= total_cleaners.filter(is_mattress_skill=True)
-# 				total_leaders 	= total_leaders.filter(is_mattress_skill=True)
-# 			elif service_type == 'Facade Cleaning':
-# 				total_cleaners 	= total_cleaners.filter(is_facade_skill=True)
-# 				total_leaders 	= total_leaders.filter(is_facade_skill=True)
-# 			elif service_type == 'Storage Area':
-# 				total_cleaners 	= total_cleaners.filter(is_storagearea_skill=True)
-# 				total_leaders 	= total_leaders.filter(is_storagearea_skill=True)
-# 			elif service_type == 'Car Parking Umbrella':
-# 				total_cleaners 	= total_cleaners.filter(is_carparkingumbrella_skill=True)
-# 				total_leaders 	= total_leaders.filter(is_carparkingumbrella_skill=True)
-# 			elif service_type == 'Window Cleaning':
-# 				total_cleaners 	= total_cleaners.filter(is_window_skill=True)
-# 				total_leaders 	= total_leaders.filter(is_window_skill=True)
-# 			elif service_type == 'Outdoor Cleaning':
-# 				total_cleaners 	= total_cleaners.filter(is_outdoor_skill=True)
-# 				total_leaders 	= total_leaders.filter(is_outdoor_skill=True)
-
-# 		#absent cleaners and leaders
-# 		if gender:
-# 			absent_cleaners   = LeaveSchedule.objects.select_related('staff').filter(leave_date=cleaning_date).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))&Q(staff__gender=gender)).values_list('staff',flat=True)
-# 			absent_leaders    = LeaveSchedule.objects.select_related('staff').filter(leave_date=cleaning_date,staff__user_type='TEAMINCHARGE',staff__gender=gender).values_list('staff',flat=True)	
-# 		else:
-# 			absent_cleaners   = LeaveSchedule.objects.select_related('staff').filter(leave_date=cleaning_date).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
-# 			absent_leaders    = LeaveSchedule.objects.select_related('staff').filter(leave_date=cleaning_date,staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)
-
-# 		slotes           =[0,2,4,6,8,10,12,14,16,18,20,22]
-# 		slote_durations  =[2,4,6,8,10]
-# 		available_slotes = {}
-# 		#slote wise checking
-# 		for slote in slotes:
-# 			available_durations = []
-# 			for slote_duration in slote_durations:
-# 				slote_start_datetime 			  = cleaning_date.replace(hour=slote,minute=0,second=0,microsecond=0)
-# 				slote_end_datetime                = slote_start_datetime+timedelta(hours=slote_duration)
-# 				slote_start_time 			      = slote_start_datetime.time()
-# 				slote_end_time                    = slote_end_datetime.time()
-
-# 				#included shift cleaners
-# 				if gender:
-# 					shift_cleaners      = ShiftSchedule.objects.select_related('staff').filter(Q(shift_date=cleaning_date)|Q(Q(shift3_start_at__lte=slote_end_datetime)&Q(shift3_end_at__gte=slote_end_datetime))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))&Q(staff__gender=gender)).filter(Q(Q(Q(shift1_start_at__lte=slote_start_time)&Q(shift1_end_at__gte=slote_start_time))&Q(Q(shift1_start_at__lte=slote_end_time)&Q(shift1_end_at__gte=slote_end_time))) | Q(Q(Q(shift2_start_at__lte=slote_start_time)&Q(shift2_end_at__gte=slote_start_time))&Q(Q(shift2_start_at__lte=slote_end_time)&Q(shift2_end_at__gte=slote_end_time))) | Q(Q(Q(shift3_start_at__lte=slote_start_datetime)&Q(shift3_end_at__gte=slote_start_datetime))&Q(Q(shift3_start_at__lte=slote_end_datetime)&Q(shift3_end_at__gte=slote_end_datetime)))).values_list('staff',flat=True)
-# 					shift_leaders       = ShiftSchedule.objects.select_related('staff').filter(Q(shift_date=cleaning_date)|Q(Q(shift3_start_at__lte=slote_end_datetime)&Q(shift3_end_at__gte=slote_end_datetime))).filter(staff__user_type='TEAMINCHARGE',staff__gender=gender).filter(Q(Q(Q(shift1_start_at__lte=slote_start_time)&Q(shift1_end_at__gte=slote_start_time))&Q(Q(shift1_start_at__lte=slote_end_time)&Q(shift1_end_at__gte=slote_end_time))) | Q(Q(Q(shift2_start_at__lte=slote_start_time)&Q(shift2_end_at__gte=slote_start_time))&Q(Q(shift2_start_at__lte=slote_end_time)&Q(shift2_end_at__gte=slote_end_time))) | Q(Q(Q(shift3_start_at__lte=slote_start_datetime)&Q(shift3_end_at__gte=slote_start_datetime))&Q(Q(shift3_start_at__lte=slote_end_datetime)&Q(shift3_end_at__gte=slote_end_datetime)))).values_list('staff',flat=True)
-# 					today_shifts        = ShiftSchedule.objects.select_related('staff').filter(is_active=True,staff__gender=gender).filter(Q(shift_date=cleaning_date)|Q(Q(shift3_start_at__lte=slote_end_datetime)&Q(shift3_end_at__gte=slote_end_datetime))).values_list('staff',flat=True)
-# 					super_shift_cleaners= UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE'))&Q(gender=gender))).exclude(id__in=today_shifts).filter( Q(Q(universal_shift_start__lte=slote_start_time)&Q(universal_shift_end__gte=slote_start_time))&Q(Q(universal_shift_start__lte=slote_end_time)&Q(universal_shift_end__gte=slote_end_time)) ).values_list('id',flat=True)
-# 					super_shift_leaders = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE',gender=gender).exclude(id__in=today_shifts).filter(Q(Q(universal_shift_start__lte=slote_start_time)&Q(universal_shift_end__gte=slote_start_time))&Q(Q(universal_shift_start__lte=slote_end_time)&Q(universal_shift_end__gte=slote_end_time))).values_list('id',flat=True)
-# 				else:
-# 					shift_cleaners      = ShiftSchedule.objects.select_related('staff').filter(Q(shift_date=cleaning_date)|Q(Q(shift3_start_at__lte=slote_end_datetime)&Q(shift3_end_at__gte=slote_end_datetime))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=slote_start_time)&Q(shift1_end_at__gte=slote_start_time))&Q(Q(shift1_start_at__lte=slote_end_time)&Q(shift1_end_at__gte=slote_end_time))) | Q(Q(Q(shift2_start_at__lte=slote_start_time)&Q(shift2_end_at__gte=slote_start_time))&Q(Q(shift2_start_at__lte=slote_end_time)&Q(shift2_end_at__gte=slote_end_time))) | Q(Q(Q(shift3_start_at__lte=slote_start_datetime)&Q(shift3_end_at__gte=slote_start_datetime))&Q(Q(shift3_start_at__lte=slote_end_datetime)&Q(shift3_end_at__gte=slote_end_datetime)))).values_list('staff',flat=True)
-# 					shift_leaders       = ShiftSchedule.objects.select_related('staff').filter(Q(shift_date=cleaning_date)|Q(Q(shift3_start_at__lte=slote_end_datetime)&Q(shift3_end_at__gte=slote_end_datetime))).filter(staff__user_type='TEAMINCHARGE').filter(Q(Q(Q(shift1_start_at__lte=slote_start_time)&Q(shift1_end_at__gte=slote_start_time))&Q(Q(shift1_start_at__lte=slote_end_time)&Q(shift1_end_at__gte=slote_end_time))) | Q(Q(Q(shift2_start_at__lte=slote_start_time)&Q(shift2_end_at__gte=slote_start_time))&Q(Q(shift2_start_at__lte=slote_end_time)&Q(shift2_end_at__gte=slote_end_time))) | Q(Q(Q(shift3_start_at__lte=slote_start_datetime)&Q(shift3_end_at__gte=slote_start_datetime))&Q(Q(shift3_start_at__lte=slote_end_datetime)&Q(shift3_end_at__gte=slote_end_datetime)))).values_list('staff',flat=True)
-# 					today_shifts        = ShiftSchedule.objects.select_related('staff').filter(Q(shift_date=cleaning_date)|Q(Q(shift3_start_at__lte=slote_end_datetime)&Q(shift3_end_at__gte=slote_end_datetime))).values_list('staff',flat=True)
-# 					super_shift_cleaners= UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(id__in=today_shifts).filter( Q(Q(universal_shift_start__lte=slote_start_time)&Q(universal_shift_end__gte=slote_start_time))&Q(Q(universal_shift_start__lte=slote_end_time)&Q(universal_shift_end__gte=slote_end_time)) ).values_list('id',flat=True)
-# 					super_shift_leaders = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(id__in=today_shifts).filter(Q(Q(universal_shift_start__lte=slote_start_time)&Q(universal_shift_end__gte=slote_start_time))&Q(Q(universal_shift_start__lte=slote_end_time)&Q(universal_shift_end__gte=slote_end_time))).values_list('id',flat=True)
-
-		
-# 				#(applying 8 to 22 leave logic)
-# 				leavestart_at_datetime1  = slote_start_datetime.replace(hour=8,minute=0,second=0,microsecond=0)
-# 				leaveend_at_datetime1    = slote_start_datetime.replace(hour=22,minute=0,second=0,microsecond=0)
-# 				leavestart_at_datetime2  = slote_end_datetime.replace(hour=8,minute=0,second=0,microsecond=0)
-# 				leaveend_at_datetime2    = slote_end_datetime.replace(hour=22,minute=0,second=0,microsecond=0)
-		
-# 				if (leavestart_at_datetime1 <= slote_start_datetime and leaveend_at_datetime1 > slote_start_datetime) or (leavestart_at_datetime2 < slote_end_datetime and leaveend_at_datetime2 >= slote_end_datetime):
-# 					total_newcleaners = total_cleaners.filter(Q(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners))).exclude(id__in=absent_cleaners)
-# 					total_newleaders  = total_leaders.filter(Q(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders))).exclude(id__in=absent_leaders)
-# 				else:
-# 					total_newcleaners = total_cleaners.filter(Q(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners)))
-# 					total_newleaders  = total_leaders.filter(Q(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders)))		
-
-# 				new_absent_cleaners     = UserProfile.objects.filter(id__in=absent_cleaners).filter(Q(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners)))
-# 				new_absent_leaders      = UserProfile.objects.filter(id__in=absent_leaders).filter(Q(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders)))
-
-# 				if gender:				
-# 					active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(member__gender=gender).filter(Q(Q(Q(start_at__gte=slote_start_datetime)&Q(start_at__lt=slote_end_datetime))|Q(Q(end_at__gt=slote_start_datetime)&Q(end_at__lte=slote_end_datetime))|Q(Q(start_at__lte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__gte=slote_end_datetime))|Q(Q(start_at__gte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__lte=slote_end_datetime))))
-# 					active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(member__gender=gender).filter(Q(Q(Q(start_at__gte=slote_start_datetime)&Q(start_at__lt=slote_end_datetime))|Q(Q(end_at__gt=slote_start_datetime)&Q(end_at__lte=slote_end_datetime))|Q(Q(start_at__lte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__gte=slote_end_datetime))|Q(Q(start_at__gte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__lte=slote_end_datetime))))
-# 				else:
-# 					active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_start_datetime)&Q(start_at__lt=slote_end_datetime))|Q(Q(end_at__gt=slote_start_datetime)&Q(end_at__lte=slote_end_datetime))|Q(Q(start_at__lte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__gte=slote_end_datetime))|Q(Q(start_at__gte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__lte=slote_end_datetime))))
-# 					active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_start_datetime)&Q(start_at__lt=slote_end_datetime))|Q(Q(end_at__gt=slote_start_datetime)&Q(end_at__lte=slote_end_datetime))|Q(Q(start_at__lte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__gte=slote_end_datetime))|Q(Q(start_at__gte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__lte=slote_end_datetime))))
-
-# 				for service_type in service_types:
-					
-# 					if service_type == 'General Cleaning':
-# 						active_cleaners1 	= active_cleaners1.filter(member__is_general_skill=True)
-# 						active_cleaners2 	= active_cleaners2.filter(member__is_general_skill=True)
-# 						new_absent_cleaners = new_absent_cleaners.filter(is_general_skill=True)
-# 						new_absent_leaders  = new_absent_leaders.filter(is_general_skill=True)
-# 					elif service_type == 'Deep Cleaning':
-# 						active_cleaners1 	= active_cleaners1.filter(member__is_deep_skill=True)
-# 						active_cleaners2 	= active_cleaners2.filter(member__is_deep_skill=True)
-# 						new_absent_cleaners = new_absent_cleaners.filter(is_deep_skill=True)
-# 						new_absent_leaders  = new_absent_leaders.filter(is_deep_skill=True)
-# 					elif service_type == 'Upholstery Cleaning':
-# 						active_cleaners1 	= active_cleaners1.filter(member__is_upholstery_skill=True)
-# 						active_cleaners2 	= active_cleaners2.filter(member__is_upholstery_skill=True)
-# 						new_absent_cleaners = new_absent_cleaners.filter(is_upholstery_skill=True)
-# 						new_absent_leaders  = new_absent_leaders.filter(is_upholstery_skill=True)
-# 					elif service_type == 'Kitchen Cleaning':
-# 						active_cleaners1 	= active_cleaners1.filter(member__is_kitchen_skill=True)
-# 						active_cleaners2 	= active_cleaners2.filter(member__is_kitchen_skill=True)
-# 						new_absent_cleaners = new_absent_cleaners.filter(is_kitchen_skill=True)
-# 						new_absent_leaders  = new_absent_leaders.filter(is_kitchen_skill=True)
-# 					elif service_type == 'Kitchen Appliances':
-# 						active_cleaners1 	= active_cleaners1.filter(member__is_kitchen_skill=True)
-# 						active_cleaners2 	= active_cleaners2.filter(member__is_kitchen_skill=True)
-# 						new_absent_cleaners = new_absent_cleaners.filter(is_kitchen_skill=True)
-# 						new_absent_leaders  = new_absent_leaders.filter(is_kitchen_skill=True)
-# 					elif service_type == 'Carpet Cleaning':
-# 						active_cleaners1 	= active_cleaners1.filter(member__is_carpet_skill=True)
-# 						active_cleaners2 	= active_cleaners2.filter(member__is_carpet_skill=True)
-# 						new_absent_cleaners = new_absent_cleaners.filter(is_carpet_skill=True)
-# 						new_absent_leaders  = new_absent_leaders.filter(is_carpet_skill=True)
-# 					elif service_type == 'Sterilization':
-# 						active_cleaners1 	= active_cleaners1.filter(member__is_sterilization_skill=True)
-# 						active_cleaners2 	= active_cleaners2.filter(member__is_sterilization_skill=True)
-# 						new_absent_cleaners = new_absent_cleaners.filter(is_sterilization_skill=True)
-# 						new_absent_leaders  = new_absent_leaders.filter(is_sterilization_skill=True)
-# 					elif service_type == 'Mattress Cleaning':
-# 						active_cleaners1 	= active_cleaners1.filter(member__is_mattress_skill=True)
-# 						active_cleaners2 	= active_cleaners2.filter(member__is_mattress_skill=True)
-# 						new_absent_cleaners = new_absent_cleaners.filter(is_mattress_skill=True)
-# 						new_absent_leaders  = new_absent_leaders.filter(is_mattress_skill=True)
-# 					elif service_type == 'Facade Cleaning':
-# 						active_cleaners1 	= active_cleaners1.filter(member__is_facade_skill=True)
-# 						active_cleaners2 	= active_cleaners2.filter(member__is_facade_skill=True)
-# 						new_absent_cleaners = new_absent_cleaners.filter(is_facade_skill=True)
-# 						new_absent_leaders  = new_absent_leaders.filter(is_facade_skill=True)
-# 					elif service_type == 'Storage Area':
-# 						active_cleaners1 	= active_cleaners1.filter(member__is_storagearea_skill=True)
-# 						active_cleaners2 	= active_cleaners2.filter(member__is_storagearea_skill=True)
-# 						new_absent_cleaners = new_absent_cleaners.filter(is_storagearea_skill=True)
-# 						new_absent_leaders  = new_absent_leaders.filter(is_storagearea_skill=True)
-# 					elif service_type == 'Car Parking Umbrella':
-# 						active_cleaners1 	= active_cleaners1.filter(member__is_carparkingumbrella_skill=True)
-# 						active_cleaners2 	= active_cleaners2.filter(member__is_carparkingumbrella_skill=True)
-# 						new_absent_cleaners = new_absent_cleaners.filter(is_carparkingumbrella_skill=True)
-# 						new_absent_leaders = new_absent_leaders.filter(is_carparkingumbrella_skill=True)
-# 					elif service_type == 'Window Cleaning':
-# 						active_cleaners1 	= active_cleaners1.filter(member__is_window_skill=True)
-# 						active_cleaners2 	= active_cleaners2.filter(member__is_window_skill=True)
-# 						new_absent_cleaners = new_absent_cleaners.filter(is_window_skill=True)
-# 						new_absent_leaders  = new_absent_leaders.filter(is_window_skill=True)
-# 					elif service_type == 'Outdoor Cleaning':
-# 						active_cleaners1 	= active_cleaners1.filter(member__is_outdoor_skill=True)
-# 						active_cleaners2 	= active_cleaners2.filter(member__is_outdoor_skill=True)
-# 						new_absent_cleaners = new_absent_cleaners.filter(is_outdoor_skill=True)
-# 						new_absent_leaders  = new_absent_leaders.filter(is_outdoor_skill=True)
-
-# 				new_absent_cleaners = new_absent_cleaners.values_list('id',flat=True)
-# 				new_absent_leaders  = new_absent_leaders.values_list('id',flat=True)
-				
-# 				cleaning_active_team_leaders = active_cleaners1.filter(member__user_type='TEAMINCHARGE').values_list('member',flat=True)
-# 				cleaning_active_cleaners     = active_cleaners1.filter(Q(Q(member__user_type='TEAMINCHARGE')|Q(member__user_type='CLEANER'))).values_list('member',flat=True)
-
-# 				followup_active_team_leaders = active_cleaners2.filter(member__user_type='TEAMINCHARGE').values_list('member',flat=True)
-# 				followup_active_cleaners     = active_cleaners2.filter(Q(Q(member__user_type='TEAMINCHARGE')|Q(member__user_type='CLEANER'))).values_list('member',flat=True)
-
-# 				#merging
-# 				team_leaders_scheduled      = []
-# 				team_members_scheduled      = []
-
-# 				for active_team_leaders in cleaning_active_team_leaders:
-# 					team_leaders_scheduled.append(active_team_leaders)
-# 				for active_team_leaders in followup_active_team_leaders:
-# 					team_leaders_scheduled.append(active_team_leaders)
-
-# 				for active_team_member in cleaning_active_cleaners:
-# 					team_members_scheduled.append(active_team_member)
-# 				for active_team_member in followup_active_cleaners:
-# 					team_members_scheduled.append(active_team_member)
-
-# 				#(applying 8 to 22 leave logic)
-# 				if (leavestart_at_datetime1 <= slote_start_datetime and leaveend_at_datetime1 > slote_start_datetime) or (leavestart_at_datetime2 < slote_end_datetime and leaveend_at_datetime2 >= slote_end_datetime):
-# 					for absent_cleaner in new_absent_cleaners:
-# 						team_members_scheduled.append(absent_cleaner)
-# 					for absent_leader in new_absent_leaders:
-# 						team_leaders_scheduled.append(absent_leader)					
-
-# 				total_newcleaners = total_newcleaners.exclude(id__in=team_members_scheduled)
-# 				total_newleaders = total_newleaders.exclude(id__in=team_leaders_scheduled)
-
-# 				#slote appending
-# 				if total_newcleaners and total_newleaders:
-# 					if((total_newcleaners.count()-1)>=number_of_cleaners and (total_newleaders.count())>=1):
-# 						available_durations.append(slote_duration)				
-			
-# 			available_slotes[slote] = available_durations
-
-# 		dropdown_slotes['success']= True
-# 		dropdown_slotes['slotes'] = available_slotes
-# 		return Response(dropdown_slotes,HTTP_200_OK)
-
 class GetMultipleServiceCleaningSlotes(APIView):  
     permission_classes = (AllowAny,)
     authentication_classes = ()
@@ -3588,274 +3357,673 @@ class GetMultipleServiceCleaningSlotes(APIView):
         return Response(dropdown_slotes, HTTP_200_OK)
 
 class GetMultipleServiceDateCleaningSlotes(APIView):  
-	permission_classes        = (AllowAny,)
-	authentication_classes    = ()
+    permission_classes        = (AllowAny,)
+    authentication_classes    = ()
 
-	def post(self,request):
-		dropdown_slotes  = {}
+    def post(self, request):
+        dropdown_slotes = {
+            'available_slotes': [],
+            'busy_slotes': [],
+            'combined_slots': [],
+            'success': True
+        }
 
-		number_of_cleaners  = int(request.data.get('number_of_cleaners'))-1
+        number_of_cleaners = int(request.data.get('number_of_cleaners')) - 1
+        cleaning_hours = float(request.data.get('cleaning_hours'))
+        service_types = request.data.get('service_types')
+        shift_availability_check = request.data.get('shift_availability_check')
+        policy = request.data.get('policy')
+        cleaning_datetimes = request.data.get('cleaning_datetimes')
+        
+        # Pre-filter total cleaners and leaders based on service types
+        # This avoids repeating the same filters for each date
+        total_cleaners = UserProfile.objects.filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+        total_leaders = UserProfile.objects.filter(user_type='TEAMINCHARGE')
+        
+        for service_type in service_types:
+            if service_type == 'General Cleaning':
+                total_cleaners = total_cleaners.filter(is_general_skill=True)
+                total_leaders = total_leaders.filter(is_general_skill=True)
+            elif service_type == 'Deep Cleaning':
+                total_cleaners = total_cleaners.filter(is_deep_skill=True)
+                total_leaders = total_leaders.filter(is_deep_skill=True)
+            elif service_type == 'Upholstery Cleaning':
+                total_cleaners = total_cleaners.filter(is_upholstery_skill=True)
+                total_leaders = total_leaders.filter(is_upholstery_skill=True)
+            elif service_type == 'Kitchen Cleaning':
+                total_cleaners = total_cleaners.filter(is_kitchen_skill=True)
+                total_leaders = total_leaders.filter(is_kitchen_skill=True)
+            elif service_type == 'Kitchen Appliances':
+                total_cleaners = total_cleaners.filter(is_kitchen_skill=True)
+                total_leaders = total_leaders.filter(is_kitchen_skill=True)
+            elif service_type == 'Carpet Cleaning':
+                total_cleaners = total_cleaners.filter(is_carpet_skill=True)
+                total_leaders = total_leaders.filter(is_carpet_skill=True)
+            elif service_type == 'Sterilization':
+                total_cleaners = total_cleaners.filter(is_sterilization_skill=True)
+                total_leaders = total_leaders.filter(is_sterilization_skill=True)
+            elif service_type == 'Mattress Cleaning':
+                total_cleaners = total_cleaners.filter(is_mattress_skill=True)
+                total_leaders = total_leaders.filter(is_mattress_skill=True)
+            elif service_type == 'Facade Cleaning':
+                total_cleaners = total_cleaners.filter(is_facade_skill=True)
+                total_leaders = total_leaders.filter(is_facade_skill=True)
+            elif service_type == 'Storage Area':
+                total_cleaners = total_cleaners.filter(is_storagearea_skill=True)
+                total_leaders = total_leaders.filter(is_storagearea_skill=True)
+            elif service_type == 'Car Parking Umbrella':
+                total_cleaners = total_cleaners.filter(is_carparkingumbrella_skill=True)
+                total_leaders = total_leaders.filter(is_carparkingumbrella_skill=True)
+            elif service_type == 'Window Cleaning':
+                total_cleaners = total_cleaners.filter(is_window_skill=True)
+                total_leaders = total_leaders.filter(is_window_skill=True)
+            elif service_type == 'Outdoor Cleaning':
+                total_cleaners = total_cleaners.filter(is_outdoor_skill=True)
+                total_leaders = total_leaders.filter(is_outdoor_skill=True)
+        
+        # Process dates in chunks to avoid memory issues
+        chunk_size = 30  # Process 30 days at a time
+        for i in range(0, len(cleaning_datetimes), chunk_size):
+            chunk_dates = cleaning_datetimes[i:i+chunk_size]
+            
+            # Collect all start/end dates for batch querying
+            all_start_dates = set()
+            all_end_dates = set()
+            all_date_times = []
+            
+            # Parse all dates first
+            for cleaning_datetime in chunk_dates:
+                if policy == 'onetime':
+                    slote_start_datetime = datetime.strptime(cleaning_datetime[0]+' '+cleaning_datetime[1], '%d-%m-%Y %I:%M %p')
+                    slote_end_datetime = datetime.strptime(cleaning_datetime[0]+' '+cleaning_datetime[2], '%d-%m-%Y %I:%M %p')
+                else:
+                    slote_start_datetime = datetime.strptime(cleaning_datetime, '%d-%m-%Y %I:%M %p')
+                    slote_end_datetime = slote_start_datetime + timedelta(hours=cleaning_hours)
+                
+                start_at_date = slote_start_datetime.date()
+                end_at_date = slote_end_datetime.date()
+                
+                all_start_dates.add(start_at_date)
+                all_end_dates.add(end_at_date)
+                all_date_times.append((slote_start_datetime, slote_end_datetime))
+            
+            # Batch query for leaves across all dates in the chunk
+            all_dates = list(all_start_dates.union(all_end_dates))
+            absent_staff = {}
+            leave_schedules = LeaveSchedule.objects.select_related('staff').filter(leave_date__in=all_dates)
+            
+            # Organize absences by date
+            for leave in leave_schedules:
+                if leave.leave_date not in absent_staff:
+                    absent_staff[leave.leave_date] = {'cleaners': set(), 'leaders': set()}
+                
+                if leave.staff.user_type == 'TEAMINCHARGE':
+                    absent_staff[leave.leave_date]['leaders'].add(leave.staff.id)
+                    absent_staff[leave.leave_date]['cleaners'].add(leave.staff.id)
+                elif leave.staff.user_type == 'CLEANER':
+                    absent_staff[leave.leave_date]['cleaners'].add(leave.staff.id)
+            
+            # Batch query for shift schedules if needed
+            shift_data = {}
+            if shift_availability_check:
+                # Get all shift schedules for the dates in this chunk
+                shift_schedules = ShiftSchedule.objects.select_related('staff').filter(
+                    shift_date__in=all_dates
+                )
+                
+                # Organize shifts by date
+                for shift in shift_schedules:
+                    if shift.shift_date not in shift_data:
+                        shift_data[shift.shift_date] = {'staff_ids': set(), 'schedules': []}
+                    
+                    shift_data[shift.shift_date]['staff_ids'].add(shift.staff.id)
+                    shift_data[shift.shift_date]['schedules'].append(shift)
+                
+                # Pre-fetch universal shift cleaners
+                universal_shift_cleaners = {
+                    user.id: user for user in UserProfile.objects.filter(
+                        Q(is_active=True) & Q(Q(user_type='CLEANER') | Q(user_type='TEAMINCHARGE'))
+                    )
+                }
+            
+            # Batch query for active cleaners
+            # Define datetime range for active cleaners
+            min_start = min(dt[0] for dt in all_date_times)
+            max_end = max(dt[1] for dt in all_date_times)
+            
+            # Get all cleaning team members active in the date range
+            active_cleaning_members = CleaningTeamMember.objects.select_related('member').filter(
+                Q(Q(start_at__gte=min_start) & Q(start_at__lt=max_end)) |
+                Q(Q(end_at__gt=min_start) & Q(end_at__lte=max_end)) |
+                Q(Q(start_at__lte=min_start) & Q(end_at__gte=max_end)) |
+                Q(Q(start_at__gte=min_start) & Q(end_at__lte=max_end))
+            )
+            
+            # Get all followup team members active in the date range
+            active_followup_members = FollowUpTeamMember.objects.select_related('member').filter(
+                Q(Q(start_at__gte=min_start) & Q(start_at__lt=max_end)) |
+                Q(Q(end_at__gt=min_start) & Q(end_at__lte=max_end)) |
+                Q(Q(start_at__lte=min_start) & Q(end_at__gte=max_end)) |
+                Q(Q(start_at__gte=min_start) & Q(end_at__lte=max_end))
+            )
+            
+            # Apply service type filters to active cleaners
+            for service_type in service_types:
+                if service_type == 'General Cleaning':
+                    active_cleaning_members = active_cleaning_members.filter(member__is_general_skill=True)
+                    active_followup_members = active_followup_members.filter(member__is_general_skill=True)
+                elif service_type == 'Deep Cleaning':
+                    active_cleaning_members = active_cleaning_members.filter(member__is_deep_skill=True)
+                    active_followup_members = active_followup_members.filter(member__is_deep_skill=True)
+                elif service_type == 'Upholstery Cleaning':
+                    active_cleaning_members = active_cleaning_members.filter(member__is_upholstery_skill=True)
+                    active_followup_members = active_followup_members.filter(member__is_upholstery_skill=True)
+                elif service_type == 'Kitchen Cleaning':
+                    active_cleaning_members = active_cleaning_members.filter(member__is_kitchen_skill=True)
+                    active_followup_members = active_followup_members.filter(member__is_kitchen_skill=True)
+                elif service_type == 'Kitchen Appliances':
+                    active_cleaning_members = active_cleaning_members.filter(member__is_kitchen_skill=True)
+                    active_followup_members = active_followup_members.filter(member__is_kitchen_skill=True)
+                elif service_type == 'Carpet Cleaning':
+                    active_cleaning_members = active_cleaning_members.filter(member__is_carpet_skill=True)
+                    active_followup_members = active_followup_members.filter(member__is_carpet_skill=True)
+                elif service_type == 'Sterilization':
+                    active_cleaning_members = active_cleaning_members.filter(member__is_sterilization_skill=True)
+                    active_followup_members = active_followup_members.filter(member__is_sterilization_skill=True)
+                elif service_type == 'Mattress Cleaning':
+                    active_cleaning_members = active_cleaning_members.filter(member__is_mattress_skill=True)
+                    active_followup_members = active_followup_members.filter(member__is_mattress_skill=True)
+                elif service_type == 'Facade Cleaning':
+                    active_cleaning_members = active_cleaning_members.filter(member__is_facade_skill=True)
+                    active_followup_members = active_followup_members.filter(member__is_facade_skill=True)
+                elif service_type == 'Storage Area':
+                    active_cleaning_members = active_cleaning_members.filter(member__is_storagearea_skill=True)
+                    active_followup_members = active_followup_members.filter(member__is_storagearea_skill=True)
+                elif service_type == 'Car Parking Umbrella':
+                    active_cleaning_members = active_cleaning_members.filter(member__is_carparkingumbrella_skill=True)
+                    active_followup_members = active_followup_members.filter(member__is_carparkingumbrella_skill=True)
+                elif service_type == 'Window Cleaning':
+                    active_cleaning_members = active_cleaning_members.filter(member__is_window_skill=True)
+                    active_followup_members = active_followup_members.filter(member__is_window_skill=True)
+                elif service_type == 'Outdoor Cleaning':
+                    active_cleaning_members = active_cleaning_members.filter(member__is_outdoor_skill=True)
+                    active_followup_members = active_followup_members.filter(member__is_outdoor_skill=True)
+            
+            # Create dictionaries for active members lookup
+            active_cleaning_dict = {}
+            active_followup_dict = {}
+            
+            for member in active_cleaning_members:
+                if (member.start_at, member.end_at) not in active_cleaning_dict:
+                    active_cleaning_dict[(member.start_at, member.end_at)] = []
+                active_cleaning_dict[(member.start_at, member.end_at)].append(member.member)
+            
+            for member in active_followup_members:
+                if (member.start_at, member.end_at) not in active_followup_dict:
+                    active_followup_dict[(member.start_at, member.end_at)] = []
+                active_followup_dict[(member.start_at, member.end_at)].append(member.member)
+            
+            # Now process each date in the chunk
+            for idx, cleaning_datetime in enumerate(chunk_dates):
+                slote_start_datetime, slote_end_datetime = all_date_times[idx]
+                slote_start_time = slote_start_datetime.time()
+                slote_end_time = slote_end_datetime.time()
+                start_at_date = slote_start_datetime.date()
+                end_at_date = slote_end_datetime.date()
+                
+                # Get absent staff for these dates
+                absent_cleaners_ids = set()
+                absent_leaders_ids = set()
+                
+                if start_at_date in absent_staff:
+                    absent_cleaners_ids.update(absent_staff[start_at_date]['cleaners'])
+                    absent_leaders_ids.update(absent_staff[start_at_date]['leaders'])
+                
+                if end_at_date in absent_staff and end_at_date != start_at_date:
+                    absent_cleaners_ids.update(absent_staff[end_at_date]['cleaners'])
+                    absent_leaders_ids.update(absent_staff[end_at_date]['leaders'])
+                
+                # Process shift availability
+                total_newcleaners = total_cleaners
+                total_newleaders = total_leaders
+                
+                if shift_availability_check:
+                    # Get shift cleaners for the current dates
+                    shift_cleaners = set()
+                    shift_leaders = set()
+                    
+                    # Check which staff are on shift
+                    for date in [start_at_date, end_at_date]:
+                        if date in shift_data:
+                            for shift in shift_data[date]['schedules']:
+                                # Check if shift overlaps with slot time
+                                shift1_overlaps = (shift.shift1_start_at <= slote_start_time and 
+                                                 shift.shift1_end_at >= slote_start_time and
+                                                 shift.shift1_start_at <= slote_end_time and 
+                                                 shift.shift1_end_at >= slote_end_time)
+                                
+                                shift2_overlaps = (shift.shift2_start_at <= slote_start_time and 
+                                                 shift.shift2_end_at >= slote_start_time and
+                                                 shift.shift2_start_at <= slote_end_time and 
+                                                 shift.shift2_end_at >= slote_end_time)
+                                
+                                shift3_overlaps = (shift.shift3_start_at <= slote_start_datetime and 
+                                                 shift.shift3_end_at >= slote_start_datetime and
+                                                 shift.shift3_start_at <= slote_end_datetime and 
+                                                 shift.shift3_end_at >= slote_end_datetime)
+                                
+                                if shift1_overlaps or shift2_overlaps or shift3_overlaps:
+                                    if shift.staff.user_type == 'TEAMINCHARGE':
+                                        shift_leaders.add(shift.staff.id)
+                                    shift_cleaners.add(shift.staff.id)
+                    
+                    # Get universal shift staff
+                    super_shift_cleaners = set()
+                    super_shift_leaders = set()
+                    
+                    for user_id, profile in universal_shift_cleaners.items():
+                        if (profile.universal_shift_start <= slote_start_time and 
+                            profile.universal_shift_end >= slote_start_time and
+                            profile.universal_shift_start <= slote_end_time and 
+                            profile.universal_shift_end >= slote_end_time):
+                            
+                            if user_id not in shift_data.get(start_at_date, {}).get('staff_ids', set()) and \
+                               user_id not in shift_data.get(end_at_date, {}).get('staff_ids', set()):
+                                super_shift_cleaners.add(user_id)
+                                if profile.user_type == 'TEAMINCHARGE':
+                                    super_shift_leaders.add(user_id)
+                    
+                    # Apply 8 to 22 leave logic
+                    leavestart_at_datetime1 = slote_start_datetime.replace(hour=8, minute=0, second=0, microsecond=0)
+                    leaveend_at_datetime1 = slote_start_datetime.replace(hour=22, minute=0, second=0, microsecond=0)
+                    leavestart_at_datetime2 = slote_end_datetime.replace(hour=8, minute=0, second=0, microsecond=0)
+                    leaveend_at_datetime2 = slote_end_datetime.replace(hour=22, minute=0, second=0, microsecond=0)
+                    
+                    if ((leavestart_at_datetime1 <= slote_start_datetime and leaveend_at_datetime1 > slote_start_datetime) or 
+                        (leavestart_at_datetime2 < slote_end_datetime and leaveend_at_datetime2 >= slote_end_datetime)):
+                        total_newcleaners = total_cleaners.filter(
+                            Q(id__in=shift_cleaners) | Q(id__in=super_shift_cleaners)
+                        ).exclude(id__in=absent_cleaners_ids)
+                        
+                        total_newleaders = total_leaders.filter(
+                            Q(id__in=shift_leaders) | Q(id__in=super_shift_leaders)
+                        ).exclude(id__in=absent_leaders_ids)
+                    else:
+                        total_newcleaners = total_cleaners.filter(
+                            Q(id__in=shift_cleaners) | Q(id__in=super_shift_cleaners)
+                        )
+                        
+                        total_newleaders = total_leaders.filter(
+                            Q(id__in=shift_leaders) | Q(id__in=super_shift_leaders)
+                        )
+                else:
+                    # Apply 8 to 22 leave logic without shift check
+                    leavestart_at_datetime1 = slote_start_datetime.replace(hour=8, minute=0, second=0, microsecond=0)
+                    leaveend_at_datetime1 = slote_start_datetime.replace(hour=22, minute=0, second=0, microsecond=0)
+                    leavestart_at_datetime2 = slote_end_datetime.replace(hour=8, minute=0, second=0, microsecond=0)
+                    leaveend_at_datetime2 = slote_end_datetime.replace(hour=22, minute=0, second=0, microsecond=0)
+                    
+                    if ((leavestart_at_datetime1 <= slote_start_datetime and leaveend_at_datetime1 > slote_start_datetime) or 
+                        (leavestart_at_datetime2 < slote_end_datetime and leaveend_at_datetime2 >= slote_end_datetime)):
+                        total_newcleaners = total_cleaners.exclude(id__in=absent_cleaners_ids)
+                        total_newleaders = total_leaders.exclude(id__in=absent_leaders_ids)
+                
+                # Find all scheduled team members for this time slot
+                team_leaders_scheduled = set()
+                team_members_scheduled = set()
+                
+                # Check active cleaning and followup members for this specific time slot
+                for (start, end), members in active_cleaning_dict.items():
+                    if ((start <= slote_start_datetime and end >= slote_start_datetime) or
+                        (start <= slote_end_datetime and end >= slote_end_datetime) or
+                        (start >= slote_start_datetime and end <= slote_end_datetime) or
+                        (start <= slote_start_datetime and end >= slote_end_datetime)):
+                        
+                        for member in members:
+                            team_members_scheduled.add(member.id)
+                            if member.user_type == 'TEAMINCHARGE':
+                                team_leaders_scheduled.add(member.id)
+                
+                for (start, end), members in active_followup_dict.items():
+                    if ((start <= slote_start_datetime and end >= slote_start_datetime) or
+                        (start <= slote_end_datetime and end >= slote_end_datetime) or
+                        (start >= slote_start_datetime and end <= slote_end_datetime) or
+                        (start <= slote_start_datetime and end >= slote_end_datetime)):
+                        
+                        for member in members:
+                            team_members_scheduled.add(member.id)
+                            if member.user_type == 'TEAMINCHARGE':
+                                team_leaders_scheduled.add(member.id)
+                
+                # Apply 8 to 22 leave logic for absences
+                if ((leavestart_at_datetime1 <= slote_start_datetime and leaveend_at_datetime1 > slote_start_datetime) or 
+                    (leavestart_at_datetime2 < slote_end_datetime and leaveend_at_datetime2 >= slote_end_datetime)):
+                    
+                    if shift_availability_check:
+                        # Filter absent cleaners by those who should be on shift
+                        shift_absent_cleaner_ids = set(absent_cleaners_ids).intersection(
+                            set(shift_cleaners).union(set(super_shift_cleaners))
+                        )
+                        
+                        shift_absent_leader_ids = set(absent_leaders_ids).intersection(
+                            set(shift_leaders).union(set(super_shift_leaders))
+                        )
+                        
+                        team_members_scheduled.update(shift_absent_cleaner_ids)
+                        team_leaders_scheduled.update(shift_absent_leader_ids)
+                    else:
+                        # All absent cleaners count
+                        team_members_scheduled.update(absent_cleaners_ids)
+                        team_leaders_scheduled.update(absent_leaders_ids)
+                
+                # Exclude scheduled staff from available staff
+                available_cleaners = total_newcleaners.exclude(id__in=team_members_scheduled)
+                available_leaders = total_newleaders.exclude(id__in=team_leaders_scheduled)
+                
+                # Check slot availability
+                if available_cleaners and available_leaders:
+                    if (available_cleaners.count() - 1) >= number_of_cleaners and available_leaders.count() >= 1:
+                        slot_datetime_str = datetime.strftime(slote_start_datetime, '%d-%m-%Y %I:%M %p')
+                        dropdown_slotes['available_slotes'].append(slot_datetime_str)
+                        
+                        combined_slots_dict = {
+                            "date": datetime.strftime(slote_start_datetime, '%d-%m-%Y'),
+                            "time": datetime.strftime(slote_start_datetime, '%I:%M %p'),
+                            "is_available": True
+                        }
+                        dropdown_slotes['combined_slots'].append(combined_slots_dict)
+                    else:
+                        slot_datetime_str = datetime.strftime(slote_start_datetime, '%d-%m-%Y %I:%M %p')
+                        dropdown_slotes['busy_slotes'].append(slot_datetime_str)
+                        
+                        combined_slots_dict = {
+                            "date": datetime.strftime(slote_start_datetime, '%d-%m-%Y'),
+                            "time": datetime.strftime(slote_start_datetime, '%I:%M %p'),
+                            "is_available": False
+                        }
+                        dropdown_slotes['combined_slots'].append(combined_slots_dict)
+                else:
+                    slot_datetime_str = datetime.strftime(slote_start_datetime, '%d-%m-%Y %I:%M %p')
+                    dropdown_slotes['busy_slotes'].append(slot_datetime_str)
+                    
+                    combined_slots_dict = {
+                        "date": datetime.strftime(slote_start_datetime, '%d-%m-%Y'),
+                        "time": datetime.strftime(slote_start_datetime, '%I:%M %p'),
+                        "is_available": False
+                    }
+                    dropdown_slotes['combined_slots'].append(combined_slots_dict)
+        
+        return Response(dropdown_slotes, HTTP_200_OK)	
 
-		cleaning_hours      = float(request.data.get('cleaning_hours'))
+# class GetMultipleServiceDateCleaningSlotes(APIView):  
+# 	permission_classes        = (AllowAny,)
+# 	authentication_classes    = ()
 
-		service_types       = request.data.get('service_types')			 
+# 	def post(self,request):
+# 		dropdown_slotes  = {}
 
-		#count total cleaners and total leaders
-		total_cleaners = UserProfile.objects.filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
-		total_leaders  = UserProfile.objects.filter(user_type='TEAMINCHARGE')
-		for service_type in service_types:
-			if service_type == 'General Cleaning':
-				total_cleaners 	= total_cleaners.filter(is_general_skill=True)
-				total_leaders 	= total_leaders.filter(is_general_skill=True)
-			elif service_type == 'Deep Cleaning':
-				total_cleaners 	= total_cleaners.filter(is_deep_skill=True)
-				total_leaders 	= total_leaders.filter(is_deep_skill=True)
-			elif service_type == 'Upholstery Cleaning':
-				total_cleaners 	= total_cleaners.filter(is_upholstery_skill=True)
-				total_leaders 	= total_leaders.filter(is_upholstery_skill=True)
-			elif service_type == 'Kitchen Cleaning':
-				total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
-				total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
-			elif service_type == 'Kitchen Appliances':
-				total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
-				total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
-			elif service_type == 'Carpet Cleaning':
-				total_cleaners 	= total_cleaners.filter(is_carpet_skill=True)
-				total_leaders 	= total_leaders.filter(is_carpet_skill=True)
-			elif service_type == 'Sterilization':
-				total_cleaners 	= total_cleaners.filter(is_sterilization_skill=True)
-				total_leaders 	= total_leaders.filter(is_sterilization_skill=True)
-			elif service_type == 'Mattress Cleaning':
-				total_cleaners 	= total_cleaners.filter(is_mattress_skill=True)
-				total_leaders 	= total_leaders.filter(is_mattress_skill=True)
-			elif service_type == 'Facade Cleaning':
-				total_cleaners 	= total_cleaners.filter(is_facade_skill=True)
-				total_leaders 	= total_leaders.filter(is_facade_skill=True)
-			elif service_type == 'Storage Area':
-				total_cleaners 	= total_cleaners.filter(is_storagearea_skill=True)
-				total_leaders 	= total_leaders.filter(is_storagearea_skill=True)
-			elif service_type == 'Car Parking Umbrella':
-				total_cleaners 	= total_cleaners.filter(is_carparkingumbrella_skill=True)
-				total_leaders 	= total_leaders.filter(is_carparkingumbrella_skill=True)
-			elif service_type == 'Window Cleaning':
-				total_cleaners 	= total_cleaners.filter(is_window_skill=True)
-				total_leaders 	= total_leaders.filter(is_window_skill=True)
-			elif service_type == 'Outdoor Cleaning':
-				total_cleaners 	= total_cleaners.filter(is_outdoor_skill=True)
-				total_leaders 	= total_leaders.filter(is_outdoor_skill=True)
+# 		number_of_cleaners  = int(request.data.get('number_of_cleaners'))-1
+
+# 		cleaning_hours      = float(request.data.get('cleaning_hours'))
+
+# 		service_types       = request.data.get('service_types')			 
+
+# 		#count total cleaners and total leaders
+# 		total_cleaners = UserProfile.objects.filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+# 		total_leaders  = UserProfile.objects.filter(user_type='TEAMINCHARGE')
+# 		for service_type in service_types:
+# 			if service_type == 'General Cleaning':
+# 				total_cleaners 	= total_cleaners.filter(is_general_skill=True)
+# 				total_leaders 	= total_leaders.filter(is_general_skill=True)
+# 			elif service_type == 'Deep Cleaning':
+# 				total_cleaners 	= total_cleaners.filter(is_deep_skill=True)
+# 				total_leaders 	= total_leaders.filter(is_deep_skill=True)
+# 			elif service_type == 'Upholstery Cleaning':
+# 				total_cleaners 	= total_cleaners.filter(is_upholstery_skill=True)
+# 				total_leaders 	= total_leaders.filter(is_upholstery_skill=True)
+# 			elif service_type == 'Kitchen Cleaning':
+# 				total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
+# 				total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
+# 			elif service_type == 'Kitchen Appliances':
+# 				total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
+# 				total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
+# 			elif service_type == 'Carpet Cleaning':
+# 				total_cleaners 	= total_cleaners.filter(is_carpet_skill=True)
+# 				total_leaders 	= total_leaders.filter(is_carpet_skill=True)
+# 			elif service_type == 'Sterilization':
+# 				total_cleaners 	= total_cleaners.filter(is_sterilization_skill=True)
+# 				total_leaders 	= total_leaders.filter(is_sterilization_skill=True)
+# 			elif service_type == 'Mattress Cleaning':
+# 				total_cleaners 	= total_cleaners.filter(is_mattress_skill=True)
+# 				total_leaders 	= total_leaders.filter(is_mattress_skill=True)
+# 			elif service_type == 'Facade Cleaning':
+# 				total_cleaners 	= total_cleaners.filter(is_facade_skill=True)
+# 				total_leaders 	= total_leaders.filter(is_facade_skill=True)
+# 			elif service_type == 'Storage Area':
+# 				total_cleaners 	= total_cleaners.filter(is_storagearea_skill=True)
+# 				total_leaders 	= total_leaders.filter(is_storagearea_skill=True)
+# 			elif service_type == 'Car Parking Umbrella':
+# 				total_cleaners 	= total_cleaners.filter(is_carparkingumbrella_skill=True)
+# 				total_leaders 	= total_leaders.filter(is_carparkingumbrella_skill=True)
+# 			elif service_type == 'Window Cleaning':
+# 				total_cleaners 	= total_cleaners.filter(is_window_skill=True)
+# 				total_leaders 	= total_leaders.filter(is_window_skill=True)
+# 			elif service_type == 'Outdoor Cleaning':
+# 				total_cleaners 	= total_cleaners.filter(is_outdoor_skill=True)
+# 				total_leaders 	= total_leaders.filter(is_outdoor_skill=True)
 		
 
-		available_slotes = []
-		busy_slotes      = []
-		combined_slots   = []
+# 		available_slotes = []
+# 		busy_slotes      = []
+# 		combined_slots   = []
 
-		#Test on multiple date
-		shift_availability_check = request.data.get('shift_availability_check') 
-		policy = request.data.get('policy') 
-		cleaning_datetimes       = request.data.get('cleaning_datetimes')
+# 		#Test on multiple date
+# 		shift_availability_check = request.data.get('shift_availability_check') 
+# 		policy = request.data.get('policy') 
+# 		cleaning_datetimes       = request.data.get('cleaning_datetimes')
 		
-		for cleaning_datetime in cleaning_datetimes:
-			team_leaders_scheduled      = []
-			team_members_scheduled      = []
+# 		for cleaning_datetime in cleaning_datetimes:
+# 			team_leaders_scheduled      = []
+# 			team_members_scheduled      = []
 
-			if policy == 'onetime':
-				slote_start_datetime 			  = datetime.strptime(cleaning_datetime[0]+' '+cleaning_datetime[1],'%d-%m-%Y %I:%M %p')
-				slote_end_datetime                = datetime.strptime(cleaning_datetime[0]+' '+cleaning_datetime[2],'%d-%m-%Y %I:%M %p')
-				slote_start_time 			      = slote_start_datetime.time()
-				slote_end_time                    = slote_end_datetime.time()
-				start_at_date                     = slote_start_datetime.date()
-				end_at_date                       = slote_end_datetime.date()
-			else:
-				slote_start_datetime 			  = datetime.strptime(cleaning_datetime,'%d-%m-%Y %I:%M %p')
-				slote_end_datetime                = slote_start_datetime+timedelta(hours=cleaning_hours)
-				slote_start_time 			      = slote_start_datetime.time()
-				slote_end_time                    = slote_end_datetime.time()
-				start_at_date                     = slote_start_datetime.date()
-				end_at_date                       = slote_end_datetime.date()
+# 			if policy == 'onetime':
+# 				slote_start_datetime 			  = datetime.strptime(cleaning_datetime[0]+' '+cleaning_datetime[1],'%d-%m-%Y %I:%M %p')
+# 				slote_end_datetime                = datetime.strptime(cleaning_datetime[0]+' '+cleaning_datetime[2],'%d-%m-%Y %I:%M %p')
+# 				slote_start_time 			      = slote_start_datetime.time()
+# 				slote_end_time                    = slote_end_datetime.time()
+# 				start_at_date                     = slote_start_datetime.date()
+# 				end_at_date                       = slote_end_datetime.date()
+# 			else:
+# 				slote_start_datetime 			  = datetime.strptime(cleaning_datetime,'%d-%m-%Y %I:%M %p')
+# 				slote_end_datetime                = slote_start_datetime+timedelta(hours=cleaning_hours)
+# 				slote_start_time 			      = slote_start_datetime.time()
+# 				slote_end_time                    = slote_end_datetime.time()
+# 				start_at_date                     = slote_start_datetime.date()
+# 				end_at_date                       = slote_end_datetime.date()
 
-			#absent cleaners and leaders	
-			absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(leave_date=start_at_date)|Q(leave_date=end_at_date)).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
-			absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(Q(leave_date=start_at_date)|Q(leave_date=end_at_date)).filter(staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)
+# 			#absent cleaners and leaders	
+# 			absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(leave_date=start_at_date)|Q(leave_date=end_at_date)).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
+# 			absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(Q(leave_date=start_at_date)|Q(leave_date=end_at_date)).filter(staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)
 
-			#included shift cleaners
-			if shift_availability_check:
-				shift_cleaners      = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_at_date)|Q(shift_date=end_at_date)|Q(Q(shift3_start_at__lte=slote_end_datetime)&Q(shift3_end_at__gte=slote_end_datetime)))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=slote_start_time)&Q(shift1_end_at__gte=slote_start_time))&Q(Q(shift1_start_at__lte=slote_end_time)&Q(shift1_end_at__gte=slote_end_time))) | Q(Q(Q(shift2_start_at__lte=slote_start_time)&Q(shift2_end_at__gte=slote_start_time))&Q(Q(shift2_start_at__lte=slote_end_time)&Q(shift2_end_at__gte=slote_end_time))) | Q(Q(Q(shift3_start_at__lte=slote_start_datetime)&Q(shift3_end_at__gte=slote_start_datetime))&Q(Q(shift3_start_at__lte=slote_end_datetime)&Q(shift3_end_at__gte=slote_end_datetime)))).values_list('staff',flat=True)
-				shift_leaders       = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_at_date)|Q(shift_date=end_at_date)|Q(Q(shift3_start_at__lte=slote_end_datetime)&Q(shift3_end_at__gte=slote_end_datetime)))).filter(staff__user_type='TEAMINCHARGE').filter(Q(Q(Q(shift1_start_at__lte=slote_start_time)&Q(shift1_end_at__gte=slote_start_time))&Q(Q(shift1_start_at__lte=slote_end_time)&Q(shift1_end_at__gte=slote_end_time))) | Q(Q(Q(shift2_start_at__lte=slote_start_time)&Q(shift2_end_at__gte=slote_start_time))&Q(Q(shift2_start_at__lte=slote_end_time)&Q(shift2_end_at__gte=slote_end_time))) | Q(Q(Q(shift3_start_at__lte=slote_start_datetime)&Q(shift3_end_at__gte=slote_start_datetime))&Q(Q(shift3_start_at__lte=slote_end_datetime)&Q(shift3_end_at__gte=slote_end_datetime)))).values_list('staff',flat=True)
-				today_shifts        = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_at_date)|Q(shift_date=end_at_date)|Q(Q(shift3_start_at__lte=slote_end_datetime)&Q(shift3_end_at__gte=slote_end_datetime)))).values_list('staff',flat=True)
-				super_shift_cleaners= UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(id__in=today_shifts).filter( Q(Q(universal_shift_start__lte=slote_start_time)&Q(universal_shift_end__gte=slote_start_time))&Q(Q(universal_shift_start__lte=slote_end_time)&Q(universal_shift_end__gte=slote_end_time)) ).values_list('id',flat=True)
-				super_shift_leaders = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(id__in=today_shifts).filter(Q(Q(universal_shift_start__lte=slote_start_time)&Q(universal_shift_end__gte=slote_start_time))&Q(Q(universal_shift_start__lte=slote_end_time)&Q(universal_shift_end__gte=slote_end_time))).values_list('id',flat=True)
+# 			#included shift cleaners
+# 			if shift_availability_check:
+# 				shift_cleaners      = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_at_date)|Q(shift_date=end_at_date)|Q(Q(shift3_start_at__lte=slote_end_datetime)&Q(shift3_end_at__gte=slote_end_datetime)))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=slote_start_time)&Q(shift1_end_at__gte=slote_start_time))&Q(Q(shift1_start_at__lte=slote_end_time)&Q(shift1_end_at__gte=slote_end_time))) | Q(Q(Q(shift2_start_at__lte=slote_start_time)&Q(shift2_end_at__gte=slote_start_time))&Q(Q(shift2_start_at__lte=slote_end_time)&Q(shift2_end_at__gte=slote_end_time))) | Q(Q(Q(shift3_start_at__lte=slote_start_datetime)&Q(shift3_end_at__gte=slote_start_datetime))&Q(Q(shift3_start_at__lte=slote_end_datetime)&Q(shift3_end_at__gte=slote_end_datetime)))).values_list('staff',flat=True)
+# 				shift_leaders       = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_at_date)|Q(shift_date=end_at_date)|Q(Q(shift3_start_at__lte=slote_end_datetime)&Q(shift3_end_at__gte=slote_end_datetime)))).filter(staff__user_type='TEAMINCHARGE').filter(Q(Q(Q(shift1_start_at__lte=slote_start_time)&Q(shift1_end_at__gte=slote_start_time))&Q(Q(shift1_start_at__lte=slote_end_time)&Q(shift1_end_at__gte=slote_end_time))) | Q(Q(Q(shift2_start_at__lte=slote_start_time)&Q(shift2_end_at__gte=slote_start_time))&Q(Q(shift2_start_at__lte=slote_end_time)&Q(shift2_end_at__gte=slote_end_time))) | Q(Q(Q(shift3_start_at__lte=slote_start_datetime)&Q(shift3_end_at__gte=slote_start_datetime))&Q(Q(shift3_start_at__lte=slote_end_datetime)&Q(shift3_end_at__gte=slote_end_datetime)))).values_list('staff',flat=True)
+# 				today_shifts        = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_at_date)|Q(shift_date=end_at_date)|Q(Q(shift3_start_at__lte=slote_end_datetime)&Q(shift3_end_at__gte=slote_end_datetime)))).values_list('staff',flat=True)
+# 				super_shift_cleaners= UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(id__in=today_shifts).filter( Q(Q(universal_shift_start__lte=slote_start_time)&Q(universal_shift_end__gte=slote_start_time))&Q(Q(universal_shift_start__lte=slote_end_time)&Q(universal_shift_end__gte=slote_end_time)) ).values_list('id',flat=True)
+# 				super_shift_leaders = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(id__in=today_shifts).filter(Q(Q(universal_shift_start__lte=slote_start_time)&Q(universal_shift_end__gte=slote_start_time))&Q(Q(universal_shift_start__lte=slote_end_time)&Q(universal_shift_end__gte=slote_end_time))).values_list('id',flat=True)
 
-				#(applying 8 to 22 leave logic)
-				leavestart_at_datetime1  = slote_start_datetime.replace(hour=8,minute=0,second=0,microsecond=0)
-				leaveend_at_datetime1    = slote_start_datetime.replace(hour=22,minute=0,second=0,microsecond=0)
-				leavestart_at_datetime2  = slote_end_datetime.replace(hour=8,minute=0,second=0,microsecond=0)
-				leaveend_at_datetime2    = slote_end_datetime.replace(hour=22,minute=0,second=0,microsecond=0)
+# 				#(applying 8 to 22 leave logic)
+# 				leavestart_at_datetime1  = slote_start_datetime.replace(hour=8,minute=0,second=0,microsecond=0)
+# 				leaveend_at_datetime1    = slote_start_datetime.replace(hour=22,minute=0,second=0,microsecond=0)
+# 				leavestart_at_datetime2  = slote_end_datetime.replace(hour=8,minute=0,second=0,microsecond=0)
+# 				leaveend_at_datetime2    = slote_end_datetime.replace(hour=22,minute=0,second=0,microsecond=0)
 		
-				if (leavestart_at_datetime1 <= slote_start_datetime and leaveend_at_datetime1 > slote_start_datetime) or (leavestart_at_datetime2 < slote_end_datetime and leaveend_at_datetime2 >= slote_end_datetime):
-					total_newcleaners = total_cleaners.filter(Q(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners))).exclude(id__in=absent_cleaners)
-					total_newleaders  = total_leaders.filter(Q(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders))).exclude(id__in=absent_leaders)
-				else:
-					total_newcleaners = total_cleaners.filter(Q(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners)))
-					total_newleaders  = total_leaders.filter(Q(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders)))
+# 				if (leavestart_at_datetime1 <= slote_start_datetime and leaveend_at_datetime1 > slote_start_datetime) or (leavestart_at_datetime2 < slote_end_datetime and leaveend_at_datetime2 >= slote_end_datetime):
+# 					total_newcleaners = total_cleaners.filter(Q(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners))).exclude(id__in=absent_cleaners)
+# 					total_newleaders  = total_leaders.filter(Q(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders))).exclude(id__in=absent_leaders)
+# 				else:
+# 					total_newcleaners = total_cleaners.filter(Q(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners)))
+# 					total_newleaders  = total_leaders.filter(Q(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders)))
 
-				active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_start_datetime)&Q(start_at__lt=slote_end_datetime))|Q(Q(end_at__gt=slote_start_datetime)&Q(end_at__lte=slote_end_datetime))|Q(Q(start_at__lte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__gte=slote_end_datetime))|Q(Q(start_at__gte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__lte=slote_end_datetime))))
-				active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_start_datetime)&Q(start_at__lt=slote_end_datetime))|Q(Q(end_at__gt=slote_start_datetime)&Q(end_at__lte=slote_end_datetime))|Q(Q(start_at__lte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__gte=slote_end_datetime))|Q(Q(start_at__gte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__lte=slote_end_datetime))))
+# 				active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_start_datetime)&Q(start_at__lt=slote_end_datetime))|Q(Q(end_at__gt=slote_start_datetime)&Q(end_at__lte=slote_end_datetime))|Q(Q(start_at__lte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__gte=slote_end_datetime))|Q(Q(start_at__gte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__lte=slote_end_datetime))))
+# 				active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_start_datetime)&Q(start_at__lt=slote_end_datetime))|Q(Q(end_at__gt=slote_start_datetime)&Q(end_at__lte=slote_end_datetime))|Q(Q(start_at__lte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__gte=slote_end_datetime))|Q(Q(start_at__gte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__lte=slote_end_datetime))))
 
-				new_absent_cleaners     = UserProfile.objects.filter(id__in=absent_cleaners).filter(Q(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners)))
-				new_absent_leaders      = UserProfile.objects.filter(id__in=absent_leaders).filter(Q(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders)))	
+# 				new_absent_cleaners     = UserProfile.objects.filter(id__in=absent_cleaners).filter(Q(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners)))
+# 				new_absent_leaders      = UserProfile.objects.filter(id__in=absent_leaders).filter(Q(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders)))	
 			
-			#excluded shift cleaners
-			else:
-				#(applying 8 to 22 leave logic)
-				leavestart_at_datetime1  = slote_start_datetime.replace(hour=8,minute=0,second=0,microsecond=0)
-				leaveend_at_datetime1    = slote_start_datetime.replace(hour=22,minute=0,second=0,microsecond=0)
-				leavestart_at_datetime2  = slote_end_datetime.replace(hour=8,minute=0,second=0,microsecond=0)
-				leaveend_at_datetime2    = slote_end_datetime.replace(hour=22,minute=0,second=0,microsecond=0)
+# 			#excluded shift cleaners
+# 			else:
+# 				#(applying 8 to 22 leave logic)
+# 				leavestart_at_datetime1  = slote_start_datetime.replace(hour=8,minute=0,second=0,microsecond=0)
+# 				leaveend_at_datetime1    = slote_start_datetime.replace(hour=22,minute=0,second=0,microsecond=0)
+# 				leavestart_at_datetime2  = slote_end_datetime.replace(hour=8,minute=0,second=0,microsecond=0)
+# 				leaveend_at_datetime2    = slote_end_datetime.replace(hour=22,minute=0,second=0,microsecond=0)
 		
-				if (leavestart_at_datetime1 <= slote_start_datetime and leaveend_at_datetime1 > slote_start_datetime) or (leavestart_at_datetime2 < slote_end_datetime and leaveend_at_datetime2 >= slote_end_datetime):
-					total_newcleaners = total_cleaners.exclude(id__in=absent_cleaners)
-					total_newleaders  = total_leaders.exclude(id__in=absent_leaders)
-				else:
-					total_newcleaners = total_cleaners
-					total_newleaders  = total_leaders
+# 				if (leavestart_at_datetime1 <= slote_start_datetime and leaveend_at_datetime1 > slote_start_datetime) or (leavestart_at_datetime2 < slote_end_datetime and leaveend_at_datetime2 >= slote_end_datetime):
+# 					total_newcleaners = total_cleaners.exclude(id__in=absent_cleaners)
+# 					total_newleaders  = total_leaders.exclude(id__in=absent_leaders)
+# 				else:
+# 					total_newcleaners = total_cleaners
+# 					total_newleaders  = total_leaders
 
-				active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_start_datetime)&Q(start_at__lt=slote_end_datetime))|Q(Q(end_at__gt=slote_start_datetime)&Q(end_at__lte=slote_end_datetime))|Q(Q(start_at__lte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__gte=slote_end_datetime))|Q(Q(start_at__gte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__lte=slote_end_datetime))))
-				active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_start_datetime)&Q(start_at__lt=slote_end_datetime))|Q(Q(end_at__gt=slote_start_datetime)&Q(end_at__lte=slote_end_datetime))|Q(Q(start_at__lte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__gte=slote_end_datetime))|Q(Q(start_at__gte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__lte=slote_end_datetime))))
+# 				active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_start_datetime)&Q(start_at__lt=slote_end_datetime))|Q(Q(end_at__gt=slote_start_datetime)&Q(end_at__lte=slote_end_datetime))|Q(Q(start_at__lte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__gte=slote_end_datetime))|Q(Q(start_at__gte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__lte=slote_end_datetime))))
+# 				active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_start_datetime)&Q(start_at__lt=slote_end_datetime))|Q(Q(end_at__gt=slote_start_datetime)&Q(end_at__lte=slote_end_datetime))|Q(Q(start_at__lte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__gte=slote_end_datetime))|Q(Q(start_at__gte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__lte=slote_end_datetime))))
 
-				new_absent_cleaners     = UserProfile.objects.filter(id__in=absent_cleaners)
-				new_absent_leaders      = UserProfile.objects.filter(id__in=absent_leaders)
+# 				new_absent_cleaners     = UserProfile.objects.filter(id__in=absent_cleaners)
+# 				new_absent_leaders      = UserProfile.objects.filter(id__in=absent_leaders)
 
-			for service_type in service_types:					
-				if service_type == 'General Cleaning':
-					active_cleaners1 	= active_cleaners1.filter(member__is_general_skill=True)
-					active_cleaners2 	= active_cleaners2.filter(member__is_general_skill=True)
-					new_absent_cleaners = new_absent_cleaners.filter(is_general_skill=True)
-					new_absent_leaders  = new_absent_leaders.filter(is_general_skill=True)
-				elif service_type == 'Deep Cleaning':
-					active_cleaners1 	= active_cleaners1.filter(member__is_deep_skill=True)
-					active_cleaners2 	= active_cleaners2.filter(member__is_deep_skill=True)
-					new_absent_cleaners = new_absent_cleaners.filter(is_deep_skill=True)
-					new_absent_leaders  = new_absent_leaders.filter(is_deep_skill=True)
-				elif service_type == 'Upholstery Cleaning':
-					active_cleaners1 	= active_cleaners1.filter(member__is_upholstery_skill=True)
-					active_cleaners2 	= active_cleaners2.filter(member__is_upholstery_skill=True)
-					new_absent_cleaners = new_absent_cleaners.filter(is_upholstery_skill=True)
-					new_absent_leaders  = new_absent_leaders.filter(is_upholstery_skill=True)
-				elif service_type == 'Kitchen Cleaning':
-					active_cleaners1 	= active_cleaners1.filter(member__is_kitchen_skill=True)
-					active_cleaners2 	= active_cleaners2.filter(member__is_kitchen_skill=True)
-					new_absent_cleaners = new_absent_cleaners.filter(is_kitchen_skill=True)
-					new_absent_leaders  = new_absent_leaders.filter(is_kitchen_skill=True)
-				elif service_type == 'Kitchen Appliances':
-					active_cleaners1 	= active_cleaners1.filter(member__is_kitchen_skill=True)
-					active_cleaners2 	= active_cleaners2.filter(member__is_kitchen_skill=True)
-					new_absent_cleaners = new_absent_cleaners.filter(is_kitchen_skill=True)
-					new_absent_leaders  = new_absent_leaders.filter(is_kitchen_skill=True)
-				elif service_type == 'Carpet Cleaning':
-					active_cleaners1 	= active_cleaners1.filter(member__is_carpet_skill=True)
-					active_cleaners2 	= active_cleaners2.filter(member__is_carpet_skill=True)
-					new_absent_cleaners = new_absent_cleaners.filter(is_carpet_skill=True)
-					new_absent_leaders  = new_absent_leaders.filter(is_carpet_skill=True)
-				elif service_type == 'Sterilization':
-					active_cleaners1 	= active_cleaners1.filter(member__is_sterilization_skill=True)
-					active_cleaners2 	= active_cleaners2.filter(member__is_sterilization_skill=True)
-					new_absent_cleaners = new_absent_cleaners.filter(is_sterilization_skill=True)
-					new_absent_leaders  = new_absent_leaders.filter(is_sterilization_skill=True)
-				elif service_type == 'Mattress Cleaning':
-					active_cleaners1 	= active_cleaners1.filter(member__is_mattress_skill=True)
-					active_cleaners2 	= active_cleaners2.filter(member__is_mattress_skill=True)
-					new_absent_cleaners = new_absent_cleaners.filter(is_mattress_skill=True)
-					new_absent_leaders  = new_absent_leaders.filter(is_mattress_skill=True)
-				elif service_type == 'Facade Cleaning':
-					active_cleaners1 	= active_cleaners1.filter(member__is_facade_skill=True)
-					active_cleaners2 	= active_cleaners2.filter(member__is_facade_skill=True)
-					new_absent_cleaners = new_absent_cleaners.filter(is_facade_skill=True)
-					new_absent_leaders  = new_absent_leaders.filter(is_facade_skill=True)
-				elif service_type == 'Storage Area':
-					active_cleaners1 	= active_cleaners1.filter(member__is_storagearea_skill=True)
-					active_cleaners2 	= active_cleaners2.filter(member__is_storagearea_skill=True)
-					new_absent_cleaners = new_absent_cleaners.filter(is_storagearea_skill=True)
-					new_absent_leaders  = new_absent_leaders.filter(is_storagearea_skill=True)
-				elif service_type == 'Car Parking Umbrella':
-					active_cleaners1 	= active_cleaners1.filter(member__is_carparkingumbrella_skill=True)
-					active_cleaners2 	= active_cleaners2.filter(member__is_carparkingumbrella_skill=True)
-					new_absent_cleaners = new_absent_cleaners.filter(is_carparkingumbrella_skill=True)
-					new_absent_leaders = new_absent_leaders.filter(is_carparkingumbrella_skill=True)
-				elif service_type == 'Window Cleaning':
-					active_cleaners1 	= active_cleaners1.filter(member__is_window_skill=True)
-					active_cleaners2 	= active_cleaners2.filter(member__is_window_skill=True)
-					new_absent_cleaners = new_absent_cleaners.filter(is_window_skill=True)
-					new_absent_leaders  = new_absent_leaders.filter(is_window_skill=True)
-				elif service_type == 'Outdoor Cleaning':
-					active_cleaners1 	= active_cleaners1.filter(member__is_outdoor_skill=True)
-					active_cleaners2 	= active_cleaners2.filter(member__is_outdoor_skill=True)
-					new_absent_cleaners = new_absent_cleaners.filter(is_outdoor_skill=True)
-					new_absent_leaders  = new_absent_leaders.filter(is_outdoor_skill=True)
+# 			for service_type in service_types:					
+# 				if service_type == 'General Cleaning':
+# 					active_cleaners1 	= active_cleaners1.filter(member__is_general_skill=True)
+# 					active_cleaners2 	= active_cleaners2.filter(member__is_general_skill=True)
+# 					new_absent_cleaners = new_absent_cleaners.filter(is_general_skill=True)
+# 					new_absent_leaders  = new_absent_leaders.filter(is_general_skill=True)
+# 				elif service_type == 'Deep Cleaning':
+# 					active_cleaners1 	= active_cleaners1.filter(member__is_deep_skill=True)
+# 					active_cleaners2 	= active_cleaners2.filter(member__is_deep_skill=True)
+# 					new_absent_cleaners = new_absent_cleaners.filter(is_deep_skill=True)
+# 					new_absent_leaders  = new_absent_leaders.filter(is_deep_skill=True)
+# 				elif service_type == 'Upholstery Cleaning':
+# 					active_cleaners1 	= active_cleaners1.filter(member__is_upholstery_skill=True)
+# 					active_cleaners2 	= active_cleaners2.filter(member__is_upholstery_skill=True)
+# 					new_absent_cleaners = new_absent_cleaners.filter(is_upholstery_skill=True)
+# 					new_absent_leaders  = new_absent_leaders.filter(is_upholstery_skill=True)
+# 				elif service_type == 'Kitchen Cleaning':
+# 					active_cleaners1 	= active_cleaners1.filter(member__is_kitchen_skill=True)
+# 					active_cleaners2 	= active_cleaners2.filter(member__is_kitchen_skill=True)
+# 					new_absent_cleaners = new_absent_cleaners.filter(is_kitchen_skill=True)
+# 					new_absent_leaders  = new_absent_leaders.filter(is_kitchen_skill=True)
+# 				elif service_type == 'Kitchen Appliances':
+# 					active_cleaners1 	= active_cleaners1.filter(member__is_kitchen_skill=True)
+# 					active_cleaners2 	= active_cleaners2.filter(member__is_kitchen_skill=True)
+# 					new_absent_cleaners = new_absent_cleaners.filter(is_kitchen_skill=True)
+# 					new_absent_leaders  = new_absent_leaders.filter(is_kitchen_skill=True)
+# 				elif service_type == 'Carpet Cleaning':
+# 					active_cleaners1 	= active_cleaners1.filter(member__is_carpet_skill=True)
+# 					active_cleaners2 	= active_cleaners2.filter(member__is_carpet_skill=True)
+# 					new_absent_cleaners = new_absent_cleaners.filter(is_carpet_skill=True)
+# 					new_absent_leaders  = new_absent_leaders.filter(is_carpet_skill=True)
+# 				elif service_type == 'Sterilization':
+# 					active_cleaners1 	= active_cleaners1.filter(member__is_sterilization_skill=True)
+# 					active_cleaners2 	= active_cleaners2.filter(member__is_sterilization_skill=True)
+# 					new_absent_cleaners = new_absent_cleaners.filter(is_sterilization_skill=True)
+# 					new_absent_leaders  = new_absent_leaders.filter(is_sterilization_skill=True)
+# 				elif service_type == 'Mattress Cleaning':
+# 					active_cleaners1 	= active_cleaners1.filter(member__is_mattress_skill=True)
+# 					active_cleaners2 	= active_cleaners2.filter(member__is_mattress_skill=True)
+# 					new_absent_cleaners = new_absent_cleaners.filter(is_mattress_skill=True)
+# 					new_absent_leaders  = new_absent_leaders.filter(is_mattress_skill=True)
+# 				elif service_type == 'Facade Cleaning':
+# 					active_cleaners1 	= active_cleaners1.filter(member__is_facade_skill=True)
+# 					active_cleaners2 	= active_cleaners2.filter(member__is_facade_skill=True)
+# 					new_absent_cleaners = new_absent_cleaners.filter(is_facade_skill=True)
+# 					new_absent_leaders  = new_absent_leaders.filter(is_facade_skill=True)
+# 				elif service_type == 'Storage Area':
+# 					active_cleaners1 	= active_cleaners1.filter(member__is_storagearea_skill=True)
+# 					active_cleaners2 	= active_cleaners2.filter(member__is_storagearea_skill=True)
+# 					new_absent_cleaners = new_absent_cleaners.filter(is_storagearea_skill=True)
+# 					new_absent_leaders  = new_absent_leaders.filter(is_storagearea_skill=True)
+# 				elif service_type == 'Car Parking Umbrella':
+# 					active_cleaners1 	= active_cleaners1.filter(member__is_carparkingumbrella_skill=True)
+# 					active_cleaners2 	= active_cleaners2.filter(member__is_carparkingumbrella_skill=True)
+# 					new_absent_cleaners = new_absent_cleaners.filter(is_carparkingumbrella_skill=True)
+# 					new_absent_leaders = new_absent_leaders.filter(is_carparkingumbrella_skill=True)
+# 				elif service_type == 'Window Cleaning':
+# 					active_cleaners1 	= active_cleaners1.filter(member__is_window_skill=True)
+# 					active_cleaners2 	= active_cleaners2.filter(member__is_window_skill=True)
+# 					new_absent_cleaners = new_absent_cleaners.filter(is_window_skill=True)
+# 					new_absent_leaders  = new_absent_leaders.filter(is_window_skill=True)
+# 				elif service_type == 'Outdoor Cleaning':
+# 					active_cleaners1 	= active_cleaners1.filter(member__is_outdoor_skill=True)
+# 					active_cleaners2 	= active_cleaners2.filter(member__is_outdoor_skill=True)
+# 					new_absent_cleaners = new_absent_cleaners.filter(is_outdoor_skill=True)
+# 					new_absent_leaders  = new_absent_leaders.filter(is_outdoor_skill=True)
 
-				new_absent_cleaners = new_absent_cleaners.values_list('id',flat=True)
-				new_absent_leaders  = new_absent_leaders.values_list('id',flat=True)
+# 				new_absent_cleaners = new_absent_cleaners.values_list('id',flat=True)
+# 				new_absent_leaders  = new_absent_leaders.values_list('id',flat=True)
 
-				cleaning_active_team_leaders = active_cleaners1.filter(member__user_type='TEAMINCHARGE').values_list('member',flat=True)
-				cleaning_active_cleaners     = active_cleaners1.filter(Q(Q(member__user_type='TEAMINCHARGE')|Q(member__user_type='CLEANER'))).values_list('member',flat=True)
+# 				cleaning_active_team_leaders = active_cleaners1.filter(member__user_type='TEAMINCHARGE').values_list('member',flat=True)
+# 				cleaning_active_cleaners     = active_cleaners1.filter(Q(Q(member__user_type='TEAMINCHARGE')|Q(member__user_type='CLEANER'))).values_list('member',flat=True)
 
-				followup_active_team_leaders = active_cleaners2.filter(member__user_type='TEAMINCHARGE').values_list('member',flat=True)
-				followup_active_cleaners     = active_cleaners2.filter(Q(Q(member__user_type='TEAMINCHARGE')|Q(member__user_type='CLEANER'))).values_list('member',flat=True)
+# 				followup_active_team_leaders = active_cleaners2.filter(member__user_type='TEAMINCHARGE').values_list('member',flat=True)
+# 				followup_active_cleaners     = active_cleaners2.filter(Q(Q(member__user_type='TEAMINCHARGE')|Q(member__user_type='CLEANER'))).values_list('member',flat=True)
 
-				#merging
-				for active_team_leaders in cleaning_active_team_leaders:
-					team_leaders_scheduled.append(active_team_leaders)
-				for active_team_leaders in followup_active_team_leaders:
-					team_leaders_scheduled.append(active_team_leaders)
+# 				#merging
+# 				for active_team_leaders in cleaning_active_team_leaders:
+# 					team_leaders_scheduled.append(active_team_leaders)
+# 				for active_team_leaders in followup_active_team_leaders:
+# 					team_leaders_scheduled.append(active_team_leaders)
 
-				for active_team_member in cleaning_active_cleaners:
-					team_members_scheduled.append(active_team_member)
-				for active_team_member in followup_active_cleaners:
-					team_members_scheduled.append(active_team_member)
+# 				for active_team_member in cleaning_active_cleaners:
+# 					team_members_scheduled.append(active_team_member)
+# 				for active_team_member in followup_active_cleaners:
+# 					team_members_scheduled.append(active_team_member)
 
-			#(8 to 22 leave logic applied)
-			if (leavestart_at_datetime1 <= slote_start_datetime and leaveend_at_datetime1 > slote_start_datetime) or (leavestart_at_datetime2 < slote_end_datetime and leaveend_at_datetime2 >= slote_end_datetime):
-				for absent_cleaner in new_absent_cleaners:
-					team_members_scheduled.append(absent_cleaner)
-				for absent_leader in new_absent_leaders:
-					team_leaders_scheduled.append(absent_leader)
+# 			#(8 to 22 leave logic applied)
+# 			if (leavestart_at_datetime1 <= slote_start_datetime and leaveend_at_datetime1 > slote_start_datetime) or (leavestart_at_datetime2 < slote_end_datetime and leaveend_at_datetime2 >= slote_end_datetime):
+# 				for absent_cleaner in new_absent_cleaners:
+# 					team_members_scheduled.append(absent_cleaner)
+# 				for absent_leader in new_absent_leaders:
+# 					team_leaders_scheduled.append(absent_leader)
 
-			total_newcleaners = total_newcleaners.exclude(id__in=team_members_scheduled)
-			total_newleaders = total_newleaders.exclude(id__in=team_leaders_scheduled)
+# 			total_newcleaners = total_newcleaners.exclude(id__in=team_members_scheduled)
+# 			total_newleaders = total_newleaders.exclude(id__in=team_leaders_scheduled)
 
-			#slote availability				
-			if total_newcleaners and total_newleaders:
-					if((total_newcleaners.count()-1)>=number_of_cleaners and (total_newleaders.count())>=1):
-						available_slotes.append(datetime.strftime(slote_start_datetime,'%d-%m-%Y %I:%M %p'))	
+# 			#slote availability				
+# 			if total_newcleaners and total_newleaders:
+# 					if((total_newcleaners.count()-1)>=number_of_cleaners and (total_newleaders.count())>=1):
+# 						available_slotes.append(datetime.strftime(slote_start_datetime,'%d-%m-%Y %I:%M %p'))	
 
-						combined_slots_dict = {
-							"date" : datetime.strftime(slote_start_datetime,'%d-%m-%Y'),
-							"time" : datetime.strftime(slote_start_datetime,'%I:%M %p'),
-							"is_available" : True
-						}
+# 						combined_slots_dict = {
+# 							"date" : datetime.strftime(slote_start_datetime,'%d-%m-%Y'),
+# 							"time" : datetime.strftime(slote_start_datetime,'%I:%M %p'),
+# 							"is_available" : True
+# 						}
 
-						combined_slots.append(combined_slots_dict)
+# 						combined_slots.append(combined_slots_dict)
 
-					else:
-						busy_slotes.append(datetime.strftime(slote_start_datetime,'%d-%m-%Y %I:%M %p'))
+# 					else:
+# 						busy_slotes.append(datetime.strftime(slote_start_datetime,'%d-%m-%Y %I:%M %p'))
 
-						combined_slots_dict = {
-							"date" : datetime.strftime(slote_start_datetime,'%d-%m-%Y'),
-							"time" : datetime.strftime(slote_start_datetime,'%I:%M %p'),
-							"is_available" : False
-						}
+# 						combined_slots_dict = {
+# 							"date" : datetime.strftime(slote_start_datetime,'%d-%m-%Y'),
+# 							"time" : datetime.strftime(slote_start_datetime,'%I:%M %p'),
+# 							"is_available" : False
+# 						}
 						
-						combined_slots.append(combined_slots_dict)
+# 						combined_slots.append(combined_slots_dict)
 					
-			else:
-				busy_slotes.append(datetime.strftime(slote_start_datetime,'%d-%m-%Y %I:%M %p'))
+# 			else:
+# 				busy_slotes.append(datetime.strftime(slote_start_datetime,'%d-%m-%Y %I:%M %p'))
 		
 
-		dropdown_slotes['available_slotes'] = available_slotes
-		dropdown_slotes['busy_slotes']      = busy_slotes
-		dropdown_slotes['combined_slots']   = combined_slots
-		dropdown_slotes['success']          = True
+# 		dropdown_slotes['available_slotes'] = available_slotes
+# 		dropdown_slotes['busy_slotes']      = busy_slotes
+# 		dropdown_slotes['combined_slots']   = combined_slots
+# 		dropdown_slotes['success']          = True
 		
-		return Response(dropdown_slotes,HTTP_200_OK)
+# 		return Response(dropdown_slotes,HTTP_200_OK)
 
 
 
@@ -4283,7 +4451,7 @@ class GetAvailableCleanersGroupSubscription(APIView):
 			cleaning_datetime_start      = datetime.strptime(subscription_detail['cleaning_datetime_start'],'%d-%m-%Y %I:%M %p')
 			cleaning_datetime_end        = datetime.strptime(subscription_detail['cleaning_datetime_end'],'%d-%m-%Y %I:%M %p')
 			
-			
+
 			team_members_scheduled      = []
 			#absent cleaners and leaders
 			cleaning_date1   = cleaning_datetime_start.date()
