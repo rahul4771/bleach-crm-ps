@@ -3362,7 +3362,7 @@ from concurrent.futures import ThreadPoolExecutor
 from django.db.models import Q
 
 
-class GetMultipleServiceDateCleaningSlotes(APIView):  
+class GetMultipleServiceDateCleaningSlotes(APIView):
     permission_classes = (AllowAny,)
     authentication_classes = ()
 
@@ -3395,7 +3395,11 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
         }
 
         # Pre-filter cleaners based on required skills
-        selected_cleaners = {user[0] for user in all_cleaners if any(user[skill_filters[stype]] for stype in service_types)}
+        skill_indexes = {skill: idx + 2 for idx, skill in enumerate(skill_filters.values())}
+        selected_cleaners = {
+            user[0] for user in all_cleaners
+            if any(user[skill_indexes[skill]] for skill in service_types if skill in skill_indexes)
+        }
         selected_leaders = selected_cleaners & all_leaders
 
         # Get all cleaning dates
