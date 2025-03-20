@@ -3405,10 +3405,12 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
         shift_availability_check = request.data.get('shift_availability_check')
         policy = request.data.get('policy')
 
-        # Batch query for absent staff
-        absent_staff_data = LeaveSchedule.objects.filter(
-            leave_date__in=[d[0] for d in cleaning_datetimes]
-        ).values_list('staff', 'leave_date')
+        # Convert 'DD-MM-YYYY' format to 'YYYY-MM-DD'
+		cleaning_dates = {datetime.strptime(d.split(" ")[0], "%d-%m-%Y").strftime("%Y-%m-%d") for d in cleaning_datetimes}
+
+		absent_staff_data = LeaveSchedule.objects.filter(
+			leave_date__in=cleaning_dates
+		).values_list('staff', 'leave_date')
 
         absent_staff_map = {}
         for staff_id, leave_date in absent_staff_data:
