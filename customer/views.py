@@ -3356,123 +3356,7 @@ class GetMultipleServiceCleaningSlotes(APIView):
         dropdown_slotes['slotes'] = available_slotes
         return Response(dropdown_slotes, HTTP_200_OK)
 
-from itertools import islice
-from concurrent.futures import ThreadPoolExecutor
-from django.db.models import Q
 
-class GetMultipleServiceDateCleaningSlotes(APIView):  
-    permission_classes = (AllowAny,)
-    authentication_classes = ()
-
-    def post(self, request):
-        dropdown_slots = {}
-
-        number_of_cleaners = int(request.data.get('number_of_cleaners')) - 1
-        cleaning_hours = float(request.data.get('cleaning_hours'))
-        service_types = request.data.get('service_types')
-
-        # Fetch all cleaners and leaders in one query
-        all_cleaners = UserProfile.objects.filter(user_type__in=['CLEANER', 'TEAMINCHARGE']).values_list(
-            'id', 'user_type', 'is_general_skill', 'is_deep_skill', 'is_upholstery_skill',
-            'is_kitchen_skill', 'is_carpet_skill', 'is_sterilization_skill', 'is_mattress_skill',
-            'is_facade_skill', 'is_storagearea_skill', 'is_carparkingumbrella_skill', 'is_window_skill',
-            'is_outdoor_skill'
-        )
-
-        all_leaders = {user[0] for user in all_cleaners if user[1] == 'TEAMINCHARGE'}
-
-        # Map service types to skills
-        skill_filters = {
-            'General Cleaning': 'is_general_skill', 'Deep Cleaning': 'is_deep_skill',
-            'Upholstery Cleaning': 'is_upholstery_skill', 'Kitchen Cleaning': 'is_kitchen_skill',
-            'Kitchen Appliances': 'is_kitchen_skill', 'Carpet Cleaning': 'is_carpet_skill',
-            'Sterilization': 'is_sterilization_skill', 'Mattress Cleaning': 'is_mattress_skill',
-            'Facade Cleaning': 'is_facade_skill', 'Storage Area': 'is_storagearea_skill',
-            'Car Parking Umbrella': 'is_carparkingumbrella_skill', 'Window Cleaning': 'is_window_skill',
-            'Outdoor Cleaning': 'is_outdoor_skill'
-        }
-
-        # Pre-filter cleaners based on required skills
-        skill_indexes = {skill: idx + 2 for idx, skill in enumerate(skill_filters.values())}
-        selected_cleaners = {
-            user[0] for user in all_cleaners
-            if any(user[skill_indexes[skill]] for skill in service_types if skill in skill_indexes)
-        }
-        selected_leaders = selected_cleaners & all_leaders
-
-        # Get all cleaning dates
-        cleaning_datetimes = request.data.get('cleaning_datetimes')
-        shift_availability_check = request.data.get('shift_availability_check')
-        policy = request.data.get('policy')
-
-        # Convert 'DD-MM-YYYY' format to 'YYYY-MM-DD'
-		cleaning_dates = {datetime.strptime(d.split(" ")[0], "%d-%m-%Y").strftime("%Y-%m-%d") for d in cleaning_datetimes}
-
-		absent_staff_data = LeaveSchedule.objects.filter(
-			leave_date__in=cleaning_dates
-		).values_list('staff', 'leave_date')
-
-        absent_staff_map = {}
-        for staff_id, leave_date in absent_staff_data:
-            if leave_date not in absent_staff_map:
-                absent_staff_map[leave_date] = set()
-            absent_staff_map[leave_date].add(staff_id)
-
-        # Batch processing function
-        def process_cleaning_dates(date_chunk):
-            available_slots = []
-            busy_slots = []
-            combined_slots = []
-
-            for cleaning_datetime in date_chunk:
-                if policy == 'onetime':
-                    start_datetime = datetime.strptime(cleaning_datetime[0] + ' ' + cleaning_datetime[1], '%d-%m-%Y %I:%M %p')
-                    end_datetime = datetime.strptime(cleaning_datetime[0] + ' ' + cleaning_datetime[2], '%d-%m-%Y %I:%M %p')
-                else:
-                    start_datetime = datetime.strptime(cleaning_datetime, '%d-%m-%Y %I:%M %p')
-                    end_datetime = start_datetime + timedelta(hours=cleaning_hours)
-
-                start_date = start_datetime.date()
-                end_date = end_datetime.date()
-
-                # Get absent staff
-                absent_cleaners = absent_staff_map.get(start_date, set()) | absent_staff_map.get(end_date, set())
-                available_cleaners = selected_cleaners - absent_cleaners
-                available_leaders = selected_leaders - absent_cleaners
-
-                # Check slot availability
-                if available_cleaners and available_leaders:
-                    if len(available_cleaners) - 1 >= number_of_cleaners and len(available_leaders) >= 1:
-                        available_slots.append(start_datetime.strftime('%d-%m-%Y %I:%M %p'))
-                        combined_slots.append({"date": start_datetime.strftime('%d-%m-%Y'), "time": start_datetime.strftime('%I:%M %p'), "is_available": True})
-                    else:
-                        busy_slots.append(start_datetime.strftime('%d-%m-%Y %I:%M %p'))
-                        combined_slots.append({"date": start_datetime.strftime('%d-%m-%Y'), "time": start_datetime.strftime('%I:%M %p'), "is_available": False})
-                else:
-                    busy_slots.append(start_datetime.strftime('%d-%m-%Y %I:%M %p'))
-
-            return {"available": available_slots, "busy": busy_slots, "combined": combined_slots}
-
-        # Chunk processing for large datasets
-        def chunked_iterable(iterable, size):
-            it = iter(iterable)
-            while chunk := list(islice(it, size)):
-                yield chunk
-
-        date_chunks = list(chunked_iterable(cleaning_datetimes, 20))  # Process in batches of 20
-
-        results = {"available_slotes": [], "busy_slotes": [], "combined_slots": []}
-
-        with ThreadPoolExecutor() as executor:
-            chunk_results = list(executor.map(process_cleaning_dates, date_chunks))
-
-        for res in chunk_results:
-            results["available_slotes"].extend(res["available"])
-            results["busy_slotes"].extend(res["busy"])
-            results["combined_slots"].extend(res["combined"])
-
-        results["success"] = True
-        return Response(results, status=200)
 
 
 # class GetMultipleServiceDateCleaningSlotes(APIView):
@@ -9118,3 +9002,123 @@ class CartScheduleAPI(APIView):
 			response_dict['updated_cost'] = cart.total_cost
 
 		return Response(response_dict,HTTP_200_OK)
+
+
+
+
+from itertools import islice
+from concurrent.futures import ThreadPoolExecutor
+from django.db.models import Q
+
+class GetMultipleServiceDateCleaningSlotes(APIView):  
+    permission_classes = (AllowAny,)
+    authentication_classes = ()
+
+    def post(self, request):
+        dropdown_slots = {}
+
+        number_of_cleaners = int(request.data.get('number_of_cleaners')) - 1
+        cleaning_hours = float(request.data.get('cleaning_hours'))
+        service_types = request.data.get('service_types')
+        cleaning_datetimes = request.data.get('cleaning_datetimes')
+        shift_availability_check = request.data.get('shift_availability_check')
+        policy = request.data.get('policy')
+
+        # Convert 'DD-MM-YYYY' format to 'YYYY-MM-DD' for querying
+        cleaning_dates = {datetime.strptime(d.split(" ")[0], "%d-%m-%Y").strftime("%Y-%m-%d") for d in cleaning_datetimes}
+
+        # Fetch all cleaners and leaders in one query
+        all_cleaners = UserProfile.objects.filter(user_type__in=['CLEANER', 'TEAMINCHARGE']).values_list(
+            'id', 'user_type', 'is_general_skill', 'is_deep_skill', 'is_upholstery_skill',
+            'is_kitchen_skill', 'is_carpet_skill', 'is_sterilization_skill', 'is_mattress_skill',
+            'is_facade_skill', 'is_storagearea_skill', 'is_carparkingumbrella_skill', 'is_window_skill',
+            'is_outdoor_skill'
+        )
+
+        all_leaders = {user[0] for user in all_cleaners if user[1] == 'TEAMINCHARGE'}
+
+        # Map service types to skills
+        skill_filters = {
+            'General Cleaning': 'is_general_skill', 'Deep Cleaning': 'is_deep_skill',
+            'Upholstery Cleaning': 'is_upholstery_skill', 'Kitchen Cleaning': 'is_kitchen_skill',
+            'Kitchen Appliances': 'is_kitchen_skill', 'Carpet Cleaning': 'is_carpet_skill',
+            'Sterilization': 'is_sterilization_skill', 'Mattress Cleaning': 'is_mattress_skill',
+            'Facade Cleaning': 'is_facade_skill', 'Storage Area': 'is_storagearea_skill',
+            'Car Parking Umbrella': 'is_carparkingumbrella_skill', 'Window Cleaning': 'is_window_skill',
+            'Outdoor Cleaning': 'is_outdoor_skill'
+        }
+
+        # Pre-filter cleaners based on required skills
+        skill_indexes = {skill: idx + 2 for idx, skill in enumerate(skill_filters.values())}
+        selected_cleaners = {
+            user[0] for user in all_cleaners
+            if any(user[skill_indexes[skill]] for skill in service_types if skill in skill_indexes)
+        }
+        selected_leaders = selected_cleaners & all_leaders
+
+        # Batch query for absent staff (fixed date format issue)
+        absent_staff_data = LeaveSchedule.objects.filter(
+            leave_date__in=cleaning_dates
+        ).values_list('staff', 'leave_date')
+
+        absent_staff_map = {}
+        for staff_id, leave_date in absent_staff_data:
+            if leave_date not in absent_staff_map:
+                absent_staff_map[leave_date] = set()
+            absent_staff_map[leave_date].add(staff_id)
+
+        # Batch processing function
+        def process_cleaning_dates(date_chunk):
+            available_slots = []
+            busy_slots = []
+            combined_slots = []
+
+            for cleaning_datetime in date_chunk:
+                if policy == 'onetime':
+                    start_datetime = datetime.strptime(cleaning_datetime[0] + ' ' + cleaning_datetime[1], '%d-%m-%Y %I:%M %p')
+                    end_datetime = datetime.strptime(cleaning_datetime[0] + ' ' + cleaning_datetime[2], '%d-%m-%Y %I:%M %p')
+                else:
+                    start_datetime = datetime.strptime(cleaning_datetime, '%d-%m-%Y %I:%M %p')
+                    end_datetime = start_datetime + timedelta(hours=cleaning_hours)
+
+                start_date = start_datetime.strftime("%Y-%m-%d")
+                end_date = end_datetime.strftime("%Y-%m-%d")
+
+                # Get absent staff
+                absent_cleaners = absent_staff_map.get(start_date, set()) | absent_staff_map.get(end_date, set())
+                available_cleaners = selected_cleaners - absent_cleaners
+                available_leaders = selected_leaders - absent_cleaners
+
+                # Check slot availability
+                if available_cleaners and available_leaders:
+                    if len(available_cleaners) - 1 >= number_of_cleaners and len(available_leaders) >= 1:
+                        available_slots.append(start_datetime.strftime('%d-%m-%Y %I:%M %p'))
+                        combined_slots.append({"date": start_datetime.strftime('%d-%m-%Y'), "time": start_datetime.strftime('%I:%M %p'), "is_available": True})
+                    else:
+                        busy_slots.append(start_datetime.strftime('%d-%m-%Y %I:%M %p'))
+                        combined_slots.append({"date": start_datetime.strftime('%d-%m-%Y'), "time": start_datetime.strftime('%I:%M %p'), "is_available": False})
+                else:
+                    busy_slots.append(start_datetime.strftime('%d-%m-%Y %I:%M %p'))
+
+            return {"available": available_slots, "busy": busy_slots, "combined": combined_slots}
+
+        # Chunk processing for large datasets
+        def chunked_iterable(iterable, size):
+            it = iter(iterable)
+            while chunk := list(islice(it, size)):
+                yield chunk
+
+        date_chunks = list(chunked_iterable(cleaning_datetimes, 20))  # Process in batches of 20
+
+        results = {"available_slotes": [], "busy_slotes": [], "combined_slots": []}
+
+        with ThreadPoolExecutor() as executor:
+            chunk_results = list(executor.map(process_cleaning_dates, date_chunks))
+
+        for res in chunk_results:
+            results["available_slotes"].extend(res["available"])
+            results["busy_slotes"].extend(res["busy"])
+            results["combined_slots"].extend(res["combined"])
+
+        results["success"] = True
+        return Response(results, status=200)
