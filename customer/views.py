@@ -5699,158 +5699,158 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 # 		return Response(response_dict,HTTP_200_OK)
 
 
-# class EvaluatorMultipleCleaningBookingLetCustomerPhase2(APIView):
-# 	permission_classes        = (AllowAny,)
-# 	authentication_classes    = ()
-# 	def post(self,request,evaluation_details_id): 
+class EvaluatorMultipleCleaningBookingLetCustomerPhase2(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+	def post(self,request,evaluation_details_id): 
 
-# 		with transaction.atomic():
-# 			response_dict = {'success':False}
+		with transaction.atomic():
+			response_dict = {'success':False}
 			
-# 			#evaluation,evaluation details, and order
-# 			evaluation_details = EvaluationDetails.objects.select_related('evaluation').get(id=evaluation_details_id)
-# 			evaluation         = evaluation_details.evaluation
+			#evaluation,evaluation details, and order
+			evaluation_details = EvaluationDetails.objects.select_related('evaluation').get(id=evaluation_details_id)
+			evaluation         = evaluation_details.evaluation
 
-# 			#customer booking
-# 			#create booking
-# 			try:
-# 				customerbooking = CustomerBooking.objects.get(evaluation=evaluation)
-# 			except:
-# 				booking_id               = CustomerBooking.objects.filter(is_active=True).aggregate(t=Max('booking_id'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
-# 				current_booking_starting = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2))
+			#customer booking
+			#create booking
+			try:
+				customerbooking = CustomerBooking.objects.get(evaluation=evaluation)
+			except:
+				booking_id               = CustomerBooking.objects.filter(is_active=True).aggregate(t=Max('booking_id'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
+				current_booking_starting = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2))
 
-# 				if current_booking_starting == int(str(booking_id)[:4]):
-# 					new_booking_id = int(booking_id)+1
-# 				else:
-# 					new_booking_id = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')
+				if current_booking_starting == int(str(booking_id)[:4]):
+					new_booking_id = int(booking_id)+1
+				else:
+					new_booking_id = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')
 
-# 				customerbooking = CustomerBooking.objects.create(booking_id=new_booking_id,booking_type='CLEANINGBOOKING',booking_date=timezone.now(),evaluation=evaluation)
+				customerbooking = CustomerBooking.objects.create(booking_id=new_booking_id,booking_type='CLEANINGBOOKING',booking_date=timezone.now(),evaluation=evaluation)
 
-# 			##order
-# 			try:
-# 				order              = Order.objects.get(evaluation=evaluation)
-# 			except:
-# 				last_invoice_no  		 = Order.objects.filter(is_active=True).aggregate(t=Max('invoice_no'))['t']
-# 				current_invoice_starting = str(timezone.now().year)
-# 				if last_invoice_no:		
-# 					if current_invoice_starting == last_invoice_no[0:4]:
-# 						new_invoice_no 		 = str(int(last_invoice_no[4:]) + 1 )
-# 						new_invoice_no 		 = last_invoice_no[0:-(len(new_invoice_no))]+new_invoice_no
-# 					else:
-# 						new_invoice_no 		 = str(timezone.now().year)+'00001'
-# 				else:
-# 					new_invoice_no 		 = str(timezone.now().year)+'00001'
+			##order
+			try:
+				order              = Order.objects.get(evaluation=evaluation)
+			except:
+				last_invoice_no  		 = Order.objects.filter(is_active=True).aggregate(t=Max('invoice_no'))['t']
+				current_invoice_starting = str(timezone.now().year)
+				if last_invoice_no:		
+					if current_invoice_starting == last_invoice_no[0:4]:
+						new_invoice_no 		 = str(int(last_invoice_no[4:]) + 1 )
+						new_invoice_no 		 = last_invoice_no[0:-(len(new_invoice_no))]+new_invoice_no
+					else:
+						new_invoice_no 		 = str(timezone.now().year)+'00001'
+				else:
+					new_invoice_no 		 = str(timezone.now().year)+'00001'
 					
-# 				order              = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,payment_status='PENDING',invoice_no=new_invoice_no)
+				order              = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,payment_status='PENDING',invoice_no=new_invoice_no)
 			
-# 			services        = request.data.get("service_details")
+			services        = request.data.get("service_details")
 
-# 			#Evaluation cost updation
-# 			evaluation.total_cost      += request.data.get('total_cost')
-# 			evaluation.estimated_cost  += request.data.get('estimated_cost')
-# 			evaluation.save()
+			#Evaluation cost updation
+			evaluation.total_cost      += request.data.get('total_cost')
+			evaluation.estimated_cost  += request.data.get('estimated_cost')
+			evaluation.save()
 
-# 			#order cost updation
-# 			order.total_amount         += request.data.get('total_cost')
-# 			order.remining_amount      += request.data.get('total_cost')
-# 			order.save()
+			#order cost updation
+			order.total_amount         += request.data.get('total_cost')
+			order.remining_amount      += request.data.get('total_cost')
+			order.save()
 			
-# 			#evaluation details cost updation
-# 			evaluation_details.status         = 'EVALUATED'
-# 			evaluation_details.total_cost     = request.data.get('total_cost')
-# 			evaluation_details.estimated_cost = request.data.get('estimated_cost')			
-# 			evaluation_details.save()
+			#evaluation details cost updation
+			evaluation_details.status         = 'EVALUATED'
+			evaluation_details.total_cost     = request.data.get('total_cost')
+			evaluation_details.estimated_cost = request.data.get('estimated_cost')			
+			evaluation_details.save()
 
-# 			service_dict = {}
-# 			#evaluation book
-# 			for service_detail in services.keys():
-# 				service_save_serializer                    = EvaluationBookSerializer(data=services[service_detail])
-# 				if service_save_serializer.is_valid():
-# 					saved_service                              = service_save_serializer.save(evaluation_details=evaluation_details,cleaning_policy='ONE TIME SERVICE',cleaning_method='Method1',service_type_id=services[service_detail]['service_type'])	
-# 					response_dict['service_success']           = True
-# 				else:
-# 					errors= service_save_serializer.errors   
-# 					key=tuple(errors.keys())[0] 
-# 					error=errors[key]
-# 					response_dict['service_Error']=key +':'+ error[0]
-# 					response_dict['service_Error_List'] = service_save_serializer.errors
+			service_dict = {}
+			#evaluation book
+			for service_detail in services.keys():
+				service_save_serializer                    = EvaluationBookSerializer(data=services[service_detail])
+				if service_save_serializer.is_valid():
+					saved_service                              = service_save_serializer.save(evaluation_details=evaluation_details,cleaning_policy='ONE TIME SERVICE',cleaning_method='Method1',service_type_id=services[service_detail]['service_type'])	
+					response_dict['service_success']           = True
+				else:
+					errors= service_save_serializer.errors   
+					key=tuple(errors.keys())[0] 
+					error=errors[key]
+					response_dict['service_Error']=key +':'+ error[0]
+					response_dict['service_Error_List'] = service_save_serializer.errors
 
-# 					response_dict['service_success']  = False
+					response_dict['service_success']  = False
 
-# 					return Response(response_dict,HTTP_200_OK) 							
+					return Response(response_dict,HTTP_200_OK) 							
 
-# 				#create sections
-# 				sections_dict = services[service_detail]['sections']
-# 				for key in sections_dict.keys():
-# 					section_save_serializer                    = EvaluationBookSectionSerializer(data=sections_dict[key])
-# 					if section_save_serializer.is_valid():
-# 						saved_section                          = section_save_serializer.save(evaluation_book=saved_service,section_cleanings=1,)
+				#create sections
+				sections_dict = services[service_detail]['sections']
+				for key in sections_dict.keys():
+					section_save_serializer                    = EvaluationBookSectionSerializer(data=sections_dict[key])
+					if section_save_serializer.is_valid():
+						saved_section                          = section_save_serializer.save(evaluation_book=saved_service,section_cleanings=1,)
 						
-# 						response_dict['section_success']       = True
-# 					else:
-# 						errors= section_save_serializer.errors   
-# 						key=tuple(errors.keys())[0] 
-# 						error=errors[key]
-# 						response_dict['section_Error']=key +':'+ error[0]
-# 						response_dict['section_Error_List'] = section_save_serializer.errors
+						response_dict['section_success']       = True
+					else:
+						errors= section_save_serializer.errors   
+						key=tuple(errors.keys())[0] 
+						error=errors[key]
+						response_dict['section_Error']=key +':'+ error[0]
+						response_dict['section_Error_List'] = section_save_serializer.errors
 
-# 						response_dict['section_success']  = False
+						response_dict['section_success']  = False
 
-# 						return Response(response_dict,HTTP_200_OK)
+						return Response(response_dict,HTTP_200_OK)
 					
-# 					#create kenotes
-# 					try:
-# 						keynotes_dict = sections_dict[key]['keynotes']
-# 					except:
-# 						keynotes_dict = None					
-# 					if keynotes_dict:
-# 						for key1 in keynotes_dict.keys():
-# 							keynote_save_serializer = EvaluationSectionKeynoteSerializer(data=keynotes_dict[key1])
-# 							if keynote_save_serializer.is_valid():
-# 								saved_keynote       = keynote_save_serializer.save(evaluation_section=saved_section)
+					#create kenotes
+					try:
+						keynotes_dict = sections_dict[key]['keynotes']
+					except:
+						keynotes_dict = None					
+					if keynotes_dict:
+						for key1 in keynotes_dict.keys():
+							keynote_save_serializer = EvaluationSectionKeynoteSerializer(data=keynotes_dict[key1])
+							if keynote_save_serializer.is_valid():
+								saved_keynote       = keynote_save_serializer.save(evaluation_section=saved_section)
 								
-# 								response_dict['keynote_success']       = True
-# 							else:
-# 								errors= keynote_save_serializer.errors   
-# 								key=tuple(errors.keys())[0] 
-# 								error=errors[key]
-# 								response_dict['keynote_Error']      = key +':'+ error[0]
-# 								response_dict['keynote_Error_List'] = keynote_save_serializer.errors
+								response_dict['keynote_success']       = True
+							else:
+								errors= keynote_save_serializer.errors   
+								key=tuple(errors.keys())[0] 
+								error=errors[key]
+								response_dict['keynote_Error']      = key +':'+ error[0]
+								response_dict['keynote_Error_List'] = keynote_save_serializer.errors
 
-# 								response_dict['keynote_success']    = False
+								response_dict['keynote_success']    = False
 
-# 								return Response(response_dict,HTTP_200_OK)
+								return Response(response_dict,HTTP_200_OK)
 
-# 					#create add-ons
-# 					try:
-# 						addons_dict = sections_dict[key]['addons']
-# 					except:
-# 						addons_dict = None
-# 					if addons_dict:
-# 						for key2 in addons_dict.keys():
-# 							addons_save_serializer = EvaluationSectionAddonSerializer(data=addons_dict[key2])
-# 							if addons_save_serializer.is_valid():
-# 								saved_addon       = addons_save_serializer.save(evaluation_section=saved_section)
+					#create add-ons
+					try:
+						addons_dict = sections_dict[key]['addons']
+					except:
+						addons_dict = None
+					if addons_dict:
+						for key2 in addons_dict.keys():
+							addons_save_serializer = EvaluationSectionAddonSerializer(data=addons_dict[key2])
+							if addons_save_serializer.is_valid():
+								saved_addon       = addons_save_serializer.save(evaluation_section=saved_section)
 								
-# 								response_dict['addon_success']       = True
-# 							else:
-# 								errors= addons_save_serializer.errors   
-# 								key=tuple(errors.keys())[0] 
-# 								error=errors[key]
-# 								response_dict['addon_Error']      = key +':'+ error[0]
-# 								response_dict['addon_Error_List'] = addons_save_serializer.errors
+								response_dict['addon_success']       = True
+							else:
+								errors= addons_save_serializer.errors   
+								key=tuple(errors.keys())[0] 
+								error=errors[key]
+								response_dict['addon_Error']      = key +':'+ error[0]
+								response_dict['addon_Error_List'] = addons_save_serializer.errors
 
-# 								response_dict['addon_success']    = False
+								response_dict['addon_success']    = False
 
-# 								return Response(response_dict,HTTP_200_OK)
+								return Response(response_dict,HTTP_200_OK)
 
-# 				service_dict[saved_service.id] = saved_service.service_type.name				
+				service_dict[saved_service.id] = saved_service.service_type.name				
 
-# 			response_dict['evaluation_book_ids'] = service_dict
-# 			response_dict['booking_id']          = customerbooking.booking_id
-# 			response_dict['success']             = True
+			response_dict['evaluation_book_ids'] = service_dict
+			response_dict['booking_id']          = customerbooking.booking_id
+			response_dict['success']             = True
 
-# 		return Response(response_dict,HTTP_200_OK)
+		return Response(response_dict,HTTP_200_OK)
 
 class DuplicateBookingPhase2(APIView):
 	permission_classes        = (AllowAny,)
