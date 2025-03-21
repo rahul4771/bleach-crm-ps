@@ -9721,7 +9721,12 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
             response_dict = {'success': False}
             
             # Fetch all cleaners and leaders at once
-            all_cleaners = UserProfile.objects.filter(user_type__in=['CLEANER', 'TEAMINCHARGE']).values('id', 'user_type', 'is_general_skill', 'is_deep_skill', 'is_upholstery_skill', 'is_kitchen_skill', 'is_carpet_skill', 'is_sterilization_skill', 'is_mattress_skill', 'is_facade_skill', 'is_storagearea_skill', 'is_carparkingumbrella_skill', 'is_window_skill', 'is_outdoor_skill')
+            all_cleaners = UserProfile.objects.filter(user_type__in=['CLEANER', 'TEAMINCHARGE']).values(
+                'id', 'user_type', 'is_general_skill', 'is_deep_skill', 'is_upholstery_skill',
+                'is_kitchen_skill', 'is_carpet_skill', 'is_sterilization_skill', 'is_mattress_skill',
+                'is_facade_skill', 'is_storagearea_skill', 'is_carparkingumbrella_skill',
+                'is_window_skill', 'is_outdoor_skill'
+            )
             all_leaders = {user['id'] for user in all_cleaners if user['user_type'] == 'TEAMINCHARGE'}
 
             # Map service types to skills
@@ -9735,7 +9740,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
                 'Outdoor Cleaning': 'is_outdoor_skill'
             }
 
-            # Process services in one go
+            # Process services
             service_details = request.data.get("service_details")
             selected_cleaners = set()
             selected_leaders = set()
@@ -9749,7 +9754,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
                     selected_cleaners.update(filtered_cleaners)
                     selected_leaders.update(filtered_cleaners & all_leaders)
 
-            # Fetch evaluation details & order at once
+            # Fetch evaluation details & order
             evaluation_details = EvaluationDetails.objects.select_related('evaluation').get(id=evaluation_details_id)
             evaluation = evaluation_details.evaluation
 
@@ -9768,42 +9773,52 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 
             shift_availability_check = request.data.get('shift_availability_check')
 
-            # Process schedules efficiently
+            # Process schedules
             test_schedules_dict = list(service_details.values())[0]['schedule_details']
             schedule_dates = {datetime.strptime(v['date'], '%d-%m-%Y').date() for v in test_schedules_dict.values()}
 
-            absent_staff = LeaveSchedule.objects.filter(leave_date__in=schedule_dates).values_list('staff', flat=True)
+            absent_staff = set(LeaveSchedule.objects.filter(leave_date__in=schedule_dates).values_list('staff', flat=True))
+
+            # **Check shift availability if required**
+            if shift_availability_check:
+                shift_cleaners = set(ShiftSchedule.objects.filter(shift_date__in=schedule_dates).values_list('staff', flat=True))
+            else:
+                shift_cleaners = set()
 
             for key, schedule in test_schedules_dict.items():
                 start_datetime = datetime.strptime(schedule['date'] + ' ' + schedule['time'], '%d-%m-%Y %I:%M %p')
                 end_datetime = start_datetime + timedelta(hours=schedule['cleaning_hours'])
                 number_of_cleaners = schedule['no_of_cleaners'] - 1
 
-                available_cleaners = selected_cleaners - set(absent_staff)
-                available_leaders = selected_leaders - set(absent_staff)
+                # **Apply availability logic**
+                available_cleaners = selected_cleaners - absent_staff - shift_cleaners
+                available_leaders = selected_leaders - absent_staff - shift_cleaners
 
                 if len(available_cleaners) - 1 < number_of_cleaners or len(available_leaders) < 1:
                     response_dict['Error'] = 'Cleaners are not available'
                     return Response(response_dict, status=200)
 
-            # Update evaluation, order, and evaluation details costs in bulk
+            # **Bulk update evaluation, order, and evaluation details costs**
             total_cost = float(request.data.get('total_cost'))
             estimated_cost = float(request.data.get('estimated_cost'))
 
-            evaluation.total_cost += total_cost
-            evaluation.estimated_cost += estimated_cost
-            evaluation.save()
+            Evaluation.objects.filter(id=evaluation.id).update(
+                total_cost=evaluation.total_cost + total_cost,
+                estimated_cost=evaluation.estimated_cost + estimated_cost
+            )
 
-            order.total_amount += total_cost
-            order.remining_amount += total_cost
-            order.save()
+            Order.objects.filter(id=order.id).update(
+                total_amount=order.total_amount + total_cost,
+                remining_amount=order.remining_amount + total_cost
+            )
 
-            evaluation_details.status = 'EVALUATED'
-            evaluation_details.total_cost += total_cost
-            evaluation_details.estimated_cost += estimated_cost
-            evaluation_details.save()
+            EvaluationDetails.objects.filter(id=evaluation_details.id).update(
+                status='EVALUATED',
+                total_cost=evaluation_details.total_cost + total_cost,
+                estimated_cost=evaluation_details.estimated_cost + estimated_cost
+            )
 
-            # Process service saving in bulk
+            # **Process services in bulk**
             service_dict = {}
 
             for service_detail in service_details.values():
@@ -9821,18 +9836,21 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
                     response_dict['service_Error'] = service_serializer.errors
                     return Response(response_dict, status=200)
 
-                # Create schedule
+                # **Create schedule**
+                order_schedules = []
                 for schedule in test_schedules_dict.values():
                     start_datetime = datetime.strptime(schedule['date'] + ' ' + schedule['time'], '%d-%m-%Y %I:%M %p')
                     end_datetime = start_datetime + timedelta(hours=schedule['cleaning_hours'])
 
-                    OrderScheduler.objects.create(
+                    order_schedules.append(OrderScheduler(
                         order=order, status='CONFIRMED', customer_address=evaluation_details.address,
                         evaluation_details=evaluation_details, start_at=start_datetime,
                         end_at=end_datetime, order_scheduler_book=saved_service,
                         no_of_cleaners=schedule['no_of_cleaners'], cleaning_hours=schedule['cleaning_hours'],
                         hourly_cleaning_duration=schedule['hourly_cleaning_duration']
-                    )
+                    ))
+
+                OrderScheduler.objects.bulk_create(order_schedules)
 
             response_dict['evaluation_book_ids'] = service_dict
             response_dict['success'] = True
