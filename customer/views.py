@@ -9712,6 +9712,7 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
         return Response(dropdown_slotes, HTTP_200_OK)
 	
 
+
 class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):  
     permission_classes = (AllowAny,)
     authentication_classes = ()
@@ -9720,7 +9721,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
         with transaction.atomic():
             response_dict = {'success': False}
             
-            # Fetch all cleaners and leaders at once
+            # **Fetch all cleaners and leaders in one query**
             all_cleaners = UserProfile.objects.filter(user_type__in=['CLEANER', 'TEAMINCHARGE']).values(
                 'id', 'user_type', 'is_general_skill', 'is_deep_skill', 'is_upholstery_skill',
                 'is_kitchen_skill', 'is_carpet_skill', 'is_sterilization_skill', 'is_mattress_skill',
@@ -9729,7 +9730,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
             )
             all_leaders = {user['id'] for user in all_cleaners if user['user_type'] == 'TEAMINCHARGE'}
 
-            # Map service types to skills
+            # **Map service types to skills**
             skill_filters = {
                 'General Cleaning': 'is_general_skill', 'Deep Cleaning': 'is_deep_skill',
                 'Upholstery Cleaning': 'is_upholstery_skill', 'Kitchen Cleaning': 'is_kitchen_skill',
@@ -9740,40 +9741,43 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
                 'Outdoor Cleaning': 'is_outdoor_skill'
             }
 
-            # Process services
-            service_details = request.data.get("service_details")
+            # **Process service details**
+            service_details = request.data.get("service_details", {})
             selected_cleaners = set()
             selected_leaders = set()
 
             for service_data in service_details.values():
-                service_type = ServiceType.objects.get(id=service_data['service_type']).name
-                skill_key = skill_filters.get(service_type)
-
+                service_type = ServiceType.objects.filter(id=service_data['service_type']).first()
+                if not service_type:
+                    continue  # Skip if service type is invalid
+                
+                skill_key = skill_filters.get(service_type.name)
                 if skill_key:
-                    filtered_cleaners = {user['id'] for user in all_cleaners if user[skill_key]}
+                    filtered_cleaners = {user['id'] for user in all_cleaners if user.get(skill_key)}
                     selected_cleaners.update(filtered_cleaners)
                     selected_leaders.update(filtered_cleaners & all_leaders)
 
-            # Fetch evaluation details & order
+            # **Ensure cleaners are selected**
+            if not selected_cleaners:
+                response_dict['Error'] = 'No available cleaners found'
+                return Response(response_dict, status=200)
+
+            # **Fetch evaluation details & order**
             evaluation_details = EvaluationDetails.objects.select_related('evaluation').get(id=evaluation_details_id)
             evaluation = evaluation_details.evaluation
 
             last_invoice_no = Order.objects.filter(is_active=True).aggregate(t=Max('invoice_no'))['t']
             current_year = str(timezone.now().year)
+            new_invoice_no = str(int(last_invoice_no[4:]) + 1) if last_invoice_no and current_year == last_invoice_no[:4] else current_year + '00001'
 
-            new_invoice_no = (
-                str(int(last_invoice_no[4:]) + 1) if last_invoice_no and current_year == last_invoice_no[:4]
-                else current_year + '00001'
-            )
-
-            order, created = Order.objects.get_or_create(
+            order, _ = Order.objects.get_or_create(
                 evaluation=evaluation,
                 defaults={'order_no': evaluation.evaluation_id, 'payment_status': 'PENDING', 'invoice_no': new_invoice_no}
             )
 
-            shift_availability_check = request.data.get('shift_availability_check')
+            shift_availability_check = request.data.get('shift_availability_check', False)
 
-            # Process schedules
+            # **Process schedules**
             test_schedules_dict = list(service_details.values())[0]['schedule_details']
             schedule_dates = {datetime.strptime(v['date'], '%d-%m-%Y').date() for v in test_schedules_dict.values()}
 
@@ -9788,8 +9792,8 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
             for key, schedule in test_schedules_dict.items():
                 start_datetime = datetime.strptime(schedule['date'] + ' ' + schedule['time'], '%d-%m-%Y %I:%M %p')
                 end_datetime = start_datetime + timedelta(hours=schedule['cleaning_hours'])
-                number_of_cleaners = schedule['no_of_cleaners'] - 1
-
+                number_of_cleaners = max(0, schedule['no_of_cleaners'] - 1)  # Ensure non-negative
+                
                 # **Apply availability logic**
                 available_cleaners = selected_cleaners - absent_staff - shift_cleaners
                 available_leaders = selected_leaders - absent_staff - shift_cleaners
@@ -9798,9 +9802,9 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
                     response_dict['Error'] = 'Cleaners are not available'
                     return Response(response_dict, status=200)
 
-            # **Bulk update evaluation, order, and evaluation details costs**
-            total_cost = float(request.data.get('total_cost'))
-            estimated_cost = float(request.data.get('estimated_cost'))
+            # **Update evaluation & order costs in bulk**
+            total_cost = float(request.data.get('total_cost', 0))
+            estimated_cost = float(request.data.get('estimated_cost', 0))
 
             Evaluation.objects.filter(id=evaluation.id).update(
                 total_cost=evaluation.total_cost + total_cost,
