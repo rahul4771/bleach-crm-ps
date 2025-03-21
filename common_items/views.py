@@ -6169,6 +6169,62 @@ class FineWriteBack(IsAuthenticated,View):
 		else:
 			return redirect('bleach_salesadmin:salesadmindash-board')
 		
+
+# **Background Function for SMS**
+def send_sms_notification(evaluation, address_str):
+	url = "https://smsapi.future-club.com/fccsms.aspx"
+	sms_url = (
+		f"https://my.bleachkw.com/customer/booking/invoice/paw{evaluation.evaluation_id[3:14]}{evaluation.customer.username}"
+		if hasattr(evaluation, 'customerbooking')
+		else f"https://my.bleachkw.com/customer/quatation/paw{evaluation.tracking_no}{evaluation.customer.username}"
+	)
+
+	messages_dict = {
+		"ENGLISH": f"Dear Customer, Please find the Quotation against the cleaning at {address_str} here {sms_url}. "
+				f"For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait",
+		"ARABIC": f"عزيزنا العميل نرجوا الاطلاع على عرض سعر خدمات التنظيف المطلوبة في {address_str} {sms_url} "
+				"لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف",
+	}
+
+	message = messages_dict.get(evaluation.customer.sms_preference, messages_dict["ENGLISH"])
+	querystring = {
+		"UID": "Blkusr",
+		"P": "lckw33",
+		"S": "BLEACH",
+		"G": f"965{evaluation.customer.mobile_number}",
+		"M": message,
+		"IID": "1468",
+		"L": "L" if evaluation.customer.sms_preference == "ENGLISH" else "A",
+	}
+	requests.get(url, params=querystring, headers={"cache-control": "no-cache"})
+
+# **Background Function for Email**
+def send_email_notification(evaluation, address_str, evaluator):
+	order = Order.objects.get(evaluation=evaluation)
+	price_ranges = ServicePriceRange.objects.filter(is_active=True)
+	template = "email/invoice.html" if hasattr(evaluation, 'customerbooking') else "email/quatation.html"
+
+	context = {
+		"invoice": order,
+		"evaluation": evaluation,
+		"evaluationbooks": EvaluationBook.objects.filter(evaluation_details__evaluation=evaluation),
+		"address_list": address_str,
+		"price_ranges": price_ranges,
+	}
+	if not hasattr(evaluation, 'customerbooking'):
+		context["evaluator"] = evaluator
+
+	msg_html = render_to_string(template, context)
+	msg = EmailMultiAlternatives(
+		subject="Bleach Invoice" if hasattr(evaluation, 'customerbooking') else "Bleach Quotation",
+		body="",
+		from_email="notification@bleach-kw.com",
+		to=[evaluation.customer.email],
+	)
+	msg.attach_alternative(msg_html, "text/html")
+	msg.send(fail_silently=False)
+
+		
 class MakeQuatationPhase1(IsAuthenticated,View):
 
 	def get(self,request,enquiry_id,evaluation_id):
@@ -6194,8 +6250,8 @@ class MakeQuatationPhase1(IsAuthenticated,View):
 
 		return render(request,'common/enquiry/phase1quatation.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit})	
 	
-
 	def post(self, request, enquiry_id, evaluation_id):
+		from concurrent.futures import ThreadPoolExecutor
 		action = request.POST.get("action_type")
 
 		# **Handle Cancellation**
@@ -6218,7 +6274,7 @@ class MakeQuatationPhase1(IsAuthenticated,View):
 		total_cost = float(request.POST.get("total_amount") or 0.000)
 		evaluator_note = request.POST.get("evaluator_note")
 
-		# **Update Evaluation in a Single Query**
+		# **Bulk Update Evaluation & Order**
 		Evaluation.objects.filter(id=evaluation_id, is_active=True).update(
 			payment_method=payment_method,
 			quatation_status="PENDING",
@@ -6230,7 +6286,6 @@ class MakeQuatationPhase1(IsAuthenticated,View):
 			evaluator_note=evaluator_note,
 		)
 
-		# **Update Order Efficiently**
 		is_advance = request.POST.get("is_advance")
 		order_update_data = {"total_amount": total_cost, "remining_amount": total_cost}
 
@@ -6241,7 +6296,7 @@ class MakeQuatationPhase1(IsAuthenticated,View):
 
 		Order.objects.filter(evaluation__id=evaluation_id, is_active=True).update(**order_update_data)
 
-		# **Fetch Required Data in One Query**
+		# **Fetch Required Data Efficiently**
 		order = Order.objects.filter(evaluation__id=evaluation_id, is_active=True).select_related(
 			"evaluation__call_attender", "evaluation__customer"
 		).prefetch_related(
@@ -6262,21 +6317,20 @@ class MakeQuatationPhase1(IsAuthenticated,View):
 
 		evaluator = evaluationdetails.evaluator.name if evaluationdetails and evaluationdetails.evaluator else evaluation.call_attender.name
 
-		# **Process Address Efficiently**
+		# **Optimize Address Processing**
 		address = evaluationdetails.address
-		address_list = filter(None, [
+		address_list = list(filter(None, [
 			address.apartment, address.floor, address.street, address.building,
 			address.avenue, address.block, address.area.name, address.governorate.name
-		])
+		]))
 		address_str = ", ".join(address_list)
 
-		# **SMS Notification**
-		if evaluation.customer.is_sms:
-			self.send_sms_notification(evaluation, address_str)
-
-		# **Email Notification**
-		if evaluation.customer.is_email:
-			self.send_email_notification(evaluation, order, evaluationdetails, address_str, evaluator)
+		# **Run SMS & Email in Background Using Threading**
+		with ThreadPoolExecutor() as executor:
+			if evaluation.customer.is_sms:
+				executor.submit(send_sms_notification, evaluation, address_str)
+			if evaluation.customer.is_email:
+				executor.submit(send_email_notification, evaluation, address_str, evaluator)
 
 		# **Redirect User Based on Role**
 		return redirect({
@@ -6284,54 +6338,4 @@ class MakeQuatationPhase1(IsAuthenticated,View):
 			"EVALUATOR": "evaluator:evaluatordash-board",
 		}.get(request.user.user_type, "booking-officer:bookingofficerdash-board"))
 
-	# **Helper Functions for SMS & Email**
-	def send_sms_notification(self, evaluation, address_str):
-		url = "https://smsapi.future-club.com/fccsms.aspx"
-		sms_url = (
-			f"https://my.bleachkw.com/customer/booking/invoice/paw{evaluation.evaluation_id[3:14]}{evaluation.customer.username}"
-			if hasattr(evaluation, 'customerbooking')
-			else f"https://my.bleachkw.com/customer/quatation/paw{evaluation.tracking_no}{evaluation.customer.username}"
-		)
-
-		messages_dict = {
-			"ENGLISH": f"Dear Customer, Please find the Quotation against the cleaning at {address_str} here {sms_url}. "
-					f"For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait",
-			"ARABIC": f"عزيزنا العميل نرجوا الاطلاع على عرض سعر خدمات التنظيف المطلوبة في {address_str} {sms_url} "
-					"لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف",
-		}
-
-		message = messages_dict.get(evaluation.customer.sms_preference, messages_dict["ENGLISH"])
-		querystring = {
-			"UID": "Blkusr",
-			"P": "lckw33",
-			"S": "BLEACH",
-			"G": f"965{evaluation.customer.mobile_number}",
-			"M": message,
-			"IID": "1468",
-			"L": "L" if evaluation.customer.sms_preference == "ENGLISH" else "A",
-		}
-		requests.get(url, params=querystring, headers={"cache-control": "no-cache"})
-
-	def send_email_notification(self, evaluation, order, evaluationdetails, address_str, evaluator):
-		price_ranges = ServicePriceRange.objects.filter(is_active=True)
-		template = "email/invoice.html" if hasattr(evaluation, 'customerbooking') else "email/quatation.html"
-		
-		context = {
-			"invoice": order,
-			"evaluation": evaluation,
-			"evaluationbooks": EvaluationBook.objects.filter(evaluation_details=evaluationdetails),
-			"address_list": address_str,
-			"price_ranges": price_ranges,
-		}
-		if not hasattr(evaluation, 'customerbooking'):
-			context["evaluator"] = evaluator
-
-		msg_html = render_to_string(template, context)
-		msg = EmailMultiAlternatives(
-			subject="Bleach Invoice" if hasattr(evaluation, 'customerbooking') else "Bleach Quotation",
-			body="",
-			from_email="notification@bleach-kw.com",
-			to=[evaluation.customer.email],
-		)
-		msg.attach_alternative(msg_html, "text/html")
-		msg.send(fail_silently=False)
+	
