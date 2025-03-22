@@ -9713,6 +9713,148 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 	
 
 
+# class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):  
+#     permission_classes = (AllowAny,)
+#     authentication_classes = ()
+
+#     def post(self, request, evaluation_details_id):  
+#         with transaction.atomic():
+#             response_dict = {'success': False}
+
+#             # **Fetch all cleaners and leaders (Restored Original Logic)**
+#             total_cleaners = UserProfile.objects.filter(Q(user_type='CLEANER') | Q(user_type='TEAMINCHARGE'))
+#             total_leaders = UserProfile.objects.filter(user_type='TEAMINCHARGE')
+
+#             # **Filter cleaners dynamically based on services**
+#             service_details = request.data.get("service_details", {})
+#             for service_detail in service_details.keys():
+#                 service = ServiceType.objects.get(id=service_details[service_detail]['service_type'])
+#                 service_type = service.name
+
+#                 skill_mapping = {
+#                     'General Cleaning': 'is_general_skill',
+#                     'Deep Cleaning': 'is_deep_skill',
+#                     'Upholstery Cleaning': 'is_upholstery_skill',
+#                     'Kitchen Cleaning': 'is_kitchen_skill',
+#                     'Kitchen Appliances': 'is_kitchen_skill',
+#                     'Carpet Cleaning': 'is_carpet_skill',
+#                     'Sterilization': 'is_sterilization_skill',
+#                     'Mattress Cleaning': 'is_mattress_skill',
+#                     'Facade Cleaning': 'is_facade_skill',
+#                     'Storage Area': 'is_storagearea_skill',
+#                     'Car Parking Umbrella': 'is_carparkingumbrella_skill',
+#                     'Window Cleaning': 'is_window_skill',
+#                     'Outdoor Cleaning': 'is_outdoor_skill',
+#                 }
+
+#                 if service_type in skill_mapping:
+#                     skill_field = skill_mapping[service_type]
+#                     total_cleaners = total_cleaners.filter(**{skill_field: True})
+#                     total_leaders = total_leaders.filter(**{skill_field: True})
+
+#             # **Fetch evaluation details & order**
+#             evaluation_details = EvaluationDetails.objects.select_related('evaluation').get(id=evaluation_details_id)
+#             evaluation = evaluation_details.evaluation
+
+#             last_invoice_no = Order.objects.filter(is_active=True).aggregate(t=Max('invoice_no'))['t']
+#             current_year = str(timezone.now().year)
+#             new_invoice_no = (
+#                 str(int(last_invoice_no[4:]) + 1) if last_invoice_no and current_year == last_invoice_no[:4]
+#                 else current_year + '00001'
+#             )
+
+#             order, _ = Order.objects.get_or_create(
+#                 evaluation=evaluation,
+#                 defaults={'order_no': evaluation.evaluation_id, 'payment_status': 'PENDING', 'invoice_no': new_invoice_no}
+#             )
+
+#             shift_availability_check = request.data.get('shift_availability_check', False)
+
+#             # **Process schedules**
+#             test_schedules_dict = list(service_details.values())[0]['schedule_details']
+#             schedule_dates = {datetime.strptime(v['date'], '%d-%m-%Y').date() for v in test_schedules_dict.values()}
+
+#             absent_staff = LeaveSchedule.objects.filter(leave_date__in=schedule_dates).values_list('staff', flat=True)
+
+#             # **Check shift availability if required**
+#             if shift_availability_check:
+#                 shift_cleaners = ShiftSchedule.objects.filter(shift_date__in=schedule_dates).values_list('staff', flat=True)
+#             else:
+#                 shift_cleaners = []
+
+#             for key, schedule in test_schedules_dict.items():
+#                 start_datetime = datetime.strptime(schedule['date'] + ' ' + schedule['time'], '%d-%m-%Y %I:%M %p')
+#                 end_datetime = start_datetime + timedelta(hours=schedule['cleaning_hours'])
+#                 number_of_cleaners = max(0, schedule['no_of_cleaners'] - 1)
+
+#                 # **Apply availability logic using restored filtering**
+#                 available_cleaners = total_cleaners.exclude(id__in=absent_staff).exclude(id__in=shift_cleaners)
+#                 available_leaders = total_leaders.exclude(id__in=absent_staff).exclude(id__in=shift_cleaners)
+
+#                 if available_cleaners.count() - 1 < number_of_cleaners or available_leaders.count() < 1:
+#                     response_dict['Error'] = 'Cleaners are not available'
+#                     return Response(response_dict, status=200)
+
+#             # **Update evaluation & order costs in bulk**
+#             total_cost = float(request.data.get('total_cost', 0))
+#             estimated_cost = float(request.data.get('estimated_cost', 0))
+
+#             Evaluation.objects.filter(id=evaluation.id).update(
+#                 total_cost=evaluation.total_cost + total_cost,
+#                 estimated_cost=evaluation.estimated_cost + estimated_cost
+#             )
+
+#             Order.objects.filter(id=order.id).update(
+#                 total_amount=order.total_amount + total_cost,
+#                 remining_amount=order.remining_amount + total_cost
+#             )
+
+#             EvaluationDetails.objects.filter(id=evaluation_details.id).update(
+#                 status='EVALUATED',
+#                 total_cost=evaluation_details.total_cost + total_cost,
+#                 estimated_cost=evaluation_details.estimated_cost + estimated_cost
+#             )
+
+#             # **Process services in bulk**
+#             service_dict = {}
+
+#             for service_detail in service_details.values():
+#                 service_serializer = EvaluationBookSerializer(data=service_detail)
+
+#                 if service_serializer.is_valid():
+#                     saved_service = service_serializer.save(
+#                         service_type_id=service_detail['service_type'],
+#                         evaluation_details=evaluation_details,
+#                         cleaning_policy=service_detail['cleaning_policy'],
+#                         cleaning_method='Method1'
+#                     )
+#                     service_dict[saved_service.id] = service_detail['service_type']
+#                 else:
+#                     response_dict['service_Error'] = service_serializer.errors
+#                     return Response(response_dict, status=200)
+
+#                 # **Create schedule**
+#                 order_schedules = []
+#                 for schedule in test_schedules_dict.values():
+#                     start_datetime = datetime.strptime(schedule['date'] + ' ' + schedule['time'], '%d-%m-%Y %I:%M %p')
+#                     end_datetime = start_datetime + timedelta(hours=schedule['cleaning_hours'])
+
+#                     order_schedules.append(OrderScheduler(
+#                         order=order, status='CONFIRMED', customer_address=evaluation_details.address,
+#                         evaluation_details=evaluation_details, start_at=start_datetime,
+#                         end_at=end_datetime, order_scheduler_book=saved_service,
+#                         no_of_cleaners=schedule['no_of_cleaners'], cleaning_hours=schedule['cleaning_hours'],
+#                         hourly_cleaning_duration=schedule['hourly_cleaning_duration']
+#                     ))
+
+#                 OrderScheduler.objects.bulk_create(order_schedules)
+
+#             response_dict['evaluation_book_ids'] = service_dict
+#             response_dict['success'] = True
+
+#         return Response(response_dict, status=200)
+
+
 class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):  
     permission_classes = (AllowAny,)
     authentication_classes = ()
@@ -9721,11 +9863,11 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
         with transaction.atomic():
             response_dict = {'success': False}
 
-            # **Fetch all cleaners and leaders (Restored Original Logic)**
+            # Fetch all cleaners and leaders
             total_cleaners = UserProfile.objects.filter(Q(user_type='CLEANER') | Q(user_type='TEAMINCHARGE'))
             total_leaders = UserProfile.objects.filter(user_type='TEAMINCHARGE')
 
-            # **Filter cleaners dynamically based on services**
+            # Filter cleaners dynamically based on services
             service_details = request.data.get("service_details", {})
             for service_detail in service_details.keys():
                 service = ServiceType.objects.get(id=service_details[service_detail]['service_type'])
@@ -9752,7 +9894,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
                     total_cleaners = total_cleaners.filter(**{skill_field: True})
                     total_leaders = total_leaders.filter(**{skill_field: True})
 
-            # **Fetch evaluation details & order**
+            # Fetch evaluation details & order
             evaluation_details = EvaluationDetails.objects.select_related('evaluation').get(id=evaluation_details_id)
             evaluation = evaluation_details.evaluation
 
@@ -9770,13 +9912,13 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 
             shift_availability_check = request.data.get('shift_availability_check', False)
 
-            # **Process schedules**
+            # Process schedules
             test_schedules_dict = list(service_details.values())[0]['schedule_details']
             schedule_dates = {datetime.strptime(v['date'], '%d-%m-%Y').date() for v in test_schedules_dict.values()}
 
             absent_staff = LeaveSchedule.objects.filter(leave_date__in=schedule_dates).values_list('staff', flat=True)
 
-            # **Check shift availability if required**
+            # Check shift availability if required
             if shift_availability_check:
                 shift_cleaners = ShiftSchedule.objects.filter(shift_date__in=schedule_dates).values_list('staff', flat=True)
             else:
@@ -9787,7 +9929,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
                 end_datetime = start_datetime + timedelta(hours=schedule['cleaning_hours'])
                 number_of_cleaners = max(0, schedule['no_of_cleaners'] - 1)
 
-                # **Apply availability logic using restored filtering**
+                # Apply availability logic
                 available_cleaners = total_cleaners.exclude(id__in=absent_staff).exclude(id__in=shift_cleaners)
                 available_leaders = total_leaders.exclude(id__in=absent_staff).exclude(id__in=shift_cleaners)
 
@@ -9795,7 +9937,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
                     response_dict['Error'] = 'Cleaners are not available'
                     return Response(response_dict, status=200)
 
-            # **Update evaluation & order costs in bulk**
+            # Update evaluation & order costs in bulk
             total_cost = float(request.data.get('total_cost', 0))
             estimated_cost = float(request.data.get('estimated_cost', 0))
 
@@ -9815,7 +9957,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
                 estimated_cost=evaluation_details.estimated_cost + estimated_cost
             )
 
-            # **Process services in bulk**
+            # Process services in bulk
             service_dict = {}
 
             for service_detail in service_details.values():
@@ -9833,7 +9975,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
                     response_dict['service_Error'] = service_serializer.errors
                     return Response(response_dict, status=200)
 
-                # **Create schedule**
+                # Create schedule
                 order_schedules = []
                 for schedule in test_schedules_dict.values():
                     start_datetime = datetime.strptime(schedule['date'] + ' ' + schedule['time'], '%d-%m-%Y %I:%M %p')
@@ -9849,10 +9991,48 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 
                 OrderScheduler.objects.bulk_create(order_schedules)
 
+                # Process sections
+                sections_dict = service_detail.get('sections', {})
+                for section_key, section_data in sections_dict.items():
+                    section_serializer = EvaluationBookSectionSerializer(data=section_data)
+
+                    if section_serializer.is_valid():
+                        if service_detail['cleaning_policy'] == 'SUBSCRIPTION':
+                            saved_section = section_serializer.save(
+                                evaluation_book=saved_service,
+                                section_cleanings=len(test_schedules_dict),
+                                section_net_cost=section_serializer.validated_data['section_cost'] * len(test_schedules_dict)
+                            )
+                        else:
+                            saved_section = section_serializer.save(
+                                evaluation_book=saved_service,
+                                section_cleanings=len(test_schedules_dict)
+                            )
+                    else:
+                        response_dict['section_Error'] = section_serializer.errors
+                        return Response(response_dict, status=200)
+
+                    # Process keynotes
+                    keynotes_dict = section_data.get('keynotes', {})
+                    for keynote_key, keynote_data in keynotes_dict.items():
+                        keynote_serializer = EvaluationSectionKeynoteSerializer(data=keynote_data)
+                        if keynote_serializer.is_valid():
+                            keynote_serializer.save(evaluation_section=saved_section)
+                        else:
+                            response_dict['keynote_Error'] = keynote_serializer.errors
+                            return Response(response_dict, status=200)
+
+                    # Process add-ons
+                    addons_dict = section_data.get('addons', {})
+                    for addon_key, addon_data in addons_dict.items():
+                        addon_serializer = EvaluationSectionAddonSerializer(data=addon_data)
+                        if addon_serializer.is_valid():
+                            addon_serializer.save(evaluation_section=saved_section)
+                        else:
+                            response_dict['addon_Error'] = addon_serializer.errors
+                            return Response(response_dict, status=200)
+
             response_dict['evaluation_book_ids'] = service_dict
             response_dict['success'] = True
 
         return Response(response_dict, status=200)
-
-
-		
