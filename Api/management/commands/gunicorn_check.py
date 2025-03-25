@@ -14,6 +14,8 @@ class Command(BaseCommand):
 
         if not self.is_gunicorn_running():
             self.send_alert(ALERT_EMAILS)
+        else:
+            print("gunicorn running")
 
     def is_gunicorn_running(self):
         """Check if Gunicorn is running."""
