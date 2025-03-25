@@ -9898,10 +9898,10 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
             evaluation_details = EvaluationDetails.objects.select_related('evaluation').get(id=evaluation_details_id)
             evaluation = evaluation_details.evaluation
 
-            last_invoice_no = Order.objects.filter(is_active=True).aggregate(t=Max('invoice_no'))['t']
+            last_invoice_no = Order.objects.filter(is_active=True).order_by('-id').first().invoice_no
             current_year = str(timezone.now().year)
             new_invoice_no = (
-                str(int(last_invoice_no[4:]) + 1) if last_invoice_no and current_year == last_invoice_no[:4]
+                str(timezone.now().year)+ str(int(last_invoice_no[4:]) + 1).zfill(len(last_invoice_no[4:])) if last_invoice_no and current_year == last_invoice_no[:4]
                 else current_year + '00001'
             )
 
