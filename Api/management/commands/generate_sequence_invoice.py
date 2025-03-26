@@ -10,7 +10,7 @@ class Command(BaseCommand):
         reference_order_no = "BLC20250310182"  # The reference order
         reference_order = Order.objects.filter(order_no=reference_order_no).first()
         last_invoice_no = Order.objects.filter(
-            invoice_no__isnull=False, id__lte=reference_order.id
+            invoice_no__isnull=False , id__lte=reference_order.id
         ).order_by('-id').first().invoice_no
         updated_last_invoice_no = ""
         current_year = str(timezone.now().year)
@@ -24,14 +24,15 @@ class Command(BaseCommand):
                     else current_year + '00001'
                 )
                 print("if generated invoice" , new_invoice_no)
-                print("if", o.invoice_no, o.order_no)
+                print("if" , o.invoice_no , o.order_no)
                 updated_last_invoice_no = new_invoice_no
             else:
                 new_invoice_no = (
                     str(timezone.now().year) + str(int(updated_last_invoice_no[4:]) + 1).zfill(
-                        len(updated_last_invoice_no[4:])) if updated_last_invoice_no and current_year == updated_last_invoice_no[:4]
+                        len(updated_last_invoice_no[
+                            4:])) if updated_last_invoice_no and current_year == updated_last_invoice_no[:4]
                     else current_year + '00001'
                 )
                 print("else generated invoice" , new_invoice_no)
-                print("else", o.invoice_no, o.order_no)
-                updated_last_invoice_no = str(int(updated_last_invoice_no[4:]) + 1).zfill(len(updated_last_invoice_no[4:]))
+                print("else" , o.invoice_no , o.order_no)
+                updated_last_invoice_no = new_invoice_no
