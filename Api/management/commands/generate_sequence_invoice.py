@@ -34,3 +34,4 @@ class Command(BaseCommand):
                 )
                 print("else generated invoice" , new_invoice_no)
                 print("else", o.invoice_no, o.order_no)
+                updated_last_invoice_no = str(int(updated_last_invoice_no[4:]) + 1).zfill(len(updated_last_invoice_no[4:]))
