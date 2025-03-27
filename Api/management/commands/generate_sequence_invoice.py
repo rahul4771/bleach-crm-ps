@@ -23,9 +23,9 @@ class Command(BaseCommand):
                         len(last_invoice_no[4:])) if last_invoice_no and current_year == last_invoice_no[:4]
                     else current_year + '00001'
                 )
-                print("if generated invoice" , new_invoice_no)
-                print("if" , o.invoice_no , o.order_no)
                 updated_last_invoice_no = new_invoice_no
+                o.invoice_no = new_invoice_no
+                o.save()
             else:
                 new_invoice_no = (
                     str(timezone.now().year) + str(int(updated_last_invoice_no[4:]) + 1).zfill(
@@ -33,6 +33,6 @@ class Command(BaseCommand):
                             4:])) if updated_last_invoice_no and current_year == updated_last_invoice_no[:4]
                     else current_year + '00001'
                 )
-                print("else generated invoice" , new_invoice_no)
-                print("else" , o.invoice_no , o.order_no)
                 updated_last_invoice_no = new_invoice_no
+                o.invoice_no = new_invoice_no
+                o.save()
