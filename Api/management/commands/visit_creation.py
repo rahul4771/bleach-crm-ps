@@ -15,7 +15,7 @@ class Command(BaseCommand):
             order = Order.objects.get(evaluation__evaluation_id='BLC20250310272')
             evaluation_details = EvaluationDetails.objects.get(evaluation=evaluation)
             customer_address = Address.objects.get(id=8198)
-            order_scheduler_books = EvaluationBook.objects.filter(id__in=[17197])
+            order_scheduler_books = EvaluationBook.objects.filter(id__in=[17198])
 
             # Define schedule times
             start_datetime = datetime.strptime('11/04/2025 10:00 AM', '%d/%m/%Y %I:%M %p')
