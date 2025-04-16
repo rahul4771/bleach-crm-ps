@@ -1670,7 +1670,7 @@ def export_users_xls(request):
 		).select_related(
 			'follow_up__investigation__order'
 		).prefetch_related(
-			'team__followup_team_members__member'
+			'followupteam_followupschedule__followup_team_members__member'
 		)
 		
 		for followup in all_followup_visits:
