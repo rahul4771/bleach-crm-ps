@@ -1586,240 +1586,117 @@ def export_users_xls(request):
 		response['Content-Disposition'] = 'attachment; filename="EMPLOYEE_COMMISSION_'+from_date+'_'+to_date+'.xls"'
 
 		wb = xlwt.Workbook(encoding='utf-8')
-		
-		# Sheet 1: Summary Report
-		ws = wb.add_sheet('EMPLOYEE SUMMARY')
-		columns = ['Cleaner', 'Status', 'Occupied Hours', 'Total Working Hours', 'Efficiency (%)']
+		ws = wb.add_sheet('EMPLOYEE COMMISSION SHEET')
+
+		columns = ['Cleaner','Status','Occupied Hours','Total Working Hours']
 		
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
-		
-		# Get active workers during the period
+
 		try:
-			total_active_workers = CleaningTeamMember.objects.filter(
-				Q(is_active=True) & Q(team__order_scheduler__end_at__range=(prev_date_start, todate_date_end))
-			).values_list('member', flat=True).distinct().union(
-				FollowUpTeamMember.objects.filter(
-					Q(is_active=True) & Q(end_at__range=(prev_date_start, todate_date_end))
-				).values_list('member', flat=True)
-			).distinct()
+			total_active_workers = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(team__order_scheduler__end_at__range=(prev_date_start,todate_date_end)) )).values_list('member',flat=True).distinct().union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(end_at__range=(prev_date_start,todate_date_end))) ).values_list('member',flat=True)).distinct()
 		except:
-			total_active_workers = []
-		
+			total_active_workers = 0
+
+		print(total_active_workers,"workrs")
+
 		rows = []
-		employee_detailed_data = {}  # Store detailed data for second sheet
-		
+
 		for worker in total_active_workers:
 			employees = []
 			employee = UserProfile.objects.get(id=int(worker))
+
+			employee_cleanings_list = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(member__id=employee.id)&Q(team__order_scheduler__end_at__range=(prev_date_start,todate_date_end)) )).values_list('team__order_scheduler__order__order_no','team__order_scheduler__start_at','team__order_scheduler__end_at').union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(member__id=employee.id)&Q(end_at__range=(prev_date_start,todate_date_end))) ).values_list('team__followup_scheduler__follow_up__investigation__order__order_no','start_at','end_at'))
 			
-			# Get all cleanings for this employee in the date range
-			employee_cleanings_list = CleaningTeamMember.objects.filter(
-				Q(is_active=True) & Q(member__id=employee.id) & 
-				Q(team__order_scheduler__end_at__range=(prev_date_start, todate_date_end))
-			).values_list(
-				'team__order_scheduler__order__order_no',
-				'team__order_scheduler__start_at',
-				'team__order_scheduler__end_at',
-				'team__order_scheduler__no_of_cleaners',
-				'team__order_scheduler__cleaning_hours',
-				'team__order_scheduler__hourly_cleaning_duration'
-			).union(
-				FollowUpTeamMember.objects.filter(
-					Q(is_active=True) & Q(member__id=employee.id) & 
-					Q(end_at__range=(prev_date_start, todate_date_end))
-				).values_list(
-					'team__followup_scheduler__follow_up__investigation__order__order_no',
-					'start_at',
-					'end_at',
-					Value(1, output_field=IntegerField()),  # Default no_of_cleaners for followup
-					Value(2, output_field=IntegerField()),  # Default cleaning_hours for followup
-					Value(1, output_field=IntegerField())   # Default hourly_duration for followup
-				)
-			)
-			
-			# Calculate occupied hours
+			#occupied hours calc
 			cleaning_durations = []
-			detailed_order_data = []
 			
 			for cleaning in employee_cleanings_list:
-				order_no = cleaning[0]
-				start_time = cleaning[1]
-				end_time = cleaning[2]
-				no_of_cleaners = cleaning[3]
-				budgeted_hours = cleaning[4]
-				hourly_duration = cleaning[5]
 				
-				# Calculate duration for this cleaning
 				duration_list = [] 
-				duration_list.append(int(datetime.strftime(start_time, '%H')))
-				duration_list.append(int(datetime.strftime(end_time, '%H')))
-				duration_list.append(datetime.strftime(end_time, '%d-%m-%Y'))
-				cleaning_durations.append(duration_list)
+				duration_list.append(int(datetime.strftime(cleaning[1],'%H')))
+				duration_list.append(int(datetime.strftime(cleaning[2],'%H')))
+				duration_list.append(datetime.strftime(cleaning[2],'%d-%m-%Y'))
 				
-				# Store detailed info for second sheet
-				detailed_order_data.append({
-					'order_no': order_no,
-					'date': datetime.strftime(start_time, '%d-%m-%Y'),
-					'start_time': datetime.strftime(start_time, '%H:%M'),
-					'end_time': datetime.strftime(end_time, '%H:%M'),
-					'budgeted_hours': budgeted_hours,
-					'actual_hours': (end_time - start_time).total_seconds() / 3600,
-					'no_of_cleaners': no_of_cleaners,
-					'hourly_duration': hourly_duration
-				})
-			
-			# Store detailed data for second sheet
-			employee_detailed_data[employee.id] = {
-				'name': employee.name,
-				'orders': detailed_order_data
-			}
-			
-			# Calculate total occupied hours using the existing slot logic
-			new_cleaning_durations = []
-			output = []
-			
+
+				cleaning_durations.append(duration_list)
+
+			new_cleaning_durations=[]
+			output=[]
+
 			for i in cleaning_durations:
-				if i[0] > i[1]:
-					new_cleaning_durations = new_cleaning_durations + [[i[0], 24, i[2]], [0, i[1], i[2]]]
+				
+				if i[0]>i[1]:
+					new_cleaning_durations= new_cleaning_durations+[[i[0],24,i[2]],[0,i[1],i[2]]]
 				else:
-					new_cleaning_durations = new_cleaning_durations + [i]
-			
+					new_cleaning_durations= new_cleaning_durations+[i]
+				
 			total_duration = 0
 			final_slots = []
 			for i in new_cleaning_durations:
-				slots = return_slots(i[0], i[1], i[2])
+				
+				slots= return_slots(i[0],i[1],i[2])
 				output.append(slots)
-			
-			# Calculate duration for each date
+
+			#calculating duration of slots for each date
 			for date in daterange:
-				str_date = datetime.strftime(date, '%d-%m-%Y')
+				str_date = datetime.strftime(date,'%d-%m-%Y')
+				
+				new_output = []
+
 				date_slot_list = []
 				
 				for elem in output:
+					print(elem[0],str_date,"ele")
 					if str_date == elem[0]:
 						elem.pop(0)
+						print(elem,"ele2")
 						for obj in elem:
+							print(obj,"obj")
 							date_slot_list.append(obj)
-				
-				final_slots = (list(set(date_slot_list)))
-				duration = len(final_slots) * 2
+				print(date_slot_list,str_date,"dts")
+
+				final_slots=(list(set(date_slot_list)))
+				duration = len(final_slots)*(2)	
 				total_duration += duration
-			
-			# Calculate total working hours
-			leave_schedules = LeaveSchedule.objects.filter(
-				staff=employee, 
-				leave_date__range=(prev_date_start, todate_date_end - timedelta(days=1))
-			).values_list('leave_date', flat=True).distinct().count()
-			
-			worked_days = int((todate_date_end - prev_date_start).days) - int(leave_schedules)
+
+			#total working hours calc
+			d0 = prev_date_start
+			d1 = todate_date_end
+			print(d0,d1,"dee")
+
+			delta = d1 - d0
+			print(d0,d1,delta.days,"daysss")
+
+			todate = todate_date_end - timedelta(days=1)
+			todate = todate.replace(hour=23,minute=59,second=59,microsecond=0)		
+
+			print(todate,"toddy")			
+
+			leave_schedules = LeaveSchedule.objects.filter(staff=employee,leave_date__range=(prev_date_start,todate)).values_list('leave_date',flat=True).distinct().count()
+
+			print(leave_schedules,"lvs")
+
+			worked_days = int(delta.days) - int(leave_schedules)
 			total_working_hours = worked_days * 10
-			
-			# Calculate efficiency
-			efficiency = (total_duration / total_working_hours * 100) if total_working_hours > 0 else 0
-			
-			# Prepare row for summary sheet
+			# total_working_hours = total_working_hours // 24
+
 			employees.append(employee.name)
-			employees.append('Active' if employee.is_active else 'Inactive')
+			if employee.is_active == True:
+				employees.append('Active')
+			else:
+				employees.append('Inactive')
 			employees.append(total_duration)
 			employees.append(total_working_hours)
-			employees.append(f"{efficiency:.2f}%")
-			
+
 			rows.append(employees)
-		
-		# Write summary data
+
+		# print(rows,"ross")
+	
 		for row in rows:
 			row_num += 1
 			for col_num in range(len(row)):
 				ws.write(row_num, col_num, row[col_num], font_style)
-		
-		# Sheet 2: Detailed Report
-		ws_detail = wb.add_sheet('EMPLOYEE DETAILED REPORT')
-		
-		detail_columns = ['Cleaner', 'Order No', 'Date', 'Start Time', 'End Time', 
-						'Budgeted Hours', 'Actual Hours', 'Team Size', 'Hourly Rate']
-		
-		for col_num in range(len(detail_columns)):
-			ws_detail.write(0, col_num, detail_columns[col_num], font_style)
-		
-		detail_row = 0
-		
-		# Write detailed employee data
-		for employee_id, data in employee_detailed_data.items():
-			employee_name = data['name']
-			for order in data['orders']:
-				detail_row += 1
-				
-				detail_data = [
-					employee_name,
-					order['order_no'],
-					order['date'],
-					order['start_time'],
-					order['end_time'],
-					order['budgeted_hours'],
-					f"{order['actual_hours']:.2f}",
-					order['no_of_cleaners'],
-					order['hourly_duration']
-				]
-				
-				for col_num in range(len(detail_data)):
-					ws_detail.write(detail_row, col_num, detail_data[col_num], font_style)
-		
-		# Sheet 3: Shift Analysis
-		ws_shift = wb.add_sheet('SHIFT ANALYSIS')
-		
-		shift_columns = ['Cleaner', 'Date', 'Official Shift Hours', 'Occupied Hours', 'Idle Hours', 'Efficiency (%)']
-		
-		for col_num in range(len(shift_columns)):
-			ws_shift.write(0, col_num, shift_columns[col_num], font_style)
-		
-		shift_row = 0
-		
-		# Calculate shift data per day for each employee
-		for employee_id, data in employee_detailed_data.items():
-			employee_name = data['name']
-			employee = UserProfile.objects.get(id=int(employee_id))
-			
-			# For each date in the range
-			for date in daterange:
-				shift_row += 1
-				str_date = datetime.strftime(date, '%d-%m-%Y')
-				
-				# Check if employee has leave on this date
-				has_leave = LeaveSchedule.objects.filter(
-					staff=employee, 
-					leave_date=date.date()
-				).exists()
-				
-				if has_leave:
-					shift_data = [
-						employee_name,
-						str_date,
-						"On Leave",
-						0,
-						0,
-						"0.00%"
-					]
-				else:
-					# Calculate occupied hours for this date
-					date_orders = [order for order in data['orders'] if order['date'] == str_date]
-					daily_occupied_hours = sum(order['actual_hours'] for order in date_orders)
-					
-					official_shift_hours = 10  # Standard shift hours
-					idle_hours = max(0, official_shift_hours - daily_occupied_hours)
-					daily_efficiency = (daily_occupied_hours / official_shift_hours * 100) if official_shift_hours > 0 else 0
-					
-					shift_data = [
-						employee_name,
-						str_date,
-						official_shift_hours,
-						f"{daily_occupied_hours:.2f}",
-						f"{idle_hours:.2f}",
-						f"{daily_efficiency:.2f}%"
-					]
-				
-				for col_num in range(len(shift_data)):
-					ws_shift.write(shift_row, col_num, shift_data[col_num], font_style)
 
 	if report_type == 'paymentdetails':
 
