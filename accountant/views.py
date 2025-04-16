@@ -1587,7 +1587,7 @@ def export_users_xls(request):
 
 		wb = xlwt.Workbook(encoding='utf-8')
 		
-		# Sheet 1: Summary Report
+		# Sheet 1: Summary Report (unchanged from previous version)
 		ws = wb.add_sheet('EMPLOYEE SUMMARY')
 		columns = ['Cleaner', 'Status', 'Occupied Hours', 'Total Working Hours', 'Efficiency (%)']
 		
@@ -1608,12 +1608,124 @@ def export_users_xls(request):
 		
 		rows = []
 		employee_detailed_data = {}  # Store detailed data for second sheet
+		visit_data = {}  # Store visit-specific data
 		
+		# First, collect all order visits in the date range
+		all_order_visits = OrderScheduler.objects.filter(
+			start_at__range=(prev_date_start, todate_date_end),
+			is_active=True
+		).select_related(
+			'order', 'evaluation_details', 'order_scheduler_book'
+		).prefetch_related(
+			'cleaning_team__cleaning_team_members__member'
+		)
+		
+		# Process order visits first to create a visit data structure
+		for visit in all_order_visits:
+			order_no = visit.order.order_no
+			visit_id = visit.id
+			visit_date = datetime.strftime(visit.start_at, '%d-%m-%Y')
+			
+			if order_no not in visit_data:
+				visit_data[order_no] = {
+					'order_no': order_no,
+					'customer': visit.order.evaluation.customer.name if visit.order.evaluation.customer else 'N/A',
+					'service_type': visit.order_scheduler_book.service_type.name if visit.order_scheduler_book and visit.order_scheduler_book.service_type else 'N/A',
+					'location': visit.customer_address.area.name if visit.customer_address and visit.customer_address.area else 'N/A',
+					'visits': {}
+				}
+			
+			# Store visit details
+			visit_data[order_no]['visits'][visit_id] = {
+				'visit_id': visit_id,
+				'date': visit_date,
+				'start_time': datetime.strftime(visit.start_at, '%H:%M'),
+				'end_time': datetime.strftime(visit.end_at, '%H:%M'),
+				'budgeted_hours': visit.cleaning_hours,
+				'actual_duration': (visit.end_at - visit.start_at).total_seconds() / 3600,
+				'planned_cleaners': visit.no_of_cleaners,
+				'hourly_rate': visit.hourly_cleaning_duration,
+				'assigned_cleaners': []
+			}
+			
+			# Add cleaning team members
+			if hasattr(visit, 'cleaning_team') and visit.cleaning_team:
+				team_members = CleaningTeamMember.objects.filter(
+					team=visit.cleaning_team,
+					is_active=True
+				).select_related('member')
+				
+				for team_member in team_members:
+					cleaner_info = {
+						'id': team_member.member.id,
+						'name': team_member.member.name,
+						'role': 'TEAM LEADER' if team_member.member.user_type == 'TEAMINCHARGE' else 'CLEANER'
+					}
+					visit_data[order_no]['visits'][visit_id]['assigned_cleaners'].append(cleaner_info)
+		
+		# Now process follow-up visits
+		all_followup_visits = FollowUpScheduler.objects.filter(
+			start_at__range=(prev_date_start, todate_date_end),
+			is_active=True
+		).select_related(
+			'follow_up__investigation__order'
+		).prefetch_related(
+			'team__followup_team_members__member'
+		)
+		
+		for followup in all_followup_visits:
+			if not followup.follow_up or not followup.follow_up.investigation or not followup.follow_up.investigation.order:
+				continue
+				
+			order_no = followup.follow_up.investigation.order.order_no
+			visit_id = f"FU-{followup.id}"
+			visit_date = datetime.strftime(followup.start_at, '%d-%m-%Y')
+			
+			if order_no not in visit_data:
+				visit_data[order_no] = {
+					'order_no': order_no,
+					'customer': followup.follow_up.investigation.order.evaluation.customer.name 
+						if followup.follow_up.investigation.order.evaluation.customer else 'N/A',
+					'service_type': 'Follow-up',
+					'location': followup.follow_up.investigation.address.area.name 
+						if followup.follow_up.investigation.address and followup.follow_up.investigation.address.area else 'N/A',
+					'visits': {}
+				}
+			
+			# Store follow-up visit details
+			visit_data[order_no]['visits'][visit_id] = {
+				'visit_id': visit_id,
+				'date': visit_date,
+				'start_time': datetime.strftime(followup.start_at, '%H:%M'),
+				'end_time': datetime.strftime(followup.end_at, '%H:%M'),
+				'budgeted_hours': 2,  # Default for follow-ups
+				'actual_duration': (followup.end_at - followup.start_at).total_seconds() / 3600,
+				'planned_cleaners': 1,  # Default for follow-ups
+				'hourly_rate': 1,      # Default for follow-ups
+				'assigned_cleaners': []
+			}
+			
+			# Add follow-up team members
+			if hasattr(followup, 'team') and followup.team:
+				team_members = FollowUpTeamMember.objects.filter(
+					team=followup.team,
+					is_active=True
+				).select_related('member')
+				
+				for team_member in team_members:
+					cleaner_info = {
+						'id': team_member.member.id,
+						'name': team_member.member.name,
+						'role': 'TEAM LEADER' if team_member.member.user_type == 'TEAMINCHARGE' else 'CLEANER'
+					}
+					visit_data[order_no]['visits'][visit_id]['assigned_cleaners'].append(cleaner_info)
+		
+		# Now process employee data with visit information
 		for worker in total_active_workers:
 			employees = []
 			employee = UserProfile.objects.get(id=int(worker))
 			
-			# Get all cleanings for this employee in the date range
+			# Get all cleanings for this employee in the date range (similar to previous code)
 			employee_cleanings_list = CleaningTeamMember.objects.filter(
 				Q(is_active=True) & Q(member__id=employee.id) & 
 				Q(team__order_scheduler__end_at__range=(prev_date_start, todate_date_end))
@@ -1621,6 +1733,7 @@ def export_users_xls(request):
 				'team__order_scheduler__order__order_no',
 				'team__order_scheduler__start_at',
 				'team__order_scheduler__end_at',
+				'team__order_scheduler__id',  # Added to identify specific visits
 				'team__order_scheduler__no_of_cleaners',
 				'team__order_scheduler__cleaning_hours',
 				'team__order_scheduler__hourly_cleaning_duration'
@@ -1632,23 +1745,30 @@ def export_users_xls(request):
 					'team__followup_scheduler__follow_up__investigation__order__order_no',
 					'start_at',
 					'end_at',
-					Value(1, output_field=IntegerField()),  # Default no_of_cleaners for followup
-					Value(2, output_field=IntegerField()),  # Default cleaning_hours for followup
-					Value(1, output_field=IntegerField())   # Default hourly_duration for followup
+					Value(-1, output_field=IntegerField()),  # Placeholder for followup_id
+					Value(1, output_field=IntegerField()),   # Default no_of_cleaners for followup
+					Value(2, output_field=IntegerField()),   # Default cleaning_hours for followup
+					Value(1, output_field=IntegerField())    # Default hourly_duration for followup
 				)
 			)
 			
 			# Calculate occupied hours
 			cleaning_durations = []
 			detailed_order_data = []
+			employee_visits = []
 			
 			for cleaning in employee_cleanings_list:
 				order_no = cleaning[0]
 				start_time = cleaning[1]
 				end_time = cleaning[2]
-				no_of_cleaners = cleaning[3]
-				budgeted_hours = cleaning[4]
-				hourly_duration = cleaning[5]
+				visit_id = cleaning[3]
+				no_of_cleaners = cleaning[4]
+				budgeted_hours = cleaning[5]
+				hourly_duration = cleaning[6]
+				
+				# Skip if order_no is None (can happen with deleted records)
+				if not order_no:
+					continue
 				
 				# Calculate duration for this cleaning
 				duration_list = [] 
@@ -1657,25 +1777,42 @@ def export_users_xls(request):
 				duration_list.append(datetime.strftime(end_time, '%d-%m-%Y'))
 				cleaning_durations.append(duration_list)
 				
-				# Store detailed info for second sheet
-				detailed_order_data.append({
-					'order_no': order_no,
-					'date': datetime.strftime(start_time, '%d-%m-%Y'),
-					'start_time': datetime.strftime(start_time, '%H:%M'),
-					'end_time': datetime.strftime(end_time, '%H:%M'),
-					'budgeted_hours': budgeted_hours,
-					'actual_hours': (end_time - start_time).total_seconds() / 3600,
-					'no_of_cleaners': no_of_cleaners,
-					'hourly_duration': hourly_duration
-				})
+				# Find visit details for this order
+				visit_key = visit_id if visit_id > 0 else f"FU-{abs(visit_id)}"
+				
+				# Store detailed info for order sheet
+				if order_no in visit_data and visit_key in visit_data[order_no]['visits']:
+					visit_info = visit_data[order_no]['visits'][visit_key]
+					
+					detailed_info = {
+						'order_no': order_no,
+						'date': datetime.strftime(start_time, '%d-%m-%Y'),
+						'start_time': datetime.strftime(start_time, '%H:%M'),
+						'end_time': datetime.strftime(end_time, '%H:%M'),
+						'budgeted_hours': budgeted_hours,
+						'actual_hours': (end_time - start_time).total_seconds() / 3600,
+						'no_of_cleaners': no_of_cleaners,
+						'hourly_duration': hourly_duration,
+						'visit_id': visit_key,
+						'customer': visit_data[order_no].get('customer', 'N/A'),
+						'service_type': visit_data[order_no].get('service_type', 'N/A'),
+						'location': visit_data[order_no].get('location', 'N/A'),
+						'total_assigned_cleaners': len(visit_info.get('assigned_cleaners', []))
+					}
+					
+					detailed_order_data.append(detailed_info)
+					employee_visits.append(visit_key)
 			
-			# Store detailed data for second sheet
+			# Store detailed data for employee sheets
 			employee_detailed_data[employee.id] = {
 				'name': employee.name,
-				'orders': detailed_order_data
+				'status': 'Active' if employee.is_active else 'Inactive',
+				'orders': detailed_order_data,
+				'visits': employee_visits
 			}
 			
 			# Calculate total occupied hours using the existing slot logic
+			# (Same as in previous version)
 			new_cleaning_durations = []
 			output = []
 			
@@ -1706,7 +1843,7 @@ def export_users_xls(request):
 				duration = len(final_slots) * 2
 				total_duration += duration
 			
-			# Calculate total working hours
+			# Calculate total working hours (same as before)
 			leave_schedules = LeaveSchedule.objects.filter(
 				staff=employee, 
 				leave_date__range=(prev_date_start, todate_date_end - timedelta(days=1))
@@ -1733,11 +1870,57 @@ def export_users_xls(request):
 			for col_num in range(len(row)):
 				ws.write(row_num, col_num, row[col_num], font_style)
 		
-		# Sheet 2: Detailed Report
+		# Sheet 2: Visits Detailed Report
+		ws_visits = wb.add_sheet('VISITS DETAILED REPORT')
+		
+		visits_columns = [
+			'Order No', 'Customer', 'Service Type', 'Location', 'Visit Date', 'Visit ID', 
+			'Start Time', 'End Time', 'Budgeted Hours', 'Actual Hours', 
+			'Planned Team Size', 'Actual Team Size', 'Hourly Rate', 'Team Members'
+		]
+		
+		for col_num in range(len(visits_columns)):
+			ws_visits.write(0, col_num, visits_columns[col_num], font_style)
+		
+		visits_row = 0
+		
+		# Write visit data
+		for order_no, order_info in visit_data.items():
+			for visit_id, visit_info in order_info['visits'].items():
+				visits_row += 1
+				
+				# Format team members as comma-separated list
+				team_members = ", ".join([member['name'] + ' (' + member['role'] + ')' 
+										for member in visit_info['assigned_cleaners']])
+				
+				visit_row_data = [
+					order_no,
+					order_info['customer'],
+					order_info['service_type'],
+					order_info['location'],
+					visit_info['date'],
+					visit_id,
+					visit_info['start_time'],
+					visit_info['end_time'],
+					visit_info['budgeted_hours'],
+					f"{visit_info['actual_duration']:.2f}",
+					visit_info['planned_cleaners'],
+					len(visit_info['assigned_cleaners']),
+					visit_info['hourly_rate'],
+					team_members
+				]
+				
+				for col_num in range(len(visit_row_data)):
+					ws_visits.write(visits_row, col_num, visit_row_data[col_num], font_style)
+		
+		# Sheet 3: Employee Detailed Report
 		ws_detail = wb.add_sheet('EMPLOYEE DETAILED REPORT')
 		
-		detail_columns = ['Cleaner', 'Order No', 'Date', 'Start Time', 'End Time', 
-						'Budgeted Hours', 'Actual Hours', 'Team Size', 'Hourly Rate']
+		detail_columns = [
+			'Cleaner', 'Order No', 'Customer', 'Service Type', 'Location', 'Visit Date', 
+			'Visit ID', 'Start Time', 'End Time', 'Budgeted Hours', 'Actual Hours', 
+			'Total Team Size', 'Hourly Rate'
+		]
 		
 		for col_num in range(len(detail_columns)):
 			ws_detail.write(0, col_num, detail_columns[col_num], font_style)
@@ -1753,22 +1936,26 @@ def export_users_xls(request):
 				detail_data = [
 					employee_name,
 					order['order_no'],
+					order['customer'],
+					order['service_type'],
+					order['location'],
 					order['date'],
+					order['visit_id'],
 					order['start_time'],
 					order['end_time'],
 					order['budgeted_hours'],
 					f"{order['actual_hours']:.2f}",
-					order['no_of_cleaners'],
+					order['total_assigned_cleaners'],
 					order['hourly_duration']
 				]
 				
 				for col_num in range(len(detail_data)):
 					ws_detail.write(detail_row, col_num, detail_data[col_num], font_style)
 		
-		# Sheet 3: Shift Analysis
+		# Sheet 4: Shift Analysis (similar to previous version)
 		ws_shift = wb.add_sheet('SHIFT ANALYSIS')
 		
-		shift_columns = ['Cleaner', 'Date', 'Official Shift Hours', 'Occupied Hours', 'Idle Hours', 'Efficiency (%)']
+		shift_columns = ['Cleaner', 'Date', 'Official Shift Hours', 'Occupied Hours', 'Idle Hours', 'Efficiency (%)', 'Visit Count']
 		
 		for col_num in range(len(shift_columns)):
 			ws_shift.write(0, col_num, shift_columns[col_num], font_style)
@@ -1798,12 +1985,14 @@ def export_users_xls(request):
 						"On Leave",
 						0,
 						0,
-						"0.00%"
+						"0.00%",
+						0
 					]
 				else:
 					# Calculate occupied hours for this date
 					date_orders = [order for order in data['orders'] if order['date'] == str_date]
 					daily_occupied_hours = sum(order['actual_hours'] for order in date_orders)
+					visit_count = len(date_orders)
 					
 					official_shift_hours = 10  # Standard shift hours
 					idle_hours = max(0, official_shift_hours - daily_occupied_hours)
@@ -1815,11 +2004,65 @@ def export_users_xls(request):
 						official_shift_hours,
 						f"{daily_occupied_hours:.2f}",
 						f"{idle_hours:.2f}",
-						f"{daily_efficiency:.2f}%"
+						f"{daily_efficiency:.2f}%",
+						visit_count
 					]
 				
 				for col_num in range(len(shift_data)):
 					ws_shift.write(shift_row, col_num, shift_data[col_num], font_style)
+		
+		# Sheet 5: Order Analysis
+		ws_orders = wb.add_sheet('ORDER ANALYSIS')
+		
+		order_columns = [
+			'Order No', 'Customer', 'Service Type', 'Location', 'Total Visits', 
+			'Total Budgeted Hours', 'Total Actual Hours', 'Total Cleaners Used', 
+			'Average Team Size', 'Start Date', 'End Date'
+		]
+		
+		for col_num in range(len(order_columns)):
+			ws_orders.write(0, col_num, order_columns[col_num], font_style)
+		
+		order_row = 0
+		
+		# Calculate order statistics
+		for order_no, order_info in visit_data.items():
+			order_row += 1
+			
+			total_visits = len(order_info['visits'])
+			total_budgeted_hours = sum(visit['budgeted_hours'] for visit in order_info['visits'].values())
+			total_actual_hours = sum(visit['actual_duration'] for visit in order_info['visits'].values())
+			
+			# Calculate total cleaners used (unique cleaners across all visits)
+			all_cleaners = set()
+			for visit in order_info['visits'].values():
+				for cleaner in visit['assigned_cleaners']:
+					all_cleaners.add(cleaner['id'])
+			
+			# Calculate average team size
+			avg_team_size = sum(len(visit['assigned_cleaners']) for visit in order_info['visits'].values()) / total_visits if total_visits > 0 else 0
+			
+			# Determine start and end dates
+			visit_dates = [datetime.strptime(visit['date'], '%d-%m-%Y') for visit in order_info['visits'].values()]
+			start_date = min(visit_dates).strftime('%d-%m-%Y') if visit_dates else 'N/A'
+			end_date = max(visit_dates).strftime('%d-%m-%Y') if visit_dates else 'N/A'
+			
+			order_data = [
+				order_no,
+				order_info['customer'],
+				order_info['service_type'],
+				order_info['location'],
+				total_visits,
+				total_budgeted_hours,
+				f"{total_actual_hours:.2f}",
+				len(all_cleaners),
+				f"{avg_team_size:.2f}",
+				start_date,
+				end_date
+			]
+			
+			for col_num in range(len(order_data)):
+				ws_orders.write(order_row, col_num, order_data[col_num], font_style)
 
 	if report_type == 'paymentdetails':
 
