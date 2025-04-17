@@ -1581,7 +1581,6 @@ def export_users_xls(request):
 				ws2.write(row_num2, col_num, row[col_num], font_style)
 	
 	if report_type == 'employeecommission':
-
 		response = HttpResponse(content_type='application/ms-excel')
 		response['Content-Disposition'] = 'attachment; filename="EMPLOYEE_COMMISSION_'+from_date+'_'+to_date+'.xls"'
 
@@ -1617,7 +1616,7 @@ def export_users_xls(request):
 		).select_related(
 			'order', 'evaluation_details', 'order_scheduler_book'
 		).prefetch_related(
-			'cleaning_team_order_scheduler__cleaning_member_team__member'
+			'cleaning_team__cleaning_team_members__member'
 		)
 		
 		# Process order visits first to create a visit data structure
@@ -1670,7 +1669,7 @@ def export_users_xls(request):
 		).select_related(
 			'follow_up__investigation__order'
 		).prefetch_related(
-			'followupteam_followupschedule__followup_team_members__member'
+			'team__followup_team_members__member'
 		)
 		
 		for followup in all_followup_visits:
