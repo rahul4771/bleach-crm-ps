@@ -1686,8 +1686,8 @@ def export_users_xls(request):
 					'customer': followup.follow_up.investigation.order.evaluation.customer.name 
 						if followup.follow_up.investigation.order.evaluation.customer else 'N/A',
 					'service_type': 'Follow-up',
-					'location': followup.follow_up.investigation.address.area.name 
-						if followup.follow_up.investigation.address and followup.follow_up.investigation.address.area else 'N/A',
+					'location': followup.follow_up.investigation.order_schedule.customer_address.area.name 
+    					if followup.follow_up.investigation.order_schedule and followup.follow_up.investigation.order_schedule.customer_address and followup.follow_up.investigation.order_schedule.customer_address.area else 'N/A',
 					'visits': {}
 				}
 			
