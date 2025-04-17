@@ -2035,11 +2035,11 @@ def export_users_xls(request):
 			# Calculate total cleaners used (unique cleaners across all visits)
 			all_cleaners = set()
 			for visit in order_info['visits'].values():
-				for cleaner in visit['no_of_cleaners']:
+				for cleaner in visit['assigned_cleaners']:
 					all_cleaners.add(cleaner['id'])
 			
 			# Calculate average team size
-			avg_team_size = sum(len(visit['no_of_cleaners']) for visit in order_info['visits'].values()) / total_visits if total_visits > 0 else 0
+			avg_team_size = sum(len(visit['assigned_cleaners']) for visit in order_info['visits'].values()) / total_visits if total_visits > 0 else 0
 			
 			# Determine start and end dates
 			visit_dates = [datetime.strptime(visit['date'], '%d-%m-%Y') for visit in order_info['visits'].values()]
