@@ -1616,7 +1616,7 @@ def export_users_xls(request):
 		).select_related(
 			'order', 'evaluation_details', 'order_scheduler_book'
 		).prefetch_related(
-			'cleaning_team__cleaning_team_members__member'
+			'cleaning_team_order_scheduler__cleaning_member_team__member'
 		)
 		
 		# Process order visits first to create a visit data structure
@@ -1669,7 +1669,7 @@ def export_users_xls(request):
 		).select_related(
 			'follow_up__investigation__order'
 		).prefetch_related(
-			'team__followup_team_members__member'
+			'followupteam_followupschedule__followup_team_members__member'
 		)
 		
 		for followup in all_followup_visits:
