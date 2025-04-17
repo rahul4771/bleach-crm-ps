@@ -2029,7 +2029,7 @@ def export_users_xls(request):
 			order_row += 1
 			
 			total_visits = len(order_info['visits'])
-			total_budgeted_hours = sum(visit['budgeted_hours'] for visit in order_info['visits'].values())
+			total_budgeted_hours = sum(visit.get('budgeted_hours') or 0 for visit in order_info['visits'].values())
 			total_actual_hours = sum(visit['actual_duration'] for visit in order_info['visits'].values())
 			
 			# Calculate total cleaners used (unique cleaners across all visits)
