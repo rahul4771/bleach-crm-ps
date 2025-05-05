@@ -14,8 +14,8 @@ class Command(BaseCommand):
             evaluation = Evaluation.objects.get(evaluation_id='BLC20250510008')
             order = Order.objects.get(evaluation__evaluation_id='BLC20250510008')
             evaluation_details = EvaluationDetails.objects.get(evaluation=evaluation)
-            customer_address_id = evaluation.customer.id
-            customer_address = Address.objects.get(customer__id=customer_address_id)
+            #customer_address_id = evaluation.customer.id
+            customer_address = Address.objects.get(id=4540)
             order_scheduler_books = EvaluationBook.objects.filter(id__in=[17548])
 
             # Define schedule times
