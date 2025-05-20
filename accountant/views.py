@@ -1745,11 +1745,38 @@ def export_users_xls(request):
 			if order_no not in visit_data:
 				visit_data[order_no] = {
 					'order_no': order_no,
-					'customer': visit.order.evaluation.customer.name if visit.order.evaluation.customer else 'N/A',
+					'customer': visit.order.evaluation.customer.name if visit.order.evaluation and visit.order.evaluation.customer else 'N/A',
 					'service_type': visit.order_scheduler_book.service_type.name if visit.order_scheduler_book and visit.order_scheduler_book.service_type else 'N/A',
 					'location': visit.customer_address.area.name if visit.customer_address and visit.customer_address.area else 'N/A',
 					'visits': {}
 				}
+			
+			# Initialize assigned_cleaners as a list instead of reusing no_of_cleaners
+			assigned_cleaners = []
+			
+			# Get cleaning team members for this visit
+			try:
+				cleaning_team = CleaningTeam.objects.filter(
+					order_scheduler=visit,
+					is_active=True
+				).first()
+				
+				if cleaning_team:
+					team_members = CleaningTeamMember.objects.filter(
+						team=cleaning_team,
+						is_active=True
+					).select_related('member')
+					
+					for team_member in team_members:
+						cleaner_info = {
+							'id': team_member.member.id,
+							'name': team_member.member.name,
+							'role': 'TEAM LEADER' if team_member.member.user_type == 'TEAMINCHARGE' else 'CLEANER'
+						}
+						assigned_cleaners.append(cleaner_info)
+			except Exception as e:
+				# Handle potential errors fetching team members
+				pass
 			
 			# Store visit details
 			visit_data[order_no]['visits'][visit_id] = {
@@ -1761,23 +1788,8 @@ def export_users_xls(request):
 				'actual_duration': (visit.end_at - visit.start_at).total_seconds() / 3600,
 				'planned_cleaners': visit.no_of_cleaners,
 				'hourly_rate': visit.hourly_cleaning_duration,
-				'assigned_cleaners': []
+				'assigned_cleaners': assigned_cleaners  # Now correctly set as a list of cleaners
 			}
-			
-			# Add cleaning team members
-			if hasattr(visit, 'cleaning_team') and visit.cleaning_team:
-				team_members = CleaningTeamMember.objects.filter(
-					team=visit.cleaning_team,
-					is_active=True
-				).select_related('member')
-				
-				for team_member in team_members:
-					cleaner_info = {
-						'id': team_member.member.id,
-						'name': team_member.member.name,
-						'role': 'TEAM LEADER' if team_member.member.user_type == 'TEAMINCHARGE' else 'CLEANER'
-					}
-					visit_data[order_no]['visits'][visit_id]['assigned_cleaners'].append(cleaner_info)
 		
 		# Now process follow-up visits
 		all_followup_visits = FollowUpScheduler.objects.filter(
@@ -1801,12 +1813,39 @@ def export_users_xls(request):
 				visit_data[order_no] = {
 					'order_no': order_no,
 					'customer': followup.follow_up.investigation.order.evaluation.customer.name 
-						if followup.follow_up.investigation.order.evaluation.customer else 'N/A',
+						if followup.follow_up.investigation.order.evaluation and followup.follow_up.investigation.order.evaluation.customer else 'N/A',
 					'service_type': 'Follow-up',
 					'location': followup.follow_up.investigation.order_schedule.customer_address.area.name 
-    					if followup.follow_up.investigation.order_schedule and followup.follow_up.investigation.order_schedule.customer_address and followup.follow_up.investigation.order_schedule.customer_address.area else 'N/A',
+						if followup.follow_up.investigation.order_schedule and followup.follow_up.investigation.order_schedule.customer_address and followup.follow_up.investigation.order_schedule.customer_address.area else 'N/A',
 					'visits': {}
 				}
+			
+			# Initialize assigned_cleaners as a list
+			assigned_cleaners = []
+			
+			# Get follow-up team members
+			try:
+				followup_team = FollowUpTeam.objects.filter(
+					followup_scheduler=followup,
+					is_active=True
+				).first()
+				
+				if followup_team:
+					team_members = FollowUpTeamMember.objects.filter(
+						team=followup_team,
+						is_active=True
+					).select_related('member')
+					
+					for team_member in team_members:
+						cleaner_info = {
+							'id': team_member.member.id,
+							'name': team_member.member.name,
+							'role': 'TEAM LEADER' if team_member.member.user_type == 'TEAMINCHARGE' else 'CLEANER'
+						}
+						assigned_cleaners.append(cleaner_info)
+			except Exception as e:
+				# Handle potential errors fetching team members
+				pass
 			
 			# Store follow-up visit details
 			visit_data[order_no]['visits'][visit_id] = {
@@ -1816,25 +1855,10 @@ def export_users_xls(request):
 				'end_time': datetime.strftime(followup.end_at, '%H:%M'),
 				'budgeted_hours': 2,  # Default for follow-ups
 				'actual_duration': (followup.end_at - followup.start_at).total_seconds() / 3600,
-				'planned_cleaners': 1,  # Default for follow-ups
+				'planned_cleaners': followup_team.no_of_cleaners if followup_team else 1,  # Use team value if available
 				'hourly_rate': 1,      # Default for follow-ups
-				'assigned_cleaners': []
+				'assigned_cleaners': assigned_cleaners  # Now properly set as a list
 			}
-			
-			# Add follow-up team members
-			if hasattr(followup, 'team') and followup.team:
-				team_members = FollowUpTeamMember.objects.filter(
-					team=followup.team,
-					is_active=True
-				).select_related('member')
-				
-				for team_member in team_members:
-					cleaner_info = {
-						'id': team_member.member.id,
-						'name': team_member.member.name,
-						'role': 'TEAM LEADER' if team_member.member.user_type == 'TEAMINCHARGE' else 'CLEANER'
-					}
-					visit_data[order_no]['visits'][visit_id]['assigned_cleaners'].append(cleaner_info)
 		
 		# Now process employee data with visit information
 		for worker in total_active_workers:
