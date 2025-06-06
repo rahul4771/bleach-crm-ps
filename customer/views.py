@@ -3255,14 +3255,115 @@ class GetServiceAddOns(APIView):
 
 
 
-class GetMultipleServiceCleaningSlotes(APIView):  
+# class GetMultipleServiceCleaningSlotes(APIView):  
+#     permission_classes = (AllowAny,)
+#     authentication_classes = ()
+
+#     def post(self, request):
+#         dropdown_slotes = {}
+
+#         cleaning_date = datetime.strptime(request.data.get('cleaning_date'), '%d-%m-%Y')
+#         number_of_cleaners = int(request.data.get('number_of_cleaners')) - 1
+#         service_types = request.data.get('service_types')
+#         gender = request.data.get('gender')
+
+#         # Precompute filters for service types
+#         service_filters = {
+#             'General Cleaning': {'is_general_skill': True},
+#             'Deep Cleaning': {'is_deep_skill': True},
+#             'Upholstery Cleaning': {'is_upholstery_skill': True},
+#             'Kitchen Cleaning': {'is_kitchen_skill': True},
+#             'Kitchen Appliances': {'is_kitchen_skill': True},
+#             'Carpet Cleaning': {'is_carpet_skill': True},
+#             'Sterilization': {'is_sterilization_skill': True},
+#             'Mattress Cleaning': {'is_mattress_skill': True},
+#             'Facade Cleaning': {'is_facade_skill': True},
+#             'Storage Area': {'is_storagearea_skill': True},
+#             'Car Parking Umbrella': {'is_carparkingumbrella_skill': True},
+#             'Window Cleaning': {'is_window_skill': True},
+#             'Outdoor Cleaning': {'is_outdoor_skill': True},
+#         }
+
+#         # Base querysets for cleaners and leaders
+#         base_cleaners = UserProfile.objects.filter(Q(user_type='CLEANER') | Q(user_type='TEAMINCHARGE'))
+#         base_leaders = UserProfile.objects.filter(user_type='TEAMINCHARGE')
+
+#         if gender:
+#             base_cleaners = base_cleaners.filter(gender=gender)
+#             base_leaders = base_leaders.filter(gender=gender)
+
+#         # Apply service type filters to base querysets
+#         for service_type in service_types:
+#             filter_kwargs = service_filters.get(service_type, {})
+#             if filter_kwargs:
+#                 base_cleaners = base_cleaners.filter(**filter_kwargs)
+#                 base_leaders = base_leaders.filter(**filter_kwargs)
+
+#         # Precompute absent cleaners and leaders
+#         absent_cleaners = LeaveSchedule.objects.filter(leave_date=cleaning_date).values_list('staff', flat=True)
+#         absent_leaders = LeaveSchedule.objects.filter(leave_date=cleaning_date, staff__user_type='TEAMINCHARGE').values_list('staff', flat=True)
+
+#         # Precompute shift cleaners and leaders
+#         shift_cleaners = ShiftSchedule.objects.filter(shift_date=cleaning_date).values_list('staff', flat=True)
+#         shift_leaders = ShiftSchedule.objects.filter(shift_date=cleaning_date, staff__user_type='TEAMINCHARGE').values_list('staff', flat=True)
+
+#         # Precompute super shift cleaners and leaders
+#         super_shift_cleaners = UserProfile.objects.filter(Q(is_active=True) & (Q(user_type='CLEANER') | Q(user_type='TEAMINCHARGE'))).values_list('id', flat=True)
+#         super_shift_leaders = UserProfile.objects.filter(is_active=True, user_type='TEAMINCHARGE').values_list('id', flat=True)
+
+#         # Precompute active cleaners and leaders
+#         active_cleaners1 = CleaningTeamMember.objects.filter(start_at__lt=cleaning_date, end_at__gt=cleaning_date).values_list('member', flat=True)
+#         active_cleaners2 = FollowUpTeamMember.objects.filter(start_at__lt=cleaning_date, end_at__gt=cleaning_date).values_list('member', flat=True)
+
+#         # Merge active cleaners and leaders
+#         team_leaders_scheduled = list(active_cleaners1.filter(member__user_type='TEAMINCHARGE')) + list(active_cleaners2.filter(member__user_type='TEAMINCHARGE'))
+#         team_members_scheduled = list(active_cleaners1.filter(Q(member__user_type='TEAMINCHARGE') | Q(member__user_type='CLEANER'))) + list(active_cleaners2.filter(Q(member__user_type='TEAMINCHARGE') | Q(member__user_type='CLEANER')))
+
+#         # Apply 8 to 22 leave logic
+#         leavestart_at_datetime1 = cleaning_date.replace(hour=8, minute=0, second=0, microsecond=0)
+#         leaveend_at_datetime1 = cleaning_date.replace(hour=22, minute=0, second=0, microsecond=0)
+
+#         # Slote wise checking
+#         slotes = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22]
+#         slote_durations = [2, 4, 6, 8, 10]
+#         available_slotes = {}
+
+#         for slote in slotes:
+#             available_durations = []
+#             for slote_duration in slote_durations:
+#                 slote_start_datetime = cleaning_date.replace(hour=slote, minute=0, second=0, microsecond=0)
+#                 slote_end_datetime = slote_start_datetime + timedelta(hours=slote_duration)
+
+#                 # Check if slote is within leave time
+#                 if (leavestart_at_datetime1 <= slote_start_datetime and leaveend_at_datetime1 > slote_start_datetime) or (leavestart_at_datetime1 < slote_end_datetime and leaveend_at_datetime1 >= slote_end_datetime):
+#                     total_newcleaners = base_cleaners.filter(Q(id__in=shift_cleaners) | Q(id__in=super_shift_cleaners)).exclude(id__in=absent_cleaners)
+#                     total_newleaders = base_leaders.filter(Q(id__in=shift_leaders) | Q(id__in=super_shift_leaders)).exclude(id__in=absent_leaders)
+#                 else:
+#                     total_newcleaners = base_cleaners.filter(Q(id__in=shift_cleaners) | Q(id__in=super_shift_cleaners))
+#                     total_newleaders = base_leaders.filter(Q(id__in=shift_leaders) | Q(id__in=super_shift_leaders))
+
+#                 # Exclude scheduled team members
+#                 total_newcleaners = total_newcleaners.exclude(id__in=team_members_scheduled)
+#                 total_newleaders = total_newleaders.exclude(id__in=team_leaders_scheduled)
+
+#                 # Check if enough cleaners and leaders are available
+#                 if total_newcleaners.count() - 1 >= number_of_cleaners and total_newleaders.count() >= 1:
+#                     available_durations.append(slote_duration)
+
+#             available_slotes[slote] = available_durations
+
+#         dropdown_slotes['success'] = True
+#         dropdown_slotes['slotes'] = available_slotes
+#         return Response(dropdown_slotes, HTTP_200_OK)
+
+class GetMultipleServiceCleaningSlotes(APIView):
     permission_classes = (AllowAny,)
     authentication_classes = ()
 
     def post(self, request):
         dropdown_slotes = {}
 
-        cleaning_date = datetime.strptime(request.data.get('cleaning_date'), '%d-%m-%Y')
+        cleaning_date = datetime.strptime(request.data.get('cleaning_date'), '%d-%m-%Y').date() # Extract date only
         number_of_cleaners = int(request.data.get('number_of_cleaners')) - 1
         service_types = request.data.get('service_types')
         gender = request.data.get('gender')
@@ -3285,8 +3386,8 @@ class GetMultipleServiceCleaningSlotes(APIView):
         }
 
         # Base querysets for cleaners and leaders
-        base_cleaners = UserProfile.objects.filter(Q(user_type='CLEANER') | Q(user_type='TEAMINCHARGE'))
-        base_leaders = UserProfile.objects.filter(user_type='TEAMINCHARGE')
+        base_cleaners = UserProfile.objects.filter(Q(user_type='CLEANER') | Q(user_type='TEAMINCHARGE'), is_active=True)
+        base_leaders = UserProfile.objects.filter(user_type='TEAMINCHARGE', is_active=True)
 
         if gender:
             base_cleaners = base_cleaners.filter(gender=gender)
@@ -3299,64 +3400,113 @@ class GetMultipleServiceCleaningSlotes(APIView):
                 base_cleaners = base_cleaners.filter(**filter_kwargs)
                 base_leaders = base_leaders.filter(**filter_kwargs)
 
-        # Precompute absent cleaners and leaders
+        # Precompute absent cleaners and leaders for the cleaning_date
         absent_cleaners = LeaveSchedule.objects.filter(leave_date=cleaning_date).values_list('staff', flat=True)
         absent_leaders = LeaveSchedule.objects.filter(leave_date=cleaning_date, staff__user_type='TEAMINCHARGE').values_list('staff', flat=True)
 
-        # Precompute shift cleaners and leaders
-        shift_cleaners = ShiftSchedule.objects.filter(shift_date=cleaning_date).values_list('staff', flat=True)
-        shift_leaders = ShiftSchedule.objects.filter(shift_date=cleaning_date, staff__user_type='TEAMINCHARGE').values_list('staff', flat=True)
+        # Precompute shift cleaners and leaders for the cleaning_date
+        # Note: ShiftSchedule filtering by time needs to be dynamic within the loop for each slot
+        shift_cleaners_ids = ShiftSchedule.objects.filter(shift_date=cleaning_date).values_list('staff', flat=True)
+        shift_leaders_ids = ShiftSchedule.objects.filter(shift_date=cleaning_date, staff__user_type='TEAMINCHARGE').values_list('staff', flat=True)
 
         # Precompute super shift cleaners and leaders
-        super_shift_cleaners = UserProfile.objects.filter(Q(is_active=True) & (Q(user_type='CLEANER') | Q(user_type='TEAMINCHARGE'))).values_list('id', flat=True)
-        super_shift_leaders = UserProfile.objects.filter(is_active=True, user_type='TEAMINCHARGE').values_list('id', flat=True)
+        super_shift_cleaners_ids = UserProfile.objects.filter(Q(is_active=True) & (Q(user_type='CLEANER') | Q(user_type='TEAMINCHARGE'))).values_list('id', flat=True)
+        super_shift_leaders_ids = UserProfile.objects.filter(is_active=True, user_type='TEAMINCHARGE').values_list('id', flat=True)
 
-        # Precompute active cleaners and leaders
-        active_cleaners1 = CleaningTeamMember.objects.filter(start_at__lt=cleaning_date, end_at__gt=cleaning_date).values_list('member', flat=True)
-        active_cleaners2 = FollowUpTeamMember.objects.filter(start_at__lt=cleaning_date, end_at__gt=cleaning_date).values_list('member', flat=True)
+        # Precompute active cleaners and leaders (scheduled in other bookings) for the cleaning_date
+        # This assumes active_cleaners1/2 refers to bookings overlapping the cleaning_date.
+        # This part of the logic might need more precise time-based filtering if a booking only partially overlaps a day.
+        # For this refactor, we are using broad date-based check and then refining inside the loop based on slot times.
+        active_cleaning_members = CleaningTeamMember.objects.filter(Q(start_at__date=cleaning_date) | Q(end_at__date=cleaning_date)).values_list('member', flat=True)
+        active_followup_members = FollowUpTeamMember.objects.filter(Q(start_at__date=cleaning_date) | Q(end_at__date=cleaning_date)).values_list('member', flat=True)
 
-        # Merge active cleaners and leaders
-        team_leaders_scheduled = list(active_cleaners1.filter(member__user_type='TEAMINCHARGE')) + list(active_cleaners2.filter(member__user_type='TEAMINCHARGE'))
-        team_members_scheduled = list(active_cleaners1.filter(Q(member__user_type='TEAMINCHARGE') | Q(member__user_type='CLEANER'))) + list(active_cleaners2.filter(Q(member__user_type='TEAMINCHARGE') | Q(member__user_type='CLEANER')))
+        # Merge active members
+        team_leaders_scheduled = list(UserProfile.objects.filter(id__in=active_cleaning_members, user_type='TEAMINCHARGE').values_list('id', flat=True)) + \
+                                 list(UserProfile.objects.filter(id__in=active_followup_members, user_type='TEAMINCHARGE').values_list('id', flat=True))
+        team_members_scheduled = list(active_cleaning_members) + list(active_followup_members)
+        
+        # Ensure unique IDs
+        team_leaders_scheduled = list(set(team_leaders_scheduled))
+        team_members_scheduled = list(set(team_members_scheduled))
 
-        # Apply 8 to 22 leave logic
-        leavestart_at_datetime1 = cleaning_date.replace(hour=8, minute=0, second=0, microsecond=0)
-        leaveend_at_datetime1 = cleaning_date.replace(hour=22, minute=0, second=0, microsecond=0)
+        # Apply 8 to 22 leave logic reference datetimes for the cleaning_date
+        leavestart_at_datetime_ref = datetime.combine(cleaning_date, datetime.min.time().replace(hour=8))
+        leaveend_at_datetime_ref = datetime.combine(cleaning_date, datetime.min.time().replace(hour=22))
 
-        # Slote wise checking
-        slotes = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22]
-        slote_durations = [2, 4, 6, 8, 10]
-        available_slotes = {}
+        # Slot definitions
+        slotes = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22] # Start hours
+        slote_durations = [2, 4, 6, 8, 10] # Durations in hours
 
-        for slote in slotes:
-            available_durations = []
-            for slote_duration in slote_durations:
-                slote_start_datetime = cleaning_date.replace(hour=slote, minute=0, second=0, microsecond=0)
-                slote_end_datetime = slote_start_datetime + timedelta(hours=slote_duration)
+        available_slotes_list = []
+        busy_slotes_list = []
+        combined_slots_final = []
 
-                # Check if slote is within leave time
-                if (leavestart_at_datetime1 <= slote_start_datetime and leaveend_at_datetime1 > slote_start_datetime) or (leavestart_at_datetime1 < slote_end_datetime and leaveend_at_datetime1 >= slote_end_datetime):
-                    total_newcleaners = base_cleaners.filter(Q(id__in=shift_cleaners) | Q(id__in=super_shift_cleaners)).exclude(id__in=absent_cleaners)
-                    total_newleaders = base_leaders.filter(Q(id__in=shift_leaders) | Q(id__in=super_shift_leaders)).exclude(id__in=absent_leaders)
+        for slote_hour in slotes:
+            for duration_hours in slote_durations:
+                slote_start_datetime = datetime.combine(cleaning_date, datetime.min.time().replace(hour=slote_hour))
+                slote_end_datetime = slote_start_datetime + timedelta(hours=duration_hours)
+
+                # Filter shifts for the specific slot time range
+                current_shift_cleaners = ShiftSchedule.objects.filter(
+                    shift_date=cleaning_date,
+                    shift1_start_at__lte=slote_start_datetime.time(),
+                    shift1_end_at__gte=slote_end_datetime.time()
+                ).values_list('staff', flat=True)
+
+                current_shift_leaders = ShiftSchedule.objects.filter(
+                    shift_date=cleaning_date,
+                    staff__user_type='TEAMINCHARGE',
+                    shift1_start_at__lte=slote_start_datetime.time(),
+                    shift1_end_at__gte=slote_end_datetime.time()
+                ).values_list('staff', flat=True)
+
+                # Combine shift and super shift members
+                effective_shift_cleaners = list(set(list(current_shift_cleaners) + list(super_shift_cleaners_ids)))
+                effective_shift_leaders = list(set(list(current_shift_leaders) + list(super_shift_leaders_ids)))
+
+                # Determine available staff considering leaves and shifts for the current slot
+                if (leavestart_at_datetime_ref <= slote_start_datetime and leaveend_at_datetime_ref > slote_start_datetime) or \
+                   (leavestart_at_datetime_ref < slote_end_datetime and leaveend_at_datetime_ref >= slote_end_datetime):
+                    # Within general leave hours (8 AM to 10 PM)
+                    current_available_cleaners = base_cleaners.filter(id__in=effective_shift_cleaners).exclude(id__in=absent_cleaners)
+                    current_available_leaders = base_leaders.filter(id__in=effective_shift_leaders).exclude(id__in=absent_leaders)
                 else:
-                    total_newcleaners = base_cleaners.filter(Q(id__in=shift_cleaners) | Q(id__in=super_shift_cleaners))
-                    total_newleaders = base_leaders.filter(Q(id__in=shift_leaders) | Q(id__in=super_shift_leaders))
+                    # Outside general leave hours (no leave applied to base calculations)
+                    current_available_cleaners = base_cleaners.filter(id__in=effective_shift_cleaners)
+                    current_available_leaders = base_leaders.filter(id__in=effective_shift_leaders)
 
-                # Exclude scheduled team members
-                total_newcleaners = total_newcleaners.exclude(id__in=team_members_scheduled)
-                total_newleaders = total_newleaders.exclude(id__in=team_leaders_scheduled)
+                # Exclude scheduled team members from available staff for the current slot
+                current_available_cleaners = current_available_cleaners.exclude(id__in=team_members_scheduled)
+                current_available_leaders = current_available_leaders.exclude(id__in=team_leaders_scheduled)
 
-                # Check if enough cleaners and leaders are available
-                if total_newcleaners.count() - 1 >= number_of_cleaners and total_newleaders.count() >= 1:
-                    available_durations.append(slote_duration)
+                # Check if enough cleaners and leaders are available for this specific slot and duration
+                # Adjusting number_of_cleaners check to ensure it's not less than 0
+                required_cleaners = max(0, number_of_cleaners) # Ensure required cleaners is not negative
 
-            available_slotes[slote] = available_durations
+                if current_available_cleaners.count() >= required_cleaners and current_available_leaders.count() >= 1:
+                    is_available = True
+                else:
+                    is_available = False
+
+                formatted_slot_time = datetime.strftime(slote_start_datetime, '%d-%m-%Y %I:%M %p')
+
+                if is_available:
+                    available_slotes_list.append(formatted_slot_time)
+                else:
+                    busy_slotes_list.append(formatted_slot_time)
+
+                combined_slots_final.append({
+                    "date": datetime.strftime(slote_start_datetime, '%d-%m-%Y'),
+                    "time": datetime.strftime(slote_start_datetime, '%I:%M %p'),
+                    "is_available": is_available
+                })
 
         dropdown_slotes['success'] = True
-        dropdown_slotes['slotes'] = available_slotes
+        dropdown_slotes['available_slotes'] = available_slotes_list
+        dropdown_slotes['busy_slotes'] = busy_slotes_list
+        dropdown_slotes['combined_slots'] = combined_slots_final
+        
         return Response(dropdown_slotes, HTTP_200_OK)
-
-
 
 
 class GetMultipleServiceDateCleaningSlotes(APIView):
