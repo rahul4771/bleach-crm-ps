@@ -11,8 +11,8 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         try:
             # Fetch required objects
-            evaluation = Evaluation.objects.get(evaluation_id='BLC2025050610003')
-            order = Order.objects.get(evaluation__evaluation_id='BLC2025050610003')
+            evaluation = Evaluation.objects.get(evaluation_id='BLC20250610003')
+            order = Order.objects.get(evaluation__evaluation_id='BLC20250610003')
             evaluation_details = EvaluationDetails.objects.get(evaluation=evaluation)
             customer_address_id = evaluation.customer.id
             customer_address = Address.objects.get(customer__id=customer_address_id)
