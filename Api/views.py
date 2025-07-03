@@ -2115,7 +2115,7 @@ class DailySalesAPI(APIView):
 				# print(schedule.cleaning_cost,float(schedule.order.evaluation.cancelled_amount),float(refund_amount),float(schedule.order.evaluation.writeback_amount),float(schedule.order.evaluation.promocode_amount),float(schedule.no_of_order_visits),schedule.discount_cost,"printerrr")	
 				
 			list_item = {
-					'Date': str(date.date()),
+					'Dates': str(date.date()),
 					'Day': date.strftime("%A"),
 					'gross_amount':gross_amount,
 					'subtractions':subtraction_amount,
