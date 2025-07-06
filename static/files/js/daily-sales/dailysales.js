@@ -48,11 +48,11 @@ function nextDay(){
             $('#sales_status').html('');
 
             $.each(response.data.list,function(key,value){
-                $('#model-table2').append('<tr><td>'+value.order_no+'</td><td>'+value.customer+'</td><td  style="text-align: right;">'+parseFloat(value.gross_amount).toFixed(3)+'</td><td>'+value.service_type+'</td><td>'+value.salesman+'</td><td>'+value.schedule_status+'</td></tr>');
+                $('#model-table2').append('<tr><td>'+value.order_no+'</td><td>'+value.customer+'</td><td  style="text-align: right;">'+parseFloat(value.gross_amount).toFixed(2)+'</td><td>'+value.service_type+'</td><td>'+value.salesman+'</td><td>'+value.schedule_status+'</td></tr>');
             })
 
             $('#net_day_sale').text(parseFloat(response.data.net_day_sales).toFixed(3));
-            $('#gross_day_sale').text(parseFloat(response.data.gross_day_sales).toFixed(2));
+            $('#gross_day_sale').text(parseFloat(response.data.gross_day_sales).toFixed(3));
             $('#addition_day').text(parseFloat(response.data.additions).toFixed(3));
             $('#subtraction_day').text(parseFloat(response.data.subtractions).toFixed(3));
             $('#sale_day').text(response.data.day);
