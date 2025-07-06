@@ -52,7 +52,7 @@ function nextDay(){
             })
 
             $('#net_day_sale').text(parseFloat(response.data.net_day_sales).toFixed(3));
-            $('#gross_day_sale').text(parseFloat(response.data.gross_day_sales).toFixed(3));
+            $('#gross_day_sale').text(parseFloat(response.data.gross_day_sales).toFixed(2));
             $('#addition_day').text(parseFloat(response.data.additions).toFixed(3));
             $('#subtraction_day').text(parseFloat(response.data.subtractions).toFixed(3));
             $('#sale_day').text(response.data.day);
