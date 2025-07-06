@@ -2175,10 +2175,10 @@ class DailySalesBreakDownAPI(APIView):
 			order_schedule_count = OrderScheduler.objects.filter(order__order_no=schedule.order.order_no).count()
 
 			#calculating schedule total
-			if schedule.cleaning_cost:
-				gross_amount = float(schedule.cleaning_cost) or 0
-			else:
-				gross_amount = 0
+			#if schedule.cleaning_cost:
+			gross_amount = float(schedule.cleaning_cost) or 0
+			#else:
+			#	gross_amount = 0
 
 			if schedule.order.evaluation.cancelled_amount:
 				cancelled_amount = float(schedule.order.evaluation.cancelled_amount)
