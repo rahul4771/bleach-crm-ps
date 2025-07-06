@@ -1714,6 +1714,7 @@ class MakeQuatationPhase1Edit(IsAuthenticated,View):
 
 
 class DailySales(IsAuthenticated, View):
+	#left dashboard daily sales and monthly sales values on top of the dashboard.
 	def get(self,request):
 		# for monthly tab and daily sales tab
 		today = datetime.now()
