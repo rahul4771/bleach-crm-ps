@@ -1756,7 +1756,7 @@ class DailySales(IsAuthenticated, View):
 					refund_amount = 0
 				
 				if schedule.cleaning_cost:
-					gross_amount += float(schedule.cleaning_cost)
+					gross_amount += float(schedule.cleaning_cost) or 0
 				else:
 					gross_amount += 0
 
