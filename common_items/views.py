@@ -1755,7 +1755,8 @@ class DailySales(IsAuthenticated, View):
 					refund = None
 					refund_amount = 0
 				
-				#if schedule.cleaning_cost:
+				if schedule.cleaning_cost is not None:
+  					
 					gross_amount += float(schedule.cleaning_cost)
 				#else:
 				#	gross_amount += 0
