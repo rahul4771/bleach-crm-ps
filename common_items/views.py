@@ -1755,11 +1755,10 @@ class DailySales(IsAuthenticated, View):
 					refund = None
 					refund_amount = 0
 				
-				if schedule.cleaning_cost is not None:
-  					
+				if schedule.cleaning_cost:
 					gross_amount += float(schedule.cleaning_cost)
-				#else:
-				#	gross_amount += 0
+				else:
+					gross_amount += 0
 
 				addition_amount    += (float(schedule.order.evaluation.fine_amount)/float(schedule.no_of_order_visits)) + float(0 if schedule.additional_charge_cost is None else schedule.additional_charge_cost)
 
