@@ -2177,6 +2177,8 @@ class DailySalesBreakDownAPI(APIView):
 			#calculating schedule total
 			if schedule.cleaning_cost:
 				gross_amount = float(schedule.cleaning_cost) or 0
+			else:
+				gross_amount = 0
 			
 
 			if schedule.order.evaluation.cancelled_amount:
