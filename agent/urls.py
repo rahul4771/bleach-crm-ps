@@ -1,6 +1,9 @@
 from django.conf.urls import include, url
 from agent import views 
 
+app_name = 'agent'
+
+
 urlpatterns = [
 
 

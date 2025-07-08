@@ -1,6 +1,7 @@
 from django.conf.urls import include, url
 from common_items import views 
 
+app_name = 'common_items'
 #all users urls
 
 urlpatterns = [

@@ -1,0 +1,1118 @@
+
+//$('#cl-evaluator-1').height($('#slot-row-1').height());
+
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip(); 
+    $( ".scroll-cal" ).scrollLeft( 650 ); 
+    $('#cleaningCalendar-carousel').owlCarousel({
+        loop:false,
+        margin:10,
+        nav:true,
+        navText:[`<i class='fa fa-chevron-left service-control' @click='prevService()'></i>`,
+      `<i class='fa fa-chevron-right service-control'></i>`], 
+        responsive:{
+            0:{
+                items:1
+            },
+            600:{
+                items:3
+            },
+            1000:{
+                items:5
+            }
+        }
+    })
+   
+  });
+  
+console.log("maxheight:"+$('#cleaningCalendar-carousel').height())
+var heightCarousel=$('#cleaningCalendar-carousel').height()
+$('.owl-item').height(heightCarousel)
+
+  function openModal(){
+   
+   
+  }
+  function selectSlot(elem){
+    console.log("elem is "+elem)
+    $(elem).toggleClass('time-slot-active')
+  }
+
+
+  /** vue js */
+
+
+const app=  new Vue({
+
+    el: '#app',
+    vuetify: new Vuetify(),
+    delimiters: ['<%', '%>'],
+   
+    
+    data: {
+        setAttenderNotes:"",
+        agent:'#0D87C5',
+        cleaningDate:new Date().toISOString().substr(0, 10),
+        selectedDate:new Date().toISOString().substr(0, 10),
+        selectedEvaluator:'Ahamed Abdou',
+        lateHour:false,
+        editEval:false,
+        delAlert:false,
+        customer:'#139275',
+        cancelled:'#8B8B8B',
+        primary:'#2d4e85',
+        selectedCleaningSlot:[],
+        services:[],
+        slots:{},
+        combineSlots:[],
+        slotDate:'',
+        dateSelected:'',
+        selectedSlot:'1',
+        evaluators:[],
+        currentSlot:{},
+        currentSlotDetails:null,
+        openedit:false,
+        currentTime:'',
+        booking:{
+            booking_date:'',
+            booking_time:''
+        },
+        convertedTime:{
+            earlyHours:[],
+            lateHours:[]
+          },
+         
+          lateHours:false,
+        selectedTime:'',
+        today:'',
+        timeSlots:[],
+        parsedSlots:[],
+        no_of_slots:0,
+        teammembers:'yes',
+        slot:{
+          "1":{
+            slots:[]
+          },
+          "2":{
+            slots:[]
+          },
+          "3":{
+            slots:[]
+          },
+          "4":{
+            slots:[]
+          },
+          "5":{
+            slots:[]
+          },
+          "6":{
+            slots:[]
+          },
+          "7":{
+            slots:[]
+          },
+          "8":{
+            slots:[]
+          },
+        },
+        slotFormat:{
+          "1":{
+            start_time:'12:00 AM',
+            end_time:'03:00 AM'
+          },
+          "2":{
+            start_time:'03:00 AM',
+            end_time:'06:00 AM'
+          },
+          "3":{
+            start_time:'06:00 AM',
+            end_time:'09:00 AM'
+          },
+          "4":{
+            start_time:'09:00 AM',
+            end_time:'12:00 PM'
+          },
+          "5":{
+            start_time:'12:00 PM',
+            end_time:'03:00 PM'
+          },
+          "6":{
+            start_time:'03:00 PM',
+            end_time:'06:00 PM'
+          },
+          "7":{
+            start_time:'06:00 PM',
+            end_time:'09:00 PM'
+          },
+          "8":{
+            start_time:'09:00 PM',
+            end_time:'12:00 AM'
+          }
+        },
+        url:'http://localhost:8000',
+        cleaningData:{
+          cleaning_datetime_start:'',
+          cleaning_datetime_end:'',
+          service_types:[]
+        },
+        cleaningDetails:{},
+        combinedCleaningDetails:[],
+        cleaningEditSlots:[],
+        availableSlots:[],
+        selectedEditSlot:[],
+        selectedSlotDetailed:{},
+        dataCompleted:false,
+        action_type:'edit_cleaning_withautofix',
+        cleaningAgentDialog:false,
+        cleaningFollowupDialog:false,
+        followupStat:false,
+        convertedDate:'',
+        popup:{
+          border:'',
+          text:'',
+          bg:'',
+          color:'',
+          type:''
+        }
+
+      },
+      watch: {
+        services: function (val) {
+          // when the hash prop changes, this function will be fired.
+          this.getSlotDetails()
+        } 
+      },
+      mounted(){
+        this.getSlots()
+        this.parseDate()
+        moment.locale('fr');
+        this.currentTime=moment().format().split("T")[1];
+        this.dateSelected = moment().format().split("T")[0];
+        this.today = moment().format().split("T")[0];
+       
+       
+        console.log("today is "+this.today)
+        console.log("time is "+this.currentTime)
+        //console.log("tiime is "+moment().format("hh:mm A"))
+       // moment(currentTime).format("hh:mm"))
+
+        this.formatDate()
+        this.getEvaluationSlots()
+      },
+      methods:{
+        selectEditSlot(slot){
+         
+
+          this.selectedEditSlot.push(slot)
+          this.selectedSlotDetailed[this.convertedDate].push(slot)
+        },
+        removeEditSlot(slot){
+          const index = this.selectedEditSlot.indexOf(slot);
+          if (index > -1) {
+            this.selectedEditSlot.splice(index, 1);
+          }
+          
+        },
+        closeModal(){
+          this.editEval=false
+          this.delAlert=false
+        },
+          setEvaluators(evaluatorList){
+            this.evaluators=evaluatorList
+          },
+        getTime(){
+          
+            if(!this.lateHours)
+            {
+            return this.convertedTime.earlyHours
+            }
+            else{
+              //return this.convertedTime.earlyHours.concat(this.convertedTime.lateHours)
+              return this.timeSlots
+            }
+          },
+          checkToday(slot){
+            if(this.selectedDate==this.today){
+                if((slot-2)<this.currentTime.split(':')[0]){
+                  return true
+                }
+                else{
+                  return false
+                }
+            }
+            else{
+              return false
+            }
+          },
+          convertTime(){
+            this.convertedTime.earlyHours=[],
+            this.convertedTime.lateHours=[]
+            for(var i=8;i<24;i++){
+              if(this.timeSlots.includes(i)){
+                if(i<20)
+                {
+                this.convertedTime.earlyHours.push(i)
+                }
+                else{
+                  this.convertedTime.lateHours.push(i)
+                }
+              }
+            }
+            for(var i=0;i<8;i++){
+              if(this.timeSlots.includes(i)){
+                this.convertedTime.lateHours.push(i)
+              }
+            }
+    
+    
+          },
+          selectTime(time,slot){
+            this.booking.booking_time=time
+            this.selectedTime=slot
+          },
+        formatDate() {
+            var slotDate = this.dateSelected;
+            var slotYear = slotDate.split("-")[0];
+            var slotMonth = slotDate.split("-")[1];
+            var slotDay = slotDate.split("-")[2];
+            if (slotDay[0] == 0) {
+              slotDay = slotDay[1];
+            }
+            if (slotMonth[0] == 0) {
+              slotMonth = slotMonth[1];
+            }
+            this.slotDate = slotDay + "-" + slotMonth + "-" + slotYear;
+            
+          },
+          getRowDiff(item,slots,index){
+            if(slots.length>0){
+              if((index+1)!=item.row)
+              return (item.row-(index+1))
+            }
+            else{
+              return 0
+            }
+
+          },
+          getEvaluationSlots(){
+            this.formatDate()
+            this.booking.booking_date=this.slotDate
+            this.booking.booking_time=''
+            this.selectedTime=''
+            axios
+              .get(
+                 this.url+"/customer/ajax/evaluationslotes?evaluation_booking_date="+this.slotDate
+               
+              )
+              .then((response) => {
+                 this.timeSlots = response.data.slotes;
+                 this.convertTime()
+                 if(response.data['ERROR']){
+                   this.errMsg=response.data['ERROR']
+                 }
+               
+      
+                //this.parseSize();
+              })
+               .catch((error) => {
+                console.log(error);
+              });
+          },
+          parseDate(){
+            this.cleaningDate=this.selectedDate.split('-')[2]+'-'+this.selectedDate.split('-')[1]+'-'+this.selectedDate.split('-')[0]
+          },
+          getSlots(){
+           // console.log($('#cl_cleaning_calendar').val())
+           this.services=[]
+            this.cleaningDate=$('#cl_cleaning_calendar').val()
+            this.combineSlots=[]
+            this.selectedCleaningSlot=[]
+            this.slots={}
+            
+           // this.slot={}
+           this.slot={
+            "1":{
+              slots:[]
+            },
+            "2":{
+              slots:[]
+            },
+            "3":{
+              slots:[]
+            },
+            "4":{
+              slots:[]
+            },
+            "5":{
+              slots:[]
+            },
+            "6":{
+              slots:[]
+            },
+            "7":{
+              slots:[]
+            },
+            "8":{
+              slots:[]
+            }}
+            axios.get(this.url+"/agent/cleaningcallendar?cleaning_callendar_date="+this.cleaningDate).then((response) => {
+                this.slots = response.data;
+                for(var i=0;i<this.slots.notapproved_cleanings.length;i++){
+                   
+                    this.combineSlots.push({type:'not approved',class:'subscription-cleaning-bg',slots:this.slots.notapproved_cleanings[i]})
+                }
+                for(var j=0;j<this.slots.appoved_cleanings.length;j++){
+                   
+                    this.combineSlots.push({type:'approved',class:'onetime-cleaning-bg',slots:this.slots.appoved_cleanings[j]})
+                }
+                for(var k=0;k<this.slots.followup_cleanings.length;k++){
+                    var slot=this.slots.followup_cleanings[k]
+                    //this.slots.followup_cleanings[k]['cleaning_hours']=this.slots.followup_cleanings[k].follow_up.cleaning_hours
+                    slot.cleaning_hours=slot.follow_up.cleaning_hours
+                    slot.order={order_no:slot.follow_up.ticket_no}
+                    this.combineSlots.push({type:'followup',class:'followup-cleaning-status-bg',slots:slot})
+                }
+                this.parseSlots()
+              })
+          },
+          getSlotDetails(slot){
+            var prevSlot=parseInt(slot)-1
+            var nextSlot=parseInt(slot)+1
+           if(!this.selectedCleaningSlot.includes(String(prevSlot)) && !this.selectedCleaningSlot.includes(String(nextSlot)) && this.selectedCleaningSlot.length>0)
+            {
+              this.selectedCleaningSlot=[]
+              this.selectedCleaningSlot.push(String(slot))
+            }
+            var max=Math.max(...this.selectedCleaningSlot)
+            var min=Math.min(...this.selectedCleaningSlot)
+            this.cleaningData.cleaning_datetime_start=this.cleaningDate+' '+this.slotFormat[min].start_time
+            this.cleaningData.cleaning_datetime_end=this.cleaningDate+' '+this.slotFormat[max].end_time
+            this.cleaningData.service_types=this.services
+
+           /* for(var i=0;i<this.selectedCleaningSlot.length;i++){
+              if(this.slot[this.selectedCleaningSlot[i]].slots.length>0)
+              {
+                var index=this.selectedCleaningSlot[i]
+              this.cleaningData.cleaning_datetime_start=this.slot[index].slots[0].slots.start_at
+              this.cleaningData.cleaning_datetime_end=this.slot[index].slots[0].slots.end_at
+              console.log("start:"+this.cleaningData.cleaning_datetime_start,"end:"+this.cleaningData.cleaning_datetime_end)
+              this.cleaningData.service_types=["General Cleaning"]
+              axios.post(this.url+"/agent/cleaningcallendar/availability/",this.cleaningData).then((response) => {
+
+              })
+            }
+            }*/
+            axios.post(this.url+"/agent/cleaningcallendar/availability/",this.cleaningData).then((response) => {
+              this.cleaningDetails=response.data
+            })
+            
+          },
+          checkslot(index){
+            if(this.selectedEditSlot.length<this.no_of_slots)
+            {
+            if(this.selectedEditSlot.length>0)
+            {
+            if(index==0){
+              var nextslot=this.availableSlots[(index+1)]
+              if(this.selectedEditSlot.includes((nextslot.split(' ')[0]+' '+nextslot.split(' ')[1]))){
+                return true
+              }
+              else{
+                return false
+              }
+            }
+            else if(index==(this.availableSlots.length-1)){
+              var prevslot=this.availableSlots[(index-1)]
+              if(this.selectedEditSlot.includes((prevslot.split(' ')[0]+' '+prevslot.split(' ')[1]))){
+                return true
+              }
+              else{
+                return false
+              }
+            }
+            else{  
+              var prevslot=this.availableSlots[(index-1)]
+            var nextslot=this.availableSlots[(index+1)]
+            
+            if(this.selectedEditSlot.includes((prevslot.split(' ')[0]+' '+prevslot.split(' ')[1]))||this.selectedEditSlot.includes((nextslot.split(' ')[0]+' '+nextslot.split(' ')[1]))){
+              return true
+            }
+            else{
+              return false
+            }
+          }
+        }
+          else{
+            return true
+          }
+        }
+        else{
+          return false
+        }
+          },
+          editCleaning(){
+            
+            var temparray=this.selectedDate.split("-")
+            var selectedDate=temparray.reverse().join("-")
+            this.convertedDate=selectedDate
+            this.selectedEditSlot=[]
+            if(!this.selectedSlotDetailed[this.convertedDate]){
+              this.selectedSlotDetailed[this.convertedDate]=[]
+            }
+          
+            this.editEval=true
+            axios.post(this.url+'/agent/cleaningcallendar/cleaning/edit/slotes/',{
+             // cleaning_date:this.currentSlotDetails.start_at.split(' ')[0],
+             
+
+             cleaning_date:selectedDate,
+              number_of_cleaners:this.currentSlotDetails.no_of_cleaners,
+              service_types:this.currentSlotDetails.order_scheduler_book.service_type.name,
+              evaluation_id:this.currentSlotDetails.order.order_no
+            }).then((response) => {
+              this.cleaningEditSlots=response.data.slotes
+
+              this.parseEditSlots()
+            })
+          },
+          editFollowupCleaning(){
+            this.editEval=true
+            this.selectedEditSlot=[]
+            var temparray=this.selectedDate.split("-")
+            var selectedDate=temparray.reverse().join("-")
+            this.convertedDate=selectedDate
+            if(!this.selectedSlotDetailed[this.convertedDate]){
+              this.selectedSlotDetailed[this.convertedDate]=[]
+            }
+            this.cleaningEditSlots={
+              "0":[3,6,9,12],
+              "3":[3,6,9,12],
+              "6":[3,6,9,12],
+              "9":[3,6,9,12],
+              "12":[3,6,9,12],
+              "15":[3,6,9,12],
+              "18":[3,6,9,12],
+              "21":[3,6,9,12]
+
+            }
+            this.parseEditSlots()
+          },
+          saveEdit(){
+            var temparray=this.selectedDate.split("-")
+            var selectedDate=temparray.reverse().join("-")
+            var max=moment(this.selectedEditSlot[0], 'h:mma')
+            var min=moment(this.selectedEditSlot[0], 'h:mma')
+            for(var i=1;i<this.selectedEditSlot.length;i++){
+              var cslot=moment(this.selectedEditSlot[i], 'h:mma')
+              if(moment(cslot).isAfter(max)){
+                max=cslot
+              }
+              if(moment(cslot).isBefore(min)){
+                min=cslot
+              }
+            }
+            console.log("max is "+moment(max).format('hh:mm A'))
+            var end = (moment(max).add(3, 'hours'))
+
+            axios.post(this.url+'/agent/cleaningcallendar/cleaning/edit/save/',{
+             // cleaning_date:this.currentSlotDetails.start_at.split(' ')[0],
+             
+
+            cleaning_start:selectedDate+' '+moment(min).format('hh:mm A'),
+            cleaning_end:selectedDate+' '+moment(end).format('hh:mm A'),
+            no_of_cleaners:this.currentSlotDetails.no_of_cleaners,
+            cleaning_hours:this.currentSlotDetails.cleaning_hours,
+            schedules : [this.currentSlotDetails.id],
+            evaluation_id:this.currentSlotDetails.order.order_no,
+            service_types:['General Cleaning'],
+            action_type:this.action_type
+            }).then((response) => {
+              console.log(response)
+              this.editEval=false,
+              this.selectedEditSlot=[],
+              this.availableSlots=[],
+              this.currentSlot={},
+              this.currentSlotDetails={}
+              this.cleaningAgentDialog=false
+              this.dataCompleted=false
+              this.getSlots()
+              
+            })
+          },
+          saveEditFollowup(){
+            var temparray=this.selectedDate.split("-")
+            var selectedDate=temparray.reverse().join("-")
+            var max=moment(this.selectedEditSlot[0], 'h:mma')
+            var min=moment(this.selectedEditSlot[0], 'h:mma')
+            for(var i=1;i<this.selectedEditSlot.length;i++){
+              var cslot=moment(this.selectedEditSlot[i], 'h:mma')
+              if(moment(cslot).isAfter(max)){
+                max=cslot
+              }
+              if(moment(cslot).isBefore(min)){
+                min=cslot
+              }
+            }
+            console.log("max is "+moment(max).format('hh:mm A'))
+            var end = (moment(max).add(3, 'hours'))
+
+            axios.post(this.url+'/agent/cleaningcallendar/followup/edit/save/',{
+          
+             
+
+            cleaning_start_at:selectedDate+' '+moment(min).format('hh:mm A'),
+            cleaning_end_at:selectedDate+' '+moment(end).format('hh:mm A'),
+            no_of_cleaners:this.currentSlotDetails.follow_up.no_of_cleaners,
+            cleaning_hours:this.currentSlotDetails.follow_up.cleaning_hours,
+            followup_id:this.currentSlotDetails.id
+            }).then((response) => {
+              console.log(response)
+              this.editEval=false,
+              this.selectedEditSlot=[],
+              this.availableSlots=[],
+              this.currentSlot={},
+              this.currentSlotDetails={}
+              this.cleaningFollowupDialog=false
+              this.followupStat=false
+              this.getSlots()
+              
+            })
+          },
+          parseEditSlots(){
+            this.availableSlots=[]
+              for(var slot in this.cleaningEditSlots){
+
+                if(this.cleaningEditSlots[slot].includes(3))
+                {
+                 
+                  
+                   var slotno=(parseInt(slot)/3)+1
+                    var start=this.slotFormat[slotno].start_time
+                    var end=this.slotFormat[slotno].end_time
+                   
+                    var slotAvailable=start+' - '+end
+                  
+                  this.availableSlots.push(slotAvailable)
+                }
+                
+              }
+          },
+          checkCustomerBooking(classType,slot,type){
+            if(type!="followup-cleaning-status-bg"){
+
+            
+            if(classType=='cl-start-end' || classType=='cl-end-only')
+            {
+            if (!slot.evaluation_details.evaluator){
+              return true
+            }
+            else{
+              return false
+            }
+          }
+          else{
+            return false
+          }
+        }
+        else{
+          return false
+        }
+          },
+          checkTeamLeader(slot,type){
+            if(type!='followup-cleaning-status-bg'){
+              if(slot.cleaning_team_order_scheduler.length>0){
+                if(slot.cleaning_team_order_scheduler[0].team_leader){
+                 return  true
+                }
+                else{
+                  return false
+                }
+              }
+              else{
+                return false
+              }
+            }
+            else{
+              if(slot.followupteam_followupschedule.length>0){
+                if(slot.followupteam_followupschedule[0].team_leader){
+                  return  true
+                 }
+                 else{
+                   return false
+                 }
+              }
+              else{
+                return false
+              }
+            }
+            
+          },
+          closeCleaningModal(){
+            this.editEval=false
+            this.cleaningAgentDialog=false
+            this.cleaningFollowupDialog=false
+          },
+          openCleaningModal(item){
+            this.cleaningAgentDialog=false
+            this.dataCompleted=false
+            this.cleaningFollowupDialog=false
+              this.followupStat=false
+            this.currentSlotDetails={}
+            //this.dataCompleted=true
+            console.log("item is "+JSON.stringify(item))
+            
+         if(item.color!='followup-cleaning-status-bg')
+         {
+          if(item.color=='subscription-cleaning-status-bg'){
+            this.popup.color='#139275'
+            this.popup.border='subscription-border'
+            this.popup.type='subscription-popup'
+            this.popup.text='subscription-text',
+            this.popup.bg='subscription-cleaning-status-bg'
+
+
+          }
+          else if(item.color=='onetime-cleaning-status-bg'){
+            this.popup.color='#0D87C5'
+            this.popup.border='onetime-border'
+            this.popup.type='onetime-popup'
+            this.popup.text='onetime-text',
+            this.popup.bg='onetime-cleaning-status-bg'
+          }
+          else if(item.color=='not-approved-status-bg'){
+            this.popup.color='#8B8B8B'
+            this.popup.border='not-approved-border'
+            this.popup.type='not-approved-popup'
+            this.popup.text='not-approved-text',
+            this.popup.bg='not-approved-status-bg'
+          }
+           
+            axios.get(this.url+"/agent/cleaningcallendar/cleaning/popup/?cleaning_start="+item.slots.start_at+'&cleaning_end='+item.slots.end_at+'&evaluation_id='+item.slots.order.order_no).then((response) => {
+              this.currentSlotDetails=response.data.cleaning_details[0]
+              this.no_of_slots=parseInt(this.currentSlotDetails.cleaning_hours)/3
+              this.cleaningAgentDialog=true
+              this.dataCompleted=true
+             // $('#cleanAgentModal').modal('show');
+              
+            })
+          }
+          else{
+         
+
+          
+            axios.get(this.url+"/agent/cleaningcallendar/followupcleaning/popup/?followup_scheduler_id="+item.slots.id).then((response) => {
+              this.currentSlotDetails=response.data.followup_cleanings[0]
+              this.no_of_slots=parseInt(this.currentSlotDetails.follow_up.cleaning_hours)/3   
+              this.cleaningFollowupDialog=true
+              this.followupStat=true
+              
+             
+               
+            
+              
+            })
+          }
+          this.currentSlot=item
+            
+
+          },
+          parseSlots(){
+            for(var i=0;i<this.combineSlots.length;i++){
+                var startdate=this.combineSlots[i].slots.start_at.split(' ')[0]
+                var enddate=this.combineSlots[i].slots.end_at.split(' ')[0]
+                var startslot=this.combineSlots[i].slots.start_at.split(' ')[1]+' '+this.combineSlots[i].slots.start_at.split(' ')[2]
+                var endslot=this.combineSlots[i].slots.end_at.split(' ')[1]+' '+this.combineSlots[i].slots.end_at.split(' ')[2]
+                var slots=[]
+                if(parseInt(startslot.split(':')[0])%3==0 && parseInt(endslot.split(':')[0])%3==0 && parseInt(startslot.split(':')[1])==0 && parseInt(endslot.split(':')[1])==0){
+                  var color=''
+                  var slot=moment(this.cleaningDate,'DD-MM-YYYY HH:mm A')
+               //   var limit=moment(startdate+' 12:00 AM').format('DD MM YYYY h:mm:ss a').add(1,'days')
+                  var limit =moment(this.cleaningDate,'DD-MM-YYYY HH:mm A').add(1, 'days')
+                 // var lastday =moment(this.cleaningDate,'DD-MM-YYYY HH:mm A').(1, 'days')
+                  
+                  
+                  
+                  console.log("slot:"+slot+'limit:'+limit)
+                  var date_start=this.combineSlots[i].slots.start_at
+                  var date_end=this.combineSlots[i].slots.end_at
+                  /*var beginningTime = moment(startslot, 'h:mma');
+                  var endTime = moment(endslot, 'h:mma');*/
+                  console.log("begold time is :"+date_start+'end time :'+date_end)
+                  var beginningTime=moment(date_start,'DD-MM-YYYY HH:mm A')
+                  var endTime=moment(date_end,'DD-MM-YYYY HH:mm A')
+                  console.log("beg time is :"+beginningTime+'end time :'+endTime)
+                  if(this.combineSlots[i].type!='followup')
+                  {
+                  if(this.combineSlots[i].slots.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE'){
+                    color='onetime-cleaning-status-bg'
+                  }
+                  else if(this.combineSlots[i].slots.order_scheduler_book.cleaning_policy=='SUBSCRIPTION'){
+                    color='subscription-cleaning-status-bg'
+                  }
+                
+                  if(this.combineSlots[i].slots.work_status=='CLEANING_CANCELLED')
+                  {
+                    color='rejected-status-bg'
+                  }
+                }
+                  if(this.combineSlots[i].type=='followup')
+                  {
+                    color='followup-cleaning-status-bg'
+                  }
+                  else if(this.combineSlots[i].type=='not approved'){
+                    if(!this.combineSlots[i].slots.order.order_status)
+                    {
+                      color='not-approved-not-paid-status-bg'
+                    }
+                    else{
+                      color='not-approved-status-bg'
+                    }
+                  }
+                  else if(this.combineSlots[i].type=='approved'){
+                    if(!this.combineSlots[i].slots.order.order_status)
+                    {
+                      color='approved-not-paid-status-bg'
+                    }
+                   /* else
+                    {
+                      color='approved-bg'
+                    }*/
+                  }
+                  
+                  while(slot.isBefore(limit)){
+                    if(slot.isBefore(endTime) && slot.isSameOrAfter(beginningTime)){
+                      
+                      if(slot.isSame(beginningTime) && !(moment(slot).add(3, 'hours')).isSame(endTime)){
+                        var slotData={
+                          slot:moment(slot).format('hh:mm A'),
+                          classType:'cl-start-only',
+                          color:color,
+                          startTime:startslot,
+                          endTime:endslot,
+                          startDate:startdate,
+                          endDate:enddate,
+                          row:'',
+                          slots:this.combineSlots[i].slots
+
+                        }
+                           
+                      }
+                      else if(slot.isSame(beginningTime)&& (moment(slot).add(3, 'hours')).isSame(endTime)){
+                        var slotData={
+                          slot:moment(slot).format('hh:mm A'),
+                          classType:'cl-start-end',
+                          color:color,
+                          startTime:startslot,
+                          endTime:endslot,
+                          startDate:startdate,
+                          endDate:enddate,
+                          row:'',
+                          slots:this.combineSlots[i].slots
+                         
+
+                        }
+                           
+                      }
+                      else if(!slot.isSame(beginningTime) && (moment(slot).add(3, 'hours')).isSame(endTime)){
+                        var slotData={
+                          slot:moment(slot).format('hh:mm A'),
+                          classType:'cl-end-only',
+                          color:color,
+                          startTime:startslot,
+                          endTime:endslot,
+                          startDate:startdate,
+                          endDate:enddate,
+                          row:'',
+                          slots:this.combineSlots[i].slots
+
+                        }
+
+                      }
+                      else{
+                        var slotData={
+                          slot:moment(slot).format('hh:mm A'),
+                          classType:'cl-continue',
+                          color:color,
+                          startTime:startslot,
+                          endTime:endslot,
+                          startDate:startdate,
+                          endDate:enddate,
+                          row:'',
+                          slots:this.combineSlots[i].slots
+
+                        }
+
+                      }
+                      console.log("slot data is"+JSON.stringify(slotData))
+                      this.parsedSlots.push(slotData)
+                      var slotFormatted=moment(slot).format('hh:mm A')
+                  console.log("sloformatted is "+slotFormatted)
+                  if(slotFormatted=='12:00 AM'){
+                    slots.push(1)
+                    this.slot["1"].slots.push(slotData)
+                  }
+                  else if(slotFormatted=='03:00 AM'){
+                    slots.push(2)
+                    this.slot["2"].slots.push(slotData)
+                  }
+                  else if(slotFormatted=='06:00 AM'){
+                    slots.push(3)
+                    this.slot["3"].slots.push(slotData)
+                  }
+                  else if(slotFormatted=='09:00 AM'){
+                    slots.push(4)
+                    this.slot["4"].slots.push(slotData)
+                  }
+                  else if(slotFormatted=='12:00 PM'){
+                    slots.push(5)
+                    this.slot["5"].slots.push(slotData)
+                  }
+                  else if(slotFormatted=='03:00 PM'){
+                    slots.push(6)
+                    this.slot["6"].slots.push(slotData)
+                  }
+                  else if(slotFormatted=='06:00 PM'){
+                    slots.push(7)
+                    this.slot["7"].slots.push(slotData)
+                  }
+                  else if(slotFormatted=='09:00 PM'){
+                    slots.push(8)
+                    this.slot["8"].slots.push(slotData)
+                  }
+                      console.log("end time :" +endslot+",start time :"+startslot+",slot :"+moment(slot).format('hh:mm A'))
+                  }
+                 
+                  
+                  slot=moment(slot).add(3, 'hours');  
+                  }
+                  console.log("slots:" +slots)
+                  var rowno=this.setRow(slots)
+                  console.log("row no:" +rowno)
+                  for(var j=0;j<slots.length;j++){
+                    var slotind=slots[j]
+                    if(this.slot[slotind].slots.length>0){
+                      this.slot[slotind].slots[(this.slot[slotind].slots.length-1)].row=rowno
+                    }
+                   
+                  }
+                 
+                  
+                }
+
+                /*    continous slot */
+             /*   else{
+                  if(this.combineSlots[i].type!='followup')
+                  {
+                  if(this.combineSlots[i].slots.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE'){
+                    color='onetime-cleaning-status-bg'
+                  }
+                  else if(this.combineSlots[i].slots.order_scheduler_book.cleaning_policy=='SUBSCRIPTION'){
+                    color='subscription-cleaning-status-bg'
+                  }
+                
+                  if(this.combineSlots[i].slots.work_status=='CLEANING_CANCELLED')
+                  {
+                    color='rejected-status-bg'
+                  }
+                }
+                  if(this.combineSlots[i].type=='followup')
+                  {
+                    color='followup-cleaning-status-bg'
+                  }
+                  else if(this.combineSlots[i].type=='not approved'){
+                    if(!this.combineSlots[i].slots.order.order_status)
+                    {
+                      color='not-approved-not-paid-status-bg'
+                    }
+                    else{
+                      color='not-approved-status-bg'
+                    }
+                  }
+                  else if(this.combineSlots[i].type=='approved'){
+                    if(!this.combineSlots[i].slots.order.order_status)
+                    {
+                      color='approved-not-paid-status-bg'
+                    }
+                   
+                  }
+
+
+
+                }*/
+            }
+          },
+          setRow(slots){
+           /* var max=this.slot[slots[0]].slots.length
+            var rows =[]
+            if(max>0)
+            {
+              for(var j=0;j<max;j++){
+                rows.push(this.slot[slots[0]].slots[j].row)
+              }
+            }*/
+            var max=0
+            var rows=[]
+            
+            var maxslots=[]
+            for(var i=0;i<slots.length;i++){
+              maxslots.push(this.slot[slots[i]].slots.length)
+              if(this.slot[slots[i]].slots.length>max){
+                max=this.slot[slots[i]].slots.length
+                for(var j=0;j<max;j++){
+                  rows.push(this.slot[slots[i]].slots[j].row)
+                }
+
+              }
+            }
+            
+            console.log("slots are "+JSON.stringify(maxslots)+"max is:" +max)
+            if(rows.length>0){
+              if(max<(Math.max(...rows)+1)){
+                max=Math.max(...rows)+1
+              }
+              console.log("rows are "+JSON.stringify(rows)+"max is:" +max)
+            }
+           
+            return max
+          },
+          startChecker(start,end,hour){
+              start=start.split(':')[0]
+              end=end.split(':')[0]
+            if(start[0]=='0'){
+                start=start[1]
+            }
+            if(end[0]=='0'){
+                end=end[1]
+            }
+            var begin=parseInt(start)
+            var stop=begin+hour
+            if(stop>12){
+                stop=stop-12
+            }
+            console.log("stop :"+stop)
+            console.log("end :"+end)
+            if(stop==end){
+
+                return true
+            }
+
+            
+          },
+          checkAll(slot_start,slot_end,start_at,end_at,cleaning_hours){
+            this.cleaningDate='31-07-2021'
+              var endTime=end_at.split(' ')[1]
+              var endDate=end_at.split(' ')[0]
+              
+              var endUnit=end_at.split(' ')[2]
+              var startTime=start_at.split(' ')[1]
+              var startDate=start_at.split(' ')[0]
+              var startUnit=start_at.split(' ')[2]
+              var slotStart=slot_start.split(' ')[0]
+              var slotStartUnit=slot_start.split(' ')[1]
+              var slotEnd=slot_end.split(' ')[0]
+              var slotEndUnit=slot_end.split(' ')[1]
+              if(cleaning_hours==3){
+                  if(startTime==slotStart && slotStartUnit==startUnit && slotEndUnit==endUnit){
+                      return 'start-end'
+                  }
+              }
+
+              else if(cleaning_hours>3){
+                if(startTime==slotStart && endTime!=slotEnd && slotStartUnit==startUnit){
+                    return 'start-only'
+                }
+                else if(startTime!=slotStart && endTime==slotEnd && slotEndUnit==endUnit && this.cleaningDate==endDate){
+                 
+                    return 'end-only'
+                   
+                   
+                    
+                }
+                else {
+                    
+
+                        var slotStartVal=parseInt(slotStart.split(':')[0])
+                        var slotEndVal=parseInt(slotEnd.split(':')[0])
+                        var startVal=parseInt(startTime.split(':')[0])
+                        var endVal=parseInt(endTime.split(':')[0])
+                        if(startDate==endDate){
+                        if(startUnit=='PM'){
+                            startVal=startVal+12
+                        }
+                        if(endUnit=='PM'){
+                            endVal=endVal+12
+                        }
+                        if(slotStartUnit=='PM'){
+                            slotStartVal=slotStartVal+12
+                        }
+                        if(slotEndUnit=='PM'){
+                            slotEndVal=slotEndVal+12
+                        }
+                            if(slotStartVal<endVal && slotStartVal>startVal){
+                                return 'continue'
+                            }
+                        }
+                        else{
+                            if(startUnit=='PM'){
+                                startVal=startVal+12
+                            }
+                            if(endUnit=='PM'){
+                                endVal=endVal+12
+                            }
+                            if(slotStartUnit=='PM'){
+                                slotStartVal=slotStartVal+12
+                            }
+                            if(slotEndUnit=='PM'){
+                                slotEndVal=slotEndVal+12
+                            }
+                            if(slotStartVal>startVal && slotStartVal!=24){
+                                return 'continue'
+                            }
+                        }
+
+                        
+
+                    
+                   
+                    
+                }
+
+              }
+
+
+
+          },
+          changeCleaningDate(){
+            console.log("new date "+ $('#cl_cleaning_calendar').val())
+
+          }
+      }
+  })
+
+ 
+  //New Date picker
+  $('.next-day').on('click', function () {
+
+    $selectedDay            = $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").getDate();
+    var $tmpSelectedDay     = new Date($selectedDay) 
+    $tmpSelectedDay.setDate($tmpSelectedDay.getDate() + 1);
+    $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+        
+ });
+
+
+$('.prev-day').on('click', function () {
+
+    $selectedDay            = $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").getDate();
+    var $tmpSelectedDay     = new Date($selectedDay) 
+    $tmpSelectedDay.setDate($tmpSelectedDay.getDate() - 1);
+    $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+
+});
+
+$('.today-date').on('click', function () {
+    var $tmpSelectedDay     = new Date();
+    $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+});
+
+

@@ -1,6 +1,9 @@
 from django.conf.urls import include, url
 from customer import views 
 
+app_name = 'customer'
+
+
 #all users urls
 
 urlpatterns = [

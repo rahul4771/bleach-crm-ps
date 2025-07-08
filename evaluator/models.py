@@ -165,7 +165,7 @@ class CleaningType(models.Model):
 
 class CleaningMethod(models.Model):	
 	name 				= models.CharField(max_length=100,blank=False,null=False)
-	service_type 		= models.ForeignKey('ServiceType',blank=True,null=True,related_name='method_service_type')
+	service_type 		= models.ForeignKey('ServiceType',on_delete=models.PROTECT,blank=True,null=True,related_name='method_service_type')
 	
 	is_active       	= models.BooleanField(null=False,blank=True,default=True)
 	created         	= models.DateTimeField(auto_now_add=True)
@@ -192,7 +192,7 @@ class AreaType(models.Model):
 
 class CleaningSection(models.Model):	
 	name 				= models.CharField(max_length=100,blank=False,null=False)
-	service_type 		= models.ForeignKey('ServiceType',blank=True,null=True,related_name='cleaning_section_service_type')
+	service_type 		= models.ForeignKey('ServiceType',on_delete=models.PROTECT,blank=True,null=True,related_name='cleaning_section_service_type')
 	
 	is_active       	= models.BooleanField(null=False,blank=True,default=True)
 	created         	= models.DateTimeField(auto_now_add=True)
@@ -209,9 +209,9 @@ class Evaluation(models.Model):
 	evaluation_id		= models.CharField(max_length=100,blank=False,null=False)
 	tracking_no         = models.CharField(max_length=20,blank=False,null=False)
 
-	call_attender 		= models.ForeignKey(UserProfile,blank=True,null=True,related_name='attender_evaluation')
+	call_attender 		= models.ForeignKey(UserProfile,on_delete=models.PROTECT,blank=True,null=True,related_name='attender_evaluation')
 	evaluator_note      = models.CharField(max_length=1000,blank=False,null=False)
-	customer			= models.ForeignKey(UserProfile,blank=True,null=True,related_name='customer_evaluation')
+	customer			= models.ForeignKey(UserProfile,on_delete=models.PROTECT,blank=True,null=True,related_name='customer_evaluation')
 
 	estimated_cost		= models.FloatField(blank=True,null=True,default=0)
 	discount			= models.FloatField(blank=True,null=True,default=0)
@@ -222,10 +222,10 @@ class Evaluation(models.Model):
 	total_cost          = models.FloatField(blank=True,null=True,default=0)
 	
 	fine_amount         = models.FloatField(blank=True,null=True,default=0)
-	fine_created_by     = models.ForeignKey(UserProfile,blank=True,null=True,related_name='finecreatedby')
+	fine_created_by     = models.ForeignKey(UserProfile,on_delete=models.PROTECT,blank=True,null=True,related_name='finecreatedby')
 	
 	writeback_amount    = models.FloatField(blank=True,null=True,default=0)
-	writeback_created_by= models.ForeignKey(UserProfile,blank=True,null=True,related_name='writebackcreatedby')
+	writeback_created_by= models.ForeignKey(UserProfile,on_delete=models.PROTECT,blank=True,null=True,related_name='writebackcreatedby')
 
 	quatation_status		= models.CharField(max_length=50,blank=True,null=True,choices=QUATATION_CHOICES)
 	quatation_approved_date = models.DateTimeField(blank=True,null=True)
@@ -253,12 +253,12 @@ class Evaluation(models.Model):
 #Store the Onsite Details by the Evaluator
 
 class EvaluationDetails(models.Model):
-	evaluation 			= models.ForeignKey('Evaluation',blank=True,null=True,related_name='evaluation_details')
-	evaluator           = models.ForeignKey(UserProfile,blank=True,null=True,related_name='evaluator_evaluation')
+	evaluation 			= models.ForeignKey('Evaluation',on_delete=models.PROTECT,blank=True,null=True,related_name='evaluation_details')
+	evaluator           = models.ForeignKey(UserProfile,on_delete=models.PROTECT,blank=True,null=True,related_name='evaluator_evaluation')
 	proposed_time		= models.DateTimeField(blank=True,null=True)
 	check_in			= models.DateTimeField(blank=True,null=True)
 	check_out			= models.DateTimeField(blank=True,null=True)
-	address 			= models.ForeignKey(Address,blank=True,null=True,related_name='evaluation_details_address')
+	address 			= models.ForeignKey(Address,on_delete=models.PROTECT,blank=True,null=True,related_name='evaluation_details_address')
 	
 	attender_note 		= models.CharField(max_length=5000,blank=True,null=True)
 	evaluator_note		= models.CharField(max_length=500,blank=True,null=True)
@@ -281,10 +281,10 @@ class EvaluationDetails(models.Model):
 
 #For Multiple Cleaning evaluation details
 class EvaluationBook(models.Model):
-	evaluation_details 	= models.ForeignKey('EvaluationDetails',blank=True,null=True,related_name='evaluation_book_evaluation_details')	
+	evaluation_details 	= models.ForeignKey('EvaluationDetails',on_delete=models.PROTECT,blank=True,null=True,related_name='evaluation_book_evaluation_details')	
 	
 	cleaning_policy		= models.CharField(max_length=20,blank=True,null=True,choices=CLEANING_CHOICES)
-	service_type		= models.ForeignKey('ServiceType',blank=True,null=True,related_name='evaluation_details_service_type')
+	service_type		= models.ForeignKey('ServiceType',on_delete=models.PROTECT,blank=True,null=True,related_name='evaluation_details_service_type')
 	area_type	 		= models.CharField(max_length=100,blank=True,null=True)
 	cleaning_method 	= models.CharField(max_length=100,blank=True,null=True)
 	location_type		= models.CharField(max_length=100,blank=True,null=True)
@@ -297,8 +297,8 @@ class EvaluationBook(models.Model):
 	evaluator_note		= models.CharField(max_length=5000,blank=True,null=True)
 	
 	status              = models.CharField(max_length=20,blank=True,null=True,choices=BOOK_CHOICES)
-	cancell_requester   = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cancell_requester')
-	cancelled_by        = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cancell_by')
+	cancell_requester   = models.ForeignKey(UserProfile,on_delete=models.PROTECT,blank=True,null=True,related_name='cancell_requester')
+	cancelled_by        = models.ForeignKey(UserProfile,on_delete=models.PROTECT,blank=True,null=True,related_name='cancell_by')
 	
 	is_active           = models.BooleanField(null=False,blank=True,default=True)
 	created             = models.DateTimeField(auto_now_add=True)
@@ -312,7 +312,7 @@ class EvaluationBook(models.Model):
 #For Tracking Medias Uploaded by Evaluator on Site
 
 class EvaluationMedia(models.Model):
-	evaluation_book 		 = models.ForeignKey('EvaluationBook',blank=False,null=False,related_name='evaluationbookmedia')
+	evaluation_book 		 = models.ForeignKey('EvaluationBook',on_delete=models.PROTECT,blank=False,null=False,related_name='evaluationbookmedia')
 	media                    = models.FileField(upload_to='evaluationbook/',blank=True,null=True,max_length=1000)
 	media_type 				 = models.CharField(max_length=20,blank=False,null=False,choices=MEDIA_CHOICES)
 	taken_status 			 = models.CharField(max_length=20,blank=False,null=False,choices=MEDIA_TAKEN_CHOICES)
@@ -348,7 +348,7 @@ def submission_delete(sender, instance, **kwargs):
     
 
 class EvaluationBookSection(models.Model):
-	evaluation_book = models.ForeignKey('EvaluationBook',blank=False,null=False,related_name='evaluationsection_book')
+	evaluation_book = models.ForeignKey('EvaluationBook',on_delete=models.PROTECT,blank=False,null=False,related_name='evaluationsection_book')
 	section_name 	= models.CharField(max_length=100,blank=False,null=False)
 	section_name_arabic = models.CharField(max_length=100,blank=True,null=True)
 	category		= models.CharField(max_length=100,blank=True,null=True)
@@ -421,7 +421,7 @@ class EvaluationBookSection(models.Model):
 
 
 class EvaluationSectionKeynote(models.Model):
-	evaluation_section = models.ForeignKey('EvaluationBookSection',blank=False,null=False,related_name='keynotesections')
+	evaluation_section = models.ForeignKey('EvaluationBookSection',on_delete=models.PROTECT,blank=False,null=False,related_name='keynotesections')
 	sub_area 		   = models.CharField(max_length=100,blank=True,null=True)
 	quantity 		   = models.CharField(max_length=100,blank=True,null=True)
 	completion_status  = models.BooleanField(null=False,blank=True,default=False)
@@ -437,7 +437,7 @@ class EvaluationSectionKeynote(models.Model):
 
 
 class EvaluationSectionAddons(models.Model):
-	evaluation_section 	 = models.ForeignKey('EvaluationBookSection',blank=False,null=False,related_name='addonsections')
+	evaluation_section 	 = models.ForeignKey('EvaluationBookSection',on_delete=models.PROTECT,blank=False,null=False,related_name='addonsections')
 	name 		         = models.CharField(max_length=100,blank=True,null=True)
 	addon_cost 	         = models.FloatField(blank=True,null=True)
 	quantity 		   	 = models.CharField(max_length=100,blank=True,null=True)

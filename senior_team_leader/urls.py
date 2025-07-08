@@ -1,6 +1,9 @@
 from django.conf.urls import include, url
 from senior_team_leader import views 
 
+app_name = 'senior_team_leader'
+
+
 urlpatterns = [
 
 	url(r'^dashboard/$',views.StlHome.as_view(),name='stldash-board'),

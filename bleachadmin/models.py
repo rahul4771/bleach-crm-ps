@@ -7,7 +7,7 @@ SERVICEDIVISION_CHOICES = (('SOFA','SOFA'),
 
 
 class ServiceProductivity(models.Model):
-	service_type     = models.ForeignKey(ServiceType,blank=True,null=True,related_name='productivity_service_type')
+	service_type     = models.ForeignKey(ServiceType,on_delete=models.PROTECT,blank=True,null=True,related_name='productivity_service_type')
 	perhour_cleaning = models.CharField(max_length=100,blank=True,null=True)
 
 	is_newkitchen       = models.BooleanField(null=False,blank=True,default=False)
@@ -30,7 +30,7 @@ class ServiceProductivity(models.Model):
 		return str(self.service_type.name)
 
 class ServicePriceRange(models.Model):
-	service_type     = models.ForeignKey(ServiceType,blank=True,null=True,related_name='pricerange_service_type')
+	service_type     = models.ForeignKey(ServiceType,on_delete=models.PROTECT,blank=True,null=True,related_name='pricerange_service_type')
 	name             = models.CharField(max_length=100,blank=True,null=True)
 	minimum_area     = models.FloatField(blank=True,null=True)
 	maximum_area     = models.FloatField(blank=True,null=True)
@@ -55,7 +55,7 @@ class ServicePriceRange(models.Model):
 
 
 class ServiceAddOns(models.Model):
-	service_type     = models.ForeignKey(ServiceType,blank=True,null=True,related_name='addons_service_type')
+	service_type     = models.ForeignKey(ServiceType,on_delete=models.PROTECT,blank=True,null=True,related_name='addons_service_type')
 	name             = models.CharField(max_length=100,blank=True,null=True)
 	category         = models.CharField(max_length=100,blank=True,null=True)
 	size             = models.CharField(max_length=100,blank=True,null=True)

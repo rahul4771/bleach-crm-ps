@@ -18,11 +18,11 @@ PAYMENT_GATEWAY_CHOICES = (
 
 #Payment History of Customers...There may be multiple payment history for single order(in case of subscription,down payment)
 class PaymentHistory(models.Model):
-	order 						 = models.ForeignKey(Order,blank=False,null=False,related_name='history_order')
+	order 						 = models.ForeignKey(Order,on_delete=models.PROTECT,blank=False,null=False,related_name='history_order')
 	receipt_no                   = models.IntegerField(blank=True,null=True)
 	amount_paid 				 = models.FloatField(blank=True,null=True)
 	payment_mode 				 = models.CharField(max_length=100,blank=True,null=True,choices=PAYMENT_MODE_CHOICES)
-	received_by 				 = models.ForeignKey(UserProfile,blank=True,null=True,related_name='payment_history_received_by')
+	received_by 				 = models.ForeignKey(UserProfile,on_delete=models.PROTECT,blank=True,null=True,related_name='payment_history_received_by')
 	paid_date 					 = models.DateTimeField(blank=True,null=True)
 
 	check_no            		 = models.CharField(max_length=100,blank=True,null=True)
@@ -67,7 +67,7 @@ class DailySales(models.Model):
 		return str(self.sales_date)
 
 class AdditionalChargeHistory(models.Model):
-	order 						 = models.ForeignKey(Order,blank=False,null=False,related_name='additionalcharges')
+	order 						 = models.ForeignKey(Order,on_delete=models.PROTECT,blank=False,null=False,related_name='additionalcharges')
 	additional_charge_date       = models.DateField(blank=True,null=True)
 	additional_charge            = models.FloatField(blank=True,null=True)
 

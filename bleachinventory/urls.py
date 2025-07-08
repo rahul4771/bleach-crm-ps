@@ -1,6 +1,8 @@
 from django.conf.urls import include, url
 from bleachinventory import views
 
+app_name = 'bleach-inventory'
+
 urlpatterns = [
 
 url(r'^dashboard/$',views.InventoryHome.as_view(),name='inventorydash-board'),

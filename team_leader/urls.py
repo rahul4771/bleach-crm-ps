@@ -1,6 +1,9 @@
 from django.conf.urls import include, url
 from team_leader import views 
 
+app_name = 'team_leader'
+
+
 urlpatterns = [
 
 	url(r'^dashboard/$',views.TlHome.as_view(),name='tldash-board'),

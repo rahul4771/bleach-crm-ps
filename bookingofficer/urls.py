@@ -2,6 +2,9 @@
 from django.conf.urls import include, url
 from bookingofficer import views 
 
+app_name = 'bookingofficer'
+
+
 urlpatterns = [
 
 	url(r'^dashboard/$',views.AdminHome.as_view(),name='bookingofficerdash-board'),

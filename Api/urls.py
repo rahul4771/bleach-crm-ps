@@ -1,6 +1,9 @@
 from django.conf.urls import include, url
 from Api import views 
 
+app_name = 'api'
+
+
 urlpatterns = [
 
 	url(r'countries/$',views.CountriesAPI.as_view(),name='countries'),
