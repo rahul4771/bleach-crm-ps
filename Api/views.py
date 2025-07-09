@@ -2074,7 +2074,7 @@ class DailySalesAPI(APIView):
 			else:
 			 	orderschedules = OrderScheduler.objects.select_related('order').prefetch_related('order__order_scheduler_order').filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q( Q(work_status = 'CLEANING_CANCELLED') | Q(work_status='CLEANING_FULFILLED') | Q(work_status='CLEANING_TEAM_ASSIGNED') | Q(work_status='CLEANING_IN_PROGRESS'))).annotate(no_of_order_visits=Count('order__order_scheduler_order'),gross_amount=Sum('cleaning_cost')) #.aggregate(gross_amount=Coalesce(Sum('cleaning_cost'),0), cancelled_amount=Coalesce(Sum(F('order__evaluation__cancelled_amount')/F('no_of_order_visits'),output_field=FloatField()),0), write_off_amount=Coalesce(Sum(F('order__evaluation__writeback_amount')/F('no_of_order_visits'),output_field=FloatField()),0), promocode_amount=Coalesce(Sum(F('order__evaluation__promocode_amount')/F('no_of_order_visits'),output_field=FloatField()),0), fine_amount=Coalesce(Sum(F('order__evaluation__fine_amount')/F('no_of_order_visits'),output_field=FloatField()),0) )
 			
-			gross_amount = 0
+		    gross_amount = 0
 			subtraction_amount = 0
 			addition_amount = 0
 
