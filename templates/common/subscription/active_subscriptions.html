@@ -319,6 +319,7 @@
 <th data-hide="phone,tablet" style="text-align:center;">Paid/Total (in KD)</th>
 {% comment %} <th>Contact</th> {% endcomment %}
 <th style="text-align:center;" data-hide="phone,tablet">Debit/Credit</th>
+<th style="text-align:center;" data-hide="phone,tablet">Invoice Number</th>
 <th style="text-align:center;" data-hide="phone,tablet">Shortcuts</th>
 </tr>
 </thead>
@@ -337,6 +338,7 @@
     <td data-label="Remining" class="red-text" style="text-align:center;font-size:19px;">{{invoice.balance|floatformat:3|default_if_none:'0'}}</td>
     {% endif %}
     
+    <td data-label="Remining" style="text-align:center;">INV{{invoice.invoice_no|default_if_none:''}}</td>
     <td data-label="" style="text-align:center;">
 
     <div class="btn-group" id="actionDropdown">

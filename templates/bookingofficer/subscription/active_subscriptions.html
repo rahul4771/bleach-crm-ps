@@ -199,6 +199,7 @@
 <th data-hide="phone,tablet" style="text-align:center;">Paid/Total (in KD)</th>
 {% comment %} <th>Contact</th> {% endcomment %}
 <th style="text-align:center;" data-hide="phone,tablet">Debit/Credit</th>
+<th style="text-align:center;" data-hide="phone,tablet">Invoice Number</th>
 <th data-hide="phone,tablet"></th>
 </tr>
 </thead>
@@ -217,6 +218,7 @@
     <td data-label="Remining" class="red-text" style="text-align:center;font-size:19px;">{{invoice.balance|default_if_none:'0'}}</td>
     {% endif %}
     
+    <td data-label="Remining" style="text-align:center;">INV{{invoice.invoice_no|default_if_none:''}}</td>
     <td data-label="" style="text-align:center;">
     <img {% if invoice.dropzerosamountpaid == invoice.dropzerostotalamount %}src="{% static 'files/images/send_invoice_greay.png' %}"{% else %} {% if invoice.balance <= 0 %}src="{% static 'files/images/send_invoice_green.png' %}" class="clickable-cursor send_invoice"{% else %}src="{% static 'files/images/send_invoice_red.png' %}" class="clickable-cursor send_invoice" {% endif %} {% endif %} align="absmiddle" title="Send Invoice" data-id="{{invoice.id}}" data-blcno="{{invoice.evaluation.evaluation_id}}" data-customername="{{invoice.evaluation.customer.mobile_number}}" data-contactno="{{invoice.evaluation.customer.name}}" {% for schedule in invoice.orderschedules %}{% if forloop.first %}data-startdate="{{schedule.start_at|date:'d-m-Y'}}" {% endif %}{% if forloop.last %}data-enddate="{{schedule.start_at|date:'d-m-Y'}}"{% endif %}{% endfor %} data-totalamount="{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}}" data-paidamount="{{invoice.amount_paid|default_if_none:'0.000'|floatformat:'3'}}" data-balance="{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}" data-remining="{{invoice.balance|default_if_none:'0.000'|floatformat:'3'}}" width="32.5px" height="32.5px">&nbsp&nbsp
     <a href="/customer/subscription/quatation/paw{{invoice.evaluation.evaluation_id|slice:'3:'}}{{invoice.evaluation.customer.username}}" title="View Quotation" target="_blank"><img src="{% static 'files/images/view-icon-green.png' %}" align="absmiddle" class="download-icon"></a>&nbsp&nbsp
