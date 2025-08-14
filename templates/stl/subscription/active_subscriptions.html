@@ -198,6 +198,7 @@
 <th data-hide="phone" style="text-align:center;">Completed/Total</th>
 {% comment %} <th>Contact</th> {% endcomment %}
 <th style="text-align:center;" data-hide="phone,tablet">Area</th>
+<th style="text-align:center;" data-hide="phone,tablet">Invoice Number</th>
 <th data-hide="phone,tablet"></th>
 </tr>
 </thead>
@@ -210,6 +211,7 @@
     <td data-label="Colmpleted Cleaning" style="text-align:center;">{{invoice.completed_cleanings_count}}/{{invoice.total_cleanings_count}}</td>
         
     <td data-label="Remining" style="text-align:center;">{{invoice.area}}</td>
+    <td data-label="Remining" style="text-align:center;">INV{{invoice.invoice_no|default_if_none:''}}</td>
     
     <td data-label="" style="text-align:center;">
     <img src="{% static 'files/images/order_blue.png' %}" align="absmiddle" class="clickable-row" data-href="{% url 'stl:stl-order-details' invoice.id %}" width="32.5px" height="32.5px">
