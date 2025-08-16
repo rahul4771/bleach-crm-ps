@@ -1409,66 +1409,83 @@
   </div>
    <!-- send invoice modal ends here-->
 
-   <div id="addStore" class="inv-sidedrawer">
+   <!-- <div id="addStore" class="inv-sidedrawer"> -->
+   <div id="addStore" class="inv-sidedrawer hidden-xs hidden-sm hidden-md hidden-lg hidden-xl p-0">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 p-0 m-0">
+            <div class="inv-sidedrawer-inner">
+                <div class="d-flex">
+                    <div class="inv-drawer-head" id="itemHead">
+                        Payment details
+                    </div>
+                    <div class="right-pos">
 
-    <div class="inv-sidedrawer-inner">
-        <div class="d-flex">
-            <div class="inv-drawer-head" id="itemHead">
-                Payment details
-            </div>
-            <div class="right-pos">
-
-                <button onclick="closeNavAddStore()" class="img-button">
-                    <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
-                </button>
-            </div>
-        </div>
-        <hr>
-        <div class="row mt-40">
-            <div class="col-md-12">
-                <div style="border-top:1px solid #c4c4c4">
-                  <table class="inv-table">
-                      <tr>
-
-                          <th >
-                              Date
-                          </th>
-                          <th >
-                            Payment Type
-                          </th>
-                          <th>
-                            Amount (KD)
-                          </th>
-                      </tr>
-                      <tbody id="items_container">
-
-                        {% for payment in order.paymenthistory %}
-                        <tr>
-                            <td>
-                                {{payment.paid_date|date:'d-m-Y'}}
-                            </td>
-                            <td>
-                                {% if payment.payment_mode == 'ONLINECREDIT' %}
-                                    {{payment.payment_gateway}}
-                                {% else %}
-                                    {{payment.payment_mode}}
-                                {% endif %}
-                            </td>
-                            <td>
-                                {{payment.amount_paid|default_if_none:'0.000'|floatformat:3}} KD
-                            </td>
-                        </tr>
-                        {% endfor %}
-
-                    </tbody>
-                  </table>
+                        <button onclick="closeNavAddStore()" class="img-button">
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+                    </div>
                 </div>
+                <hr>
+                <div class="row mt-40">
+                   <div class="col-md-12 timeline">
+                        {% for payment in order.paymenthistory %}
+                            <div class="list-group-item milestone border">
+                                <div class="flex-column">
+                                    <!-- Date -->
+                                    <small class="text-muted d-block">
+                                        {{ payment.paid_date|date:'M d, Y' }}
+                                    </small>
+
+                                    <!-- Payment Info -->
+                                    <strong class="d-block mt-2">
+                                        {% if payment.payment_mode == 'ONLINECREDIT' %}
+                                            {% if payment.payment_gateway == 'DEBITCARD' %}
+                                                Payment via Debit Card
+                                            {% elif payment.payment_gateway == 'CREDITCARD' %}
+                                                Payment via Online Credit
+                                            {% endif %}
+                                        {% else %}
+                                            Payment via {{ payment.payment_mode|lower }}
+                                        {% endif %}
+                                    </strong>
+
+                                    <!-- Amount -->
+                                    <span class="mt-2">
+                                      Amount : {{ payment.amount_paid|default_if_none:'0.000'|floatformat:3 }} KD
+                                    </span>
+
+                                    <!-- Transaction Details -->
+                                    {% if payment.transaction_id %}
+                                        <small class="text-muted d-block mt-2">
+                                            Transaction No: {{ payment.transaction_id }}
+                                        </small>
+                                    {% endif %}
+
+                                    {% if payment.bank_name and payment.payment_gateway == 'BANK' %}
+                                        <small class="text-muted d-block mt-2">
+                                            Bank: {{ payment.bank_name }} 
+                                            {% if payment.bank_no %} ({{ payment.bank_no }}) {% endif %}
+                                        </small>
+                                    {% endif %}
+
+                                    {% if payment.receipt_no %}
+                                        <small class="text-muted d-block mt-2">
+                                            Receipt No: {{ payment.receipt_no }}
+                                        </small>
+                                    {% endif %}
+
+                                    
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+
+                </div>
+                <!-- <div class="text-center mt-40">
+                    <button data-dismiss="modal" style="box-shadow:none !important" onclick="closeNavAddStore()" class="view-button">Cancel</button>
+                </div> -->
             </div>
         </div>
-        <!-- <div class="text-center mt-40">
-            <button data-dismiss="modal" style="box-shadow:none !important" onclick="closeNavAddStore()" class="view-button">Cancel</button>
-        </div> -->
-    </div>
    </div>
 {% if request.user.user_type == 'SALESADMIN' %}
   {% include "salesadmin/common/header.html" %}
@@ -4166,18 +4183,26 @@
 
 
 <script>
-     function closeNavAddStore() {
-        document.getElementById("addStore").style.width = "0";
+    function closeNavAddStore() {
+        let addStore = document.getElementById("addStore");
+        addStore.classList.add("hidden-xs", "hidden-sm", "hidden-md", "hidden-lg", "hidden-xl");
     }
     function openPaymentDialog(){
+        let addStore = document.getElementById("addStore");
+        addStore.classList.remove("hidden-xs", "hidden-sm", "hidden-md", "hidden-lg", "hidden-xl");
+
+        // Add based on screen width
         if (screen.width <= 600) {
-            document.getElementById("addStore").style.width = "100%";
-        } else if (screen.width <= 720) {
-            document.getElementById("addStore").style.width = "50%";
-        }
+            addStore.classList.add("col-xs-12"); // 100% width
+        } 
+        else if (screen.width <= 720) {
+            addStore.classList.add("col-sm-6");  // 50% width
+        } 
         else {
-            document.getElementById("addStore").style.width = "30%";
+            addStore.classList.add("col-md-4");  // ~33.3% width
         }
+
+        
     }
    var url=api
 function duplicate(id){

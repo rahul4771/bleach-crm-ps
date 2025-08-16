@@ -901,19 +901,18 @@ display: flex;
   cursor: pointer;
 }
 .inv-sidedrawer{
-  height: 100%;
-  width: 0;
-  position: fixed;
-  z-index: 9999;
-  top: 0;
-  right: 0;
-  background-color: #FFFFFF;
-  overflow-x: hidden;
-  transition: 0.5s;
-  box-shadow: -8px 0px 6px #0000001C;
-border: 1px solid #D5D5D5;
-opacity: 1;
-  border-radius: 0px;
+  height: 100% !important;
+  position: fixed !important;
+  z-index: 9999 !important;
+  top: 0 !important;
+  right: 0 !important;
+  background-color: #FFFFFF !important;
+  overflow-x: hidden !important;
+  transition: 0.5s !important;
+  box-shadow: -8px 0px 6px #0000001C !important;
+  border: 1px solid #D5D5D5 !important;
+  opacity: 1 !important;
+  border-radius: 0px !important;
 }
 .inv-sidedrawer-inner{
   max-height: 90vh;
