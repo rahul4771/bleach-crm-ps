@@ -298,7 +298,7 @@
               </div>
               <div class="d-flex pt-1 inv-invoice-details pb-4">
                 <div class="w-50 inv-text-left inv-primary-text" >
-                  Visit(s)
+                  Total Visit
                 </div>
                 <div class="w-50 inv-text-right inv-primary-text visits-view" onclick="openVisit()">
                  Show Visits
@@ -410,6 +410,10 @@
                 <div class="col-md-8 col-print-8">
                   <div class="inv-service-title p-2 inv-text-bold">
                     {{evaluation_book.service_type}} - {{book_section.section_name}}
+                  </div>
+                  <!--  -->
+                  <div class="inv-service-title p-2 inv-text-bold">
+                   {{evaluation_detail.address.apartment}}</b>: {% if evaluation_detail.address.floor %}{{evaluation_detail.address.floor}}, {% else %}{% endif %} {{evaluation_detail.address.building}}, {{evaluation_detail.address.block}}, {{evaluation_detail.address.street}},<br> {% if evaluation_detail.address.avenue %}{{evaluation_detail.address.avenue}}, {% else %}{% endif %} {{evaluation_detail.address.area.name}}, {{evaluation_detail.address.governorate.name}}
                   </div>
                   <div class="d-flex mb-10" > {% if evaluation_book.status == 'CANCELLED' %} <div class="status-dot cancel-chip-bg"></div> <div class="ml-2">Cancelled</div> {% endif %}</div>
 
