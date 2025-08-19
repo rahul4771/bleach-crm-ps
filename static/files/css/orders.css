@@ -1798,3 +1798,10 @@ padding-top:10px;
 .mx-auto{
   margin: auto;
 }
+.justify-content-space-between {
+  display: flex;
+  justify-content: space-between;
+}
+.mb-0  { margin-bottom: 0rem !important; }
+.mb-1  { margin-bottom: 0.25rem !important; }  /* ~4px */
+.mb-2  { margin-bottom: 0.5rem !important; }   /* ~8px */
