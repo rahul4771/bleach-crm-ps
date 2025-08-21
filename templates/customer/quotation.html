@@ -413,8 +413,8 @@
                   </div>
                   <!--  -->
                   <div class="inv-service-title p-2">
-                    <span>Location : </span>
-                    <span> {{evaluation_detail.address.apartment}}, {% if evaluation_detail.address.floor %}{{evaluation_detail.address.floor}}, {% else %}{% endif %} {{evaluation_detail.address.building}}, {{evaluation_detail.address.block}}, {{evaluation_detail.address.street}},<br> {% if evaluation_detail.address.avenue %}{{evaluation_detail.address.avenue}}, {% else %}{% endif %} {{evaluation_detail.address.area.name}}, {{evaluation_detail.address.governorate.name}}</span>
+                    <span class="fs-08">Location : </span>
+                    <span class="fs-08"> {{evaluation_detail.address.apartment}}, {% if evaluation_detail.address.floor %}{{evaluation_detail.address.floor}}, {% else %}{% endif %} {{evaluation_detail.address.building}}, {{evaluation_detail.address.block}}, {{evaluation_detail.address.street}},<br> {% if evaluation_detail.address.avenue %}{{evaluation_detail.address.avenue}}, {% else %}{% endif %} {{evaluation_detail.address.area.name}}, {{evaluation_detail.address.governorate.name}}</span>
                   </div>
                   <div class="d-flex mb-10" > {% if evaluation_book.status == 'CANCELLED' %} <div class="status-dot cancel-chip-bg"></div> <div class="ml-2">Cancelled</div> {% endif %}</div>
 
