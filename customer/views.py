@@ -845,7 +845,14 @@ class CustomerInvoice(View):
 
 		price_ranges 		= ServicePriceRange.objects.filter(is_active=True)
 
-		return render(request,"customer/customer_invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,"price_ranges":price_ranges})		
+		#service details
+		try:
+			order_details = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details', queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details', queryset=EvaluationBook.objects.filter(is_active=True), to_attr='evaluationbooks')), to_attr='evaluationdetails')).annotate(customerbooking=Sum(Case(When(Q(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING') & Q(evaluation__booking_evaluation__is_bookingcompleted=False), then=1), default=0, output_field=IntegerField()))).get(is_active=True, evaluation__evaluation_id=evaluation_id, evaluation__customer__username=user_name)
+
+		except:
+			order_details = None
+
+		return render(request,"customer/customer_invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,"price_ranges":price_ranges,'order_details':order_details})		
 
 	def post(self,request,evaluation_id):
 
