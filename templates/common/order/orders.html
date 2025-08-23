@@ -334,7 +334,7 @@
           {% elif order.order_status == 'ORDER_CANCELLED' %}
           <div  class="d-flex "><div class="round-marker cancelled-status-bg"></div><span>Order Cancelled</span></div>
           {% else %}
-          <div  class="d-flex "><div class="round-marker"></div><span></span></div>
+          <div class="d-flex "><div class="round-marker pending-status-bg"></div><span>Pending</span></div>
           {% endif %}
         {% else %}
           {% if order.order_status == 'CANCEL_IN_PROGRESS' %}
