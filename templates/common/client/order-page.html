@@ -2654,24 +2654,51 @@
 
                                         <h2>Payment</h2>
                                         <div class="row">
-                                            <div class="col-md-5">
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Total amount</div>
-                                                    <div class="col-xs-6">: <span class="c-text">{{order.evaluation.estimated_cost|default_if_none:'0.000'|floatformat:'3'}} KD</span></div>
+                                            <div class="col-md-12">
+                                                 {% if order.evaluation.quatation_status %}
+                                                    <div class="row mb-2">
+                                                        <div class="col-xs-4 justify-content-space-between"><span>Payment Policy</span><span>:</span> </div>
+                                                        <div class="col-xs-8"><span class="c-text">{{order.evaluation.payment_method|default_if_none:''}}</span>
+
+                                                            {% if request.user.user_type == 'AGENT' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN'%}
+
+                                                                {% if order.evaluation.quatation_status != 'APPROVED' %}
+                                                                    {% if order.amount_paid == 0.000 and order.evaluation.is_promocode_applied == False %}
+                                                                    <button class="model-close ml-10" >
+                                                                        <img  class="policy-time-edit pointer" src="{% static 'files/icons/edit.png' %}" data-amount_before_cleaning="{{order.evaluation.before_cleaning_amount}}" data-amount_after_cleaning="{{order.evaluation.after_cleaning_amount}}" data-discount="{{order.evaluation.discount}}" data-payment_method="{{order.evaluation.payment_method}}" data-total_amount="{{order.evaluation.estimated_cost}}" data-final_amount="{{order.evaluation.total_cost}}" data-additional_charge="{{order.evaluation.additional_charge|default_if_none:'0'}}" data-cancelled_amount="{{order.evaluation.cancelled_amount|default_if_none:'0'}}" onclick="openPaymentEdit(this)">
+                                                                    </button>
+                                                                    {% endif %}
+                                                                {% elif order.evaluation.quatation_status == 'APPROVED' %}
+                                                                    {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.booked_evaluation.payment_method == 'POSTPAID' or order.booked_evaluation.payment_method == 'SUBSCRIPTION' %}
+                                                                    {% else %}
+                                                                    <button class="model-close ml-10" >
+                                                                                <img  class="policy-time-edit pointer" src="{% static 'files/icons/edit.png' %}" data-amount_before_cleaning="{{order.evaluation.before_cleaning_amount}}" data-amount_after_cleaning="{{order.evaluation.after_cleaning_amount}}" data-discount="{{order.evaluation.discount}}" data-payment_method="{{order.evaluation.payment_method}}" data-total_amount="{{order.evaluation.estimated_cost}}" data-final_amount="{{order.evaluation.total_cost}}" data-additional_charge="{{order.evaluation.additional_charge|default_if_none:'0'}}" data-cancelled_amount="{{order.evaluation.cancelled_amount|default_if_none:'0'}}" onclick="openPaymentEdit(this)">
+                                                                            </button>
+                                                                    {% endif %}
+                                                                {% endif %}
+
+                                                            {% endif %}
+
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                                <div class="row mb-2">
+                                                    <div class="col-xs-4 justify-content-space-between"><span>Total Amount</span><span>:</span> </div>
+                                                    <div class="col-xs-8"><span class="c-text">{{order.evaluation.estimated_cost|default_if_none:'0.000'|floatformat:'3'}} KD</span></div>
                                                 </div>
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Discount</div>
-                                                    <div class="col-xs-6">: <span class="c-text">{{order.evaluation.discount|default_if_none:'0.000'|floatformat:'3'}} KD</span></div>
+                                                <div class="row mb-2">
+                                                    <div class="col-xs-4 justify-content-space-between"><span>Discount</span><span>:</span> </div>
+                                                    <div class="col-xs-8"><span class="c-text">{{order.evaluation.discount|default_if_none:'0.000'|floatformat:'3'}} KD</span></div>
                                                 </div>
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Additional Charge(s)</div>
-                                                    <div class="col-xs-6">: <span class="c-text">{{order.evaluation.additional_charge|default_if_none:'0.000'|floatformat:'3'}} KD</span></div>
+                                                <div class="row mb-2">
+                                                    <div class="col-xs-4 justify-content-space-between"><span>Additional Charge(s)</span><span>:</span></div>
+                                                    <div class="col-xs-8"><span class="c-text">{{order.evaluation.additional_charge|default_if_none:'0.000'|floatformat:'3'}} KD</span></div>
                                                 </div>
 
                                                 {% if order.evaluation.cancelled_amount %}
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Cancelled Amount</div>
-                                                    <div class="col-xs-6">: <span class="c-text">{{order.evaluation.cancelled_amount|default_if_none:'0.000'|floatformat:'3'}} KD</span></div>
+                                                <div class="row mb-2">
+                                                    <div class="col-xs-4 justify-content-space-between"><span>Cancelled Amount</span><span>:</span></div>
+                                                    <div class="col-xs-8"><span class="c-text">{{order.evaluation.cancelled_amount|default_if_none:'0.000'|floatformat:'3'}} KD</span></div>
                                                 </div>
                                                 {% endif %}
 
@@ -2679,14 +2706,14 @@
                                                 {% for item in order.cancelled_order_amount %}
 
                                                     {% if item.amount_return_method == 'CASHBACK' %}
-                                                    <div class="row c-mb-3">
-                                                        <div class="col-xs-6">Refund Amount</div>
-                                                        <div class="col-xs-6">: <span class="c-text">{{item.return_amount|default_if_none:'0.000'|floatformat:'3'}} KD</span></div>
+                                                    <div class="row mb-2">
+                                                        <div class="col-xs-4 justify-content-space-between"><span>Refund Amount</span><span>:</span></div>
+                                                        <div class="col-xs-8"><span class="c-text">{{item.return_amount|default_if_none:'0.000'|floatformat:'3'}} KD</span></div>
                                                     </div>
                                                     {% elif item.amount_return_method == 'CREDIT' %}
-                                                    <div class="row c-mb-3">
-                                                        <div class="col-xs-6">Added to Wallet Amount</div>
-                                                        <div class="col-xs-6">: <span class="c-text">{{item.return_amount|default_if_none:'0.000'|floatformat:'3'}} KD</span></div>
+                                                    <div class="row mb-2">
+                                                        <div class="col-xs-4 justify-content-space-between"><span>Added to Wallet Amount</span><span>:</span></div>
+                                                        <div class="col-xs-8"><span class="c-text">{{item.return_amount|default_if_none:'0.000'|floatformat:'3'}} KD</span></div>
                                                     </div>
                                                     {% endif %}
 
@@ -2694,92 +2721,59 @@
 
 
                                                 {% if order.evaluation.credit_amount %}
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Applied Credit</div>
-                                                    <div class="col-xs-6">: <span class="c-text">{{order.evaluation.credit_amount|default_if_none:'0.000'|floatformat:'3'}} KD</span></div>
+                                                <div class="row mb-2">
+                                                    <div class="col-xs-4 justify-content-space-between"><span>Applied Credit</span><span>:</span></div>
+                                                    <div class="col-xs-8"><span class="c-text">{{order.evaluation.credit_amount|default_if_none:'0.000'|floatformat:'3'}} KD</span></div>
                                                 </div>
                                                 {% endif %}
 
                                                 {% if order.evaluation.is_promocode_applied == True %}
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Promocode</div>
-                                                    <div class="col-xs-6">: <span class="c-text">{{order.evaluation.promocode_amount|default_if_none:'0.000'|floatformat:3}} KD</span></div>
+                                                <div class="row mb-2">
+                                                    <div class="col-xs-4  justify-content-space-between"><span>Promocode</span><span>:</span></div>
+                                                    <div class="col-xs-8"><span class="c-text">{{order.evaluation.promocode_amount|default_if_none:'0.000'|floatformat:3}} KD</span></div>
                                                 </div>
                                                 {% endif %}
 
                                                 {% if order.evaluation.fine_amount != 0 %}
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Fine</div>
-                                                    <div class="col-xs-6">: <span class="c-text">{{order.evaluation.fine_amount|floatformat:'3'}} KD</span></div>
+                                                <div class="row mb-2">
+                                                    <div class="col-xs-4  justify-content-space-between"><span>Fine</span><span>:</span></div>
+                                                    <div class="col-xs-8"><span class="c-text">{{order.evaluation.fine_amount|floatformat:'3'}} KD</span></div>
                                                 </div>
                                                 {% endif %}
 
                                                 {% if order.evaluation.writeback_amount != 0 %}
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Write-Off Amount</div>
-                                                    <div class="col-xs-6">: <span class="c-text">{{order.evaluation.writeback_amount|floatformat:'3'}} KD</span></div>
+                                                <div class="row mb-2">
+                                                    <div class="col-xs-4  justify-content-space-between"><span>Write-Off Amount</span><span>:</span></div>
+                                                    <div class="col-xs-8"><span class="c-text">{{order.evaluation.writeback_amount|floatformat:'3'}} KD</span></div>
                                                 </div>
                                                 {% endif %}
 
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-6">
-                                                        <h2><b>Final Amount</b> </h2>
-                                                    </div>
-                                                    <div class="col-xs-6">
-                                                        <h2>{{order.evaluation.total_cost|default_if_none:'0.000'|floatformat:'3'}} KD</h2>
+                                                <div class="row mb-2">
+                                                    <div class="col-xs-4  justify-content-space-between"><h5 class="mb-0">Final Amount</h5><span>:</span></div>
+                                                    <div class="col-xs-8">
+                                                        <h5 class="mb-0">{{order.evaluation.total_cost|default_if_none:'0.000'|floatformat:'3'}} KD</h5>
                                                     </div>
                                                 </div>
-
-
-
-
 
                                                 {% if order.evaluation.quatation_status %}
 
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Payment Method</div>
-                                                    <div class="col-xs-6">: <span class="c-text">{{order.evaluation.payment_method|default_if_none:''}}</span>
-
-                                                        {% if request.user.user_type == 'AGENT' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN'%}
-
-                                                            {% if order.evaluation.quatation_status != 'APPROVED' %}
-                                                                {% if order.amount_paid == 0.000 and order.evaluation.is_promocode_applied == False %}
-                                                                <button class="model-close ml-10" >
-                                                                    <img  class="policy-time-edit pointer" src="{% static 'files/icons/edit.png' %}" data-amount_before_cleaning="{{order.evaluation.before_cleaning_amount}}" data-amount_after_cleaning="{{order.evaluation.after_cleaning_amount}}" data-discount="{{order.evaluation.discount}}" data-payment_method="{{order.evaluation.payment_method}}" data-total_amount="{{order.evaluation.estimated_cost}}" data-final_amount="{{order.evaluation.total_cost}}" data-additional_charge="{{order.evaluation.additional_charge|default_if_none:'0'}}" data-cancelled_amount="{{order.evaluation.cancelled_amount|default_if_none:'0'}}" onclick="openPaymentEdit(this)">
-                                                                </button>
-                                                                {% endif %}
-                                                            {% elif order.evaluation.quatation_status == 'APPROVED' %}
-                                                                {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.booked_evaluation.payment_method == 'POSTPAID' or order.booked_evaluation.payment_method == 'SUBSCRIPTION' %}
-                                                                {% else %}
-                                                                <button class="model-close ml-10" >
-                                                                            <img  class="policy-time-edit pointer" src="{% static 'files/icons/edit.png' %}" data-amount_before_cleaning="{{order.evaluation.before_cleaning_amount}}" data-amount_after_cleaning="{{order.evaluation.after_cleaning_amount}}" data-discount="{{order.evaluation.discount}}" data-payment_method="{{order.evaluation.payment_method}}" data-total_amount="{{order.evaluation.estimated_cost}}" data-final_amount="{{order.evaluation.total_cost}}" data-additional_charge="{{order.evaluation.additional_charge|default_if_none:'0'}}" data-cancelled_amount="{{order.evaluation.cancelled_amount|default_if_none:'0'}}" onclick="openPaymentEdit(this)">
-                                                                        </button>
-                                                                {% endif %}
-                                                            {% endif %}
-
-                                                        {% endif %}
-
+                                                    {% if order.evaluation.payment_method == 'BREAKDOWN' %}
+                                                    <div class="row mb-2">
+                                                        <div class="col-xs-4 justify-content-space-between"><span>Before Cleaning Amount</span><span>:</span></div>
+                                                        <div class="col-xs-8"><span class="c-text">{{order.evaluation.before_cleaning_amount|default_if_none:''}} KD</span></div>
                                                     </div>
+                                                    <div class="row mb-2">
+                                                        <div class="col-xs-4 justify-content-space-between"><span>After Cleaning Amount</span><span>:</span></div>
+                                                        <div class="col-xs-8"><span class="c-text">{{order.evaluation.after_cleaning_amount|default_if_none:''}} KD</span></div>
+                                                    </div>
+                                                    {% endif %}
+                                                <div class="row mb-2">
+                                                    <div class="col-xs-4 justify-content-space-between"><span>Paid Amount</span><span>:</span></div>
+                                                    <div class="col-xs-8"><span class="c-text">{{order.total_paid_amount|default_if_none:'0.000'|floatformat:3}} KD</span><button type="button" class="btn btn-link btn-xs ml-10" onclick="openPaymentDialog()" data-toggle="tooltip" data-placement="top" title="View Payment Details" ><i class="fa fa-eye" style="color:#222;"></i></button></div>
                                                 </div>
-
-                                                {% if order.evaluation.payment_method == 'BREAKDOWN' %}
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Before Cleaning Amount</div>
-                                                    <div class="col-xs-6">: <span class="c-text">{{order.evaluation.before_cleaning_amount|default_if_none:''}} KD</span></div>
-                                                </div>
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-6">After Cleaning Amount</div>
-                                                    <div class="col-xs-6">: <span class="c-text">{{order.evaluation.after_cleaning_amount|default_if_none:''}} KD</span></div>
-                                                </div>
-                                                {% endif %}
-
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Paid</div>
-                                                    <div class="col-xs-6">: <span class="c-text">{{order.total_paid_amount|default_if_none:'0.000'|floatformat:3}} KD</span> <a onclick="openPaymentDialog()" style="cursor: pointer; text-decoration:underline;color:#2E4E85;font-size:12px"> Payment details</a></div>
-                                                </div>
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Balance</div>
-                                                    <div class="col-xs-6">: <span class="c-text">{{order.remining_amount|default_if_none:'0.000'|floatformat:'3'}} KD</span></div>
+                                                <div class="row mb-2">
+                                                    <div class="col-xs-4 justify-content-space-between"><span>Balance Amount</span><span>:</span></div>
+                                                    <div class="col-xs-8"><span class="c-text">{{order.remining_amount|default_if_none:'0.000'|floatformat:'3'}} KD</span></div>
                                                 </div>
 
                                                 {% endif %}
@@ -2789,9 +2783,9 @@
 
 
                                                 {% comment %} {% if order.paymenthistory %}
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Payment Type(s)</div>
-                                                    <div class="col-xs-6">: <span class="c-text">
+                                                <div class="row mb-2">
+                                                    <div class="col-xs-4 justify-content-space-between"><span>Payment Type(s)</span><span>:</span></div>
+                                                    <div class="col-xs-8"><span class="c-text">
                                                     {% for history in order.paymenthistory %}
                                                     {% if history.payment_mode == 'ONLINECREDIT' %}
                                                     {{history.payment_gateway|default_if_none:''}},
@@ -2804,9 +2798,9 @@
                                                 {% endif %} {% endcomment %}
 
                                                  {% if order.payment_completed_date %}
-                                                 <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Closed Date</div>
-                                                    <div class="col-xs-6">: <span class="c-text">{{order.payment_completed_date|default_if_none:''}}</span></div>
+                                                 <div class="row mb-2">
+                                                    <div class="col-xs-4 justify-content-space-between"><span>Closed Date</span><span>:</span></div>
+                                                    <div class="col-xs-8"><span class="c-text">{{order.payment_completed_date|default_if_none:''}}</span></div>
                                                 </div>
                                                 {% endif %}
 
