@@ -911,7 +911,13 @@ class CustomerSubscriptionInvoice(View):
 		
 		price_ranges 		= ServicePriceRange.objects.filter(is_active=True)
 
-		return render(request,"customer/customer_invoice_subscription.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,"completed_jobs_count":completed_jobs_count,"price_ranges":price_ranges,})
+		#service details
+		try:
+			order_details = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details', queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details', queryset=EvaluationBook.objects.filter(is_active=True), to_attr='evaluationbooks')), to_attr='evaluationdetails')).annotate(customerbooking=Sum(Case(When(Q(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING') & Q(evaluation__booking_evaluation__is_bookingcompleted=False), then=1), default=0, output_field=IntegerField()))).get(is_active=True, evaluation__evaluation_id=evaluation_id, evaluation__customer__username=user_name)
+		except:
+			order_details = None
+
+		return render(request,"customer/customer_invoice_subscription.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,"completed_jobs_count":completed_jobs_count,"price_ranges":price_ranges,'order_details':order_details})
 
 	def post(self,request,evaluation_id):
 		action            = request.POST.get('action_type')
@@ -963,7 +969,6 @@ class PaymentResponseDebit(View):
 
 			evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=int(tracking_no)+1,customer=customer_cart.customer,estimated_cost=customer_cart.total_cost,discount=customer_cart.cart_discount,promocode_amount=customer_cart.promocode_amount,is_promocode_applied=is_promocode_applied,total_cost=customer_cart.final_cost,payment_method='PREPAID',payment_way='ONLINE',quatation_status='APPROVED',quatation_approved_date=timezone.now(),quatation_expiry_date=timezone.now()+timedelta(14))
 
-			print(evaluation.evaluation_id,"evalid")
 
 			#Booking Number
 			booking_id               = CustomerBooking.objects.filter(is_active=True).aggregate(t=Max('booking_id'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
