@@ -338,7 +338,12 @@
                       Visit : <span class="inv-text-bold">{% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}</span>
                     </div>
                     <div class="p-2">
-                      Unit Price : <span class="inv-text-bold">{{section.section_net_cost|floatformat:'3'}}</span>
+                      Unit Price : <span class="inv-text-bold">
+                        {% if section.section_cleanings %}
+                          {{ section.section_net_cost|div:section.section_cleanings|floatformat:'3' }}
+                        {% else %}
+                          {{ section.section_net_cost|floatformat:'3' }}
+                        {% endif %}</span>
                     </div>
                   </div>
                 </div>
