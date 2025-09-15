@@ -1848,7 +1848,15 @@ class PaymentReceipt(View):
 					nonduplicate_schedules.append(orderschedule)	
 
 				duplicate_schedules.append(orderschedule.order_scheduler_book)
-
+		else:
+		
+			customer = payment_history.order.evaluation.customer
+			customer_address = Address.objects.filter(customer__id=customer.id, currently_active=True).first()
+			
+			orderschedules = []
+			if customer_address:
+				orderschedules.append(type('OrderSchedule', (), {'customer_address': customer_address})())
+			setattr(payment_history.order, 'orderschedules', orderschedules)		
 
 		return render(request,"customer/voucher.html",{'payment_history':payment_history,'nonduplicate_schedules':nonduplicate_schedules,})
 
