@@ -998,15 +998,12 @@
 
               {% endif %}
 
-              <div class="col-5 offset-1 inv-white-btn text-center  mt-4 mb-4 ">
-
-                <i class="fa fa-download" ></i>
-                <a style="text-decoration: none; color: #616161;"  href="/customer/invoice/download/paw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}">Download</a>
-              </div> 
-              <div class="col-5 offset-1  inv-white-btn text-center  mt-4 mb-4 " onclick="printDiv()">
-                <i class="fa fa-print"></i>
-                Print
-              </div> 
+              <div class="d-flex col-12 justify-content-center">
+                <div class="col-4 inv-white-btn text-center  mt-4 mb-4 ">
+                  <i class="fa fa-download" ></i>
+                  <a style="text-decoration: none; color: #616161;"  href="/customer/invoice/download/paw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}">Download</a>
+                </div> 
+              </div>
             </div>
           </div>
           

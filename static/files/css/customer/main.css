@@ -1011,3 +1011,7 @@ bottom: 0;
 .fs-08{
   font-size: 0.8rem !important;
 }
+
+.w-150 {
+    width: 150px !important;
+}
