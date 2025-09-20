@@ -2153,7 +2153,7 @@
                                         <div class="row">
                                         {% for multi_order_schedule in order.orderschedules %}
                                         {% if multi_order_schedule.order_scheduler_book == evaluationbook %}
-                                        <div style="margin-bottom: 10px;" class="col-md-4 col-xs-12 c-pr5 visit-list" id="id_select_visit{{multi_order_schedule.id}}" onclick="load_cleaning_team('id_select_visit'+{{multi_order_schedule.id}},{{multi_order_schedule.id}},{{evaluationbook.id}})">
+                                        <div style="margin-bottom: 10px;" class="col-md-6 col-xs-12 c-pr5 visit-list" id="id_select_visit{{multi_order_schedule.id}}" onclick="load_cleaning_team('id_select_visit'+{{multi_order_schedule.id}},{{multi_order_schedule.id}},{{evaluationbook.id}})">
                                             <div class="cleaning-status-container  pointer ">
 
                                                 <div  id="id_select_visit_inner{{multi_order_schedule.id}}" class="row cleaning-status-row  cleaning-status-card  ">
@@ -2176,8 +2176,19 @@
 
                                                         </a>
                                                     </div>
-                                                    <div class="vist-card-item-second visit-text">
+                                                    <!-- <div class="vist-card-item-second visit-text">
                                                         {{multi_order_schedule.start_at|date:'d-m-Y g:i A'}}
+                                                    </div> -->
+                                                    <div class="vist-card-item-second visit-text">
+                                                        <span id="visit-date-display-{{multi_order_schedule.id}}"
+                                                            data-id="{{multi_order_schedule.id}}"
+                                                            data-start_at="{{multi_order_schedule.start_at|date:'d-m-Y g:i A'}}"
+                                                            data-cleaning_hours="{{multi_order_schedule.cleaning_hours}}"
+                                                            data-default_cleaning_hours="{{evaluationbook.cleaning_hours}}"
+                                                            onclick="showDateTimeInput(this)">
+                                                            {{multi_order_schedule.start_at|date:'d-m-Y g:i A'}}
+                                                        </span>
+                                                       <input type="text" id="visit-datetime-input-{{multi_order_schedule.id}}" class="visit-datetime-input" style="display:none;" />
                                                     </div>
 
                                                     {% for investigation in multi_order_schedule.investigations|slice:":1" %}{% for followup in investigation.followups|slice:":1" %}{% if followup %}
@@ -4945,6 +4956,74 @@ $('#close_send_invoice_popup').click(function(){
       $('#send_invoice_popup').css({'visibility':'hidden','opacity':0,});
   });
 
+function showDateTimeInput(element) {
+    const orderScheduleId = element.getAttribute('data-id');
+    const startAt = element.getAttribute('data-start_at');
+    const cleaningHours = element.getAttribute('data-cleaning_hours');
+    const defaultCleaningHours = element.getAttribute('data-default_cleaning_hours') || 0;
+    const input = $(`#visit-datetime-input-${orderScheduleId}`);
+    const display = $(`#visit-date-display-${orderScheduleId}`);
+
+    display.hide();
+    input.show();
+
+    // Remove any previous event handlers to prevent multiple triggers
+    input.off('dp.change');
+
+    let hasChanged = false;
+    input.datetimepicker({
+        format: 'D-M-YYYY HH:mm A',
+        showClose: true,
+        defaultDate: startAt
+    }).on('dp.change', function(e) {
+        if (hasChanged) return; // Prevent multiple calls
+        hasChanged = true;
+        const newDateTime = e.date.format('D-M-YYYY HH:mm A');
+        const newCleaningHours = cleaningHours ? cleaningHours : defaultCleaningHours;
+        updateVisitDateTime(orderScheduleId, newDateTime, newCleaningHours);
+        input.hide();
+        display.show();
+    });
+}
+
+function updateVisitDateTime(orderScheduleId, dateTimeStr, cleaningHours) {
+        fetch('/common/update-visit-datetime/', {
+                method: 'POST',
+                headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ id: orderScheduleId, datetime: dateTimeStr, cleaning_hours: cleaningHours })
+        })
+        .then(response => response.json())
+        .then(data => {
+                if (data.success) {
+                        $(`#visit-date-display-${orderScheduleId}`).text(data.new_datetime);
+                } else {
+                        console.log(data.error);
+                }
+        })
+        .catch(error => {
+                console.log(error.message);
+        });
+}
+
+// Helper function to get CSRF token from cookies
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  console.log(cookieValue);
+  return cookieValue;
+}
  </script>
 
 {% endblock %}

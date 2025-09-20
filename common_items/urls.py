@@ -73,5 +73,6 @@ urlpatterns = [
 		url(r'^ajax/resourcestoggle/',views.ResourcesToggle,name='resource-toggle'),
 
 		url(r'^cancell-order/(?P<order_id>[-\w]+)/$',views.OrderCancellation.as_view(),name='cancell-order'),
-		url(r'^cancell-book/(?P<evaluation_id>[-\w]+)/$',views.EvaluationBookCancellation.as_view(),name='cancell-book'),	
+		url(r'^cancell-book/(?P<evaluation_id>[-\w]+)/$',views.EvaluationBookCancellation.as_view(),name='cancell-book'),
+        url(r'^update-visit-datetime/$', views.update_visit_datetime, name='update-visit-datetime'),	
 	]
