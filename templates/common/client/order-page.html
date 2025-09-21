@@ -4972,13 +4972,13 @@ function showDateTimeInput(element) {
 
     let hasChanged = false;
     input.datetimepicker({
-        format: 'D-M-YYYY HH:mm A',
+        format: 'D-M-YYYY h:mm A', // Use 12-hour format for backend compatibility
         showClose: true,
         defaultDate: startAt
     }).on('dp.change', function(e) {
         if (hasChanged) return; // Prevent multiple calls
         hasChanged = true;
-        const newDateTime = e.date.format('D-M-YYYY HH:mm A');
+        const newDateTime = e.date.format('D-M-YYYY h:mm A'); // Use 12-hour format for backend compatibility
         const newCleaningHours = cleaningHours ? cleaningHours : defaultCleaningHours;
         updateVisitDateTime(orderScheduleId, newDateTime, newCleaningHours);
         input.hide();
