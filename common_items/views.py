@@ -1,9 +1,11 @@
+from rest_framework.views import APIView
 from django.core.mail import send_mail
 from django.shortcuts import render,redirect
 from django.template.loader import render_to_string
 from django.views import View
 from django.forms import formset_factory,modelformset_factory
 from django.http import HttpResponse,JsonResponse
+import json
 
 from django.conf import settings
 from bleach_crm_ps.permissions import IsAgent,IsAuthenticated
@@ -6339,4 +6341,29 @@ class MakeQuatationPhase1(IsAuthenticated,View):
 			"EVALUATOR": "evaluator:evaluatordash-board",
 		}.get(request.user.user_type, "booking-officer:bookingofficerdash-board"))
 
-	
+def update_visit_datetime(request):
+	if request.method == 'POST':
+		print(request.body,"requestbody")
+		data = json.loads(request.body)
+		id = data.get('id')
+		datetime_str = data.get('datetime')
+		cleaning_hours = data.get('cleaning_hours')
+		try:
+			parsed_datetime = datetime.strptime(datetime_str, '%d-%m-%Y %I:%M %p')
+			schedule = OrderScheduler.objects.get(id=id)
+			schedule.start_at = parsed_datetime
+			# Update end_at only if cleaning_hours > 0
+			if cleaning_hours:
+				try:
+					cleaning_hours_float = float(cleaning_hours)
+				except (TypeError, ValueError):
+					cleaning_hours_float = 0
+				if cleaning_hours_float > 0:
+					schedule.end_at = parsed_datetime + timedelta(hours=cleaning_hours_float)
+
+					print(schedule.end_at,"endat")
+					print(schedule.start_at,"startat")
+			schedule.save()
+			return JsonResponse({'success': True, 'new_datetime': schedule.start_at.strftime('%d-%m-%Y %I:%M %p')})
+		except Exception as e:
+			return JsonResponse({'success': False, 'error': str(e)})
