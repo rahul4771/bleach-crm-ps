@@ -935,7 +935,24 @@ const app = new Vue({
   methods:{
     async formatCheck(){
       // var item=$('.section-edit-area').data('section_id')
-        },
+      // console.log("item is"+item)
+      var completed=false
+      this.service_items=[]
+      for(var i=0;i<this.ser_bookids.length;i++){
+        await axios.get(this.url+'/customer/editorder/'+this.orderId+'?evaluation_book_id='+this.ser_bookids[i]).then(response=>{
+          this.service_items.push(response.data.section_details)
+          if(i>=(this.ser_bookids.length-1)){
+
+           this.checkFormat()
+
+          }
+        }).catch(err=>{
+  
+        })
+      }
+      
+     
+    },
     getCookie(name) {
       let cookieValue = null;
       if (document.cookie && document.cookie !== '') {
