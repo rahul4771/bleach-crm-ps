@@ -918,32 +918,96 @@ const app = new Vue({
           selected_visit_cleaners:[],
           visit_team_leader:'',
           service_items:[],
-          sizeissue:false
+          sizeissue:false,
 
          // url:'http://localhost:8000'
       // url:'https://test.bleach-kw.com'
             //url:'http://127.0.0.1:8000'
+        visitDateTimeUpdate: {
+          orderScheduleId: null,
+          date: '',
+          time: '',
+          cleaningHours: ''
+        },
+        visitDateTimeUpdateErr: false,
+        visitDateTimeUpdateSuccess: false,
   },
   methods:{
     async formatCheck(){
       // var item=$('.section-edit-area').data('section_id')
-      // console.log("item is"+item)
-      var completed=false
-      this.service_items=[]
-      for(var i=0;i<this.ser_bookids.length;i++){
-        await axios.get(this.url+'/customer/editorder/'+this.orderId+'?evaluation_book_id='+this.ser_bookids[i]).then(response=>{
-          this.service_items.push(response.data.section_details)
-          if(i>=(this.ser_bookids.length-1)){
-
-           this.checkFormat()
-
+        },
+    getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
           }
-        }).catch(err=>{
-  
-        })
+        }
       }
+      return cookieValue;
+    },
+
+    showUpdateVisitDateTimeModal(orderScheduleId) {
+      const el = document.getElementById(`visit-date-display-${orderScheduleId}`);
+      let dateStr = el ? el.getAttribute('data-start_at') : '';
+      let date = '';
+      let time = '';
+      if (dateStr) {
+        const m = moment(dateStr, 'DD-MM-YYYY h:mm A');
+        date = m.isValid() ? m.format('YYYY-MM-DD') : '';
+        time = m.isValid() ? m.format('HH:mm') : '';
+      }
+      this.visitDateTimeUpdate.orderScheduleId = orderScheduleId;
+      this.visitDateTimeUpdate.date = date;
+      this.visitDateTimeUpdate.time = time;
+      this.visitDateTimeUpdate.cleaningHours = el ? el.getAttribute('data-cleaning_hours') : '';
+      $('#update-visit-datetime-trigger').click();
+    },
+
+    updateVisitDateTime() {
+      // Clear previous messages
+      this.visitDateTimeUpdateErr = '';
+      this.visitDateTimeUpdateSuccess = '';
       
-     
+      const dateTimeStr = this.visitDateTimeUpdate.date + ' ' + this.visitDateTimeUpdate.time;
+      const formattedDateTime = moment(dateTimeStr, 'YYYY-MM-DD HH:mm').format('DD-MM-YYYY h:mm A');
+      const csrfToken = this.getCookie('csrftoken');
+
+      axios.post('/common/update-visit-datetime/', {
+        id: this.visitDateTimeUpdate.orderScheduleId,
+        datetime: formattedDateTime,
+        cleaning_hours: this.visitDateTimeUpdate.cleaningHours
+      }, {
+        headers: {
+          'X-CSRFToken': csrfToken
+        }
+      }).then(response => {
+        
+        if (response.data.success) {
+          this.visitDateTimeUpdateSuccess = true;
+          this.visitDateTimeUpdateErr = false;
+          setTimeout(() => {
+            console.log(response.data.success);
+             $('#updateVisitDateTimeModal').modal('hide')
+             $('.modal-backdrop').remove();
+            this.reloadVisitList();
+          }, 2000);
+        } else {
+          this.visitDateTimeUpdateErr = true;
+          this.visitDateTimeUpdateSuccess = false;
+        }
+      }).catch(error => {
+        this.visitDateTimeUpdateErr = true;
+        this.visitDateTimeUpdateSuccess = false;
+      });
+    },
+
+    reloadVisitList() {
+        location.reload();
     },
     checkFormat(){
      
