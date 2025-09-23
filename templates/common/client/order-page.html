@@ -2178,8 +2178,16 @@
 
                                                         </a>
                                                     </div>
-                                                    <div class="vist-card-item-second visit-text">
-                                                        {{multi_order_schedule.start_at|date:'d-m-Y g:i A'}}
+                                                   <div class="vist-card-item-second visit-text pointer"
+                                                            @click="showUpdateVisitDateTimeModal({{ multi_order_schedule.id }})">
+                                                        <span id="visit-date-display-{{multi_order_schedule.id}}"
+                                                                data-id="{{multi_order_schedule.id}}"
+                                                                data-start_at="{{multi_order_schedule.start_at|date:'d-m-Y g:i A'}}"
+                                                                data-cleaning_hours="{{multi_order_schedule.cleaning_hours}}"
+                                                                data-default_cleaning_hours="{{evaluationbook.cleaning_hours}}"
+                                                        >
+                                                            {{ multi_order_schedule.start_at | date:'d-m-Y g:i A'}}
+                                                        </span>
                                                     </div>
                                                     
 

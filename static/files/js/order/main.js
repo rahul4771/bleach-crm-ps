@@ -1008,7 +1008,6 @@ const app = new Vue({
           this.visitDateTimeUpdateSuccess = true;
           this.visitDateTimeUpdateErr = false;
           setTimeout(() => {
-            console.log(response.data.success);
              $('#updateVisitDateTimeModal').modal('hide')
              $('.modal-backdrop').remove();
             this.reloadVisitList();
