@@ -37,6 +37,25 @@
   </div>
 </div>
  <!-- notes modal ends here-->
+<!-- Invoice Modal -->
+
+<div class="modal fade" id="invoiceModalCenter" tabindex="-1" role="dialog" aria-labelledby="invoiceModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
+    <div class="modal-content primary-modal-border">
+      <div class="d-flex">
+        <h5 class="modal-title" id="exampleModalLongTitle">Invoice Details</h5>
+        <button type="button" class="close ml-auto" data-dismiss="modal" aria-label="Close" style="margin-left:auto">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div> 
+      <div class="modal-body">
+       <div class="row">
+           <div class="col-md-12 col-lg-12" id="invoiceNumberList"></div>
+        </div>
+      </div> 
+    </div>
+  </div>
+</div>
 
 {% if request.user.user_type == 'SALESADMIN' %}
   {% include "salesadmin/common/header.html" %}
@@ -557,6 +576,7 @@
         <thead>
         <tr>
         <th class="text-left">Order Number</th>
+        <th class="text-left">Invoice Number </th>
         <th class="text-left" data-hide="phone,tablet">Customer</th>
         <th class="text-left" data-hide="phone,tablet">Service Type</th>
         <th class="text-center" data-hide="phone,tablet">Mobile</th>
@@ -568,10 +588,17 @@
         </thead>
         <tbody>
         {% for invoice in normal_due_payments %}
+
         
         {% if invoice.evaluation.payment_method == 'PREPAID' or invoice.evaluation.payment_method == 'POSTPAID' %}
         <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
         <td data-label="BLC Number" {% if invoice.evaluation.payment_method == 'PREPAID' %}class="prepaid-line"{% else %}class="postpaid-line"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
+        <td data-label="Invoice Number">
+          {% if invoice.invoice_count > 1 %}
+          <a href="#" class="show-invoice-popup" data-invoice-numbers="{{invoice.invoice_nos|join:', '}}" data-toggle="modal" data-target="#invoiceModalCenter" data-evaluation-id="{{invoice.evaluation.evaluation_id}}" data-customer-username="{{invoice.evaluation.customer.username}}">INV{{invoice.invoice_no}}</a>
+          {% else %}
+          INV{{invoice.invoice_no}}
+          {% endif %}</td>
         <td data-label="Customer" class="text-left">{{invoice.evaluation.customer.name}}</td>
         <td data-label="Service Type(s)">
         {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
@@ -608,6 +635,12 @@
         {% if invoice.preamount_paid != invoice.evaluation.before_cleaning_amount %}
         <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
         <td data-label="BLC Number" class="prepaid-line">{{invoice.evaluation.evaluation_id}}</td>
+        <td data-label="Invoice Number">
+          {% if invoice.invoice_count > 1 %}
+         <a href="#" class="show-invoice-popup" data-invoice-numbers="{{invoice.invoice_nos|join:', '}}" data-toggle="modal" data-target="#invoiceModalCenter" data-evaluation-id="{{invoice.evaluation.evaluation_id}}" data-customer-username="{{invoice.evaluation.customer.username}}">INV{{invoice.invoice_no}}</a>
+          {% else %}
+          INV{{invoice.invoice_no}}
+          {% endif %}</td>
         <td data-label="Customer" class="text-left">{{invoice.evaluation.customer.name}}</td>
         <td data-label="Service Type(s)">
         {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
@@ -635,6 +668,13 @@
         {% if invoice.last_completed and invoice.postamount_paid != invoice.evaluation.after_cleaning_amount %}
         <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
         <td data-label="BLC Number" >{{invoice.evaluation.evaluation_id}}</td>
+        <td data-label="Invoice Number">
+          {% if invoice.invoice_count > 1 %}
+         <a href="#" class="show-invoice-popup" data-invoice-numbers="{{invoice.invoice_nos|join:', '}}" data-toggle="modal" data-target="#invoiceModalCenter" data-evaluation-id="{{invoice.evaluation.evaluation_id}}" data-customer-username="{{invoice.evaluation.customer.username}}">INV{{invoice.invoice_no}}</a>
+          {% else %}
+          INV{{invoice.invoice_no}}
+          {% endif %}
+        </td>
         <td data-label="Customer" class="text-left">{{invoice.evaluation.customer.name}}</td>
         <td data-label="Service Type(s)">
         {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
@@ -1157,8 +1197,21 @@
     $('#order_id').val($(this).data('orderid'));
 
   })
-
+ 
+  $('.show-invoice-popup').click(function() {
+    const orderId = $(this).data('order-id');
+    const invoiceNumbers = $(this).data('invoice-numbers');
+    const evaluationId = $(this).data('evaluation-id').slice(3); // Remove 'BLC' 
+    const customerUsername = $(this).data('customer-username');
+    if(invoiceNumbers && invoiceNumbers.length > 0) {
+      const invoiceList = invoiceNumbers.split(',').map(num => `<div class="col-md-3 col-sm-12 col-xs-12 justify-content-center" style="border: 1px solid #ccc; padding: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-right: 1rem; cursor:pointer" onclick="window.open('/customer/invoice/prw${evaluationId}${customerUsername}', '_blank')">${`INV${num.trim()}`}</div>`).join('');
+      $('#invoiceNumberList').html(invoiceList);
+    } else {
+      $('#invoiceNumberList').html('<div>No Invoices</div>');
+    }
+});
   
+
 
 // //datepicker and timepicker for popup
     $(document).on("click", ".content", function () {
