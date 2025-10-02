@@ -1295,6 +1295,12 @@ class PaymentDetails(IsAuthenticated,View):
 		entry_per_page4 = (subscription_due_payments.end_index())-(subscription_due_payments.start_index())+1
 		# entry_per_page5 = (neworder_due_payments.end_index())-(neworder_due_payments.start_index())+1
 
+		# Get the number of invoices generated for the normal_due_payments orders
+		for order in normal_due_payments:
+			order.invoice_count = XeroInvoice.objects.filter(is_active=True,order=order).count()
+			order.invoice_nos = list(XeroInvoice.objects.filter(is_active=True, order=order).values_list('invoice_no', flat=True))
+
+
 		return render(request,'common/payment/payments.html',{'total_transactions':total_transactions,'total_transactions_amount':total_transactions_amount,'total_due_amount':total_due_amount,'total_due_orders':total_due_orders,'total_doubtful_due_amount':total_doubtful_due_amount,'total_doubtful_due_orders':total_doubtful_due_orders,'total_normal_due_amount':total_normal_due_amount,'total_normal_due_orders':total_normal_due_orders,'total_subscription_due_amount':total_subscription_due_amount,'total_subscription_due_orders':total_subscription_due_orders,'tab':tab,'invoices':invoices,"search_query":search,"page_range1":page_range1,"page_range2":page_range2,"page_range3":page_range3,"page_range4":page_range4,"entry_per_page1":entry_per_page1,"entry_per_page2":entry_per_page2,"entry_per_page3":entry_per_page3,"entry_per_page4":entry_per_page4,"no_of_entries":no_of_entries,'transactions':transactions,"doubtful_due_payments":doubtful_due_payments,'normal_due_payments':normal_due_payments,'subscription_due_payments':subscription_due_payments})  #'total_neworder_due_orders':total_neworder_due_orders,'neworder_due_payments':neworder_due_payments',total_neworder_due_amount':total_neworder_due_amount,
 
 	def post(self,request):
