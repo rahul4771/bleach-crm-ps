@@ -382,3 +382,29 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+
+.smd-p-1 {
+  padding: 1rem;
+}
+.smd-m-1 {
+  margin: 1rem;
+}
+.smd-tiles {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
+  cursor: pointer;
+}
+.smd-card-border {
+  border: 2px solid #bed0e8;
+  padding: 20px; 
+  margin-bottom: 10px;  
+  border-radius: 8px;
+}
+.smd-productivity-tab{
+  margin-top: 65px;
+}
+.smd-fs-18 {
+  font-size: 18px !important;
+}
