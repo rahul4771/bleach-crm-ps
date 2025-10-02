@@ -614,6 +614,8 @@
     <div data-toggle="modal" data-target="#editBackupModal" id="editBackupTeamBtn"></div>
     <div data-toggle="modal" data-target="#addServiceModal" id="addServiceModalBtn"></div>
     <div data-toggle="modal" data-target="#assignCleanersModal" id="assign-cleaners-trigger"></div>
+    <div data-toggle="modal" data-target="#updateVisitDateTimeModal" id="update-visit-datetime-trigger"></div>
+
 <!-- edit section dialog begins here-->
 <div class="modal fade " id="editSectionDialog" tabindex="-1" role="dialog" aria-labelledby="editSectionDialogTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
@@ -2176,9 +2178,18 @@
 
                                                         </a>
                                                     </div>
-                                                    <div class="vist-card-item-second visit-text">
-                                                        {{multi_order_schedule.start_at|date:'d-m-Y g:i A'}}
+                                                   <div class="vist-card-item-second visit-text pointer"
+                                                            @click="showUpdateVisitDateTimeModal({{ multi_order_schedule.id }})">
+                                                        <span id="visit-date-display-{{multi_order_schedule.id}}"
+                                                                data-id="{{multi_order_schedule.id}}"
+                                                                data-start_at="{{multi_order_schedule.start_at|date:'d-m-Y g:i A'}}"
+                                                                data-cleaning_hours="{{multi_order_schedule.cleaning_hours}}"
+                                                                data-default_cleaning_hours="{{evaluationbook.cleaning_hours}}"
+                                                        >
+                                                            {{ multi_order_schedule.start_at | date:'d-m-Y g:i A'}}
+                                                        </span>
                                                     </div>
+                                                    
 
                                                     {% for investigation in multi_order_schedule.investigations|slice:":1" %}{% for followup in investigation.followups|slice:":1" %}{% if followup %}
                                                     <img  class="visit-time-edit pointer ml-auto mt-2p" src="{% static 'files/icons/flags.png' %}" ><span class="ml-5 visit-text"></span>
@@ -4106,6 +4117,53 @@
 </div>
 
 <!-- note to customer modal ends here-->
+
+<!-- note to customer edit modal-->
+<div class="modal fade bd-example-modal-lg" id="updateVisitDateTimeModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog cancel-model update-visit-datetime-modal" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 c-mt-10 c-model-head">
+                    <h1> Update Visit Date & Time </h1>
+                    <div class="col-md-12 d-flex justify-center mt-10 ">
+                       <div class="form-group">
+                            <label for="visit-date">Date</label>
+                                <input type="date" id="visit-date" class="form-control" placeholder="Select date" v-model="visitDateTimeUpdate.date">
+                        </div>
+                        <div class="form-group">
+                            <label for="visit-time">Time</label>
+                                <input type="time" id="visit-time" class="form-control" placeholder="Select time" v-model="visitDateTimeUpdate.time">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                    <div class="col-md-12  text-center" v-if="visitDateTimeUpdateErr">
+                        <div class="alert alert-danger" role="alert">
+                            Failed to update visit date and time.
+                        </div>
+                    </div>
+                    <div class="col-md-12 text-center" v-if="visitDateTimeUpdateSuccess">
+                        <div class="alert alert-success" role="alert">
+                            Visit date and time updated successfully.
+                        </div>
+                    </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <div class="cancel-model-content">
+                            <button class="sent-button" @click="updateVisitDateTime">Submit</button>
+                        <button data-dismiss="modal" class="view-button" id="close_customer_note">Cancel</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
 <!--
 
     Alert Box
@@ -4222,7 +4280,7 @@ $('input[name="radio"]').click(function(){
 
 
 
- <script>
+<script>
     var x, i, j, l, ll, selElmnt, a, b, c;
 
     x = document.getElementsByClassName("custom-select");
@@ -4296,7 +4354,7 @@ $('input[name="radio"]').click(function(){
     }
 
     document.addEventListener("click", closeAllSelect);
-    </script> -->
+</script>
 
 
 
