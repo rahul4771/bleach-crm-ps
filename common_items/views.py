@@ -6373,3 +6373,25 @@ def update_visit_datetime(request):
 			return JsonResponse({'success': True, 'new_datetime': schedule.start_at.strftime('%d-%m-%Y %I:%M %p')})
 		except Exception as e:
 			return JsonResponse({'success': False, 'error': str(e)})
+
+
+def add_service_type(request):
+	if request.method == 'POST':
+		service_name =  request.POST.get('new_service_name')
+		service_name_arabic =  request.POST.get('new_service_name_arabic')
+
+		# Backend validation for duplicate names
+		if ServiceType.objects.filter(name__iexact=service_name).exists():
+			return JsonResponse({'success': False, 'error_field': 'new_service_name', 'error_message': 'Service name already exists.'})
+		if ServiceType.objects.filter(name_arabic__iexact=service_name_arabic).exists():
+			return JsonResponse({'success': False, 'error_field': 'new_service_name_arabic', 'error_message': 'Service name in Arabic already exists.'})
+		
+		try:
+			service_type = ServiceType.objects.create(
+				name=service_name,
+				name_arabic=service_name_arabic,
+				is_active=True
+			)
+			return JsonResponse({'success': True, 'service_type': service_type.name})
+		except Exception as e:
+			return JsonResponse({'success': False, 'error': str(e)})

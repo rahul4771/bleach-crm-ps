@@ -75,4 +75,5 @@ urlpatterns = [
 		url(r'^cancell-order/(?P<order_id>[-\w]+)/$',views.OrderCancellation.as_view(),name='cancell-order'),
 		url(r'^cancell-book/(?P<evaluation_id>[-\w]+)/$',views.EvaluationBookCancellation.as_view(),name='cancell-book'),
         url(r'^update-visit-datetime/$', views.update_visit_datetime, name='update-visit-datetime'),	
+        url(r'^add-service-type/$', views.add_service_type, name='add-service-type'),	
 	]

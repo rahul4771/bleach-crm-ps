@@ -44,7 +44,8 @@
                 <!--main-content-holder-->
                 <div class="white-wrapper">
                     <!--white-wrapper-->
-                   <div class="row"  id="smd-service-list">
+                    <!-- service tiles section -->
+                    <div class="row"  id="smd-service-list">
                         <div class="col-md-12">
                             <div class="col-xs-12 col-sm-12 col-md-2 smd-tiles smd-p-1 smd-m-1" onclick="onServiceTypeClick('discount')">
                                 <h2 class="productivity-name smd-fs-18">Discounts</h2>
@@ -54,9 +55,58 @@
                                     <h2 class="productivity-name smd-fs-18">{{ service_type.name }}</h2>
                                 </div>
                             {% endfor %}
+                            <div class="col-xs-12 col-sm-12 col-md-2 smd-p-1 smd-m-1" onclick="onAddNewServiceClick()">
+                               <button class="border-button smd-p-10-px"><i class="fa fa-plus-circle"></i> Add Service Type </button>
+                            </div>
                         </div>
-                   </div>
-                   <!-- service details section -->
+                    </div>
+                    <!-- service tiles section -->
+                    <!-- add new service section -->
+                    <div id="smd-add-new-service" class="mt-20 hide">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button class="blue-button" onclick="onBackButtonClick('add-new-service')"><i class="fa fa-arrow-left"></i> Back</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="smd-add-service mt-10">
+                                <div class="col-md-12 smd-card-border">
+                                    <div class="col-md-8">
+                                        <h2 class="productivity-name">Add Service Type</h2>
+                                    </div>
+                                    <form id="add-new-service-form">                                       
+                                        <div class="col-md-8 mt-10">
+                                            <div class="row">
+                                                <div class="col-xs-12 col-md-4">
+                                                    <label for="new_service_name" class="smd-label">Service name</label>
+                                                </div>
+                                                <div class="col-xs-12 col-md-8">
+                                                    <input id="new_service_name" type="text" class="textBox form-control" name="new_service_name" placeholder="e.g: Kitchen Cleaning" required="required">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8 mt-10">
+                                            <div class="row">
+                                                <div class="col-xs-12 col-md-4">
+                                                    <label for="new_service_name_arabic" class="smd-label">Service name in arabic</label>
+                                                </div>
+                                                <div class="col-xs-12 col-md-8">
+                                                    <input id="new_service_name_arabic" type="text" class="textBox form-control" name="new_service_name_arabic" placeholder="مثال: تنظيف المطبخ" required="required">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <button class="border-button mt-30" type="submit">
+                                                <i class="fa fa-plus-circle" aria-hidden="true"></i> Add Service
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- add new service section -->
+                    <!-- service details section -->
                     <div id="smd-service-details" class="mt-20 hide">
                         <div class="row">
                             <button data-toggle="modal" data-target="#editModal"  class="pricerange_edit_button" style="display:none;"></button>
@@ -78,41 +128,32 @@
                                 <input   type="text" required="required" name="discount_setting_id" id="discount_setting_id" value="{{discount_settings.id}}" class="hidden-field"/>
                                 <div class="col-md-6 ">
                                     <div class="discount-card">
-                                    <div class="row ml-10">
-                                        
-                                        <div class="col-md-12">
-                                            <h2 class="productivity-name"> Discounts</h2>
-                                            <div class="d-flex mt-10">
-                                            <div >
-                                                
-                                                <label class="switch">
-                                                
-                                                    <input type="checkbox" id="is_stat" name="is_stat" {% if discount_percentage.is_active == true %}checked{% endif %} onchange="changeDiscountStat()">
-                                                    <span class="slider round"></span>
-                                                </label>
+                                        <div class="row ml-10">
+                                            <div class="col-md-12">
+                                                <h2 class="productivity-name"> Discounts</h2>
+                                                <div class="d-flex mt-10">
+                                                    <div>
+                                                        <label class="switch">
+                                                            <input type="checkbox" id="is_stat" name="is_stat" {% if discount_percentage.is_active == true %}checked{% endif %} onchange="changeDiscountStat()">
+                                                            <span class="slider round"></span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="discount-stat">Active</div>
+                                                </div>
                                             </div>
-                                            <div class="discount-stat">Active</div>
+                                            <div class="col-md-5 mt-10 ">
+                                                <div class="discount-label">Duration (Days)</div>
+                                                <input   type="number" class="discount-card-sub-input mt-5" placeholder="Duration" required="required" name="duration" value="{{discount_settings.duration}}"/>
+                                            </div>
+                                            <div class="col-md-5 mt-10">
+                                                <div class="discount-label">Discount (%)</div>
+                                                <input   type="number" class="discount-card-sub-input mt-5" placeholder="Discount in %" required="required" name="discount_percentage" value="{{discount_settings.discount_percentage}}"/>
+                                            </div>
+                                            <div class="col-md-12  mt-10 mb-10 ">
+                                                <input type="submit" value="Update" class="discount-submit"/>
                                             </div>
                                         </div>
-                                        
-                                        <div class="col-md-5 mt-10 ">
-                                            <div class="discount-label">Duration (Days)</div>
-                                            <input   type="number" class="discount-card-sub-input mt-5" placeholder="Duration" required="required" name="duration" value="{{discount_settings.duration}}"/>
-                                        </div>
-                                        <div class="col-md-5 mt-10">
-                                            <div class="discount-label">Discount (%)</div>
-                                            <input   type="number" class="discount-card-sub-input mt-5" placeholder="Discount in %" required="required" name="discount_percentage" value="{{discount_settings.discount_percentage}}"/>
-                                        </div>
-                                        <div class="col-md-12  mt-10 mb-10 ">
-                                            <input type="submit" value="Update" class="discount-submit"/>
-                                        
-
-                                        </div>
-                                    
                                     </div>
-                                </div>
-                                    
-
                                 </div>
                             </form>
                         </div>
@@ -770,6 +811,77 @@
 {% endblock %}
 {% block javascript %}
 <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("add-new-service-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const form = event.target;
+            const formData = new FormData(form);
+            let isValid = true;
+
+           
+           form.querySelectorAll("[required]").forEach(input => {
+            const formGroup = input.closest('.row');
+            let helpBlock = formGroup ? formGroup.querySelector('.help-block') : null;
+            if (helpBlock) helpBlock.remove();
+
+            if (!input.value.trim()) {
+                isValid = false;
+                if (formGroup) {
+                    formGroup.classList.add("has-error");
+                    const errorSpan = document.createElement("span");
+                    errorSpan.className = "help-block";
+                    errorSpan.textContent = "This field is required.";
+                    input.parentNode.appendChild(errorSpan);
+                }
+            } else {
+                if (formGroup) formGroup.classList.remove("has-error");
+            }
+        });
+
+            if (isValid) {
+                fetch("{% url 'common_items:add-service-type' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}",
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.reload();
+                    } else {
+                       if(data.error_field && data.error_message){
+                            const errorInput = form.querySelector(`[name="${data.error_field}"]`);
+                            if (errorInput) {
+                                const formGroup = errorInput.closest('.row');
+                                if (formGroup) {
+                                    formGroup.classList.add("has-error");
+                                    let helpBlock = formGroup.querySelector('.help-block');
+                                    if (!helpBlock) {
+                                        helpBlock = document.createElement("span");
+                                        helpBlock.className = "help-block";
+                                        errorInput.parentNode.appendChild(helpBlock);
+                                    }
+                                    helpBlock.textContent = data.error_message;
+                                }
+                            }
+                       } else {
+                            alert("An error occurred. Please try again.");
+                       }
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+            }
+        });
+    });
+    
+    // Handles the click event on a service type tile.
+    // Hides the service type list, shows the service details section,
+    // and displays only the panel related to the selected service type.
     function onServiceTypeClick(serviceType) {
         const serviceList = document.getElementById("smd-service-list");
         const serviceDetails = document.getElementById("smd-service-details");
@@ -786,17 +898,32 @@
             }
         });
     }
-    function onBackButtonClick() {
+
+    // Handles the click event for the "Back" button in the service details section.
+    // Shows the service type list, hides the service details section,
+    // and hides all service type detail panels
+    function onBackButtonClick(type = null) {
         const serviceList = document.getElementById("smd-service-list");
         const serviceDetails = document.getElementById("smd-service-details");
         const panels = serviceDetails.querySelectorAll(".row");
         serviceList.classList.remove("hide");
         serviceDetails.classList.add("hide");
+        if(type && type ==='add-new-service'){
+            const addNewService = document.getElementById("smd-add-new-service");
+            addNewService.classList.add("hide");
+            return;
+         }
         panels.forEach(element => {
             if (element.id && element.id.endsWith('-panel')) {
                 element.classList.add("hide");
             }
         });
+    }
+    function onAddNewServiceClick(){
+         const serviceList = document.getElementById("smd-service-list");
+         serviceList.classList.add("hide");
+         const addNewService = document.getElementById("smd-add-new-service");
+         addNewService.classList.remove("hide");
     }
     //add Add-ons
     function add_add_on(elem){
