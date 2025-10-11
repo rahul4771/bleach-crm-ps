@@ -115,6 +115,7 @@
                             <button data-toggle="modal" id="id_add_add" data-target="#add-onModal"  style="display:none;"></button>
                             <button data-toggle="modal" id="id_add_edit" data-target="#edit-onModal"  style="display:none;"></button>
                             <button data-toggle="modal" id="id_add_delete" data-target="#delete-onModal"  style="display:none;"></button>
+                            <button data-toggle="modal" id="add_category" data-target="#addCategoryModal"  style="display:none;"></button>
                             
                             <div class="col-md-12">
                                 <button class="blue-button" onclick="onBackButtonClick()"><i class="fa fa-arrow-left"></i> Back</button>
@@ -162,104 +163,114 @@
                             <div class="col-md-12  mt-10" >
                                 <div class="col-md-12 smd-card-border">
                                     <div class="col-md-6" >
-                                        <h2 class="productivity-name"> {{service_type.name}}</h2>
+                                        <div class="d-flex smd-justify-content-between">
+                                            <div>
+                                                <h2 class="productivity-name">{{service_type.name}}</h2>
+                                            </div>
+                                            <div >
+                                                <button class="border-button" onclick="viewAddCategoryModal('{{service_type.name}}','{{service_type.id}}')"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add Category</button>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex smd-justify-content-flex-end smd-mb-1 smd-mt-1">
                                             <div class="productivity-card-sub">
 
-                                            {% for service_productivity in service_productivities %}
-                                                {% if service_productivity.service_type == service_type %}
-                                                    {% if not service_productivity.is_newkitchen and not service_productivity.is_cabinet and not service_productivity.is_highprice_facade and not service_productivity.is_highprice_window and service_productivity.upholstery_type != 'CURTAIN' %}
-                                                        <div class="productivity-sub-top" id="productivityhead_{{service_type.id}}1">
-                                                            <div class="productivity-sub-top-item-left">
-                                                            Productivity
+                                                {% for service_productivity in service_productivities %}
+                                                    {% if service_productivity.service_type == service_type %}
+                                                        {% if not service_productivity.is_newkitchen and not service_productivity.is_cabinet and not service_productivity.is_highprice_facade and not service_productivity.is_highprice_window and service_productivity.upholstery_type != 'CURTAIN' %}
+                                                            <div class="productivity-sub-top" id="productivityhead_{{service_type.id}}1">
+                                                                <div class="productivity-sub-top-item-left">
+                                                                Productivity
+                                                                </div>
+                                                                <div class="productivity-sub-top-item-right"> 
+                                                                    <img id="id_edit_{{service_productivity.id}}" onclick="editPro({{service_productivity.id}})" class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
+                                                                    <button  id="id_done_{{service_productivity.id}}" onclick="doneEdit({{service_productivity.id}})" class="productivity-card-done">Done</button>
+                                                                </div>
                                                             </div>
-                                                            <div class="productivity-sub-top-item-right"> 
-                                                                <img id="id_edit_{{service_productivity.id}}" onclick="editPro({{service_productivity.id}})" class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                                                <button  id="id_done_{{service_productivity.id}}" onclick="doneEdit({{service_productivity.id}})" class="productivity-card-done">Done</button>
+                                                                <div class="productivity-card-sub-content" id="productivitycontent_{{service_type.id}}1">
+                                                                <h1 id="id_pro_value_{{service_productivity.id}}" >{{service_productivity.perhour_cleaning}} <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
+                                                                <input  id="id_pro_{{service_productivity.id}}" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
                                                             </div>
-                                                        </div>
-                                                            <div class="productivity-card-sub-content" id="productivitycontent_{{service_type.id}}1">
-                                                            <h1 id="id_pro_value_{{service_productivity.id}}" >{{service_productivity.perhour_cleaning}} <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
-                                                            <input  id="id_pro_{{service_productivity.id}}" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
-                                                        </div>
+                                                        {% endif %}
                                                     {% endif %}
-                                                {% endif %}
-                                            {% endfor %}
+                                                {% endfor %}
 
-                                            {% for service_productivity in service_productivities %}
-                                                {% if service_productivity.service_type == service_type %}
-                                                    {% if not service_price_range.is_cabinet and service_productivity.is_newkitchen or service_productivity.is_highprice_facade or service_productivity.is_highprice_window or service_productivity.upholstery_type == 'CURTAIN' %}
-                                                        <div class="productivity-sub-top" id="productivityhead_{{service_type.id}}2" style="display: none;">
-                                                            <div class="productivity-sub-top-item-left">
-                                                            Productivity
+                                                {% for service_productivity in service_productivities %}
+                                                    {% if service_productivity.service_type == service_type %}
+                                                        {% if not service_price_range.is_cabinet and service_productivity.is_newkitchen or service_productivity.is_highprice_facade or service_productivity.is_highprice_window or service_productivity.upholstery_type == 'CURTAIN' %}
+                                                            <div class="productivity-sub-top" id="productivityhead_{{service_type.id}}2" style="display: none;">
+                                                                <div class="productivity-sub-top-item-left">
+                                                                Productivity
+                                                                </div>
+                                                                <div class="productivity-sub-top-item-right"> 
+                                                                    <img id="id_edit_{{service_productivity.id}}" onclick="editPro({{service_productivity.id}})" class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
+                                                                    <button  id="id_done_{{service_productivity.id}}" onclick="doneEdit({{service_productivity.id}})" class="productivity-card-done">Done</button>
+                                                                </div>
                                                             </div>
-                                                            <div class="productivity-sub-top-item-right"> 
-                                                                <img id="id_edit_{{service_productivity.id}}" onclick="editPro({{service_productivity.id}})" class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                                                <button  id="id_done_{{service_productivity.id}}" onclick="doneEdit({{service_productivity.id}})" class="productivity-card-done">Done</button>
+                                                            <div class="productivity-card-sub-content" id="productivitycontent_{{service_type.id}}2" style="display: none;">
+                                                                <h1 id="id_pro_value_{{service_productivity.id}}" >{{service_productivity.perhour_cleaning}} <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
+                                                                <input  id="id_pro_{{service_productivity.id}}" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
                                                             </div>
-                                                        </div>
-                                                        <div class="productivity-card-sub-content" id="productivitycontent_{{service_type.id}}2" style="display: none;">
-                                                            <h1 id="id_pro_value_{{service_productivity.id}}" >{{service_productivity.perhour_cleaning}} <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
-                                                            <input  id="id_pro_{{service_productivity.id}}" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
-                                                        </div>
+                                                        {% endif %}
                                                     {% endif %}
-                                                {% endif %}
-                                            {% endfor %}
+                                                {% endfor %}
 
-                                            {% for service_productivity in service_productivities %}
-                                                {% if service_productivity.service_type == service_type %}
-                                                    {% if not service_productivity.is_newkitchen and service_productivity.is_cabinet %}
-                                                        <div class="productivity-sub-top" id="productivityhead_{{service_type.id}}3" style="display: none;">
-                                                            <div class="productivity-sub-top-item-left">
-                                                            Productivity
+                                                {% for service_productivity in service_productivities %}
+                                                    {% if service_productivity.service_type == service_type %}
+                                                        {% if not service_productivity.is_newkitchen and service_productivity.is_cabinet %}
+                                                            <div class="productivity-sub-top" id="productivityhead_{{service_type.id}}3" style="display: none;">
+                                                                <div class="productivity-sub-top-item-left">
+                                                                Productivity
+                                                                </div>
+                                                                <div class="productivity-sub-top-item-right"> 
+                                                                    <img id="id_edit_{{service_productivity.id}}" onclick="editPro({{service_productivity.id}})" class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
+                                                                    <button  id="id_done_{{service_productivity.id}}" onclick="doneEdit({{service_productivity.id}})" class="productivity-card-done">Done</button>
+                                                                </div>
                                                             </div>
-                                                            <div class="productivity-sub-top-item-right"> 
-                                                                <img id="id_edit_{{service_productivity.id}}" onclick="editPro({{service_productivity.id}})" class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                                                <button  id="id_done_{{service_productivity.id}}" onclick="doneEdit({{service_productivity.id}})" class="productivity-card-done">Done</button>
+                                                            <div class="productivity-card-sub-content" id="productivitycontent_{{service_type.id}}3" style="display: none;">
+                                                                <h1 id="id_pro_value_{{service_productivity.id}}" >{{service_productivity.perhour_cleaning}} <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
+                                                                <input  id="id_pro_{{service_productivity.id}}" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
                                                             </div>
-                                                        </div>
-                                                        <div class="productivity-card-sub-content" id="productivitycontent_{{service_type.id}}3" style="display: none;">
-                                                            <h1 id="id_pro_value_{{service_productivity.id}}" >{{service_productivity.perhour_cleaning}} <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
-                                                            <input  id="id_pro_{{service_productivity.id}}" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
-                                                        </div>
+                                                        {% endif %}
                                                     {% endif %}
-                                                {% endif %}
-                                            {% endfor %}
+                                                {% endfor %}
 
-                                            {% for service_productivity in service_productivities %}
-                                                {% if service_productivity.service_type == service_type %}
-                                                    {% if service_productivity.is_newkitchen and service_productivity.is_cabinet %}
-                                                        <div class="productivity-sub-top" id="productivityhead_{{service_type.id}}4" style="display: none;">
-                                                            <div class="productivity-sub-top-item-left">
-                                                            Productivity
+                                                {% for service_productivity in service_productivities %}
+                                                    {% if service_productivity.service_type == service_type %}
+                                                        {% if service_productivity.is_newkitchen and service_productivity.is_cabinet %}
+                                                            <div class="productivity-sub-top" id="productivityhead_{{service_type.id}}4" style="display: none;">
+                                                                <div class="productivity-sub-top-item-left">
+                                                                Productivity
+                                                                </div>
+                                                                <div class="productivity-sub-top-item-right"> 
+                                                                    <img id="id_edit_{{service_productivity.id}}" onclick="editPro({{service_productivity.id}})" class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
+                                                                    <button  id="id_done_{{service_productivity.id}}" onclick="doneEdit({{service_productivity.id}})" class="productivity-card-done">Done</button>
+                                                                </div>
                                                             </div>
-                                                            <div class="productivity-sub-top-item-right"> 
-                                                                <img id="id_edit_{{service_productivity.id}}" onclick="editPro({{service_productivity.id}})" class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                                                <button  id="id_done_{{service_productivity.id}}" onclick="doneEdit({{service_productivity.id}})" class="productivity-card-done">Done</button>
+                                                            <div class="productivity-card-sub-content" id="productivitycontent_{{service_type.id}}4" style="display: none;">
+                                                                <h1 id="id_pro_value_{{service_productivity.id}}" >{{service_productivity.perhour_cleaning}} <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
+                                                                <input  id="id_pro_{{service_productivity.id}}" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
                                                             </div>
-                                                        </div>
-                                                        <div class="productivity-card-sub-content" id="productivitycontent_{{service_type.id}}4" style="display: none;">
-                                                            <h1 id="id_pro_value_{{service_productivity.id}}" >{{service_productivity.perhour_cleaning}} <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
-                                                            <input  id="id_pro_{{service_productivity.id}}" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
-                                                        </div>
+                                                        {% endif %}
                                                     {% endif %}
-                                                {% endif %}
-                                            {% endfor %}
+                                                {% endfor %}
 
                                             </div>
-
-                                            <div class="smd-productivity-tab">
-                                            <button id="normal_button_id_{{service_type.id}}" class="productivity-tab-item productivity-tab-border"  onclick="viewNormal({{service_type.id}})">{% if service_type.name == 'Upholstery Cleaning' %}Sofa{% elif service_type.name == 'Window Cleaning' %}Old Window{% elif service_type.name == 'Facade Cleaning' %}Old Facade{%elif service_type.name == 'Kitchen Cleaning'%}Old Kitchen{% else %}Normal{% endif %}</button>
-                                            {% if service_type.name == 'Upholstery Cleaning' or service_type.name == 'Kitchen Cleaning' or service_type.name == 'Facade Cleaning' or service_type.name == 'Window Cleaning' %}
-                                            <button id="special_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewSpecial({{service_type.id}})">{% if service_type.name == 'Upholstery Cleaning' %}Curtain{% elif service_type.name == 'Window Cleaning' %}New Window{% elif service_type.name == 'Facade Cleaning' %}New Facade{%elif service_type.name == 'Kitchen Cleaning'%}New Kitchen{% endif %}</button>
-                                            {% endif %}
-                                            {% if service_type.name == 'Kitchen Cleaning' %}
-                                            <button id="veryspecial_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewVerySpecial({{service_type.id}})">{% if service_type.name == 'Kitchen Cleaning' %}Old Kitchen (with cabinet){% endif %}</button>
-                                            {% endif %}
-                                            {% if service_type.name == 'Kitchen Cleaning' %}
-                                            <button id="veryveryspecial_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewVeryVerySpecial({{service_type.id}})">New Kitchen (with Cabinet)</button>
-                                            {% endif %}
                                         </div>
-
+                                        <div class="d-flex">
+                                            <div class="smd-productivity-tab">
+                                                <button id="normal_button_id_{{service_type.id}}" class="productivity-tab-item productivity-tab-border"  onclick="viewNormal({{service_type.id}})">{% if service_type.name == 'Upholstery Cleaning' %}Sofa{% elif service_type.name == 'Window Cleaning' %}Old Window{% elif service_type.name == 'Facade Cleaning' %}Old Facade{%elif service_type.name == 'Kitchen Cleaning'%}Old Kitchen{% else %}Normal{% endif %}</button>
+                                                {% if service_type.name == 'Upholstery Cleaning' or service_type.name == 'Kitchen Cleaning' or service_type.name == 'Facade Cleaning' or service_type.name == 'Window Cleaning' %}
+                                                <button id="special_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewSpecial({{service_type.id}})">{% if service_type.name == 'Upholstery Cleaning' %}Curtain{% elif service_type.name == 'Window Cleaning' %}New Window{% elif service_type.name == 'Facade Cleaning' %}New Facade{%elif service_type.name == 'Kitchen Cleaning'%}New Kitchen{% endif %}</button>
+                                                {% endif %}
+                                                {% if service_type.name == 'Kitchen Cleaning' %}
+                                                <button id="veryspecial_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewVerySpecial({{service_type.id}})">{% if service_type.name == 'Kitchen Cleaning' %}Old Kitchen (with cabinet){% endif %}</button>
+                                                {% endif %}
+                                                {% if service_type.name == 'Kitchen Cleaning' %}
+                                                <button id="veryveryspecial_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewVeryVerySpecial({{service_type.id}})">New Kitchen (with Cabinet)</button>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        
                                         <div id="normal_id_{{service_type.id}}" class="productivity-card-content"> <!--normal-->
                                             {% for service_price_range in service_price_ranges %}
                                                 {% if service_price_range.service_type == service_type %}
@@ -804,6 +815,55 @@
                 </div>
             </div>
         </div>
+         <!-- Modal add category -->
+        <div class="modal fade" id="addCategoryModal" role="dialog">
+            <div class="modal-dialog cancel-model cancel-order-border" role="document">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+        
+                            <div class="d-flex cl-modal-icons">
+                                <button data-dismiss="modal" class="img-button">
+                                    <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                                </button>
+        
+                            </div>
+                        </div>
+                    </div>
+                    <h2 class="productivity-name" id="category_modal_heading"> </h2>
+                    <form id="add_category_form" name="add_category_form">
+                        {% csrf_token %}
+                        <input type="hidden" name="service_type_id" id="add_service_type_id">
+                        <div class="row mt-10">
+                            <div class="form-group col-md-12 mt-10">
+                                <label >Category Name</label>
+                                <input name="category_name" id="category_name" type="text" placeholder=" " required="required" class="textBox form-control">
+                            </div>
+                            <div class="form-group col-md-12 mt-10">
+                                <label >Description</label>
+                                <textarea name="category_description" id="category_description" class="textBox form-control" placeholder="Description"></textarea>
+                            </div>
+                            <div class="form-group col-md-6 mt-10">
+                                <label >Status</label>
+                                <select name="status" id="add_status_id" class="textBox form-control">
+                                    <option value="ACTIVE" selected>Active</option>
+                                    <option value="INACTIVE">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <div class="cancel-model-content">
+                                    <button class="sent-button"><input type="submit" class="btn-submit" id="add_category_submit_button" value="Submit"></button>
+                                    <button data-dismiss="modal" class="view-button">Cancel</button>
+                                </div>
+                            </div>
+            
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 </section>
 
 
@@ -877,6 +937,53 @@
                 });
             }
         });
+
+        document.getElementById("add_category_form").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const form = event.target;
+            const formData = new FormData(form);
+            let isValid = true;
+
+           
+           form.querySelectorAll("[required]").forEach(input => {
+                const formGroup = input.closest('.form-group');
+                let helpBlock = formGroup ? formGroup.querySelector('.help-block') : null;
+                if (helpBlock) helpBlock.remove();
+
+                if (!input.value.trim()) {
+                    isValid = false;
+                    if (formGroup) {
+                        formGroup.classList.add("has-error");
+                        const errorSpan = document.createElement("span");
+                        errorSpan.className = "help-block";
+                        errorSpan.textContent = "This field is required.";
+                        input.parentNode.appendChild(errorSpan);
+                    }
+                } else {
+                    if (formGroup) formGroup.classList.remove("has-error");
+                }
+            });
+            // add validation for description length
+            const descriptionInput = form.querySelector("#category_description");
+            if (descriptionInput && descriptionInput.value.length > 200) {
+                isValid = false;
+                const formGroup = descriptionInput.closest('.form-group');
+                if (formGroup) {
+                    formGroup.classList.add("has-error");
+                    let helpBlock = formGroup.querySelector('.help-block');
+                    if (!helpBlock) {
+                        helpBlock = document.createElement("span");
+                        helpBlock.className = "help-block";
+                        descriptionInput.parentNode.appendChild(helpBlock);
+                    }
+                    helpBlock.textContent = "Description cannot exceed 200 characters.";
+                }
+            } else {
+                const formGroup = descriptionInput.closest('.form-group');
+                if (formGroup) formGroup.classList.remove("has-error");
+            }
+        });
     });
     
     // Handles the click event on a service type tile.
@@ -919,6 +1026,8 @@
             }
         });
     }
+    // Handles the click event for the "Add New Service" button.
+    // Hides the service type list and shows the add new service form.
     function onAddNewServiceClick(){
          const serviceList = document.getElementById("smd-service-list");
          serviceList.classList.add("hide");
@@ -1233,5 +1342,12 @@ function delete_price_range(elem)
     $('#delete_price_range_id').val($(elem).data('id'));
     $(".pricerange_delete_button").click();
 }
+
+function viewAddCategoryModal(serviceTypeName, serviceTypeId){
+  document.getElementById("add_category").click();
+  document.getElementById("category_modal_heading").textContent = `Add new category for ${serviceTypeName}`;
+  document.getElementById("add_service_type_id").value = serviceTypeId;
+}
+// add_category_submit_button
 </script>
 {% endblock %}

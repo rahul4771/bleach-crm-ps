@@ -44,12 +44,12 @@
     padding: 0px;
   }
 .productivity-card-sub {
-  position: absolute;
+  /* position: absolute; */
   background: #edf1f6 0% 0% no-repeat padding-box;
   border-radius: 4px;
   opacity: 1;
-  right: 20px;
-  top: 10px;
+  /* right: 20px; */
+  /* top: 45px; */
   padding: 7px 7px 0px 7px;
   width: 300px;
 }
@@ -389,6 +389,12 @@ input:checked + .slider:before {
 .smd-m-1 {
   margin: 1rem;
 }
+.smd-mb-1 {
+  margin-bottom: 1rem;
+}
+.smd-mt-1 {
+  margin-top: 1rem;
+}
 .smd-tiles {
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -403,8 +409,18 @@ input:checked + .slider:before {
   border-radius: 8px;
 }
 .smd-productivity-tab{
-  margin-top: 65px;
+  margin-top: 15px;
 }
 .smd-fs-18 {
   font-size: 18px !important;
+}
+.smd-justify-content-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.smd-justify-content-flex-end {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
