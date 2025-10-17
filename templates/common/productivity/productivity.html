@@ -115,7 +115,7 @@
                             <button data-toggle="modal" id="id_add_add" data-target="#add-onModal"  style="display:none;"></button>
                             <button data-toggle="modal" id="id_add_edit" data-target="#edit-onModal"  style="display:none;"></button>
                             <button data-toggle="modal" id="id_add_delete" data-target="#delete-onModal"  style="display:none;"></button>
-                            <button data-toggle="modal" id="add_category" data-target="#addCategoryModal"  style="display:none;"></button>
+                            <button data-toggle="modal" id="add_productivity" data-target="#addProductivityModal"  style="display:none;"></button>
                             
                             <div class="col-md-12">
                                 <button class="blue-button" onclick="onBackButtonClick()"><i class="fa fa-arrow-left"></i> Back</button>
@@ -158,7 +158,9 @@
                                 </div>
                             </form>
                         </div>
+                        
                         {% for service_type in service_types %}
+
                         <div class="row hide" id="{{service_type|slugify}}-panel" >
                             <div class="col-md-12  mt-10" >
                                 <div class="col-md-12 smd-card-border">
@@ -167,11 +169,36 @@
                                             <div>
                                                 <h2 class="productivity-name">{{service_type.name}}</h2>
                                             </div>
-                                            <div >
+                                            <div>
                                                 <button class="border-button" onclick="viewAddCategoryModal('{{service_type.name}}','{{service_type.id}}')"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add Category</button>
                                             </div>
                                         </div>
-                                        <div class="d-flex smd-justify-content-flex-end smd-mb-1 smd-mt-1">
+                                        <div class="d-flex">
+                                            {% for productivity in service_productivities %}
+                                                {% if productivity.service_type_id == service_type.id %}
+                                                    <div class="smd-productivity-tab" id="{{service_type|slugify}}-productivity-tab">
+                                                        <button id="category-tab-{{productivity.name|slugify}}-{{productivity.id}}" class="productivity-tab-item"  onclick="onProductivityTabClick(event)" data-productivity-name="{{productivity.name|slugify}}" data-productivity-id="{{productivity.id}}">{{productivity.name}}</button>
+                                                    </div>
+                                                {% endif %} 
+                                            {% endfor %}
+                                        </div>
+                                        {% for productivity in service_productivities %}
+                                            {% if productivity.service_type_id == service_type.id %}
+                                                <div class="d-flex smd-justify-content-between smd-mb-1 smd-mt-1 hide" id="productivity-content-{{productivity.name|slugify}}-{{productivity.id}}">
+                                                    <div class="productivity-card-sub" >
+                                                        <div class="productivity-sub-top-item-left">
+                                                            Productivity
+                                                        </div>
+                                                        <div class="productivity-sub-top-item-right"> 
+                                                             <h1 id="productivity-perhour-{{productivity.id}}">
+                                                                {{productivity.perhour_cleaning}} <span class="productivity-card-sub-content-text">sqm/man/hr</span>
+                                                            </h1>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                        <!-- <div class="d-flex smd-justify-content-between smd-mb-1 smd-mt-1">
                                             <div class="productivity-card-sub">
 
                                                 {% for service_productivity in service_productivities %}
@@ -255,8 +282,11 @@
                                                 {% endfor %}
 
                                             </div>
-                                        </div>
-                                        <div class="d-flex">
+                                            <div>
+                                                <button class="border-button" onclick="viewEditCategoryModal('{{service_type.name}}','{{service_type.id}}')"><i class="fa fa-pen" aria-hidden="true"></i> Edit Category</button>
+                                            </div>
+                                        </div> -->
+                                        <!-- <div class="d-flex">
                                             <div class="smd-productivity-tab">
                                                 <button id="normal_button_id_{{service_type.id}}" class="productivity-tab-item productivity-tab-border"  onclick="viewNormal({{service_type.id}})">{% if service_type.name == 'Upholstery Cleaning' %}Sofa{% elif service_type.name == 'Window Cleaning' %}Old Window{% elif service_type.name == 'Facade Cleaning' %}Old Facade{%elif service_type.name == 'Kitchen Cleaning'%}Old Kitchen{% else %}Normal{% endif %}</button>
                                                 {% if service_type.name == 'Upholstery Cleaning' or service_type.name == 'Kitchen Cleaning' or service_type.name == 'Facade Cleaning' or service_type.name == 'Window Cleaning' %}
@@ -269,7 +299,7 @@
                                                 <button id="veryveryspecial_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewVeryVerySpecial({{service_type.id}})">New Kitchen (with Cabinet)</button>
                                                 {% endif %}
                                             </div>
-                                        </div>
+                                        </div> -->
                                         
                                         <div id="normal_id_{{service_type.id}}" class="productivity-card-content"> <!--normal-->
                                             {% for service_price_range in service_price_ranges %}
@@ -816,7 +846,7 @@
             </div>
         </div>
          <!-- Modal add category -->
-        <div class="modal fade" id="addCategoryModal" role="dialog">
+        <div class="modal fade" id="addProductivityModal" role="dialog">
             <div class="modal-dialog cancel-model cancel-order-border" role="document">
                 <div class="container-fluid">
                     <div class="row">
@@ -830,32 +860,56 @@
                             </div>
                         </div>
                     </div>
-                    <h2 class="productivity-name" id="category_modal_heading"> </h2>
-                    <form id="add_category_form" name="add_category_form">
+                    <h2 class="productivity-name" id="productivity_modal_heading"> </h2>
+                    <form id="add_productivity_form" name="add_productivity_form">
                         {% csrf_token %}
-                        <input type="hidden" name="service_type_id" id="add_service_type_id">
+                        <input type="hidden" name="productivity_service_type_id" id="productivity_service_type_id">
                         <div class="row mt-10">
                             <div class="form-group col-md-12 mt-10">
-                                <label >Category Name</label>
-                                <input name="category_name" id="category_name" type="text" placeholder=" " required="required" class="textBox form-control">
+                                <label >Category Name <span class="text-danger">*</span></label>
+                                <input name="productivity_name" id="productivity_name" type="text" placeholder=" " required="required" class="textBox form-control">
+                                 <span id="helpBlock1" class="help-block"></span>
                             </div>
                             <div class="form-group col-md-12 mt-10">
                                 <label >Description</label>
-                                <textarea name="category_description" id="category_description" class="textBox form-control" placeholder="Description"></textarea>
+                                <textarea name="productivity_description" id="productivity_description" class="textBox form-control" placeholder="Description"></textarea>
+                                <span id="helpBlock2" class="help-block"></span>
                             </div>
-                            <div class="form-group col-md-6 mt-10">
-                                <label >Status</label>
-                                <select name="status" id="add_status_id" class="textBox form-control">
-                                    <option value="ACTIVE" selected>Active</option>
-                                    <option value="INACTIVE">Inactive</option>
+                            <div>
+                            <div class="form-group col-md-12 mt-10">
+                                <label >Cleaning Hours</label>
+                                <input name="productivity_cleaning_hours" id="productivity_cleaning_hours" type="text" placeholder=" "  class="textBox form-control">
+                            </div>
+                            <div class="form-group col-md-12 mt-10">
+                                <label >Maximum Cleaners Required</label>
+                                <input name="productivity_max_cleaners" id="productivity_max_cleaners" type="text" placeholder=" "  class="textBox form-control">
+                                 <span id="helpBlock4" class="help-block"></span>
+                            </div>
+                            <div class="form-group col-md-12 mt-10">
+                                <label >Maximum Hours Required</label>
+                                <input name="productivity_max_hours" id="productivity_max_hours" type="text" placeholder=" " class="textBox form-control">
+                            </div>
+                            <div class="form-group col-md-12 mt-10">
+                                <label >Minimum Cleaners Required</label>
+                                <input name="productivity_min_cleaners" id="productivity_min_cleaners" type="text" placeholder=" "  class="textBox form-control">
+                            </div>
+                            <div class="form-group col-md-12 mt-10">
+                                <label >Minimum Hours Required</label>
+                                <input name="productivity_min_hours" id="productivity_min_hours" type="text" placeholder=" "  class="textBox form-control">
+                            </div>
+                            <div class="form-group col-md-12 mt-10">
+                                <label >Status<span class="text-danger">*</span></label>
+                                <select name="status" id="add_status_id" class="textBox form-control" required>
+                                    <option value="active" selected>Active</option>
+                                    <option value="inactive">Inactive</option>
                                 </select>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12 text-center">
                                 <div class="cancel-model-content">
-                                    <button class="sent-button"><input type="submit" class="btn-submit" id="add_category_submit_button" value="Submit"></button>
-                                    <button data-dismiss="modal" class="view-button">Cancel</button>
+                                    <button class="sent-button"><input type="submit" class="btn-submit" id="add_productivity_submit_button" value="Submit"></button>
+                                    <button data-dismiss="modal" class="view-button" onclick="">Cancel</button>
                                 </div>
                             </div>
             
@@ -938,54 +992,87 @@
             }
         });
 
-        document.getElementById("add_category_form").addEventListener("submit", function(event) {
+        document.getElementById("add_productivity_form").addEventListener("submit", function(event) {
             event.preventDefault();
 
             const form = event.target;
             const formData = new FormData(form);
             let isValid = true;
 
-           
-           form.querySelectorAll("[required]").forEach(input => {
-                const formGroup = input.closest('.form-group');
-                let helpBlock = formGroup ? formGroup.querySelector('.help-block') : null;
-                if (helpBlock) helpBlock.remove();
+            const descriptionInput = form.querySelector("#productivity_description");
+            const cleaningHoursInput = form.querySelector("#productivity_cleaning_hours");
+            const maxCleanersInput = form.querySelector("#productivity_max_cleaners");
+            const maxHoursInput = form.querySelector("#productivity_max_hours");
+            const minCleanersInput = form.querySelector("#productivity_min_cleaners");
+            const minHoursInput = form.querySelector("#productivity_min_hours");
 
+            form.querySelectorAll("[required]").forEach(input => {
+                clearErrorFromInput(input);
                 if (!input.value.trim()) {
                     isValid = false;
-                    if (formGroup) {
-                        formGroup.classList.add("has-error");
-                        const errorSpan = document.createElement("span");
-                        errorSpan.className = "help-block";
-                        errorSpan.textContent = "This field is required.";
-                        input.parentNode.appendChild(errorSpan);
-                    }
-                } else {
-                    if (formGroup) formGroup.classList.remove("has-error");
+                    setErrorOnInput(input, "This field is required.");
                 }
             });
-            // add validation for description length
-            const descriptionInput = form.querySelector("#category_description");
-            if (descriptionInput && descriptionInput.value.length > 200) {
-                isValid = false;
-                const formGroup = descriptionInput.closest('.form-group');
-                if (formGroup) {
-                    formGroup.classList.add("has-error");
-                    let helpBlock = formGroup.querySelector('.help-block');
-                    if (!helpBlock) {
-                        helpBlock = document.createElement("span");
-                        helpBlock.className = "help-block";
-                        descriptionInput.parentNode.appendChild(helpBlock);
-                    }
-                    helpBlock.textContent = "Description cannot exceed 200 characters.";
+
+            if (descriptionInput) {
+                if (descriptionInput.value.length > 500) {
+                    isValid = false;
+                    setErrorOnInput(descriptionInput, "Description cannot exceed 500 characters.");
+                } else {
+                    clearErrorFromInput(descriptionInput);
                 }
-            } else {
-                const formGroup = descriptionInput.closest('.form-group');
-                if (formGroup) formGroup.classList.remove("has-error");
             }
+
+            if (!validateNumberInput(cleaningHoursInput, false, "Please enter a valid non-negative number")) isValid = false;
+            if (!validateNumberInput(maxCleanersInput, true, "Please enter a valid non-negative integer")) isValid = false;
+            if (!validateNumberInput(maxHoursInput, false, "Please enter a valid non-negative number")) isValid = false;
+            if (!validateNumberInput(minCleanersInput, true, "Please enter a valid non-negative integer")) isValid = false;
+            if (!validateNumberInput(minHoursInput, false, "Please enter a valid non-negative number")) isValid = false;
+
+            if (!isValid) return;
+
+            
         });
     });
     
+    function getFormGroup(input) {
+        return input ? (input.closest('.form-group') || input.closest('.row')) : null;
+    }
+
+    function setErrorOnInput(input, message) {
+        const formGroup = getFormGroup(input);
+        if (!formGroup) return;
+        formGroup.classList.add("has-error");
+        let helpBlock = formGroup.querySelector('.help-block');
+        if (!helpBlock) {
+            helpBlock = document.createElement("span");
+            helpBlock.className = "help-block";
+            formGroup.appendChild(helpBlock);
+        }
+        helpBlock.textContent = message;
+    }
+
+    function clearErrorFromInput(input) {
+        const formGroup = getFormGroup(input);
+        if (!formGroup) return;
+        formGroup.classList.remove("has-error");
+        const helpBlock = formGroup.querySelector('.help-block');
+        if (helpBlock) helpBlock.remove();
+    }
+
+    function validateNumberInput(input, integerOnly, message) {
+        if (!input || input.value.length === 0) {
+            clearErrorFromInput(input);
+            return true;
+        }
+        const val = integerOnly ? parseInt(input.value, 10) : parseFloat(input.value);
+        if (isNaN(val) || val < 0) {
+            setErrorOnInput(input, message);
+            return false;
+        }
+        clearErrorFromInput(input);
+        return true;
+    }
     // Handles the click event on a service type tile.
     // Hides the service type list, shows the service details section,
     // and displays only the panel related to the selected service type.
@@ -993,6 +1080,7 @@
         const serviceList = document.getElementById("smd-service-list");
         const serviceDetails = document.getElementById("smd-service-details");
         const panels = serviceDetails.querySelectorAll(".row");
+        const productivityTabs = serviceDetails.querySelectorAll(`#${serviceType}-productivity-tab`);
         serviceList.classList.add("hide");
         serviceDetails.classList.remove("hide");
         panels.forEach(element => {
@@ -1004,6 +1092,56 @@
                 }
             }
         });
+
+        if (productivityTabs && productivityTabs.length > 0) {
+            // scope to the current panel (safer)
+            const currentPanel = serviceDetails.querySelector(`#${serviceType}-panel`);
+
+            // hide all productivity contents once (only inside current panel if available)
+            const allProductivityContents = currentPanel
+                ? currentPanel.querySelectorAll("[id^='productivity-content-']")
+                : serviceDetails.querySelectorAll("[id^='productivity-content-']");
+            allProductivityContents.forEach(content => content.classList.add("hide"));
+
+            // remove border from all tab buttons
+            productivityTabs.forEach(tab => {
+                const btn = tab.querySelector(".productivity-tab-item");
+                if (btn) btn.classList.remove("productivity-tab-border");
+            });
+
+            // find first tab that has a valid button and activate it
+            const firstValidTab = Array.from(productivityTabs).find(tab => {
+                const b = tab.querySelector(".productivity-tab-item");
+                return b && b.getAttribute("data-productivity-name") && b.getAttribute("data-productivity-id");
+            });
+
+            if (firstValidTab) {
+                const btn = firstValidTab.querySelector(".productivity-tab-item");
+                const productivityName = btn.getAttribute("data-productivity-name");
+                const productivityId = btn.getAttribute("data-productivity-id");
+                if (productivityName && productivityId) {
+                    const productivityContent = document.getElementById(`productivity-content-${productivityName}-${productivityId}`);
+                    if (productivityContent) productivityContent.classList.remove("hide");
+                }
+                btn.classList.add("productivity-tab-border");
+            }
+        }        
+
+    }
+
+    function onProductivityTabClick(event){
+        const productivityName = event.currentTarget.getAttribute("data-productivity-name");
+        const productivityId = event.currentTarget.getAttribute("data-productivity-id");
+        const allProductivityContents = document.querySelectorAll("[id^='productivity-content-']");
+        allProductivityContents.forEach(content => content.classList.add("hide"));
+        const allTabs = document.querySelectorAll(".productivity-tab-item");
+        allTabs.forEach(tab => tab.classList.remove("productivity-tab-border"));
+        event.currentTarget.classList.add("productivity-tab-border");
+
+        if(productivityName && productivityId){
+            const productivityContent = document.getElementById(`productivity-content-${productivityName}-${productivityId}`);
+            productivityContent.classList.remove("hide");
+        }
     }
 
     // Handles the click event for the "Back" button in the service details section.
@@ -1344,10 +1482,10 @@ function delete_price_range(elem)
 }
 
 function viewAddCategoryModal(serviceTypeName, serviceTypeId){
-  document.getElementById("add_category").click();
-  document.getElementById("category_modal_heading").textContent = `Add new category for ${serviceTypeName}`;
-  document.getElementById("add_service_type_id").value = serviceTypeId;
+  document.getElementById("add_productivity").click();
+  document.getElementById("productivity_modal_heading").textContent = `Add new category for ${serviceTypeName}`;
+  document.getElementById("productivity_service_type_id").value = serviceTypeId;
 }
-// add_category_submit_button
+// add_productivity_submit_button
 </script>
 {% endblock %}
