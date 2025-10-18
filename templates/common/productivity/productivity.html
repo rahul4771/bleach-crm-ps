@@ -909,7 +909,7 @@
                             <div class="col-md-12 text-center">
                                 <div class="cancel-model-content">
                                     <button class="sent-button"><input type="submit" class="btn-submit" id="add_productivity_submit_button" value="Submit"></button>
-                                    <button data-dismiss="modal" class="view-button" onclick="">Cancel</button>
+                                    <button class="view-button" type="reset">Cancel</button>
                                 </div>
                             </div>
             
@@ -1031,8 +1031,64 @@
 
             if (!isValid) return;
 
-            
+            fetch("{% url 'common_items:add-service-productivity' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    if(data.error_field && data.error_message){
+                        const errorInput = form.querySelector(`[name="${data.error_field}"]`);
+                        if (errorInput) {
+
+                            const formGroup = errorInput.closest('.form-group');
+                            if (formGroup) {
+                                formGroup.classList.add("has-error");
+                                let helpBlock = formGroup.querySelector('.help-block');
+                                if (!helpBlock) {
+                                    helpBlock = document.createElement("span");
+                                    helpBlock.className = "help-block";
+                                    errorInput.parentNode.appendChild(helpBlock);
+                                }
+                                helpBlock.textContent = data.error_message;
+                            }
+                        }
+                    } else {
+                        console.log('data', data);
+                        alert("An error occurred. Please try again.");
+                    }
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
         });
+
+        document.getElementById("add_productivity_form").addEventListener("reset", function(event) {
+            event.preventDefault();
+            const form = event.target;
+            form.querySelectorAll(".has-error").forEach(formGroup => {
+                formGroup.classList.remove("has-error");
+                const helpBlock = formGroup.querySelector('.help-block');
+                if (helpBlock) helpBlock.remove();
+            });
+
+            form.reset();
+            const resetButton = form.querySelector("[type='reset']");
+            if (resetButton) {
+                resetButton.setAttribute("data-dismiss", "modal");
+                resetButton.click();
+            }
+
+
+        });
+
     });
     
     function getFormGroup(input) {

@@ -6395,3 +6395,52 @@ def add_service_type(request):
 			return JsonResponse({'success': True, 'service_type': service_type.name})
 		except Exception as e:
 			return JsonResponse({'success': False, 'error': str(e)})
+
+class ServiceProductivityAPIView(APIView):
+
+	def post(self, request, *args, **kwargs):
+		data = getattr(request, "data", request.POST)
+		service_type_id = data.get("service_type_id")
+		name = (data.get("productivity_name") or data.get("name") or "").strip()
+		description = data.get("productivity_description", "")
+		cleaning_hours = data.get("productivity_cleaning_hours") or None
+		max_cleaners = data.get("productivity_max_cleaners") or None
+		max_hours = data.get("productivity_max_hours") or None
+		min_cleaners = data.get("productivity_min_cleaners") or None
+		min_hours = data.get("productivity_min_hours") or None
+		is_active = True if data.get("status") == "active" else False
+
+		if not name:
+			return JsonResponse({"success": False, "error_field": "productivity_name", "error_message": "Name is required."}, status=400)
+
+		service_type = None
+		if service_type_id:
+			service_type = ServiceType.objects.filter(id=service_type_id).first()
+			if not service_type:
+				return JsonResponse({"success": False, "error_field": "service_type_id", "error_message": "Invalid service type."}, status=400)
+			
+		dup_qs = ServiceProductivity.objects.filter(name__iexact=name)
+		if service_type:
+			dup_qs = dup_qs.filter(service_type=service_type)
+		if dup_qs.exists():
+			return JsonResponse({"success": False, "error_field": "productivity_name", "error_message": "Service productivity with this name already exists."}, status=400)
+
+		try:
+			service_productivity = ServiceProductivity.objects.create(
+				service_type=service_type,
+				perhour_cleaning=cleaning_hours,
+				name=name,
+				description=description,
+				min_cleaners=min_cleaners,
+				max_cleaners=max_cleaners,
+				min_hours=min_hours,
+				max_hours=max_hours,
+				is_active=is_active,
+				is_highprice_facade=0,
+				is_highprice_window=0,
+				is_newkitchen=0,
+				is_cabinet=0,
+			)
+			return JsonResponse({"success": True, "id": service_productivity.id}, status=201)
+		except Exception as e:
+			return JsonResponse({"success": False, "error": str(e)}, status=500)
