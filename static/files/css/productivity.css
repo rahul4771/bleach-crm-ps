@@ -411,6 +411,9 @@ input:checked + .slider:before {
 .smd-productivity-tab{
   margin-top: 15px;
 }
+.smd-fs-16 {
+  font-size: 16px !important;
+}
 .smd-fs-18 {
   font-size: 18px !important;
 }

@@ -48,11 +48,11 @@
                     <div class="row"  id="smd-service-list">
                         <div class="col-md-12">
                             <div class="col-xs-12 col-sm-12 col-md-2 smd-tiles smd-p-1 smd-m-1" onclick="onServiceTypeClick('discount')">
-                                <h2 class="productivity-name smd-fs-18">Discounts</h2>
+                                <h2 class="productivity-name smd-fs-16">Discounts</h2>
                             </div>
                             {% for service_type in service_types %}
                                 <div class="col-xs-12 col-sm-12 col-md-2  smd-tiles smd-p-1 smd-m-1" onclick="onServiceTypeClick('{{ service_type.name|slugify }}')">
-                                    <h2 class="productivity-name smd-fs-18">{{ service_type.name }}</h2>
+                                    <h2 class="productivity-name smd-fs-16">{{ service_type.name }}</h2>
                                 </div>
                             {% endfor %}
                             <div class="col-xs-12 col-sm-12 col-md-2 smd-p-1 smd-m-1" onclick="onAddNewServiceClick()">
@@ -115,7 +115,7 @@
                             <button data-toggle="modal" id="id_add_add" data-target="#add-onModal"  style="display:none;"></button>
                             <button data-toggle="modal" id="id_add_edit" data-target="#edit-onModal"  style="display:none;"></button>
                             <button data-toggle="modal" id="id_add_delete" data-target="#delete-onModal"  style="display:none;"></button>
-                            <button data-toggle="modal" id="add_productivity" data-target="#addProductivityModal"  style="display:none;"></button>
+                            <button data-toggle="modal" id="manage_productivity" data-target="#manageProductivityModal"  style="display:none;"></button>                           
                             
                             <div class="col-md-12">
                                 <button class="blue-button" onclick="onBackButtonClick()"><i class="fa fa-arrow-left"></i> Back</button>
@@ -190,10 +190,33 @@
                                                             Productivity
                                                         </div>
                                                         <div class="productivity-sub-top-item-right"> 
-                                                             <h1 id="productivity-perhour-{{productivity.id}}">
-                                                                {{productivity.perhour_cleaning}} <span class="productivity-card-sub-content-text">sqm/man/hr</span>
-                                                            </h1>
+                                                            {% if productivity.perhour_cleaning != none%}
+                                                                <h1 id="productivity-perhour-{{productivity.id}}">
+                                                                    {{productivity.perhour_cleaning}} <span class="productivity-card-sub-content-text">sqm/man/hr</span>
+                                                                </h1>
+                                                            {% else %}
+                                                                <h1 id="productivity-perhour-{{productivity.id}}">
+                                                                    --
+                                                                </h1>
+                                                            {% endif %}
                                                         </div>
+                                                    </div>
+                                                     <div>
+                                                        <button class="border-button"
+                                                            onclick="viewEditProductivityModal({
+                                                                id: {{ productivity.id|default:'null' }},
+                                                                name: '{{ productivity.name|escapejs }}',
+                                                                service_type_id: {{ productivity.service_type_id|default:'null' }},
+                                                                description: '{{ productivity.description|default_if_none:''|escapejs }}',
+                                                                cleaning_hours: {{ productivity.cleaning_hours|default:'null' }},
+                                                                max_cleaners: {{ productivity.max_cleaners|default:'null' }},
+                                                                max_hours: {{ productivity.max_hours|default:'null' }},
+                                                                min_cleaners: {{ productivity.min_cleaners|default:'null' }},
+                                                                min_hours: {{ productivity.min_hours|default:'null' }},
+                                                                is_active: '{{ productivity.is_active}}'
+                                                            })">
+                                                            <i class="fa fa-pen" aria-hidden="true"></i> Edit Category
+                                                        </button>
                                                     </div>
                                                 </div>
                                             {% endif %}
@@ -846,7 +869,7 @@
             </div>
         </div>
          <!-- Modal add category -->
-        <div class="modal fade" id="addProductivityModal" role="dialog">
+        <div class="modal fade" id="manageProductivityModal" role="dialog">
             <div class="modal-dialog cancel-model cancel-order-border" role="document">
                 <div class="container-fluid">
                     <div class="row">
@@ -861,7 +884,7 @@
                         </div>
                     </div>
                     <h2 class="productivity-name" id="productivity_modal_heading"> </h2>
-                    <form id="add_productivity_form" name="add_productivity_form">
+                    <form id="manage_productivity_form" name="manage_productivity_form" data-action="">
                         {% csrf_token %}
                         <input type="hidden" name="productivity_service_type_id" id="productivity_service_type_id">
                         <div class="row mt-10">
@@ -899,7 +922,7 @@
                             </div>
                             <div class="form-group col-md-12 mt-10">
                                 <label >Status<span class="text-danger">*</span></label>
-                                <select name="status" id="add_status_id" class="textBox form-control" required>
+                                <select name="status" id="status_id" class="textBox form-control" required>
                                     <option value="active" selected>Active</option>
                                     <option value="inactive">Inactive</option>
                                 </select>
@@ -908,7 +931,7 @@
                         <div class="row">
                             <div class="col-md-12 text-center">
                                 <div class="cancel-model-content">
-                                    <button class="sent-button"><input type="submit" class="btn-submit" id="add_productivity_submit_button" value="Submit"></button>
+                                    <button class="sent-button"><input type="submit" class="btn-submit" id="manage_productivity_submit_button" value="Submit"></button>
                                     <button class="view-button" type="reset">Cancel</button>
                                 </div>
                             </div>
@@ -918,6 +941,8 @@
                 </div>
             </div>
         </div>
+        <!-- Modal edit category -->
+       
 </section>
 
 
@@ -992,12 +1017,13 @@
             }
         });
 
-        document.getElementById("add_productivity_form").addEventListener("submit", function(event) {
+        document.getElementById("manage_productivity_form").addEventListener("submit", function(event) {
             event.preventDefault();
 
             const form = event.target;
             const formData = new FormData(form);
             let isValid = true;
+            const formAction = form.getAttribute("data-action");
 
             const descriptionInput = form.querySelector("#productivity_description");
             const cleaningHoursInput = form.querySelector("#productivity_cleaning_hours");
@@ -1030,47 +1056,16 @@
             if (!validateNumberInput(minHoursInput, false, "Please enter a valid non-negative number")) isValid = false;
 
             if (!isValid) return;
-
-            fetch("{% url 'common_items:add-service-productivity' %}", {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": "{{ csrf_token }}",
-                },
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.reload();
-                } else {
-                    if(data.error_field && data.error_message){
-                        const errorInput = form.querySelector(`[name="${data.error_field}"]`);
-                        if (errorInput) {
-
-                            const formGroup = errorInput.closest('.form-group');
-                            if (formGroup) {
-                                formGroup.classList.add("has-error");
-                                let helpBlock = formGroup.querySelector('.help-block');
-                                if (!helpBlock) {
-                                    helpBlock = document.createElement("span");
-                                    helpBlock.className = "help-block";
-                                    errorInput.parentNode.appendChild(helpBlock);
-                                }
-                                helpBlock.textContent = data.error_message;
-                            }
-                        }
-                    } else {
-                        console.log('data', data);
-                        alert("An error occurred. Please try again.");
-                    }
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-            });
+            if (formAction === "add") {
+                addServiceProductivity(form, formData);
+            } else if (formAction === "edit") {
+                const productivityId = form.querySelector("#productivity_id").value;
+                editServiceProductivity(form, productivityId, formData);
+            }
+            
         });
 
-        document.getElementById("add_productivity_form").addEventListener("reset", function(event) {
+        document.getElementById("manage_productivity_form").addEventListener("reset", function(event) {
             event.preventDefault();
             const form = event.target;
             form.querySelectorAll(".has-error").forEach(formGroup => {
@@ -1129,6 +1124,91 @@
         clearErrorFromInput(input);
         return true;
     }
+
+    function addServiceProductivity(form, formData) {
+        fetch("{% url 'common_items:add-service-productivity' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.reload();
+            } else {
+                if(data.error_field && data.error_message){
+                    const errorInput = form.querySelector(`[name="${data.error_field}"]`);
+                    if (errorInput) {
+
+                        const formGroup = errorInput.closest('.form-group');
+                        if (formGroup) {
+                            formGroup.classList.add("has-error");
+                            let helpBlock = formGroup.querySelector('.help-block');
+                            if (!helpBlock) {
+                                helpBlock = document.createElement("span");
+                                helpBlock.className = "help-block";
+                                errorInput.parentNode.appendChild(helpBlock);
+                            }
+                            helpBlock.textContent = data.error_message;
+                        }
+                    }
+                } else {
+                    console.log('data', data);
+                    alert("An error occurred. Please try again.");
+                }
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+    }
+    function editServiceProductivity(form, productivityId, formData){
+        const updateUrlTemplate = "{% url 'common_items:update-service-productivity' 'PRODUCTIVITY_ID_PLACEHOLDER' %}";
+        const updateUrl = updateUrlTemplate.replace('PRODUCTIVITY_ID_PLACEHOLDER', encodeURIComponent(productivityId));
+        fetch(updateUrl, {
+            method: "PUT",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.reload();
+            } else {
+                if(data.error_field && data.error_message){
+                    console.log("error", data.error_field);
+                    console.log("error", data.error_message);
+                    const errorInput = form.querySelector(`[name="${data.error_field}"]`);
+                    console.log("errorInput",errorInput);
+                    if (errorInput) {
+
+                        const formGroup = errorInput.closest('.form-group');
+                        if (formGroup) {
+                            formGroup.classList.add("has-error");
+                            let helpBlock = formGroup.querySelector('.help-block');
+                            if (!helpBlock) {
+                                helpBlock = document.createElement("span");
+                                helpBlock.className = "help-block";
+                                errorInput.parentNode.appendChild(helpBlock);
+                            }
+                            helpBlock.textContent = data.error_message;
+                        }
+                    }
+                } else {
+                    console.log('data', data);
+                    alert("An error occurred. Please try again.");
+                }
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+    }
+
     // Handles the click event on a service type tile.
     // Hides the service type list, shows the service details section,
     // and displays only the panel related to the selected service type.
@@ -1538,9 +1618,51 @@ function delete_price_range(elem)
 }
 
 function viewAddCategoryModal(serviceTypeName, serviceTypeId){
-  document.getElementById("add_productivity").click();
-  document.getElementById("productivity_modal_heading").textContent = `Add new category for ${serviceTypeName}`;
-  document.getElementById("productivity_service_type_id").value = serviceTypeId;
+    document.getElementById("manage_productivity").click();
+    document.getElementById("productivity_modal_heading").textContent = `Add new category for ${serviceTypeName}`;
+    document.getElementById("productivity_service_type_id").value = serviceTypeId;
+    document.getElementById("manage_productivity_form").setAttribute("data-action", "add");
+}
+
+function viewEditProductivityModal(productivity){
+    const {
+        id: pid,
+        name: pname,
+        service_type_id: pservice_type_id,
+        description: pdescription,
+        cleaning_hours: pcleaning_hours,
+        max_cleaners: pmax_cleaners,
+        max_hours: pmax_hours,
+        min_cleaners: pmin_cleaners,
+        min_hours: pmin_hours,
+        is_active: is_active
+    } = productivity;
+    const statusValue = is_active.toLowerCase() === 'true' ? "active" : "inactive"
+    console.log("statusValue typeof",  statusValue);
+
+    document.getElementById("manage_productivity").click();
+    document.getElementById("productivity_modal_heading").textContent = `Edit category for ${pname}`;
+    document.getElementById("productivity_service_type_id").value = pservice_type_id;
+    document.getElementById("manage_productivity_form").setAttribute("data-action", "edit");
+    document.getElementById("productivity_name").value = pname;
+    document.getElementById("productivity_description").value = pdescription;
+    document.getElementById("productivity_cleaning_hours").value = pcleaning_hours;
+    document.getElementById("productivity_max_cleaners").value = pmax_cleaners;
+    document.getElementById("productivity_max_hours").value = pmax_hours;
+    document.getElementById("productivity_min_cleaners").value = pmin_cleaners;
+    document.getElementById("productivity_min_hours").value = pmin_hours;
+    document.getElementById("status_id").value = statusValue;
+    if(document.getElementById("productivity_id")){
+        document.getElementById("productivity_id").value = pid;
+    } else {
+        const hiddenInput = document.createElement("input");
+        hiddenInput.type = "hidden";
+        hiddenInput.name = "productivity_id";
+        hiddenInput.id = "productivity_id";
+        hiddenInput.value = pid;
+        document.getElementById("manage_productivity_form").appendChild(hiddenInput);
+    }
+
 }
 // add_productivity_submit_button
 </script>
