@@ -2431,7 +2431,7 @@ class Productivity(IsAuthenticated,View):
 			service_price_ranges = None
 
 		try:
-			service_productivities = ServiceProductivity.objects.filter(is_active=True)
+			service_productivities = ServiceProductivity.objects.all()
 		except:
 			service_productivities = None
 
