@@ -32,6 +32,7 @@ class ServiceProductivity(models.Model):
 
 class ServicePriceRange(models.Model):
 	service_type     = models.ForeignKey(ServiceType,on_delete=models.PROTECT,blank=True,null=True,related_name='pricerange_service_type')
+	service_productivity     = models.ForeignKey(ServiceProductivity,on_delete=models.PROTECT,blank=True,null=True,related_name='pricerange_service_productivity')
 	name             = models.CharField(max_length=100,blank=True,null=True)
 	minimum_area     = models.FloatField(blank=True,null=True)
 	maximum_area     = models.FloatField(blank=True,null=True)
