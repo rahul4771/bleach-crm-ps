@@ -77,5 +77,6 @@ urlpatterns = [
         url(r'^update-visit-datetime/$', views.update_visit_datetime, name='update-visit-datetime'),	
         url(r'^add-service-type/$', views.add_service_type, name='add-service-type'),	
         url(r'^add-service-productivity/$', views.ServiceProductivityAPIView.as_view(), name='add-service-productivity'),
-        url(r'^update-service-productivity/(?P<productivity_id>[-\w]+)$', views.ServiceProductivityAPIView.as_view(), name='update-service-productivity')
+        url(r'^update-service-productivity/(?P<productivity_id>[-\w]+)$', views.ServiceProductivityAPIView.as_view(), name='update-service-productivity'),
+        url(r'^add-service-price-range/$', views.ProductivityPriceRangeAPIView.as_view(), name='add-service-price-range')
 	]

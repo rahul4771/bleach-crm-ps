@@ -219,7 +219,7 @@
                                                         </button>
                                                     </div>
                                                 </div>
-                                                 <div id="productivity-price-range-{{productivity.name|slugify}}-{{productivity.id}}" class="productivity-card-content hide">
+                                                <div id="productivity-price-range-{{productivity.name|slugify}}-{{productivity.id}}" class="productivity-card-content hide">
                                                     {% for service_price_range in service_price_ranges %}
                                                         {% if service_price_range.service_type_id == service_type.id and service_price_range.service_productivity_id == productivity.id %}
                                                             <div class="row productivity-card-items">
@@ -243,13 +243,15 @@
                                                             </div>
                                                         {% endif %}
                                                     {% endfor %}
-                                                 </div>
+                                                    <div class="addNewPrice">
+                                                        <button class="border-button" onclick="add_price_range(this);" data-service-type-name="{{service_type.name}}" data-service-type-id="{{service_type.id}}" data-productivity-id="{{productivity.id}}" data-productivity-name="{{productivity.name}}" ><i class="fa fa-plus-circle" aria-hidden="true"></i> Price Range</button>
+                                                    </div>
+
+                                                </div>
+                                                
                                              {% endif %}
                                         {% endfor %}
-                                        <div class="addNewPrice">
-                                            <button class="border-button" onclick="add_price_range(this);" data-service_type_name="{{service_type.name}}" data-service_type_id="{{service_type.id}}"><i class="fa fa-plus-circle" aria-hidden="true"></i> Price Range</button>
-                                        </div>
-
+                                        
                                     </div>
 
                                     <div class="col-md-6">
@@ -458,65 +460,45 @@
                         </div>
                     </div>
                     <h2 class="productivity-name" id="add_service_type_name_id"> </h2>
-                    <form method="POST" action="">
-                        {% csrf_token %}
-                    <input type="hidden" name="action_type" value="add_price_range">
-                    <input type="hidden" name="service_type" id="add_service_type_id">
-                    <div class="row mt-10">
-                        <div class="col-md-6 mt-10">
-                            <label > Name</label>
-                            <input name="name" id="add_name_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
-                        </div>
-                        <div class="col-md-6 mt-10">
-                            <label > Price</label>
-                            <input name="price" id="add_price_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
-                        </div>
-                        <div class="col-md-6 mt-10">
-                            <label > Minimum Area</label>
-                            <input name="minimum_area" id="add_minimum_area_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
-                        </div>
-                        <div class="col-md-6 mt-10">
-                            <label > Maximum Area</label>
-                            <input name="maximum_area" id="add_maximum_area_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
-                        </div>
-                        <div class="col-md-6 mt-10">
-                            <label > Unit Price</label>
-                            <input name="unit_price" id="add_unit_price_id" type="text" placeholder=" " class="textBox model-text-border">
-                        </div>
-                        <div class="col-md-6 mt-10 kitchen-checkbox">
-                            <label > New Kitchen</label>
-                            <input name="is_newkitchen" id="add_is_newkitchen_id" type="checkbox">
-                        </div>
-                        <div class="col-md-6 mt-10 kitchen-checkbox">
-                            <label > With Cabinet</label>
-                            <input name="is_cabinet" id="edit_is_withcabinet_id" type="checkbox">
-                        </div>
-                        <div class="col-md-6 mt-10 facade-checkbox">
-                            <label > High Price Facade</label>
-                            <input name="is_highprice_facade" id="add_is_highprice_facade_id" type="checkbox">
-                        </div>
-                        <div class="col-md-6 mt-10 window-checkbox">
-                            <label > High Price Window</label>
-                            <input name="is_newkitchen" id="add_is_highprice_window_id" type="checkbox">
-                        </div>
-                        <div class="col-md-6 mt-10 upholstery-checkbox">
-                            <label > Upholstery Type</label>
-                            <select name="upholstery_type" id="add_upholstery_type_id" class="textBox model-text-border">
-                                <option value="SOFA" selected>SOFA</option>
-                                <option value="CURTAIN">CURTAIN</option>
-                            </select>
-                        </div>
-        
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12 text-center">
-                            <div class="cancel-model-content">
-                                <button class="sent-button"><input type="submit" class="btn-submit" value="Submit"></button>
-                                <button data-dismiss="modal" class="view-button">Cancel</button>
+                    <form id="manage-price-range-form" name="manage-price-range-form" action="">
+                        <input type="hidden" name="service_type" id="add_service_type_id">
+                        <div class="row mt-10">
+                            <div class="form-group col-md-6 mt-10">
+                                <label > Name</label>
+                                <input name="name" id="add_name_id" type="text" placeholder=" " required="required" class="textBox model-text-border form-control">
+                            </div>
+                            <div class="form-group col-md-6 mt-10">
+                                <label > Price</label>
+                                <input name="price" id="add_price_id" type="text" placeholder=" " required="required" class="textBox model-text-border form-control">
+                            </div>
+                            <div class="form-group col-md-6 mt-10">
+                                <label > Minimum Area</label>
+                                <input name="minimum_area" id="add_minimum_area_id" type="text" placeholder=" " required="required" class="textBox model-text-border form-control">
+                            </div>
+                            <div class="form-group col-md-6 mt-10">
+                                <label > Maximum Area</label>
+                                <input name="maximum_area" id="add_maximum_area_id" type="text" placeholder=" " required="required" class="textBox model-text-border form-control">
+                            </div>
+                            <div class="form-group col-md-6 mt-10">
+                                <label > Unit Price</label>
+                                <input name="unit_price" id="add_unit_price_id" type="text" placeholder=" " class="textBox model-text-border form-control">
+                            </div>
+                            <div class="form-group col-md-6 mt-10">
+                                <label > Productivity</label>
+                                <input name="productivity_id" id="add_productivity_id" type="hidden" placeholder=" " required="required" class="textBox model-text-border">
+                                <input name="productivity_name" id="add_productivity_name" type="text" placeholder=" " required="required" class="textBox model-text-border form-control" disabled="true">
                             </div>
                         </div>
-        
-                    </div>
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <div class="cancel-model-content">
+                                    <button class="sent-button"><input type="submit" class="btn-submit" value="Submit"></button>
+                                    <button  class="view-button">Cancel</button>
+                                    <!-- data-dismiss="modal" -->
+                                </div>
+                            </div>
+            
+                        </div>
                     </form>
                 </div>
             </div>
@@ -769,24 +751,24 @@
             let isValid = true;
 
            
-           form.querySelectorAll("[required]").forEach(input => {
-            const formGroup = input.closest('.row');
-            let helpBlock = formGroup ? formGroup.querySelector('.help-block') : null;
-            if (helpBlock) helpBlock.remove();
+            form.querySelectorAll("[required]").forEach(input => {
+                const formGroup = input.closest('.row');
+                let helpBlock = formGroup ? formGroup.querySelector('.help-block') : null;
+                if (helpBlock) helpBlock.remove();
 
-            if (!input.value.trim()) {
-                isValid = false;
-                if (formGroup) {
-                    formGroup.classList.add("has-error");
-                    const errorSpan = document.createElement("span");
-                    errorSpan.className = "help-block";
-                    errorSpan.textContent = "This field is required.";
-                    input.parentNode.appendChild(errorSpan);
+                if (!input.value.trim()) {
+                    isValid = false;
+                    if (formGroup) {
+                        formGroup.classList.add("has-error");
+                        const errorSpan = document.createElement("span");
+                        errorSpan.className = "help-block";
+                        errorSpan.textContent = "This field is required.";
+                        input.parentNode.appendChild(errorSpan);
+                    }
+                } else {
+                    if (formGroup) formGroup.classList.remove("has-error");
                 }
-            } else {
-                if (formGroup) formGroup.classList.remove("has-error");
-            }
-        });
+            });
 
             if (isValid) {
                 fetch("{% url 'common_items:add-service-type' %}", {
@@ -894,6 +876,42 @@
 
         });
 
+        document.getElementById("manage-price-range-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            let isValid = true;
+            const formAction = form.getAttribute("data-action");
+
+            form.querySelectorAll("[required]").forEach(input => {
+                const formGroup = input.closest('.form-group');
+                let helpBlock = formGroup ? formGroup.querySelector('.help-block') : null;
+                if (helpBlock) helpBlock.remove();
+
+                if (!input.value.trim()) {
+                    isValid = false;
+                    if (formGroup) {
+                        formGroup.classList.add("has-error");
+                        const errorSpan = document.createElement("span");
+                        errorSpan.className = "help-block";
+                        errorSpan.textContent = "This field is required.";
+                        input.parentNode.appendChild(errorSpan);
+                    }
+                } else {
+                    if (formGroup) formGroup.classList.remove("has-error");
+                    clearErrorFromInput(input);
+                }
+
+            });
+
+            if (!isValid) return;
+                if (formAction === "add") {
+                    addPriceRange(form, formData);
+                } else if (formAction === "edit") {
+                    
+                }
+            
+        });
     });
     
     function getFormGroup(input) {
@@ -974,6 +992,7 @@
             console.error("Error:", error);
         });
     }
+
     function editServiceProductivity(form, productivityId, formData){
         const updateUrlTemplate = "{% url 'common_items:update-service-productivity' 'PRODUCTIVITY_ID_PLACEHOLDER' %}";
         const updateUrl = updateUrlTemplate.replace('PRODUCTIVITY_ID_PLACEHOLDER', encodeURIComponent(productivityId));
@@ -1019,6 +1038,45 @@
         });
     }
 
+    function addPriceRange(form, formData){
+        fetch("{% url 'common_items:add-service-price-range' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.reload();
+            } else {
+                if(data.error_field && data.error_message){
+                    const errorInput = form.querySelector(`[name="${data.error_field}"]`);
+                    if (errorInput) {
+
+                        const formGroup = errorInput.closest('.form-group');
+                        if (formGroup) {
+                            formGroup.classList.add("has-error");
+                            let helpBlock = formGroup.querySelector('.help-block');
+                            if (!helpBlock) {
+                                helpBlock = document.createElement("span");
+                                helpBlock.className = "help-block";
+                                errorInput.parentNode.appendChild(helpBlock);
+                            }
+                            helpBlock.textContent = data.error_message;
+                        }
+                    }
+                } else {
+                    console.log('data', data);
+                    alert("An error occurred. Please try again.");
+                }
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+    }
     // Handles the click event on a service type tile.
     // Hides the service type list, shows the service details section,
     // and displays only the panel related to the selected service type.
@@ -1388,46 +1446,25 @@
 
 
 //Add price range
-function add_price_range(elem)
+function add_price_range(element)
 {
-    $("#add_service_type_name_id").text($(elem).data('service_type_name'));
-    $("#add_service_type_id").val($(elem).data('service_type_id'));
+    const serviceTypeName = element.dataset.serviceTypeName || '';
+    const serviceTypeId = element.dataset.serviceTypeId || '';
+    const productivityId = element.dataset.productivityId || element.dataset.productivity || '';
+    const productivityName = element.dataset.productivityName || '';
 
-    servicename = $(elem).data('service_type_name');
-  
-  if(servicename=='Facade Cleaning'){
-      $('.facade-checkbox').show()
-      $('.window-checkbox').hide()
-      $('.upholstery-checkbox').hide()
-      $('.kitchen-checkbox').hide()
-    }
-    else if(servicename=='Window Cleaning'){
-      $('.window-checkbox').show()
-      $('.facade-checkbox').hide() 
-      $('.upholstery-checkbox').hide()
-      $('.kitchen-checkbox').hide()
-    
-    }
-    else if(servicename=='Upholstery Cleaning'){
-      $('.upholstery-checkbox').show()
-      $('.facade-checkbox').hide()
-      $('.window-checkbox').hide()
-      $('.kitchen-checkbox').hide()
-    }
-    else if(servicename=='Kitchen Cleaning'){
-      $('.kitchen-checkbox').show()
-      $('.facade-checkbox').hide()
-      $('.window-checkbox').hide()
-      $('.upholstery-checkbox').hide()
-    }
-    else{
-      $('.facade-checkbox').hide()
-      $('.window-checkbox').hide()
-      $('.upholstery-checkbox').hide()
-      $('.kitchen-checkbox').hide()
-    }
+    const headingEl = document.getElementById('add_service_type_name_id');
+    headingEl.textContent = `Add new price range for ${serviceTypeName}` + (productivityName ? ' — ' + productivityName : '');
 
-    $(".pricerange_add_button").click();
+    // Set the values in the modal
+    document.getElementById("add_service_type_id").value = serviceTypeId;
+    document.getElementById("add_productivity_id").value = productivityId;
+    document.getElementById("add_productivity_name").value = productivityName;
+
+    // Show the modal
+    const addTrigger = document.querySelector('.pricerange_add_button');
+    document.getElementById("manage-price-range-form").setAttribute("data-action", "add");
+    if (addTrigger) addTrigger.click();
 }
 
 //Delete Price Range
