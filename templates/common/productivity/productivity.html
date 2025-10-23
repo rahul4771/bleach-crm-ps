@@ -1141,9 +1141,10 @@
         });
     }
     
-    // Handles the click event on a service type tile.
-    // Hides the service type list, shows the service details section,
-    // and displays only the panel related to the selected service type.
+    /**
+     * Toggle service details for `serviceType`: hide service list, show the matching panel,
+     * hide other panels, activate the first valid productivity tab and reveal its content and price ranges.
+     */
     function onServiceTypeClick(serviceType) {
         const serviceList = document.getElementById("smd-service-list");
         const serviceDetails = document.getElementById("smd-service-details");
@@ -1204,6 +1205,11 @@
 
     }
 
+    /**
+     * Hide all productivity contents and price-range panels, clear active state from tabs,
+     * then show the content and price-range panel for the clicked productivity tab and
+     * mark that tab as active.
+     */
     function onProductivityTabClick(event){
         const productivityName = event.currentTarget.getAttribute("data-productivity-name");
         const productivityId = event.currentTarget.getAttribute("data-productivity-id");
@@ -1222,9 +1228,10 @@
         }
     }
 
-    // Handles the click event for the "Back" button in the service details section.
-    // Shows the service type list, hides the service details section,
-    // and hides all service type detail panels
+    /**
+     * Show the service list and hide the service-details view.
+     * If type === 'add-new-service' also hide the add-new-service panel.
+     */
     function onBackButtonClick(type = null) {
         const serviceList = document.getElementById("smd-service-list");
         const serviceDetails = document.getElementById("smd-service-details");
@@ -1242,8 +1249,10 @@
             }
         });
     }
-    // Handles the click event for the "Add New Service" button.
-    // Hides the service type list and shows the add new service form.
+   
+    /**
+     * Hide the service list and show the "Add Service Type" panel.
+     */
     function onAddNewServiceClick(){
          const serviceList = document.getElementById("smd-service-list");
          serviceList.classList.add("hide");
