@@ -1413,7 +1413,7 @@
     const productivityName = element.dataset.productivityName || "";
 
     const headingEl = document.getElementById("manage_service_type_name_id");
-    if (headingEl) headingEl.textContent = `Edit ${serviceTypeName}`+ (productivityName ? ` – ${ productivityName} ( ${priceRangeName})` : ` – ( ${priceRangeName})`); 
+    if (headingEl) headingEl.textContent = `Edit ${serviceTypeName}`+ (productivityName ? ` – ${ productivityName} ( ${priceRangeName})` : ` – (${priceRangeName})`); 
     
     document.getElementById("manage_price_range_id").value = priceRangeId;
     document.getElementById("manage_service_type_id").value = serviceTypeId;
