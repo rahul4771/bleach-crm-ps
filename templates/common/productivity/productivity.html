@@ -1295,239 +1295,112 @@
        
     }
 
+    //edit price range
+    function edit_price_range(element){
+        const priceRangeId = element.dataset.id || "";
+        const priceRangeName = element.dataset.name || "";
+        const minimumArea = element.dataset.minimumArea || "";
+        const maximumArea = element.dataset.maximumArea || "";
+        const price = element.dataset.price || "";
+        const unitPrice = element.dataset.unitPrice || "";
+        const serviceTypeName = element.dataset.serviceTypeName || "";
+        const serviceTypeId = element.dataset.serviceTypeId || "";
+        const productivityId = element.dataset.productivityId || "";
+        const productivityName = element.dataset.productivityName || "";
 
-  function viewVeryVerySpecial(id) {
-    document.getElementById("veryveryspecial_id_"+id).style.display = "block";
-    document.getElementById("veryspecial_id_"+id).style.display = "none";
-    document.getElementById("normal_id_"+id).style.display = "none";
-    document.getElementById("special_id_"+id).style.display = "none";
-    $("#veryveryspecial_button_id_"+id).addClass("productivity-tab-border");
-    $("#veryspecial_button_id_"+id).removeClass("productivity-tab-border");
-    $("#normal_button_id_"+id).removeClass("productivity-tab-border");
-    $("#special_button_id_"+id).removeClass("productivity-tab-border");
+        const headingEl = document.getElementById("manage_service_type_name_id");
+        if (headingEl) headingEl.textContent = `Edit ${serviceTypeName}`+ (productivityName ? ` – ${ productivityName} ( ${priceRangeName})` : ` – (${priceRangeName})`); 
+        
+        document.getElementById("manage_price_range_id").value = priceRangeId;
+        document.getElementById("manage_service_type_id").value = serviceTypeId;
+        document.getElementById("manage_productivity_id").value = productivityId;
+        document.getElementById("manage_price_range_name").value = priceRangeName;
+        document.getElementById("manage_minimum_area").value = minimumArea;
+        document.getElementById("manage_maximum_area").value = maximumArea;
+        document.getElementById("manage_price").value = price;
+        document.getElementById("manage_unit_price").value = unitPrice;
+        document.getElementById("manage_productivity_name").value = productivityName;
+        
 
-    $("#productivityhead_"+id+"1").hide();
-    $("#productivityhead_"+id+"2").hide();
-    $("#productivityhead_"+id+"3").hide();
-    $("#productivityhead_"+id+"4").show();
-    $("#productivitycontent_"+id+"1").hide();
-    $("#productivitycontent_"+id+"2").hide();
-    $("#productivitycontent_"+id+"3").hide();
-    $("#productivitycontent_"+id+"4").show();
-                                }
-
-  function viewVerySpecial(id) {
-    document.getElementById("veryveryspecial_id_"+id).style.display = "none";
-    document.getElementById("veryspecial_id_"+id).style.display = "block";
-    document.getElementById("normal_id_"+id).style.display = "none";
-    document.getElementById("special_id_"+id).style.display = "none";
-    $("#veryveryspecial_button_id_"+id).removeClass("productivity-tab-border");
-    $("#veryspecial_button_id_"+id).addClass("productivity-tab-border");
-    $("#normal_button_id_"+id).removeClass("productivity-tab-border");
-    $("#special_button_id_"+id).removeClass("productivity-tab-border");
-
-    $("#productivityhead_"+id+"1").hide();
-    $("#productivityhead_"+id+"2").hide();
-    $("#productivityhead_"+id+"3").show();
-    $("#productivityhead_"+id+"4").hide();
-    $("#productivitycontent_"+id+"1").hide();
-    $("#productivitycontent_"+id+"2").hide();
-    $("#productivitycontent_"+id+"3").show();
-    $("#productivitycontent_"+id+"4").hide();
-  }
-
-  function viewSpecial(id) {
-    document.getElementById("special_id_"+id).style.display = "block";
-    document.getElementById("normal_id_"+id).style.display = "none";
-    document.getElementById("veryspecial_id_"+id).style.display = "none";
-    document.getElementById("veryveryspecial_id_"+id).style.display = "none";
-    $("#special_button_id_"+id).addClass("productivity-tab-border");
-    $("#normal_button_id_"+id).removeClass("productivity-tab-border");
-    $("#veryspecial_button_id_"+id).removeClass("productivity-tab-border");
-    $("#veryveryspecial_button_id_"+id).removeClass("productivity-tab-border");
-
-    $("#productivityhead_"+id+"1").hide();
-    $("#productivityhead_"+id+"2").show();
-    $("#productivityhead_"+id+"3").hide();
-    $("#productivityhead_"+id+"4").hide();
-    $("#productivitycontent_"+id+"1").hide();
-    $("#productivitycontent_"+id+"2").show();
-    $("#productivitycontent_"+id+"3").hide();
-    $("#productivitycontent_"+id+"4").hide();
-  }
-
-  function viewNormal(id) {
-    document.getElementById("normal_id_"+id).style.display = "block";
-    document.getElementById("special_id_"+id).style.display = "none";
-    document.getElementById("veryspecial_id_"+id).style.display = "none";
-    document.getElementById("veryveryspecial_id_"+id).style.display = "none";
-    $("#normal_button_id_"+id).addClass("productivity-tab-border");
-    $("#special_button_id_"+id).removeClass("productivity-tab-border");
-    $("#veryspecial_button_id_"+id).removeClass("productivity-tab-border");
-    $("#veryveryspecial_button_id_"+id).removeClass("productivity-tab-border");
-    
-    $("#productivityhead_"+id+"1").show();
-    $("#productivityhead_"+id+"2").hide();
-    $("#productivityhead_"+id+"3").hide();
-    $("#productivityhead_"+id+"4").hide();
-    $("#productivitycontent_"+id+"1").show();
-    $("#productivitycontent_"+id+"2").hide();
-    $("#productivitycontent_"+id+"3").hide();
-    $("#productivitycontent_"+id+"4").hide();
-  }
-
-  function editPro(id) {
-    document.getElementById("id_edit_"+id).style.display = "none";
-    document.getElementById("id_done_"+id).style.display = "block";
-    document.getElementById("id_pro_value_"+id).style.display = "none";
-    var valString = $("#id_pro_value_"+id).text()
-    var temp = valString.split(" ");
-    var v = parseFloat(temp[0])
-    $("#id_pro_"+id).val(v);
-    document.getElementById("id_pro_"+id).style.display = "block";
-  }
-  function doneEdit(id) {
-    document.getElementById("id_edit_"+id).style.display = "block";
-    document.getElementById("id_done_"+id).style.display = "none";
-    document.getElementById("id_pro_value_"+id).style.display = "block";
-    document.getElementById("id_pro_"+id).style.display = "none";
-    productivity_id    = id;
-    productivity_value = $("#id_pro_"+id).val();
-
-    // var csrf_header = {'X-CSRFToken':'{{csrf_token}}'};
-    $.ajax({
-            url: "{% url 'common_items:productivity' %}",
-            data: {
-            'productivity_id': productivity_id,
-            'productivity_value':productivity_value,
-            'action_type':'edit_productivity'
-            },
-            dataType: "json",
-            type: "GET",
-            contentType: "application/json;charset=utf-8",
-            
-            success: function(data) {
-                if(data['success'] == true)
-                {
-                    window.location.href="{% url 'common_items:productivity' %}";
-                }
-            }
-        });
-
-}
-
-
-//edit price range
-  function edit_price_range(element)
-  {
-    const priceRangeId = element.dataset.id || "";
-    const priceRangeName = element.dataset.name || "";
-    const minimumArea = element.dataset.minimumArea || "";
-    const maximumArea = element.dataset.maximumArea || "";
-    const price = element.dataset.price || "";
-    const unitPrice = element.dataset.unitPrice || "";
-    const serviceTypeName = element.dataset.serviceTypeName || "";
-    const serviceTypeId = element.dataset.serviceTypeId || "";
-    const productivityId = element.dataset.productivityId || "";
-    const productivityName = element.dataset.productivityName || "";
-
-    const headingEl = document.getElementById("manage_service_type_name_id");
-    if (headingEl) headingEl.textContent = `Edit ${serviceTypeName}`+ (productivityName ? ` – ${ productivityName} ( ${priceRangeName})` : ` – (${priceRangeName})`); 
-    
-    document.getElementById("manage_price_range_id").value = priceRangeId;
-    document.getElementById("manage_service_type_id").value = serviceTypeId;
-    document.getElementById("manage_productivity_id").value = productivityId;
-    document.getElementById("manage_price_range_name").value = priceRangeName;
-    document.getElementById("manage_minimum_area").value = minimumArea;
-    document.getElementById("manage_maximum_area").value = maximumArea;
-    document.getElementById("manage_price").value = price;
-    document.getElementById("manage_unit_price").value = unitPrice;
-    document.getElementById("manage_productivity_name").value = productivityName;
-    
-
-    // Show the modal
-    const manageTrigger = document.querySelector('.pricerange_manage_button');
-    document.getElementById("manage-price-range-form").setAttribute("data-action", "edit");
-    if (manageTrigger) manageTrigger.click();
-}
-
-
-
-//Add price range
-function add_price_range(element)
-{
-    const serviceTypeName = element.dataset.serviceTypeName || "";
-    const serviceTypeId = element.dataset.serviceTypeId || "";
-    const productivityId = element.dataset.productivityId || element.dataset.productivity || "";
-    const productivityName = element.dataset.productivityName || "";
-
-    const headingEl = document.getElementById("manage_service_type_name_id");
-    headingEl.textContent = `Add new price range for ${serviceTypeName}` + (productivityName ? ' — ' + productivityName : "");
-
-    // Set the values in the modal
-    document.getElementById("manage_service_type_id").value = serviceTypeId;
-    document.getElementById("manage_productivity_id").value = productivityId;
-    document.getElementById("manage_productivity_name").value = productivityName;
-
-    // Show the modal
-    const manageTrigger = document.querySelector('.pricerange_manage_button');
-    document.getElementById("manage-price-range-form").setAttribute("data-action", "add");
-    if (manageTrigger) manageTrigger.click();
-}
-
-//Delete Price Range
-function delete_price_range(elem)
-{
-    $('#delete_price_range_id').val($(elem).data('id'));
-    $(".pricerange_delete_button").click();
-}
-
-function viewAddCategoryModal(serviceTypeName, serviceTypeId){
-    document.getElementById("manage_productivity").click();
-    document.getElementById("productivity_modal_heading").textContent = `Add new category for ${serviceTypeName}`;
-    document.getElementById("productivity_service_type_id").value = serviceTypeId;
-    document.getElementById("manage_productivity_form").setAttribute("data-action", "add");
-}
-
-function viewEditProductivityModal(productivity){
-    const {
-        id: pid,
-        name: pname,
-        service_type_id: pservice_type_id,
-        description: pdescription,
-        cleaning_hours: pcleaning_hours,
-        max_cleaners: pmax_cleaners,
-        max_hours: pmax_hours,
-        min_cleaners: pmin_cleaners,
-        min_hours: pmin_hours,
-        is_active: is_active
-    } = productivity;
-    const statusValue = is_active.toLowerCase() === 'true' ? "active" : "inactive"
-
-    document.getElementById("manage_productivity").click();
-    document.getElementById("productivity_modal_heading").textContent = `Edit category for ${pname}`;
-    document.getElementById("productivity_service_type_id").value = pservice_type_id;
-    document.getElementById("manage_productivity_form").setAttribute("data-action", "edit");
-    document.getElementById("productivity_name").value = pname;
-    document.getElementById("productivity_description").value = pdescription;
-    document.getElementById("productivity_cleaning_hours").value = pcleaning_hours;
-    document.getElementById("productivity_max_cleaners").value = pmax_cleaners;
-    document.getElementById("productivity_max_hours").value = pmax_hours;
-    document.getElementById("productivity_min_cleaners").value = pmin_cleaners;
-    document.getElementById("productivity_min_hours").value = pmin_hours;
-    document.getElementById("status_id").value = statusValue;
-    if(document.getElementById("productivity_id")){
-        document.getElementById("productivity_id").value = pid;
-    } else {
-        const hiddenInput = document.createElement("input");
-        hiddenInput.type = "hidden";
-        hiddenInput.name = "productivity_id";
-        hiddenInput.id = "productivity_id";
-        hiddenInput.value = pid;
-        document.getElementById("manage_productivity_form").appendChild(hiddenInput);
+        // Show the modal
+        const manageTrigger = document.querySelector('.pricerange_manage_button');
+        document.getElementById("manage-price-range-form").setAttribute("data-action", "edit");
+        if (manageTrigger) manageTrigger.click();
     }
 
-}
-// add_productivity_submit_button
+    //Add price range
+    function add_price_range(element){
+        const serviceTypeName = element.dataset.serviceTypeName || "";
+        const serviceTypeId = element.dataset.serviceTypeId || "";
+        const productivityId = element.dataset.productivityId || element.dataset.productivity || "";
+        const productivityName = element.dataset.productivityName || "";
+
+        const headingEl = document.getElementById("manage_service_type_name_id");
+        headingEl.textContent = `Add new price range for ${serviceTypeName}` + (productivityName ? ' — ' + productivityName : "");
+
+        // Set the values in the modal
+        document.getElementById("manage_service_type_id").value = serviceTypeId;
+        document.getElementById("manage_productivity_id").value = productivityId;
+        document.getElementById("manage_productivity_name").value = productivityName;
+
+        // Show the modal
+        const manageTrigger = document.querySelector('.pricerange_manage_button');
+        document.getElementById("manage-price-range-form").setAttribute("data-action", "add");
+        if (manageTrigger) manageTrigger.click();
+    }
+
+    //Delete Price Range
+    function delete_price_range(elem)
+    {
+        $('#delete_price_range_id').val($(elem).data('id'));
+        $(".pricerange_delete_button").click();
+    }
+
+    function viewAddCategoryModal(serviceTypeName, serviceTypeId){
+        document.getElementById("manage_productivity").click();
+        document.getElementById("productivity_modal_heading").textContent = `Add new category for ${serviceTypeName}`;
+        document.getElementById("productivity_service_type_id").value = serviceTypeId;
+        document.getElementById("manage_productivity_form").setAttribute("data-action", "add");
+    }
+
+    function viewEditProductivityModal(productivity){
+        const {
+            id: pid,
+            name: pname,
+            service_type_id: pservice_type_id,
+            description: pdescription,
+            cleaning_hours: pcleaning_hours,
+            max_cleaners: pmax_cleaners,
+            max_hours: pmax_hours,
+            min_cleaners: pmin_cleaners,
+            min_hours: pmin_hours,
+            is_active: is_active
+        } = productivity;
+        const statusValue = is_active.toLowerCase() === 'true' ? "active" : "inactive"
+
+        document.getElementById("manage_productivity").click();
+        document.getElementById("productivity_modal_heading").textContent = `Edit category for ${pname}`;
+        document.getElementById("productivity_service_type_id").value = pservice_type_id;
+        document.getElementById("manage_productivity_form").setAttribute("data-action", "edit");
+        document.getElementById("productivity_name").value = pname;
+        document.getElementById("productivity_description").value = pdescription;
+        document.getElementById("productivity_cleaning_hours").value = pcleaning_hours;
+        document.getElementById("productivity_max_cleaners").value = pmax_cleaners;
+        document.getElementById("productivity_max_hours").value = pmax_hours;
+        document.getElementById("productivity_min_cleaners").value = pmin_cleaners;
+        document.getElementById("productivity_min_hours").value = pmin_hours;
+        document.getElementById("status_id").value = statusValue;
+        if(document.getElementById("productivity_id")){
+            document.getElementById("productivity_id").value = pid;
+        } else {
+            const hiddenInput = document.createElement("input");
+            hiddenInput.type = "hidden";
+            hiddenInput.name = "productivity_id";
+            hiddenInput.id = "productivity_id";
+            hiddenInput.value = pid;
+            document.getElementById("manage_productivity_form").appendChild(hiddenInput);
+        }
+
+    }
 </script>
 {% endblock %}
