@@ -109,7 +109,6 @@
                     <!-- service details section -->
                     <div id="smd-service-details" class="mt-20 hide">
                         <div class="row">
-                            <button data-toggle="modal" data-target="#editModal"  class="pricerange_edit_button" style="display:none;"></button>
                             <button data-toggle="modal" data-target="#priceRangeManageModal" class="pricerange_manage_button" style="display:none;"></button>
                             <button data-toggle="modal" data-target="#DeleteModal" class="pricerange_delete_button" style="display:none;"></button>
                             <button data-toggle="modal" id="id_add_add" data-target="#add-onModal"  style="display:none;"></button>
@@ -350,7 +349,7 @@
                         {% csrf_token %}
                     <div class="row">
                         <input type="hidden" name="action_type" value="delete_price_range">
-                        <input type="hidden" name="price_range" id="delete_price_range_id">
+                        <input type="hidden" name="price_range_id" id="delete_price_range_id">
                         <div class="col-md-12 text-center">
                             <div class="cancel-model-content">
                                 <button class="sent-button"><input class="btn-submit" type="submit" value="Yes"></button>
@@ -1359,10 +1358,13 @@
     }
 
     //Delete Price Range
-    function delete_price_range(elem)
-    {
-        $('#delete_price_range_id').val($(elem).data('id'));
-        $(".pricerange_delete_button").click();
+    function delete_price_range(element){
+        const id = element.dataset.id || element.getAttribute('data-id') || '';
+        const hiddenInput = document.getElementById('delete_price_range_id');
+        if (hiddenInput) hiddenInput.value = id;
+
+        const trigger = document.querySelector('.pricerange_delete_button');
+        if (trigger) trigger.click();
     }
 
     function viewAddCategoryModal(serviceTypeName, serviceTypeId){
