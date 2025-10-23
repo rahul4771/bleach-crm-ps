@@ -6558,3 +6558,60 @@ class ProductivityPriceRangeAPIView(APIView):
 		)
 		price_range.save()
 		return JsonResponse({"success": True, "id": price_range.id}, status=201)
+	
+	def put(self, request, *args, **kwargs):
+		data = getattr(request, "data", request.POST)
+		price_range_id = kwargs.get("price_range_id")
+		price_range_id = int(price_range_id)
+		service_type_id = data.get("service_type")
+		name = (data.get("name")).strip()
+		price = data.get("price", "")
+		minimum_area = data.get("minimum_area") or None
+		maximum_area = data.get("maximum_area") or None
+		unit_price = data.get("unit_price") or None
+		productivity_id = data.get("productivity_id") or None
+		is_active = 1
+		
+		if not price_range_id:
+			return JsonResponse({"success": False, "error": "price_range_id required"}, status=400)
+
+		service_type = None
+		if service_type_id:
+			service_type = ServiceType.objects.filter(id=service_type_id).first()
+			if not service_type:
+				return JsonResponse({"success": False, "error_field": "service_type", "error_message": "Invalid service type."}, status=400)
+			
+		service_productivity = None
+		if productivity_id:
+			service_productivity = ServiceProductivity.objects.filter(id=productivity_id).first()
+			if not service_productivity:
+				return JsonResponse({"success": False, "error_field": "productivity_id", "error_message": "Invalid productivity."}, status=400)
+
+		pr = ServicePriceRange.objects.filter(id=price_range_id)
+		if not pr.exists():
+			return JsonResponse({"success": False, "error": "Service price range not found"}, status=404)
+
+		# Check for duplicate name if name is changed
+		if pr.first().name.lower() != name.lower():
+			dup_pr = ServicePriceRange.objects.filter(name__iexact=name)
+			if service_type and service_productivity:
+				dup_pr = dup_pr.filter(service_type=service_type, service_productivity=service_productivity)
+			if dup_pr.exists():
+				return JsonResponse({"success": False, "error_field": "name", "error_message": "Price range with this name already exists."}, status=400)
+
+
+		try:
+
+			pr.update(
+				service_type=service_type,
+				name=name,
+				price=price,
+				minimum_area=minimum_area,
+				maximum_area=maximum_area,
+				unit_price=unit_price,
+				service_productivity=service_productivity,
+				is_active=is_active
+			)
+			return JsonResponse({"success": True, "id": pr.first().id}, status=201)
+		except Exception as e:
+			return JsonResponse({"success": False, "error_message": str(e)}, status=500)

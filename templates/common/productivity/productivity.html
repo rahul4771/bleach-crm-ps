@@ -110,7 +110,7 @@
                     <div id="smd-service-details" class="mt-20 hide">
                         <div class="row">
                             <button data-toggle="modal" data-target="#editModal"  class="pricerange_edit_button" style="display:none;"></button>
-                            <button data-toggle="modal" data-target="#addModal" class="pricerange_add_button" style="display:none;"></button>
+                            <button data-toggle="modal" data-target="#priceRangeManageModal" class="pricerange_manage_button" style="display:none;"></button>
                             <button data-toggle="modal" data-target="#DeleteModal" class="pricerange_delete_button" style="display:none;"></button>
                             <button data-toggle="modal" id="id_add_add" data-target="#add-onModal"  style="display:none;"></button>
                             <button data-toggle="modal" id="id_add_edit" data-target="#edit-onModal"  style="display:none;"></button>
@@ -233,7 +233,7 @@
                                                                     {{service_price_range.price|floatformat:'3'}} KD
                                                                 </div>
                                                                 <div class="col-md-3 productivity-card-items-4">
-                                                                    <button onclick="edit_price_range(this);" class="img-button" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum_area="{{service_price_range.minimum_area}}" data-maximum_area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit_price="{{service_price_range.unit_price|default_if_none:''}}" data-is_newkitchen="{{service_price_range.is_newkitchen}}" data-is_cabinet="{{service_price_range.is_cabinet}}" data-is_highprice_facade="{{service_price_range.is_highprice_facade}}" data-is_highprice_window="{{service_price_range.is_highprice_window}}" data-upholstery_type="{{service_price_range.upholstery_type}}">
+                                                                    <button onclick="edit_price_range(this);" class="img-button" data-service-type-name="{{service_price_range.service_type.name}}" data-service-type-id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum-area="{{service_price_range.minimum_area}}" data-maximum-area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit-price="{{service_price_range.unit_price|default_if_none:''}}"  data-productivity-id="{{service_price_range.service_productivity.id}}" data-productivity-name="{{productivity.name}}">
                                                                         <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
                                                                     </button>
                                                                     <button class="img-button" onclick="delete_price_range(this);" data-id="{{service_price_range.id}}">
@@ -444,8 +444,8 @@
                 </div>
             </div>
         </div>
-        <!-- Modal add -->
-        <div class="modal fade" id="addModal" role="dialog">
+        <!-- Price Range Manage Modal -->
+        <div class="modal fade" id="priceRangeManageModal" role="dialog">
             <div class="modal-dialog cancel-model cancel-order-border" role="document">
                 <div class="container-fluid">
                     <div class="row">
@@ -459,34 +459,35 @@
                             </div>
                         </div>
                     </div>
-                    <h2 class="productivity-name" id="add_service_type_name_id"> </h2>
+                    <h2 class="productivity-name" id="manage_service_type_name_id"> </h2>
                     <form id="manage-price-range-form" name="manage-price-range-form" action="">
-                        <input type="hidden" name="service_type" id="add_service_type_id">
+                        <input type="hidden" name="service_type" id="manage_service_type_id">
+                        <input type="hidden" name="price_range_id" id="manage_price_range_id">
                         <div class="row mt-10">
                             <div class="form-group col-md-6 mt-10">
                                 <label > Name</label>
-                                <input name="name" id="add_name_id" type="text" placeholder=" " required="required" class="textBox model-text-border form-control">
+                                <input name="name" id="manage_price_range_name" type="text" placeholder=" " required="required" class="textBox model-text-border form-control">
                             </div>
                             <div class="form-group col-md-6 mt-10">
                                 <label > Price</label>
-                                <input name="price" id="add_price_id" type="text" placeholder=" " required="required" class="textBox model-text-border form-control">
+                                <input name="price" id="manage_price" type="text" placeholder=" " required="required" class="textBox model-text-border form-control">
                             </div>
                             <div class="form-group col-md-6 mt-10">
                                 <label > Minimum Area</label>
-                                <input name="minimum_area" id="add_minimum_area_id" type="text" placeholder=" " required="required" class="textBox model-text-border form-control">
+                                <input name="minimum_area" id="manage_minimum_area" type="text" placeholder=" " required="required" class="textBox model-text-border form-control">
                             </div>
                             <div class="form-group col-md-6 mt-10">
                                 <label > Maximum Area</label>
-                                <input name="maximum_area" id="add_maximum_area_id" type="text" placeholder=" " required="required" class="textBox model-text-border form-control">
+                                <input name="maximum_area" id="manage_maximum_area" type="text" placeholder=" " required="required" class="textBox model-text-border form-control">
                             </div>
                             <div class="form-group col-md-6 mt-10">
                                 <label > Unit Price</label>
-                                <input name="unit_price" id="add_unit_price_id" type="text" placeholder=" " class="textBox model-text-border form-control">
+                                <input name="unit_price" id="manage_unit_price" type="text" placeholder=" " class="textBox model-text-border form-control">
                             </div>
                             <div class="form-group col-md-6 mt-10">
                                 <label > Productivity</label>
-                                <input name="productivity_id" id="add_productivity_id" type="hidden" placeholder=" " required="required" class="textBox model-text-border">
-                                <input name="productivity_name" id="add_productivity_name" type="text" placeholder=" " required="required" class="textBox model-text-border form-control" disabled="true">
+                                <input name="productivity_id" id="manage_productivity_id" type="hidden" placeholder=" " required="required" class="textBox model-text-border">
+                                <input name="productivity_name" id="manage_productivity_name" type="text" placeholder=" " required="required" class="textBox model-text-border form-control" disabled="true">
                             </div>
                         </div>
                         <div class="row">
@@ -908,7 +909,8 @@
                 if (formAction === "add") {
                     addPriceRange(form, formData);
                 } else if (formAction === "edit") {
-                    
+                   const priceRangeId = form.querySelector("#manage_price_range_id").value;
+                    editPriceRange(form, formData, priceRangeId);
                 }
             
         });
@@ -1077,6 +1079,49 @@
             console.error("Error:", error);
         });
     }
+
+    function editPriceRange(form, formData, priceRangeId){
+        const updateUrlTemplate = "{% url 'common_items:update-service-price-range' 'PRICERANGE_ID_PLACEHOLDER' %}";
+        const updateUrl = updateUrlTemplate.replace('PRICERANGE_ID_PLACEHOLDER', encodeURIComponent(priceRangeId));
+        fetch(updateUrl, {
+            method: "PUT",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.reload();
+            } else {
+                if(data.error_field && data.error_message){
+                    const errorInput = form.querySelector(`[name="${data.error_field}"]`);
+                    if (errorInput) {
+
+                        const formGroup = errorInput.closest('.form-group');
+                        if (formGroup) {
+                            formGroup.classList.add("has-error");
+                            let helpBlock = formGroup.querySelector('.help-block');
+                            if (!helpBlock) {
+                                helpBlock = document.createElement("span");
+                                helpBlock.className = "help-block";
+                                errorInput.parentNode.appendChild(helpBlock);
+                            }
+                            helpBlock.textContent = data.error_message;
+                        }
+                    }
+                } else {
+                    console.log('data', data);
+                    alert("An error occurred. Please try again.");
+                }
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+    }
+    
     // Handles the click event on a service type tile.
     // Hides the service type list, shows the service details section,
     // and displays only the panel related to the selected service type.
@@ -1354,93 +1399,37 @@
 
 
 //edit price range
-  function edit_price_range(elem)
+  function edit_price_range(element)
   {
-  $('#edit_price_range_id').val($(elem).data('id'));
-  $('#edit_name_id').val($(elem).data('name'));
-  $('#edit_minimum_area_id').val($(elem).data('minimum_area'));
-  $('#edit_maximum_area_id').val($(elem).data('maximum_area'));
-  $('#edit_price_id').val($(elem).data('price'));
-  $('#edit_unit_price_id').val($(elem).data('unit_price'));
+    const priceRangeId = element.dataset.id || "";
+    const priceRangeName = element.dataset.name || "";
+    const minimumArea = element.dataset.minimumArea || "";
+    const maximumArea = element.dataset.maximumArea || "";
+    const price = element.dataset.price || "";
+    const unitPrice = element.dataset.unitPrice || "";
+    const serviceTypeName = element.dataset.serviceTypeName || "";
+    const serviceTypeId = element.dataset.serviceTypeId || "";
+    const productivityId = element.dataset.productivityId || "";
+    const productivityName = element.dataset.productivityName || "";
 
-  $("#edit_service_type_name_id").text($(elem).data('service_type_name'));
-  $("#edit_service_type_id").val($(elem).data('service_type_id'));
-
-  servicename = $(elem).data('service_type_name');
-  if(servicename=='Facade Cleaning'){
-      $('.facade-checkbox').show()
-      $('.window-checkbox').hide()
-      $('.upholstery-checkbox').hide()
-      $('.kitchen-checkbox').hide()
-
-      if($(elem).data('is_highprice_facade') == 'True')
-      {
-        $('#edit_is_highprice_facade_id').attr('checked',true)
-      }
-      else
-      {
-       $('#edit_is_highprice_facade_id').attr('checked',false) 
-      }
-    }
-    else if(servicename=='Window Cleaning'){
-      $('.window-checkbox').show()
-      $('.facade-checkbox').hide()
-     
-      $('.upholstery-checkbox').hide()
-      $('.kitchen-checkbox').hide()
+    const headingEl = document.getElementById("manage_service_type_name_id");
+    if (headingEl) headingEl.textContent = `Edit ${serviceTypeName}`+ (productivityName ? ` – ${ productivityName} ( ${priceRangeName})` : ` – ( ${priceRangeName})`); 
     
-      if($(elem).data('is_highprice_window') == 'True')
-      {
-      $('#edit_is_highprice_window_id').attr('checked',true)
-      }
-      else
-      {
-        $('#edit_is_highprice_window_id').attr('checked',false)
-      }
-    }
-    else if(servicename=='Upholstery Cleaning'){
-      $('.upholstery-checkbox').show()
-      $('.facade-checkbox').hide()
-      $('.window-checkbox').hide()
+    document.getElementById("manage_price_range_id").value = priceRangeId;
+    document.getElementById("manage_service_type_id").value = serviceTypeId;
+    document.getElementById("manage_productivity_id").value = productivityId;
+    document.getElementById("manage_price_range_name").value = priceRangeName;
+    document.getElementById("manage_minimum_area").value = minimumArea;
+    document.getElementById("manage_maximum_area").value = maximumArea;
+    document.getElementById("manage_price").value = price;
+    document.getElementById("manage_unit_price").value = unitPrice;
+    document.getElementById("manage_productivity_name").value = productivityName;
     
-      $('.kitchen-checkbox').hide()
-      $('#edit_upholstery_type_id').val($(elem).data('upholstery_type'));
-    }
-    else if(servicename=='Kitchen Cleaning'){
-      $('.kitchen-checkbox').show()
-      $('.facade-checkbox').hide()
-      $('.window-checkbox').hide()
-      $('.upholstery-checkbox').hide()
- 
-      if($(elem).data('is_newkitchen')=='True')
-      {
-     
-        $('#edit_is_newkitchen_id').attr('checked',true)
-      }
-      else
-      {
-        $('#edit_is_newkitchen_id').attr('checked',false) 
-      }
-      
-      if($(elem).data('is_cabinet')=='True')
-      {
-     
-        $('#edit_is_withcabinet_id').attr('checked',true)
-      }
-      else
-      {
-        $('#edit_is_withcabinet_id').attr('checked',false) 
-      }
 
-    }
-    else{
-      $('.facade-checkbox').hide()
-      $('.window-checkbox').hide()
-      $('.upholstery-checkbox').hide()
-      $('.kitchen-checkbox').hide()
-    }
-
-    $(".pricerange_edit_button").click();
+    // Show the modal
+    const manageTrigger = document.querySelector('.pricerange_manage_button');
+    document.getElementById("manage-price-range-form").setAttribute("data-action", "edit");
+    if (manageTrigger) manageTrigger.click();
 }
 
 
@@ -1448,23 +1437,23 @@
 //Add price range
 function add_price_range(element)
 {
-    const serviceTypeName = element.dataset.serviceTypeName || '';
-    const serviceTypeId = element.dataset.serviceTypeId || '';
-    const productivityId = element.dataset.productivityId || element.dataset.productivity || '';
-    const productivityName = element.dataset.productivityName || '';
+    const serviceTypeName = element.dataset.serviceTypeName || "";
+    const serviceTypeId = element.dataset.serviceTypeId || "";
+    const productivityId = element.dataset.productivityId || element.dataset.productivity || "";
+    const productivityName = element.dataset.productivityName || "";
 
-    const headingEl = document.getElementById('add_service_type_name_id');
-    headingEl.textContent = `Add new price range for ${serviceTypeName}` + (productivityName ? ' — ' + productivityName : '');
+    const headingEl = document.getElementById("manage_service_type_name_id");
+    headingEl.textContent = `Add new price range for ${serviceTypeName}` + (productivityName ? ' — ' + productivityName : "");
 
     // Set the values in the modal
-    document.getElementById("add_service_type_id").value = serviceTypeId;
-    document.getElementById("add_productivity_id").value = productivityId;
-    document.getElementById("add_productivity_name").value = productivityName;
+    document.getElementById("manage_service_type_id").value = serviceTypeId;
+    document.getElementById("manage_productivity_id").value = productivityId;
+    document.getElementById("manage_productivity_name").value = productivityName;
 
     // Show the modal
-    const addTrigger = document.querySelector('.pricerange_add_button');
+    const manageTrigger = document.querySelector('.pricerange_manage_button');
     document.getElementById("manage-price-range-form").setAttribute("data-action", "add");
-    if (addTrigger) addTrigger.click();
+    if (manageTrigger) manageTrigger.click();
 }
 
 //Delete Price Range
@@ -1495,7 +1484,6 @@ function viewEditProductivityModal(productivity){
         is_active: is_active
     } = productivity;
     const statusValue = is_active.toLowerCase() === 'true' ? "active" : "inactive"
-    console.log("statusValue typeof",  statusValue);
 
     document.getElementById("manage_productivity").click();
     document.getElementById("productivity_modal_heading").textContent = `Edit category for ${pname}`;
