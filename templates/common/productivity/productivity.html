@@ -880,6 +880,93 @@
 
 
         });
+
+        document.getElementById("manage-addon-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            let isValid = true;
+
+            form.querySelectorAll("[required]").forEach(input => {
+                const formGroup = input.closest('.form-group');
+                let helpBlock = formGroup ? formGroup.querySelector('.help-block') : null;
+                if (helpBlock) helpBlock.remove();
+
+                if (!input.value.trim()) {
+                    isValid = false;
+                    if (formGroup) {
+                        formGroup.classList.add("has-error");
+                        const errorSpan = document.createElement("span");
+                        errorSpan.className = "help-block";
+                        errorSpan.textContent = "This field is required.";
+                        input.parentNode.appendChild(errorSpan);
+                    }
+                } else {
+                    if (formGroup) formGroup.classList.remove("has-error");
+                }
+            });
+
+            const categoryInput = form.querySelector("#addon_category");
+            if (categoryInput && categoryInput.value.length > 0) {
+                if (categoryInput.value.trim().length == 0) {
+                    isValid = false;
+                    setErrorOnInput(categoryInput, "Category cannot be empty if provided.");
+                } else {
+                    clearErrorFromInput(categoryInput);
+                }
+
+            }
+            const sizeInput = form.querySelector("#addon_size");
+            if (sizeInput && sizeInput.value.length > 0) {
+                if (sizeInput.value.trim().length == 0) {
+                    isValid = false;
+                    setErrorOnInput(sizeInput, "Size cannot be empty if provided.");
+                } else {
+                    clearErrorFromInput(sizeInput);
+                }
+
+            }
+
+            if (!isValid) return;
+
+            if (isValid) {
+                fetch("{% url 'common_items:add-service-addons' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}",
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.reload();
+                    } else {
+                       if(data.error_field && data.error_message){
+                            const errorInput = form.querySelector(`[name="${data.error_field}"]`);
+                            if (errorInput) {
+                                const formGroup = errorInput.closest('.form-group');
+                                if (formGroup) {
+                                    formGroup.classList.add("has-error");
+                                    let helpBlock = formGroup.querySelector('.help-block');
+                                    if (!helpBlock) {
+                                        helpBlock = document.createElement("span");
+                                        helpBlock.className = "help-block";
+                                        errorInput.parentNode.appendChild(helpBlock);
+                                    }
+                                    helpBlock.textContent = data.error_message;
+                                }
+                            }
+                       } else {
+                            alert("An error occurred. Please try again.");
+                       }
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+            }
+        });
     });
     
     function getFormGroup(input) {

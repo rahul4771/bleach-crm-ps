@@ -6647,10 +6647,16 @@ class ServiceAddOnsAPIView(APIView):
 		if not price:
 			return JsonResponse({"success": False, "error_field": "price", "error_message": "Price is required."}, status=400)
 
+		if not price.isdigit() or float(price) < 0:
+			return JsonResponse({"success": False, "error_field": "price", "error_message": "Price must be a valid number."}, status=400)
+
 		# Validate productivity
 		if not productivity:
 			return JsonResponse({"success": False, "error_field": "productivity", "error_message": "Productivity is required."}, status=400)
 
+		if not productivity.isdigit() or float(productivity) < 0:
+			return JsonResponse({"success": False, "error_field": "productivity", "error_message": "Productivity must be a valid number."}, status=400)
+		
 		# Create the service addon
 		service_addon = ServiceAddOns.objects.create(
 			service_type=service_type,
