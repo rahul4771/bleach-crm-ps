@@ -2470,7 +2470,7 @@ class Productivity(IsAuthenticated,View):
 
 
 		if action == 'delete_price_range':
-			price_range_id       = request.POST.get('price_range')
+			price_range_id       = request.POST.get('price_range_id')
 			price_range          = ServicePriceRange.objects.filter(id=price_range_id).delete()
 			messages.success(request,"Service Price Range Deleted Successfully")
 
