@@ -1219,12 +1219,12 @@
     }
     
     //add Add-ons
-    function add_add_on(elem){
+    function add_add_on(element){
         const nameEl = document.getElementById('manage_addon_service_type_name');
         const idEl = document.getElementById('service_type_id');
 
-        const serviceName = elem.getAttribute('data-service-type-name') || '';
-        const serviceId = elem.getAttribute('data-service-type-id') || '';
+        const serviceName = element.getAttribute('data-service-type-name') || '';
+        const serviceId = element.getAttribute('data-service-type-id') || '';
 
         if (nameEl) nameEl.textContent = serviceName;
         if (idEl) idEl.value = serviceId;

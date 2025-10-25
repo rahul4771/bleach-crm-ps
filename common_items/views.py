@@ -6617,7 +6617,7 @@ class ProductivityPriceRangeAPIView(APIView):
 			return JsonResponse({"success": False, "error_message": str(e)}, status=500)
 
 
-class ServiceAddonsAPIView(APIView):
+class ServiceAddOnsAPIView(APIView):
 
 	def post(self, request, *args, **kwargs):
 		data = getattr(request, "data", request.POST)
