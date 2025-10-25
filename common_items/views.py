@@ -6684,21 +6684,33 @@ class ServiceAddOnsAPIView(APIView):
 		price = safe_str(data.get("price"))
 		productivity = safe_str(data.get("productivity"))
 		
+		# Validations
 		if not addon_id:
 			return JsonResponse({"success": False, "error": "Addon id required"}, status=400)
 
+		# Validate name
 		if not name:
 			return JsonResponse({"success": False, "error_field": "name", "error_message": "Name is required."}, status=400)
 		
+		# Validate size
 		if not size:
 			return JsonResponse({"success": False, "error_field": "size", "error_message": "Size is required."}, status=400)
 
+		# Validate price
 		if not price:
 			return JsonResponse({"success": False, "error_field": "price", "error_message": "Price is required."}, status=400)
 
+		# Validate price
+		if not price.isdigit() or float(price) < 0:
+			return JsonResponse({"success": False, "error_field": "price", "error_message": "Price must be a valid number."}, status=400)
+
+		# Validate productivity
 		if not productivity:
 			return JsonResponse({"success": False, "error_field": "productivity", "error_message": "Productivity is required."}, status=400)
 
+		if not productivity.isdigit() or float(productivity) < 0:
+			return JsonResponse({"success": False, "error_field": "productivity", "error_message": "Productivity must be a valid number."}, status=400)
+		
 		service_type = None
 		if service_type_id:
 			service_type = ServiceType.objects.filter(id=service_type_id).first()

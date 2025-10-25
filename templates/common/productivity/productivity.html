@@ -258,7 +258,7 @@
                                                 <h2 class="productivity-name">Add-ons</h2>
                                             </div>
                                             <div>
-                                                <button class="border-button" onclick="" id="{{service_type|slugify}}-add-addon-button" data-service-type-name="{{service_type.name}}" data-service-type-id="{{service_type.id}}"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add Add-on</button>
+                                                <button class="border-button" onclick="add_add_on(this);" id="{{service_type|slugify}}-add-addon-button" data-service-type-name="{{service_type.name}}" data-service-type-id="{{service_type.id}}"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add Add-on</button>
                                             </div>
 
                                         </div>
@@ -305,7 +305,7 @@
                                                             {{service_addon.productivity|default_if_none:''}}
                                                         </div>
                                                         <div class="col-md-2 productivity-card-items-4">
-                                                            <button onclick="edit_add_on(this);" data-service_type_name="{{service_addon.service_type.name}}" data-service-type-id="{{service_addon.service_type.id}}" data-id="{{service_addon.id}}" data-name="{{service_addon.name}}" data-category="{{service_addon.category|default_if_none:''}}" data-size="{{service_addon.size|default_if_none:''}}" data-price="{{service_addon.price}}" data-productivity="{{service_addon.productivity}}" class="img-button" >
+                                                            <button onclick="edit_add_on(this);" data-service-type-name="{{service_addon.service_type.name}}" data-service-type-id="{{service_addon.service_type.id}}" data-id="{{service_addon.id}}" data-name="{{service_addon.name}}" data-category="{{service_addon.category|default_if_none:''}}" data-size="{{service_addon.size|default_if_none:''}}" data-price="{{service_addon.price}}" data-productivity="{{service_addon.productivity}}" class="img-button" >
                                                                 <img class="productivity-card-edit" src="/static/files/icons/edit.png">
                                                             </button>
                                                             <button class="img-button" onclick="delete_add_on(this);" data-id="{{service_addon.id}}">
@@ -529,25 +529,25 @@
                         <input type="hidden" name="addon_id" id="addon_id">
                         <input type="hidden" name="service_type" id="service_type_id">
                         <div class="row mt-10">
-                            <div class="col-md-6 mt-10">
+                            <div class="col-md-6 form-group mt-10">
                                 <label > Item</label>
-                                <input  type="text" name="name" id="addon_name" placeholder=" " required="required" class="textBox model-text-border">
+                                <input  type="text" name="name" id="addon_name" placeholder=" " required="required" class="textBox model-text-border form-control">
                             </div>
-                            <div class="col-md-6 mt-10">
+                            <div class="col-md-6 form-group mt-10">
                                 <label > Category Name</label>
-                                <input  type="text" name="category" id="addon_category" placeholder=" " class="textBox model-text-border">
+                                <input  type="text" name="category" id="addon_category" placeholder=" " class="textBox model-text-border form-control">
                             </div>
-                            <div class="col-md-6 mt-10">
+                            <div class="col-md-6 form-group mt-10">
                                 <label >Size</label>
-                                <input  type="text" name="size" id="addon_size" placeholder=" " class="textBox model-text-border">
+                                <input  type="text" name="size" id="addon_size" placeholder=" " class="textBox model-text-border form-control">
                             </div>
-                            <div class="col-md-6 mt-10">
+                            <div class="col-md-6 form-group mt-10">
                                 <label >Price</label>
-                                <input  type="text" name="price" id="addon_price" placeholder=" " required="required" class="textBox model-text-border">
+                                <input  type="text" name="price" id="addon_price" placeholder=" " required="required" class="textBox model-text-border form-control">
                             </div>
-                            <div class="col-md-6 mt-10">
+                            <div class="col-md-6 form-group mt-10">
                                 <label >Productivity</label>
-                                <input  type="text" name="productivity" id="addon_productivity" placeholder=" " required="required" class="textBox model-text-border">
+                                <input  type="text" name="productivity" id="addon_productivity" placeholder=" " required="required" class="textBox model-text-border form-control">
                             </div>
                             
             
@@ -885,6 +885,7 @@
             event.preventDefault();
             const form = event.target;
             const formData = new FormData(form);
+            const formAction = form.getAttribute("data-action");
             let isValid = true;
 
             form.querySelectorAll("[required]").forEach(input => {
@@ -930,41 +931,12 @@
             if (!isValid) return;
 
             if (isValid) {
-                fetch("{% url 'common_items:add-service-addons' %}", {
-                    method: "POST",
-                    headers: {
-                        "X-CSRFToken": "{{ csrf_token }}",
-                    },
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        window.location.reload();
-                    } else {
-                       if(data.error_field && data.error_message){
-                            const errorInput = form.querySelector(`[name="${data.error_field}"]`);
-                            if (errorInput) {
-                                const formGroup = errorInput.closest('.form-group');
-                                if (formGroup) {
-                                    formGroup.classList.add("has-error");
-                                    let helpBlock = formGroup.querySelector('.help-block');
-                                    if (!helpBlock) {
-                                        helpBlock = document.createElement("span");
-                                        helpBlock.className = "help-block";
-                                        errorInput.parentNode.appendChild(helpBlock);
-                                    }
-                                    helpBlock.textContent = data.error_message;
-                                }
-                            }
-                       } else {
-                            alert("An error occurred. Please try again.");
-                       }
-                    }
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                });
+                if(formAction === "add"){
+                    addAddon(form, formData);
+                } else if(formAction === "edit"){
+                    const addonId = form.querySelector("#addon_id").value;
+                    editAddon(form, formData, addonId);
+                } 
             }
         });
     });
@@ -1175,6 +1147,86 @@
         });
     }
     
+    function addAddon(form, formData){
+        fetch("{% url 'common_items:add-service-addons' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.reload();
+            } else {
+                if(data.error_field && data.error_message){
+                    const errorInput = form.querySelector(`[name="${data.error_field}"]`);
+                    if (errorInput) {
+                        const formGroup = errorInput.closest('.form-group');
+                        if (formGroup) {
+                            formGroup.classList.add("has-error");
+                            let helpBlock = formGroup.querySelector('.help-block');
+                            if (!helpBlock) {
+                                helpBlock = document.createElement("span");
+                                helpBlock.className = "help-block";
+                                errorInput.parentNode.appendChild(helpBlock);
+                            }
+                            helpBlock.textContent = data.error_message;
+                        }
+                    }
+                } else {
+                    alert("An error occurred. Please try again.");
+                }
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+    }
+    
+    function editAddon(form, formData, addonId){
+        const updateUrlTemplate = "{% url 'common_items:update-service-addons' 'ADDON_ID_PLACEHOLDER' %}";
+        const updateUrl = updateUrlTemplate.replace('ADDON_ID_PLACEHOLDER', encodeURIComponent(addonId));
+        fetch(updateUrl, {
+            method: "PUT",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.reload();
+            } else {
+                if(data.error_field && data.error_message){
+                    const errorInput = form.querySelector(`[name="${data.error_field}"]`);
+                    if (errorInput) {
+
+                        const formGroup = errorInput.closest('.form-group');
+                        if (formGroup) {
+                            formGroup.classList.add("has-error");
+                            let helpBlock = formGroup.querySelector('.help-block');
+                            if (!helpBlock) {
+                                helpBlock = document.createElement("span");
+                                helpBlock.className = "help-block";
+                                errorInput.parentNode.appendChild(helpBlock);
+                            }
+                            helpBlock.textContent = data.error_message;
+                        }
+                    }
+                } else {
+                    console.log('data', data);
+                    alert("An error occurred. Please try again.");
+                }
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+    }
+
     /**
      * Toggle service details for `serviceType`: hide service list, show the matching panel,
      * hide other panels, activate the first valid productivity tab and reveal its content and price ranges.
