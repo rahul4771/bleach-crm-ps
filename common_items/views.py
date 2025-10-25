@@ -2421,7 +2421,8 @@ class Productivity(IsAuthenticated,View):
 		
 		
 		try:
-			service_types = ServiceType.objects.filter(is_active=True)	
+			service_addons_qs = ServiceAddOns.objects.select_related('service_type') 
+			service_types = ServiceType.objects.filter(is_active=True).prefetch_related(Prefetch('addons_service_type',queryset=service_addons_qs,to_attr='service_addons'))	
 		except:
 			service_types = None
 
