@@ -939,6 +939,25 @@
                 } 
             }
         });
+
+        document.getElementById("manage-addon-form").addEventListener("reset", function(event) {
+            event.preventDefault();
+            const form = event.target;
+            form.querySelectorAll(".has-error").forEach(formGroup => {
+                formGroup.classList.remove("has-error");
+                const helpBlock = formGroup.querySelector('.help-block');
+                if (helpBlock) helpBlock.remove();
+            });
+
+            form.reset();
+            const resetButton = form.querySelector("[type='reset']");
+            if (resetButton) {
+                resetButton.setAttribute("data-dismiss", "modal");
+                resetButton.click();
+            }
+
+        });
+
     });
     
     function getFormGroup(input) {
