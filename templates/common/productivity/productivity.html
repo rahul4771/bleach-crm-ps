@@ -1374,18 +1374,33 @@
     }
 
     //edit Add-ons
-    function edit_add_on(elem){
-        $('#edit_addon_id').val($(elem).data('id'));
-        $('#edit_name_addon_id').val($(elem).data('name'));
-        $('#edit_size_addon_id').val($(elem).data('size'));
-        $('#edit_category_addon_id').val($(elem).data('category'));
-        $('#edit_price_addon_id').val($(elem).data('price'));
-        $('#edit_productivity_addon_id').val($(elem).data('productivity'));
-        
-        $("#edit_service_type_name_addon_id").text($(elem).data('service_type_name'));
-        $("#edit_service_type_addon_id").val($(elem).data('service_type_id'));
+    function edit_add_on(element){
+        const addonId = element.getAttribute('data-id') || '';
+        const serviceTypeId = element.getAttribute('data-service-type-id') || '';
+        const addonName = element.getAttribute('data-name') || '';
+        const addonCategory = element.getAttribute('data-category') || '';
+        const addonSize = element.getAttribute('data-size') || '';
+        const addonPrice = element.getAttribute('data-price') || '';
+        const serviceTypeName = element.getAttribute('data-service-type-name') || '';
+        const productivity = element.getAttribute('data-productivity') || '';
+       
 
-        $('#manage_addons').click();
+        const nameEl = document.getElementById('manage_addon_service_type_name');
+        const idEl = document.getElementById('service_type_id');
+
+        if (nameEl) nameEl.textContent = serviceTypeName;
+        if (idEl) idEl.value = serviceTypeId;
+
+        document.getElementById('addon_id').value = addonId;
+        document.getElementById('addon_name').value = addonName;
+        document.getElementById('addon_category').value = addonCategory;
+        document.getElementById('addon_size').value = addonSize;
+        document.getElementById('addon_price').value = addonPrice;
+        document.getElementById('addon_productivity').value = productivity;
+
+        const trigger = document.getElementById('manage_addons');
+        document.getElementById("manage-addon-form").setAttribute("data-action", "edit");
+        if (trigger) trigger.click();
     }
 
     //delete Add-ons

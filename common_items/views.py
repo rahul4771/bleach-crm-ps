@@ -6647,16 +6647,25 @@ class ServiceAddOnsAPIView(APIView):
 		if not price:
 			return JsonResponse({"success": False, "error_field": "price", "error_message": "Price is required."}, status=400)
 
-		if not price.isdigit() or float(price) < 0:
+		try:
+			price_val = float(price)
+		except (TypeError, ValueError):
 			return JsonResponse({"success": False, "error_field": "price", "error_message": "Price must be a valid number."}, status=400)
+        
+		if price_val < 0:
+			return JsonResponse({"success": False, "error_field": "price", "error_message": "Price must be non-negative."}, status=400)
 
 		# Validate productivity
 		if not productivity:
 			return JsonResponse({"success": False, "error_field": "productivity", "error_message": "Productivity is required."}, status=400)
-
-		if not productivity.isdigit() or float(productivity) < 0:
+        
+		try:
+			productivity_val = float(productivity)
+		except (TypeError, ValueError):
 			return JsonResponse({"success": False, "error_field": "productivity", "error_message": "Productivity must be a valid number."}, status=400)
-		
+		if productivity_val < 0:
+			return JsonResponse({"success": False, "error_field": "productivity", "error_message": "Productivity must be non-negative."}, status=400)
+        
 		# Create the service addon
 		service_addon = ServiceAddOns.objects.create(
 			service_type=service_type,
@@ -6700,17 +6709,25 @@ class ServiceAddOnsAPIView(APIView):
 		if not price:
 			return JsonResponse({"success": False, "error_field": "price", "error_message": "Price is required."}, status=400)
 
-		# Validate price
-		if not price.isdigit() or float(price) < 0:
+		try:
+			price_val = float(price)
+		except (TypeError, ValueError):
 			return JsonResponse({"success": False, "error_field": "price", "error_message": "Price must be a valid number."}, status=400)
+        
+		if price_val < 0:
+			return JsonResponse({"success": False, "error_field": "price", "error_message": "Price must be non-negative."}, status=400)
 
 		# Validate productivity
 		if not productivity:
 			return JsonResponse({"success": False, "error_field": "productivity", "error_message": "Productivity is required."}, status=400)
-
-		if not productivity.isdigit() or float(productivity) < 0:
+        
+		try:
+			productivity_val = float(productivity)
+		except (TypeError, ValueError):
 			return JsonResponse({"success": False, "error_field": "productivity", "error_message": "Productivity must be a valid number."}, status=400)
-		
+		if productivity_val < 0:
+			return JsonResponse({"success": False, "error_field": "productivity", "error_message": "Productivity must be non-negative."}, status=400)
+        
 		service_type = None
 		if service_type_id:
 			service_type = ServiceType.objects.filter(id=service_type_id).first()
