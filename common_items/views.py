@@ -6615,3 +6615,103 @@ class ProductivityPriceRangeAPIView(APIView):
 			return JsonResponse({"success": True, "id": pr.first().id}, status=201)
 		except Exception as e:
 			return JsonResponse({"success": False, "error_message": str(e)}, status=500)
+
+
+class ServiceAddonsAPIView(APIView):
+
+	def post(self, request, *args, **kwargs):
+		data = getattr(request, "data", request.POST)
+		service_type_id = data.get("service_type")
+		name =  (data.get("name")).strip()
+		category = (data.get("category")).strip()
+		size = (data.get("size")).strip()
+		price = (data.get("price")).strip()
+		productivity = (data.get("productivity")).strip()
+
+		if not name:
+			return JsonResponse({"success": False, "error_field": "name", "error_message": "Name is required."}, status=400)
+
+		service_type = None
+		if service_type_id:
+			service_type = ServiceType.objects.filter(id=service_type_id).first()
+			if not service_type:
+				return JsonResponse({"success": False, "error_field": "service_type", "error_message": "Invalid service type."}, status=400)
+
+		
+		# Validate size
+		if not size:
+			return JsonResponse({"success": False, "error_field": "size", "error_message": "Size is required."}, status=400)
+
+		# Validate price
+		if not price:
+			return JsonResponse({"success": False, "error_field": "price", "error_message": "Price is required."}, status=400)
+
+		# Validate productivity
+		if not productivity:
+			return JsonResponse({"success": False, "error_field": "productivity", "error_message": "Productivity is required."}, status=400)
+
+		# Create the service addon
+		service_addon = ServiceAddOns.objects.create(
+			service_type=service_type,
+			name=name,
+			category=category,
+			size=size,
+			price=price,
+			productivity=productivity
+		)
+
+		return JsonResponse({"success": True, "id": service_addon.id}, status=201)
+
+	def put(self, request, *args, **kwargs):
+		data = getattr(request, "data", None) or request.data or {}
+
+		def safe_str(val):
+			return val.strip() if isinstance(val, str) and val.strip() != "" else None
+
+		addon_id = kwargs.get("addon_id")
+		addon_id = int(safe_str(addon_id))
+		service_type_id = safe_str(data.get("service_type"))
+		name = safe_str(data.get("name"))
+		category = safe_str(data.get("category")) or ""
+		size = safe_str(data.get("size"))
+		price = safe_str(data.get("price"))
+		productivity = safe_str(data.get("productivity"))
+		
+		if not addon_id:
+			return JsonResponse({"success": False, "error": "Addon id required"}, status=400)
+
+		if not name:
+			return JsonResponse({"success": False, "error_field": "name", "error_message": "Name is required."}, status=400)
+		
+		if not size:
+			return JsonResponse({"success": False, "error_field": "size", "error_message": "Size is required."}, status=400)
+
+		if not price:
+			return JsonResponse({"success": False, "error_field": "price", "error_message": "Price is required."}, status=400)
+
+		if not productivity:
+			return JsonResponse({"success": False, "error_field": "productivity", "error_message": "Productivity is required."}, status=400)
+
+		service_type = None
+		if service_type_id:
+			service_type = ServiceType.objects.filter(id=service_type_id).first()
+			if not service_type:
+				return JsonResponse({"success": False, "error_field": "service_type", "error_message": "Invalid service type."}, status=400)
+
+		sa = ServiceAddOns.objects.filter(id=addon_id)
+		if not sa.exists():
+			return JsonResponse({"success": False, "error": "Service addon not found"}, status=404)
+		
+		try:
+			sa.update(
+				service_type=service_type,
+				name=name,
+				category=category,
+				size=size,
+				price=price,
+				productivity=productivity
+			)
+			return JsonResponse({"success": True, "id": sa.first().id}, status=201)
+		except Exception as e:
+			return JsonResponse({"success": False, "error_message": str(e)}, status=500)
+		

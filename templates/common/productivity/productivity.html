@@ -111,10 +111,9 @@
                         <div class="row">
                             <button data-toggle="modal" data-target="#priceRangeManageModal" class="pricerange_manage_button" style="display:none;"></button>
                             <button data-toggle="modal" data-target="#DeleteModal" class="pricerange_delete_button" style="display:none;"></button>
-                            <button data-toggle="modal" id="id_add_add" data-target="#add-onModal"  style="display:none;"></button>
-                            <button data-toggle="modal" id="id_add_edit" data-target="#edit-onModal"  style="display:none;"></button>
+                            <button data-toggle="modal" id="manage_addons" data-target="#manageAddonModal"  style="display:none;"></button>
                             <button data-toggle="modal" id="id_add_delete" data-target="#delete-onModal"  style="display:none;"></button>
-                            <button data-toggle="modal" id="manage_productivity" data-target="#manageProductivityModal"  style="display:none;"></button>                           
+                            <button data-toggle="modal" id="manage_productivity" data-target="#productivityManageModal"  style="display:none;"></button>                           
                             
                             <div class="col-md-12">
                                 <button class="blue-button" onclick="onBackButtonClick()"><i class="fa fa-arrow-left"></i> Back</button>
@@ -254,10 +253,18 @@
                                     </div>
 
                                     <div class="col-md-6">
-                                        {% for service_addon in service_addons %}
-                                            {% if service_type == service_addon.service_type %}
-                                                {% ifchanged service_addon.service_type %}
-                                                    <h2 class="productivity-name mt-10"> Add-on</h2>
+                                        <div class="d-flex smd-justify-content-between">
+                                            <div>
+                                                <h2 class="productivity-name">Add-ons</h2>
+                                            </div>
+                                            <div>
+                                                <button class="border-button" onclick="" id="{{service_type|slugify}}-add-addon-button" data-service-type-name="{{service_type.name}}" data-service-type-id="{{service_type.id}}"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add Add-on</button>
+                                            </div>
+
+                                        </div>
+                                        <div id="{{service_type|slugify}}-panel-addons" class="hide mt-10">
+                                            {% for service_addon in service_type.service_addons %}
+                                                {% if forloop.first %}
                                                     <div class="productivity-card-content">
                                                         <div class="row productivity-card-items2">
                                                             <div style="font-weight: 600;" class="col-md-2 productivity-card-items-1">
@@ -280,37 +287,36 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                {% endifchanged %}
-                                            {% endif %}
-
-                                            {% if service_type == service_addon.service_type %}
-                                                <div class="row productivity-card-items">
-                                                    <div class="col-md-2 productivity-card-items-1">
-                                                        {{service_addon.name}}
+                                                {% endif %}
+                                                    <div class="row productivity-card-items">
+                                                        <div class="col-md-2 productivity-card-items-1">
+                                                            {{service_addon.name}}
+                                                        </div>
+                                                        <div class="col-md-2 productivity-card-items-2">
+                                                            {{service_addon.category|default_if_none:''}}
+                                                        </div>
+                                                        <div class="col-md-2 productivity-card-items-3">
+                                                            {{service_addon.size|default_if_none:''}}
+                                                        </div>
+                                                        <div class="col-md-2 productivity-card-items-3">
+                                                            {{service_addon.price|floatformat:'3'|default_if_none:''}} KD
+                                                        </div>
+                                                        <div class="col-md-2 productivity-card-items-3">
+                                                            {{service_addon.productivity|default_if_none:''}}
+                                                        </div>
+                                                        <div class="col-md-2 productivity-card-items-4">
+                                                            <button onclick="edit_add_on(this);" data-service_type_name="{{service_addon.service_type.name}}" data-service-type-id="{{service_addon.service_type.id}}" data-id="{{service_addon.id}}" data-name="{{service_addon.name}}" data-category="{{service_addon.category|default_if_none:''}}" data-size="{{service_addon.size|default_if_none:''}}" data-price="{{service_addon.price}}" data-productivity="{{service_addon.productivity}}" class="img-button" >
+                                                                <img class="productivity-card-edit" src="/static/files/icons/edit.png">
+                                                            </button>
+                                                            <button class="img-button" onclick="delete_add_on(this);" data-id="{{service_addon.id}}">
+                                                                <img class="productivity-card-edit" src="/static/files/icons/delete.png">
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                    <div class="col-md-2 productivity-card-items-2">
-                                                        {{service_addon.category|default_if_none:''}}
-                                                    </div>
-                                                    <div class="col-md-2 productivity-card-items-3">
-                                                        {{service_addon.size|default_if_none:''}}
-                                                    </div>
-                                                    <div class="col-md-2 productivity-card-items-3">
-                                                        {{service_addon.price|floatformat:'3'|default_if_none:''}} KD
-                                                    </div>
-                                                    <div class="col-md-2 productivity-card-items-3">
-                                                        {{service_addon.productivity|default_if_none:''}}
-                                                    </div>
-                                                    <div class="col-md-2 productivity-card-items-4">
-                                                        <button onclick="edit_add_on(this);" data-service_type_name="{{service_addon.service_type.name}}" data-service_type_id="{{service_addon.service_type.id}}" data-id="{{service_addon.id}}" data-name="{{service_addon.name}}" data-category="{{service_addon.category|default_if_none:''}}" data-size="{{service_addon.size|default_if_none:''}}" data-price="{{service_addon.price}}" data-productivity="{{service_addon.productivity}}" class="img-button" >
-                                                            <img class="productivity-card-edit" src="/static/files/icons/edit.png">
-                                                        </button>
-                                                        <button class="img-button" onclick="delete_add_on(this);" data-id="{{service_addon.id}}">
-                                                            <img class="productivity-card-edit" src="/static/files/icons/delete.png">
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            {% endif %}
-                                        {% endfor %}
+                                            {% empty %}
+                                                <div class="mt-10">No add-ons for this service.</div>
+                                            {% endfor %}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -503,65 +509,8 @@
                 </div>
             </div>
         </div>
-        <!-- Modal add-on -->
-        <div class="modal fade" id="add-onModal" role="dialog">
-            <div class="modal-dialog cancel-model cancel-order-border" role="document">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-12">
-        
-                            <div class="d-flex cl-modal-icons">
-                                <button data-dismiss="modal" class="img-button">
-                                    <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
-                                </button>
-        
-                            </div>
-                        </div>
-                    </div>
-                    <h2 class="productivity-name" id="add_service_type_addon_name_id"></h2>
-                    <form method="POST" action="">
-                    {% csrf_token %}
-                    <input type="hidden" name="action_type" value="add_addon">
-                    <input type="hidden" name="service_type" id="add_service_type_addon_id">
-                    <div class="row mt-10">
-                        <div class="col-md-6 mt-10">
-                            <label > Item</label>
-                            <input  type="text" name="name" placeholder=" " required="required" class="textBox model-text-border">
-                        </div>
-                        <div class="col-md-6 mt-10">
-                            <label > Category Name</label>
-                            <input  type="text" name="category" placeholder=" " class="textBox model-text-border">
-                        </div>
-                        <div class="col-md-6 mt-10">
-                            <label >Size</label>
-                            <input  type="text" name="size" placeholder=" " class="textBox model-text-border">
-                        </div>
-                        <div class="col-md-6 mt-10">
-                            <label >Price</label>
-                            <input  type="text" name="price" placeholder=" " required="required" class="textBox model-text-border">
-                        </div>
-                        <div class="col-md-6 mt-10">
-                            <label >Productivity</label>
-                            <input  type="text" name="productivity" placeholder=" " required="required" class="textBox model-text-border">
-                        </div>
-                        
-        
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12 text-center">
-                            <div class="cancel-model-content">
-                                <button class="sent-button"><input type="submit" class="btn-submit" value="Submit"></button>
-                                <button data-dismiss="modal" class="view-button">Cancel</button>
-                            </div>
-                        </div>
-        
-                    </div>
-                    </form>
-                </div>
-            </div>
-        </div>
         <!-- Modal edit add-on -->
-        <div class="modal fade" id="edit-onModal" role="dialog">
+        <div class="modal fade" id="manageAddonModal" role="dialog">
             <div class="modal-dialog cancel-model cancel-order-border" role="document">
                 <div class="container-fluid">
                     <div class="row">
@@ -575,45 +524,44 @@
                             </div>
                         </div>
                     </div>
-                    <h2 class="productivity-name" id="edit_service_type_name_addon_id"></h2>
-                    <form method="POST" action="">
-                    {% csrf_token %}
-                    <input type="hidden" name="action_type" value="edit_addon">
-                    <input type="hidden" name="addon" id="edit_addon_id">
-                    <input type="hidden" name="service_type" id="edit_service_type_addon_id">
-                    <div class="row mt-10">
-                        <div class="col-md-6 mt-10">
-                            <label > Item</label>
-                            <input  type="text" name="name" id="edit_name_addon_id" placeholder=" " required="required" class="textBox model-text-border">
-                        </div>
-                        <div class="col-md-6 mt-10">
-                            <label > Category Name</label>
-                            <input  type="text" name="category" id="edit_category_addon_id" placeholder=" " class="textBox model-text-border">
-                        </div>
-                        <div class="col-md-6 mt-10">
-                            <label >Size</label>
-                            <input  type="text" name="size" id="edit_size_addon_id" placeholder=" " class="textBox model-text-border">
-                        </div>
-                        <div class="col-md-6 mt-10">
-                            <label >Price</label>
-                            <input  type="text" name="price" id="edit_price_addon_id" placeholder=" " required="required" class="textBox model-text-border">
-                        </div>
-                        <div class="col-md-6 mt-10">
-                            <label >Productivity</label>
-                            <input  type="text" name="productivity" id="edit_productivity_addon_id" placeholder=" " required="required" class="textBox model-text-border">
-                        </div>
-                        
-        
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12 text-center">
-                            <div class="cancel-model-content">
-                                <button class="sent-button"><input type="submit" class="btn-submit" value="Submit"></button>
-                                <button data-dismiss="modal" class="view-button">Cancel</button>
+                    <h2 class="productivity-name" id="manage_addon_service_type_name"></h2>
+                    <form id="manage-addon-form" method="POST" action="">
+                        <input type="hidden" name="addon_id" id="addon_id">
+                        <input type="hidden" name="service_type" id="service_type_id">
+                        <div class="row mt-10">
+                            <div class="col-md-6 mt-10">
+                                <label > Item</label>
+                                <input  type="text" name="name" id="addon_name" placeholder=" " required="required" class="textBox model-text-border">
                             </div>
+                            <div class="col-md-6 mt-10">
+                                <label > Category Name</label>
+                                <input  type="text" name="category" id="addon_category" placeholder=" " class="textBox model-text-border">
+                            </div>
+                            <div class="col-md-6 mt-10">
+                                <label >Size</label>
+                                <input  type="text" name="size" id="addon_size" placeholder=" " class="textBox model-text-border">
+                            </div>
+                            <div class="col-md-6 mt-10">
+                                <label >Price</label>
+                                <input  type="text" name="price" id="addon_price" placeholder=" " required="required" class="textBox model-text-border">
+                            </div>
+                            <div class="col-md-6 mt-10">
+                                <label >Productivity</label>
+                                <input  type="text" name="productivity" id="addon_productivity" placeholder=" " required="required" class="textBox model-text-border">
+                            </div>
+                            
+            
                         </div>
-        
-                    </div>
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <div class="cancel-model-content">
+                                    <button class="sent-button"><input type="submit" class="btn-submit" value="Submit"></button>
+                                    <button  class="view-button" type="reset">Cancel</button>
+                                    <!-- data-dismiss="modal" -->
+                                </div>
+                            </div>
+            
+                        </div>
                     </form>
                 </div>
             </div>
@@ -661,7 +609,7 @@
             </div>
         </div>
          <!-- Modal add category -->
-        <div class="modal fade" id="manageProductivityModal" role="dialog">
+        <div class="modal fade" id="productivityManageModal" role="dialog">
             <div class="modal-dialog cancel-model cancel-order-border" role="document">
                 <div class="container-fluid">
                     <div class="row">
@@ -1149,8 +1097,19 @@
         const serviceDetails = document.getElementById("smd-service-details");
         const panels = serviceDetails.querySelectorAll(".row");
         const productivityTabs = serviceDetails.querySelectorAll(`#${serviceType}-productivity-tab`);
+        const addonsPanels = serviceDetails.querySelectorAll("[id$='-panel-addons']");
         serviceList.classList.add("hide");
         serviceDetails.classList.remove("hide");
+        
+        addonsPanels.forEach(panel => {
+            if(!panel.classList.contains("hide")){
+                panel.classList.add("hide");
+            }
+            if(panel.id === serviceType + "-panel-addons"){
+                panel.classList.remove("hide");
+            }
+        });
+
         panels.forEach(element => {
             if (element.id && element.id.endsWith('-panel')) {
                 if (element.id === serviceType + "-panel") {
@@ -1258,12 +1217,21 @@
          const addNewService = document.getElementById("smd-add-new-service");
          addNewService.classList.remove("hide");
     }
+    
     //add Add-ons
     function add_add_on(elem){
-        $("#add_service_type_addon_name_id").text($(elem).data('service_type_name'));
-        $("#add_service_type_addon_id").val($(elem).data('service_type_id'));
-        
-        $('#id_add_add').click();
+        const nameEl = document.getElementById('manage_addon_service_type_name');
+        const idEl = document.getElementById('service_type_id');
+
+        const serviceName = elem.getAttribute('data-service-type-name') || '';
+        const serviceId = elem.getAttribute('data-service-type-id') || '';
+
+        if (nameEl) nameEl.textContent = serviceName;
+        if (idEl) idEl.value = serviceId;
+
+        const trigger = document.getElementById('manage_addons');
+        document.getElementById("manage-addon-form").setAttribute("data-action", "add");
+        if (trigger) trigger.click();
     }
 
     //edit Add-ons
@@ -1278,7 +1246,7 @@
         $("#edit_service_type_name_addon_id").text($(elem).data('service_type_name'));
         $("#edit_service_type_addon_id").val($(elem).data('service_type_id'));
 
-        $('#id_add_edit').click();
+        $('#manage_addons').click();
     }
 
     //delete Add-ons
