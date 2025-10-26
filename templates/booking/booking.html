@@ -45,6 +45,63 @@
         </div>
         <!--welcome-wrapper-->
       </div>
+      <style>
+    /* Overlay background */
+    .alert-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    /* Alert box styling */
+    .alert-box {
+      background: white;
+      padding: 25px 30px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+      animation: popIn 0.4s ease;
+    }
+
+    /* Title and text */
+    .alert-box h3 {
+      color: #2e7d32;
+      margin-bottom: 10px;
+    }
+    .alert-box p {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    /* Continue button */
+    .alert-box button {
+      background: linear-gradient(90deg, #2e7d32, #4caf50);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      transition: transform 0.2s ease;
+    }
+    .alert-box button:hover {
+      transform: scale(1.05);
+    }
+
+    /* Animation */
+    @keyframes popIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+  </style>
+
 
 
       <div>
@@ -2576,14 +2633,20 @@ width="1000"
           >
             Fill all the details of the Apartment  to proceed
           </v-alert>
-                              <v-btn color="primary" v-on:click="nextFloor(index - 1, floor)" class="mb-2 mt-2"
-                                v-if="!building[index - 1].completed && !building[index-1].floors[floor-1].apartment">
+                                <v-btn
+                                color="primary"
+                                class="mb-2 mt-2"
+                                @click="handleContinue(index - 1, floor)"
+                                v-if="!building[index - 1].completed && !building[index-1].floors[floor-1].apartment"
+                              >
                                 Continue
                               </v-btn>
+                              
                               <v-btn color="primary" v-on:click="nextFloor(index - 1, floor)" class="mb-2 mt-2"
                                 v-if="!building[index - 1].completed && building[index-1].floors[floor-1].apartment && building[index-1].floors[floor-1].completed">
                                 Continue
                               </v-btn>
+
                               <!--  <v-btn
                               text
                               @click="e.building[index - 1].e = floor - 1"
@@ -4134,7 +4197,56 @@ Fill all the details of the Buildings  to proceed
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@1.0.13/dist/browser-image-compression.js"></script>
 
 <script src="{% static 'files/js/booking/booking.js' %}"></script>
+<style>
+  .alert-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
 
+/* Alert box styling */
+.alert-box {
+  background: white;
+  padding: 25px 30px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+  animation: popIn 0.4s ease;
+}
+
+/* Title and text */
+.alert-box h3 {
+  color: #2e7d32;
+  margin-bottom: 10px;
+}
+.alert-box p {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+/* Continue button */
+.alert-box button {
+  background: linear-gradient(90deg, #2e7d32, #4caf50);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: transform 0.2s ease;
+}
+.alert-box button:hover {
+  transform: scale(1.05);
+}
+
+</style>
 
 
 {% endblock %}

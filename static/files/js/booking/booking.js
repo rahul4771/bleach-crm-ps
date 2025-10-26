@@ -135,7 +135,7 @@ const app=new Vue({
       altweekStat:false,
       subStat:'',
       altdaysStat:false,
-      currentPageTitle:'Booking',
+     
       custBookStat:false,
       scheduleStat:true,
       serviceChange:true,
@@ -617,7 +617,42 @@ current_service:''
 
       },
       methods: {
+        handleContinue(building, floor) {
+        this.nextFloor(building, floor);
+  // Step 1: First calculate the total cost
+  const total = this.findAddedCost();
+  
+  
 
+     const overlay = document.createElement('div');
+    overlay.className = 'alert-overlay';
+    overlay.style.display = 'flex'; // show immediately
+
+    // Create alert box
+    const box = document.createElement('div');
+    box.className = 'alert-box';
+    box.innerHTML = `<h3>Total Cost</h3><p>${total}</p>`;
+
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+
+    setTimeout(() => {
+      overlay.style.transition = 'opacity 0.4s';
+      overlay.style.opacity = 0; // fade out
+
+      setTimeout(() => {
+        if (document.body.contains(overlay)) {
+          document.body.removeChild(overlay); // remove from DOM
+        }
+        this.nextFloor(building, floor);
+      }, 400); // wait for fade out animation
+    }, 2000);
+},
+
+
+        
+
+                 
         isSlotsSelected(){
           if(this.currentSlotDay>this.cleaning_set.length){
             return true
@@ -708,18 +743,23 @@ current_service:''
 
           }
           if(totalcost){
-            console.log("added amount if  is "+totalcost)
+            console.log("added amount is "+totalcost)
             return totalcost
           }
           else{
-            console.log("added amount else is "+totalcost)
+            console.log("added amount is "+totalcost)
             return 0
           }
+          
+   
+  
+          
+    
         //}
         // else{
         //   return 0
         // }
-        },
+       },
         checkHourly(){
           for(var i=0;i<this.multiServicesBill.length;i++){
             if(this.multiServicesBill[i].service=='Hourly Cleaning'){
@@ -5365,12 +5405,15 @@ try {
     }
   },
   nextFloor(building, floor) {
+        
+
     this.apartment_stat_err=false
     this.building_msg=false
     if(this.building[building].floors[floor-1].apartment && !this.apartmentCompleteChecker(building,floor-1)){
       this.apartment_stat_err=true
     }
     else{
+      
     this.floor_msg=false
       console.log('validate is '+this.$refs.form)
      if(this.$refs['building-'+building+'floor-'+(floor-1)][0].validate())
@@ -5453,6 +5496,7 @@ try {
      }
       this.findTempcost()
     }
+   
   },
   recalcPrice(building,floor) {
     
