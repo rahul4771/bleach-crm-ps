@@ -283,7 +283,7 @@
                                                 </tr>
                                                 <tr
                                                     v-if="!servicePriceRanges[productivity.id] || !servicePriceRanges[productivity.id].length">
-                                                    <td colspan="5" class="text-center">
+                                                    <td :colspan="!toggleDivs.showView ? 5 : 6" class="text-center">
                                                         <div class="dashboard-card mb-3"
                                                             style="border-left: 4px solid #9ec5fe; background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 100%);">
                                                             <div class="dashboard-card-body"
@@ -414,7 +414,7 @@
 
                                         <tr
                                             v-if="!serviceAddons[serviceTypeId] || !serviceAddons[serviceTypeId].length">
-                                            <td colspan="6" class="text-center">
+                                            <td :colspan="!toggleDivs.showView ? 6 : 7" class="text-center">
                                                 <div class="dashboard-card mb-3"
                                                     style="border-left: 4px solid #9ec5fe; background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 100%);">
                                                     <div class="dashboard-card-body" style="padding: 16px 20px;">
