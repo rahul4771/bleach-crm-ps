@@ -243,7 +243,7 @@
     font-size: 22px;
 }
 .model-text-border {
-    border: 1px solid #707070 !important;
+    border: 1px solid #707070;
     border-radius: 5px !important;
 }
 select.minimal {
@@ -426,4 +426,10 @@ input:checked + .slider:before {
   display: flex;
   justify-content: flex-end;
   align-items: center;
+}
+
+.stats-card-value {
+    color: #1f2937;
+    font-size: 2rem;
+    font-weight: 700;
 }

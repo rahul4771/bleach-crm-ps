@@ -76,10 +76,13 @@ urlpatterns = [
 		url(r'^cancell-book/(?P<evaluation_id>[-\w]+)/$',views.EvaluationBookCancellation.as_view(),name='cancell-book'),
         url(r'^update-visit-datetime/$', views.update_visit_datetime, name='update-visit-datetime'),	
         url(r'^add-service-type/$', views.add_service_type, name='add-service-type'),	
+        url(r'^update-service-type/(?P<service_type_id>[-\w]+)/$', views.ServiceTypeAPIView.as_view(), name='update-service-type'),	
         url(r'^add-service-productivity/$', views.ServiceProductivityAPIView.as_view(), name='add-service-productivity'),
         url(r'^update-service-productivity/(?P<productivity_id>[-\w]+)$', views.ServiceProductivityAPIView.as_view(), name='update-service-productivity'),
         url(r'^add-service-price-range/$', views.ProductivityPriceRangeAPIView.as_view(), name='add-service-price-range'),
         url(r'^update-service-price-range/(?P<price_range_id>[-\w]+)$', views.ProductivityPriceRangeAPIView.as_view(), name='update-service-price-range'),
         url(r'^add-service-addons/$', views.ServiceAddOnsAPIView.as_view(), name='add-service-addons'),
         url(r'^update-service-addons/(?P<addon_id>[-\w]+)$', views.ServiceAddOnsAPIView.as_view(), name='update-service-addons'),
+        url(r'^staging/productivity/$',views.StagingProductivity.as_view(),name='staging-productivity'),
+        url(r'^staging/productivity/get-service-types/$', views.ProductivityServiceTypeAPIView.as_view(), name='get-service-types'),
 	]

@@ -1,0 +1,329 @@
+const { createApp } = Vue;
+
+createApp({
+    // Application data
+    data() {
+        return {
+            avatarBaseUrl: 'https://ui-avatars.com/api/',
+            serviceTypes: [],
+            productivities: [],
+            serviceAddons: [],
+            servicePriceRanges: [],
+            serviceTypeId: '',
+            activePtab: null,
+            colorCodes: [
+                "6366f1",
+                "10b981",
+                "f59e0b",
+                "ef4444",
+                "8b5cf6",
+                "06b6d4",
+                "ec4899",
+                "f97316",
+                "84cc16",
+                "0891b2"
+            ],
+            toggleDivs: {
+                showList: true,
+                showView: false,
+                showManageServiceType: false,
+                showProductivity: false,
+                showAddons: false
+            },
+            viewServiceType: {
+                title: '',
+                name: '',
+                arabicName: '',
+                activeStatus: ''
+            },
+            validationErrors: {
+                'manageServiceType': {}
+            },
+            successMsg: '',
+            serviceFormFields: {
+                name: '',
+                name_arabic: '',
+                is_active: ''
+            }
+
+        };
+    },
+    // Methods for handling service types
+    methods: {
+        // Handle view, edit, remove actions
+        handleServiceViewBtnClick(serviceType) {
+            this.toggleDivs.showList = false;
+            this.toggleDivs.showView = true;
+            this.toggleDivs.showProductivity = true;
+            this.toggleDivs.showAddons = true;
+            this.viewServiceType = {
+                title: serviceType.name,
+                name: serviceType.name,
+                arabicName: serviceType.name_arabic,
+                activeStatus: serviceType.is_active ? 'Active' : 'Inactive'
+            }
+            this.serviceTypeId = serviceType.id
+        },
+        handleEditServiceBtnClick(serviceType) {
+            this.toggleDivs.showList = false;
+            this.toggleDivs.showManageServiceType = true;
+            this.viewServiceType = {
+                title: `Edit ${serviceType.name}`,
+            };
+            const form = document.getElementById('manage-service-form');
+            if (form) {
+                form.setAttribute('data-action', 'edit')
+
+                this.serviceFormFields.name = serviceType.name || '';
+                this.serviceFormFields.name_arabic = serviceType.name_arabic || '';
+                this.serviceFormFields.is_active = serviceType.is_active ? 'active' : 'inactive';
+
+                const hiddenName = 'editing_service_type_id';
+                let hidden = form.querySelector(`input[name="${hiddenName}"]`);
+                if (!hidden) {
+                    hidden = document.createElement('input');
+                    hidden.type = 'hidden';
+                    hidden.name = hiddenName;
+                    hidden.id = hiddenName;
+                    form.appendChild(hidden);
+                }
+                hidden.value = serviceType.id || '';
+
+            }
+
+        },
+        remove(student) {
+            if (confirm(`Delete ${student.name}?`)) {
+                this.students = this.students.filter(s => s.id !== student.id);
+            }
+        },
+        // Handle add button clicks
+        handleAddServiceBtnClick() {
+            this.toggleDivs.showList = false;
+            this.toggleDivs.showManageServiceType = true;
+            this.validationErrors['manageServiceType'] = [];
+
+            const form = document.getElementById('manage-service-form');
+            if (form) {
+                form.setAttribute('data-action', 'add')
+            }
+        },
+        backButtonAction(view) {
+            Object.keys(this.toggleDivs).forEach(key => {
+                this.toggleDivs[key] = (key === view);
+            });
+            // this.
+            this.setActiveProductivityTab(null);
+            this.resetNewService();
+        },
+        setActiveProductivityTab(pid = null) {
+            this.activePtab = pid
+        },
+        handleEditPriceRangeBtnClick(priceRange, productivityId) {
+            // Logic to handle editing a price range
+            alert(`Edit Price Range: ${priceRange.name} under Productivity ID: ${productivityId}`);
+        },
+        removePriceRange(priceRange, productivityId) {
+            // Logic to handle removing a price range
+            if (confirm(`Delete Price Range: ${priceRange.name}?`)) {
+                if (this.servicePriceRanges[productivityId]) {
+                    this.servicePriceRanges[productivityId] = this.servicePriceRanges[productivityId].filter(item => item.id !== priceRange.id);
+                }
+            }
+        },
+
+        // Add or update service type
+        submitServiceTypeForm() {
+            this.validationErrors['manageServiceType'] = {};
+            if (!this.serviceFormFields.name || !this.serviceFormFields.name.trim()) {
+                this.validationErrors['manageServiceType']['serviceTypeName'] = 'Service name is required.';
+            }
+            if (!this.serviceFormFields.name_arabic || !this.serviceFormFields.name_arabic.trim()) {
+                this.validationErrors['manageServiceType']['serviceTypeArabicName'] = 'Arabic name is required.';
+            }
+            const arabicRegex = /^[\u0600-\u06FF\s]+$/;
+            if (this.serviceFormFields.name_arabic.trim().length > 0 && !arabicRegex.test(this.serviceFormFields.name_arabic)) {
+                this.validationErrors['manageServiceType']['serviceTypeArabicName'] = 'Service name (Arabic) must contain only Arabic characters.';
+            }
+            if (this.serviceFormFields.is_active === '') {
+                this.validationErrors['manageServiceType']['serviceTypeIsActive'] = 'Status is required.';
+            }
+
+            if (Object.keys(this.validationErrors['manageServiceType']).length) return;
+
+            // prepare payload for backend (convert boolean to expected value)
+            const payload = {
+                new_service_name: this.serviceFormFields.name,
+                new_service_name_arabic: this.serviceFormFields.name_arabic,
+                new_service_is_active: this.serviceFormFields.is_active
+            };
+
+            const form = document.getElementById('manage-service-form');
+            const formAction = form.getAttribute('data-action')
+            if (formAction === 'add') {
+                this.createServiceType(this.toFormData(payload));
+            } else {
+                const serviceId = form.querySelector('input#editing_service_type_id, input[name="editing_service_type_id"]');
+                this.updateServiceType(this.toFormData(payload), serviceId.value);
+            }
+
+        },
+        // Fetch service types from the server
+        getServiceTypes() {
+            fetch('get-service-types/')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.service_types) {
+                        this.serviceTypes = data.service_types.map(serviceType => {
+                            return {
+                                ...serviceType,
+                                avatar: `${this.avatarBaseUrl}?name=${encodeURIComponent(serviceType.name)}&background=${this.colorCodes[serviceType.id % this.colorCodes.length]}&color=fff`
+                            };
+                        });
+                    }
+                    if (data.service_productivities) {
+                        const grouped = {};
+                        data.service_productivities.forEach(p => {
+                            const key = String(p.service_type_id ?? '0');
+                            if (!grouped[key]) grouped[key] = [];
+                            grouped[key].push(p);
+                        });
+                        this.productivities = grouped;
+                    }
+                    if (data.service_addons) {
+                        const grouped = {};
+                        data.service_addons.forEach(p => {
+                            const key = String(p.service_type_id ?? '0');
+                            if (!grouped[key]) grouped[key] = [];
+                            p.avatar = `${this.avatarBaseUrl}?name=${encodeURIComponent(p.name)}&background=${this.colorCodes[p.id % this.colorCodes.length]}&color=fff`;
+                            grouped[key].push(p);
+                        });
+                        this.serviceAddons = grouped;
+                    }
+                    if (data.service_price_ranges) {
+                        const grouped = {};
+                        data.service_price_ranges.forEach(p => {
+                            const key = String(p.service_productivity_id ?? '0');
+                            if (!grouped[key]) grouped[key] = [];
+                            p.avatar = `${this.avatarBaseUrl}?name=${encodeURIComponent(p.name)}&background=${this.colorCodes[p.id % this.colorCodes.length]}&color=fff`;
+                            grouped[key].push(p);
+                        });
+                        this.servicePriceRanges = grouped;
+                    }
+
+                })
+                .catch(error => {
+                    console.error('Error fetching service types:', error);
+                });
+        },
+        createServiceType(formData) {
+            const csrftoken = this.getCookie('csrftoken')
+            const baseUrl = window.location.origin;
+
+            const url = `${baseUrl}/common/add-service-type/`
+            fetch(url, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+                .then(r => r.json())
+                .then(data => {
+                    if (!data.success) {
+                        if (data.error_field && data.error_message) {
+                            if (data.error_field === 'new_service_name') {
+                                this.validationErrors['manageServiceType']['serviceTypeName'] = data.error_message;
+                            }
+                            if (data.error_field === 'new_service_name_arabic') {
+                                this.validationErrors['manageServiceType']['serviceTypeArabicName'] = data.error_message;
+                            }
+                            if (data.error_field === 'new_service_is_active') {
+                                this.validationErrors['manageServiceType']['serviceTypeIsActive'] = data.error_message;
+                            }
+                        }
+                    } else {
+                        this.successMsg = data.service_type
+                            ? `Service type "${data.service_type}" added successfully.`
+                            : 'Service type added successfully.';
+                        this.resetNewService();
+                        setTimeout(() => { this.successMsg = ''; }, 5000);
+
+                    }
+                }).catch(err => console.error(err));
+
+        },
+        updateServiceType(formData, serviceId) {
+            const csrftoken = this.getCookie('csrftoken')
+            const baseUrl = window.location.origin;
+
+            const url = `${baseUrl}/common/update-service-type/${serviceId}/`
+            fetch(url, {
+                method: 'PUT',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+                .then(r => r.json())
+                .then(data => {
+                    if (!data.success) {
+                        if (data.error_field && data.error_message) {
+                            if (data.error_field === 'edit_service_name') {
+                                this.validationErrors['manageServiceType']['serviceTypeName'] = data.error_message;
+                            }
+                            if (data.error_field === 'edit_service_name_arabic') {
+                                this.validationErrors['manageServiceType']['serviceTypeArabicName'] = data.error_message;
+                            }
+                            if (data.error_field === 'edit_service_is_active') {
+                                this.validationErrors['manageServiceType']['serviceTypeIsActive'] = data.error_message;
+                            }
+                        }
+                    } else {
+                        this.successMsg = data.service_type
+                            ? `Service type "${data.service_type}" updated successfully.`
+                            : 'Service type updated successfully.';
+                        this.resetNewService();
+                        setTimeout(() => { this.successMsg = ''; }, 5000);
+
+                    }
+                }).catch(err => console.error(err));
+
+        },
+
+        // utility functions
+        getCookie(name) {
+            const v = document.cookie.split('; ').find(row => row.startsWith(name + '='));
+            return v ? decodeURIComponent(v.split('=')[1]) : null;
+        },
+        toFormData(payload) {
+            const fd = new FormData();
+            for (const k in payload) fd.append(k, payload[k]);
+            return fd;
+        },
+        resetNewService() {
+            this.newService = { name: '', name_arabic: '', is_active: '' };
+            this.validationErrors['manageServiceType'] = {};
+        },
+        formatCurrency(value) {
+            if (value == null || value === '') return '--';
+            const n = Number(value);
+            if (Number.isNaN(n)) return value;
+            const formatted = new Intl.NumberFormat('en-US', {
+                minimumFractionDigits: 3,
+                maximumFractionDigits: 3
+            }).format(n);
+            return `${formatted} KD`;
+        }
+
+
+    },
+    // Lifecycle hook to fetch service types on mount
+    mounted() {
+        this.getServiceTypes();
+    }
+}).mount('#app');

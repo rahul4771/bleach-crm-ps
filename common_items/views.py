@@ -6379,6 +6379,7 @@ def add_service_type(request):
 	if request.method == 'POST':
 		service_name =  request.POST.get('new_service_name')
 		service_name_arabic =  request.POST.get('new_service_name_arabic')
+		is_active =  True if request.POST.get('new_service_is_active') == 'active' else False
 
 		# Backend validation for duplicate names
 		if ServiceType.objects.filter(name__iexact=service_name).exists():
@@ -6390,11 +6391,54 @@ def add_service_type(request):
 			service_type = ServiceType.objects.create(
 				name=service_name,
 				name_arabic=service_name_arabic,
-				is_active=True
+				is_active=is_active
 			)
 			return JsonResponse({'success': True, 'service_type': service_type.name})
 		except Exception as e:
 			return JsonResponse({'success': False, 'error': str(e)})
+
+class ServiceTypeAPIView(APIView):
+	def put(self, request, *args, **kwargs):
+
+		data = getattr(request, "data", None) or request.data or {}
+
+		def safe_str(val):
+			return val.strip() if isinstance(val, str) and val.strip() != "" else None
+
+		raw_id = kwargs.get("service_type_id")
+		if raw_id is None:
+			return JsonResponse({"success": False, "error": "service_type_id required"}, status=400)
+	
+		try:
+			service_type_id = int(safe_str(str(raw_id)) or raw_id)
+		except (TypeError, ValueError):
+			return JsonResponse({"success": False, "error": "Invalid service_type_id"}, status=400)
+
+		name = safe_str(data.get("new_service_name"))
+		name_arabic = safe_str(data.get("new_service_name_arabic"))
+		is_active = True if data.get("new_service_is_active") == "active" else False
+
+		if not name:
+			return JsonResponse({"success": False, "error_field": "new_service_name", "error_message": "Service name is required."}, status=400)
+
+		service_type = ServiceType.objects.filter(id=service_type_id).first()
+		if not service_type:
+			return JsonResponse({"success": False, "error": "Invalid service type."}, status=400)
+	
+		# Check for duplicate names if name is changed
+		if ServiceType.objects.filter(name__iexact=name).exclude(id=service_type.id).exists():
+			return JsonResponse({"success": False, "error_field": "new_service_name", "error_message": "Service type with this name already exists."}, status=400)
+
+		if name_arabic and ServiceType.objects.filter(name_arabic__iexact=name_arabic).exclude(id=service_type.id).exists():
+			return JsonResponse({"success": False, "error_field": "new_service_name_arabic", "error_message": "Service type with this name (Arabic) already exists."}, status=400)
+
+		service_type.name = name
+		if name_arabic is not None:
+			service_type.name_arabic = name_arabic
+			service_type.is_active = is_active
+		service_type.save()
+
+		return JsonResponse({"success": True, "service_type": service_type.name})		
 
 class ServiceProductivityAPIView(APIView):
 
@@ -6750,4 +6794,72 @@ class ServiceAddOnsAPIView(APIView):
 			return JsonResponse({"success": True, "id": sa.first().id}, status=201)
 		except Exception as e:
 			return JsonResponse({"success": False, "error_message": str(e)}, status=500)
+		
+class StagingProductivity(IsAuthenticated,View):
+	def get(self,request):
+
+		#save ajax productivity
+		# response_dict = {}
+		# action = request.GET.get('action_type')
+		# if action == 'edit_productivity':
+		# 	productivity_id    = request.GET.get('productivity_id')
+		# 	productivity_value = request.GET.get('productivity_value')
+
+		# 	productivity                  = ServiceProductivity.objects.get(id=productivity_id)
+		# 	productivity.perhour_cleaning = productivity_value
+		# 	productivity.save()
+		# 	response_dict['success'] =True
+		# 	return JsonResponse(response_dict)
+		
+		
+		# try:
+		# 	service_addons_qs = ServiceAddOns.objects.select_related('service_type') 
+		# 	service_types = ServiceType.objects.filter(is_active=True).prefetch_related(Prefetch('addons_service_type',queryset=service_addons_qs,to_attr='service_addons'))	
+		# except:
+		# 	service_types = None
+
+		
+
+		
+
+		
+
+		# discount_settings = Settings.objects.filter(is_active=True).first()
+
+		return render(request,'common/productivity/staging-productivity.html')
+
+class ProductivityServiceTypeAPIView(APIView):
+	def get(self, request):
+		service_types = list(ServiceType.objects.values('id','name','name_arabic', 'is_active'))
+		service_productivities = []
+		for p in ServiceProductivity.objects.select_related('service_type').all():
+			service_productivities.append({
+				'id': p.id,
+				'service_type_id': p.service_type_id,
+				'service_type_name': p.service_type.name if p.service_type else None,
+				'perhour_cleaning': float(p.perhour_cleaning) if getattr(p, 'perhour_cleaning', None) is not None else None,
+				'name': p.name,
+				'description': p.description if hasattr(p, 'description') else '',
+				'min_cleaners': p.min_cleaners,
+				'max_cleaners': p.max_cleaners,
+				'min_hours': p.min_hours,
+				'max_hours': p.max_hours,
+				'is_active': bool(getattr(p, 'is_active', False)),
+			})
+		
+		service_addons = list(ServiceAddOns.objects.filter(is_active=True).values(
+			'id', 'service_type_id', 'name', 'category', 'size', 'price', 'productivity', 'is_active'
+		))
+
+		service_price_ranges = list(ServicePriceRange.objects.filter(is_active=True).values(
+			'id', 'service_type_id', 'service_productivity_id', 'name', 'price', 'minimum_area', 'maximum_area', 'unit_price', 'is_active'
+		))
+
+		return JsonResponse({
+			'service_types': service_types,
+			'service_productivities': service_productivities,
+			'service_addons': service_addons,
+			'service_price_ranges': service_price_ranges
+		})
+		
 		

@@ -1,0 +1,429 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'files/css/bi.css' %}">
+<link rel="stylesheet" href="{% static 'files/css/data-table.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+    [v-cloak] {
+        display: none !important;
+    }
+</style>
+<div class="wrapper" id="app" v-cloak>
+    {% if request.user.user_type == 'SALESADMIN' %}
+    {% include "salesadmin/common/header.html" %}
+    {% elif request.user.user_type == 'AGENT' %}
+    {% include "agent/common/header.html" %}
+    {% elif request.user.user_type == 'ADMIN' %}
+    {% include "admin/common/header.html" %}
+    {% elif request.user.user_type == 'BOOKINGOFFICER' %}
+    {% include "bookingofficer/common/header.html" %}
+    {% elif request.user.user_type == 'EVALUATOR' %}
+    {% include "evaluator/common/header.html" %}
+    {% elif request.user.user_type == 'SENIORTEAMLEADER' %}
+    {% include "stl/common/header.html" %}
+    {% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
+    {% include "operationsupervisor/common/header.html" %}
+    {% elif request.user.user_type == 'TECHNICALSUPERVISOR' %}
+    {% include "technicalsupervisor/common/header.html" %}
+    {% elif request.user.user_type == 'ACCOUNTANT' %}
+    {% include "accountant/common/header.html" %}
+    {% endif %}
+
+    <section class="content">
+        <div class="container-fluid space topspace">
+            <div class="welcome-wrapper">
+                <!-- <h1 class="dashboard-head">Productivity</h1> -->
+            </div>
+
+            <div class="main-content-holder">
+                <div class="white-wrapper">
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h1 class="h1 mb-0 text-gray-800">Productivity</h1>
+                                <!-- <p class="text-muted mb-0">Advanced data tables with search, sort, and export
+                                    functionality</p> -->
+                            </div>
+                        </div>
+                    </div>
+                    <!--  -->
+                    <div>
+                        <div class="alert text-white" role="alert" v-if="successMsg"
+                            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);" v-text="successMsg">
+                        </div>
+                    </div>
+                    <div class="dashboard-card" id="productivity-list" v-show="toggleDivs.showList">
+                        <div class="dashboard-card-header py-4 px-4">
+                            <h2 class="mb-0">Service Types</h2>
+                        </div>
+                        <div class="dashboard-card-body px-4 py-4">
+                            <div class="export-buttons mb-3">
+                                <button class="export-btn" @click="handleAddServiceBtnClick">
+                                    <i class="fa fa-plus-circle"></i> Add Service Type
+                                </button>
+                            </div>
+                            <div
+                                class="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns">
+
+                                <div class="datatable-container">
+                                    <table
+                                        class="table table-striped table-bordered dt-responsive nowrap datatable-table"
+                                        style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th><button>Name</button></th>
+                                                <th><button>Arabic</button></th>
+                                                <th><button>Status</button></th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="(serviceType, index) in serviceTypes" :key="serviceType.id"
+                                                :data-index="index">
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <img :src="serviceType.avatar" :alt="serviceType.name"
+                                                            class="student-avatar me-3">
+                                                        <div>
+                                                            <div class="student-name" v-text="serviceType.name"></div>
+                                                            <div class="student-email"></div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td v-text="serviceType.name_arabic"></td>
+                                                <td>
+                                                    <span
+                                                        :class="['status-badge', serviceType.is_active === true ? 'status-active' : 'status-pending']"
+                                                        v-text="serviceType.is_active ? 'Active' : 'Inactive'"></span>
+                                                </td>
+                                                <td>
+                                                    <button class="btn-action btn-view" title="View"
+                                                        @click="handleServiceViewBtnClick(serviceType)"><i
+                                                            class="fa fa-eye"></i></button>
+                                                    <button class="btn-action btn-edit" title="Edit"
+                                                        @click="handleEditServiceBtnClick(serviceType)"><i
+                                                            class="fa fa-pen"></i></button>
+                                                    <button class="btn-action btn-delete" title="Delete"
+                                                        @click="remove(serviceType)"><i
+                                                            class="fa fa-trash"></i></button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Manage Service Types -->
+                    <div class="dashboard-card" id="manage-service-type" v-show="toggleDivs.showManageServiceType">
+                        <div class="dashboard-card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h2 v-text="viewServiceType.title ? viewServiceType.title : 'Add Service Type'"></h2>
+                                <button class="btn btn-secondary" @click="backButtonAction('showList')">Back to
+                                    List</button>
+                            </div>
+                            <div class="dashboard-card-body">
+                                <form id="manage-service-form" @submit.prevent="submitServiceTypeForm">
+                                    <div class="dashboard-grid grid-cols-3">
+                                        <div class="form-group">
+                                            <label for="serviceTypeName" class="form-label">Service name</label>
+                                            <input type="text" id="serviceTypeName" name="new_service_name"
+                                                v-model="serviceFormFields.name" placeholder="Enter service type name"
+                                                :class="{'form-control': true, 'is-invalid': validationErrors['manageServiceType']['serviceTypeName'] }">
+                                            <div class="invalid-feedback"
+                                                v-if="validationErrors['manageServiceType']['serviceTypeName']"
+                                                v-text="validationErrors['manageServiceType']['serviceTypeName']">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="serviceTypeArabicName" class="form-label">Service name in
+                                                arabic</label>
+                                            <input type="text" id="serviceTypeArabicName" name="new_service_name_arabic"
+                                                v-model="serviceFormFields.name_arabic"
+                                                placeholder="Enter service type name in Arabic"
+                                                :class="{'form-control': true, 'is-invalid': validationErrors['manageServiceType']['serviceTypeArabicName'] }">
+                                            <div class="invalid-feedback"
+                                                v-if="validationErrors['manageServiceType']['serviceTypeArabicName']"
+                                                v-text="validationErrors['manageServiceType']['serviceTypeArabicName']">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="serviceTypeIsActive" class="form-label">Status</label>
+                                            <select id="serviceTypeIsActive" name="new_service_is_active"
+                                                v-model="serviceFormFields.is_active"
+                                                :class="{'form-control': true, 'is-invalid': validationErrors['manageServiceType']['serviceTypeIsActive'] }">
+                                                <option value="" selected="">Choose your status...</option>
+                                                <option value="active">Active</option>
+                                                <option value="inactive">Inactive</option>
+                                            </select>
+                                            <div class="invalid-feedback"
+                                                v-if="validationErrors['manageServiceType']['serviceTypeIsActive']"
+                                                v-text="validationErrors['manageServiceType']['serviceTypeIsActive']">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <button type="submit" class="btn btn-primary">Save Information</button>
+                                        <button type="reset" class="btn btn-outline-secondary ms-2">Clear
+                                            Form</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- View Service Types -->
+                    <div class="dashboard-card" id="productivity-view" v-show="toggleDivs.showView">
+                        <div class="dashboard-card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="dashboard-card-title" v-text="viewServiceType.title"></h5>
+                                <button class="btn btn-secondary" @click="backButtonAction('showList')">Back to
+                                    List</button>
+                            </div>
+
+                        </div>
+                        <div class="dashboard-card-body">
+                            <form class="dashboard-grid grid-cols-3">
+                                <div class="form-group">
+                                    <label for="serviceTypeName" class="form-label">Name</label>
+                                    <input type="text" class="form-control" id="serviceTypeName"
+                                        :value="viewServiceType.name" disabled="">
+                                </div>
+                                <div class="form-group">
+                                    <label for="serviceTypeArabicName" class="form-label">Name In Arabic</label>
+                                    <input type="text" class="form-control" id="serviceTypeArabicName"
+                                        :value="viewServiceType.arabicName" disabled="">
+                                </div>
+                                <div class="form-group">
+                                    <label for="serviceTypeStatus" class="form-label">Status</label>
+                                    <input type="text" class="form-control" id="serviceTypeStatus"
+                                        :value="viewServiceType.activeStatus" disabled="">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- Productivity and Price Ranges -->
+                    <div class="dashboard-card" id="productivity-and-price-ranges" v-show="toggleDivs.showProductivity">
+                        <div class="dashboard-card-header">
+                            <h5 class="dashboard-card-title">Price Ranges</h5>
+                        </div>
+                        <div class="dashboard-card-header border-0">
+                            <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                                <li class="nav-item" role="presentation"
+                                    v-for="(productivity, index) in productivities[serviceTypeId]"
+                                    :key="productivity.id" :data-index="index"
+                                    @click="setActiveProductivityTab(productivity.id)">
+                                    <button v-text="productivity.name"
+                                        :class="{'nav-link':true, 'active': activePtab === productivity.id || (activePtab == null && index === 0)}">
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="dashboard-card-body">
+                            <div class="tab-content">
+                                <div id="students" role="tabpanel" aria-labelledby="students-tab"
+                                    v-for="(productivity, index) in productivities[serviceTypeId]"
+                                    :key="productivity.id" :data-index="index"
+                                    :class="{'tab-pane':true, 'active': activePtab === productivity.id || (activePtab == null && index === 0)}">
+
+                                    <div class="dashboard-grid grid-cols-4 mb-4">
+                                        <div class="stats-card">
+                                            <div class="stats-card-label">Productivity</div>
+                                            <div class="stats-card-value"
+                                                v-text="productivity.perhour_cleaning || '--'">
+                                            </div>
+                                            <span class="stats-card-change positive"
+                                                v-if="productivity.perhour_cleaning">sqm/man/hrg</span>
+                                        </div>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th scope="col">Item</th>
+                                                    <th scope="col">Area (min-max)</th>
+                                                    <th scope="col">Price</th>
+                                                    <th scope="col">Status</th>
+                                                    <th scope="col" v-if="!toggleDivs.showView">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-if="servicePriceRanges[productivity.id] && servicePriceRanges[productivity.id].length"
+                                                    v-for="(item, idx) in servicePriceRanges[productivity.id]"
+                                                    :key="item.id" :data-index="idx">
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <img :src="item.avatar" :alt="item.name"
+                                                                class="rounded-circle me-2" width="32" height="32">
+                                                            <span v-text="item.name"></span>
+                                                        </div>
+                                                    </td>
+                                                    <td v-text="`${item.minimum_area} - ${item.maximum_area}`"></td>
+                                                    <td v-text="formatCurrency(item.price)"></td>
+                                                    <td>
+                                                        <span
+                                                            :class="['status-badge', item.is_active === true ? 'status-active' : 'status-pending']"
+                                                            v-text="item.is_active ? 'Active' : 'Inactive'"></span>
+                                                    </td>
+                                                    <td v-if="!toggleDivs.showView">
+                                                        <button class="btn-action btn-edit" title="Edit"
+                                                            @click="handleEditPriceRangeBtnClick(item, productivity.id)"><i
+                                                                class="fa fa-pen"></i></button>
+                                                        <button class="btn-action btn-delete" title="Delete"
+                                                            @click="removePriceRange(item, productivity.id)"><i
+                                                                class="fa fa-trash"></i></button>
+                                                    </td>
+                                                </tr>
+                                                <tr
+                                                    v-if="!servicePriceRanges[productivity.id] || !servicePriceRanges[productivity.id].length">
+                                                    <td colspan="5" class="text-center">
+                                                        <div class="dashboard-card mb-3"
+                                                            style="border-left: 4px solid #9ec5fe; background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 100%);">
+                                                            <div class="dashboard-card-body"
+                                                                style="padding: 16px 20px;">
+                                                                <div class="d-flex align-items-center">
+                                                                    <div class="d-flex align-items-center justify-content-center"
+                                                                        style="width: 48px; height: 48px; background: rgba(16, 174, 185, 0.1); border-radius: 12px; margin-right: 16px;">
+                                                                        <i class="fa fa-exclamation-circle text-info"
+                                                                            style="font-size: 1.5rem;"></i>
+                                                                    </div>
+                                                                    <div class="flex-grow-1">
+                                                                        <h6 class="mb-1 fw-semibold text-gray-900">
+                                                                            No Price Ranges Available</h6>
+                                                                        <p class="mb-0 small text-muted">There are no
+                                                                            price ranges defined for this productivity
+                                                                            yet. Please add price ranges to get started.
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Add-ons -->
+                    <div class="dashboard-card" id="productivity-and-price-ranges" v-show="toggleDivs.showAddons">
+                        <div class="dashboard-card-header">
+                            <h5 class="dashboard-card-title">Add-Ons</h5>
+                        </div>
+                        <div class="dashboard-card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th scope="col">Item</th>
+                                            <th scope="col">Category Name</th>
+                                            <th scope="col">Size</th>
+                                            <th scope="col">Price</th>
+                                            <th scope="col">Productivity</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col" v-if="!toggleDivs.showView">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(addon, index) in serviceAddons[serviceTypeId]" :key="index">
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img :src="addon.avatar" class="rounded-circle me-2" width="32"
+                                                        height="32" :alt="addon.name">
+                                                    <div>
+                                                        <div v-text="addon.name"></div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <div v-text="addon.category"></div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div v-text="addon.size"></div>
+                                            </td>
+                                            <td>
+                                                <div v-text="formatCurrency(addon.price)"></div>
+                                            </td>
+                                            <td>
+                                                <div v-text="addon.productivity"></div>
+                                            </td>
+                                            <td>
+                                                <span
+                                                    :class="['status-badge', addon.is_active === true ? 'status-active' : 'status-pending']"
+                                                    v-text="addon.is_active ? 'Active' : 'Inactive'"></span>
+                                            </td>
+                                            <td v-if="!toggleDivs.showView">
+                                                <div class="dropdown">
+                                                    <button class="btn btn-light btn-sm" data-bs-toggle="dropdown"
+                                                        aria-expanded="false">
+                                                        <i class="fa fa-ellipsis-h"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu" style="">
+                                                        <li><a class="dropdown-item" href="#"><i
+                                                                    class="bi bi-eye me-2"></i>View Details</a></li>
+                                                        <li><a class="dropdown-item" href="edit-department.html"><i
+                                                                    class="bi bi-pencil me-2"></i>Edit Department</a>
+                                                        </li>
+                                                        <li><a class="dropdown-item" href="#"><i
+                                                                    class="bi bi-people me-2"></i>Manage Faculty</a>
+                                                        </li>
+                                                        <li>
+                                                            <hr class="dropdown-divider">
+                                                        </li>
+                                                        <li><a class="dropdown-item text-danger" href="#"><i
+                                                                    class="bi bi-trash me-2"></i>Delete</a></li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <tr
+                                            v-if="!serviceAddons[serviceTypeId] || !serviceAddons[serviceTypeId].length">
+                                            <td colspan="5" class="text-center">
+                                                <div class="dashboard-card mb-3"
+                                                    style="border-left: 4px solid #9ec5fe; background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 100%);">
+                                                    <div class="dashboard-card-body" style="padding: 16px 20px;">
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="d-flex align-items-center justify-content-center"
+                                                                style="width: 48px; height: 48px; background: rgba(16, 174, 185, 0.1); border-radius: 12px; margin-right: 16px;">
+                                                                <i class="fa fa-exclamation-circle text-info"
+                                                                    style="font-size: 1.5rem;"></i>
+                                                            </div>
+                                                            <div class="flex-grow-1">
+                                                                <h6 class="mb-1 fw-semibold text-gray-900">
+                                                                    No Addons Available</h6>
+                                                                <p class="mb-0 small text-muted">There are no
+                                                                    addons defined for this productivity
+                                                                    yet. Please add addons to get started.
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+    </section>
+
+</div>
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<script src="{% static 'files/js/staging-productivity.js' %}"></script>
+{% endblock %}
