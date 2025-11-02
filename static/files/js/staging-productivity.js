@@ -228,6 +228,13 @@ createApp({
                 this.validationErrors.manageProductivity.status = 'Status is required.';
             }
 
+            this.validateNumberInput(this.categoryFormFields.perhour_cleaning, false, "Please enter a valid non-negative number", 'perhour_cleaning');
+            this.validateNumberInput(this.categoryFormFields.max_cleaners, true, "Please enter a valid non-negative integer", 'max_cleaners');
+            this.validateNumberInput(this.categoryFormFields.max_hours, false, "Please enter a valid non-negative number", 'max_hours');
+            this.validateNumberInput(this.categoryFormFields.min_cleaners, true, "Please enter a valid non-negative integer", 'min_cleaners');
+            this.validateNumberInput(this.categoryFormFields.min_hours, false, "Please enter a valid non-negative number", 'min_hours');
+
+
             if (Object.keys(this.validationErrors.manageProductivity).length > 0) {
                 return;
             }
@@ -445,7 +452,25 @@ createApp({
                 maximumFractionDigits: 3
             }).format(n);
             return `${formatted} KD`;
-        }
+        },
+        validateNumberInput(value, mustBeInteger = false, errorMessage = 'Invalid number', fieldKey = null) {
+            // treat empty/null/undefined as valid (field optional)
+            if (value === '' || value === null || value === undefined) {
+                if (fieldKey) delete this.validationErrors.manageProductivity[fieldKey];
+                return true;
+            }
+            const num = Number(value);
+            if (Number.isNaN(num) || num < 0) {
+                if (fieldKey) this.validationErrors.manageProductivity[fieldKey] = errorMessage;
+                return false;
+            }
+            if (mustBeInteger && !Number.isInteger(num)) {
+                if (fieldKey) this.validationErrors.manageProductivity[fieldKey] = errorMessage;
+                return false;
+            }
+            if (fieldKey) delete this.validationErrors.manageProductivity[fieldKey];
+            return true;
+        },
 
 
     },
