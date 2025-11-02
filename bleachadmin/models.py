@@ -7,9 +7,10 @@ SERVICEDIVISION_CHOICES = (('SOFA','SOFA'),
 
 
 class ServiceProductivity(models.Model):
-	service_type     = models.ForeignKey(ServiceType,on_delete=models.PROTECT,blank=True,null=True,related_name='productivity_service_type')
-	perhour_cleaning = models.CharField(max_length=100,blank=True,null=True)
-
+	service_type     	= models.ForeignKey(ServiceType,on_delete=models.PROTECT,blank=True,null=True,related_name='productivity_service_type')
+	perhour_cleaning 	= models.CharField(max_length=100,blank=True,null=True)
+	name 			 	= models.CharField(max_length=100,blank=False,null=False)
+	description      	= models.TextField(blank=True,null=True)
 	is_newkitchen       = models.BooleanField(null=False,blank=True,default=False)
 	is_cabinet          = models.BooleanField(null=False,blank=True,default=False)
 	is_highprice_facade = models.BooleanField(null=False,blank=True,default=False)
@@ -20,9 +21,9 @@ class ServiceProductivity(models.Model):
 	min_hours      		= models.IntegerField(null=True,blank=True)
 	max_hours     		= models.IntegerField(null=True,blank=True)
 
-	is_active    = models.BooleanField(null=False,blank=True,default=True)
-	created      = models.DateTimeField(auto_now_add=True)
-	updated      = models.DateTimeField(auto_now=True)
+	is_active    		= models.BooleanField(null=False,blank=True,default=True)
+	created      		= models.DateTimeField(auto_now_add=True)
+	updated      		= models.DateTimeField(auto_now=True)
 	def __unicode__(self):
 		return str(self.service_type.name)
 
@@ -31,6 +32,7 @@ class ServiceProductivity(models.Model):
 
 class ServicePriceRange(models.Model):
 	service_type     = models.ForeignKey(ServiceType,on_delete=models.PROTECT,blank=True,null=True,related_name='pricerange_service_type')
+	service_productivity     = models.ForeignKey(ServiceProductivity,on_delete=models.PROTECT,blank=True,null=True,related_name='pricerange_service_productivity')
 	name             = models.CharField(max_length=100,blank=True,null=True)
 	minimum_area     = models.FloatField(blank=True,null=True)
 	maximum_area     = models.FloatField(blank=True,null=True)
