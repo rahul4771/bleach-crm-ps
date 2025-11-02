@@ -134,7 +134,7 @@ createApp({
                 backdrop.className = 'modal-backdrop fade show';
                 document.body.appendChild(backdrop);
                 this.modalHeading = 'Add Category';
-                this.validationErrors['manageServiceType'] = [];
+                this.validationErrors['manageProductivity'] = [];
                 const form = document.getElementById('manage-productivity-form');
                 if (form) {
                     form.setAttribute('data-action', 'add')
