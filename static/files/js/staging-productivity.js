@@ -249,7 +249,7 @@ createApp({
                 is_active: isActive
             };
 
-            const form = document.getElementById('manage-service-form');
+            const form = document.getElementById('manage-productivity-form');
             const formAction = form.getAttribute('data-action')
             this.createProductivityCategory(this.toFormData(payload));
             if (formAction === 'add') {
