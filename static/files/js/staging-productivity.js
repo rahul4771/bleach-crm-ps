@@ -5,12 +5,14 @@ createApp({
     data() {
         return {
             avatarBaseUrl: 'https://ui-avatars.com/api/',
+            activePtab: null,
+            successMsg: '',
+            modalHeading: '',
             serviceTypes: [],
             productivities: [],
             serviceAddons: [],
             servicePriceRanges: [],
             serviceTypeId: '',
-            activePtab: null,
             colorCodes: [
                 "6366f1",
                 "10b981",
@@ -37,14 +39,24 @@ createApp({
                 activeStatus: ''
             },
             validationErrors: {
-                'manageServiceType': {}
+                manageServiceType: {},
+                manageProductivity: {}
             },
-            successMsg: '',
             serviceFormFields: {
                 name: '',
                 name_arabic: '',
                 is_active: ''
-            }
+            },
+            categoryFormFields: {
+                name: '',
+                description: '',
+                perhour_cleaning: '',
+                max_cleaners: '',
+                max_hours: '',
+                min_cleaners: '',
+                min_hours: '',
+                is_active: ''
+            },
 
         };
     },
@@ -111,6 +123,25 @@ createApp({
                 form.setAttribute('data-action', 'add')
             }
         },
+        // Handle Add Category button click
+        handleAddCategoryBtnClick() {
+            const modal = document.getElementById('manage-service-type-modal');
+            if (modal) {
+                modal.classList.add('in', 'show');
+                modal.style.display = 'block';
+                document.body.classList.add('modal-open');
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                document.body.appendChild(backdrop);
+                this.modalHeading = 'Add Category';
+                this.validationErrors['manageServiceType'] = [];
+                const form = document.getElementById('manage-productivity-form');
+                if (form) {
+                    form.setAttribute('data-action', 'add')
+                }
+            }
+        },
+        // Handle back button action
         backButtonAction(view) {
             Object.keys(this.toggleDivs).forEach(key => {
                 this.toggleDivs[key] = (key === view);
@@ -131,6 +162,19 @@ createApp({
             if (confirm(`Delete Price Range: ${priceRange.name}?`)) {
                 if (this.servicePriceRanges[productivityId]) {
                     this.servicePriceRanges[productivityId] = this.servicePriceRanges[productivityId].filter(item => item.id !== priceRange.id);
+                }
+            }
+        },
+        // Close modal
+        closeModal() {
+            const modal = document.getElementsByClassName('modal');
+            if (modal.length) {
+                modal[0].classList.remove('in', 'show');
+                modal[0].style.display = 'none';
+                document.body.classList.remove('modal-open');
+                const backdrop = document.getElementsByClassName('modal-backdrop');
+                if (backdrop.length) {
+                    backdrop[0].remove();
                 }
             }
         },
@@ -169,6 +213,51 @@ createApp({
                 const serviceId = form.querySelector('input#editing_service_type_id, input[name="editing_service_type_id"]');
                 this.updateServiceType(this.toFormData(payload), serviceId.value);
             }
+
+        },
+        // Add or update productivity category
+        submitProductivityForm() {
+            this.validationErrors.manageProductivity = {};
+
+            // client-side validation
+            if (!this.categoryFormFields.name || !this.categoryFormFields.name.trim()) {
+                this.validationErrors.manageProductivity.categoryName = 'Category Name is required.';
+            }
+
+            if (this.categoryFormFields.is_active === '') {
+                this.validationErrors.manageProductivity.status = 'Status is required.';
+            }
+
+            if (Object.keys(this.validationErrors.manageProductivity).length > 0) {
+                return;
+            }
+
+            // normalize is_active to boolean (select uses :value true/false, fallback handles string)
+            const rawStatus = this.categoryFormFields.is_active;
+            let isActive = null;
+            if (rawStatus === true || rawStatus === 'true') isActive = true;
+            else if (rawStatus === false || rawStatus === 'false') isActive = false;
+
+            const payload = {
+                name: this.categoryFormFields.name.trim(),
+                description: this.categoryFormFields.description,
+                perhour_cleaning: this.categoryFormFields.perhour_cleaning,
+                max_cleaners: this.categoryFormFields.max_cleaners,
+                max_hours: this.categoryFormFields.max_hours,
+                min_cleaners: this.categoryFormFields.min_cleaners,
+                min_hours: this.categoryFormFields.min_hours,
+                is_active: isActive
+            };
+
+            const form = document.getElementById('manage-service-form');
+            const formAction = form.getAttribute('data-action')
+            this.createProductivityCategory(this.toFormData(payload));
+            if (formAction === 'add') {
+                this.createProductivityCategory(this.toFormData(payload));
+            } else {
+
+            }
+
 
         },
         // Fetch service types from the server
@@ -219,6 +308,7 @@ createApp({
                     console.error('Error fetching service types:', error);
                 });
         },
+        // Create a new service type
         createServiceType(formData) {
             const csrftoken = this.getCookie('csrftoken')
             const baseUrl = window.location.origin;
@@ -258,6 +348,7 @@ createApp({
                 }).catch(err => console.error(err));
 
         },
+        // Update an existing service type
         updateServiceType(formData, serviceId) {
             const csrftoken = this.getCookie('csrftoken')
             const baseUrl = window.location.origin;
@@ -296,6 +387,40 @@ createApp({
                     }
                 }).catch(err => console.error(err));
 
+        },
+        // Create a new productivity category
+        createProductivityCategory(formData) {
+            const csrftoken = this.getCookie('csrftoken')
+            const baseUrl = window.location.origin;
+            const url = `${baseUrl}/common/add-service-productivity/`
+            fetch(url, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+                .then(res => {
+                    if (!res.ok) throw res;
+                    return res.json();
+                })
+                .then(data => {
+                    this.successMsg = 'Category saved successfully.';
+                    this.closeModal();
+                    // refresh list or update local state
+                    this.loadProductivitiesForServiceType(this.serviceTypeId);
+                })
+                .catch(async err => {
+                    // map server validation errors if present
+                    if (err.json) {
+                        const body = await err.json();
+                        this.validationErrors.manageProductivity = body.errors || {};
+                    } else {
+                        console.error(err);
+                    }
+                });
         },
 
         // utility functions

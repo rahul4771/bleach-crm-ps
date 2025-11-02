@@ -55,6 +55,7 @@
                             style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);" v-text="successMsg">
                         </div>
                     </div>
+                    <!-- Service Types -->
                     <div class="dashboard-card" id="productivity-list" v-show="toggleDivs.showList">
                         <div class="dashboard-card-header py-4 px-4">
                             <h2 class="mb-0">Service Types</h2>
@@ -210,7 +211,18 @@
                     <!-- Productivity and Price Ranges -->
                     <div class="dashboard-card" id="productivity-and-price-ranges" v-show="toggleDivs.showProductivity">
                         <div class="dashboard-card-header">
-                            <h5 class="dashboard-card-title">Categories & Price Ranges</h5>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="dashboard-card-title"
+                                    v-text="!productivities[serviceTypeId] || productivities[serviceTypeId].length === 0 ? 'Categories' : 'Categories & Price Ranges'">
+                                </h5>
+                                <div v-if="!toggleDivs.showView">
+                                    <button class="btn btn-primary" @click="handleAddCategoryBtnClick">Add
+                                        Category</button>
+                                    <button class="btn btn-primary ms-2"
+                                        v-if="productivities[serviceTypeId] && productivities[serviceTypeId].length > 0">Add
+                                        Price Range</button>
+                                </div>
+                            </div>
                         </div>
                         <div class="dashboard-card-header border-0">
                             <ul class="nav nav-tabs card-header-tabs" role="tablist">
@@ -283,7 +295,7 @@
                                                 </tr>
                                                 <tr
                                                     v-if="!servicePriceRanges[productivity.id] || !servicePriceRanges[productivity.id].length">
-                                                    <td :colspan="!toggleDivs.showView ? 5 : 6" class="text-center">
+                                                    <td :colspan="toggleDivs.showView ? 5 : 6" class="text-center">
                                                         <div class="dashboard-card mb-3"
                                                             style="border-left: 4px solid #9ec5fe; background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 100%);">
                                                             <div class="dashboard-card-body"
@@ -414,7 +426,7 @@
 
                                         <tr
                                             v-if="!serviceAddons[serviceTypeId] || !serviceAddons[serviceTypeId].length">
-                                            <td :colspan="!toggleDivs.showView ? 6 : 7" class="text-center">
+                                            <td :colspan="toggleDivs.showView ? 6 : 7" class="text-center">
                                                 <div class="dashboard-card mb-3"
                                                     style="border-left: 4px solid #9ec5fe; background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 100%);">
                                                     <div class="dashboard-card-body" style="padding: 16px 20px;">
@@ -439,6 +451,111 @@
                                         </tr>
                                     </tbody>
                                 </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="manage-service-type-modal" tabindex="-1" aria-labelledby="xlModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h3 class="modal-title" id="xlModalLabel" v-text="modalHeading"></h3>
+                                    <button type="button" class="btn-close" aria-label="Close"
+                                        @click="closeModal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="manage-productivity-form" @submit.prevent="submitProductivityForm">
+                                        <div class="dashboard-grid grid-cols-3">
+                                            <div class="form-group">
+                                                <label for="productivity_name" class="form-label">Category Name <span
+                                                        class="text-danger">*</span></label>
+                                                <input type="text" id="productivity_name" name="productivity_name"
+                                                    v-model="categoryFormFields.name" placeholder="Enter category name"
+                                                    :class="{'form-control': true, 'is-invalid': validationErrors['manageProductivity']['categoryName'] }">
+                                                <div class="invalid-feedback"
+                                                    v-if="validationErrors['manageProductivity']['categoryName']"
+                                                    v-text="validationErrors['manageProductivity']['categoryName']">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="productivity_description"
+                                                    class="form-label">Description</label>
+                                                <textarea id="productivity_description" name="productivity_description"
+                                                    v-model="categoryFormFields.description" placeholder="Description"
+                                                    class="form-control"></textarea>
+                                                <div class="invalid-feedback"
+                                                    v-if="validationErrors['manageProductivity']['productivityDescription']"
+                                                    v-text="validationErrors['manageProductivity']['productivityDescription']">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="productivity_cleaning_hours" class="form-label">Cleaning
+                                                    Hours</label>
+                                                <input type="text" id="productivity_cleaning_hours"
+                                                    name="productivity_cleaning_hours"
+                                                    v-model="categoryFormFields.perhour_cleaning" placeholder=""
+                                                    class="form-control">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="productivity_max_cleaners" class="form-label">Maximum
+                                                    Cleaners Required</label>
+                                                <input type="text" id="productivity_max_cleaners"
+                                                    name="productivity_max_cleaners"
+                                                    v-model="categoryFormFields.max_cleaners" placeholder=""
+                                                    class="form-control">
+                                                <div class="invalid-feedback"
+                                                    v-if="validationErrors['manageProductivity']['productivityMaxCleaners']"
+                                                    v-text="validationErrors['manageProductivity']['productivityMaxCleaners']">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="productivity_max_hours" class="form-label">Maximum Hours
+                                                    Required</label>
+                                                <input type="text" id="productivity_max_hours"
+                                                    name="productivity_max_hours" v-model="categoryFormFields.max_hours"
+                                                    placeholder="" class="form-control">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="productivity_min_cleaners" class="form-label">Minimum
+                                                    Cleaners Required</label>
+                                                <input type="text" id="productivity_min_cleaners"
+                                                    name="productivity_min_cleaners"
+                                                    v-model="categoryFormFields.min_cleaners" placeholder=""
+                                                    class="form-control">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="productivity_min_hours" class="form-label">Minimum Hours
+                                                    Required</label>
+                                                <input type="text" id="productivity_min_hours"
+                                                    name="productivity_min_hours" v-model="categoryFormFields.min_hours"
+                                                    placeholder="" class="form-control">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="status_id" class="form-label">Status <span
+                                                        class="text-danger">*</span></label>
+                                                <select id="status_id" name="status"
+                                                    v-model="categoryFormFields.is_active"
+                                                    class="form-control">
+                                                    <option :value="">Choose an option</option>
+                                                    <option :value="true">Active</option>
+                                                    <option :value="false">Inactive</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" @click="closeModal">Close</button>
+                                    <button type="submit" form="manage-productivity-form"
+                                        class="btn btn-primary">Save</button>
+                                </div>
                             </div>
                         </div>
                     </div>
