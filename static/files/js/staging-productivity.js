@@ -67,6 +67,9 @@ createApp({
         handleEditServiceBtnClick(serviceType) {
             this.toggleDivs.showList = false;
             this.toggleDivs.showManageServiceType = true;
+            this.toggleDivs.showProductivity = true;
+            this.toggleDivs.showAddons = true;
+            this.serviceTypeId = serviceType.id
             this.viewServiceType = {
                 title: `Edit ${serviceType.name}`,
             };
