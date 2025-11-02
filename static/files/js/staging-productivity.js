@@ -258,7 +258,6 @@ createApp({
 
             }
 
-
         },
         // Fetch service types from the server
         getServiceTypes() {

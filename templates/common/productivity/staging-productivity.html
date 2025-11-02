@@ -159,7 +159,7 @@
                                             <select id="serviceTypeIsActive" name="new_service_is_active"
                                                 v-model="serviceFormFields.is_active"
                                                 :class="{'form-control': true, 'is-invalid': validationErrors['manageServiceType']['serviceTypeIsActive'] }">
-                                                <option value="" selected="">Choose your status...</option>
+                                                <option value="" selected="">Choose an option</option>
                                                 <option value="active">Active</option>
                                                 <option value="inactive">Inactive</option>
                                             </select>
@@ -478,64 +478,76 @@
                                                     v-text="validationErrors['manageProductivity']['categoryName']">
                                                 </div>
                                             </div>
-
                                             <div class="form-group">
                                                 <label for="productivity_description"
                                                     class="form-label">Description</label>
                                                 <textarea id="productivity_description" name="productivity_description"
                                                     v-model="categoryFormFields.description" placeholder="Description"
-                                                    class="form-control"></textarea>
+                                                    :class="{'form-control': true, 'is-invalid': validationErrors['manageProductivity']['description'] }"></textarea>
                                                 <div class="invalid-feedback"
-                                                    v-if="validationErrors['manageProductivity']['productivityDescription']"
-                                                    v-text="validationErrors['manageProductivity']['productivityDescription']">
+                                                    v-if="validationErrors['manageProductivity']['description']"
+                                                    v-text="validationErrors['manageProductivity']['description']">
                                                 </div>
                                             </div>
-
                                             <div class="form-group">
                                                 <label for="productivity_cleaning_hours" class="form-label">Cleaning
                                                     Hours</label>
                                                 <input type="text" id="productivity_cleaning_hours"
                                                     name="productivity_cleaning_hours"
                                                     v-model="categoryFormFields.perhour_cleaning" placeholder=""
-                                                    class="form-control">
+                                                    :class="{'form-control': true, 'is-invalid': validationErrors['manageProductivity']['cleaningHours'] }">
+                                                <div class="invalid-feedback"
+                                                    v-if="validationErrors['manageProductivity']['cleaningHours']"
+                                                    v-text="validationErrors['manageProductivity']['cleaningHours']">
+                                                </div>
                                             </div>
-
                                             <div class="form-group">
                                                 <label for="productivity_max_cleaners" class="form-label">Maximum
                                                     Cleaners Required</label>
                                                 <input type="text" id="productivity_max_cleaners"
                                                     name="productivity_max_cleaners"
                                                     v-model="categoryFormFields.max_cleaners" placeholder=""
-                                                    class="form-control">
+                                                    :class="{'form-control': true, 'is-invalid': validationErrors['manageProductivity']['maxCleaners'] }">
                                                 <div class="invalid-feedback"
-                                                    v-if="validationErrors['manageProductivity']['productivityMaxCleaners']"
-                                                    v-text="validationErrors['manageProductivity']['productivityMaxCleaners']">
+                                                    v-if="validationErrors['manageProductivity']['maxCleaners']"
+                                                    v-text="validationErrors['manageProductivity']['maxCleaners']">
                                                 </div>
                                             </div>
-
                                             <div class="form-group">
                                                 <label for="productivity_max_hours" class="form-label">Maximum Hours
                                                     Required</label>
                                                 <input type="text" id="productivity_max_hours"
                                                     name="productivity_max_hours" v-model="categoryFormFields.max_hours"
-                                                    placeholder="" class="form-control">
+                                                    placeholder=""
+                                                    :class="{'form-control': true, 'is-invalid': validationErrors['manageProductivity']['maxHours'] }">
+                                                <div class="invalid-feedback"
+                                                    v-if="validationErrors['manageProductivity']['maxHours']"
+                                                    v-text="validationErrors['manageProductivity']['maxHours']">
+                                                </div>
                                             </div>
-
                                             <div class="form-group">
                                                 <label for="productivity_min_cleaners" class="form-label">Minimum
                                                     Cleaners Required</label>
                                                 <input type="text" id="productivity_min_cleaners"
                                                     name="productivity_min_cleaners"
                                                     v-model="categoryFormFields.min_cleaners" placeholder=""
-                                                    class="form-control">
+                                                    :class="{'form-control': true, 'is-invalid': validationErrors['manageProductivity']['minCleaners'] }">
+                                                <div class="invalid-feedback"
+                                                    v-if="validationErrors['manageProductivity']['minCleaners']"
+                                                    v-text="validationErrors['manageProductivity']['minCleaners']">
+                                                </div>
                                             </div>
-
                                             <div class="form-group">
                                                 <label for="productivity_min_hours" class="form-label">Minimum Hours
                                                     Required</label>
                                                 <input type="text" id="productivity_min_hours"
                                                     name="productivity_min_hours" v-model="categoryFormFields.min_hours"
-                                                    placeholder="" class="form-control">
+                                                    placeholder=""
+                                                    :class="{'form-control': true, 'is-invalid': validationErrors['manageProductivity']['minHours'] }">
+                                                <div class="invalid-feedback"
+                                                    v-if="validationErrors['manageProductivity']['minHours']"
+                                                    v-text="validationErrors['manageProductivity']['minHours']">
+                                                </div>
                                             </div>
 
                                             <div class="form-group">
@@ -543,13 +555,18 @@
                                                         class="text-danger">*</span></label>
                                                 <select id="status_id" name="status"
                                                     v-model="categoryFormFields.is_active"
-                                                    class="form-control">
-                                                    <option :value="">Choose an option</option>
+                                                    :class="{'form-control': true, 'is-invalid': validationErrors['manageProductivity']['status'] }">
+                                                    <option value="" selected>Choose an option</option>
                                                     <option :value="true">Active</option>
                                                     <option :value="false">Inactive</option>
                                                 </select>
+                                                <div class="invalid-feedback"
+                                                    v-if="validationErrors['manageProductivity']['minHours']"
+                                                    v-text="validationErrors['manageProductivity']['minHours']">
+                                                </div>
                                             </div>
                                         </div>
+                                    </form>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" @click="closeModal">Close</button>
