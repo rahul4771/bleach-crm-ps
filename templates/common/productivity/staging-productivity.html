@@ -210,7 +210,7 @@
                     <!-- Productivity and Price Ranges -->
                     <div class="dashboard-card" id="productivity-and-price-ranges" v-show="toggleDivs.showProductivity">
                         <div class="dashboard-card-header">
-                            <h5 class="dashboard-card-title">Price Ranges</h5>
+                            <h5 class="dashboard-card-title">Categories & Price Ranges</h5>
                         </div>
                         <div class="dashboard-card-header border-0">
                             <ul class="nav nav-tabs card-header-tabs" role="tablist">
@@ -227,7 +227,8 @@
 
                         <div class="dashboard-card-body">
                             <div class="tab-content">
-                                <div id="students" role="tabpanel" aria-labelledby="students-tab"
+                                <div role="tabpanel"
+                                    v-if="productivities[serviceTypeId] && productivities[serviceTypeId].length"
                                     v-for="(productivity, index) in productivities[serviceTypeId]"
                                     :key="productivity.id" :data-index="index"
                                     :class="{'tab-pane':true, 'active': activePtab === productivity.id || (activePtab == null && index === 0)}">
@@ -295,7 +296,7 @@
                                                                     </div>
                                                                     <div class="flex-grow-1">
                                                                         <h6 class="mb-1 fw-semibold text-gray-900">
-                                                                            No Price Ranges Available</h6>
+                                                                            No Price Ranges Are Available</h6>
                                                                         <p class="mb-0 small text-muted">There are no
                                                                             price ranges defined for this productivity
                                                                             yet. Please add price ranges to get started.
@@ -309,6 +310,29 @@
 
                                             </tbody>
                                         </table>
+                                    </div>
+                                </div>
+                                <div role="tabpanel"
+                                    v-if="!productivities[serviceTypeId] || !productivities[serviceTypeId].length">
+                                    <div class="dashboard-card mb-3 text-center"
+                                        style="border-left: 4px solid #9ec5fe; background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 100%);">
+                                        <div class="dashboard-card-body" style="padding: 16px 20px;">
+                                            <div class="d-flex align-items-center">
+                                                <div class="d-flex align-items-center justify-content-center"
+                                                    style="width: 48px; height: 48px; background: rgba(16, 174, 185, 0.1); border-radius: 12px; margin-right: 16px;">
+                                                    <i class="fa fa-exclamation-circle text-info"
+                                                        style="font-size: 1.5rem;"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <h6 class="mb-1 fw-semibold text-gray-900">
+                                                        No Categories Are Available</h6>
+                                                    <p class="mb-0 small text-muted">There are no
+                                                        categories defined for this productivity
+                                                        yet. Please add categories to get started.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -390,7 +414,7 @@
 
                                         <tr
                                             v-if="!serviceAddons[serviceTypeId] || !serviceAddons[serviceTypeId].length">
-                                            <td colspan="5" class="text-center">
+                                            <td colspan="6" class="text-center">
                                                 <div class="dashboard-card mb-3"
                                                     style="border-left: 4px solid #9ec5fe; background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 100%);">
                                                     <div class="dashboard-card-body" style="padding: 16px 20px;">
@@ -402,7 +426,7 @@
                                                             </div>
                                                             <div class="flex-grow-1">
                                                                 <h6 class="mb-1 fw-semibold text-gray-900">
-                                                                    No Addons Available</h6>
+                                                                    No Addons Are Available</h6>
                                                                 <p class="mb-0 small text-muted">There are no
                                                                     addons defined for this productivity
                                                                     yet. Please add addons to get started.
