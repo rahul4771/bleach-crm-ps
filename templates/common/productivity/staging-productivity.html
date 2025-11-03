@@ -565,10 +565,11 @@
                                                     v-text="validationErrors['manageProductivity']['status']">
                                                 </div>
                                             </div>
+                                            <input type="hidden" id="productivity_service_type_id"
+                                                name="productivity_service_type_id"
+                                                v-model="categoryFormFields.service_type_id" placeholder=""
+                                                :class="{'form-control': true}">
                                         </div>
-                                        <input type="text" id="productivity_service_type_id" name="productivity_service_type_id"
-                                            v-model="categoryFormFields.service_type_id" placeholder=""
-                                            :class="{'form-control': true}">
                                     </form>
                                 </div>
                                 <div class="modal-footer">

@@ -268,7 +268,8 @@ createApp({
                 productivity_max_hours: this.categoryFormFields.max_hours,
                 productivity_min_cleaners: this.categoryFormFields.min_cleaners,
                 productivity_min_hours: this.categoryFormFields.min_hours,
-                status: isActive
+                status: isActive,
+                productivity_service_type_id: this.serviceTypeId
             };
 
             const form = document.getElementById('manage-productivity-form');
@@ -427,10 +428,14 @@ createApp({
                     return res.json();
                 })
                 .then(data => {
-                    this.successMsg = 'Category saved successfully.';
+
                     this.closeModal();
-                    // refresh list or update local state
-                    this.loadProductivitiesForServiceType(this.serviceTypeId);
+                    const key = String(this.serviceTypeId ?? '0');
+                    if (!this.productivities[key]) this.productivities[key] = [];
+                    this.productivities[key].push(data.service_productivity);
+                    this.successMsg = 'Category saved successfully.';
+                    setTimeout(() => { this.successMsg = ''; }, 5000);
+
                 })
                 .catch(async err => {
                     // map server validation errors if present
