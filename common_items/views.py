@@ -6484,7 +6484,20 @@ class ServiceProductivityAPIView(APIView):
 				is_newkitchen=0,
 				is_cabinet=0,
 			)
-			return JsonResponse({"success": True, "id": service_productivity.id}, status=201)
+			sp = service_productivity
+			sp_data = {
+                "id": sp.id,
+                "service_type_id": sp.service_type_id,
+                "perhour_cleaning": float(sp.perhour_cleaning) if sp.perhour_cleaning is not None else None,
+                "name": sp.name,
+                "description": sp.description or "",
+                "min_cleaners": sp.min_cleaners,
+                "max_cleaners": sp.max_cleaners,
+                "min_hours": sp.min_hours,
+                "max_hours": sp.max_hours,
+                "is_active": sp.is_active,
+            }
+			return JsonResponse({"success": True, "service_productivity": sp_data}, status=201)
 		except Exception as e:
 			return JsonResponse({"success": False, "error": str(e)}, status=500)
 		
@@ -6555,7 +6568,21 @@ class ServiceProductivityAPIView(APIView):
 				is_newkitchen=0,
 				is_cabinet=0,
 			)
-			return JsonResponse({"success": True, "id": sp.first().id}, status=201)
+			sp_obj = sp.first()
+			sp_data = {
+				"id": sp_obj.id,
+				"service_type_id": sp_obj.service_type_id,
+				"perhour_cleaning": float(sp_obj.perhour_cleaning) if sp_obj.perhour_cleaning is not None else None,
+				"name": sp_obj.name,
+				"description": sp_obj.description or "",
+				"min_cleaners": sp_obj.min_cleaners,
+				"max_cleaners": sp_obj.max_cleaners,
+				"min_hours": sp_obj.min_hours,
+				"max_hours": sp_obj.max_hours,
+				"is_active": sp_obj.is_active,
+			}
+
+			return JsonResponse({"success": True, "service_productivity": sp_data}, status=201)
 		except Exception as e:
 			return JsonResponse({"success": False, "error_message": str(e)}, status=500)
 

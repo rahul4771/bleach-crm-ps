@@ -182,7 +182,7 @@ createApp({
                         max_hours: productivity.max_hours || '',
                         min_cleaners: productivity.min_cleaners || '',
                         min_hours: productivity.min_hours || '',
-                        is_active: productivity.is_active ? 'active' : 'inactive',
+                        is_active: productivity.is_active ? true : false,
                         service_type_id: this.serviceTypeId,
                     }
                 }
@@ -227,7 +227,9 @@ createApp({
             }
         },
 
-        // Add or update service type
+        /* Form submission methods 
+         * Add or update service type 
+         */
         submitServiceTypeForm() {
             this.validationErrors['manageServiceType'] = {};
             if (!this.serviceFormFields.name || !this.serviceFormFields.name.trim()) {
@@ -263,7 +265,7 @@ createApp({
             }
 
         },
-        // Add or update productivity category
+        /* Add or update productivity category */
         submitProductivityForm() {
             this.validationErrors.manageProductivity = {};
 
@@ -301,7 +303,7 @@ createApp({
                 productivity_max_hours: this.categoryFormFields.max_hours,
                 productivity_min_cleaners: this.categoryFormFields.min_cleaners,
                 productivity_min_hours: this.categoryFormFields.min_hours,
-                status: isActive,
+                status: isActive ? 'active' : 'inactive',
                 productivity_service_type_id: this.serviceTypeId
             };
 
@@ -310,10 +312,11 @@ createApp({
             if (formAction === 'add') {
                 this.createProductivityCategory(this.toFormData(payload));
             } else {
-
+                this.updateProductivityCategory(this.toFormData(payload), this.categoryFormFields.id);
             }
 
         },
+
         // Fetch service types from the server
         getServiceTypes() {
             fetch('get-service-types/')
@@ -483,9 +486,9 @@ createApp({
         updateProductivityCategory(formData, productivityId) {
             const csrftoken = this.getCookie('csrftoken')
             const baseUrl = window.location.origin;
-            const url = `${baseUrl}/common/update-service-productivity/${productivityId}/`
+            const url = `${baseUrl}/common/update-service-productivity/${productivityId}`
             fetch(url, {
-                method: 'POST',
+                method: 'PUT',
                 credentials: 'same-origin',
                 headers: {
                     'X-CSRFToken': csrftoken,
@@ -502,7 +505,10 @@ createApp({
                     this.closeModal();
                     const key = String(this.serviceTypeId ?? '0');
                     if (!this.productivities[key]) this.productivities[key] = [];
-                    this.productivities[key].push(data.service_productivity);
+                    const index = this.productivities[key].findIndex(p => p.id === data.service_productivity.id);
+                    if (index !== -1) {
+                        this.productivities[key].splice(index, 1, data.service_productivity);
+                    }
                     this.successMsg = data.service_productivity ? `Category ${data.service_productivity.name} updated successfully.` : 'Category updated successfully.';
                     setTimeout(() => { this.successMsg = ''; }, 5000);
 

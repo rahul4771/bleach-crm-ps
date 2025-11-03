@@ -564,9 +564,9 @@
                                                 <select id="status_id" name="status"
                                                     v-model="categoryFormFields.is_active"
                                                     :class="{'form-control': true, 'is-invalid': validationErrors['manageProductivity']['status'] }">
-                                                    <option value="" selected>Choose an option</option>
-                                                    <option :value="true">Active</option>
-                                                    <option :value="false">Inactive</option>
+                                                    <option value="" default>Choose an option</option>
+                                                    <option :value="true" :selected="categoryFormFields.is_active === true">Active</option>
+                                                    <option :value="false" :selected="categoryFormFields.is_active === false">Inactive</option>
                                                 </select>
                                                 <div class="invalid-feedback"
                                                     v-if="validationErrors['manageProductivity']['status']"
