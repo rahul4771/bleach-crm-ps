@@ -6445,7 +6445,7 @@ class ServiceProductivityAPIView(APIView):
 	def post(self, request, *args, **kwargs):
 		data = getattr(request, "data", request.POST)
 		productivity_service_type_id = data.get("productivity_service_type_id")
-		name = (data.get("productivity_name")).strip()
+		name = (data.get("productivity_name") or '').strip()
 		description = data.get("productivity_description", "")
 		cleaning_hours = data.get("productivity_cleaning_hours") or None
 		max_cleaners = data.get("productivity_max_cleaners") or None

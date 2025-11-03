@@ -246,19 +246,18 @@ createApp({
             else if (rawStatus === false || rawStatus === 'false') isActive = false;
 
             const payload = {
-                name: this.categoryFormFields.name.trim(),
-                description: this.categoryFormFields.description,
-                perhour_cleaning: this.categoryFormFields.perhour_cleaning,
-                max_cleaners: this.categoryFormFields.max_cleaners,
-                max_hours: this.categoryFormFields.max_hours,
-                min_cleaners: this.categoryFormFields.min_cleaners,
-                min_hours: this.categoryFormFields.min_hours,
-                is_active: isActive
+                productivity_name: this.categoryFormFields.name.trim(),
+                productivity_description: this.categoryFormFields.description,
+                productivity_cleaning_hours: this.categoryFormFields.perhour_cleaning,
+                productivity_max_cleaners: this.categoryFormFields.max_cleaners,
+                productivity_max_hours: this.categoryFormFields.max_hours,
+                productivity_min_cleaners: this.categoryFormFields.min_cleaners,
+                productivity_min_hours: this.categoryFormFields.min_hours,
+                status: isActive
             };
 
             const form = document.getElementById('manage-productivity-form');
             const formAction = form.getAttribute('data-action')
-            this.createProductivityCategory(this.toFormData(payload));
             if (formAction === 'add') {
                 this.createProductivityCategory(this.toFormData(payload));
             } else {

@@ -465,7 +465,7 @@
                                         @click="closeModal"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <form id="manage-productivity-form" @submit.prevent="submitProductivityForm">
+                                    <form id="manage-productivity-form">
                                         <div class="dashboard-grid grid-cols-3">
                                             <div class="form-group">
                                                 <label for="productivity_name" class="form-label">Category Name <span
@@ -570,8 +570,8 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" @click="closeModal">Close</button>
-                                    <button type="submit" form="manage-productivity-form"
-                                        class="btn btn-primary">Save</button>
+                                    <button type="button" class="btn btn-primary"
+                                        @click="submitProductivityForm">Save</button>
                                 </div>
                             </div>
                         </div>
