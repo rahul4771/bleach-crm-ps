@@ -219,7 +219,8 @@
                                     <button class="btn btn-primary" @click="handleAddCategoryBtnClick">Add
                                         Category</button>
                                     <button class="btn btn-primary ms-2"
-                                        v-if="productivities[serviceTypeId] && productivities[serviceTypeId].length > 0">Add
+                                        v-if="productivities[serviceTypeId] && productivities[serviceTypeId].length > 0"
+                                        @click="handleAddPriceRangeBtnClick(productivities[serviceTypeId].id)">Add
                                         Price Range</button>
                                 </div>
                             </div>
@@ -253,7 +254,8 @@
                                                     v-text="productivity.perhour_cleaning || '--'">
                                                 </div>
                                                 <div>
-                                                    <span @click="handleEditProductivityBtnClick(productivity)" :style="{cursor: 'pointer'}">
+                                                    <span @click="handleEditProductivityBtnClick(productivity)"
+                                                        :style="{cursor: 'pointer'}">
                                                         <i class="fa fa-pen" title="Productivity in sqm/man/hrg"></i>
                                                     </span>
                                                 </div>
@@ -463,6 +465,7 @@
                         </div>
                     </div>
 
+                    <!-- Manage Service Type Modal -->
                     <div class="modal fade" id="manage-service-type-modal" tabindex="-1" aria-labelledby="xlModalLabel"
                         aria-hidden="true">
                         <div class="modal-dialog modal-xl">
@@ -565,8 +568,12 @@
                                                     v-model="categoryFormFields.is_active"
                                                     :class="{'form-control': true, 'is-invalid': validationErrors['manageProductivity']['status'] }">
                                                     <option value="" default>Choose an option</option>
-                                                    <option :value="true" :selected="categoryFormFields.is_active === true">Active</option>
-                                                    <option :value="false" :selected="categoryFormFields.is_active === false">Inactive</option>
+                                                    <option :value="true"
+                                                        :selected="categoryFormFields.is_active === true">Active
+                                                    </option>
+                                                    <option :value="false"
+                                                        :selected="categoryFormFields.is_active === false">Inactive
+                                                    </option>
                                                 </select>
                                                 <div class="invalid-feedback"
                                                     v-if="validationErrors['manageProductivity']['status']"
@@ -577,8 +584,7 @@
                                                 name="productivity_service_type_id"
                                                 v-model="categoryFormFields.service_type_id" placeholder=""
                                                 :class="{'form-control': true}">
-                                            <input type="hidden" id="productivity_id"
-                                                name="productivity_id"
+                                            <input type="hidden" id="productivity_id" name="productivity_id"
                                                 v-model="categoryFormFields.id" placeholder=""
                                                 :class="{'form-control': true}">
                                         </div>
@@ -593,6 +599,99 @@
                         </div>
                     </div>
 
+                    <!-- Manage Price Range Modal -->
+                    <div class="modal fade" id="manage-service-type-modal" tabindex="-1" aria-labelledby="xlModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h3 class="modal-title" id="xlModalLabel" v-text="modalHeading"></h3>
+                                    <button type="button" class="btn-close" aria-label="Close"
+                                        @click="closeModal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="manage-price-range-form">
+                                        <div class="dashboard-grid grid-cols-3">
+                                            <div class="form-group">
+                                                <label for="price_range_item_name" class="form-label">Item Name <span
+                                                        class="text-danger">*</span></label>
+                                                <input type="text" id="price_range_item_name"
+                                                    name="price_range_item_name" v-model="priceRangeFormFields.name"
+                                                    placeholder="Enter item name"
+                                                    :class="{'form-control': true, 'is-invalid': validationErrors['managePriceRange']['name'] }">
+                                                <div class="invalid-feedback"
+                                                    v-if="validationErrors['managePriceRange']['name']"
+                                                    v-text="validationErrors['managePriceRange']['name']">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label for="price_range_price" class="form-label">Price <span
+                                                        class="text-danger">*</span></label>
+                                                <input type="number" step="0.01" id="price_range_price"
+                                                    name="price_range_price" v-model="priceRangeFormFields.price"
+                                                    placeholder="Enter price"
+                                                    :class="{'form-control': true, 'is-invalid': validationErrors['managePriceRange']['price'] }">
+                                                <div class="invalid-feedback"
+                                                    v-if="validationErrors['managePriceRange']['price']"
+                                                    v-text="validationErrors['managePriceRange']['price']">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="price_range_minimum_area" class="form-label">Minimum Area</label>
+                                                <input type="number" step="1" id="price_range_minimum_area"
+                                                    name="price_range_minimum_area"
+                                                    v-model="priceRangeFormFields.minimum_area" placeholder=""
+                                                    :class="{'form-control': true, 'is-invalid': validationErrors['managePriceRange']['minimumArea'] }">
+                                                <div class="invalid-feedback"
+                                                    v-if="validationErrors['managePriceRange']['minimumArea']"
+                                                    v-text="validationErrors['managePriceRange']['minimumArea']">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="price_range_maximum_area" class="form-label">Maximum Area</label>
+                                                <input type="number" step="1" id="price_range_maximum_area"
+                                                    name="price_range_maximum_area"
+                                                    v-model="priceRangeFormFields.maximum_area" placeholder=""
+                                                    :class="{'form-control': true, 'is-invalid': validationErrors['managePriceRange']['maximumArea'] }">
+                                                <div class="invalid-feedback"
+                                                    v-if="validationErrors['managePriceRange']['maximumArea']"
+                                                    v-text="validationErrors['managePriceRange']['maximumArea']">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="price_range_unit_price" class="form-label">Unit Price</label>
+                                                <input type="number" step="0.01" id="price_range_unit_price"
+                                                    name="price_range_unit_price"
+                                                    v-model="priceRangeFormFields.unit_price" placeholder=""
+                                                    :class="{'form-control': true, 'is-invalid': validationErrors['managePriceRange']['unitPrice'] }">
+                                                <div class="invalid-feedback"
+                                                    v-if="validationErrors['managePriceRange']['unitPrice']"
+                                                    v-text="validationErrors['managePriceRange']['unitPrice']">
+                                                </div>
+                                            </div>
+
+                                            <input type="hidden" id="productivity_id" name="productivity_id"
+                                                v-model="priceRangeFormFields.productivity_id" placeholder=""
+                                                :class="{'form-control': true}">
+                                            <input type="hidden" id="price_range_id" name="price_range_id"
+                                                v-model="priceRangeFormFields.id" placeholder=""
+                                                :class="{'form-control': true}">
+                                            
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" @click="closeModal">Close</button>
+                                    <button type="button" class="btn btn-primary"
+                                        @click="submitPriceRangeForm">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
     </section>

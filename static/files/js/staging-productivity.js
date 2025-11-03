@@ -40,7 +40,8 @@ createApp({
             },
             validationErrors: {
                 manageServiceType: {},
-                manageProductivity: {}
+                manageProductivity: {},
+                managePriceRange: {}
             },
             serviceFormFields: {
                 name: '',
@@ -59,7 +60,15 @@ createApp({
                 is_active: false,
                 service_type_id: ''
             },
-
+            priceRangeFormFields: {
+                id: '',
+                name: '',
+                price: '',
+                minimum_area: '',
+                maximum_area: '',
+                unit_price: '',
+                productivity_id: ''
+            },
         };
     },
     // Methods for handling service types
@@ -188,6 +197,32 @@ createApp({
                 }
             }
 
+        },
+        // Handle Add Price Range button click
+        handleAddPriceRangeBtnClick(productivityId) {
+            const modal = document.getElementById('manage-price-range-modal');
+            if (modal) {
+                modal.classList.add('in', 'show');
+                modal.style.display = 'block';
+                document.body.classList.add('modal-open');
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                document.body.appendChild(backdrop);
+                this.modalHeading = 'Add Price Range';
+                this.validationErrors['managePriceRange'] = [];
+                const form = document.getElementById('manage-price-range-form');
+                if (form) {
+                    form.setAttribute('data-action', 'add');
+                    this.priceRangeFormFields = {
+                        id: '',
+                        name: '',
+                        description: '',
+                        min_price: '',
+                        max_price: '',
+                        is_active: '',
+                    }
+                }
+            }
         },
         // Handle back button action
         backButtonAction(view) {
