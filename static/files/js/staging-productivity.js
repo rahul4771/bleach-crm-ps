@@ -48,6 +48,7 @@ createApp({
                 is_active: ''
             },
             categoryFormFields: {
+                id: '',
                 name: '',
                 description: '',
                 perhour_cleaning: '',
@@ -143,6 +144,7 @@ createApp({
                 if (form) {
                     form.setAttribute('data-action', 'add');
                     this.categoryFormFields = {
+                        id: '',
                         name: '',
                         description: '',
                         perhour_cleaning: '',
@@ -155,6 +157,37 @@ createApp({
                     }
                 }
             }
+        },
+        // Handle Edit Productivity button click
+        handleEditProductivityBtnClick(productivity) {
+            const modal = document.getElementById('manage-service-type-modal');
+            if (modal) {
+                modal.classList.add('in', 'show');
+                modal.style.display = 'block';
+                document.body.classList.add('modal-open');
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                document.body.appendChild(backdrop);
+                this.modalHeading = `Edit ${productivity.name}`;
+                this.validationErrors['manageProductivity'] = [];
+                const form = document.getElementById('manage-productivity-form');
+                if (form) {
+                    form.setAttribute('data-action', 'edit');
+                    this.categoryFormFields = {
+                        id: productivity.id || '',
+                        name: productivity.name || '',
+                        description: productivity.description || '',
+                        perhour_cleaning: productivity.perhour_cleaning || '',
+                        max_cleaners: productivity.max_cleaners || '',
+                        max_hours: productivity.max_hours || '',
+                        min_cleaners: productivity.min_cleaners || '',
+                        min_hours: productivity.min_hours || '',
+                        is_active: productivity.is_active ? 'active' : 'inactive',
+                        service_type_id: this.serviceTypeId,
+                    }
+                }
+            }
+
         },
         // Handle back button action
         backButtonAction(view) {
@@ -434,6 +467,43 @@ createApp({
                     if (!this.productivities[key]) this.productivities[key] = [];
                     this.productivities[key].push(data.service_productivity);
                     this.successMsg = 'Category saved successfully.';
+                    setTimeout(() => { this.successMsg = ''; }, 5000);
+
+                })
+                .catch(async err => {
+                    // map server validation errors if present
+                    if (err.json) {
+                        const body = await err.json();
+                        this.validationErrors.manageProductivity = body.errors || {};
+                    } else {
+                        console.error(err);
+                    }
+                });
+        },
+        updateProductivityCategory(formData, productivityId) {
+            const csrftoken = this.getCookie('csrftoken')
+            const baseUrl = window.location.origin;
+            const url = `${baseUrl}/common/update-service-productivity/${productivityId}/`
+            fetch(url, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+                .then(res => {
+                    if (!res.ok) throw res;
+                    return res.json();
+                })
+                .then(data => {
+
+                    this.closeModal();
+                    const key = String(this.serviceTypeId ?? '0');
+                    if (!this.productivities[key]) this.productivities[key] = [];
+                    this.productivities[key].push(data.service_productivity);
+                    this.successMsg = data.service_productivity ? `Category ${data.service_productivity.name} updated successfully.` : 'Category updated successfully.';
                     setTimeout(() => { this.successMsg = ''; }, 5000);
 
                 })

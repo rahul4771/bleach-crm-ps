@@ -248,9 +248,17 @@
                                     <div class="dashboard-grid grid-cols-4 mb-4">
                                         <div class="stats-card">
                                             <div class="stats-card-label">Productivity</div>
-                                            <div class="stats-card-value"
-                                                v-text="productivity.perhour_cleaning || '--'">
+                                            <div class="d-flex align-items-baseline justify-content-between">
+                                                <div class="stats-card-value"
+                                                    v-text="productivity.perhour_cleaning || '--'">
+                                                </div>
+                                                <div>
+                                                    <span @click="handleEditProductivityBtnClick(productivity)" :style="{cursor: 'pointer'}">
+                                                        <i class="fa fa-pen" title="Productivity in sqm/man/hrg"></i>
+                                                    </span>
+                                                </div>
                                             </div>
+
                                             <span class="stats-card-change positive"
                                                 v-if="productivity.perhour_cleaning">sqm/man/hrg</span>
                                         </div>
@@ -568,6 +576,10 @@
                                             <input type="hidden" id="productivity_service_type_id"
                                                 name="productivity_service_type_id"
                                                 v-model="categoryFormFields.service_type_id" placeholder=""
+                                                :class="{'form-control': true}">
+                                            <input type="hidden" id="productivity_id"
+                                                name="productivity_id"
+                                                v-model="categoryFormFields.id" placeholder=""
                                                 :class="{'form-control': true}">
                                         </div>
                                     </form>

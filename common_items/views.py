@@ -6484,7 +6484,7 @@ class ServiceProductivityAPIView(APIView):
 				is_newkitchen=0,
 				is_cabinet=0,
 			)
-			return JsonResponse({"success": True, "service_productivity": service_productivity}, status=201)
+			return JsonResponse({"success": True, "id": service_productivity.id}, status=201)
 		except Exception as e:
 			return JsonResponse({"success": False, "error": str(e)}, status=500)
 		
