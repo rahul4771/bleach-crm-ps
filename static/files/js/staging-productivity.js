@@ -109,9 +109,9 @@ createApp({
             }
 
         },
-        remove(student) {
-            if (confirm(`Delete ${student.name}?`)) {
-                this.students = this.students.filter(s => s.id !== student.id);
+        remove(serviceType) {
+            if (confirm(`Delete ${serviceType.name}?`)) {
+                this.serviceTypes = this.serviceTypes.filter(s => s.id !== serviceType.id);
             }
         },
         // Handle add button clicks
