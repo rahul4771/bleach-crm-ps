@@ -56,7 +56,7 @@ createApp({
                 max_hours: '',
                 min_cleaners: '',
                 min_hours: '',
-                is_active: '',
+                is_active: false,
                 service_type_id: ''
             },
 
@@ -182,7 +182,7 @@ createApp({
                         max_hours: productivity.max_hours || '',
                         min_cleaners: productivity.min_cleaners || '',
                         min_hours: productivity.min_hours || '',
-                        is_active: productivity.is_active ? true : false,
+                        is_active: productivity.is_active,
                         service_type_id: this.serviceTypeId,
                     }
                 }
