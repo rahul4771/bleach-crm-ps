@@ -641,7 +641,7 @@ createApp({
         updatePriceRange(formData, priceRangeId) {
             const csrftoken = this.getCookie('csrftoken')
             const baseUrl = window.location.origin;
-            const url = `${baseUrl}/common/update-service-price-range/${priceRangeId}/`;
+            const url = `${baseUrl}/common/update-service-price-range/${priceRangeId}`;
             fetch(url, {
                 method: 'PUT',
                 credentials: 'same-origin',
