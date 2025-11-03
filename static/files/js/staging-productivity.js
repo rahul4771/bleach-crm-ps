@@ -216,10 +216,11 @@ createApp({
                     this.priceRangeFormFields = {
                         id: '',
                         name: '',
-                        description: '',
-                        min_price: '',
-                        max_price: '',
-                        is_active: '',
+                        price: '',
+                        minimum_area: '',
+                        maximum_area: '',
+                        unit_price: '',
+                        productivity_id: productivityId || '',
                     }
                 }
             }
@@ -350,6 +351,45 @@ createApp({
                 this.updateProductivityCategory(this.toFormData(payload), this.categoryFormFields.id);
             }
 
+        },
+
+        /* Add or update price range */
+        submitPriceRangeForm() {
+            this.validationErrors.managePriceRange = {};
+
+            // basic validation
+            if (!this.priceRangeFormFields.name || !this.priceRangeFormFields.name.trim()) {
+                this.validationErrors.managePriceRange.name = 'Item name is required.';
+            }
+
+            // price is required and must be a non-negative number
+            if (!this.validateNumberInput(this.priceRangeFormFields.price, false, 'Please enter a valid non-negative number for price', 'price')) {
+                // validateNumberInput will set the error
+            }
+
+            // optional integer fields for areas
+            this.validateNumberInput(this.priceRangeFormFields.minimum_area, true, 'Please enter a valid non-negative integer', 'minimum_area');
+            this.validateNumberInput(this.priceRangeFormFields.maximum_area, true, 'Please enter a valid non-negative integer', 'maximum_area');
+
+            if (Object.keys(this.validationErrors.managePriceRange).length > 0) return;
+
+            const payload = {
+                price_range_name: this.priceRangeFormFields.name && this.priceRangeFormFields.name.trim(),
+                price_range_price: this.priceRangeFormFields.price,
+                price_range_minimum_area: this.priceRangeFormFields.minimum_area,
+                price_range_maximum_area: this.priceRangeFormFields.maximum_area,
+                price_range_unit_price: this.priceRangeFormFields.unit_price,
+                price_range_productivity_id: this.priceRangeFormFields.productivity_id || this.priceRangeFormFields.productivity_id === 0 ? this.priceRangeFormFields.productivity_id : this.serviceTypeId,
+            };
+
+            const form = document.getElementById('manage-price-range-form');
+            const formAction = form ? form.getAttribute('data-action') : 'add';
+            if (formAction === 'add') {
+                this.createPriceRange(this.toFormData(payload));
+            } else {
+                const id = this.priceRangeFormFields.id;
+                this.updatePriceRange(this.toFormData(payload), id);
+            }
         },
 
         // Fetch service types from the server
@@ -553,6 +593,82 @@ createApp({
                     if (err.json) {
                         const body = await err.json();
                         this.validationErrors.manageProductivity = body.errors || {};
+                    } else {
+                        console.error(err);
+                    }
+                });
+        },
+
+        // Create a new price range
+        createPriceRange(formData) {
+            const csrftoken = this.getCookie('csrftoken')
+            const baseUrl = window.location.origin;
+            const url = `${baseUrl}/common/add-service-price-range/`;
+            fetch(url, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+                .then(res => {
+                    if (!res.ok) throw res;
+                    return res.json();
+                })
+                .then(data => {
+                    this.closeModal();
+                    const key = String(this.priceRangeFormFields.productivity_id ?? this.serviceTypeId ?? '0');
+                    if (!this.servicePriceRanges[key]) this.servicePriceRanges[key] = [];
+                    // assume backend returns `service_price_range`
+                    const item = data.service_price_range || data.service_price_ranges || data;
+                    this.servicePriceRanges[key].push(item);
+                    this.successMsg = 'Price range saved successfully.';
+                    setTimeout(() => { this.successMsg = ''; }, 5000);
+                })
+                .catch(async err => {
+                    if (err.json) {
+                        const body = await err.json();
+                        this.validationErrors.managePriceRange = body.errors || {};
+                    } else {
+                        console.error(err);
+                    }
+                });
+        },
+
+        // Update an existing price range
+        updatePriceRange(formData, priceRangeId) {
+            const csrftoken = this.getCookie('csrftoken')
+            const baseUrl = window.location.origin;
+            const url = `${baseUrl}/common/update-service-price-range/${priceRangeId}/`;
+            fetch(url, {
+                method: 'PUT',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+                .then(res => {
+                    if (!res.ok) throw res;
+                    return res.json();
+                })
+                .then(data => {
+                    this.closeModal();
+                    const key = String(this.priceRangeFormFields.productivity_id ?? this.serviceTypeId ?? '0');
+                    if (!this.servicePriceRanges[key]) this.servicePriceRanges[key] = [];
+                    const updated = data.service_price_range || data;
+                    const index = this.servicePriceRanges[key].findIndex(p => p.id === updated.id);
+                    if (index !== -1) this.servicePriceRanges[key].splice(index, 1, updated);
+                    this.successMsg = updated && updated.name ? `Price range ${updated.name} updated successfully.` : 'Price range updated successfully.';
+                    setTimeout(() => { this.successMsg = ''; }, 5000);
+                })
+                .catch(async err => {
+                    if (err.json) {
+                        const body = await err.json();
+                        this.validationErrors.managePriceRange = body.errors || {};
                     } else {
                         console.error(err);
                     }
