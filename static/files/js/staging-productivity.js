@@ -55,7 +55,8 @@ createApp({
                 max_hours: '',
                 min_cleaners: '',
                 min_hours: '',
-                is_active: ''
+                is_active: '',
+                service_type_id: ''
             },
 
         };
@@ -102,7 +103,7 @@ createApp({
                     hidden.id = hiddenName;
                     form.appendChild(hidden);
                 }
-                hidden.value = serviceType.id || '';
+                hidden.value = serviceType.id ?? '';
 
             }
 
@@ -117,6 +118,9 @@ createApp({
             this.toggleDivs.showList = false;
             this.toggleDivs.showManageServiceType = true;
             this.validationErrors['manageServiceType'] = [];
+            this.viewServiceType = {
+                title: '',
+            };
 
             const form = document.getElementById('manage-service-form');
             if (form) {
@@ -137,7 +141,18 @@ createApp({
                 this.validationErrors['manageProductivity'] = [];
                 const form = document.getElementById('manage-productivity-form');
                 if (form) {
-                    form.setAttribute('data-action', 'add')
+                    form.setAttribute('data-action', 'add');
+                    this.categoryFormFields = {
+                        name: '',
+                        description: '',
+                        perhour_cleaning: '',
+                        max_cleaners: '',
+                        max_hours: '',
+                        min_cleaners: '',
+                        min_hours: '',
+                        is_active: '',
+                        service_type_id: this.serviceTypeId,
+                    }
                 }
             }
         },
