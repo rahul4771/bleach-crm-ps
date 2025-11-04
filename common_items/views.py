@@ -6591,13 +6591,13 @@ class ProductivityPriceRangeAPIView(APIView):
 	def post(self, request, *args, **kwargs):
 		data = getattr(request, "data", request.POST)
 		service_type_id = data.get("service_type")
-		name = (data.get("name")).strip()
+		name = (data.get("name") or '').strip()
 		price = data.get("price", "")
 		minimum_area = data.get("minimum_area") or None
 		maximum_area = data.get("maximum_area") or None
 		unit_price = data.get("unit_price") or None
 		productivity_id = data.get("productivity_id") or None
-		is_active = 1
+		is_active =  data.get("status") or 1
 
 
 		service_type = None
@@ -6629,7 +6629,19 @@ class ProductivityPriceRangeAPIView(APIView):
 			is_active=is_active
 		)
 		price_range.save()
-		return JsonResponse({"success": True, "id": price_range.id}, status=201)
+		pr = price_range
+		pr_data = {
+			"id": pr.id,
+			"service_type_id": pr.service_type_id,
+			"service_productivity_id": pr.service_productivity_id,
+			"name": pr.name,
+			"price": float(pr.price) if pr.price is not None else None,
+			"minimum_area": pr.minimum_area,
+			"maximum_area": pr.maximum_area,
+			"unit_price": float(pr.unit_price) if pr.unit_price is not None else None,
+			"is_active": bool(pr.is_active),
+		}
+		return JsonResponse({"success": True, "service_price_range": pr_data}, status=201)
 	
 	def put(self, request, *args, **kwargs):
 		data = getattr(request, "data", request.POST)
@@ -6642,7 +6654,7 @@ class ProductivityPriceRangeAPIView(APIView):
 		maximum_area = data.get("maximum_area") or None
 		unit_price = data.get("unit_price") or None
 		productivity_id = data.get("productivity_id") or None
-		is_active = 1
+		is_active =  data.get("status") or 1
 		
 		if not price_range_id:
 			return JsonResponse({"success": False, "error": "price_range_id required"}, status=400)
@@ -6684,7 +6696,19 @@ class ProductivityPriceRangeAPIView(APIView):
 				service_productivity=service_productivity,
 				is_active=is_active
 			)
-			return JsonResponse({"success": True, "id": pr.first().id}, status=201)
+			pr_obj = pr.first()
+			pr_data = {
+				"id": pr_obj.id,
+				"service_type_id": pr_obj.service_type_id,
+				"service_productivity_id": pr_obj.service_productivity_id,
+				"name": pr_obj.name,
+				"price": float(pr_obj.price) if pr_obj.price is not None else None,
+				"minimum_area": pr_obj.minimum_area,
+				"maximum_area": pr_obj.maximum_area,
+				"unit_price": float(pr_obj.unit_price) if pr_obj.unit_price is not None else None,
+				"is_active": bool(pr_obj.is_active),
+			}
+			return JsonResponse({"success": True, "service_price_range": pr_data}, status=201)
 		except Exception as e:
 			return JsonResponse({"success": False, "error_message": str(e)}, status=500)
 
@@ -6874,11 +6898,11 @@ class ProductivityServiceTypeAPIView(APIView):
 				'is_active': bool(getattr(p, 'is_active', False)),
 			})
 		
-		service_addons = list(ServiceAddOns.objects.filter(is_active=True).values(
+		service_addons = list(ServiceAddOns.objects.values(
 			'id', 'service_type_id', 'name', 'category', 'size', 'price', 'productivity', 'is_active'
 		))
 
-		service_price_ranges = list(ServicePriceRange.objects.filter(is_active=True).values(
+		service_price_ranges = list(ServicePriceRange.objects.values(
 			'id', 'service_type_id', 'service_productivity_id', 'name', 'price', 'minimum_area', 'maximum_area', 'unit_price', 'is_active'
 		))
 

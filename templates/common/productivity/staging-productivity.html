@@ -591,7 +591,8 @@
                                     </form>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" @click="closeModal($event)">Close</button>
+                                    <button type="button" class="btn btn-secondary"
+                                        @click="closeModal($event)">Close</button>
                                     <button type="button" class="btn btn-primary"
                                         @click="submitProductivityForm">Save</button>
                                 </div>
@@ -624,7 +625,7 @@
                                                     v-text="validationErrors['managePriceRange']['name']">
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="form-group">
                                                 <label for="price_range_price" class="form-label">Price <span
                                                         class="text-danger">*</span></label>
@@ -639,7 +640,8 @@
                                             </div>
 
                                             <div class="form-group">
-                                                <label for="price_range_minimum_area" class="form-label">Minimum Area</label>
+                                                <label for="price_range_minimum_area" class="form-label">Minimum
+                                                    Area</label>
                                                 <input type="number" step="1" id="price_range_minimum_area"
                                                     name="price_range_minimum_area"
                                                     v-model="priceRangeFormFields.minimum_area" placeholder=""
@@ -651,7 +653,8 @@
                                             </div>
 
                                             <div class="form-group">
-                                                <label for="price_range_maximum_area" class="form-label">Maximum Area</label>
+                                                <label for="price_range_maximum_area" class="form-label">Maximum
+                                                    Area</label>
                                                 <input type="number" step="1" id="price_range_maximum_area"
                                                     name="price_range_maximum_area"
                                                     v-model="priceRangeFormFields.maximum_area" placeholder=""
@@ -663,7 +666,8 @@
                                             </div>
 
                                             <div class="form-group">
-                                                <label for="price_range_unit_price" class="form-label">Unit Price</label>
+                                                <label for="price_range_unit_price" class="form-label">Unit
+                                                    Price</label>
                                                 <input type="number" step="0.01" id="price_range_unit_price"
                                                     name="price_range_unit_price"
                                                     v-model="priceRangeFormFields.unit_price" placeholder=""
@@ -671,6 +675,26 @@
                                                 <div class="invalid-feedback"
                                                     v-if="validationErrors['managePriceRange']['unitPrice']"
                                                     v-text="validationErrors['managePriceRange']['unitPrice']">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="status_id" class="form-label">Status <span
+                                                        class="text-danger">*</span></label>
+                                                <select id="status_id" name="status"
+                                                    v-model="priceRangeFormFields.status"
+                                                    :class="{'form-control': true, 'is-invalid': validationErrors['managePriceRange']['status'] }">
+                                                    <option value="" default>Choose an option</option>
+                                                    <option :value="true"
+                                                        :selected="priceRangeFormFields.status === true">Active
+                                                    </option>
+                                                    <option :value="false"
+                                                        :selected="priceRangeFormFields.status === false">Inactive
+                                                    </option>
+                                                </select>
+                                                <div class="invalid-feedback"
+                                                    v-if="validationErrors['managePriceRange']['status']"
+                                                    v-text="validationErrors['managePriceRange']['status']">
                                                 </div>
                                             </div>
 
@@ -683,12 +707,13 @@
                                             <input type="hidden" id="price_range_id" name="price_range_id"
                                                 v-model="priceRangeFormFields.id" placeholder=""
                                                 :class="{'form-control': true}">
-                                            
+
                                         </div>
                                     </form>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" @click="closeModal($event)">Close</button>
+                                    <button type="button" class="btn btn-secondary"
+                                        @click="closeModal($event)">Close</button>
                                     <button type="button" class="btn btn-primary"
                                         @click="submitPriceRangeForm">Save</button>
                                 </div>

@@ -67,6 +67,7 @@ createApp({
                 minimum_area: '',
                 maximum_area: '',
                 unit_price: '',
+                status: false,
                 productivity_id: '',
                 service_type_id: ''
             },
@@ -221,6 +222,7 @@ createApp({
                         minimum_area: '',
                         maximum_area: '',
                         unit_price: '',
+                        status: this.priceRangeFormFields.status || false,
                         productivity_id: this.activePtab || this.productivities[String(this.serviceTypeId ?? '0')]?.[0]?.id || '',
                         service_type_id: this.serviceTypeId || ''
                     }
@@ -240,8 +242,32 @@ createApp({
             this.activePtab = pid
         },
         handleEditPriceRangeBtnClick(priceRange, productivityId) {
-            // Logic to handle editing a price range
-            alert(`Edit Price Range: ${priceRange.name} under Productivity ID: ${productivityId}`);
+            const modal = document.getElementById('manage-price-range-modal');
+            if (modal) {
+                modal.classList.add('in', 'show');
+                modal.style.display = 'block';
+                document.body.classList.add('modal-open');
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                document.body.appendChild(backdrop);
+                this.modalHeading = 'Add Price Range';
+                this.validationErrors['managePriceRange'] = [];
+                const form = document.getElementById('manage-price-range-form');
+                if (form) {
+                    form.setAttribute('data-action', 'edit');
+                    this.priceRangeFormFields = {
+                        id: priceRange.id,
+                        name: priceRange.name,
+                        price: priceRange.price,
+                        minimum_area: priceRange.minimum_area,
+                        maximum_area: priceRange.maximum_area,
+                        unit_price: priceRange.unit_price,
+                        status: priceRange.is_active,
+                        productivity_id: productivityId || '',
+                        service_type_id: this.serviceTypeId || ''
+                    }
+                }
+            }
         },
         removePriceRange(priceRange, productivityId) {
             // Logic to handle removing a price range
@@ -438,6 +464,10 @@ createApp({
                 delete this.validationErrors.managePriceRange.unitPrice;
             }
 
+            if (this.priceRangeFormFields.status === '') {
+                this.validationErrors.managePriceRange.status = 'Status is required.';
+            }
+
             if (Object.keys(this.validationErrors.managePriceRange).length > 0) return;
 
             const payload = {
@@ -448,6 +478,7 @@ createApp({
                 unit_price: this.priceRangeFormFields.unit_price,
                 productivity_id: this.priceRangeFormFields.productivity_id,
                 service_type: this.priceRangeFormFields.service_type_id,
+                status: this.priceRangeFormFields.status ? 1 : 0
             };
 
             const form = document.getElementById('manage-price-range-form');
@@ -729,6 +760,7 @@ createApp({
                     const key = String(this.priceRangeFormFields.productivity_id ?? this.serviceTypeId ?? '0');
                     if (!this.servicePriceRanges[key]) this.servicePriceRanges[key] = [];
                     const updated = data.service_price_range || data;
+                    updated.avatar = `${this.avatarBaseUrl}?name=${encodeURIComponent(updated.name)}&background=${this.colorCodes[updated.id % this.colorCodes.length]}&color=fff`;
                     const index = this.servicePriceRanges[key].findIndex(p => p.id === updated.id);
                     if (index !== -1) this.servicePriceRanges[key].splice(index, 1, updated);
                     this.successMsg = updated && updated.name ? `Price range ${updated.name} updated successfully.` : 'Price range updated successfully.';
