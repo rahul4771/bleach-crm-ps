@@ -646,6 +646,7 @@ createApp({
                     if (!this.servicePriceRanges[key]) this.servicePriceRanges[key] = [];
                     // assume backend returns `service_price_range`
                     const item = data.service_price_range || data.service_price_ranges || data;
+                    item.avatar = `${this.avatarBaseUrl}?name=${encodeURIComponent(item.name)}&background=${this.colorCodes[item.id % this.colorCodes.length]}&color=fff`;
                     this.servicePriceRanges[key].push(item);
                     this.successMsg = 'Price range saved successfully.';
                     setTimeout(() => { this.successMsg = ''; }, 5000);
