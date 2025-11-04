@@ -249,17 +249,40 @@ createApp({
                 }
             }
         },
-        // Close modal
-        closeModal() {
-            const modal = document.getElementsByClassName('modal');
-            if (modal.length) {
-                modal[0].classList.remove('in', 'show');
-                modal[0].style.display = 'none';
-                document.body.classList.remove('modal-open');
-                const backdrop = document.getElementsByClassName('modal-backdrop');
-                if (backdrop.length) {
-                    backdrop[0].remove();
+        // Close modal(s).
+        // If an Event is passed (e.g. closeModal($event)) we locate the closest .modal from the event
+        // target and close only that modal. If omitted, close all open modals.
+        // This keeps modal stacking/backdrop cleanup correct.
+        closeModal(event = null) {
+            const hideModal = (m) => {
+                try {
+                    m.classList.remove('in', 'show');
+                    m.style.display = 'none';
+                    m.setAttribute('aria-hidden', 'true');
+                } catch (e) {
+                    // ignore
                 }
+            };
+
+            let targetModal = null;
+            if (event && (typeof event === 'object') && (event.target || event.currentTarget)) {
+                targetModal = event.target && event.target.closest ? event.target.closest('.modal') : (event.currentTarget && event.currentTarget.closest ? event.currentTarget.closest('.modal') : null);
+            }
+
+            if (targetModal) {
+                hideModal(targetModal);
+            } else {
+                const modals = Array.from(document.querySelectorAll('.modal.show, .modal.in.show'));
+                modals.forEach(m => hideModal(m));
+            }
+
+            // remove all backdrops (there may be multiple)
+            const backdrops = Array.from(document.querySelectorAll('.modal-backdrop'));
+            backdrops.forEach(b => b.remove());
+
+            const remaining = document.querySelectorAll('.modal.show, .modal.in.show');
+            if (!remaining.length) {
+                document.body.classList.remove('modal-open');
             }
         },
 
