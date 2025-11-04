@@ -220,7 +220,7 @@
                                         Category</button>
                                     <button class="btn btn-primary ms-2"
                                         v-if="productivities[serviceTypeId] && productivities[serviceTypeId].length > 0"
-                                        @click="handleAddPriceRangeBtnClick(productivities[serviceTypeId].id)">Add
+                                        @click="handleAddPriceRangeBtnClick">Add
                                         Price Range</button>
                                 </div>
                             </div>
@@ -676,6 +676,9 @@
 
                                             <input type="hidden" id="productivity_id" name="productivity_id"
                                                 v-model="priceRangeFormFields.productivity_id" placeholder=""
+                                                :class="{'form-control': true}">
+                                            <input type="hidden" id="service_type_id" name="service_type_id"
+                                                v-model="priceRangeFormFields.service_type_id" placeholder=""
                                                 :class="{'form-control': true}">
                                             <input type="hidden" id="price_range_id" name="price_range_id"
                                                 v-model="priceRangeFormFields.id" placeholder=""

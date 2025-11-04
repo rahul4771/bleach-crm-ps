@@ -67,7 +67,8 @@ createApp({
                 minimum_area: '',
                 maximum_area: '',
                 unit_price: '',
-                productivity_id: ''
+                productivity_id: '',
+                service_type_id: ''
             },
         };
     },
@@ -199,7 +200,7 @@ createApp({
 
         },
         // Handle Add Price Range button click
-        handleAddPriceRangeBtnClick(productivityId) {
+        handleAddPriceRangeBtnClick() {
             const modal = document.getElementById('manage-price-range-modal');
             if (modal) {
                 modal.classList.add('in', 'show');
@@ -220,7 +221,8 @@ createApp({
                         minimum_area: '',
                         maximum_area: '',
                         unit_price: '',
-                        productivity_id: productivityId || '',
+                        productivity_id: this.activePtab || this.productivities[String(this.serviceTypeId ?? '0')]?.[0]?.id || '',
+                        service_type_id: this.serviceTypeId || ''
                     }
                 }
             }
@@ -386,23 +388,66 @@ createApp({
             }
 
             // price is required and must be a non-negative number
-            if (!this.validateNumberInput(this.priceRangeFormFields.price, false, 'Please enter a valid non-negative number for price', 'price')) {
-                // validateNumberInput will set the error
+            const priceVal = this.priceRangeFormFields.price;
+            if (priceVal === '' || priceVal === null || priceVal === undefined) {
+                this.validationErrors.managePriceRange.price = 'Price is required.';
+            } else {
+                const num = Number(priceVal);
+                if (Number.isNaN(num) || num < 0) {
+                    this.validationErrors.managePriceRange.price = 'Please enter a valid non-negative number for price';
+                } else {
+                    delete this.validationErrors.managePriceRange.price;
+                }
             }
 
-            // optional integer fields for areas
-            this.validateNumberInput(this.priceRangeFormFields.minimum_area, true, 'Please enter a valid non-negative integer', 'minimum_area');
-            this.validateNumberInput(this.priceRangeFormFields.maximum_area, true, 'Please enter a valid non-negative integer', 'maximum_area');
+            // optional integer fields for areas (minimum_area -> minimumArea key in errors)
+            const minArea = this.priceRangeFormFields.minimum_area;
+            if (minArea !== '' && minArea !== null && minArea !== undefined) {
+                const n = Number(minArea);
+                if (Number.isNaN(n) || n < 0 || !Number.isInteger(n)) {
+                    this.validationErrors.managePriceRange.minimumArea = 'Please enter a valid non-negative integer';
+                } else {
+                    delete this.validationErrors.managePriceRange.minimumArea;
+                }
+            } else {
+                delete this.validationErrors.managePriceRange.minimumArea;
+            }
+
+            const maxArea = this.priceRangeFormFields.maximum_area;
+            if (maxArea !== '' && maxArea !== null && maxArea !== undefined) {
+                const n2 = Number(maxArea);
+                if (Number.isNaN(n2) || n2 < 0 || !Number.isInteger(n2)) {
+                    this.validationErrors.managePriceRange.maximumArea = 'Please enter a valid non-negative integer';
+                } else {
+                    delete this.validationErrors.managePriceRange.maximumArea;
+                }
+            } else {
+                delete this.validationErrors.managePriceRange.maximumArea;
+            }
+
+            // optional unit_price (decimal)
+            const unitPrice = this.priceRangeFormFields.unit_price;
+            if (unitPrice !== '' && unitPrice !== null && unitPrice !== undefined) {
+                const up = Number(unitPrice);
+                if (Number.isNaN(up) || up < 0) {
+                    this.validationErrors.managePriceRange.unitPrice = 'Please enter a valid non-negative number';
+                } else {
+                    delete this.validationErrors.managePriceRange.unitPrice;
+                }
+            } else {
+                delete this.validationErrors.managePriceRange.unitPrice;
+            }
 
             if (Object.keys(this.validationErrors.managePriceRange).length > 0) return;
 
             const payload = {
-                price_range_name: this.priceRangeFormFields.name && this.priceRangeFormFields.name.trim(),
-                price_range_price: this.priceRangeFormFields.price,
-                price_range_minimum_area: this.priceRangeFormFields.minimum_area,
-                price_range_maximum_area: this.priceRangeFormFields.maximum_area,
-                price_range_unit_price: this.priceRangeFormFields.unit_price,
-                price_range_productivity_id: this.priceRangeFormFields.productivity_id || this.priceRangeFormFields.productivity_id === 0 ? this.priceRangeFormFields.productivity_id : this.serviceTypeId,
+                name: this.priceRangeFormFields.name && this.priceRangeFormFields.name.trim(),
+                price: this.priceRangeFormFields.price,
+                minimum_area: this.priceRangeFormFields.minimum_area,
+                maximum_area: this.priceRangeFormFields.maximum_area,
+                unit_price: this.priceRangeFormFields.unit_price,
+                productivity_id: this.priceRangeFormFields.productivity_id,
+                service_type: this.priceRangeFormFields.service_type_id,
             };
 
             const form = document.getElementById('manage-price-range-form');
