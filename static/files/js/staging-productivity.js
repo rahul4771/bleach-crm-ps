@@ -32,6 +32,10 @@ createApp({
                 showProductivity: false,
                 showAddons: false
             },
+            delete: {
+                softText: '',
+                strongText: '',
+            },
             viewServiceType: {
                 title: '',
                 name: '',
@@ -270,12 +274,20 @@ createApp({
             }
         },
         removePriceRange(priceRange, productivityId) {
-            // Logic to handle removing a price range
-            if (confirm(`Delete Price Range: ${priceRange.name}?`)) {
-                if (this.servicePriceRanges[productivityId]) {
-                    this.servicePriceRanges[productivityId] = this.servicePriceRanges[productivityId].filter(item => item.id !== priceRange.id);
-                }
+            const modal = document.getElementById('delete-modal');
+            if (modal) {
+                modal.classList.add('in', 'show');
+                modal.style.display = 'block';
+                document.body.classList.add('modal-open');
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                document.body.appendChild(backdrop);
+                this.deleteModal.softText = `Are you sure you want to continue with this action? This action will update the status of the price range "${priceRange.name}".`;
+               
             }
+        },
+        confirmDelete(){
+
         },
         // Close modal(s).
         // If an Event is passed (e.g. closeModal($event)) we locate the closest .modal from the event
