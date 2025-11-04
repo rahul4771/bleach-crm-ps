@@ -410,29 +410,13 @@
                                                     v-text="addon.is_active ? 'Active' : 'Inactive'"></span>
                                             </td>
                                             <td v-if="!toggleDivs.showView">
-                                                <div class="dropdown">
-                                                    <button class="btn btn-light btn-sm" data-bs-toggle="dropdown"
-                                                        aria-expanded="false">
-                                                        <i class="fa fa-ellipsis-h"></i>
-                                                    </button>
-                                                    <ul class="dropdown-menu" style="">
-                                                        <li><a class="dropdown-item" href="#"><i
-                                                                    class="bi bi-eye me-2"></i>View Details</a></li>
-                                                        <li><a class="dropdown-item" href="edit-department.html"><i
-                                                                    class="bi bi-pencil me-2"></i>Edit Department</a>
-                                                        </li>
-                                                        <li><a class="dropdown-item" href="#"><i
-                                                                    class="bi bi-people me-2"></i>Manage Faculty</a>
-                                                        </li>
-                                                        <li>
-                                                            <hr class="dropdown-divider">
-                                                        </li>
-                                                        <li><a class="dropdown-item text-danger" href="#"><i
-                                                                    class="bi bi-trash me-2"></i>Delete</a></li>
-                                                    </ul>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                                <button class="btn-action btn-edit" title="Edit"><i
+                                                        class="fa fa-pen"></i></button>
+                                                <button class="btn-action btn-delete" title="Delete"><i
+                                                        class="fa fa-trash"></i></button>
+                            </div>
+                            </td>
+                            </tr>
 
                                         <tr
                                             v-if="!serviceAddons[serviceTypeId] || !serviceAddons[serviceTypeId].length">
