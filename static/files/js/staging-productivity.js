@@ -32,7 +32,8 @@ createApp({
                 showProductivity: false,
                 showAddons: false
             },
-            delete: {
+            // renamed from `delete` to avoid using the reserved keyword in template expressions
+            deleteModal: {
                 softText: '',
                 strongText: '',
             },
@@ -45,7 +46,8 @@ createApp({
             validationErrors: {
                 manageServiceType: {},
                 manageProductivity: {},
-                managePriceRange: {}
+                managePriceRange: {},
+                manageAddOn: {}
             },
             serviceFormFields: {
                 name: '',
@@ -74,6 +76,16 @@ createApp({
                 status: false,
                 productivity_id: '',
                 service_type_id: ''
+            },
+            addonFormFields: {
+                id: '',
+                item: '',
+                category_name: '',
+                size: '',
+                price: '',
+                productivity: '',
+                service_type_id: '',
+                status: false
             },
         };
     },
@@ -233,6 +245,101 @@ createApp({
                 }
             }
         },
+        // Handle Add Add-on (Item) button click
+        handleAddAddonBtnClick() {
+            const modal = document.getElementById('manage-addon-modal');
+            if (modal) {
+                modal.classList.add('in', 'show');
+                modal.style.display = 'block';
+                document.body.classList.add('modal-open');
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                document.body.appendChild(backdrop);
+                this.modalHeading = 'Add Item';
+                this.validationErrors['manageAddOn'] = [];
+                const form = document.getElementById('manage-addon-form');
+                if (form) {
+                    form.setAttribute('data-action', 'add');
+                    this.addonFormFields = {
+                        id: '',
+                        category_name: '',
+                        size: '',
+                        price: '',
+                        productivity: '',
+                        service_type_id: this.serviceTypeId || '',
+                        status: false
+                    }
+                }
+            }
+        },
+        handleAddAddonyBtnClick() {
+            const modal = document.getElementById('manage-addon-modal');
+            if (modal) {
+                modal.classList.add('in', 'show');
+                modal.style.display = 'block';
+                document.body.classList.add('modal-open');
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                document.body.appendChild(backdrop);
+                this.modalHeading = 'Add Item';
+                this.validationErrors['manageAddOn'] = [];
+                const form = document.getElementById('manage-addon-form');
+                if (form) {
+                    form.setAttribute('data-action', 'add');
+                    this.addonFormFields = {
+                        id: '',
+                        category_name: '',
+                        size: '',
+                        price: '',
+                        productivity: '',
+                        service_type_id: this.serviceTypeId || '',
+                        status: false
+                    }
+                }
+            }
+        },
+
+        // Submit Add-on form (create or update via API)
+        submitAddonForm() {
+            this.validationErrors.manageAddOn = {};
+            if (!this.addonFormFields.item || !this.addonFormFields.item.trim()) {
+                this.validationErrors.manageAddOn.categoryName = 'Category Name is required.';
+            }
+            const priceVal = this.addonFormFields.price;
+            if (priceVal === '' || priceVal === null || priceVal === undefined) {
+                this.validationErrors.manageAddOn.price = 'Price is required.';
+            } else {
+                const num = Number(priceVal);
+                if (Number.isNaN(num) || num < 0) {
+                    this.validationErrors.manageAddOn.price = 'Please enter a valid non-negative number for price';
+                } else {
+                    delete this.validationErrors.manageAddOn.price;
+                }
+            }
+
+            if (Object.keys(this.validationErrors.manageAddOn).length > 0) return;
+
+            const payload = {
+                id: this.addonFormFields.id,
+                name: this.addonFormFields.item ? this.addonFormFields.item.trim() : '',
+                category: this.addonFormFields.category_name ? this.addonFormFields.category_name.trim() : '',
+                size: this.addonFormFields.size,
+                price: this.addonFormFields.price,
+                productivity: this.addonFormFields.productivity,
+                service_type: this.addonFormFields.service_type_id || this.serviceTypeId || '',
+                is_active: this.addonFormFields.status ? 1 : 0
+            };
+
+            const form = document.getElementById('manage-addon-form');
+            const formAction = form ? form.getAttribute('data-action') : 'add';
+            if (formAction === 'add') {
+                this.createAddOn(this.toFormData(payload), payload);
+            } else {
+                const id = this.addonFormFields.id;
+                this.updateAddOn(this.toFormData(payload), id, payload);
+            }
+
+        },
         // Handle back button action
         backButtonAction(view) {
             Object.keys(this.toggleDivs).forEach(key => {
@@ -283,10 +390,10 @@ createApp({
                 backdrop.className = 'modal-backdrop fade show';
                 document.body.appendChild(backdrop);
                 this.deleteModal.softText = `Are you sure you want to continue with this action? This action will update the status of the price range "${priceRange.name}".`;
-               
+
             }
         },
-        confirmDelete(){
+        confirmDelete() {
 
         },
         // Close modal(s).
@@ -782,6 +889,114 @@ createApp({
                     if (err.json) {
                         const body = await err.json();
                         this.validationErrors.managePriceRange = body.errors || {};
+                    } else {
+                        console.error(err);
+                    }
+                });
+        },
+
+        // Create a new service add-on via API
+        createAddOn(formData, payload) {
+            const csrftoken = this.getCookie('csrftoken');
+            const baseUrl = window.location.origin;
+            const url = `${baseUrl}/common/add-service-addons/`;
+            fetch(url, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+                .then(res => {
+                    if (!res.ok) throw res;
+                    return res.json();
+                })
+                .then(data => {
+                    this.closeModal();
+                    const key = String(payload.service_type || this.serviceTypeId || '0');
+                    if (!this.serviceAddons[key]) this.serviceAddons[key] = [];
+                    const item = {
+                        id: data.id,
+                        service_type_id: payload.service_type || this.serviceTypeId || '',
+                        name: payload.name,
+                        category: payload.category,
+                        size: payload.size,
+                        price: typeof payload.price === 'string' ? Number(payload.price) : payload.price,
+                        productivity: payload.productivity,
+                        is_active: !!payload.is_active,
+                    };
+                    item.avatar = `${this.avatarBaseUrl}?name=${encodeURIComponent(item.name)}&background=${this.colorCodes[item.id % this.colorCodes.length]}&color=fff`;
+                    this.serviceAddons[key].push(item);
+                    this.successMsg = 'Addon saved successfully.';
+                    setTimeout(() => { this.successMsg = ''; }, 5000);
+                })
+                .catch(async err => {
+                    if (err.json) {
+                        const body = await err.json();
+                        // backend often returns error_field + error_message
+                        if (body.error_field) {
+                            const mapField = f => (f === 'name' ? 'categoryName' : f);
+                            this.validationErrors.manageAddOn = this.validationErrors.manageAddOn || {};
+                            this.validationErrors.manageAddOn[mapField(body.error_field)] = body.error_message || body.error || 'Invalid input';
+                        } else if (body.errors) {
+                            this.validationErrors.manageAddOn = body.errors || {};
+                        }
+                    } else {
+                        console.error(err);
+                    }
+                });
+        },
+
+        // Update an existing service add-on via API
+        updateAddOn(formData, addonId, payload) {
+            const csrftoken = this.getCookie('csrftoken');
+            const baseUrl = window.location.origin;
+            const url = `${baseUrl}/common/update-service-addons/${addonId}`;
+            fetch(url, {
+                method: 'PUT',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+                .then(res => {
+                    if (!res.ok) throw res;
+                    return res.json();
+                })
+                .then(data => {
+                    this.closeModal();
+                    const key = String(payload.service_type || this.serviceTypeId || '0');
+                    if (!this.serviceAddons[key]) this.serviceAddons[key] = [];
+                    const updated = {
+                        id: Number(addonId),
+                        service_type_id: payload.service_type || this.serviceTypeId || '',
+                        name: payload.name,
+                        category: payload.category,
+                        size: payload.size,
+                        price: typeof payload.price === 'string' ? Number(payload.price) : payload.price,
+                        productivity: payload.productivity,
+                        is_active: !!payload.is_active,
+                    };
+                    updated.avatar = `${this.avatarBaseUrl}?name=${encodeURIComponent(updated.name)}&background=${this.colorCodes[updated.id % this.colorCodes.length]}&color=fff`;
+                    const index = this.serviceAddons[key].findIndex(p => String(p.id) === String(updated.id));
+                    if (index !== -1) this.serviceAddons[key].splice(index, 1, updated);
+                    this.successMsg = updated && updated.name ? `Addon ${updated.name} updated successfully.` : 'Addon updated successfully.';
+                    setTimeout(() => { this.successMsg = ''; }, 5000);
+                })
+                .catch(async err => {
+                    if (err.json) {
+                        const body = await err.json();
+                        if (body.error_field) {
+                            const mapField = f => (f === 'name' ? 'categoryName' : f);
+                            this.validationErrors.manageAddOn = this.validationErrors.manageAddOn || {};
+                            this.validationErrors.manageAddOn[mapField(body.error_field)] = body.error_message || body.error || 'Invalid input';
+                        } else if (body.errors) {
+                            this.validationErrors.manageAddOn = body.errors || {};
+                        }
                     } else {
                         console.error(err);
                     }

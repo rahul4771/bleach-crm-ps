@@ -363,7 +363,11 @@
                     <!-- Add-ons -->
                     <div class="dashboard-card" id="productivity-and-price-ranges" v-show="toggleDivs.showAddons">
                         <div class="dashboard-card-header">
-                            <h5 class="dashboard-card-title">Add-Ons</h5>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <h5 class="dashboard-card-title">Add-Ons</h5>
+                                <button class="btn btn-primary" @click="handleAddAddonyBtnClick">Add
+                                    Addon</button>
+                            </div>
                         </div>
                         <div class="dashboard-card-body">
                             <div class="table-responsive">
@@ -414,10 +418,8 @@
                                                         class="fa fa-pen"></i></button>
                                                 <button class="btn-action btn-delete" title="Delete"><i
                                                         class="fa fa-trash"></i></button>
-                            </div>
-                            </td>
-                            </tr>
-
+                                            </td>
+                                        </tr>
                                         <tr
                                             v-if="!serviceAddons[serviceTypeId] || !serviceAddons[serviceTypeId].length">
                                             <td :colspan="toggleDivs.showView ? 6 : 7" class="text-center">
@@ -553,7 +555,8 @@
                                                     :class="{'form-control': true, 'is-invalid': validationErrors['manageProductivity']['status'] }">
                                                     <option value="" default>Choose an option</option>
                                                     <option :value="true"
-                                                        :selected="categoryFormFields.is_active === true">Active
+                                                        :selected="categoryFormFields.is_active === true">
+                                                        Active
                                                     </option>
                                                     <option :value="false"
                                                         :selected="categoryFormFields.is_active === false">Inactive
@@ -670,7 +673,8 @@
                                                     :class="{'form-control': true, 'is-invalid': validationErrors['managePriceRange']['status'] }">
                                                     <option value="" default>Choose an option</option>
                                                     <option :value="true"
-                                                        :selected="priceRangeFormFields.status === true">Active
+                                                        :selected="priceRangeFormFields.status === true">
+                                                        Active
                                                     </option>
                                                     <option :value="false"
                                                         :selected="priceRangeFormFields.status === false">Inactive
@@ -706,6 +710,81 @@
                     </div>
 
                     <!-- Manage Service Addons -->
+                    <div class="modal fade" id="manage-addon-modal" tabindex="-1" aria-labelledby="xlModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h3 class="modal-title" id="xlModalLabel" v-text="modalHeading"></h3>
+                                    <button type="button" class="btn-close" aria-label="Close"
+                                        @click="closeModal($event)"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="manage-addon-form">
+                                        <div class="dashboard-grid grid-cols-2">
+                                            <div class="form-group">
+                                                <label for="addon_item" class="form-label">Item <span
+                                                        class="text-danger">*</span></label>
+                                                <input type="text" id="addon_item" name="addon_item"
+                                                    v-model="addonFormFields.item" placeholder="Enter item name"
+                                                    :class="{'form-control': true, 'is-invalid': validationErrors['manageAddOn']['item'] }">
+                                                <div class="invalid-feedback"
+                                                    v-if="validationErrors['manageAddOn']['item']"
+                                                    v-text="validationErrors['manageAddOn']['item']"></div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="addon_category_name" class="form-label">Category
+                                                    Name</label>
+                                                <input type="text" id="addon_category_name" name="addon_category_name"
+                                                    v-model="addonFormFields.category_name"
+                                                    placeholder="Enter category name"
+                                                    :class="{'form-control': true, 'is-invalid': validationErrors['manageAddOn']['categoryName'] }">
+                                                <div class="invalid-feedback"
+                                                    v-if="validationErrors['manageAddOn']['categoryName']"
+                                                    v-text="validationErrors['manageAddOn']['categoryName']"></div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="addon_size" class="form-label">Size</label>
+                                                <input type="text" id="addon_size" name="addon_size"
+                                                    v-model="addonFormFields.size" placeholder="Enter size"
+                                                    class="form-control">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="addon_price" class="form-label">Price <span
+                                                        class="text-danger">*</span></label>
+                                                <input type="number" step="0.01" id="addon_price" name="addon_price"
+                                                    v-model="addonFormFields.price" placeholder="Enter price"
+                                                    :class="{'form-control': true, 'is-invalid': validationErrors['manageAddOn']['price'] }">
+                                                <div class="invalid-feedback"
+                                                    v-if="validationErrors['manageAddOn']['price']"
+                                                    v-text="validationErrors['manageAddOn']['price']"></div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="addon_productivity" class="form-label">Productivity <span
+                                                        class="text-danger">*</span></label>
+                                                <input type="text" id="addon_productivity" name="addon_productivity"
+                                                    v-model="addonFormFields.productivity"
+                                                    placeholder="Productivity name" class="form-control">
+                                            </div>
+
+                                            <input type="hidden" id="addon_service_type_id" name="addon_service_type_id"
+                                                v-model="addonFormFields.service_type_id">
+                                            <input type="hidden" id="addon_id" name="addon_id"
+                                                v-model="addonFormFields.id">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        @click="closeModal($event)">Close</button>
+                                    <button type="button" class="btn btn-primary" @click="submitAddonForm">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Manage Deletions -->
                     <div class="modal fade" id="delete-modal" tabindex="-1" aria-labelledby="deleteModalLabel"
@@ -724,8 +803,8 @@
                                     <p class="text-danger"><strong v-text="deleteModal.strongText"></strong></p>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary"
-                                        data-bs-dismiss="modal" @click="closeModal($event)">Cancel</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                        @click="closeModal($event)">Cancel</button>
                                     <button type="button" class="btn btn-danger">Delete</button>
                                 </div>
                             </div>
