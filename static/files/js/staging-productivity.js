@@ -239,7 +239,7 @@ createApp({
                         maximum_area: '',
                         unit_price: '',
                         status: this.priceRangeFormFields.status || false,
-                        productivity_id: this.activePtab || this.productivities[String(this.serviceTypeId ?? '0')]?.[0]?.id || '',
+                        productivity_id: this.activePtab || (this.productivities && this.productivities[String(this.serviceTypeId ?? '0')] && this.productivities[String(this.serviceTypeId ?? '0')][0] && this.productivities[String(this.serviceTypeId ?? '0')][0].id) || '',
                         service_type_id: this.serviceTypeId || ''
                     }
                 }
@@ -268,6 +268,33 @@ createApp({
                         productivity: '',
                         service_type_id: this.serviceTypeId || '',
                         status: false
+                    }
+                }
+            }
+        },
+        handleEditAddonBtnClick(addon) {
+            const modal = document.getElementById('manage-addon-modal');
+            if (modal) {
+                modal.classList.add('in', 'show');
+                modal.style.display = 'block';
+                document.body.classList.add('modal-open');
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                document.body.appendChild(backdrop);
+                this.modalHeading = `Edit ${addon.name}`;
+                this.validationErrors['manageAddOn'] = [];
+                const form = document.getElementById('manage-addon-form');
+                if (form) {
+                    form.setAttribute('data-action', 'edit');
+                    this.addonFormFields = {
+                        id: addon.id || '',
+                        item: addon.name || '',
+                        category_name: addon.category || '',
+                        size: addon.size || '',
+                        price: addon.price || '',
+                        productivity: addon.productivity || '',
+                        service_type_id: this.serviceTypeId || '',
+                        status: addon.is_active || false
                     }
                 }
             }
@@ -558,7 +585,7 @@ createApp({
                     delete this.validationErrors.manageAddOn.price;
                 }
             }
-            if (!this.addonFormFields.productivity || !this.addonFormFields.productivity.trim()) {
+            if (!this.addonFormFields.productivity || !String(this.addonFormFields.productivity).trim()) {
                 this.validationErrors.manageAddOn.productivity = 'Productivity is required.';
             }
 
@@ -868,7 +895,6 @@ createApp({
                     }
                 });
         },
-
         // Create a new service add-on via API
         createAddOn(formData, payload) {
             const csrftoken = this.getCookie('csrftoken');
@@ -922,7 +948,6 @@ createApp({
                     }
                 });
         },
-
         // Update an existing service add-on via API
         updateAddOn(formData, addonId, payload) {
             const csrftoken = this.getCookie('csrftoken');

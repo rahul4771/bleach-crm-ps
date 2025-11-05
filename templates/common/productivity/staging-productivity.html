@@ -365,7 +365,8 @@
                         <div class="dashboard-card-header">
                             <div class="d-flex align-items-center justify-content-between">
                                 <h5 class="dashboard-card-title">Add-Ons</h5>
-                                <button class="btn btn-primary" @click="handleAddAddonBtnClick" v-if="!toggleDivs.showView">Add
+                                <button class="btn btn-primary" @click="handleAddAddonBtnClick"
+                                    v-if="!toggleDivs.showView">Add
                                     Addon</button>
                             </div>
                         </div>
@@ -414,9 +415,9 @@
                                                     v-text="addon.is_active ? 'Active' : 'Inactive'"></span>
                                             </td>
                                             <td v-if="!toggleDivs.showView">
-                                                <button class="btn-action btn-edit" title="Edit"><i
+                                                <button class="btn-action btn-edit" title="Edit" @click="handleEditAddonBtnClick(addon)"><i
                                                         class="fa fa-pen"></i></button>
-                                                <button class="btn-action btn-delete" title="Delete"><i
+                                                <button class="btn-action btn-delete" title="Delete" @click="remove(addon)"><i
                                                         class="fa fa-trash"></i></button>
                                             </td>
                                         </tr>
@@ -767,7 +768,32 @@
                                                         class="text-danger">*</span></label>
                                                 <input type="text" id="addon_productivity" name="addon_productivity"
                                                     v-model="addonFormFields.productivity"
-                                                    placeholder="Productivity name" class="form-control">
+                                                    placeholder="Productivity name" :class="{'form-control': true, 'is-invalid': validationErrors['manageAddOn']['productivity'] }">
+                                                <div class="invalid-feedback"
+                                                    v-if="validationErrors['manageAddOn']['productivity']"
+                                                    v-text="validationErrors['manageAddOn']['productivity']">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="status_id" class="form-label">Status <span
+                                                        class="text-danger">*</span></label>
+                                                <select id="status_id" name="status"
+                                                    v-model="addonFormFields.status"
+                                                    :class="{'form-control': true, 'is-invalid': validationErrors['manageAddOn']['status'] }">
+                                                    <option value="" default>Choose an option</option>
+                                                    <option :value="true"
+                                                        :selected="addonFormFields.status === true">
+                                                        Active
+                                                    </option>
+                                                    <option :value="false"
+                                                        :selected="addonFormFields.status === false">Inactive
+                                                    </option>
+                                                </select>
+                                                <div class="invalid-feedback"
+                                                    v-if="validationErrors['manageAddOn']['status']"
+                                                    v-text="validationErrors['manageAddOn']['status']">
+                                                </div>
                                             </div>
 
                                             <input type="hidden" id="addon_service_type_id" name="addon_service_type_id"
