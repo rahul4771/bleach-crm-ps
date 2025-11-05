@@ -108,7 +108,7 @@
                                                         @click="handleEditServiceBtnClick(serviceType)"><i
                                                             class="fa fa-pen"></i></button>
                                                     <button class="btn-action btn-delete" title="Delete"
-                                                        @click="remove(serviceType)"><i
+                                                        @click="removeServiceType(serviceType)"><i
                                                             class="fa fa-trash"></i></button>
                                                 </td>
                                             </tr>
@@ -417,7 +417,7 @@
                                             <td v-if="!toggleDivs.showView">
                                                 <button class="btn-action btn-edit" title="Edit" @click="handleEditAddonBtnClick(addon)"><i
                                                         class="fa fa-pen"></i></button>
-                                                <button class="btn-action btn-delete" title="Delete" @click="remove(addon)"><i
+                                                <button class="btn-action btn-delete" title="Delete" @click="removeAddon(addon)"><i
                                                         class="fa fa-trash"></i></button>
                                             </td>
                                         </tr>

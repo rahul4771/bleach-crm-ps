@@ -136,10 +136,18 @@ createApp({
             }
 
         },
-        remove(serviceType) {
-            if (confirm(`Delete ${serviceType.name}?`)) {
-                this.serviceTypes = this.serviceTypes.filter(s => s.id !== serviceType.id);
+        removeServiceType(serviceType) {
+            const modal = document.getElementById('delete-modal');
+            if (modal) {
+                modal.classList.add('in', 'show');
+                modal.style.display = 'block';
+                document.body.classList.add('modal-open');
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                document.body.appendChild(backdrop);
+                this.deleteModal.softText = `Are you sure you want to continue with this action? This action will update the status of the service type "${serviceType.name}".`;
             }
+
         },
         // Handle add button clicks
         handleAddServiceBtnClick() {
@@ -245,6 +253,47 @@ createApp({
                 }
             }
         },
+        handleEditPriceRangeBtnClick(priceRange, productivityId) {
+            const modal = document.getElementById('manage-price-range-modal');
+            if (modal) {
+                modal.classList.add('in', 'show');
+                modal.style.display = 'block';
+                document.body.classList.add('modal-open');
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                document.body.appendChild(backdrop);
+                this.modalHeading = `Edit ${priceRange.name}`;
+                this.validationErrors['managePriceRange'] = [];
+                const form = document.getElementById('manage-price-range-form');
+                if (form) {
+                    form.setAttribute('data-action', 'edit');
+                    this.priceRangeFormFields = {
+                        id: priceRange.id,
+                        name: priceRange.name,
+                        price: priceRange.price,
+                        minimum_area: priceRange.minimum_area,
+                        maximum_area: priceRange.maximum_area,
+                        unit_price: priceRange.unit_price,
+                        status: priceRange.is_active,
+                        productivity_id: productivityId || '',
+                        service_type_id: this.serviceTypeId || ''
+                    }
+                }
+            }
+        },
+        removePriceRange(priceRange, productivityId) {
+            const modal = document.getElementById('delete-modal');
+            if (modal) {
+                modal.classList.add('in', 'show');
+                modal.style.display = 'block';
+                document.body.classList.add('modal-open');
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                document.body.appendChild(backdrop);
+                this.deleteModal.softText = `Are you sure you want to continue with this action? This action will update the status of the price range "${priceRange.name}".`;
+
+            }
+        },
         // Handle Add Add-on (Item) button click
         handleAddAddonBtnClick() {
             const modal = document.getElementById('manage-addon-modal');
@@ -299,6 +348,18 @@ createApp({
                 }
             }
         },
+        removeAddon(addon) {
+            const modal = document.getElementById('delete-modal');
+            if (modal) {
+                modal.classList.add('in', 'show');
+                modal.style.display = 'block';
+                document.body.classList.add('modal-open');
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                document.body.appendChild(backdrop);
+                this.deleteModal.softText = `Are you sure you want to continue with this action? This action will update the status of the add-on "${addon.name}".`;
+            }
+        },
 
         // Handle back button action
         backButtonAction(view) {
@@ -311,47 +372,6 @@ createApp({
         },
         setActiveProductivityTab(pid = null) {
             this.activePtab = pid
-        },
-        handleEditPriceRangeBtnClick(priceRange, productivityId) {
-            const modal = document.getElementById('manage-price-range-modal');
-            if (modal) {
-                modal.classList.add('in', 'show');
-                modal.style.display = 'block';
-                document.body.classList.add('modal-open');
-                const backdrop = document.createElement('div');
-                backdrop.className = 'modal-backdrop fade show';
-                document.body.appendChild(backdrop);
-                this.modalHeading = `Edit ${priceRange.name}`;
-                this.validationErrors['managePriceRange'] = [];
-                const form = document.getElementById('manage-price-range-form');
-                if (form) {
-                    form.setAttribute('data-action', 'edit');
-                    this.priceRangeFormFields = {
-                        id: priceRange.id,
-                        name: priceRange.name,
-                        price: priceRange.price,
-                        minimum_area: priceRange.minimum_area,
-                        maximum_area: priceRange.maximum_area,
-                        unit_price: priceRange.unit_price,
-                        status: priceRange.is_active,
-                        productivity_id: productivityId || '',
-                        service_type_id: this.serviceTypeId || ''
-                    }
-                }
-            }
-        },
-        removePriceRange(priceRange, productivityId) {
-            const modal = document.getElementById('delete-modal');
-            if (modal) {
-                modal.classList.add('in', 'show');
-                modal.style.display = 'block';
-                document.body.classList.add('modal-open');
-                const backdrop = document.createElement('div');
-                backdrop.className = 'modal-backdrop fade show';
-                document.body.appendChild(backdrop);
-                this.deleteModal.softText = `Are you sure you want to continue with this action? This action will update the status of the price range "${priceRange.name}".`;
-
-            }
         },
         confirmDelete() {
 
