@@ -6723,6 +6723,7 @@ class ServiceAddOnsAPIView(APIView):
 		size = (data.get("size")).strip()
 		price = (data.get("price")).strip()
 		productivity = (data.get("productivity")).strip()
+		is_active =  data.get("is_active") or 1
 
 		if not name:
 			return JsonResponse({"success": False, "error_field": "name", "error_message": "Name is required."}, status=400)
@@ -6768,7 +6769,8 @@ class ServiceAddOnsAPIView(APIView):
 			category=category,
 			size=size,
 			price=price,
-			productivity=productivity
+			productivity=productivity,
+			is_active=is_active
 		)
 		sa_obj = service_addon
 		sa_data= {
@@ -6778,7 +6780,8 @@ class ServiceAddOnsAPIView(APIView):
 			"category": sa_obj.category,
 			"size": sa_obj.size,
 			"price": float(sa_obj.price) if sa_obj.price is not None else None,
-			"productivity": float(sa_obj.productivity) if sa_obj.productivity is not None else None
+			"productivity": float(sa_obj.productivity) if sa_obj.productivity is not None else None,
+			"is_active": bool(sa_obj.is_active)
 		}
 
 		return JsonResponse({"success": True, "sa_data": sa_data}, status=201)
@@ -6797,6 +6800,7 @@ class ServiceAddOnsAPIView(APIView):
 		size = safe_str(data.get("size"))
 		price = safe_str(data.get("price"))
 		productivity = safe_str(data.get("productivity"))
+		is_active = safe_str(data.get("is_active")) or 1
 		
 		# Validations
 		if not addon_id:
@@ -6850,7 +6854,8 @@ class ServiceAddOnsAPIView(APIView):
 				category=category,
 				size=size,
 				price=price,
-				productivity=productivity
+				productivity=productivity,
+				is_active=is_active
 			)
 			sa_obj = sa.first()
 			sa_data = {
@@ -6860,7 +6865,8 @@ class ServiceAddOnsAPIView(APIView):
 				"category": sa_obj.category,
 				"size": sa_obj.size,
 				"price": float(sa_obj.price) if sa_obj.price is not None else None,
-				"productivity": float(sa_obj.productivity) if sa_obj.productivity is not None else None
+				"productivity": float(sa_obj.productivity) if sa_obj.productivity is not None else None,
+				"is_active": bool(sa_obj.is_active)
 			}
 			return JsonResponse({"success": True, "sa_data": sa_data}, status=201)
 		except Exception as e:
