@@ -255,7 +255,7 @@ createApp({
                 const backdrop = document.createElement('div');
                 backdrop.className = 'modal-backdrop fade show';
                 document.body.appendChild(backdrop);
-                this.modalHeading = 'Add Item';
+                this.modalHeading = 'Add New Addon';
                 this.validationErrors['manageAddOn'] = [];
                 const form = document.getElementById('manage-addon-form');
                 if (form) {
@@ -272,33 +272,7 @@ createApp({
                 }
             }
         },
-        handleAddAddonyBtnClick() {
-            const modal = document.getElementById('manage-addon-modal');
-            if (modal) {
-                modal.classList.add('in', 'show');
-                modal.style.display = 'block';
-                document.body.classList.add('modal-open');
-                const backdrop = document.createElement('div');
-                backdrop.className = 'modal-backdrop fade show';
-                document.body.appendChild(backdrop);
-                this.modalHeading = 'Add Item';
-                this.validationErrors['manageAddOn'] = [];
-                const form = document.getElementById('manage-addon-form');
-                if (form) {
-                    form.setAttribute('data-action', 'add');
-                    this.addonFormFields = {
-                        id: '',
-                        category_name: '',
-                        size: '',
-                        price: '',
-                        productivity: '',
-                        service_type_id: this.serviceTypeId || '',
-                        status: false
-                    }
-                }
-            }
-        },
-
+        
         // Submit Add-on form (create or update via API)
         submitAddonForm() {
             this.validationErrors.manageAddOn = {};
@@ -361,7 +335,7 @@ createApp({
                 const backdrop = document.createElement('div');
                 backdrop.className = 'modal-backdrop fade show';
                 document.body.appendChild(backdrop);
-                this.modalHeading = 'Add Price Range';
+                this.modalHeading = `Edit ${priceRange.name}`;
                 this.validationErrors['managePriceRange'] = [];
                 const form = document.getElementById('manage-price-range-form');
                 if (form) {
