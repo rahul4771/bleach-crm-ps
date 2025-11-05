@@ -6770,8 +6770,18 @@ class ServiceAddOnsAPIView(APIView):
 			price=price,
 			productivity=productivity
 		)
+		sa_obj = service_addon
+		sa_data= {
+			"id": sa_obj.id,
+			"service_type_id": sa_obj.service_type_id,
+			"name": sa_obj.name,
+			"category": sa_obj.category,
+			"size": sa_obj.size,
+			"price": float(sa_obj.price) if sa_obj.price is not None else None,
+			"productivity": float(sa_obj.productivity) if sa_obj.productivity is not None else None
+		}
 
-		return JsonResponse({"success": True, "id": service_addon.id}, status=201)
+		return JsonResponse({"success": True, "sa_data": sa_data}, status=201)
 
 	def put(self, request, *args, **kwargs):
 		data = getattr(request, "data", None) or request.data or {}
@@ -6842,7 +6852,17 @@ class ServiceAddOnsAPIView(APIView):
 				price=price,
 				productivity=productivity
 			)
-			return JsonResponse({"success": True, "id": sa.first().id}, status=201)
+			sa_obj = sa.first()
+			sa_data = {
+				"id": sa_obj.id,
+				"service_type_id": sa_obj.service_type_id,
+				"name": sa_obj.name,
+				"category": sa_obj.category,
+				"size": sa_obj.size,
+				"price": float(sa_obj.price) if sa_obj.price is not None else None,
+				"productivity": float(sa_obj.productivity) if sa_obj.productivity is not None else None
+			}
+			return JsonResponse({"success": True, "sa_data": sa_data}, status=201)
 		except Exception as e:
 			return JsonResponse({"success": False, "error_message": str(e)}, status=500)
 		
