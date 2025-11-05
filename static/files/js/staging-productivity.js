@@ -272,48 +272,7 @@ createApp({
                 }
             }
         },
-        
-        // Submit Add-on form (create or update via API)
-        submitAddonForm() {
-            this.validationErrors.manageAddOn = {};
-            if (!this.addonFormFields.item || !this.addonFormFields.item.trim()) {
-                this.validationErrors.manageAddOn.categoryName = 'Category Name is required.';
-            }
-            const priceVal = this.addonFormFields.price;
-            if (priceVal === '' || priceVal === null || priceVal === undefined) {
-                this.validationErrors.manageAddOn.price = 'Price is required.';
-            } else {
-                const num = Number(priceVal);
-                if (Number.isNaN(num) || num < 0) {
-                    this.validationErrors.manageAddOn.price = 'Please enter a valid non-negative number for price';
-                } else {
-                    delete this.validationErrors.manageAddOn.price;
-                }
-            }
 
-            if (Object.keys(this.validationErrors.manageAddOn).length > 0) return;
-
-            const payload = {
-                id: this.addonFormFields.id,
-                name: this.addonFormFields.item ? this.addonFormFields.item.trim() : '',
-                category: this.addonFormFields.category_name ? this.addonFormFields.category_name.trim() : '',
-                size: this.addonFormFields.size,
-                price: this.addonFormFields.price,
-                productivity: this.addonFormFields.productivity,
-                service_type: this.addonFormFields.service_type_id || this.serviceTypeId || '',
-                is_active: this.addonFormFields.status ? 1 : 0
-            };
-
-            const form = document.getElementById('manage-addon-form');
-            const formAction = form ? form.getAttribute('data-action') : 'add';
-            if (formAction === 'add') {
-                this.createAddOn(this.toFormData(payload), payload);
-            } else {
-                const id = this.addonFormFields.id;
-                this.updateAddOn(this.toFormData(payload), id, payload);
-            }
-
-        },
         // Handle back button action
         backButtonAction(view) {
             Object.keys(this.toggleDivs).forEach(key => {
@@ -496,7 +455,6 @@ createApp({
             }
 
         },
-
         /* Add or update price range */
         submitPriceRangeForm() {
             this.validationErrors.managePriceRange = {};
@@ -582,6 +540,47 @@ createApp({
                 const id = this.priceRangeFormFields.id;
                 this.updatePriceRange(this.toFormData(payload), id);
             }
+        },
+        // Submit Add-on form (create or update via API)
+        submitAddonForm() {
+            this.validationErrors.manageAddOn = {};
+            if (!this.addonFormFields.item || !this.addonFormFields.item.trim()) {
+                this.validationErrors.manageAddOn.categoryName = 'Category Name is required.';
+            }
+            const priceVal = this.addonFormFields.price;
+            if (priceVal === '' || priceVal === null || priceVal === undefined) {
+                this.validationErrors.manageAddOn.price = 'Price is required.';
+            } else {
+                const num = Number(priceVal);
+                if (Number.isNaN(num) || num < 0) {
+                    this.validationErrors.manageAddOn.price = 'Please enter a valid non-negative number for price';
+                } else {
+                    delete this.validationErrors.manageAddOn.price;
+                }
+            }
+
+            if (Object.keys(this.validationErrors.manageAddOn).length > 0) return;
+
+            const payload = {
+                id: this.addonFormFields.id,
+                name: this.addonFormFields.item ? this.addonFormFields.item.trim() : '',
+                category: this.addonFormFields.category_name ? this.addonFormFields.category_name.trim() : '',
+                size: this.addonFormFields.size,
+                price: this.addonFormFields.price,
+                productivity: this.addonFormFields.productivity,
+                service_type: this.addonFormFields.service_type_id || this.serviceTypeId || '',
+                is_active: this.addonFormFields.status ? 1 : 0
+            };
+
+            const form = document.getElementById('manage-addon-form');
+            const formAction = form ? form.getAttribute('data-action') : 'add';
+            if (formAction === 'add') {
+                this.createAddOn(this.toFormData(payload), payload);
+            } else {
+                const id = this.addonFormFields.id;
+                this.updateAddOn(this.toFormData(payload), id, payload);
+            }
+
         },
 
         // Fetch service types from the server
