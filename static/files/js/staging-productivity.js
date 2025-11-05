@@ -545,7 +545,7 @@ createApp({
         submitAddonForm() {
             this.validationErrors.manageAddOn = {};
             if (!this.addonFormFields.item || !this.addonFormFields.item.trim()) {
-                this.validationErrors.manageAddOn.categoryName = 'Category Name is required.';
+                this.validationErrors.manageAddOn.item = 'Item name is required.';
             }
             const priceVal = this.addonFormFields.price;
             if (priceVal === '' || priceVal === null || priceVal === undefined) {
@@ -557,6 +557,9 @@ createApp({
                 } else {
                     delete this.validationErrors.manageAddOn.price;
                 }
+            }
+            if (!this.addonFormFields.productivity || !this.addonFormFields.productivity.trim()) {
+                this.validationErrors.manageAddOn.productivity = 'Productivity is required.';
             }
 
             if (Object.keys(this.validationErrors.manageAddOn).length > 0) return;
@@ -789,7 +792,6 @@ createApp({
                     }
                 });
         },
-
         // Create a new price range
         createPriceRange(formData) {
             const csrftoken = this.getCookie('csrftoken')
@@ -828,7 +830,6 @@ createApp({
                     }
                 });
         },
-
         // Update an existing price range
         updatePriceRange(formData, priceRangeId) {
             const csrftoken = this.getCookie('csrftoken')
