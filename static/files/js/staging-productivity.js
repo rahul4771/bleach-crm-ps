@@ -36,6 +36,7 @@ createApp({
             deleteModal: {
                 softText: '',
                 strongText: '',
+                id: ''
             },
             viewServiceType: {
                 title: '',
@@ -146,6 +147,12 @@ createApp({
                 backdrop.className = 'modal-backdrop fade show';
                 document.body.appendChild(backdrop);
                 this.deleteModal.softText = `Are you sure you want to continue with this action? This action will update the status of the service type "${serviceType.name}".`;
+                const form = document.getElementById('delete-form');
+                if (form) {
+                    form.setAttribute('data-delete-property', 'service-type');
+                    this.deleteModal.id = serviceType.id || '';
+                    
+                }
             }
 
         },
@@ -292,6 +299,11 @@ createApp({
                 document.body.appendChild(backdrop);
                 this.deleteModal.softText = `Are you sure you want to continue with this action? This action will update the status of the price range "${priceRange.name}".`;
 
+                const form = document.getElementById('delete-form');
+                if (form) {
+                    form.setAttribute('data-delete-property', 'price-range');
+                    this.deleteModal.id = priceRange.id || '';
+                }
             }
         },
         // Handle Add Add-on (Item) button click
@@ -358,6 +370,12 @@ createApp({
                 backdrop.className = 'modal-backdrop fade show';
                 document.body.appendChild(backdrop);
                 this.deleteModal.softText = `Are you sure you want to continue with this action? This action will update the status of the add-on "${addon.name}".`;
+                // append form with data set of type 'add-on'
+                const form = document.getElementById('delete-form');
+                if (form) {
+                    form.setAttribute('data-delete-property', 'add-on');
+                    this.deleteModal.id = addon.id || '';
+                }
             }
         },
 
@@ -373,7 +391,35 @@ createApp({
         setActiveProductivityTab(pid = null) {
             this.activePtab = pid
         },
-        confirmDelete() {
+        deleteProperty() {
+            const form = document.getElementById('delete-form');
+            if (form) {
+                const propertyType = form.getAttribute('data-delete-property');
+                const id = form.querySelector('input[name="delete_id"]').value;
+                if (propertyType === 'service-type') {
+                    const payload = {
+                        new_service_is_active:"inactive"
+                    }
+                    this.updateServiceType(this.toFormData(payload), id);
+                    return;
+                }
+                if (propertyType === 'price-range') {
+                    const payload = {
+                        status: 0
+                    }
+                    this.updatePriceRange(this.toFormData(payload), id);
+                    return;
+                }
+                if (propertyType === 'add-on') {
+                    const payload = {
+                        is_active: 0
+                    }
+                    this.updateAddOn(this.toFormData(payload), id);
+                    return;
+                }
+
+            }
+
 
         },
         // Close modal(s).
@@ -916,7 +962,7 @@ createApp({
                 });
         },
         // Create a new service add-on via API
-        createAddOn(formData, payload) {
+        createAddOn(formData) {
             const csrftoken = this.getCookie('csrftoken');
             const baseUrl = window.location.origin;
             const url = `${baseUrl}/common/add-service-addons/`;
@@ -937,16 +983,7 @@ createApp({
                     this.closeModal();
                     const key = String(payload.service_type || this.serviceTypeId || '0');
                     if (!this.serviceAddons[key]) this.serviceAddons[key] = [];
-                    const item = {
-                        id: data.id,
-                        service_type_id: payload.service_type || this.serviceTypeId || '',
-                        name: payload.name,
-                        category: payload.category,
-                        size: payload.size,
-                        price: typeof payload.price === 'string' ? Number(payload.price) : payload.price,
-                        productivity: payload.productivity,
-                        is_active: !!payload.is_active,
-                    };
+                    const item = data.service_addon || data;
                     item.avatar = `${this.avatarBaseUrl}?name=${encodeURIComponent(item.name)}&background=${this.colorCodes[item.id % this.colorCodes.length]}&color=fff`;
                     this.serviceAddons[key].push(item);
                     this.successMsg = 'Addon saved successfully.';
@@ -969,7 +1006,7 @@ createApp({
                 });
         },
         // Update an existing service add-on via API
-        updateAddOn(formData, addonId, payload) {
+        updateAddOn(formData, addonId) {
             const csrftoken = this.getCookie('csrftoken');
             const baseUrl = window.location.origin;
             const url = `${baseUrl}/common/update-service-addons/${addonId}`;
@@ -987,24 +1024,17 @@ createApp({
                     return res.json();
                 })
                 .then(data => {
+                    if (data.success) {
                     this.closeModal();
                     const key = String(payload.service_type || this.serviceTypeId || '0');
                     if (!this.serviceAddons[key]) this.serviceAddons[key] = [];
-                    const updated = {
-                        id: Number(addonId),
-                        service_type_id: payload.service_type || this.serviceTypeId || '',
-                        name: payload.name,
-                        category: payload.category,
-                        size: payload.size,
-                        price: typeof payload.price === 'string' ? Number(payload.price) : payload.price,
-                        productivity: payload.productivity,
-                        is_active: !!payload.is_active,
-                    };
+                    const updated = data.service_addon || data;
                     updated.avatar = `${this.avatarBaseUrl}?name=${encodeURIComponent(updated.name)}&background=${this.colorCodes[updated.id % this.colorCodes.length]}&color=fff`;
                     const index = this.serviceAddons[key].findIndex(p => String(p.id) === String(updated.id));
                     if (index !== -1) this.serviceAddons[key].splice(index, 1, updated);
                     this.successMsg = updated && updated.name ? `Addon ${updated.name} updated successfully.` : 'Addon updated successfully.';
                     setTimeout(() => { this.successMsg = ''; }, 5000);
+                    }
                 })
                 .catch(async err => {
                     if (err.json) {

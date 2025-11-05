@@ -6784,7 +6784,7 @@ class ServiceAddOnsAPIView(APIView):
 			"is_active": bool(sa_obj.is_active)
 		}
 
-		return JsonResponse({"success": True, "sa_data": sa_data}, status=201)
+		return JsonResponse({"success": True, "service_addon": sa_data}, status=201)
 
 	def put(self, request, *args, **kwargs):
 		data = getattr(request, "data", None) or request.data or {}
@@ -6868,7 +6868,7 @@ class ServiceAddOnsAPIView(APIView):
 				"productivity": float(sa_obj.productivity) if sa_obj.productivity is not None else None,
 				"is_active": bool(sa_obj.is_active)
 			}
-			return JsonResponse({"success": True, "sa_data": sa_data}, status=201)
+			return JsonResponse({"success": True, "service_addon": sa_data}, status=201)
 		except Exception as e:
 			return JsonResponse({"success": False, "error_message": str(e)}, status=500)
 		

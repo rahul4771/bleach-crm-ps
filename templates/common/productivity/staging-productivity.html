@@ -415,10 +415,11 @@
                                                     v-text="addon.is_active ? 'Active' : 'Inactive'"></span>
                                             </td>
                                             <td v-if="!toggleDivs.showView">
-                                                <button class="btn-action btn-edit" title="Edit" @click="handleEditAddonBtnClick(addon)"><i
+                                                <button class="btn-action btn-edit" title="Edit"
+                                                    @click="handleEditAddonBtnClick(addon)"><i
                                                         class="fa fa-pen"></i></button>
-                                                <button class="btn-action btn-delete" title="Delete" @click="removeAddon(addon)"><i
-                                                        class="fa fa-trash"></i></button>
+                                                <button class="btn-action btn-delete" title="Delete"
+                                                    @click="removeAddon(addon)"><i class="fa fa-trash"></i></button>
                                             </td>
                                         </tr>
                                         <tr
@@ -768,7 +769,8 @@
                                                         class="text-danger">*</span></label>
                                                 <input type="text" id="addon_productivity" name="addon_productivity"
                                                     v-model="addonFormFields.productivity"
-                                                    placeholder="Productivity name" :class="{'form-control': true, 'is-invalid': validationErrors['manageAddOn']['productivity'] }">
+                                                    placeholder="Productivity name"
+                                                    :class="{'form-control': true, 'is-invalid': validationErrors['manageAddOn']['productivity'] }">
                                                 <div class="invalid-feedback"
                                                     v-if="validationErrors['manageAddOn']['productivity']"
                                                     v-text="validationErrors['manageAddOn']['productivity']">
@@ -778,16 +780,14 @@
                                             <div class="form-group">
                                                 <label for="status_id" class="form-label">Status <span
                                                         class="text-danger">*</span></label>
-                                                <select id="status_id" name="status"
-                                                    v-model="addonFormFields.status"
+                                                <select id="status_id" name="status" v-model="addonFormFields.status"
                                                     :class="{'form-control': true, 'is-invalid': validationErrors['manageAddOn']['status'] }">
                                                     <option value="" default>Choose an option</option>
-                                                    <option :value="true"
-                                                        :selected="addonFormFields.status === true">
+                                                    <option :value="true" :selected="addonFormFields.status === true">
                                                         Active
                                                     </option>
-                                                    <option :value="false"
-                                                        :selected="addonFormFields.status === false">Inactive
+                                                    <option :value="false" :selected="addonFormFields.status === false">
+                                                        Inactive
                                                     </option>
                                                 </select>
                                                 <div class="invalid-feedback"
@@ -827,11 +827,15 @@
                                 <div class="modal-body">
                                     <p v-text="deleteModal.softText"></p>
                                     <p class="text-danger"><strong v-text="deleteModal.strongText"></strong></p>
+                                    <form id="delete-form">
+                                        <input type="hidden" id="delete_id" name="delete_id"
+                                            v-model="deleteModal.id">
+                                    </form>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                                         @click="closeModal($event)">Cancel</button>
-                                    <button type="button" class="btn btn-danger">Delete</button>
+                                    <button type="button" class="btn btn-danger" @click="deleteProperty">Delete</button>
                                 </div>
                             </div>
                         </div>
