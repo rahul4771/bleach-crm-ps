@@ -255,7 +255,7 @@
                                                 </div>
                                                 <div>
                                                     <span @click="handleEditProductivityBtnClick(productivity)"
-                                                        :style="{cursor: 'pointer'}">
+                                                        :style="{cursor: 'pointer'}" v-if="!toggleDivs.showView">
                                                         <i class="fa fa-pen" title="Productivity in sqm/man/hrg"></i>
                                                     </span>
                                                 </div>

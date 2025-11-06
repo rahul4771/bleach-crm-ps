@@ -1079,12 +1079,12 @@ createApp({
                 })
                 .then(data => {
                     this.closeModal();
-                    const index = this.serviceTypes.findIndex(s => s.id === serviceId);
+                    const index = this.serviceTypes.findIndex(s => s.id == serviceId);
                     if (index !== -1) {
                         data.service_type.avatar = `${this.avatarBaseUrl}?name=${encodeURIComponent(data.service_type.name)}&background=${this.colorCodes[data.service_type.id % this.colorCodes.length]}&color=fff`;
                         this.serviceTypes.splice(index, 1, data.service_type);
                     }
-                    this.successMsg = data.service_type ? `Service type "${data.service_type}" updated.` : 'Service type updated.';
+                    this.successMsg = data.service_type ? `Service type "${data.service_type.name}" updated successfully.` : 'Service type updated successfully.';
                     setTimeout(() => { this.successMsg = ''; }, 5000);
                 })
                 .catch(async err => {
