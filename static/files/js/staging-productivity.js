@@ -989,7 +989,7 @@ createApp({
                 })
                 .then(data => {
                     this.closeModal();
-                    const key = String(payload.service_type || this.serviceTypeId || '0');
+                    const key = String(data.service_addon?.service_type_id || this.serviceTypeId || '0');
                     if (!this.serviceAddons[key]) this.serviceAddons[key] = [];
                     const item = data.service_addon || data;
                     item.avatar = `${this.avatarBaseUrl}?name=${encodeURIComponent(item.name)}&background=${this.colorCodes[item.id % this.colorCodes.length]}&color=fff`;
