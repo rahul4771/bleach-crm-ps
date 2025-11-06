@@ -6437,8 +6437,14 @@ class ServiceTypeAPIView(APIView):
 			service_type.name_arabic = name_arabic
 			service_type.is_active = is_active
 		service_type.save()
+		st_obj = {
+			"id": service_type.id,
+			"name": service_type.name,
+			"name_arabic": service_type.name_arabic,
+			"is_active": service_type.is_active,
+		}
 
-		return JsonResponse({"success": True, "service_type": service_type.name})		
+		return JsonResponse({"success": True, "service_type": st_obj})
 
 	def delete(self, request, *args, **kwargs):
 		raw_id = kwargs.get("service_type_id")
@@ -6927,7 +6933,7 @@ class ServiceAddOnsAPIView(APIView):
 	def delete(self, request, *args, **kwargs):
 		addon_id = kwargs.get("addon_id")
 		addon_id = int(addon_id)
-		is_active = safe_str(data.get("is_active")) or 1
+		is_active = 0
 		
 		if not addon_id:
 			return JsonResponse({"success": False, "error": "Addon id required"}, status=400)
