@@ -6440,6 +6440,31 @@ class ServiceTypeAPIView(APIView):
 
 		return JsonResponse({"success": True, "service_type": service_type.name})		
 
+	def delete(self, request, *args, **kwargs):
+		raw_id = kwargs.get("service_type_id")
+		if raw_id is None:
+			return JsonResponse({"success": False, "error": "service_type_id required"}, status=400)
+	
+		try:
+			service_type_id = int(raw_id)
+		except (TypeError, ValueError):
+			return JsonResponse({"success": False, "error": "Invalid service_type_id"}, status=400)
+
+		service_type = ServiceType.objects.filter(id=service_type_id).first()
+		if not service_type:
+			return JsonResponse({"success": False, "error": "Invalid service type."}, status=400)
+
+		service_type.is_active = False
+		service_type.save()
+		st_obj = {
+			"id": service_type.id,
+			"name": service_type.name,
+			"name_arabic": service_type.name_arabic,
+			"is_active": service_type.is_active,
+		}
+
+		return JsonResponse({"success": True, "message": "Service type deactivated successfully.", "service_type": st_obj})
+
 class ServiceProductivityAPIView(APIView):
 
 	def post(self, request, *args, **kwargs):
@@ -6712,7 +6737,34 @@ class ProductivityPriceRangeAPIView(APIView):
 		except Exception as e:
 			return JsonResponse({"success": False, "error_message": str(e)}, status=500)
 
+	def delete(self, request, *args, **kwargs):
+		price_range_id = kwargs.get("price_range_id")
+		price_range_id = int(price_range_id)
+		is_active =  0
+		
+		if not price_range_id:
+			return JsonResponse({"success": False, "error": "price_range_id required"}, status=400)
 
+		pr = ServicePriceRange.objects.filter(id=price_range_id)
+		if not pr.exists():
+			return JsonResponse({"success": False, "error": "Service price range not found"}, status=404)
+
+		pr.update(
+			is_active=is_active
+		)
+		pr_obj = pr.first()
+		pr_data = {
+			"id": pr_obj.id,
+			"service_type_id": pr_obj.service_type_id,
+			"service_productivity_id": pr_obj.service_productivity_id,
+			"name": pr_obj.name,
+			"price": float(pr_obj.price) if pr_obj.price is not None else None,
+			"minimum_area": pr_obj.minimum_area,
+			"maximum_area": pr_obj.maximum_area,
+			"unit_price": float(pr_obj.unit_price) if pr_obj.unit_price is not None else None,
+			"is_active": bool(pr_obj.is_active),
+		}
+		return JsonResponse({"success": True, "service_price_range": pr_data}, status=201)
 class ServiceAddOnsAPIView(APIView):
 
 	def post(self, request, *args, **kwargs):
@@ -6872,6 +6924,37 @@ class ServiceAddOnsAPIView(APIView):
 		except Exception as e:
 			return JsonResponse({"success": False, "error_message": str(e)}, status=500)
 		
+	def delete(self, request, *args, **kwargs):
+		addon_id = kwargs.get("addon_id")
+		addon_id = int(addon_id)
+		is_active = safe_str(data.get("is_active")) or 1
+		
+		if not addon_id:
+			return JsonResponse({"success": False, "error": "Addon id required"}, status=400)
+
+		sa = ServiceAddOns.objects.filter(id=addon_id)
+		if not sa.exists():
+			return JsonResponse({"success": False, "error": "Service addon not found"}, status=404)
+		
+		try:
+			sa.update(
+				is_active=is_active
+			)
+			sa_obj = sa.first()
+			sa_data = {
+				"id": sa_obj.id,
+				"service_type_id": sa_obj.service_type_id,
+				"name": sa_obj.name,
+				"category": sa_obj.category,
+				"size": sa_obj.size,
+				"price": float(sa_obj.price) if sa_obj.price is not None else None,
+				"productivity": float(sa_obj.productivity) if sa_obj.productivity is not None else None,
+				"is_active": bool(sa_obj.is_active)
+			}
+			return JsonResponse({"success": True, "service_addon": sa_data}, status=201)
+		except Exception as e:
+			return JsonResponse({"success": False, "error_message": str(e)}, status=500)
+
 class StagingProductivity(IsAuthenticated,View):
 	def get(self,request):
 

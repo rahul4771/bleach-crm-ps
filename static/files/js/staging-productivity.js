@@ -151,7 +151,7 @@ createApp({
                 if (form) {
                     form.setAttribute('data-delete-property', 'service-type');
                     this.deleteModal.id = serviceType.id || '';
-                    
+
                 }
             }
 
@@ -398,23 +398,23 @@ createApp({
                 const id = form.querySelector('input[name="delete_id"]').value;
                 if (propertyType === 'service-type') {
                     const payload = {
-                        new_service_is_active:"inactive"
+                        new_service_is_active: "inactive"
                     }
-                    this.updateServiceType(this.toFormData(payload), id);
+                    this.deleteServiceType(this.toFormData(payload), id);
                     return;
                 }
                 if (propertyType === 'price-range') {
                     const payload = {
                         status: 0
                     }
-                    this.updatePriceRange(this.toFormData(payload), id);
+                    this.deletePriceRange(this.toFormData(payload), id);
                     return;
                 }
                 if (propertyType === 'add-on') {
                     const payload = {
                         is_active: 0
                     }
-                    this.updateAddOn(this.toFormData(payload), id);
+                    this.deleteAddOn(this.toFormData(payload), id);
                     return;
                 }
 
@@ -760,6 +760,8 @@ createApp({
                         this.successMsg = data.service_type
                             ? `Service type "${data.service_type}" added successfully.`
                             : 'Service type added successfully.';
+                        data.service_type.avatar = `${this.avatarBaseUrl}?name=${encodeURIComponent(data.service_type.name)}&background=${this.colorCodes[data.service_type.id % this.colorCodes.length]}&color=fff`;
+                        this.serviceTypes.push(data.service_type);
                         this.resetNewService();
                         setTimeout(() => { this.successMsg = ''; }, 5000);
 
@@ -800,6 +802,12 @@ createApp({
                         this.successMsg = data.service_type
                             ? `Service type "${data.service_type}" updated successfully.`
                             : 'Service type updated successfully.';
+                        // update local serviceTypes array
+                        const index = this.serviceTypes.findIndex(s => s.id === serviceId);
+                        if (index !== -1) {
+                            data.service_type.avatar = `${this.avatarBaseUrl}?name=${encodeURIComponent(data.service_type.name)}&background=${this.colorCodes[data.service_type.id % this.colorCodes.length]}&color=fff`;
+                            this.serviceTypes.splice(index, 1, data.service_type);
+                        }
                         this.resetNewService();
                         setTimeout(() => { this.successMsg = ''; }, 5000);
 
@@ -1025,15 +1033,15 @@ createApp({
                 })
                 .then(data => {
                     if (data.success) {
-                    this.closeModal();
-                    const key = String(payload.service_type || this.serviceTypeId || '0');
-                    if (!this.serviceAddons[key]) this.serviceAddons[key] = [];
-                    const updated = data.service_addon || data;
-                    updated.avatar = `${this.avatarBaseUrl}?name=${encodeURIComponent(updated.name)}&background=${this.colorCodes[updated.id % this.colorCodes.length]}&color=fff`;
-                    const index = this.serviceAddons[key].findIndex(p => String(p.id) === String(updated.id));
-                    if (index !== -1) this.serviceAddons[key].splice(index, 1, updated);
-                    this.successMsg = updated && updated.name ? `Addon ${updated.name} updated successfully.` : 'Addon updated successfully.';
-                    setTimeout(() => { this.successMsg = ''; }, 5000);
+                        this.closeModal();
+                        const key = String(data.service_addon?.service_type_id || this.serviceTypeId || '0');
+                        if (!this.serviceAddons[key]) this.serviceAddons[key] = [];
+                        const updated = data.service_addon || data;
+                        updated.avatar = `${this.avatarBaseUrl}?name=${encodeURIComponent(updated.name)}&background=${this.colorCodes[updated.id % this.colorCodes.length]}&color=fff`;
+                        const index = this.serviceAddons[key].findIndex(p => String(p.id) === String(updated.id));
+                        if (index !== -1) this.serviceAddons[key].splice(index, 1, updated);
+                        this.successMsg = updated && updated.name ? `Addon ${updated.name} updated successfully.` : 'Addon updated successfully.';
+                        setTimeout(() => { this.successMsg = ''; }, 5000);
                     }
                 })
                 .catch(async err => {
@@ -1046,6 +1054,125 @@ createApp({
                         } else if (body.errors) {
                             this.validationErrors.manageAddOn = body.errors || {};
                         }
+                    } else {
+                        console.error(err);
+                    }
+                });
+        },
+        // Delete (deactivate) a service type by delegating to the same update endpoint
+        deleteServiceType(formData, serviceId) {
+            const csrftoken = this.getCookie('csrftoken');
+            const baseUrl = window.location.origin;
+            const url = `${baseUrl}/common/delete-service-type/${serviceId}/`;
+            fetch(url, {
+                method: 'DELETE',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+                .then(res => {
+                    if (!res.ok) throw res;
+                    return res.json();
+                })
+                .then(data => {
+                    this.closeModal();
+                    const index = this.serviceTypes.findIndex(s => s.id === serviceId);
+                    if (index !== -1) {
+                        data.service_type.avatar = `${this.avatarBaseUrl}?name=${encodeURIComponent(data.service_type.name)}&background=${this.colorCodes[data.service_type.id % this.colorCodes.length]}&color=fff`;
+                        this.serviceTypes.splice(index, 1, data.service_type);
+                    }
+                    this.successMsg = data.service_type ? `Service type "${data.service_type}" updated.` : 'Service type updated.';
+                    setTimeout(() => { this.successMsg = ''; }, 5000);
+                })
+                .catch(async err => {
+                    if (err.json) {
+                        const body = await err.json();
+                        this.validationErrors.manageServiceType = body.errors || {};
+                    } else {
+                        console.error(err);
+                    }
+                });
+        },
+
+        // Delete (deactivate) a price range by calling the update endpoint and updating local state
+        deletePriceRange(formData, priceRangeId) {
+            const csrftoken = this.getCookie('csrftoken');
+            const baseUrl = window.location.origin;
+            const url = `${baseUrl}/common/delete-service-price-range/${priceRangeId}/`;
+            fetch(url, {
+                method: 'DELETE',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+                .then(res => {
+                    if (!res.ok) throw res;
+                    return res.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        this.closeModal();
+                        const key = String(data.service_price_range?.service_productivity_id || '0');
+                        if (!this.servicePriceRanges[key]) this.servicePriceRanges[key] = [];
+                        const updated = data.service_price_range || data;
+                        updated.avatar = `${this.avatarBaseUrl}?name=${encodeURIComponent(updated.name)}&background=${this.colorCodes[updated.id % this.colorCodes.length]}&color=fff`;
+                        const index = this.servicePriceRanges[key].findIndex(p => p.id === updated.id);
+                        if (index !== -1) this.servicePriceRanges[key].splice(index, 1, updated);
+                        this.successMsg = updated && updated.name ? `Price range ${updated.name} updated successfully.` : 'Price range updated successfully.';
+                        setTimeout(() => { this.successMsg = ''; }, 5000);
+                    }
+                })
+                .catch(async err => {
+                    if (err.json) {
+                        const body = await err.json();
+                        this.validationErrors.managePriceRange = body.errors || {};
+                    } else {
+                        console.error(err);
+                    }
+                });
+        },
+
+        // Delete (deactivate) an add-on by calling the update endpoint and updating local state
+        deleteAddOn(formData, addonId) {
+            const csrftoken = this.getCookie('csrftoken');
+            const baseUrl = window.location.origin;
+            const url = `${baseUrl}/common/delete-service-addons/${addonId}/`;
+            fetch(url, {
+                method: 'DELETE',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+                .then(res => {
+                    if (!res.ok) throw res;
+                    return res.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        this.closeModal();
+                        const key = String(data.service_addon?.service_type_id || this.serviceTypeId || '0');
+                        if (!this.serviceAddons[key]) this.serviceAddons[key] = [];
+                        const updated = data.service_addon || data;
+                        updated.avatar = `${this.avatarBaseUrl}?name=${encodeURIComponent(updated.name)}&background=${this.colorCodes[updated.id % this.colorCodes.length]}&color=fff`;
+                        const index = this.serviceAddons[key].findIndex(p => String(p.id) === String(updated.id));
+                        if (index !== -1) this.serviceAddons[key].splice(index, 1, updated);
+                        this.successMsg = updated && updated.name ? `Addon ${updated.name} updated successfully.` : 'Addon updated successfully.';
+                        setTimeout(() => { this.successMsg = ''; }, 5000);
+                    }
+                })
+                .catch(async err => {
+                    if (err.json) {
+                        const body = await err.json();
+                        this.validationErrors.manageAddOn = body.errors || {};
                     } else {
                         console.error(err);
                     }
