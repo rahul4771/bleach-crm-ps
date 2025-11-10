@@ -166,6 +166,11 @@ createApp({
             };
 
             const form = document.getElementById('manage-service-form');
+            this.serviceFormFields = {
+                name: '',
+                name_arabic: '',
+                is_active: '',
+            };
             if (form) {
                 form.setAttribute('data-action', 'add')
             }
