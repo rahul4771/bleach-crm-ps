@@ -253,7 +253,7 @@ createApp({
                         minimum_area: '',
                         maximum_area: '',
                         unit_price: '',
-                        status: this.priceRangeFormFields.status || false,
+                        status: this.priceRangeFormFields.status || '',
                         productivity_id: this.activePtab || (this.productivities && this.productivities[String(this.serviceTypeId ?? '0')] && this.productivities[String(this.serviceTypeId ?? '0')][0] && this.productivities[String(this.serviceTypeId ?? '0')][0].id) || '',
                         service_type_id: this.serviceTypeId || ''
                     }
