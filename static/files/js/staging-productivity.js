@@ -92,6 +92,8 @@ createApp({
     },
     // Methods for handling service types
     methods: {
+   
+
         // Handle view, edit, remove actions
         handleServiceViewBtnClick(serviceType) {
             this.toggleDivs.showList = false;

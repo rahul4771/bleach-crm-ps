@@ -9,6 +9,12 @@
 <style>
     [v-cloak] {
         display: none !important;
+    .fa-trash {
+    transition: color 0.2s ease;
+}
+.fa-trash:hover {
+    color: darkred;
+}
     }
 </style>
 <div class="wrapper" id="app" v-cloak>
@@ -255,15 +261,28 @@
                                                     v-text="productivity.perhour_cleaning || '--'">
                                                 </div>
                                                 <div>
-                                                    <span @click="handleEditProductivityBtnClick(productivity)"
+                                                    {% comment %} <span @click="handleEditProductivityBtnClick(productivity)"
                                                         :style="{cursor: 'pointer'}" v-if="!toggleDivs.showView">
                                                         <i class="fa fa-pen" title="Productivity in sqm/man/hrg"></i>
-                                                    </span>
+                                                    </span> {% endcomment %}
+                                                    <div v-if="!toggleDivs.showView" class="d-flex gap-2">
+                                                <!-- ✏️ Edit Button -->
+                                                
+                                                <span @click="handleEditProductivityBtnClick(productivity)" style="cursor: pointer;">
+                                                    <i class="fa fa-pen" title="Edit Category"></i>
+                                                </span>
+
+                                                <!-- 🗑️ Delete Button -->
+                                              <span @click="handleDeleteProductivityBtnClick(productivity)" style="cursor: pointer; color: red;">
+                                                <i class="fa fa-trash" title="Delete Category"></i>
+                                            </span>
+                                            </div>
                                                 </div>
                                             </div>
+                                            
 
-                                            <span class="stats-card-change positive"
-                                                v-if="productivity.perhour_cleaning">sqm/man/hrg</span>
+                                             <span class="stats-card-change positive"
+                                                v-if="productivity.perhour_cleaning">sqm/man/hrg</span> 
                                         </div>
                                     </div>
                                     <div class="table-responsive">
@@ -770,7 +789,7 @@
                                                         class="text-danger">*</span></label>
                                                 <input type="text" id="addon_productivity" name="addon_productivity"
                                                     v-model="addonFormFields.productivity"
-                                                    placeholder="Productivity name"
+                                                    placeholder="Enter Productivity "
                                                     :class="{'form-control': true, 'is-invalid': validationErrors['manageAddOn']['productivity'] }">
                                                 <div class="invalid-feedback"
                                                     v-if="validationErrors['manageAddOn']['productivity']"
