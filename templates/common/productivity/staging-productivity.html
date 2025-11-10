@@ -493,7 +493,7 @@
                                                     Hours</label>
                                                 <input type="text" id="productivity_cleaning_hours"
                                                     name="productivity_cleaning_hours"
-                                                    v-model="categoryFormFields.perhour_cleaning" placeholder=""
+                                                    v-model="categoryFormFields.perhour_cleaning" placeholder="Enter required cleaning hours"
                                                     :class="{'form-control': true, 'is-invalid': validationErrors['manageProductivity']['cleaningHours'] }">
                                                 <div class="invalid-feedback"
                                                     v-if="validationErrors['manageProductivity']['cleaningHours']"
@@ -505,7 +505,7 @@
                                                     Cleaners Required</label>
                                                 <input type="text" id="productivity_max_cleaners"
                                                     name="productivity_max_cleaners"
-                                                    v-model="categoryFormFields.max_cleaners" placeholder=""
+                                                    v-model="categoryFormFields.max_cleaners" placeholder="Enter maximum cleaners required"
                                                     :class="{'form-control': true, 'is-invalid': validationErrors['manageProductivity']['maxCleaners'] }">
                                                 <div class="invalid-feedback"
                                                     v-if="validationErrors['manageProductivity']['maxCleaners']"
@@ -517,7 +517,7 @@
                                                     Required</label>
                                                 <input type="text" id="productivity_max_hours"
                                                     name="productivity_max_hours" v-model="categoryFormFields.max_hours"
-                                                    placeholder=""
+                                                    placeholder="Enter maximum hours required"
                                                     :class="{'form-control': true, 'is-invalid': validationErrors['manageProductivity']['maxHours'] }">
                                                 <div class="invalid-feedback"
                                                     v-if="validationErrors['manageProductivity']['maxHours']"
@@ -529,7 +529,7 @@
                                                     Cleaners Required</label>
                                                 <input type="text" id="productivity_min_cleaners"
                                                     name="productivity_min_cleaners"
-                                                    v-model="categoryFormFields.min_cleaners" placeholder=""
+                                                    v-model="categoryFormFields.min_cleaners" placeholder="Enter minimum cleaners required"
                                                     :class="{'form-control': true, 'is-invalid': validationErrors['manageProductivity']['minCleaners'] }">
                                                 <div class="invalid-feedback"
                                                     v-if="validationErrors['manageProductivity']['minCleaners']"
@@ -541,7 +541,7 @@
                                                     Required</label>
                                                 <input type="text" id="productivity_min_hours"
                                                     name="productivity_min_hours" v-model="categoryFormFields.min_hours"
-                                                    placeholder=""
+                                                    placeholder="Enter minimum hours required"
                                                     :class="{'form-control': true, 'is-invalid': validationErrors['manageProductivity']['minHours'] }">
                                                 <div class="invalid-feedback"
                                                     v-if="validationErrors['manageProductivity']['minHours']"
