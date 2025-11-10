@@ -328,7 +328,7 @@ createApp({
                         price: '',
                         productivity: '',
                         service_type_id: this.serviceTypeId || '',
-                        status: false
+                        status: ''
                     }
                 }
             }
