@@ -265,7 +265,7 @@
                                                         :style="{cursor: 'pointer'}" v-if="!toggleDivs.showView">
                                                         <i class="fa fa-pen" title="Productivity in sqm/man/hrg"></i>
                                                     </span> {% endcomment %}
-                                                    <div v-if="!toggleDivs.showView" class="d-flex gap-2">
+                                                   <div v-if="!toggleDivs.showView" class="d-flex flex-column align-items-start mt-2 gap-3">
                                                 <!-- ✏️ Edit Button -->
                                                 
                                                 <span @click="handleEditProductivityBtnClick(productivity)" style="cursor: pointer;">
@@ -273,11 +273,11 @@
                                                 </span>
 
                                                 <!-- 🗑️ Delete Button -->
-                                              <span @click="handleDeleteProductivityBtnClick(productivity)" style="cursor: pointer; color: red;">
-                                                <i class="fa fa-trash" title="Delete Category"></i>
-                                            </span>
-                                            </div>
-                                                </div>
+                                                {% comment %} <span @click="removeProductivity(productivity)" style="cursor: pointer; color: red;">
+                                                        <i class="fa fa-trash" title="Delete Category"></i>
+                                                </span> {% endcomment %}
+                                             </div>
+                                               </div>
                                             </div>
                                             
 
@@ -430,9 +430,17 @@
                                                 <div v-text="addon.productivity"></div>
                                             </td>
                                             <td>
-                                                <span
-                                                    :class="['status-badge', addon.is_active === true ? 'status-active' : 'status-pending']"
-                                                    v-text="addon.is_active ? 'Active' : 'Inactive'"></span>
+                                                 <span
+                                                    :class="[
+                                                    'status-badge',
+                                                    addon.is_active === true ? 'status-active' :
+                                                    addon.is_active === false ? 'status-pending' :
+                                                    'status-choose'
+                                                    ]"
+                                                    v-text="addon.is_active === true ? 'Active' :
+                                                        addon.is_active === false ? 'Inactive' :
+                                                        'Choose Option'">
+                                                </span>
                                             </td>
                                             <td v-if="!toggleDivs.showView">
                                                 <button class="btn-action btn-edit" title="Edit"
@@ -865,6 +873,9 @@
     </section>
 
 </div>
+
+
+
 <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 <script src="{% static 'files/js/staging-productivity.js' %}"></script>
 {% endblock %}

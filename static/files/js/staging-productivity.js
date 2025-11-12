@@ -92,6 +92,7 @@ createApp({
     },
     // Methods for handling service types
     methods: {
+       
    
 
         // Handle view, edit, remove actions
@@ -139,25 +140,7 @@ createApp({
             }
 
         },
-        removeServiceType(serviceType) {
-            const modal = document.getElementById('delete-modal');
-            if (modal) {
-                modal.classList.add('in', 'show');
-                modal.style.display = 'block';
-                document.body.classList.add('modal-open');
-                const backdrop = document.createElement('div');
-                backdrop.className = 'modal-backdrop fade show';
-                document.body.appendChild(backdrop);
-                this.deleteModal.softText = `Are you sure you want to continue with this action? This action will update the status of the service type "${serviceType.name}".`;
-                const form = document.getElementById('delete-form');
-                if (form) {
-                    form.setAttribute('data-delete-property', 'service-type');
-                    this.deleteModal.id = serviceType.id || '';
-
-                }
-            }
-
-        },
+       
         // Handle add button clicks
         handleAddServiceBtnClick() {
             this.toggleDivs.showList = false;
@@ -233,6 +216,10 @@ createApp({
             }
 
         },
+        
+      
+
+        
         // Handle Add Price Range button click
         handleAddPriceRangeBtnClick() {
             const modal = document.getElementById('manage-price-range-modal');
@@ -412,6 +399,11 @@ createApp({
                     this.deletePriceRange(this.toFormData(payload), id);
                     return;
                 }
+                if (propertyType === 'productivity') {
+                    // Use a JSON PUT which DRF reliably parses for PUT requests.
+                    this.updateProductivityStatus(id, 'inactive');
+                    return;
+                }
                 if (propertyType === 'add-on') {
                     const payload = {
                         is_active: 0
@@ -419,10 +411,45 @@ createApp({
                     this.deleteAddOn(this.toFormData(payload), id);
                     return;
                 }
-
             }
-
-
+        },
+        // Update productivity status via JSON PUT (more reliable than FormData on PUT)
+        updateProductivityStatus(productivityId, status) {
+            const csrftoken = this.getCookie('csrftoken')
+            const baseUrl = window.location.origin;
+            const url = `${baseUrl}/common/update-service-productivity/${productivityId}`
+            fetch(url, {
+                method: 'PUT',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ status: status })
+            })
+                .then(res => {
+                    if (!res.ok) throw res;
+                    return res.json();
+                })
+                .then(data => {
+                    this.closeModal();
+                    const key = String(this.serviceTypeId ?? '0');
+                    if (!this.productivities[key]) this.productivities[key] = [];
+                    const updated = data.service_productivity || data;
+                    const index = this.productivities[key].findIndex(p => p.id === updated.id);
+                    if (index !== -1) this.productivities[key].splice(index, 1, updated);
+                    this.successMsg = updated && updated.name ? `Category ${updated.name} deleted successfully.` : 'Category deleted successfully.';
+                    setTimeout(() => { this.successMsg = ''; }, 5000);
+                })
+                .catch(async err => {
+                    if (err.json) {
+                        const body = await err.json();
+                        this.validationErrors.manageProductivity = body.errors || {};
+                    } else {
+                        console.error(err);
+                    }
+                });
         },
         // Close modal(s).
         // If an Event is passed (e.g. closeModal($event)) we locate the closest .modal from the event
