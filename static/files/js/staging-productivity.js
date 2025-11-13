@@ -151,6 +151,11 @@ createApp({
             };
 
             const form = document.getElementById('manage-service-form');
+            this.serviceFormFields = {
+                name: '',
+                name_arabic: '',
+                is_active: '',
+            };
             if (form) {
                 form.setAttribute('data-action', 'add')
             }
@@ -242,7 +247,7 @@ createApp({
                         minimum_area: '',
                         maximum_area: '',
                         unit_price: '',
-                        status: this.priceRangeFormFields.status || false,
+                        status: this.priceRangeFormFields.status || '',
                         productivity_id: this.activePtab || (this.productivities && this.productivities[String(this.serviceTypeId ?? '0')] && this.productivities[String(this.serviceTypeId ?? '0')][0] && this.productivities[String(this.serviceTypeId ?? '0')][0].id) || '',
                         service_type_id: this.serviceTypeId || ''
                     }
@@ -317,7 +322,7 @@ createApp({
                         price: '',
                         productivity: '',
                         service_type_id: this.serviceTypeId || '',
-                        status: false
+                        status: ''
                     }
                 }
             }
@@ -1018,7 +1023,7 @@ createApp({
                 })
                 .then(data => {
                     this.closeModal();
-                    const key = String(payload.service_type || this.serviceTypeId || '0');
+                    const key = String(data.service_addon?.service_type_id || this.serviceTypeId || '0');
                     if (!this.serviceAddons[key]) this.serviceAddons[key] = [];
                     const item = data.service_addon || data;
                     item.avatar = `${this.avatarBaseUrl}?name=${encodeURIComponent(item.name)}&background=${this.colorCodes[item.id % this.colorCodes.length]}&color=fff`;
