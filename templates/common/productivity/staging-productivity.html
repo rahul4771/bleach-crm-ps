@@ -9,12 +9,14 @@
 <style>
     [v-cloak] {
         display: none !important;
-    .fa-trash {
-    transition: color 0.2s ease;
-}
-.fa-trash:hover {
-    color: darkred;
-}
+
+        .fa-trash {
+            transition: color 0.2s ease;
+        }
+
+        .fa-trash:hover {
+            color: darkred;
+        }
     }
 </style>
 <div class="wrapper" id="app" v-cloak>
@@ -82,7 +84,6 @@
                                         <thead>
                                             <tr>
                                                 <th><button>Name</button></th>
-                                                
                                                 <th><button>Arabic</button></th>
                                                 <th><button>Status</button></th>
                                                 <th>Actions</th>
@@ -261,28 +262,32 @@
                                                     v-text="productivity.perhour_cleaning || '--'">
                                                 </div>
                                                 <div>
-                                                    {% comment %} <span @click="handleEditProductivityBtnClick(productivity)"
+                                                    {% comment %} <span
+                                                        @click="handleEditProductivityBtnClick(productivity)"
                                                         :style="{cursor: 'pointer'}" v-if="!toggleDivs.showView">
                                                         <i class="fa fa-pen" title="Productivity in sqm/man/hrg"></i>
                                                     </span> {% endcomment %}
-                                                   <div v-if="!toggleDivs.showView" class="d-flex flex-column align-items-start mt-2 gap-3">
-                                                <!-- ✏️ Edit Button -->
-                                                
-                                                <span @click="handleEditProductivityBtnClick(productivity)" style="cursor: pointer;">
-                                                    <i class="fa fa-pen" title="Edit Category"></i>
-                                                </span>
+                                                    <div v-if="!toggleDivs.showView"
+                                                        class="d-flex flex-column align-items-start mt-2 gap-3">
+                                                        
+                                                        <!-- ✏️ Edit Button -->
+                                                        <span @click="handleEditProductivityBtnClick(productivity)"
+                                                            style="cursor: pointer;">
+                                                            <i class="fa fa-pen" title="Edit Category"></i>
+                                                        </span>
 
-                                                <!-- 🗑️ Delete Button -->
-                                               <span @click="removeProductivity(productivity)" style="cursor: pointer; color: red;">
-                                                        <i class="fa fa-trash" title="Delete Category"></i>
-                                                </span> 
-                                             </div>
-                                               </div>
+                                                        <!-- 🗑️ Delete Button -->
+                                                        <span @click="removeProductivity(productivity)"
+                                                            style="cursor: pointer; color: red;">
+                                                            <i class="fa fa-trash" title="Delete Category"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            
 
-                                             <span class="stats-card-change positive"
-                                                v-if="productivity.perhour_cleaning">sqm/man/hrg</span> 
+
+                                            <span class="stats-card-change positive"
+                                                v-if="productivity.perhour_cleaning">sqm/man/hrg</span>
                                         </div>
                                     </div>
                                     <div class="table-responsive">
@@ -430,14 +435,12 @@
                                                 <div v-text="addon.productivity"></div>
                                             </td>
                                             <td>
-                                                 <span
-                                                    :class="[
+                                                <span :class="[
                                                     'status-badge',
                                                     addon.is_active === true ? 'status-active' :
                                                     addon.is_active === false ? 'status-pending' :
                                                     'status-choose'
-                                                    ]"
-                                                    v-text="addon.is_active === true ? 'Active' :
+                                                    ]" v-text="addon.is_active === true ? 'Active' :
                                                         addon.is_active === false ? 'Inactive' :
                                                         'Choose Option'">
                                                 </span>
@@ -856,8 +859,7 @@
                                     <p v-text="deleteModal.softText"></p>
                                     <p class="text-danger"><strong v-text="deleteModal.strongText"></strong></p>
                                     <form id="delete-form">
-                                        <input type="hidden" id="delete_id" name="delete_id"
-                                            v-model="deleteModal.id">
+                                        <input type="hidden" id="delete_id" name="delete_id" v-model="deleteModal.id">
                                     </form>
                                 </div>
                                 <div class="modal-footer">
