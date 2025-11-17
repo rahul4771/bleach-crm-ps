@@ -92,6 +92,7 @@ createApp({
     },
     // Methods for handling service types
     methods: {
+    
        
    
 
@@ -399,11 +400,8 @@ createApp({
                     this.deletePriceRange(this.toFormData(payload), id);
                     return;
                 }
-                if (propertyType === 'productivity') {
-                    // Use a JSON PUT which DRF reliably parses for PUT requests.
-                    this.updateProductivityStatus(id, 'inactive');
-                    return;
-                }
+                
+                
                 if (propertyType === 'add-on') {
                     const payload = {
                         is_active: 0
@@ -411,6 +409,12 @@ createApp({
                     this.deleteAddOn(this.toFormData(payload), id);
                     return;
                 }
+                   if (propertyType === 'productivity') {
+                        const payload = { status: 0 };
+                        this.deleteProductivity(this.toFormData(payload), id);
+                        return;
+                    }
+               
             }
         },
         // Update productivity status via JSON PUT (more reliable than FormData on PUT)
@@ -1250,6 +1254,85 @@ createApp({
             if (fieldKey) delete this.validationErrors.manageProductivity[fieldKey];
             return true;
         },
+        //delete productivity
+       removeProductivity(productivity) {
+            const modal = document.getElementById('delete-modal');
+            if (modal) {
+                modal.classList.add('in', 'show');
+                modal.style.display = 'block';
+                document.body.classList.add('modal-open');
+
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                document.body.appendChild(backdrop);
+
+                this.deleteModal.softText = `Are you sure you want to delete the productivity "${productivity.name}"?`;
+               
+
+                // attach delete type
+                const form = document.getElementById('delete-form');
+                if (form) {
+                    form.setAttribute('data-delete-property', 'productivity');
+                    this.deleteModal.id = productivity.id || '';
+                }
+            }
+        },
+    deleteProductivity(formData, productivityId) {
+            const csrftoken = this.getCookie('csrftoken');
+            const baseUrl = window.location.origin;
+            const url = `${baseUrl}/common/delete-productivity/${productivityId}/`;
+
+            fetch(url, {
+                method: 'DELETE',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+            .then(res => {
+                if (!res.ok) throw res;
+                return res.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    this.closeModal();
+
+                    // Find key → same as service type wise productivity list
+                    const key = String(data.productivity?.service_type_id || this.serviceTypeId || '0');
+
+                    if (!this.serproductivities[key]) this.productivities[key] = [];
+
+                    const updated = data.productivity || data;
+
+                    // update avatar logic if exists
+                    if (updated.name && this.avatarBaseUrl) {
+                        updated.avatar = `${this.avatarBaseUrl}?name=${encodeURIComponent(updated.name)}&background=${this.colorCodes[updated.id % this.colorCodes.length]}&color=fff`;
+                    }
+
+                    // replace list item
+                    const index = this.productivities[key].findIndex(p => String(p.id) === String(updated.id));
+                    if (index !== -1) this.productivities[key].splice(index, 1, updated);
+
+                    this.successMsg = updated && updated.name
+                        ? `Productivity ${updated.name} deleted successfully.`
+                        : 'Productivity deleted successfully.';
+                    
+                    setTimeout(() => { this.successMsg = ''; }, 5000);
+                }
+            })
+            .catch(async err => {
+                if (err.json) {
+                    const body = await err.json();
+                    this.validationErrors.manageProductivity = body.errors || {};
+                } else {
+                    console.error(err);
+                }
+            });
+        },
+
+ 
 
 
     },
