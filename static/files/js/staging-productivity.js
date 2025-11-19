@@ -92,6 +92,7 @@ createApp({
     },
     // Methods for handling service types
     methods: {
+
         // Handle view, edit, remove actions
         handleServiceViewBtnClick(serviceType) {
             this.toggleDivs.showList = false;
@@ -137,25 +138,7 @@ createApp({
             }
 
         },
-        removeServiceType(serviceType) {
-            const modal = document.getElementById('delete-modal');
-            if (modal) {
-                modal.classList.add('in', 'show');
-                modal.style.display = 'block';
-                document.body.classList.add('modal-open');
-                const backdrop = document.createElement('div');
-                backdrop.className = 'modal-backdrop fade show';
-                document.body.appendChild(backdrop);
-                this.deleteModal.softText = `Are you sure you want to continue with this action? This action will update the status of the service type "${serviceType.name}".`;
-                const form = document.getElementById('delete-form');
-                if (form) {
-                    form.setAttribute('data-delete-property', 'service-type');
-                    this.deleteModal.id = serviceType.id || '';
 
-                }
-            }
-
-        },
         // Handle add button clicks
         handleAddServiceBtnClick() {
             this.toggleDivs.showList = false;
@@ -166,11 +149,6 @@ createApp({
             };
 
             const form = document.getElementById('manage-service-form');
-            this.serviceFormFields = {
-                name: '',
-                name_arabic: '',
-                is_active: '',
-            };
             if (form) {
                 form.setAttribute('data-action', 'add')
             }
@@ -236,6 +214,31 @@ createApp({
             }
 
         },
+        //delete productivity
+        removeProductivity(productivity) {
+            const modal = document.getElementById('delete-modal');
+            if (modal) {
+                modal.classList.add('in', 'show');
+                modal.style.display = 'block';
+                document.body.classList.add('modal-open');
+
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                document.body.appendChild(backdrop);
+
+                this.deleteModal.softText = `Are you sure you want to delete the productivity "${productivity.name}"?`;
+
+
+                // attach delete type
+                const form = document.getElementById('delete-form');
+                if (form) {
+                    form.setAttribute('data-delete-property', 'productivity');
+                    this.deleteModal.id = productivity.id || '';
+                }
+            }
+        },
+
+
         // Handle Add Price Range button click
         handleAddPriceRangeBtnClick() {
             const modal = document.getElementById('manage-price-range-modal');
@@ -258,13 +261,14 @@ createApp({
                         minimum_area: '',
                         maximum_area: '',
                         unit_price: '',
-                        status: this.priceRangeFormFields.status || '',
+                        status: this.priceRangeFormFields.status || false,
                         productivity_id: this.activePtab || (this.productivities && this.productivities[String(this.serviceTypeId ?? '0')] && this.productivities[String(this.serviceTypeId ?? '0')][0] && this.productivities[String(this.serviceTypeId ?? '0')][0].id) || '',
                         service_type_id: this.serviceTypeId || ''
                     }
                 }
             }
         },
+        // Handle Edit Price Range button click
         handleEditPriceRangeBtnClick(priceRange, productivityId) {
             const modal = document.getElementById('manage-price-range-modal');
             if (modal) {
@@ -293,6 +297,7 @@ createApp({
                 }
             }
         },
+        // Delete price range
         removePriceRange(priceRange, productivityId) {
             const modal = document.getElementById('delete-modal');
             if (modal) {
@@ -311,6 +316,7 @@ createApp({
                 }
             }
         },
+
         // Handle Add Add-on (Item) button click
         handleAddAddonBtnClick() {
             const modal = document.getElementById('manage-addon-modal');
@@ -333,7 +339,7 @@ createApp({
                         price: '',
                         productivity: '',
                         service_type_id: this.serviceTypeId || '',
-                        status: ''
+                        status: false
                     }
                 }
             }
@@ -365,6 +371,7 @@ createApp({
                 }
             }
         },
+        // delete add-on
         removeAddon(addon) {
             const modal = document.getElementById('delete-modal');
             if (modal) {
@@ -393,9 +400,11 @@ createApp({
             this.setActiveProductivityTab(null);
             this.resetNewService();
         },
+        // Set active productivity tab
         setActiveProductivityTab(pid = null) {
             this.activePtab = pid
         },
+        // Reset new service form fields
         deleteProperty() {
             const form = document.getElementById('delete-form');
             if (form) {
@@ -415,6 +424,8 @@ createApp({
                     this.deletePriceRange(this.toFormData(payload), id);
                     return;
                 }
+
+
                 if (propertyType === 'add-on') {
                     const payload = {
                         is_active: 0
@@ -422,10 +433,51 @@ createApp({
                     this.deleteAddOn(this.toFormData(payload), id);
                     return;
                 }
+                if (propertyType === 'productivity') {
+                    const payload = { status: 0 };
+                    this.deleteProductivity(this.toFormData(payload), id);
+                    return;
+                }
 
             }
-
-
+        },
+        // Update productivity status via JSON PUT (more reliable than FormData on PUT)
+        updateProductivityStatus(productivityId, status) {
+            const csrftoken = this.getCookie('csrftoken')
+            const baseUrl = window.location.origin;
+            const url = `${baseUrl}/common/update-service-productivity/${productivityId}`
+            fetch(url, {
+                method: 'PUT',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ status: status })
+            })
+                .then(res => {
+                    if (!res.ok) throw res;
+                    return res.json();
+                })
+                .then(data => {
+                    this.closeModal();
+                    const key = String(this.serviceTypeId ?? '0');
+                    if (!this.productivities[key]) this.productivities[key] = [];
+                    const updated = data.service_productivity || data;
+                    const index = this.productivities[key].findIndex(p => p.id === updated.id);
+                    if (index !== -1) this.productivities[key].splice(index, 1, updated);
+                    this.successMsg = updated && updated.name ? `Category ${updated.name} deleted successfully.` : 'Category deleted successfully.';
+                    setTimeout(() => { this.successMsg = ''; }, 5000);
+                })
+                .catch(async err => {
+                    if (err.json) {
+                        const body = await err.json();
+                        this.validationErrors.manageProductivity = body.errors || {};
+                    } else {
+                        console.error(err);
+                    }
+                });
         },
         // Close modal(s).
         // If an Event is passed (e.g. closeModal($event)) we locate the closest .modal from the event
@@ -858,6 +910,7 @@ createApp({
                     }
                 });
         },
+        // Update an existing productivity category
         updateProductivityCategory(formData, productivityId) {
             const csrftoken = this.getCookie('csrftoken')
             const baseUrl = window.location.origin;
@@ -890,6 +943,61 @@ createApp({
                 })
                 .catch(async err => {
                     // map server validation errors if present
+                    if (err.json) {
+                        const body = await err.json();
+                        this.validationErrors.manageProductivity = body.errors || {};
+                    } else {
+                        console.error(err);
+                    }
+                });
+        },
+        // Delete productivity category
+        deleteProductivity(formData, productivityId) {
+            const csrftoken = this.getCookie('csrftoken');
+            const baseUrl = window.location.origin;
+            const url = `${baseUrl}/common/delete-productivity/${productivityId}/`;
+
+            fetch(url, {
+                method: 'DELETE',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+                .then(res => {
+                    if (!res.ok) throw res;
+                    return res.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        this.closeModal();
+
+                        // Find key → same as service type wise productivity list
+                        const key = String(data.productivity?.service_type_id || this.serviceTypeId || '0');
+
+                        if (!this.serproductivities[key]) this.productivities[key] = [];
+
+                        const updated = data.productivity || data;
+
+                        // update avatar logic if exists
+                        if (updated.name && this.avatarBaseUrl) {
+                            updated.avatar = `${this.avatarBaseUrl}?name=${encodeURIComponent(updated.name)}&background=${this.colorCodes[updated.id % this.colorCodes.length]}&color=fff`;
+                        }
+
+                        // replace list item
+                        const index = this.productivities[key].findIndex(p => String(p.id) === String(updated.id));
+                        if (index !== -1) this.productivities[key].splice(index, 1, updated);
+
+                        this.successMsg = updated && updated.name
+                            ? `Productivity ${updated.name} deleted successfully.`
+                            : 'Productivity deleted successfully.';
+
+                        setTimeout(() => { this.successMsg = ''; }, 5000);
+                    }
+                })
+                .catch(async err => {
                     if (err.json) {
                         const body = await err.json();
                         this.validationErrors.manageProductivity = body.errors || {};
@@ -994,7 +1102,7 @@ createApp({
                 })
                 .then(data => {
                     this.closeModal();
-                    const key = String(data.service_addon?.service_type_id || this.serviceTypeId || '0');
+                    const key = String(payload.service_type || this.serviceTypeId || '0');
                     if (!this.serviceAddons[key]) this.serviceAddons[key] = [];
                     const item = data.service_addon || data;
                     item.avatar = `${this.avatarBaseUrl}?name=${encodeURIComponent(item.name)}&background=${this.colorCodes[item.id % this.colorCodes.length]}&color=fff`;
@@ -1226,7 +1334,6 @@ createApp({
             if (fieldKey) delete this.validationErrors.manageProductivity[fieldKey];
             return true;
         },
-
 
     },
     // Lifecycle hook to fetch service types on mount

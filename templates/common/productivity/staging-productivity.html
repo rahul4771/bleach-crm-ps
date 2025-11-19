@@ -9,6 +9,14 @@
 <style>
     [v-cloak] {
         display: none !important;
+
+        .fa-trash {
+            transition: color 0.2s ease;
+        }
+
+        .fa-trash:hover {
+            color: darkred;
+        }
     }
 </style>
 <div class="wrapper" id="app" v-cloak>
@@ -254,12 +262,29 @@
                                                     v-text="productivity.perhour_cleaning || '--'">
                                                 </div>
                                                 <div>
-                                                    <span @click="handleEditProductivityBtnClick(productivity)"
+                                                    {% comment %} <span
+                                                        @click="handleEditProductivityBtnClick(productivity)"
                                                         :style="{cursor: 'pointer'}" v-if="!toggleDivs.showView">
                                                         <i class="fa fa-pen" title="Productivity in sqm/man/hrg"></i>
-                                                    </span>
+                                                    </span> {% endcomment %}
+                                                    <div v-if="!toggleDivs.showView"
+                                                        class="d-flex flex-column align-items-start mt-2 gap-3">
+                                                        
+                                                        <!-- ✏️ Edit Button -->
+                                                        <span @click="handleEditProductivityBtnClick(productivity)"
+                                                            style="cursor: pointer;">
+                                                            <i class="fa fa-pen" title="Edit Category"></i>
+                                                        </span>
+
+                                                        <!-- 🗑️ Delete Button -->
+                                                        <span @click="removeProductivity(productivity)"
+                                                            style="cursor: pointer; color: red;">
+                                                            <i class="fa fa-trash" title="Delete Category"></i>
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </div>
+
 
                                             <span class="stats-card-change positive"
                                                 v-if="productivity.perhour_cleaning">sqm/man/hrg</span>
@@ -410,9 +435,15 @@
                                                 <div v-text="addon.productivity"></div>
                                             </td>
                                             <td>
-                                                <span
-                                                    :class="['status-badge', addon.is_active === true ? 'status-active' : 'status-pending']"
-                                                    v-text="addon.is_active ? 'Active' : 'Inactive'"></span>
+                                                <span :class="[
+                                                    'status-badge',
+                                                    addon.is_active === true ? 'status-active' :
+                                                    addon.is_active === false ? 'status-pending' :
+                                                    'status-choose'
+                                                    ]" v-text="addon.is_active === true ? 'Active' :
+                                                        addon.is_active === false ? 'Inactive' :
+                                                        'Choose Option'">
+                                                </span>
                                             </td>
                                             <td v-if="!toggleDivs.showView">
                                                 <button class="btn-action btn-edit" title="Edit"
@@ -493,7 +524,7 @@
                                                     Hours</label>
                                                 <input type="text" id="productivity_cleaning_hours"
                                                     name="productivity_cleaning_hours"
-                                                    v-model="categoryFormFields.perhour_cleaning" placeholder="Enter required cleaning hours"
+                                                    v-model="categoryFormFields.perhour_cleaning" placeholder=""
                                                     :class="{'form-control': true, 'is-invalid': validationErrors['manageProductivity']['cleaningHours'] }">
                                                 <div class="invalid-feedback"
                                                     v-if="validationErrors['manageProductivity']['cleaningHours']"
@@ -505,7 +536,7 @@
                                                     Cleaners Required</label>
                                                 <input type="text" id="productivity_max_cleaners"
                                                     name="productivity_max_cleaners"
-                                                    v-model="categoryFormFields.max_cleaners" placeholder="Enter maximum cleaners required"
+                                                    v-model="categoryFormFields.max_cleaners" placeholder=""
                                                     :class="{'form-control': true, 'is-invalid': validationErrors['manageProductivity']['maxCleaners'] }">
                                                 <div class="invalid-feedback"
                                                     v-if="validationErrors['manageProductivity']['maxCleaners']"
@@ -517,7 +548,7 @@
                                                     Required</label>
                                                 <input type="text" id="productivity_max_hours"
                                                     name="productivity_max_hours" v-model="categoryFormFields.max_hours"
-                                                    placeholder="Enter maximum hours required"
+                                                    placeholder=""
                                                     :class="{'form-control': true, 'is-invalid': validationErrors['manageProductivity']['maxHours'] }">
                                                 <div class="invalid-feedback"
                                                     v-if="validationErrors['manageProductivity']['maxHours']"
@@ -529,7 +560,7 @@
                                                     Cleaners Required</label>
                                                 <input type="text" id="productivity_min_cleaners"
                                                     name="productivity_min_cleaners"
-                                                    v-model="categoryFormFields.min_cleaners" placeholder="Enter minimum cleaners required"
+                                                    v-model="categoryFormFields.min_cleaners" placeholder=""
                                                     :class="{'form-control': true, 'is-invalid': validationErrors['manageProductivity']['minCleaners'] }">
                                                 <div class="invalid-feedback"
                                                     v-if="validationErrors['manageProductivity']['minCleaners']"
@@ -541,7 +572,7 @@
                                                     Required</label>
                                                 <input type="text" id="productivity_min_hours"
                                                     name="productivity_min_hours" v-model="categoryFormFields.min_hours"
-                                                    placeholder="Enter minimum hours required"
+                                                    placeholder=""
                                                     :class="{'form-control': true, 'is-invalid': validationErrors['manageProductivity']['minHours'] }">
                                                 <div class="invalid-feedback"
                                                     v-if="validationErrors['manageProductivity']['minHours']"
@@ -633,7 +664,7 @@
                                                     Area</label>
                                                 <input type="number" step="1" id="price_range_minimum_area"
                                                     name="price_range_minimum_area"
-                                                    v-model="priceRangeFormFields.minimum_area" placeholder="Enter minimum area"
+                                                    v-model="priceRangeFormFields.minimum_area" placeholder=""
                                                     :class="{'form-control': true, 'is-invalid': validationErrors['managePriceRange']['minimumArea'] }">
                                                 <div class="invalid-feedback"
                                                     v-if="validationErrors['managePriceRange']['minimumArea']"
@@ -646,7 +677,7 @@
                                                     Area</label>
                                                 <input type="number" step="1" id="price_range_maximum_area"
                                                     name="price_range_maximum_area"
-                                                    v-model="priceRangeFormFields.maximum_area" placeholder="Enter maximum area"
+                                                    v-model="priceRangeFormFields.maximum_area" placeholder=""
                                                     :class="{'form-control': true, 'is-invalid': validationErrors['managePriceRange']['maximumArea'] }">
                                                 <div class="invalid-feedback"
                                                     v-if="validationErrors['managePriceRange']['maximumArea']"
@@ -659,7 +690,7 @@
                                                     Price</label>
                                                 <input type="number" step="0.01" id="price_range_unit_price"
                                                     name="price_range_unit_price"
-                                                    v-model="priceRangeFormFields.unit_price" placeholder="Enter unit price"
+                                                    v-model="priceRangeFormFields.unit_price" placeholder=""
                                                     :class="{'form-control': true, 'is-invalid': validationErrors['managePriceRange']['unitPrice'] }">
                                                 <div class="invalid-feedback"
                                                     v-if="validationErrors['managePriceRange']['unitPrice']"
@@ -769,7 +800,7 @@
                                                         class="text-danger">*</span></label>
                                                 <input type="text" id="addon_productivity" name="addon_productivity"
                                                     v-model="addonFormFields.productivity"
-                                                    placeholder="Enter productivity"
+                                                    placeholder="Enter Productivity "
                                                     :class="{'form-control': true, 'is-invalid': validationErrors['manageAddOn']['productivity'] }">
                                                 <div class="invalid-feedback"
                                                     v-if="validationErrors['manageAddOn']['productivity']"
@@ -828,8 +859,7 @@
                                     <p v-text="deleteModal.softText"></p>
                                     <p class="text-danger"><strong v-text="deleteModal.strongText"></strong></p>
                                     <form id="delete-form">
-                                        <input type="hidden" id="delete_id" name="delete_id"
-                                            v-model="deleteModal.id">
+                                        <input type="hidden" id="delete_id" name="delete_id" v-model="deleteModal.id">
                                     </form>
                                 </div>
                                 <div class="modal-footer">
@@ -845,6 +875,9 @@
     </section>
 
 </div>
+
+
+
 <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 <script src="{% static 'files/js/staging-productivity.js' %}"></script>
 {% endblock %}
