@@ -2143,10 +2143,15 @@ class FeedbackDetails(IsAuthenticated,View):
 		fil_minimumstarring       		  = request.GET.get('minimumstarring')	
 		# fil_maximumstarring       		  = request.GET.get('maximumstarring')
 		#filters 	
-		filters=[] 
-		if fil_minimumstarring: 
-		    case1 = Q(Q(avg_starring__gte=fil_minimumstarring)&Q(avg_starring__lt=float(fil_minimumstarring)+1))
-		    filters.append(case1)
+		filters = []
+
+		if fil_minimumstarring:
+			case1 = Q(
+				Q(avg_starring__gte=fil_minimumstarring) &
+				Q(avg_starring__lt=float(fil_minimumstarring) + 1)
+			)
+			filters.append(case1)
+	
 
 		if fil_minimumstarring : 
 			filters = functools.reduce(operator.and_,filters)
@@ -6379,6 +6384,7 @@ def add_service_type(request):
 	if request.method == 'POST':
 		service_name =  request.POST.get('new_service_name')
 		service_name_arabic =  request.POST.get('new_service_name_arabic')
+		is_active =  True if request.POST.get('new_service_is_active') == 'active' else False
 
 		# Backend validation for duplicate names
 		if ServiceType.objects.filter(name__iexact=service_name).exists():
@@ -6390,18 +6396,124 @@ def add_service_type(request):
 			service_type = ServiceType.objects.create(
 				name=service_name,
 				name_arabic=service_name_arabic,
-				is_active=True
+				is_active=is_active
 			)
 			return JsonResponse({'success': True, 'service_type': service_type.name})
 		except Exception as e:
 			return JsonResponse({'success': False, 'error': str(e)})
 
+class ServiceTypeAPIView(APIView):
+	def put(self, request, *args, **kwargs):
+
+		data = getattr(request, "data", None) or request.data or {}
+
+		def safe_str(val):
+			return val.strip() if isinstance(val, str) and val.strip() != "" else None
+
+		raw_id = kwargs.get("service_type_id")
+		if raw_id is None:
+			return JsonResponse({"success": False, "error": "service_type_id required"}, status=400)
+	
+		try:
+			service_type_id = int(safe_str(str(raw_id)) or raw_id)
+		except (TypeError, ValueError):
+			return JsonResponse({"success": False, "error": "Invalid service_type_id"}, status=400)
+
+		name = safe_str(data.get("new_service_name"))
+		name_arabic = safe_str(data.get("new_service_name_arabic"))
+		is_active = True if data.get("new_service_is_active") == "active" else False
+
+		if not name:
+			return JsonResponse({"success": False, "error_field": "new_service_name", "error_message": "Service name is required."}, status=400)
+
+		service_type = ServiceType.objects.filter(id=service_type_id).first()
+		if not service_type:
+			return JsonResponse({"success": False, "error": "Invalid service type."}, status=400)
+	
+		# Check for duplicate names if name is changed
+		if ServiceType.objects.filter(name__iexact=name).exclude(id=service_type.id).exists():
+			return JsonResponse({"success": False, "error_field": "new_service_name", "error_message": "Service type with this name already exists."}, status=400)
+
+		if name_arabic and ServiceType.objects.filter(name_arabic__iexact=name_arabic).exclude(id=service_type.id).exists():
+			return JsonResponse({"success": False, "error_field": "new_service_name_arabic", "error_message": "Service type with this name (Arabic) already exists."}, status=400)
+
+		service_type.name = name
+		if name_arabic is not None:
+			service_type.name_arabic = name_arabic
+			service_type.is_active = is_active
+		service_type.save()
+		st_obj = {
+			"id": service_type.id,
+			"name": service_type.name,
+			"name_arabic": service_type.name_arabic,
+			"is_active": service_type.is_active,
+		}
+
+		return JsonResponse({"success": True, "service_type": st_obj})
+
+	def delete(self, request, *args, **kwargs):
+		raw_id = kwargs.get("service_type_id")
+		if raw_id is None:
+			return JsonResponse({"success": False, "error": "service_type_id required"}, status=400)
+	
+		try:
+			service_type_id = int(raw_id)
+		except (TypeError, ValueError):
+			return JsonResponse({"success": False, "error": "Invalid service_type_id"}, status=400)
+
+		service_type = ServiceType.objects.filter(id=service_type_id).first()
+		if not service_type:
+			return JsonResponse({"success": False, "error": "Invalid service type."}, status=400)
+
+		service_type.is_active = False
+		service_type.save()
+		st_obj = {
+			"id": service_type.id,
+			"name": service_type.name,
+			"name_arabic": service_type.name_arabic,
+			"is_active": service_type.is_active,
+		}
+
+		return JsonResponse({"success": True, "message": "Service type deactivated successfully.", "service_type": st_obj})
+
 class ServiceProductivityAPIView(APIView):
+	def delete(self, request, productivity_id=None, *args, **kwargs):
+		# if Django passed it via kwargs
+		if not productivity_id:
+			productivity_id = kwargs.get("productivity_id")
+
+		if not productivity_id:
+			return JsonResponse({"success": False, "error": "productivity_id missing"}, status=400)
+
+		try:
+			sp = ServiceProductivity.objects.get(id=productivity_id)
+		except ServiceProductivity.DoesNotExist:
+			return JsonResponse({"success": False, "error": "ServiceProductivity not found"}, status=404)
+
+		# Parse request body
+		try:
+			raw_body = request.body.decode("utf-8")
+			body_data = json.loads(raw_body) if raw_body else {}
+		except Exception:
+			body_data = {}
+
+		incoming_status = body_data.get("status", 0)
+		sp.is_active = False if int(incoming_status) == 0 else True
+		sp.save()
+
+		sp_data = {
+			"id": sp.id,
+			"name": sp.name,
+			"service_type_id": sp.service_type_id,
+			"is_active": sp.is_active,
+		}
+
+		return JsonResponse({"success": True, "productivity": sp_data})
 
 	def post(self, request, *args, **kwargs):
 		data = getattr(request, "data", request.POST)
 		productivity_service_type_id = data.get("productivity_service_type_id")
-		name = (data.get("productivity_name")).strip()
+		name = (data.get("productivity_name") or "").strip()
 		description = data.get("productivity_description", "")
 		cleaning_hours = data.get("productivity_cleaning_hours") or None
 		max_cleaners = data.get("productivity_max_cleaners") or None
@@ -6411,19 +6523,28 @@ class ServiceProductivityAPIView(APIView):
 		is_active = True if data.get("status") == "active" else False
 
 		if not name:
-			return JsonResponse({"success": False, "error_field": "productivity_name", "error_message": "Name is required."}, status=400)
+			return JsonResponse(
+				{"success": False, "error_field": "productivity_name", "error_message": "Name is required."},
+				status=400,
+			)
 
 		service_type = None
 		if productivity_service_type_id:
 			service_type = ServiceType.objects.filter(id=productivity_service_type_id).first()
 			if not service_type:
-				return JsonResponse({"success": False, "error_field": "productivity_service_type_id", "error_message": "Invalid service type."}, status=400)
-			
-		dup_qs = ServiceProductivity.objects.filter(name__iexact=name)		
+				return JsonResponse(
+					{"success": False, "error_field": "productivity_service_type_id", "error_message": "Invalid service type."},
+					status=400,
+				)
+
+		dup_qs = ServiceProductivity.objects.filter(name__iexact=name)
 		if service_type:
 			dup_qs = dup_qs.filter(service_type=service_type)
 			if dup_qs.exists():
-				return JsonResponse({"success": False, "error_field": "productivity_name", "error_message": "Service productivity with this name already exists."}, status=400)
+				return JsonResponse(
+					{"success": False, "error_field": "productivity_name", "error_message": "Service productivity with this name already exists."},
+					status=400,
+				)
 		try:
 			service_productivity = ServiceProductivity.objects.create(
 				service_type=service_type,
@@ -6440,28 +6561,48 @@ class ServiceProductivityAPIView(APIView):
 				is_newkitchen=0,
 				is_cabinet=0,
 			)
-			return JsonResponse({"success": True, "id": service_productivity.id}, status=201)
+			sp = service_productivity
+			sp_data = {
+				"id": sp.id,
+				"service_type_id": sp.service_type_id,
+				"perhour_cleaning": float(sp.perhour_cleaning) if sp.perhour_cleaning is not None else None,
+				"name": sp.name,
+				"description": sp.description or "",
+				"min_cleaners": sp.min_cleaners,
+				"max_cleaners": sp.max_cleaners,
+				"min_hours": sp.min_hours,
+				"max_hours": sp.max_hours,
+				"is_active": sp.is_active,
+			}
+			return JsonResponse({"success": True, "service_productivity": sp_data}, status=201)
 		except Exception as e:
 			return JsonResponse({"success": False, "error": str(e)}, status=500)
-		
-	def put(self, request, *args, **kwargs):
 
+	def put(self, request, *args, **kwargs):
 		data = getattr(request, "data", None) or request.data or {}
 
 		def safe_str(val):
 			return val.strip() if isinstance(val, str) and val.strip() != "" else None
 
 		productivity_id = kwargs.get("productivity_id")
-		productivity_id = int(safe_str(productivity_id))
+		try:
+			productivity_id = int(safe_str(productivity_id))
+		except Exception:
+			productivity_id = None
+
 		if not productivity_id:
 			return JsonResponse({"success": False, "error": "productivity_id required"}, status=400)
 
 		service_type_id = safe_str(data.get("productivity_service_type_id"))
 		name = safe_str(data.get("productivity_name"))
 		if not name:
-			return JsonResponse({"success": False, "error_field": "productivity_name", "error_message": "Name is required."}, status=400)
-		
+			return JsonResponse(
+				{"success": False, "error_field": "productivity_name", "error_message": "Name is required."},
+				status=400,
+			)
+
 		description = safe_str(data.get("productivity_description")) or ""
+
 		def parse_float(val):
 			try:
 				return float(val) if val is not None and str(val).strip() != "" else None
@@ -6480,22 +6621,27 @@ class ServiceProductivityAPIView(APIView):
 		if service_type_id:
 			service_type = ServiceType.objects.filter(id=service_type_id).first()
 			if not service_type:
-				return JsonResponse({"success": False, "error_field": "service_type_id", "error_message": "Invalid service type."}, status=400)
+				return JsonResponse(
+					{"success": False, "error_field": "service_type_id", "error_message": "Invalid service type."},
+					status=400,
+				)
 
 		sp = ServiceProductivity.objects.filter(id=productivity_id)
 		if not sp.exists():
 			return JsonResponse({"success": False, "error": "ServiceProductivity not found"}, status=404)
-		
+
 		# Check for duplicate name if name is changed
 		if sp.first().name.lower() != name.lower():
 			dup_sp = ServiceProductivity.objects.filter(name__iexact=name)
 			if service_type:
 				dup_sp = dup_sp.filter(service_type=service_type)
 			if dup_sp.exists():
-				return JsonResponse({"success": False, "error_field": "productivity_name", "error_message": "Service productivity with this name already exists."}, status=400)
+				return JsonResponse(
+					{"success": False, "error_field": "productivity_name", "error_message": "Service productivity with this name already exists."},
+					status=400,
+				)
 
 		try:
-			
 			sp.update(
 				service_type=service_type,
 				perhour_cleaning=cleaning_hours,
@@ -6511,22 +6657,41 @@ class ServiceProductivityAPIView(APIView):
 				is_newkitchen=0,
 				is_cabinet=0,
 			)
-			return JsonResponse({"success": True, "id": sp.first().id}, status=201)
+			sp_obj = sp.first()
+			sp_data = {
+				"id": sp_obj.id,
+				"service_type_id": sp_obj.service_type_id,
+				"perhour_cleaning": float(sp_obj.perhour_cleaning) if sp_obj.perhour_cleaning is not None else None,
+				"name": sp_obj.name,
+				"description": sp_obj.description or "",
+				"min_cleaners": sp_obj.min_cleaners,
+				"max_cleaners": sp_obj.max_cleaners,
+				"min_hours": sp_obj.min_hours,
+				"max_hours": sp_obj.max_hours,
+				"is_active": sp_obj.is_active,
+			}
+
+			return JsonResponse({"success": True, "service_productivity": sp_data}, status=201)
 		except Exception as e:
 			return JsonResponse({"success": False, "error_message": str(e)}, status=500)
+	
+		
+
+
+		
 
 class ProductivityPriceRangeAPIView(APIView):
 
 	def post(self, request, *args, **kwargs):
 		data = getattr(request, "data", request.POST)
 		service_type_id = data.get("service_type")
-		name = (data.get("name")).strip()
+		name = (data.get("name") or '').strip()
 		price = data.get("price", "")
 		minimum_area = data.get("minimum_area") or None
 		maximum_area = data.get("maximum_area") or None
 		unit_price = data.get("unit_price") or None
 		productivity_id = data.get("productivity_id") or None
-		is_active = 1
+		is_active =  data.get("status") or 1
 
 
 		service_type = None
@@ -6558,7 +6723,19 @@ class ProductivityPriceRangeAPIView(APIView):
 			is_active=is_active
 		)
 		price_range.save()
-		return JsonResponse({"success": True, "id": price_range.id}, status=201)
+		pr = price_range
+		pr_data = {
+			"id": pr.id,
+			"service_type_id": pr.service_type_id,
+			"service_productivity_id": pr.service_productivity_id,
+			"name": pr.name,
+			"price": float(pr.price) if pr.price is not None else None,
+			"minimum_area": pr.minimum_area,
+			"maximum_area": pr.maximum_area,
+			"unit_price": float(pr.unit_price) if pr.unit_price is not None else None,
+			"is_active": bool(pr.is_active),
+		}
+		return JsonResponse({"success": True, "service_price_range": pr_data}, status=201)
 	
 	def put(self, request, *args, **kwargs):
 		data = getattr(request, "data", request.POST)
@@ -6571,7 +6748,7 @@ class ProductivityPriceRangeAPIView(APIView):
 		maximum_area = data.get("maximum_area") or None
 		unit_price = data.get("unit_price") or None
 		productivity_id = data.get("productivity_id") or None
-		is_active = 1
+		is_active =  data.get("status") or 1
 		
 		if not price_range_id:
 			return JsonResponse({"success": False, "error": "price_range_id required"}, status=400)
@@ -6613,11 +6790,50 @@ class ProductivityPriceRangeAPIView(APIView):
 				service_productivity=service_productivity,
 				is_active=is_active
 			)
-			return JsonResponse({"success": True, "id": pr.first().id}, status=201)
+			pr_obj = pr.first()
+			pr_data = {
+				"id": pr_obj.id,
+				"service_type_id": pr_obj.service_type_id,
+				"service_productivity_id": pr_obj.service_productivity_id,
+				"name": pr_obj.name,
+				"price": float(pr_obj.price) if pr_obj.price is not None else None,
+				"minimum_area": pr_obj.minimum_area,
+				"maximum_area": pr_obj.maximum_area,
+				"unit_price": float(pr_obj.unit_price) if pr_obj.unit_price is not None else None,
+				"is_active": bool(pr_obj.is_active),
+			}
+			return JsonResponse({"success": True, "service_price_range": pr_data}, status=201)
 		except Exception as e:
 			return JsonResponse({"success": False, "error_message": str(e)}, status=500)
 
+	def delete(self, request, *args, **kwargs):
+		price_range_id = kwargs.get("price_range_id")
+		price_range_id = int(price_range_id)
+		is_active =  0
+		
+		if not price_range_id:
+			return JsonResponse({"success": False, "error": "price_range_id required"}, status=400)
 
+		pr = ServicePriceRange.objects.filter(id=price_range_id)
+		if not pr.exists():
+			return JsonResponse({"success": False, "error": "Service price range not found"}, status=404)
+
+		pr.update(
+			is_active=is_active
+		)
+		pr_obj = pr.first()
+		pr_data = {
+			"id": pr_obj.id,
+			"service_type_id": pr_obj.service_type_id,
+			"service_productivity_id": pr_obj.service_productivity_id,
+			"name": pr_obj.name,
+			"price": float(pr_obj.price) if pr_obj.price is not None else None,
+			"minimum_area": pr_obj.minimum_area,
+			"maximum_area": pr_obj.maximum_area,
+			"unit_price": float(pr_obj.unit_price) if pr_obj.unit_price is not None else None,
+			"is_active": bool(pr_obj.is_active),
+		}
+		return JsonResponse({"success": True, "service_price_range": pr_data}, status=201)
 class ServiceAddOnsAPIView(APIView):
 
 	def post(self, request, *args, **kwargs):
@@ -6628,6 +6844,7 @@ class ServiceAddOnsAPIView(APIView):
 		size = (data.get("size")).strip()
 		price = (data.get("price")).strip()
 		productivity = (data.get("productivity")).strip()
+		is_active =  data.get("is_active") or 1
 
 		if not name:
 			return JsonResponse({"success": False, "error_field": "name", "error_message": "Name is required."}, status=400)
@@ -6673,10 +6890,22 @@ class ServiceAddOnsAPIView(APIView):
 			category=category,
 			size=size,
 			price=price,
-			productivity=productivity
+			productivity=productivity,
+			is_active=is_active
 		)
+		sa_obj = service_addon
+		sa_data= {
+			"id": sa_obj.id,
+			"service_type_id": sa_obj.service_type_id,
+			"name": sa_obj.name,
+			"category": sa_obj.category,
+			"size": sa_obj.size,
+			"price": float(sa_obj.price) if sa_obj.price is not None else None,
+			"productivity": float(sa_obj.productivity) if sa_obj.productivity is not None else None,
+			"is_active": bool(sa_obj.is_active)
+		}
 
-		return JsonResponse({"success": True, "id": service_addon.id}, status=201)
+		return JsonResponse({"success": True, "service_addon": sa_data}, status=201)
 
 	def put(self, request, *args, **kwargs):
 		data = getattr(request, "data", None) or request.data or {}
@@ -6692,6 +6921,7 @@ class ServiceAddOnsAPIView(APIView):
 		size = safe_str(data.get("size"))
 		price = safe_str(data.get("price"))
 		productivity = safe_str(data.get("productivity"))
+		is_active = safe_str(data.get("is_active")) or 1
 		
 		# Validations
 		if not addon_id:
@@ -6745,9 +6975,120 @@ class ServiceAddOnsAPIView(APIView):
 				category=category,
 				size=size,
 				price=price,
-				productivity=productivity
+				productivity=productivity,
+				is_active=is_active
 			)
-			return JsonResponse({"success": True, "id": sa.first().id}, status=201)
+			sa_obj = sa.first()
+			sa_data = {
+				"id": sa_obj.id,
+				"service_type_id": sa_obj.service_type_id,
+				"name": sa_obj.name,
+				"category": sa_obj.category,
+				"size": sa_obj.size,
+				"price": float(sa_obj.price) if sa_obj.price is not None else None,
+				"productivity": float(sa_obj.productivity) if sa_obj.productivity is not None else None,
+				"is_active": bool(sa_obj.is_active)
+			}
+			return JsonResponse({"success": True, "service_addon": sa_data}, status=201)
 		except Exception as e:
 			return JsonResponse({"success": False, "error_message": str(e)}, status=500)
+		
+	def delete(self, request, *args, **kwargs):
+		addon_id = kwargs.get("addon_id")
+		addon_id = int(addon_id)
+		is_active = 0
+		
+		if not addon_id:
+			return JsonResponse({"success": False, "error": "Addon id required"}, status=400)
+
+		sa = ServiceAddOns.objects.filter(id=addon_id)
+		if not sa.exists():
+			return JsonResponse({"success": False, "error": "Service addon not found"}, status=404)
+		
+		try:
+			sa.update(
+				is_active=is_active
+			)
+			sa_obj = sa.first()
+			sa_data = {
+				"id": sa_obj.id,
+				"service_type_id": sa_obj.service_type_id,
+				"name": sa_obj.name,
+				"category": sa_obj.category,
+				"size": sa_obj.size,
+				"price": float(sa_obj.price) if sa_obj.price is not None else None,
+				"productivity": float(sa_obj.productivity) if sa_obj.productivity is not None else None,
+				"is_active": bool(sa_obj.is_active)
+			}
+			return JsonResponse({"success": True, "service_addon": sa_data}, status=201)
+		except Exception as e:
+			return JsonResponse({"success": False, "error_message": str(e)}, status=500)
+
+class StagingProductivity(IsAuthenticated,View):
+	def get(self,request):
+
+		#save ajax productivity
+		# response_dict = {}
+		# action = request.GET.get('action_type')
+		# if action == 'edit_productivity':
+		# 	productivity_id    = request.GET.get('productivity_id')
+		# 	productivity_value = request.GET.get('productivity_value')
+
+		# 	productivity                  = ServiceProductivity.objects.get(id=productivity_id)
+		# 	productivity.perhour_cleaning = productivity_value
+		# 	productivity.save()
+		# 	response_dict['success'] =True
+		# 	return JsonResponse(response_dict)
+		
+		
+		# try:
+		# 	service_addons_qs = ServiceAddOns.objects.select_related('service_type') 
+		# 	service_types = ServiceType.objects.filter(is_active=True).prefetch_related(Prefetch('addons_service_type',queryset=service_addons_qs,to_attr='service_addons'))	
+		# except:
+		# 	service_types = None
+
+		
+
+		
+
+		
+
+		# discount_settings = Settings.objects.filter(is_active=True).first()
+
+		return render(request,'common/productivity/staging-productivity.html')
+
+class ProductivityServiceTypeAPIView(APIView):
+	def get(self, request):
+		service_types = list(ServiceType.objects.values('id','name','name_arabic', 'is_active'))
+		service_productivities = []
+		for p in ServiceProductivity.objects.select_related('service_type').all():
+			service_productivities.append({
+				'id': p.id,
+				'service_type_id': p.service_type_id,
+				'service_type_name': p.service_type.name if p.service_type else None,
+				'perhour_cleaning': float(p.perhour_cleaning) if getattr(p, 'perhour_cleaning', None) is not None else None,
+				'name': p.name,
+				'description': p.description if hasattr(p, 'description') else '',
+				'min_cleaners': p.min_cleaners,
+				'max_cleaners': p.max_cleaners,
+				'min_hours': p.min_hours,
+				'max_hours': p.max_hours,
+				'is_active': bool(getattr(p, 'is_active', False)),
+			})
+		
+		service_addons = list(ServiceAddOns.objects.values(
+			'id', 'service_type_id', 'name', 'category', 'size', 'price', 'productivity', 'is_active'
+		))
+
+		service_price_ranges = list(ServicePriceRange.objects.values(
+			'id', 'service_type_id', 'service_productivity_id', 'name', 'price', 'minimum_area', 'maximum_area', 'unit_price', 'is_active'
+		))
+
+		return JsonResponse({
+			'service_types': service_types,
+			'service_productivities': service_productivities,
+			'service_addons': service_addons,
+			'service_price_ranges': service_price_ranges
+		})
+		
 		
