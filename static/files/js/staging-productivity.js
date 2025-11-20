@@ -138,6 +138,19 @@ createApp({
             }
 
         },
+        removeServiceType(serviceType) {
+            const modal = document.getElementById('delete-modal');
+            if (modal) {
+                modal.classList.add('in', 'show');
+                modal.style.display = 'block';
+                document.body.classList.add('modal-open');
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                document.body.appendChild(backdrop);
+                this.deleteModal.softText = `Are you sure you want to continue with this action? This action will update the status of the service type "${serviceType.name}".`;
+            }
+
+        },
 
         // Handle add button clicks
         handleAddServiceBtnClick() {
@@ -1174,6 +1187,7 @@ createApp({
         },
         // Delete (deactivate) a service type by delegating to the same update endpoint
         deleteServiceType(formData, serviceId) {
+            console.log("object");
             const csrftoken = this.getCookie('csrftoken');
             const baseUrl = window.location.origin;
             const url = `${baseUrl}/common/delete-service-type/${serviceId}/`;
