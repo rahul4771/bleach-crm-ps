@@ -148,6 +148,12 @@ createApp({
                 backdrop.className = 'modal-backdrop fade show';
                 document.body.appendChild(backdrop);
                 this.deleteModal.softText = `Are you sure you want to continue with this action? This action will update the status of the service type "${serviceType.name}".`;
+                const form = document.getElementById('delete-form');
+                if (form) {
+                    form.setAttribute('data-delete-property', 'service-type');
+                    this.deleteModal.id = serviceType.id || '';
+
+                }
             }
 
         },
