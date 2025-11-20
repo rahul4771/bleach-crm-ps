@@ -93,6 +93,20 @@ createApp({
     // Methods for handling service types
     methods: {
 
+        // Handle add button clicks
+        handleAddServiceBtnClick() {
+            this.toggleDivs.showList = false;
+            this.toggleDivs.showManageServiceType = true;
+            this.validationErrors['manageServiceType'] = [];
+            this.viewServiceType = {
+                title: '',
+            };
+
+            const form = document.getElementById('manage-service-form');
+            if (form) {
+                form.setAttribute('data-action', 'add')
+            }
+        },
         // Handle view, edit, remove actions
         handleServiceViewBtnClick(serviceType) {
             this.toggleDivs.showList = false;
@@ -107,6 +121,7 @@ createApp({
             }
             this.serviceTypeId = serviceType.id
         },
+        // Handle edit service type button click
         handleEditServiceBtnClick(serviceType) {
             this.toggleDivs.showList = false;
             this.toggleDivs.showManageServiceType = true;
@@ -138,6 +153,7 @@ createApp({
             }
 
         },
+        // Delete service type
         removeServiceType(serviceType) {
             const modal = document.getElementById('delete-modal');
             if (modal) {
@@ -158,20 +174,6 @@ createApp({
 
         },
 
-        // Handle add button clicks
-        handleAddServiceBtnClick() {
-            this.toggleDivs.showList = false;
-            this.toggleDivs.showManageServiceType = true;
-            this.validationErrors['manageServiceType'] = [];
-            this.viewServiceType = {
-                title: '',
-            };
-
-            const form = document.getElementById('manage-service-form');
-            if (form) {
-                form.setAttribute('data-action', 'add')
-            }
-        },
         // Handle Add Category button click
         handleAddCategoryBtnClick() {
             const modal = document.getElementById('manage-service-type-modal');
@@ -459,44 +461,6 @@ createApp({
                 }
 
             }
-        },
-        // Update productivity status via JSON PUT (more reliable than FormData on PUT)
-        updateProductivityStatus(productivityId, status) {
-            const csrftoken = this.getCookie('csrftoken')
-            const baseUrl = window.location.origin;
-            const url = `${baseUrl}/common/update-service-productivity/${productivityId}`
-            fetch(url, {
-                method: 'PUT',
-                credentials: 'same-origin',
-                headers: {
-                    'X-CSRFToken': csrftoken,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ status: status })
-            })
-                .then(res => {
-                    if (!res.ok) throw res;
-                    return res.json();
-                })
-                .then(data => {
-                    this.closeModal();
-                    const key = String(this.serviceTypeId ?? '0');
-                    if (!this.productivities[key]) this.productivities[key] = [];
-                    const updated = data.service_productivity || data;
-                    const index = this.productivities[key].findIndex(p => p.id === updated.id);
-                    if (index !== -1) this.productivities[key].splice(index, 1, updated);
-                    this.successMsg = updated && updated.name ? `Category ${updated.name} deleted successfully.` : 'Category deleted successfully.';
-                    setTimeout(() => { this.successMsg = ''; }, 5000);
-                })
-                .catch(async err => {
-                    if (err.json) {
-                        const body = await err.json();
-                        this.validationErrors.manageProductivity = body.errors || {};
-                    } else {
-                        console.error(err);
-                    }
-                });
         },
         // Close modal(s).
         // If an Event is passed (e.g. closeModal($event)) we locate the closest .modal from the event
@@ -1015,6 +979,44 @@ createApp({
 
                         setTimeout(() => { this.successMsg = ''; }, 5000);
                     }
+                })
+                .catch(async err => {
+                    if (err.json) {
+                        const body = await err.json();
+                        this.validationErrors.manageProductivity = body.errors || {};
+                    } else {
+                        console.error(err);
+                    }
+                });
+        },
+        // Update productivity status via JSON PUT (more reliable than FormData on PUT)
+        updateProductivityStatus(productivityId, status) {
+            const csrftoken = this.getCookie('csrftoken')
+            const baseUrl = window.location.origin;
+            const url = `${baseUrl}/common/update-service-productivity/${productivityId}`
+            fetch(url, {
+                method: 'PUT',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ status: status })
+            })
+                .then(res => {
+                    if (!res.ok) throw res;
+                    return res.json();
+                })
+                .then(data => {
+                    this.closeModal();
+                    const key = String(this.serviceTypeId ?? '0');
+                    if (!this.productivities[key]) this.productivities[key] = [];
+                    const updated = data.service_productivity || data;
+                    const index = this.productivities[key].findIndex(p => p.id === updated.id);
+                    if (index !== -1) this.productivities[key].splice(index, 1, updated);
+                    this.successMsg = updated && updated.name ? `Category ${updated.name} deleted successfully.` : 'Category deleted successfully.';
+                    setTimeout(() => { this.successMsg = ''; }, 5000);
                 })
                 .catch(async err => {
                     if (err.json) {
