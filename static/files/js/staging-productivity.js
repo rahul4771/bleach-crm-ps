@@ -797,8 +797,9 @@ createApp({
                             }
                         }
                     } else {
+                        console.log("service type", data.service_type);
                         this.successMsg = data.service_type
-                            ? `Service type "${data.service_type}" added successfully.`
+                            ? `Service type "${data.service_type.name}" added successfully.`
                             : 'Service type added successfully.';
                         data.service_type.avatar = `${this.avatarBaseUrl}?name=${encodeURIComponent(data.service_type.name)}&background=${this.colorCodes[data.service_type.id % this.colorCodes.length]}&color=fff`;
                         this.serviceTypes.push(data.service_type);
