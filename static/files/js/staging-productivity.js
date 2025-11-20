@@ -1326,7 +1326,7 @@ createApp({
             return fd;
         },
         resetNewService() {
-            this.newService = { name: '', name_arabic: '', is_active: '' };
+            this.serviceFormFields = { name: '', name_arabic: '', is_active: '' };
             this.validationErrors['manageServiceType'] = {};
         },
         formatCurrency(value) {
