@@ -155,6 +155,7 @@
                                             <input type="text" id="serviceTypeArabicName" name="new_service_name_arabic"
                                                 v-model="serviceFormFields.name_arabic"
                                                 placeholder="Enter service type name in Arabic"
+                                                dir="ltr"
                                                 :class="{'form-control': true, 'is-invalid': validationErrors['manageServiceType']['serviceTypeArabicName'] }">
                                             <div class="invalid-feedback"
                                                 v-if="validationErrors['manageServiceType']['serviceTypeArabicName']"
@@ -265,7 +266,7 @@
                                                     {% comment %} <span
                                                         @click="handleEditProductivityBtnClick(productivity)"
                                                         :style="{cursor: 'pointer'}" v-if="!toggleDivs.showView">
-                                                        <i class="fa fa-pen" title="Productivity in sqm/man/hrg"></i>
+                                                        <i class="fa fa-pen" title="Productivity in sqm/man/hr"></i>
                                                     </span> {% endcomment %}
                                                     <div v-if="!toggleDivs.showView"
                                                         class="d-flex flex-column align-items-start mt-2 gap-3">
@@ -287,7 +288,7 @@
 
 
                                             <span class="stats-card-change positive"
-                                                v-if="productivity.perhour_cleaning">sqm/man/hrg</span>
+                                                v-if="productivity.perhour_cleaning">sqm/man/hr</span>
                                         </div>
                                     </div>
                                     <div class="table-responsive">
