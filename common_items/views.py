@@ -7066,5 +7066,104 @@ class ProductivityServiceTypeAPIView(APIView):
 			'service_price_ranges': service_price_ranges,
 			'measurement_units': measurement_units,
 		})
-		
-		
+
+class MeasurmentUnitsAPIView(APIView):
+	def post(self, request, *args, **kwargs):
+		data = getattr(request, "data", request.POST)
+		name = (data.get("name") or "").strip()
+		abbreviation = (data.get("abbreviation") or "").strip()
+		is_active = True if data.get("is_active") == "active" else False
+
+		if not name:
+			return JsonResponse(
+				{"success": False, "error_field": "name", "error_message": "Name is required."},
+				status=400,
+			)
+
+		if not abbreviation:
+			return JsonResponse(
+				{"success": False, "error_field": "abbreviation", "error_message": "Abbreviation is required."},
+				status=400,
+			)
+
+		# Backend validation for duplicate names
+		if MeasurmentUnits.objects.filter(name__iexact=name).exists():
+			return JsonResponse(
+				{"success": False, "error_field": "name", "error_message": "Measurement unit with this name already exists."},
+				status=400,
+			)
+		if MeasurmentUnits.objects.filter(abbreviation__iexact=abbreviation).exists():
+			return JsonResponse(
+				{"success": False, "error_field": "abbreviation", "error_message": "Measurement unit with this abbreviation already exists."},
+				status=400,
+			)
+
+		try:
+			measurment_unit = MeasurmentUnits.objects.create(
+				name=name,
+				abbreviation=abbreviation,
+				is_active=is_active
+			)
+			mu = measurment_unit
+			mu_data = {
+				"id": mu.id,
+				"name": mu.name,
+				"abbreviation": mu.abbreviation,
+				"is_active": mu.is_active,
+			}
+			return JsonResponse({"success": True, "measurement_unit": mu_data})
+		except Exception as e:
+			return JsonResponse({"success": False, "error": str(e)})
+
+
+	def put(self, request, *args, **kwargs):
+		data = getattr(request, "data", None) or request.data or {}
+
+		def safe_str(val):
+			return val.strip() if isinstance(val, str) and val.strip() != "" else None
+
+		raw_id = kwargs.get("measurement_unit_id")
+		if raw_id is None:
+			return JsonResponse({"success": False, "error": "measurement_unit_id required"}, status=400)
+	
+		try:
+			measurement_unit_id = int(safe_str(str(raw_id)) or raw_id)
+		except (TypeError, ValueError):
+			return JsonResponse({"success": False, "error": "Invalid measurement_unit_id"}, status=400)
+
+		name = safe_str(data.get("name"))
+		abbreviation = safe_str(data.get("abbreviation"))
+		is_active = True if data.get("is_active") == "active" else False
+
+		if not name:
+			return JsonResponse({"success": False, "error_field": "name", "error_message": "Name is required."}, status=400)
+
+		if not abbreviation:
+			return JsonResponse({"success": False, "error_field": "abbreviation", "error_message": "Abbreviation is required."}, status=400)
+
+		measurement_unit = MeasurmentUnits.objects.filter(id=measurement_unit_id).first()
+		if not measurement_unit:
+			return JsonResponse({"success": False, "error": "Invalid measurement unit."}, status=400)
+	
+		# Check for duplicate names if name is changed
+		if MeasurmentUnits.objects.filter(name__iexact=name).exclude(id=measurement_unit.id).exists():
+			return JsonResponse({"success": False, "error_field": "name", "error_message": "Measurement unit with this name already exists."}, status=400)
+
+		if MeasurmentUnits.objects.filter(abbreviation__iexact=abbreviation).exclude(id=measurement_unit.id).exists():
+			return JsonResponse({"success": False, "error_field": "abbreviation", "error_message": "Measurement unit with this abbreviation already exists."}, status=400)
+
+		try:
+			measurement_unit.name = name
+			measurement_unit.abbreviation = abbreviation
+			measurement_unit.is_active = is_active
+			measurement_unit.save()
+			mu = measurement_unit
+			mu_data = {
+				"id": mu.id,
+				"name": mu.name,
+				"abbreviation": mu.abbreviation,
+				"is_active": mu.is_active,
+			}
+			return JsonResponse({"success": True, "measurement_unit": mu_data})
+		except Exception as e:
+			return JsonResponse({"success": False, "error": str(e)})

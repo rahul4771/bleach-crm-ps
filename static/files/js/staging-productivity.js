@@ -96,7 +96,8 @@ createApp({
                 id: '',
                 name: '',
                 abbreviation: '',
-                is_active: false
+                is_active: '',
+                dataAction: ''
             }
         };
     },
@@ -433,7 +434,7 @@ createApp({
                 backdrop.className = 'modal-backdrop fade show';
                 document.body.appendChild(backdrop);
             }
-            this.measurementUnitFormFields = { id: '', name: '', abbreviation: '', is_active: true };
+            this.measurementUnitFormFields = { id: '', name: '', abbreviation: '', is_active: '' };
             // this.getMeasurementUnits();
         },
         // Handle Add Measurement Unit button click
@@ -441,8 +442,15 @@ createApp({
             this.toggleDivs.showManageMeasurementUnitForm = true;
             this.toggleDivs.showAddMeasurementUnitBtn = false;
             this.validationErrors['manageMeasurementUnit'] = [];
-
+            this.measurementUnitFormFields = { id: '', name: '', abbreviation: '', is_active: '', dataAction: 'add' };
         },
+        handleEditMeasurementUnitBtnClick(unit) {
+            this.toggleDivs.showManageMeasurementUnitForm = true;
+            this.toggleDivs.showAddMeasurementUnitBtn = false;
+            this.validationErrors['manageMeasurementUnit'] = [];
+            this.measurementUnitFormFields = { id: unit.id || '', name: unit.name || '', abbreviation: unit.abbreviation || '', is_active: unit.is_active || false, dataAction: 'edit' };
+        },
+        // Handle cancel measurement unit button click
         handleCancelManageMeasurementUnitBtnClick() {
             this.toggleDivs.showAddMeasurementUnitBtn = true;
             this.toggleDivs.showManageMeasurementUnitForm = false;
@@ -450,7 +458,7 @@ createApp({
             this.measurementUnitFormFields = { id: '', name: '', abbreviation: '', is_active: true };
         },
 
-        
+
         // Handle back button action
         backButtonAction(view) {
             Object.keys(this.toggleDivs).forEach(key => {
@@ -758,7 +766,38 @@ createApp({
 
         },
         // Submit Measurement Unit form (create or update via API)
-        submitMeasurementUnitForm() { },
+        submitMeasurementUnitForm() {
+            this.validationErrors.manageMeasurementUnit = {};
+
+            // Validation
+            if (!this.measurementUnitFormFields.name || !this.measurementUnitFormFields.name.trim()) {
+                this.validationErrors.manageMeasurementUnit.name = 'Name is required.';
+            }
+            if (!this.measurementUnitFormFields.abbreviation || !this.measurementUnitFormFields.abbreviation.trim()) {
+                this.validationErrors.manageMeasurementUnit.abbreviation = 'Abbreviation is required.';
+            }
+            if (this.measurementUnitFormFields.is_active === '' || this.measurementUnitFormFields.is_active === null) {
+                this.validationErrors.manageMeasurementUnit.status = 'Status is required.';
+            }
+
+            if (Object.keys(this.validationErrors.manageMeasurementUnit).length > 0) return;
+
+            const payload = {
+                name: this.measurementUnitFormFields.name.trim(),
+                abbreviation: this.measurementUnitFormFields.abbreviation.trim(),
+                is_active: this.measurementUnitFormFields.is_active ? 'active' : 'inactive'
+            };
+
+            const form = document.getElementById('manage-measurement-unit-form');
+            const formAction = form ? form.getAttribute('data-action') : 'add';
+
+            if (formAction === 'add') {
+                this.createMeasurementUnit(this.toFormData(payload));
+            } else {
+                const id = this.measurementUnitFormFields.id;
+                this.updateMeasurementUnit(this.toFormData(payload), id);
+            }
+        },
 
         // Fetch service types from the server
         getServiceTypes() {
@@ -1236,6 +1275,82 @@ createApp({
                     } else {
                         console.error(err);
                     }
+                });
+        },
+        // Create a new measurement unit via API
+        createMeasurementUnit(formData) {
+            const csrftoken = this.getCookie('csrftoken');
+            const baseUrl = window.location.origin;
+            const url = `${baseUrl}/common/add-measurement-unit/`;
+
+            fetch(url, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.success) {
+                        // Map backend errors if present
+                        if (data.error_field && data.error_message) {
+                            this.validationErrors.manageMeasurementUnit[data.error_field] = data.error_message;
+                        }
+                    } else {
+                        // Add to local list and reset form
+                        if (data.measurement_unit) {
+                            this.measurementUnits.push(data.measurement_unit);
+                            // this.successMsg = `Measurement unit "${data.measurement_unit.name}" added successfully.`;
+                            // setTimeout(() => { this.successMsg = ''; }, 5000);
+                        }
+                        this.measurementUnitFormFields = { id: '', name: '', abbreviation: '', is_active: '', data_action: '' };
+                        this.toggleDivs.showAddMeasurementUnitBtn = true;
+                        this.toggleDivs.showManageMeasurementUnitForm = false;
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                });
+        },
+        updateMeasurementUnit(formData, unitId) {
+            const csrftoken = this.getCookie('csrftoken');
+            const baseUrl = window.location.origin;
+            const url = `${baseUrl}/common/update-measurement-unit/${unitId}`;
+
+            fetch(url, {
+                method: 'PUT',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.success) {
+                        // Map backend errors if present
+                        if (data.error_field && data.error_message) {
+                            this.validationErrors.manageMeasurementUnit[data.error_field] = data.error_message;
+                        }
+                    } else {
+                        // Update local list and reset form
+                        if (data.measurement_unit) {
+                            const idx = this.measurementUnits.findIndex(u => u.id == data.measurement_unit.id);
+                            if (idx !== -1) this.measurementUnits.splice(idx, 1, data.measurement_unit);
+                            // this.successMsg = `Measurement unit "${data.measurement_unit.name}" updated successfully.`;
+                            // setTimeout(() => { this.successMsg = ''; }, 5000);
+                        }
+                        this.measurementUnitFormFields = { id: '', name: '', abbreviation: '', is_active: '', data_action: '' };
+                        this.toggleDivs.showAddMeasurementUnitBtn = true;
+                        this.toggleDivs.showManageMeasurementUnitForm = false;
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
                 });
         },
         // Delete (deactivate) a service type by delegating to the same update endpoint

@@ -894,7 +894,9 @@
                                     </div>
                                     <!-- Add Form -->
                                     <div v-if="toggleDivs.showManageMeasurementUnitForm" class="mb-4">
-                                        <form @submit.prevent="submitMeasurementUnitForm">
+                                        <form id="manage-measurement-unit-form"
+                                            @submit.prevent="submitMeasurementUnitForm"
+                                            :data-action="measurementUnitFormFields.dataAction">
                                             <div class="dashboard-grid grid-cols-2">
                                                 <div class="form-group">
                                                     <label for="measurement_unit_name" class="form-label">Name <span
@@ -978,10 +980,12 @@
                                                         </span>
                                                     </td>
                                                     <td>
-                                                        <button class="btn btn-sm btn-primary"
-                                                            @click="handleEditMeasurementUnitBtnClick(unit)">Edit</button>
-                                                        <button class="btn btn-sm btn-danger"
-                                                            @click="removeMeasurementUnit(unit)">Delete</button>
+                                                        <button class="btn-action btn-edit" title="Edit"
+                                                            @click="handleEditMeasurementUnitBtnClick(unit)"><i
+                                                                class="fa fa-pen"></i></button>
+                                                        <button class="btn-action btn-delete" title="Delete"
+                                                            @click="removeMeasurementUnit(unit)"><i
+                                                                class="fa fa-trash"></i></button>
                                                     </td>
                                                 </tr>
                                             </tbody>
