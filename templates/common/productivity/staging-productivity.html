@@ -290,7 +290,16 @@
 
 
                                             <span class="stats-card-change positive"
-                                                v-if="productivity.perhour_cleaning">sqm/man/hr</span>
+                                                v-if="productivity.perhour_cleaning">
+                                                <template v-if="productivity.measurement_unit_id">
+                                                    {{
+                                                    measurementUnits.find(
+                                                    unit => unit.id === productivity.measurement_unit_id
+                                                    )?.abbreviation || 'sqm/man/hr'
+                                                    }}
+                                                </template>
+                                                <template v-else>sqm/man/hr</template>
+                                            </span>
                                         </div>
                                     </div>
                                     <div class="table-responsive">
