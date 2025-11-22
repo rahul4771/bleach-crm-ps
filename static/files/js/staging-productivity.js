@@ -33,7 +33,9 @@ createApp({
                 showProductivity: false,
                 showAddons: false,
                 showAddMeasurementUnitBtn: true,
-                showManageMeasurementUnitForm: false
+                showManageMeasurementList: true,
+                showManageMeasurementUnitForm: false,
+                showMUConfirmDelete: false
             },
             // renamed from `delete` to avoid using the reserved keyword in template expressions
             deleteModal: {
@@ -441,12 +443,14 @@ createApp({
         handleAddManageMeasurementUnitBtnClick() {
             this.toggleDivs.showManageMeasurementUnitForm = true;
             this.toggleDivs.showAddMeasurementUnitBtn = false;
+            this.toggleDivs.showManageMeasurementList = false;
             this.validationErrors['manageMeasurementUnit'] = [];
             this.measurementUnitFormFields = { id: '', name: '', abbreviation: '', is_active: '', dataAction: 'add' };
         },
         handleEditMeasurementUnitBtnClick(unit) {
             this.toggleDivs.showManageMeasurementUnitForm = true;
             this.toggleDivs.showAddMeasurementUnitBtn = false;
+            this.toggleDivs.showManageMeasurementList = false;
             this.validationErrors['manageMeasurementUnit'] = [];
             this.measurementUnitFormFields = { id: unit.id || '', name: unit.name || '', abbreviation: unit.abbreviation || '', is_active: unit.is_active || false, dataAction: 'edit' };
         },
@@ -454,10 +458,28 @@ createApp({
         handleCancelManageMeasurementUnitBtnClick() {
             this.toggleDivs.showAddMeasurementUnitBtn = true;
             this.toggleDivs.showManageMeasurementUnitForm = false;
+            this.toggleDivs.showManageMeasurementList = true;
             this.validationErrors['manageMeasurementUnit'] = [];
             this.measurementUnitFormFields = { id: '', name: '', abbreviation: '', is_active: true };
         },
-
+        // Delete measurement unit
+        removeMeasurementUnit(unit) {
+            this.toggleDivs.showMUConfirmDelete = true;
+            this.toggleDivs.showAddMeasurementUnitBtn = false;
+            this.toggleDivs.showManageMeasurementList = false;
+            this.measurementUnitFormFields.id = unit.id || '';
+        },
+        // Confirm delete measurement unit
+        confirmDeleteMeasurementUnit() {
+            const payload = { is_active: false };
+            this.deleteMeasurementUnit(this.toFormData(payload), this.measurementUnitFormFields.id);
+        },
+        // Cancel delete measurement unit
+        cancelDeleteMeasurementUnit() {
+            this.toggleDivs.showMUConfirmDelete = false;
+            this.toggleDivs.showAddMeasurementUnitBtn = true;
+            this.toggleDivs.showManageMeasurementList = true;
+        },
 
         // Handle back button action
         backButtonAction(view) {
@@ -1308,6 +1330,7 @@ createApp({
                         }
                         this.measurementUnitFormFields = { id: '', name: '', abbreviation: '', is_active: '', data_action: '' };
                         this.toggleDivs.showAddMeasurementUnitBtn = true;
+                        this.toggleDivs.showManageMeasurementList = true;
                         this.toggleDivs.showManageMeasurementUnitForm = false;
                     }
                 })
@@ -1346,6 +1369,7 @@ createApp({
                         }
                         this.measurementUnitFormFields = { id: '', name: '', abbreviation: '', is_active: '', data_action: '' };
                         this.toggleDivs.showAddMeasurementUnitBtn = true;
+                        this.toggleDivs.showManageMeasurementList = true;
                         this.toggleDivs.showManageMeasurementUnitForm = false;
                     }
                 })
@@ -1471,6 +1495,41 @@ createApp({
                     } else {
                         console.error(err);
                     }
+                });
+        },
+        // Delete (deactivate) a measurement unit via API
+        deleteMeasurementUnit(formData, unitId) {
+            const csrftoken = this.getCookie('csrftoken');
+            const baseUrl = window.location.origin;
+            const url = `${baseUrl}/common/delete-measurement-unit/${unitId}`;
+
+            fetch(url, {
+                method: 'DELETE',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        if (data.measurement_unit) {
+                            const idx = this.measurementUnits.findIndex(u => u.id == data.measurement_unit.id);
+                            if (idx !== -1) this.measurementUnits.splice(idx, 1, data.measurement_unit);
+                            this.toggleDivs.showAddMeasurementUnitBtn = true;
+                            this.toggleDivs.showManageMeasurementList = true;
+                            this.toggleDivs.showManageMeasurementUnitForm = false;
+                            this.toggleDivs.showMUConfirmDelete = false;
+                        }
+                    } else {
+                        // alert(data.error_message || 'Failed to delete measurement unit.');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('An error occurred while deleting the measurement unit.');
                 });
         },
 

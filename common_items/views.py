@@ -7167,3 +7167,30 @@ class MeasurmentUnitsAPIView(APIView):
 			return JsonResponse({"success": True, "measurement_unit": mu_data})
 		except Exception as e:
 			return JsonResponse({"success": False, "error": str(e)})
+
+	def delete(self, request, *args, **kwargs):
+		unit_id = kwargs.get("measurement_unit_id")
+		unit_id = int(unit_id)
+		is_active = 0
+
+		if not unit_id:
+			return JsonResponse({"success": False, "error": "Unit id required"}, status=400)
+
+		mu = MeasurmentUnits.objects.filter(id=unit_id)
+		if not mu.exists():
+			return JsonResponse({"success": False, "error": "Measurement unit not found"}, status=404)
+		
+		try:
+			mu.update(
+				is_active=is_active
+			)
+			mu_obj = mu.first()
+			mu_data = {
+				"id": mu_obj.id,
+				"name": mu_obj.name,
+				"abbreviation": mu_obj.abbreviation,
+				"is_active": mu_obj.is_active,
+			}
+			return JsonResponse({"success": True, "measurement_unit": mu_data}, status=201)
+		except Exception as e:
+			return JsonResponse({"success": False, "error_message": str(e)}, status=500)

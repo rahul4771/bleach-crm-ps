@@ -887,13 +887,13 @@
                                 <div class="modal-body">
                                     <!-- Add Button -->
                                     <div class="mb-3">
-                                        <button class="export-btn" v-if="toggleDivs.showAddMeasurementUnitBtn"
+                                        <button class="export-btn" v-show="toggleDivs.showAddMeasurementUnitBtn"
                                             @click="handleAddManageMeasurementUnitBtnClick">
                                             <i class="fa fa-plus-circle"></i> Add Measurement Unit
                                         </button>
                                     </div>
                                     <!-- Add Form -->
-                                    <div v-if="toggleDivs.showManageMeasurementUnitForm" class="mb-4">
+                                    <div v-show="toggleDivs.showManageMeasurementUnitForm" class="mb-4">
                                         <form id="manage-measurement-unit-form"
                                             @submit.prevent="submitMeasurementUnitForm"
                                             :data-action="measurementUnitFormFields.dataAction">
@@ -958,9 +958,8 @@
                                         </form>
                                     </div>
                                     <!-- Table -->
-                                    <div class="table-responsive">
-                                        <table class="table table-hover align-middle"
-                                            v-if="!toggleDivs.showManageMeasurementUnitForm">
+                                    <div class="table-responsive" v-show="toggleDivs.showManageMeasurementList">
+                                        <table class="table table-hover align-middle">
                                             <thead class="table-light">
                                                 <tr>
                                                     <th>Name</th>
@@ -991,7 +990,14 @@
                                             </tbody>
                                         </table>
                                     </div>
-
+                                    <!-- Confirm Delete -->
+                                    <div v-show="toggleDivs.showMUConfirmDelete" class="mt-4">
+                                        <h5>Are you sure you want to continue with this action? This action will update the status of the measurement unit?</h5>
+                                        <button class="btn btn-danger me-2" @click="confirmDeleteMeasurementUnit">Yes,
+                                            Delete</button>
+                                        <button class="btn btn-secondary"
+                                            @click="cancelDeleteMeasurementUnit">Cancel</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -91,4 +91,5 @@ urlpatterns = [
 		url(r'^delete-productivity/(?P<productivity_id>[-\w]+)/$', views.ServiceProductivityAPIView.as_view(), name='delete-productivity'),
         url(r'^add-measurement-unit/$', views.MeasurmentUnitsAPIView.as_view(), name='add-measurement-unit'),
 		url(r'^update-measurement-unit/(?P<measurement_unit_id>[-\w]+)$', views.MeasurmentUnitsAPIView.as_view(), name='update-measurement-unit'),
+        url(r'^delete-measurement-unit/(?P<measurement_unit_id>[-\w]+)$', views.MeasurmentUnitsAPIView.as_view(), name='delete-measurement-unit'),
 	]
