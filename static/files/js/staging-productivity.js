@@ -873,6 +873,7 @@ createApp({
                     }
                     if (data.measurement_units) {
                         this.measurementUnits = data.measurement_units;
+                        console.log("measurementUnits",  data.measurement_units);
                     }
 
                 })

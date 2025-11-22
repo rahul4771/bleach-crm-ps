@@ -583,9 +583,9 @@
                                                 </div>
                                             </div>
 
-                                            <div class="form-group">
-                                                <label for="measurement_unit_id" class="form-label">Status <span
-                                                        class="text-danger">*</span></label>
+                                            <div class="form-group" v-if="measurementUnits.length > 0">
+                                                <label for="measurement_unit_id" class="form-label">Measurement Unit
+                                                    <span class="text-danger">*</span></label>
                                                 <select id="measurement_unit_id" name="measurement_unit_id"
                                                     v-model="categoryFormFields.measurement_unit_id"
                                                     :class="{'form-control': true, 'is-invalid': validationErrors['manageProductivity']['measurementUnit'] }">
@@ -593,9 +593,8 @@
                                                     <option v-for="unit in measurementUnits" :key="unit.id"
                                                         :value="unit.id"
                                                         :selected="categoryFormFields.measurement_unit_id === unit.id"
-                                                        v-if="unit.is_active"
                                                         v-text="unit.name">
-                                                        
+
                                                     </option>
                                                 </select>
                                                 <div class="invalid-feedback"
@@ -1012,7 +1011,8 @@
                                     </div>
                                     <!-- Confirm Delete -->
                                     <div v-show="toggleDivs.showMUConfirmDelete" class="mt-4">
-                                        <h5>Are you sure you want to continue with this action? This action will update the status of the measurement unit?</h5>
+                                        <h5>Are you sure you want to continue with this action? This action will update
+                                            the status of the measurement unit?</h5>
                                         <button class="btn btn-danger me-2" @click="confirmDeleteMeasurementUnit">Yes,
                                             Delete</button>
                                         <button class="btn btn-secondary"

@@ -7053,6 +7053,7 @@ class ProductivityServiceTypeAPIView(APIView):
 				'min_hours': p.min_hours,
 				'max_hours': p.max_hours,
 				'is_active': bool(getattr(p, 'is_active', False)),
+				'measurement_unit_id': p.measurement_unit_id,
 			})
 		
 		service_addons = list(ServiceAddOns.objects.values(
