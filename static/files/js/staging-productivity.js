@@ -71,7 +71,8 @@ createApp({
                 min_cleaners: '',
                 min_hours: '',
                 is_active: false,
-                service_type_id: ''
+                service_type_id: '',
+                measurement_unit_id: ''
             },
             priceRangeFormFields: {
                 id: '',
@@ -213,6 +214,7 @@ createApp({
                         min_hours: '',
                         is_active: '',
                         service_type_id: this.serviceTypeId,
+                        measurement_unit_id: ''
                     }
                 }
             }
@@ -243,6 +245,7 @@ createApp({
                         min_hours: productivity.min_hours || '',
                         is_active: productivity.is_active,
                         service_type_id: this.serviceTypeId,
+                        measurement_unit_id: productivity.measurement_unit_id || ''
                     }
                 }
             }
@@ -619,6 +622,10 @@ createApp({
                 this.validationErrors.manageProductivity.status = 'Status is required.';
             }
 
+            if (this.categoryFormFields.measurement_unit_id === '') {
+                this.validationErrors.manageProductivity.measurementUnit = 'Measurement Unit is required.';
+            }
+
             this.validateNumberInput(this.categoryFormFields.perhour_cleaning, false, "Please enter a valid non-negative number", 'perhour_cleaning');
             this.validateNumberInput(this.categoryFormFields.max_cleaners, true, "Please enter a valid non-negative integer", 'max_cleaners');
             this.validateNumberInput(this.categoryFormFields.max_hours, false, "Please enter a valid non-negative number", 'max_hours');
@@ -645,7 +652,8 @@ createApp({
                 productivity_min_cleaners: this.categoryFormFields.min_cleaners,
                 productivity_min_hours: this.categoryFormFields.min_hours,
                 status: isActive ? 'active' : 'inactive',
-                productivity_service_type_id: this.serviceTypeId
+                productivity_service_type_id: this.serviceTypeId,
+                measurement_unit_id: this.categoryFormFields.measurement_unit_id
             };
 
             const form = document.getElementById('manage-productivity-form');

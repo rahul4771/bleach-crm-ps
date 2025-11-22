@@ -38,7 +38,7 @@ from customer.models import CustomerBooking
 from agent.forms import UserProfileForm,AddressForm
 from evaluator.forms import EvaluationDetailsForm,QuatationServiceForm
 from order.forms import InvestigationForm,PromocodeForm
-from bleachadmin.models import ServiceProductivity,ServicePriceRange,Settings,ServiceAddOns,MeasurmentUnits
+from bleachadmin.models import ServiceProductivity,ServicePriceRange,Settings,ServiceAddOns,MeasurementUnits
 from bleachadmin.forms import ServicePriceRangeForm,ServiceAddOnsForm,DiscountSettingsForm
 from senior_team_leader.forms import CleaningTeamAssignForm,FollowupTeamAssignForm
 from django.db.models import Count
@@ -6495,6 +6495,7 @@ class ServiceProductivityAPIView(APIView):
 		min_cleaners = data.get("productivity_min_cleaners") or None
 		min_hours = data.get("productivity_min_hours") or None
 		is_active = True if data.get("status") == "active" else False
+		measurement_unit_id = data.get("measurement_unit_id") or None
 
 		if not name:
 			return JsonResponse(
@@ -6534,6 +6535,7 @@ class ServiceProductivityAPIView(APIView):
 				is_highprice_window=0,
 				is_newkitchen=0,
 				is_cabinet=0,
+				measurement_unit_id=measurement_unit_id,
 			)
 			sp = service_productivity
 			sp_data = {
@@ -6547,6 +6549,7 @@ class ServiceProductivityAPIView(APIView):
 				"min_hours": sp.min_hours,
 				"max_hours": sp.max_hours,
 				"is_active": sp.is_active,
+				"measurement_unit_id": sp.measurement_unit_id,
 			}
 			return JsonResponse({"success": True, "service_productivity": sp_data}, status=201)
 		except Exception as e:
@@ -6588,6 +6591,7 @@ class ServiceProductivityAPIView(APIView):
 		max_hours = parse_float(data.get("productivity_max_hours"))
 		min_cleaners = parse_float(data.get("productivity_min_cleaners"))
 		min_hours = parse_float(data.get("productivity_min_hours"))
+		measurement_unit_id = safe_str(data.get("measurement_unit_id")) or None
 
 		is_active = True if data.get("status") == "active" else False
 
@@ -6630,6 +6634,7 @@ class ServiceProductivityAPIView(APIView):
 				is_highprice_window=0,
 				is_newkitchen=0,
 				is_cabinet=0,
+				measurement_unit_id=measurement_unit_id,
 			)
 			sp_obj = sp.first()
 			sp_data = {
@@ -6643,6 +6648,7 @@ class ServiceProductivityAPIView(APIView):
 				"min_hours": sp_obj.min_hours,
 				"max_hours": sp_obj.max_hours,
 				"is_active": sp_obj.is_active,
+				"measurement_unit_id": sp_obj.measurement_unit_id,
 			}
 
 			return JsonResponse({"success": True, "service_productivity": sp_data}, status=201)
@@ -7057,7 +7063,7 @@ class ProductivityServiceTypeAPIView(APIView):
 			'id', 'service_type_id', 'service_productivity_id', 'name', 'price', 'minimum_area', 'maximum_area', 'unit_price', 'is_active'
 		))
 
-		measurement_units = list(MeasurmentUnits.objects.values('id', 'name', 'abbreviation', 'is_active'))
+		measurement_units = list(MeasurementUnits.objects.values('id', 'name', 'abbreviation', 'is_active'))
 
 		return JsonResponse({
 			'service_types': service_types,
@@ -7067,7 +7073,7 @@ class ProductivityServiceTypeAPIView(APIView):
 			'measurement_units': measurement_units,
 		})
 
-class MeasurmentUnitsAPIView(APIView):
+class MeasurementUnitsAPIView(APIView):
 	def post(self, request, *args, **kwargs):
 		data = getattr(request, "data", request.POST)
 		name = (data.get("name") or "").strip()
@@ -7087,19 +7093,19 @@ class MeasurmentUnitsAPIView(APIView):
 			)
 
 		# Backend validation for duplicate names
-		if MeasurmentUnits.objects.filter(name__iexact=name).exists():
+		if MeasurementUnits.objects.filter(name__iexact=name).exists():
 			return JsonResponse(
 				{"success": False, "error_field": "name", "error_message": "Measurement unit with this name already exists."},
 				status=400,
 			)
-		if MeasurmentUnits.objects.filter(abbreviation__iexact=abbreviation).exists():
+		if MeasurementUnits.objects.filter(abbreviation__iexact=abbreviation).exists():
 			return JsonResponse(
 				{"success": False, "error_field": "abbreviation", "error_message": "Measurement unit with this abbreviation already exists."},
 				status=400,
 			)
 
 		try:
-			measurment_unit = MeasurmentUnits.objects.create(
+			measurment_unit = MeasurementUnits.objects.create(
 				name=name,
 				abbreviation=abbreviation,
 				is_active=is_active
@@ -7141,15 +7147,15 @@ class MeasurmentUnitsAPIView(APIView):
 		if not abbreviation:
 			return JsonResponse({"success": False, "error_field": "abbreviation", "error_message": "Abbreviation is required."}, status=400)
 
-		measurement_unit = MeasurmentUnits.objects.filter(id=measurement_unit_id).first()
+		measurement_unit = MeasurementUnits.objects.filter(id=measurement_unit_id).first()
 		if not measurement_unit:
 			return JsonResponse({"success": False, "error": "Invalid measurement unit."}, status=400)
 	
 		# Check for duplicate names if name is changed
-		if MeasurmentUnits.objects.filter(name__iexact=name).exclude(id=measurement_unit.id).exists():
+		if MeasurementUnits.objects.filter(name__iexact=name).exclude(id=measurement_unit.id).exists():
 			return JsonResponse({"success": False, "error_field": "name", "error_message": "Measurement unit with this name already exists."}, status=400)
 
-		if MeasurmentUnits.objects.filter(abbreviation__iexact=abbreviation).exclude(id=measurement_unit.id).exists():
+		if MeasurementUnits.objects.filter(abbreviation__iexact=abbreviation).exclude(id=measurement_unit.id).exists():
 			return JsonResponse({"success": False, "error_field": "abbreviation", "error_message": "Measurement unit with this abbreviation already exists."}, status=400)
 
 		try:
@@ -7176,7 +7182,7 @@ class MeasurmentUnitsAPIView(APIView):
 		if not unit_id:
 			return JsonResponse({"success": False, "error": "Unit id required"}, status=400)
 
-		mu = MeasurmentUnits.objects.filter(id=unit_id)
+		mu = MeasurementUnits.objects.filter(id=unit_id)
 		if not mu.exists():
 			return JsonResponse({"success": False, "error": "Measurement unit not found"}, status=404)
 		

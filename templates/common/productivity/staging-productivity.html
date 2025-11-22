@@ -584,6 +584,26 @@
                                             </div>
 
                                             <div class="form-group">
+                                                <label for="measurement_unit_id" class="form-label">Status <span
+                                                        class="text-danger">*</span></label>
+                                                <select id="measurement_unit_id" name="measurement_unit_id"
+                                                    v-model="categoryFormFields.measurement_unit_id"
+                                                    :class="{'form-control': true, 'is-invalid': validationErrors['manageProductivity']['measurementUnit'] }">
+                                                    <option value="" default>Choose an option</option>
+                                                    <option v-for="unit in measurementUnits" :key="unit.id"
+                                                        :value="unit.id"
+                                                        :selected="categoryFormFields.measurement_unit_id === unit.id"
+                                                        v-if="unit.is_active"
+                                                        v-text="unit.name">
+                                                        
+                                                    </option>
+                                                </select>
+                                                <div class="invalid-feedback"
+                                                    v-if="validationErrors['manageProductivity']['measurementUnit']"
+                                                    v-text="validationErrors['manageProductivity']['measurementUnit']">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
                                                 <label for="status_id" class="form-label">Status <span
                                                         class="text-danger">*</span></label>
                                                 <select id="status_id" name="status"
