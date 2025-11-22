@@ -38,7 +38,7 @@ from customer.models import CustomerBooking
 from agent.forms import UserProfileForm,AddressForm
 from evaluator.forms import EvaluationDetailsForm,QuatationServiceForm
 from order.forms import InvestigationForm,PromocodeForm
-from bleachadmin.models import ServiceProductivity,ServicePriceRange,Settings,ServiceAddOns
+from bleachadmin.models import ServiceProductivity,ServicePriceRange,Settings,ServiceAddOns,MeasurmentUnits
 from bleachadmin.forms import ServicePriceRangeForm,ServiceAddOnsForm,DiscountSettingsForm
 from senior_team_leader.forms import CleaningTeamAssignForm,FollowupTeamAssignForm
 from django.db.models import Count
@@ -7086,11 +7086,14 @@ class ProductivityServiceTypeAPIView(APIView):
 			'id', 'service_type_id', 'service_productivity_id', 'name', 'price', 'minimum_area', 'maximum_area', 'unit_price', 'is_active'
 		))
 
+		measurement_units = list(MeasurmentUnits.objects.values('id', 'name', 'abbreviation', 'is_active'))
+
 		return JsonResponse({
 			'service_types': service_types,
 			'service_productivities': service_productivities,
 			'service_addons': service_addons,
-			'service_price_ranges': service_price_ranges
+			'service_price_ranges': service_price_ranges,
+			'measurement_units': measurement_units,
 		})
 		
 		

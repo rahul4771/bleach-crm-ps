@@ -802,6 +802,9 @@ createApp({
                         });
                         this.servicePriceRanges = grouped;
                     }
+                    if (data.measurement_units) {
+                        this.measurementUnits = data.measurement_units;
+                    }
 
                 })
                 .catch(error => {
