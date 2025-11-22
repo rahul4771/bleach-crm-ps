@@ -7028,35 +7028,6 @@ class ServiceAddOnsAPIView(APIView):
 
 class StagingProductivity(IsAuthenticated,View):
 	def get(self,request):
-
-		#save ajax productivity
-		# response_dict = {}
-		# action = request.GET.get('action_type')
-		# if action == 'edit_productivity':
-		# 	productivity_id    = request.GET.get('productivity_id')
-		# 	productivity_value = request.GET.get('productivity_value')
-
-		# 	productivity                  = ServiceProductivity.objects.get(id=productivity_id)
-		# 	productivity.perhour_cleaning = productivity_value
-		# 	productivity.save()
-		# 	response_dict['success'] =True
-		# 	return JsonResponse(response_dict)
-		
-		
-		# try:
-		# 	service_addons_qs = ServiceAddOns.objects.select_related('service_type') 
-		# 	service_types = ServiceType.objects.filter(is_active=True).prefetch_related(Prefetch('addons_service_type',queryset=service_addons_qs,to_attr='service_addons'))	
-		# except:
-		# 	service_types = None
-
-		
-
-		
-
-		
-
-		# discount_settings = Settings.objects.filter(is_active=True).first()
-
 		return render(request,'common/productivity/staging-productivity.html')
 
 class ProductivityServiceTypeAPIView(APIView):
