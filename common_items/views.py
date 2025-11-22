@@ -6398,7 +6398,13 @@ def add_service_type(request):
 				name_arabic=service_name_arabic,
 				is_active=is_active
 			)
-			return JsonResponse({'success': True, 'service_type': service_type.name})
+			st_obj = {
+				"id": service_type.id,
+				"name": service_type.name,
+				"name_arabic": service_type.name_arabic,
+				"is_active": service_type.is_active,
+			}
+			return JsonResponse({'success': True, 'service_type': st_obj})
 		except Exception as e:
 			return JsonResponse({'success': False, 'error': str(e)})
 
@@ -6477,39 +6483,7 @@ class ServiceTypeAPIView(APIView):
 		return JsonResponse({"success": True, "message": "Service type deactivated successfully.", "service_type": st_obj})
 
 class ServiceProductivityAPIView(APIView):
-	def delete(self, request, productivity_id=None, *args, **kwargs):
-		# if Django passed it via kwargs
-		if not productivity_id:
-			productivity_id = kwargs.get("productivity_id")
-
-		if not productivity_id:
-			return JsonResponse({"success": False, "error": "productivity_id missing"}, status=400)
-
-		try:
-			sp = ServiceProductivity.objects.get(id=productivity_id)
-		except ServiceProductivity.DoesNotExist:
-			return JsonResponse({"success": False, "error": "ServiceProductivity not found"}, status=404)
-
-		# Parse request body
-		try:
-			raw_body = request.body.decode("utf-8")
-			body_data = json.loads(raw_body) if raw_body else {}
-		except Exception:
-			body_data = {}
-
-		incoming_status = body_data.get("status", 0)
-		sp.is_active = False if int(incoming_status) == 0 else True
-		sp.save()
-
-		sp_data = {
-			"id": sp.id,
-			"name": sp.name,
-			"service_type_id": sp.service_type_id,
-			"is_active": sp.is_active,
-		}
-
-		return JsonResponse({"success": True, "productivity": sp_data})
-
+	
 	def post(self, request, *args, **kwargs):
 		data = getattr(request, "data", request.POST)
 		productivity_service_type_id = data.get("productivity_service_type_id")
@@ -6675,10 +6649,38 @@ class ServiceProductivityAPIView(APIView):
 		except Exception as e:
 			return JsonResponse({"success": False, "error_message": str(e)}, status=500)
 	
-		
+	def delete(self, request, productivity_id=None, *args, **kwargs):
+		# if Django passed it via kwargs
+		if not productivity_id:
+			productivity_id = kwargs.get("productivity_id")
 
+		if not productivity_id:
+			return JsonResponse({"success": False, "error": "productivity_id missing"}, status=400)
 
-		
+		try:
+			sp = ServiceProductivity.objects.get(id=productivity_id)
+		except ServiceProductivity.DoesNotExist:
+			return JsonResponse({"success": False, "error": "ServiceProductivity not found"}, status=404)
+
+		# Parse request body
+		try:
+			raw_body = request.body.decode("utf-8")
+			body_data = json.loads(raw_body) if raw_body else {}
+		except Exception:
+			body_data = {}
+
+		incoming_status = body_data.get("status", 0)
+		sp.is_active = False if int(incoming_status) == 0 else True
+		sp.save()
+
+		sp_data = {
+			"id": sp.id,
+			"name": sp.name,
+			"service_type_id": sp.service_type_id,
+			"is_active": sp.is_active,
+		}
+
+		return JsonResponse({"success": True, "productivity": sp_data})		
 
 class ProductivityPriceRangeAPIView(APIView):
 
