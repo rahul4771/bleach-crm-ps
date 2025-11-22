@@ -88,3 +88,16 @@ class Settings(models.Model):
 
 	def __str__(self):
 		return str(self.discount_percentage)
+	
+class MeasurmentUnits(models.Model):
+	name             = models.CharField(max_length=100,blank=True,null=True)
+	abbreviation     = models.CharField(max_length=20,blank=True,null=True)
+
+	is_active    = models.BooleanField(null=False,blank=True,default=True)
+	created      = models.DateTimeField(auto_now_add=True)
+	updated      = models.DateTimeField(auto_now=True)
+	def __unicode__(self):
+		return str(self.name)
+
+	def __str__(self):
+		return str(self.name)

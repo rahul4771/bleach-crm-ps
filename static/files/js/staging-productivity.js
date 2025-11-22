@@ -12,6 +12,7 @@ createApp({
             productivities: [],
             serviceAddons: [],
             servicePriceRanges: [],
+            measurementUnits: [],
             serviceTypeId: '',
             colorCodes: [
                 "6366f1",
@@ -30,7 +31,9 @@ createApp({
                 showView: false,
                 showManageServiceType: false,
                 showProductivity: false,
-                showAddons: false
+                showAddons: false,
+                showAddMeasurementUnitBtn: true,
+                showManageMeasurementUnitForm: false
             },
             // renamed from `delete` to avoid using the reserved keyword in template expressions
             deleteModal: {
@@ -48,7 +51,8 @@ createApp({
                 manageServiceType: {},
                 manageProductivity: {},
                 managePriceRange: {},
-                manageAddOn: {}
+                manageAddOn: {},
+                manageMeasurementUnit: {}
             },
             serviceFormFields: {
                 name: '',
@@ -88,6 +92,12 @@ createApp({
                 service_type_id: '',
                 status: false
             },
+            measurementUnitFormFields: {
+                id: '',
+                name: '',
+                abbreviation: '',
+                is_active: false
+            }
         };
     },
     // Methods for handling service types
@@ -412,6 +422,35 @@ createApp({
             }
         },
 
+        // Handle measurement units button click
+        handleMeasurementUnitsBtnClick() {
+            const modal = document.getElementById('measurement-units-modal');
+            if (modal) {
+                modal.classList.add('in', 'show');
+                modal.style.display = 'block';
+                document.body.classList.add('modal-open');
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                document.body.appendChild(backdrop);
+            }
+            this.measurementUnitFormFields = { id: '', name: '', abbreviation: '', is_active: true };
+            // this.getMeasurementUnits();
+        },
+        // Handle Add Measurement Unit button click
+        handleAddManageMeasurementUnitBtnClick() {
+            this.toggleDivs.showManageMeasurementUnitForm = true;
+            this.toggleDivs.showAddMeasurementUnitBtn = false;
+            this.validationErrors['manageMeasurementUnit'] = [];
+
+        },
+        handleCancelManageMeasurementUnitBtnClick() {
+            this.toggleDivs.showAddMeasurementUnitBtn = true;
+            this.toggleDivs.showManageMeasurementUnitForm = false;
+            this.validationErrors['manageMeasurementUnit'] = [];
+            this.measurementUnitFormFields = { id: '', name: '', abbreviation: '', is_active: true };
+        },
+
+        
         // Handle back button action
         backButtonAction(view) {
             Object.keys(this.toggleDivs).forEach(key => {
@@ -718,6 +757,8 @@ createApp({
             }
 
         },
+        // Submit Measurement Unit form (create or update via API)
+        submitMeasurementUnitForm() { },
 
         // Fetch service types from the server
         getServiceTypes() {

@@ -73,6 +73,9 @@
                                 <button class="export-btn" @click="handleAddServiceBtnClick">
                                     <i class="fa fa-plus-circle"></i> Add Service Type
                                 </button>
+                                <button class="export-btn ms-2" @click="handleMeasurementUnitsBtnClick">
+                                    <i class="fa fa-ruler"></i> Measurement Units
+                                </button>
                             </div>
                             <div
                                 class="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns">
@@ -154,8 +157,7 @@
                                                 arabic</label>
                                             <input type="text" id="serviceTypeArabicName" name="new_service_name_arabic"
                                                 v-model="serviceFormFields.name_arabic"
-                                                placeholder="Enter service type name in Arabic"
-                                                dir="ltr"
+                                                placeholder="Enter service type name in Arabic" dir="ltr"
                                                 :class="{'form-control': true, 'is-invalid': validationErrors['manageServiceType']['serviceTypeArabicName'] }">
                                             <div class="invalid-feedback"
                                                 v-if="validationErrors['manageServiceType']['serviceTypeArabicName']"
@@ -270,7 +272,7 @@
                                                     </span> {% endcomment %}
                                                     <div v-if="!toggleDivs.showView"
                                                         class="d-flex flex-column align-items-start mt-2 gap-3">
-                                                        
+
                                                         <!-- ✏️ Edit Button -->
                                                         <span @click="handleEditProductivityBtnClick(productivity)"
                                                             style="cursor: pointer;">
@@ -867,6 +869,125 @@
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                                         @click="closeModal($event)">Cancel</button>
                                     <button type="button" class="btn btn-danger" @click="deleteProperty">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Measurement Units Modal -->
+                    <div class="modal fade" id="measurement-units-modal" tabindex="-1"
+                        aria-labelledby="measurementUnitsModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="measurementUnitsModalLabel">Measurement Units</h5>
+                                    <button type="button" class="btn-close" aria-label="Close"
+                                        @click="closeModal($event)"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- Add Button -->
+                                    <div class="mb-3">
+                                        <button class="export-btn" v-if="toggleDivs.showAddMeasurementUnitBtn"
+                                            @click="handleAddManageMeasurementUnitBtnClick">
+                                            <i class="fa fa-plus-circle"></i> Add Measurement Unit
+                                        </button>
+                                    </div>
+                                    <!-- Add Form -->
+                                    <div v-if="toggleDivs.showManageMeasurementUnitForm" class="mb-4">
+                                        <form @submit.prevent="submitMeasurementUnitForm">
+                                            <div class="dashboard-grid grid-cols-2">
+                                                <div class="form-group">
+                                                    <label for="measurement_unit_name" class="form-label">Name <span
+                                                            class="text-danger">*</span></label>
+                                                    <input type="text" id="measurement_unit_name"
+                                                        name="measurement_unit_name"
+                                                        v-model="measurementUnitFormFields.name"
+                                                        placeholder="Enter item name"
+                                                        :class="{'form-control': true, 'is-invalid': validationErrors['manageMeasurementUnit']['name'] }">
+                                                    <div class="invalid-feedback"
+                                                        v-if="validationErrors['manageMeasurementUnit']['name']"
+                                                        v-text="validationErrors['manageMeasurementUnit']['name']">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="measurement_unit_abbreviation"
+                                                        class="form-label">Abbreviation <span
+                                                            class="text-danger">*</span></label>
+                                                    <input type="text" id="measurement_unit_abbreviation"
+                                                        name="measurement_unit_abbreviation"
+                                                        v-model="measurementUnitFormFields.abbreviation"
+                                                        placeholder="Enter abbreviation"
+                                                        :class="{'form-control': true, 'is-invalid': validationErrors['manageMeasurementUnit']['abbreviation'] }">
+                                                    <div class="invalid-feedback"
+                                                        v-if="validationErrors['manageMeasurementUnit']['abbreviation']"
+                                                        v-text="validationErrors['manageMeasurementUnit']['abbreviation']">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="status_id" class="form-label">Status <span
+                                                            class="text-danger">*</span></label>
+                                                    <select id="status_id" name="status"
+                                                        v-model="measurementUnitFormFields.is_active"
+                                                        :class="{'form-control': true, 'is-invalid': validationErrors['manageMeasurementUnit']['status'] }">
+                                                        <option value="" default>Choose an option</option>
+                                                        <option :value="true"
+                                                            :selected="measurementUnitFormFields.is_active === true">
+                                                            Active
+                                                        </option>
+                                                        <option :value="false"
+                                                            :selected="measurementUnitFormFields.is_active === false">
+                                                            Inactive
+                                                        </option>
+                                                    </select>
+                                                    <div class="invalid-feedback"
+                                                        v-if="validationErrors['manageMeasurementUnit']['status']"
+                                                        v-text="validationErrors['manageMeasurementUnit']['status']">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <input type="hidden" id="measurement_unit_id" name="measurement_unit_id"
+                                                v-model="measurementUnitFormFields.id" placeholder=""
+                                                :class="{'form-control': true}">
+                                            <div class="mt-3">
+                                                <button type="submit" class="btn btn-primary me-2">Save</button>
+                                                <button type="button" class="btn btn-secondary"
+                                                    @click="handleCancelManageMeasurementUnitBtnClick">Cancel</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <!-- Table -->
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle"
+                                            v-if="!toggleDivs.showManageMeasurementUnitForm">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Abbreviation</th>
+                                                    <th>Status</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="unit in measurementUnits" :key="unit.id">
+                                                    <td v-text="unit.name"></td>
+                                                    <td v-text="unit.abbreviation"></td>
+                                                    <td>
+                                                        <span
+                                                            :class="['status-badge', unit.is_active ? 'status-active' : 'status-pending']"
+                                                            v-text="unit.is_active ? 'Active' : 'Inactive'">
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-primary"
+                                                            @click="handleEditMeasurementUnitBtnClick(unit)">Edit</button>
+                                                        <button class="btn btn-sm btn-danger"
+                                                            @click="removeMeasurementUnit(unit)">Delete</button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
