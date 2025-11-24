@@ -440,7 +440,9 @@ createApp({
                 document.body.appendChild(backdrop);
             }
             this.measurementUnitFormFields = { id: '', name: '', abbreviation: '', is_active: '' };
-            // this.getMeasurementUnits();
+
+          this.toggleDivs.showAddMeasurementUnitBtn=true;
+          this.toggleDivs.showManageMeasurementList= true
         },
         // Handle Add Measurement Unit button click
         handleAddManageMeasurementUnitBtnClick() {
@@ -873,7 +875,7 @@ createApp({
                     }
                     if (data.measurement_units) {
                         this.measurementUnits = data.measurement_units;
-                        console.log("measurementUnits",  data.measurement_units);
+                        console.log("measurementUnits", data.measurement_units);
                     }
 
                 })
