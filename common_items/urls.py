@@ -89,4 +89,7 @@ urlpatterns = [
        	url(r'^delete-service-price-range/(?P<price_range_id>[-\w]+)/$', views.ProductivityPriceRangeAPIView.as_view(), name='delete-service-price-range'),
         url(r'^delete-service-addons/(?P<addon_id>[-\w]+)/$', views.ServiceAddOnsAPIView.as_view(), name='delete-service-addons'),
 		url(r'^delete-productivity/(?P<productivity_id>[-\w]+)/$', views.ServiceProductivityAPIView.as_view(), name='delete-productivity'),
+        url(r'^add-measurement-unit/$', views.MeasurementUnitsAPIView.as_view(), name='add-measurement-unit'),
+		url(r'^update-measurement-unit/(?P<measurement_unit_id>[-\w]+)$', views.MeasurementUnitsAPIView.as_view(), name='update-measurement-unit'),
+        url(r'^delete-measurement-unit/(?P<measurement_unit_id>[-\w]+)$', views.MeasurementUnitsAPIView.as_view(), name='delete-measurement-unit'),
 	]

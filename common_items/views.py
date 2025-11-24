@@ -38,7 +38,7 @@ from customer.models import CustomerBooking
 from agent.forms import UserProfileForm,AddressForm
 from evaluator.forms import EvaluationDetailsForm,QuatationServiceForm
 from order.forms import InvestigationForm,PromocodeForm
-from bleachadmin.models import ServiceProductivity,ServicePriceRange,Settings,ServiceAddOns
+from bleachadmin.models import ServiceProductivity,ServicePriceRange,Settings,ServiceAddOns,MeasurementUnits
 from bleachadmin.forms import ServicePriceRangeForm,ServiceAddOnsForm,DiscountSettingsForm
 from senior_team_leader.forms import CleaningTeamAssignForm,FollowupTeamAssignForm
 from django.db.models import Count
@@ -6495,6 +6495,7 @@ class ServiceProductivityAPIView(APIView):
 		min_cleaners = data.get("productivity_min_cleaners") or None
 		min_hours = data.get("productivity_min_hours") or None
 		is_active = True if data.get("status") == "active" else False
+		measurement_unit_id = data.get("measurement_unit_id") or None
 
 		if not name:
 			return JsonResponse(
@@ -6534,6 +6535,7 @@ class ServiceProductivityAPIView(APIView):
 				is_highprice_window=0,
 				is_newkitchen=0,
 				is_cabinet=0,
+				measurement_unit_id=measurement_unit_id,
 			)
 			sp = service_productivity
 			sp_data = {
@@ -6547,6 +6549,7 @@ class ServiceProductivityAPIView(APIView):
 				"min_hours": sp.min_hours,
 				"max_hours": sp.max_hours,
 				"is_active": sp.is_active,
+				"measurement_unit_id": sp.measurement_unit_id,
 			}
 			return JsonResponse({"success": True, "service_productivity": sp_data}, status=201)
 		except Exception as e:
@@ -6588,6 +6591,7 @@ class ServiceProductivityAPIView(APIView):
 		max_hours = parse_float(data.get("productivity_max_hours"))
 		min_cleaners = parse_float(data.get("productivity_min_cleaners"))
 		min_hours = parse_float(data.get("productivity_min_hours"))
+		measurement_unit_id = safe_str(data.get("measurement_unit_id")) or None
 
 		is_active = True if data.get("status") == "active" else False
 
@@ -6630,6 +6634,7 @@ class ServiceProductivityAPIView(APIView):
 				is_highprice_window=0,
 				is_newkitchen=0,
 				is_cabinet=0,
+				measurement_unit_id=measurement_unit_id,
 			)
 			sp_obj = sp.first()
 			sp_data = {
@@ -6643,6 +6648,7 @@ class ServiceProductivityAPIView(APIView):
 				"min_hours": sp_obj.min_hours,
 				"max_hours": sp_obj.max_hours,
 				"is_active": sp_obj.is_active,
+				"measurement_unit_id": sp_obj.measurement_unit_id,
 			}
 
 			return JsonResponse({"success": True, "service_productivity": sp_data}, status=201)
@@ -7028,35 +7034,6 @@ class ServiceAddOnsAPIView(APIView):
 
 class StagingProductivity(IsAuthenticated,View):
 	def get(self,request):
-
-		#save ajax productivity
-		# response_dict = {}
-		# action = request.GET.get('action_type')
-		# if action == 'edit_productivity':
-		# 	productivity_id    = request.GET.get('productivity_id')
-		# 	productivity_value = request.GET.get('productivity_value')
-
-		# 	productivity                  = ServiceProductivity.objects.get(id=productivity_id)
-		# 	productivity.perhour_cleaning = productivity_value
-		# 	productivity.save()
-		# 	response_dict['success'] =True
-		# 	return JsonResponse(response_dict)
-		
-		
-		# try:
-		# 	service_addons_qs = ServiceAddOns.objects.select_related('service_type') 
-		# 	service_types = ServiceType.objects.filter(is_active=True).prefetch_related(Prefetch('addons_service_type',queryset=service_addons_qs,to_attr='service_addons'))	
-		# except:
-		# 	service_types = None
-
-		
-
-		
-
-		
-
-		# discount_settings = Settings.objects.filter(is_active=True).first()
-
 		return render(request,'common/productivity/staging-productivity.html')
 
 class ProductivityServiceTypeAPIView(APIView):
@@ -7076,6 +7053,7 @@ class ProductivityServiceTypeAPIView(APIView):
 				'min_hours': p.min_hours,
 				'max_hours': p.max_hours,
 				'is_active': bool(getattr(p, 'is_active', False)),
+				'measurement_unit_id': p.measurement_unit_id,
 			})
 		
 		service_addons = list(ServiceAddOns.objects.values(
@@ -7086,11 +7064,140 @@ class ProductivityServiceTypeAPIView(APIView):
 			'id', 'service_type_id', 'service_productivity_id', 'name', 'price', 'minimum_area', 'maximum_area', 'unit_price', 'is_active'
 		))
 
+		measurement_units = list(MeasurementUnits.objects.values('id', 'name', 'abbreviation', 'is_active'))
+
 		return JsonResponse({
 			'service_types': service_types,
 			'service_productivities': service_productivities,
 			'service_addons': service_addons,
-			'service_price_ranges': service_price_ranges
+			'service_price_ranges': service_price_ranges,
+			'measurement_units': measurement_units,
 		})
+
+class MeasurementUnitsAPIView(APIView):
+	def post(self, request, *args, **kwargs):
+		data = getattr(request, "data", request.POST)
+		name = (data.get("name") or "").strip()
+		abbreviation = (data.get("abbreviation") or "").strip()
+		is_active = True if data.get("is_active") == "active" else False
+
+		if not name:
+			return JsonResponse(
+				{"success": False, "error_field": "name", "error_message": "Name is required."},
+				status=400,
+			)
+
+		if not abbreviation:
+			return JsonResponse(
+				{"success": False, "error_field": "abbreviation", "error_message": "Abbreviation is required."},
+				status=400,
+			)
+
+		# Backend validation for duplicate names
+		if MeasurementUnits.objects.filter(name__iexact=name).exists():
+			return JsonResponse(
+				{"success": False, "error_field": "name", "error_message": "Measurement unit with this name already exists."},
+				status=400,
+			)
+		if MeasurementUnits.objects.filter(abbreviation__iexact=abbreviation).exists():
+			return JsonResponse(
+				{"success": False, "error_field": "abbreviation", "error_message": "Measurement unit with this abbreviation already exists."},
+				status=400,
+			)
+
+		try:
+			measurment_unit = MeasurementUnits.objects.create(
+				name=name,
+				abbreviation=abbreviation,
+				is_active=is_active
+			)
+			mu = measurment_unit
+			mu_data = {
+				"id": mu.id,
+				"name": mu.name,
+				"abbreviation": mu.abbreviation,
+				"is_active": mu.is_active,
+			}
+			return JsonResponse({"success": True, "measurement_unit": mu_data})
+		except Exception as e:
+			return JsonResponse({"success": False, "error": str(e)})
+
+
+	def put(self, request, *args, **kwargs):
+		data = getattr(request, "data", None) or request.data or {}
+
+		def safe_str(val):
+			return val.strip() if isinstance(val, str) and val.strip() != "" else None
+
+		raw_id = kwargs.get("measurement_unit_id")
+		if raw_id is None:
+			return JsonResponse({"success": False, "error": "measurement_unit_id required"}, status=400)
+	
+		try:
+			measurement_unit_id = int(safe_str(str(raw_id)) or raw_id)
+		except (TypeError, ValueError):
+			return JsonResponse({"success": False, "error": "Invalid measurement_unit_id"}, status=400)
+
+		name = safe_str(data.get("name"))
+		abbreviation = safe_str(data.get("abbreviation"))
+		is_active = True if data.get("is_active") == "active" else False
+
+		if not name:
+			return JsonResponse({"success": False, "error_field": "name", "error_message": "Name is required."}, status=400)
+
+		if not abbreviation:
+			return JsonResponse({"success": False, "error_field": "abbreviation", "error_message": "Abbreviation is required."}, status=400)
+
+		measurement_unit = MeasurementUnits.objects.filter(id=measurement_unit_id).first()
+		if not measurement_unit:
+			return JsonResponse({"success": False, "error": "Invalid measurement unit."}, status=400)
+	
+		# Check for duplicate names if name is changed
+		if MeasurementUnits.objects.filter(name__iexact=name).exclude(id=measurement_unit.id).exists():
+			return JsonResponse({"success": False, "error_field": "name", "error_message": "Measurement unit with this name already exists."}, status=400)
+
+		if MeasurementUnits.objects.filter(abbreviation__iexact=abbreviation).exclude(id=measurement_unit.id).exists():
+			return JsonResponse({"success": False, "error_field": "abbreviation", "error_message": "Measurement unit with this abbreviation already exists."}, status=400)
+
+		try:
+			measurement_unit.name = name
+			measurement_unit.abbreviation = abbreviation
+			measurement_unit.is_active = is_active
+			measurement_unit.save()
+			mu = measurement_unit
+			mu_data = {
+				"id": mu.id,
+				"name": mu.name,
+				"abbreviation": mu.abbreviation,
+				"is_active": mu.is_active,
+			}
+			return JsonResponse({"success": True, "measurement_unit": mu_data})
+		except Exception as e:
+			return JsonResponse({"success": False, "error": str(e)})
+
+	def delete(self, request, *args, **kwargs):
+		unit_id = kwargs.get("measurement_unit_id")
+		unit_id = int(unit_id)
+		is_active = 0
+
+		if not unit_id:
+			return JsonResponse({"success": False, "error": "Unit id required"}, status=400)
+
+		mu = MeasurementUnits.objects.filter(id=unit_id)
+		if not mu.exists():
+			return JsonResponse({"success": False, "error": "Measurement unit not found"}, status=404)
 		
-		
+		try:
+			mu.update(
+				is_active=is_active
+			)
+			mu_obj = mu.first()
+			mu_data = {
+				"id": mu_obj.id,
+				"name": mu_obj.name,
+				"abbreviation": mu_obj.abbreviation,
+				"is_active": mu_obj.is_active,
+			}
+			return JsonResponse({"success": True, "measurement_unit": mu_data}, status=201)
+		except Exception as e:
+			return JsonResponse({"success": False, "error_message": str(e)}, status=500)
