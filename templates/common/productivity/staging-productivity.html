@@ -112,7 +112,7 @@
                                                         :class="['status-badge', serviceType.is_active === true ? 'status-active' : 'status-pending']"
                                                         v-text="serviceType.is_active ? 'Active' : 'Inactive'"></span>
                                                 </td>
-                                                <td v-text="serviceType.updated"> </td>
+                                                <td v-text="formatDate(serviceType.updated)"> </td>
                                                 <td>
                                                     <button class="btn-action btn-view" title="View"
                                                         @click="handleServiceViewBtnClick(serviceType)"><i
