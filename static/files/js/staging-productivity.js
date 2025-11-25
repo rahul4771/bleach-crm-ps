@@ -441,8 +441,8 @@ createApp({
             }
             this.measurementUnitFormFields = { id: '', name: '', abbreviation: '', is_active: '' };
 
-          this.toggleDivs.showAddMeasurementUnitBtn=true;
-          this.toggleDivs.showManageMeasurementList= true
+            this.toggleDivs.showAddMeasurementUnitBtn = true;
+            this.toggleDivs.showManageMeasurementList = true
         },
         // Handle Add Measurement Unit button click
         handleAddManageMeasurementUnitBtnClick() {
