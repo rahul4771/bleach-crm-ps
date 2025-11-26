@@ -51,7 +51,7 @@
                     <div class="mb-4">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h1 class="h1 mb-0 text-gray-800">Productivity</h1>
+                                <h1 class="h1 mb-0 text-gray-800" style="font-size: 30px">Productivity</h1>
                                 <!-- <p class="text-muted mb-0">Advanced data tables with search, sort, and export
                                     functionality</p> -->
                             </div>
@@ -89,6 +89,7 @@
                                                 <th><button>Name</button></th>
                                                 <th><button>Arabic</button></th>
                                                 <th><button>Status</button></th>
+                                                <th>Updated Date</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
@@ -111,6 +112,7 @@
                                                         :class="['status-badge', serviceType.is_active === true ? 'status-active' : 'status-pending']"
                                                         v-text="serviceType.is_active ? 'Active' : 'Inactive'"></span>
                                                 </td>
+                                                <td v-text="formatDate(serviceType.updated)"> </td>
                                                 <td>
                                                     <button class="btn-action btn-view" title="View"
                                                         @click="handleServiceViewBtnClick(serviceType)"><i
@@ -599,12 +601,13 @@
                                                     v-model="categoryFormFields.measurement_unit_id"
                                                     :class="{'form-control': true, 'is-invalid': validationErrors['manageProductivity']['measurementUnit'] }">
                                                     <option value="" default>Choose an option</option>
-                                                    <option v-for="unit in measurementUnits" :key="unit.id"
-                                                        :value="unit.id"
+                                                    <option v-for="unit in measurementUnits.filter(u => u.is_active)"
+                                                        :key="unit.id" :value="unit.id"
                                                         :selected="categoryFormFields.measurement_unit_id === unit.id"
-                                                        v-text="unit.name">
+                                                        v-text="unit.name + ' (' + unit.abbreviation + ')'">
 
                                                     </option>
+
                                                 </select>
                                                 <div class="invalid-feedback"
                                                     v-if="validationErrors['manageProductivity']['measurementUnit']"

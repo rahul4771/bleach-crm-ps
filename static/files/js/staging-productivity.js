@@ -440,7 +440,9 @@ createApp({
                 document.body.appendChild(backdrop);
             }
             this.measurementUnitFormFields = { id: '', name: '', abbreviation: '', is_active: '' };
-            // this.getMeasurementUnits();
+
+            this.toggleDivs.showAddMeasurementUnitBtn = true;
+            this.toggleDivs.showManageMeasurementList = true
         },
         // Handle Add Measurement Unit button click
         handleAddManageMeasurementUnitBtnClick() {
@@ -873,7 +875,6 @@ createApp({
                     }
                     if (data.measurement_units) {
                         this.measurementUnits = data.measurement_units;
-                        console.log("measurementUnits",  data.measurement_units);
                     }
 
                 })
@@ -1584,6 +1585,14 @@ createApp({
             if (fieldKey) delete this.validationErrors.manageProductivity[fieldKey];
             return true;
         },
+        formatDate(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = date.toLocaleString('en-US', { month: 'short' });
+            const year = date.getFullYear();
+            return `${day} ${month}, ${year}`;
+        }
 
     },
     // Lifecycle hook to fetch service types on mount

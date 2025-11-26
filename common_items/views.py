@@ -7038,7 +7038,8 @@ class StagingProductivity(IsAuthenticated,View):
 
 class ProductivityServiceTypeAPIView(APIView):
 	def get(self, request):
-		service_types = list(ServiceType.objects.values('id','name','name_arabic', 'is_active'))
+		service_types = list(ServiceType.objects.values('id','name','name_arabic', 'is_active','updated'))
+
 		service_productivities = []
 		for p in ServiceProductivity.objects.select_related('service_type').all():
 			service_productivities.append({
@@ -7054,6 +7055,7 @@ class ProductivityServiceTypeAPIView(APIView):
 				'max_hours': p.max_hours,
 				'is_active': bool(getattr(p, 'is_active', False)),
 				'measurement_unit_id': p.measurement_unit_id,
+				
 			})
 		
 		service_addons = list(ServiceAddOns.objects.values(
