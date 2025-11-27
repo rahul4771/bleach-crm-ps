@@ -7203,3 +7203,7 @@ class MeasurementUnitsAPIView(APIView):
 			return JsonResponse({"success": True, "measurement_unit": mu_data}, status=201)
 		except Exception as e:
 			return JsonResponse({"success": False, "error_message": str(e)}, status=500)
+
+class StagingBooking(IsAuthenticated,View):
+	def get(self,request,evaluation_detail_id):
+		return render(request,"booking/staging-booking.html")
