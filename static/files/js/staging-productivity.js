@@ -693,7 +693,7 @@ createApp({
             const minArea = this.priceRangeFormFields.minimum_area;
             if (minArea !== '' && minArea !== null && minArea !== undefined) {
                 const n = Number(minArea);
-                if (Number.isNaN(n) || n < 0 || !Number.isInteger(n)) {
+                if (Number.isNaN(n) || n < 0 ) {
                     this.validationErrors.managePriceRange.minimumArea = 'Please enter a valid non-negative integer';
                 } else {
                     delete this.validationErrors.managePriceRange.minimumArea;
@@ -705,7 +705,7 @@ createApp({
             const maxArea = this.priceRangeFormFields.maximum_area;
             if (maxArea !== '' && maxArea !== null && maxArea !== undefined) {
                 const n2 = Number(maxArea);
-                if (Number.isNaN(n2) || n2 < 0 || !Number.isInteger(n2)) {
+                if (Number.isNaN(n2) || n2 < 0 ) {
                     this.validationErrors.managePriceRange.maximumArea = 'Please enter a valid non-negative integer';
                 } else {
                     delete this.validationErrors.managePriceRange.maximumArea;
