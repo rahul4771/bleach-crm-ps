@@ -35,7 +35,8 @@ createApp({
                 showAddMeasurementUnitBtn: true,
                 showManageMeasurementList: true,
                 showManageMeasurementUnitForm: false,
-                showMUConfirmDelete: false
+                showMUConfirmDelete: false,
+                showServiceGroupModal: false
             },
             // renamed from `delete` to avoid using the reserved keyword in template expressions
             deleteModal: {
@@ -1592,7 +1593,23 @@ createApp({
             const month = date.toLocaleString('en-US', { month: 'short' });
             const year = date.getFullYear();
             return `${day} ${month}, ${year}`;
-        }
+        },
+         showServiceGroupModal() {
+            this.toggleDivs.showList = false;
+            this.toggleDivs.showServiceGroupModal= true;
+            this.validationErrors['manageServiceType'] = [];
+            this.viewServiceType = {
+                title: '',
+            };
+
+            const form = document.getElementById('manage-service-form');
+            if (form) {
+                form.setAttribute('data-action', 'add')
+            }
+        },
+         handleImageUpload(event) {
+        this.serviceGroupForm.image = event.target.files[0];
+    },
 
     },
     // Lifecycle hook to fetch service types on mount
