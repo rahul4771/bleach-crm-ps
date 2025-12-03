@@ -1180,6 +1180,7 @@ width="1000"
               serviceType != 'Facade Cleaning' &&
               serviceType != 'Car Parking Umbrella' &&
               serviceType != 'Window Cleaning' &&
+              serviceType != 'Rope Access' &&
               serviceType != 'Outdoor Cleaning' &&
               serviceType != 'Kitchen Cleaning'
             "
@@ -1192,7 +1193,7 @@ width="1000"
               v-model="otherService.age"
             ></v-text-field>
           </div>
-          <div class="col-md-12 text-center" v-if="serviceType == 'Window Cleaning'">
+          <div class="col-md-12 text-center" v-if="serviceType == 'Window Cleaning' || serviceType == 'Rope Access'">
             <v-radio-group v-model="window_check" row v-on:change="windowFilter()">
               <v-radio label="Old Window" :value="true"></v-radio>
               <v-radio label="New Window" :value="false"></v-radio>
@@ -1235,6 +1236,7 @@ width="1000"
               serviceType != 'Facade Cleaning' &&
               serviceType != 'Car Parking Umbrella' &&
               serviceType != 'Window Cleaning' &&
+              serviceType != 'Rope Access' &&
               serviceType != 'Outdoor Cleaning'
             "
           >
@@ -1254,6 +1256,7 @@ width="1000"
               serviceType != 'Facade Cleaning' &&
               serviceType != 'Car Parking Umbrella' &&
               serviceType != 'Window Cleaning' &&
+              serviceType != 'Rope Access' &&
               serviceType != 'Outdoor Cleaning'
             "
           >
@@ -1349,7 +1352,7 @@ width="1000"
                   v-model="otherService.size"
                 ></v-select>
               </div>
-              <div v-if="serviceType == 'Window Cleaning'">
+              <div v-if="serviceType == 'Window Cleaning' || serviceType == 'Rope Access'">
                 <v-select
                   :items="windowSize"
                   item-text="combinedSize"
@@ -1372,7 +1375,7 @@ width="1000"
                 ></v-select>
               </div>
           </div>
-          <div class="col-md-6" v-if="serviceType == 'Window Cleaning'">
+          <div class="col-md-6" v-if="serviceType == 'Window Cleaning' || serviceType == 'Rope Access'">
             <v-select
               :items="['Outside & Inside', 'Outside', 'Inside']"
               label="Sides"
@@ -1388,6 +1391,7 @@ width="1000"
               serviceType != 'Facade Cleaning' &&
               serviceType != 'Car Parking Umbrella' &&
               serviceType != 'Window Cleaning' &&
+              serviceType != 'Rope Access' &&
               serviceType != 'Outdoor Cleaning'
             "
           >
@@ -1492,7 +1496,7 @@ width="1000"
 
          
           <!-- keynote for services other than detailed cleaning category begins here-->
-          <div class="col-md-12" v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning' || serviceType=='Window Cleaning' || serviceType=='Carpet Cleaning'">
+          <div class="col-md-12" v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning' || serviceType=='Window Cleaning' || serviceType=='Rope Access' || serviceType=='Carpet Cleaning'">
             <div>Add Keynotes</div>
             <div class="row m-0">
             <div v-for="(keynote,kindex) in otherService.keynote_data" v-bind:key="kindex" class="col-md-6" >
@@ -1516,7 +1520,7 @@ width="1000"
           </div>
           </div>
           
-          <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning' || serviceType=='Window Cleaning' || serviceType=='Carpet Cleaning'">
+          <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning' || serviceType=='Window Cleaning' || serviceType=='Rope Access' || serviceType=='Carpet Cleaning'">
             <v-combobox
             v-model="keynote_name"
             :items="keynote_content"
@@ -1524,13 +1528,13 @@ width="1000"
            
            ></v-combobox>
           </div>
-          <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning' || serviceType=='Window Cleaning' || serviceType=='Carpet Cleaning'">
+          <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning' || serviceType=='Window Cleaning' || serviceType=='Rope Access' || serviceType=='Carpet Cleaning'">
             <v-text-field v-model="keynote_value"
             label="Value"
               >
             </v-text-field>
           </div>
-          <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning' || serviceType=='Window Cleaning' || serviceType=='Carpet Cleaning'">
+          <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning' || serviceType=='Window Cleaning' || serviceType=='Rope Access' || serviceType=='Carpet Cleaning'">
             <v-btn color="primary" @click="addOthersKeynote()">
               Add
             </v-btn>
@@ -1837,12 +1841,12 @@ width="1000"
                 </div>
                 <div class="row m-0" v-if="serviceType">
                   <div class="col-md-4 mt-2" id="field-location-type"
-                    v-if="serviceType=='General Cleaning' || serviceType=='Hourly Cleaning' || serviceType=='Sterilization'||serviceType=='Deep Cleaning' || serviceType=='Window Cleaning' || serviceType=='Kitchen Cleaning' || serviceType=='Pest Control'">
+                    v-if="serviceType=='General Cleaning' || serviceType=='Hourly Cleaning' || serviceType=='Sterilization'|| serviceType=='Deep Cleaning' || serviceType=='Window Cleaning' || serviceType=='Rope Access' || serviceType=='Kitchen Cleaning' || serviceType=='Pest Control'">
                     <v-select :items="location_types2" v-model="location_type" label="Location Type"
                       v-if="serviceType=='General Cleaning' ||  serviceType=='Hourly Cleaning'|| serviceType=='Sterilization' || serviceType=='Pest Control'">
                     </v-select>
                     <v-select
-                      v-if="serviceType=='Deep Cleaning' || serviceType=='Window Cleaning' || serviceType=='Kitchen Cleaning'"
+                      v-if="serviceType=='Deep Cleaning' || serviceType=='Window Cleaning' || serviceType=='Rope Access' || serviceType=='Kitchen Cleaning'"
                       :items="location_types" v-model="location_type" label="Location Type" >
                     </v-select>
                   </div>
@@ -1856,6 +1860,7 @@ width="1000"
                     serviceType == 'Deep Cleaning' ||
                     serviceType == 'Sterilization' ||
                     serviceType == 'Storage Area'  ||
+                    serviceType== 'Rope Access' ||
                     serviceType == 'Pest Control'
                   ">
                     <v-select :items="buildings" v-model="temp_no_of_building" label="No of Building"
@@ -1872,6 +1877,7 @@ width="1000"
                   serviceType == 'Deep Cleaning' ||
                   serviceType == 'Sterilization' ||
                   serviceType == 'Storage Area'  ||
+                  serviceType == 'Rope Access'  ||
                   serviceType == 'Pest Control'
                 ">
                   <div class="col-md-12">
@@ -2736,6 +2742,7 @@ Fill all the details of the Buildings  to proceed
                     serviceType == 'Kitchen Cleaning' ||
                     serviceType == 'Car Parking Umbrella' ||
                     serviceType == 'Window Cleaning' ||
+                    serviceType == 'Rope Access' ||
                     serviceType == 'Outdoor Cleaning') 
                   
                 ">
@@ -2765,6 +2772,7 @@ Fill all the details of the Buildings  to proceed
                     serviceType != 'Facade Cleaning' &&
                     serviceType != 'Car Parking Umbrella' &&
                     serviceType != 'Window Cleaning' &&
+                    serviceType != 'Rope Access' &&
                     serviceType != 'Outdoor Cleaning' &&
                     serviceType != 'Kitchen Cleaning'
                   ">
@@ -2777,7 +2785,7 @@ Fill all the details of the Buildings  to proceed
                             <v-radio label="New Kitchen" value="new"></v-radio>
                           </v-radio-group>
                         </div>
-                        <div class="col-md-12 text-center" v-if="serviceType == 'Window Cleaning'">
+                        <div class="col-md-12 text-center" v-if="serviceType == 'Window Cleaning' || serviceType == 'Rope Access'">
                           <v-radio-group v-model="window_check" row v-on:change="windowFilter()">
                             <v-radio label="Old Window" :value="true"></v-radio>
                             <v-radio label="New Window" :value="false"></v-radio>
@@ -2804,6 +2812,7 @@ Fill all the details of the Buildings  to proceed
                     serviceType != 'Facade Cleaning' &&
                     serviceType != 'Car Parking Umbrella' &&
                     serviceType != 'Window Cleaning' &&
+                    serviceType != 'Rope Access' &&
                     serviceType != 'Outdoor Cleaning'
                   ">
                           <v-select :items="materials" label="Material" :rules="[v => !!v || 'Age is required']"
@@ -2814,6 +2823,7 @@ Fill all the details of the Buildings  to proceed
                     serviceType != 'Facade Cleaning' &&
                     serviceType != 'Car Parking Umbrella' &&
                     serviceType != 'Window Cleaning' &&
+                    serviceType != 'Rope Access' &&
                     serviceType != 'Outdoor Cleaning'
                   ">
                           <v-select :items="colors" label="Color" :rules="[v => !!v || 'Color is required']" required
@@ -2843,7 +2853,7 @@ Fill all the details of the Buildings  to proceed
                               :rules="[v => !!v || 'Size is required']" required v-model="otherService.size"
                               :attach="true"></v-select>
                           </div>
-                          <div v-if="serviceType == 'Window Cleaning'">
+                          <div v-if="serviceType == 'Window Cleaning' || serviceType == 'Rope Access'">
                             <v-select :items="windowSize" item-text="combinedSize" return-object label="Size"
                               :rules="[v => !!v || 'Size is required']" required v-model="otherService.size"
                               :attach="true"></v-select>
@@ -2866,7 +2876,7 @@ Fill all the details of the Buildings  to proceed
                           </div>
                         </div>
 
-                        <div class="col-md-6" v-if="serviceType == 'Window Cleaning'">
+                        <div class="col-md-6" v-if="serviceType == 'Window Cleaning' || serviceType == 'Rope Access'">
                           <v-select :items="['Outside & Inside', 'Outside', 'Inside']" label="Sides"
                             :rules="[v => !!v || 'Size is required']" required v-model="otherService.sides"
                             :attach="true"></v-select>
@@ -2876,6 +2886,7 @@ Fill all the details of the Buildings  to proceed
                     serviceType != 'Facade Cleaning' &&
                     serviceType != 'Car Parking Umbrella' &&
                     serviceType != 'Window Cleaning' &&
+                    serviceType != 'Rope Access' &&
                     serviceType != 'Outdoor Cleaning'
                   ">
                   <div>
@@ -3034,7 +3045,7 @@ Fill all the details of the Buildings  to proceed
 
   <!--more services  only for kitchen cleaning ends here-->
                         <!-- keynote for services other than detailed cleaning category begins here-->
-                        <div class="col-md-12" v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning'|| serviceType=='Window Cleaning' || serviceType=='Carpet Cleaning'">
+                        <div class="col-md-12" v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning'|| serviceType=='Window Cleaning' || serviceType=='Rope Access' || serviceType=='Carpet Cleaning'">
                           <div>Add Keynotes</div>
                           <div class="row m-0">
                           <div v-for="(keynote,kindex) in otherService.keynote_data" v-bind:key="kindex" class="col-md-3" >
@@ -3057,7 +3068,7 @@ Fill all the details of the Buildings  to proceed
                         </div>
                         </div>
                         </div>
-                        <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning' || serviceType=='Window Cleaning' || serviceType=='Carpet Cleaning'">
+                        <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning' || serviceType=='Window Cleaning' || serviceType=='Rope Access' || serviceType=='Carpet Cleaning'">
                           <v-combobox
                           v-model="keynote_name"
                           :items="keynote_content"
@@ -3065,13 +3076,13 @@ Fill all the details of the Buildings  to proceed
                          
                          ></v-combobox>
                         </div>
-                        <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning' || serviceType=='Window Cleaning' || serviceType=='Carpet Cleaning'">
+                        <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning' || serviceType=='Window Cleaning' || serviceType=='Rope Access' || serviceType=='Carpet Cleaning'">
                           <v-text-field v-model="keynote_value"
                           label="Value"
                             >
                           </v-text-field>
                         </div>
-                        <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning' || serviceType=='Window Cleaning' || serviceType=='Carpet Cleaning'">
+                        <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning' || serviceType=='Window Cleaning' || serviceType=='Rope Access' || serviceType=='Carpet Cleaning'">
                           <v-btn color="primary" @click="addOthersKeynote()">
                             Add Keynote
                           </v-btn>
@@ -3154,6 +3165,7 @@ Fill all the details of the Buildings  to proceed
                     serviceType == 'Kitchen Cleaning' ||
                     serviceType == 'Car Parking Umbrella' ||
                     serviceType == 'Window Cleaning' ||
+                    serviceType == 'Rope Access' ||
                     serviceType == 'Outdoor Cleaning') &&
                   otherServices.length > 0">
                       <div class="col-md-12 mt-4">
@@ -3187,6 +3199,7 @@ Fill all the details of the Buildings  to proceed
                     serviceType == 'Kitchen Cleaning' ||
                     serviceType == 'Car Parking Umbrella' ||
                     serviceType == 'Window Cleaning' ||
+                    serviceType == 'Rope Access' ||
                     serviceType == 'Outdoor Cleaning') &&
                   otherServices.length > 0">
                       <div class="col-md-12">

@@ -259,6 +259,9 @@ const app=new Vue({
       name: "Window Cleaning",
     },
     {
+      name: "Spider Cleaning",
+    },
+    {
       name: "Outdoor Cleaning",
     },
   ],
@@ -283,6 +286,9 @@ const app=new Vue({
       },
       {
         name: "Window Cleaning",
+      },
+      {
+        name: "Spider Cleaning",
       },
       {
         name: "Outdoor Cleaning",
@@ -3401,6 +3407,13 @@ this.infectionControlServices=[]
     <img src="/static/files/icons/booking/icons/WindowCleaning.png" class="service-icon"> 
     <div class="text-center pt-2 service-title">
     Window Cleaning
+  </div></div>
+  
+    <div class="sr-service-card m-2 p-2"  onclick="selectService('Rope Access',this)">
+    <i class="far fa-circle inactive-icon"></i>
+    <img src="/static/files/icons/booking/icons/RopeAccess.png" class="service-icon"> 
+    <div class="text-center pt-2 service-title">
+    Spider Cleaning
   </div></div>
  
     <div class="sr-service-card m-2 p-2"  onclick="selectService('Outdoor Cleaning',this)">
