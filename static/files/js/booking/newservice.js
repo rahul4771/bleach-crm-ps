@@ -258,7 +258,7 @@ $(document).ready(function(){
         name: "Window Cleaning",
       },
       {
-        name: "Spider Cleaning",
+        name: "Rope Access",
       },
       {
         name: "Outdoor Cleaning",
@@ -287,7 +287,7 @@ $(document).ready(function(){
           name: "Window Cleaning",
         },
         {
-          name: "Spider Cleaning",
+          name: "Rope Access",
         },
         {
           name: "Outdoor Cleaning",
@@ -3461,7 +3461,7 @@ $(document).ready(function(){
       <i class="far fa-circle inactive-icon"></i>
       <img src="/static/files/icons/booking/icons/RopeAccess.png" class="service-icon"> 
       <div class="text-center pt-2 service-title">
-      Spider Cleaning
+      Rope Access
     </div></div>
    
       <div class="sr-service-card m-2 p-2"  onclick="selectService('Outdoor Cleaning',this)">

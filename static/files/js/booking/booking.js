@@ -259,7 +259,7 @@ const app=new Vue({
       name: "Window Cleaning",
     },
     {
-      name: "Spider Cleaning",
+      name: "Rope Access",
     },
     {
       name: "Outdoor Cleaning",
@@ -288,7 +288,7 @@ const app=new Vue({
         name: "Window Cleaning",
       },
       {
-        name: "Spider Cleaning",
+        name: "Rope Access",
       },
       {
         name: "Outdoor Cleaning",
