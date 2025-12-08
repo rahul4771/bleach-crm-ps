@@ -453,3 +453,12 @@ class EvaluationSectionAddons(models.Model):
 
 	def __str__(self):
 		return str(self.evaluation_section)
+class ServiceGroup(models.Model):
+    service_name = models.CharField(max_length=255, blank=False, null=False)
+    service_name_arabic = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at= models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.service_name

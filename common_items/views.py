@@ -30,7 +30,7 @@ from django.db.models import Prefetch
 from django.contrib import messages
 
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
-from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons,CleaningMethod,CleaningSection,ServiceType,AreaType
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons,CleaningMethod,CleaningSection,ServiceType,AreaType,ServiceGroup 
 from order.models import Promocode,OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia,CancellOrderAmountHistory,XeroInvoice
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
@@ -49,6 +49,8 @@ from Api.models import XeroConnection
 
 from django.core.mail import send_mail,EmailMultiAlternatives
 from django.template.loader import render_to_string
+
+
 
 #restframe work 
 from rest_framework.views import APIView
@@ -7203,3 +7205,122 @@ class MeasurementUnitsAPIView(APIView):
 			return JsonResponse({"success": True, "measurement_unit": mu_data}, status=201)
 		except Exception as e:
 			return JsonResponse({"success": False, "error_message": str(e)}, status=500)
+	
+class ServiceGroupAPIView(APIView):
+
+    def post(self, request, *args, **kwargs):
+        data = getattr(request, "data", request.POST)
+
+        service_name = (data.get("service_name") or "").strip()
+        service_name_arabic = (data.get("service_name_arabic") or "").strip()
+        status = data.get("status", "active")
+        is_active = True if status == "active" else False
+
+        # Image handling
+        
+
+        # Validation
+        if not service_name:
+            return JsonResponse(
+                {"success": False, "error_field": "service_name", "error_message": "Service name is required."},
+                status=400,
+            )
+
+        # Duplicate name check
+        if ServiceGroup.objects.filter(service_name__iexact=service_name).exists():
+            return JsonResponse(
+                {"success": False, "error_field": "service_name", "error_message": "Service group already exists."},
+                status=400,
+            )
+
+        try:
+            sg = ServiceGroup.objects.create(
+                service_name=service_name,
+                service_name_arabic=service_name_arabic,
+              
+                status=is_active
+            )
+
+            return JsonResponse(
+                {
+                    "success": True,
+                    "service_group": {
+                        "id": sg.id,
+                        "service_name": sg.service_name,
+                        "service_name_arabic": sg.service_name_arabic,
+                        
+                        "status": sg.status,
+                    },
+                },
+                status=201,
+            )
+
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)}, status=500)
+
+    def put(self, request, *args, **kwargs):
+        data = getattr(request, "data", request.data)
+
+        group_id = kwargs.get("service_group_id")
+
+        # Validate group_id
+        try:
+            group_id = int(group_id)
+        except:
+            return JsonResponse({"success": False, "error": "group_id required"}, status=400)
+
+        sg_qs = ServiceGroup.objects.filter(id=group_id)
+        if not sg_qs.exists():
+            return JsonResponse({"success": False, "error": "ServiceGroup not found"}, status=404)
+
+        sg = sg_qs.first()
+
+        # Form fields
+        def clean(val):
+            return val.strip() if isinstance(val, str) and val.strip() else None
+
+        service_name = clean(data.get("service_name"))
+        if not service_name:
+            return JsonResponse(
+                {"success": False, "error_field": "service_name", "error_message": "Service name is required."},
+                status=400,
+            )
+
+        service_name_arabic = clean(data.get("service_name_arabic")) or ""
+        status = data.get("status", "active")
+        is_active = True if status == "active" else False
+
+        # Image upload
+        
+
+        # Duplicate check (if updated)
+        if sg.service_name.lower() != service_name.lower():
+            if ServiceGroup.objects.filter(service_name__iexact=service_name).exclude(id=group_id).exists():
+                return JsonResponse(
+                    {"success": False, "error_field": "service_name", "error_message": "Service group already exists."},
+                    status=400,
+                )
+
+        try:
+            sg.service_name = service_name
+            sg.service_name_arabic = service_name_arabic
+            sg.status = is_active
+           
+            sg.save()
+
+            return JsonResponse(
+                {
+                    "success": True,
+                    "service_group": {
+                        "id": sg.id,
+                        "service_name": sg.service_name,
+                        "service_name_arabic": sg.service_name_arabic,
+                        
+                        "status": sg.status,
+                    },
+                },
+                status=201,
+            )
+
+        except Exception as e:
+            return JsonResponse({"success": False, "error_message": str(e)}, status=500)
