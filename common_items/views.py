@@ -7324,3 +7324,11 @@ class ServiceGroupAPIView(APIView):
 
         except Exception as e:
             return JsonResponse({"success": False, "error_message": str(e)}, status=500)
+    def get(self, request):
+		# Fetch service groups
+        service_groups = list(ServiceGroup.objects.values(
+            'id', 'service_name', 'service_name_arabic', 'status', 'updated_at'
+        ))
+        return JsonResponse({'service_groups': service_groups})
+	
+    

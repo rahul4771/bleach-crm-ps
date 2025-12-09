@@ -1071,40 +1071,37 @@
                                             </thead>
 
                                             <tbody>
-                                                <tr v-for="(Servicegroup, index) in serviceGroups" :key="group.id" :data-index="index">
+                                                <tr v-for="(group, index) in serviceGroups" :key="group.id" :data-index="index">
 
-                                                    <td>
+                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                            <img :src="group.avatar" :alt="Servicegroup.service_name" class="student-avatar me-3">
+                                                            <img :src="group.avatar" :alt="group.service_name" class="student-avatar me-3">
                                                             <div>
-                                                                <div class="student-name" v-text="Servicegroup.service_name"></div>
+                                                                <div class="student-name" v-text="group.service_name"></div>
                                                             </div>
                                                         </div>
                                                     </td>
 
-                                                    <td v-text="Servicegroup.service_name_arabic"></td>
+                                                    <td v-text="group.service_name_arabic"></td>
 
                                                     <td>
                                                         <span
                                                             :class="[
                                                                 'status-badge',
-                                                                Servicegroup.status === 1 || Servicegroup.status === 'active'
-                                                                    ? 'status-active'
-                                                                    : 'status-pending'
+                                                                group.status == 1 ? 'status-active' : 'status-pending'
                                                             ]"
-                                                            v-text="(Servicegroup.status == 1 || Servicegroup.status === 'active') ? 'Active' : 'Inactive'">
+                                                            v-text="group.status == 1 ? 'Active' : 'Inactive'">
                                                         </span>
                                                     </td>
 
-                                                    <td v-text="formatDate(Servicegroup.updated_at)"></td>
+                                                    <td v-text="formatDate(group.updated_at)"></td>
 
                                                     <td>
-
-                                                        <button class="btn-action btn-edit" title="Edit" @click="handleEditServiceGroup(Servicegroup)">
+                                                        <button class="btn-action btn-edit" title="Edit" @click="handleEditServiceGroupBtnClick(Group)">
                                                             <i class="fa fa-pen"></i>
                                                         </button>
 
-                                                        <button class="btn-action btn-delete" title="Delete" @click="deleteServiceGroup(Servicegroup)">
+                                                        <button class="btn-action btn-delete" title="Delete" @click="deleteServiceGroup(Group))">
                                                             <i class="fa fa-trash"></i>
                                                         </button>
                                                     </td>
@@ -1188,11 +1185,7 @@
                             </div>
                      </div>
                     </div>
-
-
-                   
-
-            </div>
+                </div>
     </section>
 
 </div>
