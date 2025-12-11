@@ -169,9 +169,9 @@ createApp({
             if (form) {
                 form.setAttribute('data-action', 'edit')
 
-                 this.serviceGroupFormFields.name = serviceGroup.service_name || '';
-                 this.serviceGroupFormFields.name_arabic = serviceGroup.service_name_arabic || '';
-                 this.serviceGroupFormFields.is_active = serviceGroup.status ? 'active' : 'inactive';
+                 this.serviceFormFields.name = serviceType.name || '';
+                 this.serviceFormFields.name_arabic = serviceType.name_arabic || '';
+                 this.serviceFormFields.is_active = serviceType.status ? 'active' : 'inactive';
 
                 const hiddenName = 'editing_service_type_id';
                 let hidden = form.querySelector(`input[name="${hiddenName}"]`);
