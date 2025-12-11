@@ -7331,4 +7331,30 @@ class ServiceGroupAPIView(APIView):
         ))
         return JsonResponse({'service_groups': service_groups})
 	
-    
+    def delete(self, request, *args, **kwargs):
+        group_id = kwargs.get("service_group_id")
+        group_id = int(group_id)
+        is_active = 0
+
+        if not group_id:
+            return JsonResponse({"success": False, "error": "Group id required"}, status=400)
+
+        sg = ServiceGroup.objects.filter(id=group_id)
+        if not sg.exists():
+            return JsonResponse({"success": False, "error": "Service group not found"}, status=404)
+		
+        try:
+            sg.update(
+				status=is_active
+			)
+            sg_obj = sg.first()
+            sg_data = {
+				"id": sg_obj.id,
+				"service_name": sg_obj.service_name,
+				"service_name_arabic": sg_obj.service_name_arabic,
+				
+				"status": sg_obj.status,
+			}
+            return JsonResponse({"success": True, "service_group": sg_data}, status=201)
+        except Exception as e:
+            return JsonResponse({"success": False, "error_message": str(e)}, status=500)

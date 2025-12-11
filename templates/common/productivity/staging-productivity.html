@@ -1097,11 +1097,11 @@
                                                     <td v-text="formatDate(group.updated_at)"></td>
 
                                                     <td>
-                                                        <button class="btn-action btn-edit" title="Edit" @click="handleEditServiceGroupBtnClick(Group)">
+                                                        <button class="btn-action btn-edit" title="Edit" @click="handleEditServiceGroupBtnClick(group)">
                                                             <i class="fa fa-pen"></i>
                                                         </button>
 
-                                                        <button class="btn-action btn-delete" title="Delete" @click="deleteServiceGroup(Group))">
+                                                        <button class="btn-action btn-delete" title="Delete" @click="removeServiceGroup(group)">
                                                             <i class="fa fa-trash"></i>
                                                         </button>
                                                     </td>
@@ -1114,10 +1114,10 @@
                                 </div>
                             </div>
                     <!-- Service Group FORM -->
-                    <div class="dashboard-card" id="manage-service-type" v-show="toggleDivs.showServiceGroupModal">
+                    <div class="dashboard-card" id="manage-service-group" v-show="toggleDivs.showServiceGroupModal">
                         <div class="dashboard-card-header">
                             <div class="d-flex justify-content-between align-items-center">
-                                <h2 v-text="viewServiceType.title ? viewServiceType.title : 'Add Service Group'"></h2>
+                                <h2 v-text="viewServiceGroup.title ? viewServiceGroup.title : 'Add Service Group'"></h2>
                                 <button class="btn btn-secondary" @click="backButtonAction1('showList')">Back to
                                     List</button>
                             </div>

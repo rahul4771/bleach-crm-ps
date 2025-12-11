@@ -13,7 +13,9 @@ createApp({
             serviceAddons: [],
             servicePriceRanges: [],
             measurementUnits: [],
+            serviceGroups: [],
             serviceTypeId: '',
+            serviceGroupId: '',
             colorCodes: [
                 "6366f1",
                 "10b981",
@@ -167,9 +169,9 @@ createApp({
             if (form) {
                 form.setAttribute('data-action', 'edit')
 
-                this.serviceFormFields.name = serviceType.name || '';
-                this.serviceFormFields.name_arabic = serviceType.name_arabic || '';
-                this.serviceFormFields.is_active = serviceType.is_active ? 'active' : 'inactive';
+                 this.serviceGroupFormFields.name = serviceGroup.service_name || '';
+                 this.serviceGroupFormFields.name_arabic = serviceGroup.service_name_arabic || '';
+                 this.serviceGroupFormFields.is_active = serviceGroup.status ? 'active' : 'inactive';
 
                 const hiddenName = 'editing_service_type_id';
                 let hidden = form.querySelector(`input[name="${hiddenName}"]`);
@@ -551,6 +553,13 @@ createApp({
                     this.deleteProductivity(this.toFormData(payload), id);
                     return;
                 }
+                if (propertyType === 'service-group') {
+                    const payload = {
+                        new_group_is_active: "inactive"
+                    };
+                    this.deleteServiceGroup(this.toFormData(payload), id);
+                        return;
+               }
 
             }
         },
@@ -1612,7 +1621,7 @@ createApp({
             return `${day} ${month}, ${year}`;
         },
         showServiceGroupView() {
-            this.toggleDivs.showList = false;this.getServiceTypes
+            this.toggleDivs.showList = false;
             this.toggleDivs.showServiceGroupView = true;
             this.toggleDivs.showServiceGroupModal = false;
         },
@@ -1838,6 +1847,7 @@ createApp({
 
             this.toggleDivs.showServiceGroupView = false;
             this.toggleDivs.showServiceGroupModal = true;
+
             this.serviceGroupId = serviceGroup.id;
 
             this.viewServiceGroup = {
@@ -1848,6 +1858,7 @@ createApp({
             if (form) {
                 form.setAttribute('data-action', 'edit');
 
+                // FIXED FIELDS
                 this.serviceGroupFormFields.name = serviceGroup.service_name || '';
                 this.serviceGroupFormFields.name_arabic = serviceGroup.service_name_arabic || '';
                 this.serviceGroupFormFields.is_active = serviceGroup.status ? 'active' : 'inactive';
@@ -1865,10 +1876,80 @@ createApp({
 
                 hidden.value = serviceGroup.id ?? '';
             }
+        },
+        removeServiceGroup(serviceGroup) {
+            console.log("removeServiceGroup called", serviceGroup);
+            const modal = document.getElementById('delete-modal');
+            if (modal) {
+                modal.classList.add('in', 'show');
+                modal.style.display = 'block';
+                document.body.classList.add('modal-open');
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                document.body.appendChild(backdrop);
+                this.deleteModal.softText = `Are you sure you want to continue with this action? This action will update the status of the service type "${serviceGroup.service_name}".`;
+                const form = document.getElementById('delete-form');
+                if (form) {
+                    form.setAttribute('data-delete-property', 'service-group');
+                    this.deleteModal.id = serviceGroup.id || '';
+
+                }
+            }
+
+        },
+       
+        deleteServiceGroup(formData, groupId) {
+            const csrftoken = this.getCookie('csrftoken');
+            const baseUrl = window.location.origin;
+
+            const url = `${baseUrl}/common/delete-service-group/${groupId}/`;
+
+            fetch(url, {
+                method: 'DELETE',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+            .then(res => {
+                if (!res.ok) throw res;
+                return res.json();
+            })
+            .then(data => {
+                this.closeModal();
+
+                const index = this.serviceGroups.findIndex(g => g.id == groupId);
+                if (index !== -1) {
+                    data.service_group.avatar = 
+                        `${this.avatarBaseUrl}?name=${encodeURIComponent(data.service_group.service_name)}&background=${this.colorCodes[data.service_group.id % this.colorCodes.length]}&color=fff`;
+
+                    this.serviceGroups.splice(index, 1, data.service_group);
+                }
+
+                this.successMsg = data.service_group
+                    ? `Service group "${data.service_group.service_name}" updated successfully.`
+                    : 'Service group updated successfully.';
+
+                setTimeout(() => { this.successMsg = ''; }, 5000);
+            })
+            .catch(async err => {
+                if (err.json) {
+                    const body = await err.json();
+                    this.validationErrors.manageServiceGroup = body.errors || {};
+                } else {
+                    console.error(err);
+                }
+            });
         }
+
+
+
     },
 // Lifecycle hook to fetch service types on mount
 mounted() {
     this.getServiceTypes();
+    this.getServiceGroups();
 }
 }).mount('#app');
