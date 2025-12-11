@@ -1961,6 +1961,26 @@ def quatation_html_to_pdf_view(request,evaluation_id):
 		return response
 	return response
 
+def download_quatation_as_pdf(request,evaluation_id):
+	evaluation_id_encrypted = evaluation_id
+	evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
+	user_name =  evaluation_id_encrypted[14:]
+
+	order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate'),to_attr='orderschedules')).annotate(customerbooking=Sum(Case(When(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING',then=1),default=0,output_field=IntegerField()))).get(is_active=True,order_no=evaluation_id,evaluation__customer__username=user_name)
+	price_ranges 	= ServicePriceRange.objects.filter(is_active=True)	
+	html_string = render_to_string("customer/downloads/quatation.html",{"order":order,"price_ranges":price_ranges})
+
+	html     = HTML(string=html_string,base_url=request.build_absolute_uri())
+	main_doc = html.render()
+
+	main_doc.write_pdf(target='/home/pdf/tmp/quatation/quatation.pdf')
+
+	fs = FileSystemStorage('/home/pdf/tmp/quatation/')
+	with fs.open('quatation.pdf') as pdf:
+		response = HttpResponse(pdf, content_type='application/pdf')
+		response['Content-Disposition'] = 'attachment; filename="'+evaluation_id+'_quatation.pdf"'
+		return response
+	return response
 
 def purchaseorder_html_to_pdf_view(request,purchase_order_id):
 
