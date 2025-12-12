@@ -47,6 +47,12 @@ createApp({
                 strongText: '',
                 id: ''
             },
+            viewServiceGroup: {
+                title: '',
+                name: '',
+                arabicName: '',
+                activeStatus: ''
+            },
             viewServiceType: {
                 title: '',
                 name: '',
@@ -60,6 +66,12 @@ createApp({
                 manageAddOn: {},
                 manageMeasurementUnit: {},
                 manageServiceGroup: {}
+            },
+            serviceGroupFormFields: {
+                id: null,
+                name: '',
+                name_arabic: '',
+                status: ''
             },
             serviceFormFields: {
                 name: '',
