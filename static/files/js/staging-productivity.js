@@ -1948,9 +1948,6 @@ createApp({
                     }
                 });
         }
-
-
-
     },
     // Lifecycle hook to fetch service types on mount
     mounted() {
