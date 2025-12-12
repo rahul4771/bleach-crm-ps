@@ -133,17 +133,10 @@ createApp({
             this.toggleDivs.showList = false;
             this.toggleDivs.showServiceGroupModal = true;
             this.toggleDivs.showServiceGroupView = false;
-            this.validationErrors['manageServiceGroup'] = [];
             this.viewServiceType = {
                 title: '',
             };
-            this.serviceGroupFormFields = {
-                id: null,
-                name: '',
-                name_arabic: '',
-                status: ''
-            };
-
+            this.resetServiceGroup();
             const form = document.getElementById('manage-service-group-form');
             if (form) {
                 form.setAttribute('data-action', 'add')
@@ -1851,7 +1844,7 @@ createApp({
             this.toggleDivs.showServiceGroupModal = false;
             this.toggleDivs.showServiceGroupView = true;
         },
-        
+
         handleEditServiceGroupBtnClick(serviceGroup) {
 
             this.toggleDivs.showServiceGroupView = false;
