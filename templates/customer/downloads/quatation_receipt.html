@@ -24,15 +24,26 @@
 ===================================================== */
         @page {
             size: A4;
-            margin: 4cm 0.5cm 3.5cm 0.5cm;
+            margin-top: 4cm;
+            margin-bottom: 2cm;
+            margin-left: 0;
+            margin-right: 0;
 
             @top-center {
                 content: element(page-header);
             }
-             @bottom-center {
-                content: element(page-footer);
+
+            @bottom-center {
+                content: "";
+                background-image: url("{% static 'files/images/customer/fo2.png' %}");
+                background-repeat: no-repeat;
+                background-size: 100%;
+                background-position: center;
+                height: 2cm;
+                width: 100%;
             }
         }
+
 
         /* =====================================================
    RESET
@@ -59,18 +70,6 @@
             width: 100%;
         }
         
-        /* =====================================================
-   RUNNING FOOTER
-===================================================== */
-        .page-footer {
-            position: running(page-footer);
-            width: 100%;
-            display: block;
-        }
-        .page-footer img {
-            width: 100%;
-            display: block;
-        }
 
         /* =====================================================
    HEADER CONTENT
@@ -418,10 +417,6 @@
             <img src="{% static 'files/images/customer/logo3.png' %}" alt="Bleach Logo">
         </div>
     </header>
-    <div class="page-footer">
-        <img src="{% static 'files/images/customer/fo2.png' %}" alt="Bleach Footer">
-    </div>
-
     <div id="container">
 
         <!-- ================= TITLE ================= -->
@@ -720,7 +715,7 @@
                 {{order.total_amount|floatformat:"3"}} <span id="kd-font">KD</span>
             </h1>
         </section>
-
+        <div class="page-bottom-spacer"></div>  
     </div>
     
 </body>
