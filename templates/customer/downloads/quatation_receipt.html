@@ -34,7 +34,7 @@
             }
 
             @bottom-center {
-                content: "";
+                
                 background-image: url("{% static 'files/images/customer/fo2.png' %}");
                 background-repeat: no-repeat;
                 background-size: 100%;
@@ -122,7 +122,6 @@
             margin-top: 18px;
             margin-bottom: 25px;
             page-break-inside: avoid;
-            margin-top: 10px;
         }
 
         #left_id,
@@ -266,7 +265,6 @@
         }
 
         #soa_table2 th {
-            padding: 6px;
             background-color: #EDF1F6;
             color: #303030 !important;
             font-weight: 400;
@@ -656,7 +654,7 @@
             {% if order.evaluation.additional_charge != 0 %}
             <div class="d-flex space-between">
                 <span id="paymenttime">
-                    <strong>Additional Charge(s)</b>
+                    <strong>Additional Charge(s)</strong>
                 </span>
                 <span id="paymenttime-amount">
                     <strong>{{order.evaluation.additional_charge|floatformat:"3"}}</strong>
