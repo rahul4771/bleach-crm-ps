@@ -1961,48 +1961,49 @@ def quatation_html_to_pdf_view(request,evaluation_id):
 		return response
 	return response
 
-def download_quatation_as_pdf(request,evaluation_id):
-	evaluation_id_encrypted = evaluation_id
-	evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
-	user_name =  evaluation_id_encrypted[14:]
+def download_quatation_as_pdf(request, evaluation_id):
+    evaluation_id_encrypted = evaluation_id
+    evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
+    user_name = evaluation_id_encrypted[14:]
 
-	try:
-		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='booksections')),to_attr='evaluationbooks')),to_attr='evaluationdetails')).annotate(customerbooking=Sum(Case(When(Q( Q(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING')&Q(evaluation__booking_evaluation__is_bookingcompleted=False) ),then=1),default=0,output_field=IntegerField()))).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
-	except:
-		order = None
+    try:
+        order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='booksections')),to_attr='evaluationbooks')),to_attr='evaluationdetails')).annotate(customerbooking=Sum(Case(When(Q( Q(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING')&Q(evaluation__booking_evaluation__is_bookingcompleted=False) ),then=1),default=0,output_field=IntegerField()))).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
+    except:
+        order = None
 
-	
-	price_ranges 		= ServicePriceRange.objects.filter(is_active=True)
+    price_ranges = ServicePriceRange.objects.filter(is_active=True)
 
-	
-
-	# html_string = render_to_string("customer/downloads/quatation.html",{"order":order,"price_ranges":price_ranges})
-	return render(request,"customer/downloads/quatation.html",{"order":order,"price_ranges":price_ranges})
-	
-	# main_doc = html.render()
-	# main_doc.write_pdf(target='/home/pdf/tmp/quatation/quatation.pdf')
-
- 	# Create directory if it doesn't exist
-	# pdf_dir = Path('media/pdf/quatation')
-	# pdf_dir.mkdir(parents=True, exist_ok=True)
-	
-	# pdf_path = pdf_dir / 'quatation.pdf'
-	# html     = HTML(string=html_string,base_url=request.build_absolute_uri())
-	
-	# Actually write the PDF to disk
-	# html.write_pdf(target=str(pdf_path))
+    # return render(request,"customer/downloads/quatation_receipt.html",{"order":order,"price_ranges":price_ranges})
 	
 
-	# fs = FileSystemStorage('/home/pdf/tmp/quatation/')
-	# with fs.open('quatation.pdf') as pdf:
-	# 	response = HttpResponse(pdf, content_type='application/pdf')
-	# 	response['Content-Disposition'] = 'attachment; filename="'+evaluation_id+'_quatation.pdf"'
-	# 	return response
-	# with open(pdf_path, 'rb') as pdf:
-	# 	response = HttpResponse(pdf, content_type='application/pdf')
-	# 	response['Content-Disposition'] = f'attachment; filename="{evaluation_id}_quatation.pdf"'
-	# 	return response
-	# return response
+    # Render the HTML template with all the existing styles
+    html_string = render_to_string("customer/downloads/quatation_receipt.html", {
+        "order": order, 
+        "price_ranges": price_ranges,
+        "request": request
+    })
+
+    
+    # Create directory if it doesn't exist
+    pdf_dir = Path('media/pdf/quatation')
+    pdf_dir.mkdir(parents=True, exist_ok=True)
+    
+    pdf_path = pdf_dir / 'quatation.pdf'
+    
+    # Create HTML object with base URL for static files
+    html = HTML(
+        string=html_string, 
+        base_url=request.build_absolute_uri('/')
+    )
+    
+    # Write PDF to disk (no additional CSS needed since it's in the template)
+    html.write_pdf(target=str(pdf_path))
+    
+    # Return the PDF file
+    with open(pdf_path, 'rb') as pdf:
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{evaluation_id}_quatation.pdf"'
+        return response
 
 def purchaseorder_html_to_pdf_view(request,purchase_order_id):
 
