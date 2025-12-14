@@ -5,6 +5,7 @@ from django.dispatch import receiver
 
 import cv2
 import os
+import uuid
 from bleach_crm_ps.settings import MEDIA_ROOT
 # Create your models here.
 
