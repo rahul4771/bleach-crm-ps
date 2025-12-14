@@ -212,7 +212,6 @@
         
     <td data-label="Remining" style="text-align:center;">{{invoice.area}}</td>
     <td data-label="Remining" style="text-align:center;">INV{{invoice.invoice_no|default_if_none:''}}</td>
-    
     <td data-label="" style="text-align:center;">
     <img src="{% static 'files/images/order_blue.png' %}" align="absmiddle" class="clickable-row" data-href="{% url 'stl:stl-order-details' invoice.id %}" width="32.5px" height="32.5px">
     </td>

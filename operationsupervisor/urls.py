@@ -1,9 +1,6 @@
 from django.conf.urls import include, url
 from operationsupervisor import views 
 
-app_name = 'operationsupervisor'
-
-
 urlpatterns = [
 
 	url(r'^dashboard/$',views.OperationSupervisorHome.as_view(),name='op-supervisor-dash-board'),

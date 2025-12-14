@@ -35,7 +35,8 @@ createApp({
                 showAddMeasurementUnitBtn: true,
                 showManageMeasurementList: true,
                 showManageMeasurementUnitForm: false,
-                showMUConfirmDelete: false
+                showMUConfirmDelete: false,
+                showServiceGroupModal: false
             },
             // renamed from `delete` to avoid using the reserved keyword in template expressions
             deleteModal: {
@@ -134,6 +135,25 @@ createApp({
                 activeStatus: serviceType.is_active ? 'Active' : 'Inactive'
             }
             this.serviceTypeId = serviceType.id
+        },
+        removeServiceType(serviceType) {
+            const modal = document.getElementById('delete-modal');
+            if (modal) {
+                modal.classList.add('in', 'show');
+                modal.style.display = 'block';
+                document.body.classList.add('modal-open');
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                document.body.appendChild(backdrop);
+                this.deleteModal.softText = `Are you sure you want to continue with this action? This action will update the status of the service type "${serviceType.name}".`;
+                const form = document.getElementById('delete-form');
+                if (form) {
+                    form.setAttribute('data-delete-property', 'service-type');
+                    this.deleteModal.id = serviceType.id || '';
+
+                }
+            }
+
         },
         // Handle edit service type button click
         handleEditServiceBtnClick(serviceType) {
@@ -536,6 +556,44 @@ createApp({
 
             }
         },
+        // Update productivity status via JSON PUT (more reliable than FormData on PUT)
+        updateProductivityStatus(productivityId, status) {
+            const csrftoken = this.getCookie('csrftoken')
+            const baseUrl = window.location.origin;
+            const url = `${baseUrl}/common/update-service-productivity/${productivityId}`
+            fetch(url, {
+                method: 'PUT',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ status: status })
+            })
+                .then(res => {
+                    if (!res.ok) throw res;
+                    return res.json();
+                })
+                .then(data => {
+                    this.closeModal();
+                    const key = String(this.serviceTypeId ?? '0');
+                    if (!this.productivities[key]) this.productivities[key] = [];
+                    const updated = data.service_productivity || data;
+                    const index = this.productivities[key].findIndex(p => p.id === updated.id);
+                    if (index !== -1) this.productivities[key].splice(index, 1, updated);
+                    this.successMsg = updated && updated.name ? `Category ${updated.name} deleted successfully.` : 'Category deleted successfully.';
+                    setTimeout(() => { this.successMsg = ''; }, 5000);
+                })
+                .catch(async err => {
+                    if (err.json) {
+                        const body = await err.json();
+                        this.validationErrors.manageProductivity = body.errors || {};
+                    } else {
+                        console.error(err);
+                    }
+                });
+        },
         // Close modal(s).
         // If an Event is passed (e.g. closeModal($event)) we locate the closest .modal from the event
         // target and close only that modal. If omitted, close all open modals.
@@ -691,41 +749,41 @@ createApp({
 
             // optional integer fields for areas (minimum_area -> minimumArea key in errors)
             const minArea = this.priceRangeFormFields.minimum_area;
-            if (minArea !== '' && minArea !== null && minArea !== undefined) {
-                const n = Number(minArea);
-                if (Number.isNaN(n) || n < 0 ) {
-                    this.validationErrors.managePriceRange.minimumArea = 'Please enter a valid non-negative integer';
+                if (minArea === '' || minArea === null || minArea === undefined) {
+                    this.validationErrors.managePriceRange.minimumArea = 'minimumarea is required';
                 } else {
-                    delete this.validationErrors.managePriceRange.minimumArea;
+                    const n = Number(minArea);
+                    if (Number.isNaN(n) || n < 0) {
+                        this.validationErrors.managePriceRange.minimumArea = 'Please enter a valid non-negative integer';
+                    } else {
+                        delete this.validationErrors.managePriceRange.minimumArea;
+                    }
                 }
-            } else {
-                delete this.validationErrors.managePriceRange.minimumArea;
-            }
 
             const maxArea = this.priceRangeFormFields.maximum_area;
-            if (maxArea !== '' && maxArea !== null && maxArea !== undefined) {
-                const n2 = Number(maxArea);
-                if (Number.isNaN(n2) || n2 < 0 ) {
-                    this.validationErrors.managePriceRange.maximumArea = 'Please enter a valid non-negative integer';
+                if (maxArea === '' || maxArea === null || maxArea === undefined) {
+                    this.validationErrors.managePriceRange.maximumArea = 'maximumarea is required';
                 } else {
-                    delete this.validationErrors.managePriceRange.maximumArea;
+                    const n2 = Number(maxArea);
+                    if (Number.isNaN(n2) || n2 < 0) {
+                        this.validationErrors.managePriceRange.maximumArea = 'Please enter a valid non-negative integer';
+                    } else {
+                        delete this.validationErrors.managePriceRange.maximumArea;
+                    }
                 }
-            } else {
-                delete this.validationErrors.managePriceRange.maximumArea;
-            }
 
             // optional unit_price (decimal)
             const unitPrice = this.priceRangeFormFields.unit_price;
-            if (unitPrice !== '' && unitPrice !== null && unitPrice !== undefined) {
-                const up = Number(unitPrice);
-                if (Number.isNaN(up) || up < 0) {
-                    this.validationErrors.managePriceRange.unitPrice = 'Please enter a valid non-negative number';
+                if (unitPrice === '' || unitPrice === null || unitPrice === undefined) {
+                    this.validationErrors.managePriceRange.unitPrice = 'unitprice is required';
                 } else {
-                    delete this.validationErrors.managePriceRange.unitPrice;
+                    const up = Number(unitPrice);
+                    if (Number.isNaN(up) || up < 0) {
+                        this.validationErrors.managePriceRange.unitPrice = 'Please enter a valid non-negative number';
+                    } else {
+                        delete this.validationErrors.managePriceRange.unitPrice;
+                    }
                 }
-            } else {
-                delete this.validationErrors.managePriceRange.unitPrice;
-            }
 
             if (this.priceRangeFormFields.status === '') {
                 this.validationErrors.managePriceRange.status = 'Status is required.';
@@ -1554,7 +1612,7 @@ createApp({
             return fd;
         },
         resetNewService() {
-            this.serviceFormFields = { name: '', name_arabic: '', is_active: '' };
+            this.newService = { name: '', name_arabic: '', is_active: '' };
             this.validationErrors['manageServiceType'] = {};
         },
         formatCurrency(value) {
@@ -1592,7 +1650,23 @@ createApp({
             const month = date.toLocaleString('en-US', { month: 'short' });
             const year = date.getFullYear();
             return `${day} ${month}, ${year}`;
-        }
+        },
+         showServiceGroupModal() {
+            this.toggleDivs.showList = false;
+            this.toggleDivs.showServiceGroupModal= true;
+            this.validationErrors['manageServiceType'] = [];
+            this.viewServiceType = {
+                title: '',
+            };
+
+            const form = document.getElementById('manage-service-form');
+            if (form) {
+                form.setAttribute('data-action', 'add')
+            }
+        },
+         handleImageUpload(event) {
+        this.serviceGroupForm.image = event.target.files[0];
+    },
 
     },
     // Lifecycle hook to fetch service types on mount

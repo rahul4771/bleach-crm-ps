@@ -1763,7 +1763,9 @@ class InventoryInv(IsInventoryAdminUser,View):
 			latest_item_code = InventoryItem.objects.filter(item_code__contains=item_code_series).last()
 
 			if latest_item_code:
-				new_item_code = item_code_series + str(int(latest_item_code.item_code[6:])+1)
+				# new_item_code = item_code_series + str(int(latest_item_code.item_code[6:])+1)
+				suffix = (latest_item_code.item_code[6:].strip() or "0")
+				new_item_code = item_code_series + str(int(suffix) + 1)
 			else:
 				new_item_code = item_code_series + '101'
 			print(new_item_code,"lop")

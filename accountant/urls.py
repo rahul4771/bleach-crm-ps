@@ -1,9 +1,6 @@
 from django.conf.urls import include, url
 from accountant import views 
 
-app_name = 'accountant'
-
-
 urlpatterns = [
 
 	url(r'^dashboard/$',views.AccountantHome.as_view(),name='accountantdash-board'),

@@ -989,7 +989,7 @@ const app = new Vue({
       // Clear previous messages
       this.visitDateTimeUpdateErr = '';
       this.visitDateTimeUpdateSuccess = '';
-      
+
       const dateTimeStr = this.visitDateTimeUpdate.date + ' ' + this.visitDateTimeUpdate.time;
       const formattedDateTime = moment(dateTimeStr, 'YYYY-MM-DD HH:mm').format('DD-MM-YYYY h:mm A');
       const csrfToken = this.getCookie('csrftoken');
@@ -1003,7 +1003,7 @@ const app = new Vue({
           'X-CSRFToken': csrfToken
         }
       }).then(response => {
-        
+
         if (response.data.success) {
           this.visitDateTimeUpdateSuccess = true;
           this.visitDateTimeUpdateErr = false;

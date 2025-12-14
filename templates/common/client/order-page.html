@@ -615,7 +615,6 @@
     <div data-toggle="modal" data-target="#addServiceModal" id="addServiceModalBtn"></div>
     <div data-toggle="modal" data-target="#assignCleanersModal" id="assign-cleaners-trigger"></div>
     <div data-toggle="modal" data-target="#updateVisitDateTimeModal" id="update-visit-datetime-trigger"></div>
-
 <!-- edit section dialog begins here-->
 <div class="modal fade " id="editSectionDialog" tabindex="-1" role="dialog" aria-labelledby="editSectionDialogTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
@@ -1536,7 +1535,7 @@
                     {% elif order.order_status == 'ORDER_CANCELLED' %}
                     <div class="order-status cancelled-status-bg">Cancelled</div>
                     {% else %}
-                    <div class="order-status pending-status-bg">Pending</div>
+                    <div class="order-status approved-status-bg">Approved</div>
                     {% endif %}
                 {% else %}
                     {% if order.order_status == 'CANCEL_IN_PROGRESS' %}
@@ -2178,7 +2177,10 @@
 
                                                         </a>
                                                     </div>
-                                                   <div class="vist-card-item-second visit-text pointer"
+                                                    <!-- <div class="vist-card-item-second visit-text">
+                                                        {{multi_order_schedule.start_at|date:'d-m-Y g:i A'}}
+                                                    </div> -->
+                                                    <div class="vist-card-item-second visit-text pointer"
                                                             @click="showUpdateVisitDateTimeModal({{ multi_order_schedule.id }})">
                                                         <span id="visit-date-display-{{multi_order_schedule.id}}"
                                                                 data-id="{{multi_order_schedule.id}}"
@@ -2189,7 +2191,6 @@
                                                             {{ multi_order_schedule.start_at | date:'d-m-Y g:i A'}}
                                                         </span>
                                                     </div>
-                                                    
 
                                                     {% for investigation in multi_order_schedule.investigations|slice:":1" %}{% for followup in investigation.followups|slice:":1" %}{% if followup %}
                                                     <img  class="visit-time-edit pointer ml-auto mt-2p" src="{% static 'files/icons/flags.png' %}" ><span class="ml-5 visit-text"></span>
@@ -4117,9 +4118,7 @@
 </div>
 
 <!-- note to customer modal ends here-->
-
-<!-- note to customer edit modal-->
-<div class="modal fade bd-example-modal-lg" id="updateVisitDateTimeModal" tabindex="-1" role="dialog"
+ <div class="modal fade bd-example-modal-lg" id="updateVisitDateTimeModal" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog cancel-model update-visit-datetime-modal" role="document">
         <div class="container-fluid">
@@ -4280,7 +4279,7 @@ $('input[name="radio"]').click(function(){
 
 
 
-<script>
+ <script>
     var x, i, j, l, ll, selElmnt, a, b, c;
 
     x = document.getElementsByClassName("custom-select");
@@ -4354,7 +4353,7 @@ $('input[name="radio"]').click(function(){
     }
 
     document.addEventListener("click", closeAllSelect);
-</script>
+    </script>
 
 
 

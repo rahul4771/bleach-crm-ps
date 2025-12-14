@@ -110,7 +110,7 @@ CALLBACK_CHOICES =(
 #Store the Order Details.DownPayment,Subscription and Direct Cleaning Comes Under a Single Order
 
 class Order(models.Model):
-	evaluation 		= models.ForeignKey(Evaluation,on_delete=models.PROTECT,blank=False,null=False,related_name='evaluation_order')
+	evaluation 		= models.ForeignKey(Evaluation,blank=False,null=False,related_name='evaluation_order')
 	order_no   		= models.CharField(max_length=20,blank=False,null=False)
 	order_status 	= models.CharField(max_length=50,blank=True,null=True,choices=ORDER_STATUS)
 
@@ -137,13 +137,13 @@ class Order(models.Model):
 	is_feedback_marked	= models.BooleanField(null=False,blank=True,default=False)
 	feedback_marked_date= models.DateTimeField(blank=True,null=True)
 
-	cancell_requester   = models.ForeignKey(UserProfile,on_delete=models.PROTECT,blank=True,null=True,related_name='cancellrequesting_user')
-	cancelled_by        = models.ForeignKey(UserProfile,on_delete=models.PROTECT,blank=True,null=True,related_name='cancelled_user')   
+	cancell_requester   = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cancellrequesting_user')
+	cancelled_by        = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cancelled_user')   
 	cancell_note        = models.CharField(max_length=5000,blank=True,null=True)
 	payment_notes		= models.CharField(max_length=1000,blank=True,null=True)
-	payment_note_by		= models.ForeignKey(UserProfile,on_delete=models.PROTECT,blank=True,null=True,related_name='payment_note_user')
+	payment_note_by		= models.ForeignKey(UserProfile,blank=True,null=True,related_name='payment_note_user')
 	
-	created_by      = models.ForeignKey(UserProfile,on_delete=models.PROTECT,blank=True,null=True)
+	created_by      = models.ForeignKey(UserProfile,blank=True,null=True)
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)
 	updated         = models.DateTimeField(auto_now=True)
@@ -167,13 +167,13 @@ class Order(models.Model):
 
 
 class OrderScheduler(models.Model):
-	order 			     = models.ForeignKey('Order',blank=False,null=False,related_name='order_scheduler_order',on_delete=models.PROTECT )
-	evaluation_details   = models.ForeignKey(EvaluationDetails,blank=True,null=True,related_name='order_scheduler_evaluationdetails',on_delete=models.PROTECT)
-	order_scheduler_book = models.ForeignKey(EvaluationBook,on_delete=models.PROTECT, blank=True,null=True,related_name='order_scheduler_book_details')
+	order 			     = models.ForeignKey('Order',blank=False,null=False,related_name='order_scheduler_order')
+	evaluation_details   = models.ForeignKey(EvaluationDetails,blank=True,null=True,related_name='order_scheduler_evaluationdetails')
+	order_scheduler_book = models.ForeignKey(EvaluationBook,blank=True,null=True,related_name='order_scheduler_book_details')
 
 	start_at		   	 = models.DateTimeField(blank=True,null=True)
 	end_at			   	 = models.DateTimeField(blank=True,null=True)
-	customer_address	 = models.ForeignKey(Address,on_delete=models.PROTECT, blank=True,null=True)
+	customer_address	 = models.ForeignKey(Address,blank=True,null=True)
 	work_status 		 = models.CharField(max_length=50,blank=True,null=True,choices=ORDER_SHEDULER_STATUS)
 	status      		 = models.CharField(max_length=20,blank=True,null=True,default='WAITING',choices=SCHEDULER_CHOICES)
 
@@ -201,7 +201,7 @@ class OrderScheduler(models.Model):
 		return str(self.order.order_no+ str(self.start_at))
 
 class CancellOrderAmountHistory(models.Model):
-	order                 = models.ForeignKey(Order,on_delete=models.PROTECT, blank=False,null=False,related_name='cancelled_order')
+	order                 = models.ForeignKey(Order,blank=False,null=False,related_name='cancelled_order')
 	amount_return_method  = models.CharField(max_length=20,blank=True,null=True,choices=RETURN_METHOD_CHOICES)
 	return_amount         = models.FloatField(blank=False,null=False)
 	is_completed          = models.BooleanField(null=False,blank=True,default=False)
@@ -219,11 +219,11 @@ class CancellOrderAmountHistory(models.Model):
 #If the Customer is not Satisfied and reported a complaint. An Investigation team is assigned for Investigation
 
 class Investigation(models.Model):
-	order 				 = models.ForeignKey('Order',on_delete=models.PROTECT, blank=False,null=False,related_name='investigation_orders')
+	order 				 = models.ForeignKey('Order',blank=False,null=False,related_name='investigation_orders')
 	ticket_types         = models.CharField(max_length=5000,blank=True,null=True)
-	order_schedule		 = models.ForeignKey('OrderScheduler',on_delete=models.PROTECT, blank=False,null=False,related_name='investigations_orderschedule')	
-	investigator    	 = models.ForeignKey(UserProfile,on_delete=models.PROTECT, blank=True,null=True)
-	assigned_by          = models.ForeignKey(UserProfile,on_delete=models.PROTECT,blank=True,null=True,related_name='investigation_assigned_by')
+	order_schedule		 = models.ForeignKey('OrderScheduler',blank=False,null=False,related_name='investigations_orderschedule')	
+	investigator    	 = models.ForeignKey(UserProfile,blank=True,null=True)
+	assigned_by          = models.ForeignKey(UserProfile,blank=True,null=True,related_name='investigation_assigned_by')
 	scheduled_at 		 = models.DateTimeField(blank=True,null=True)
 	check_in 		     = models.DateTimeField(blank=True,null=True)
 	check_out 		     = models.DateTimeField(blank=True,null=True)
@@ -231,7 +231,7 @@ class Investigation(models.Model):
 
 	title				 = models.CharField(max_length=500,blank=True,null=True)
 	secondary_investigation_notes  = models.CharField(max_length=5000,blank=True,null=True)
-	secondary_investigator		 = models.ForeignKey(UserProfile,on_delete=models.PROTECT,blank=True,null=True,related_name='second_investigator')
+	secondary_investigator		 = models.ForeignKey(UserProfile,blank=True,null=True,related_name='second_investigator')
 	secondary_investigation_created = models.DateTimeField(blank=True,null=True)
 	
 	is_followup_approved           = models.BooleanField(null=False,blank=True,default=False)
@@ -255,7 +255,7 @@ class Investigation(models.Model):
 #For Tracking Medias Uploaded by Investigator on Site
 
 class InvestigationMedia(models.Model):
-	investigation 			 = models.ForeignKey('Investigation',on_delete=models.PROTECT,blank=False,null=False,related_name='investigation_media')
+	investigation 			 = models.ForeignKey('Investigation',blank=False,null=False,related_name='investigation_media')
 	media                    = models.FileField(upload_to='investigation/',blank=True,null=True)
 	media_type 				 = models.CharField(max_length=20,blank=True,null=True,choices=MEDIA_CHOICES)
 	taken_status 			 = models.CharField(max_length=50,blank=True,null=True,choices=MEDIA_TAKEN_CHOICES)
@@ -275,7 +275,7 @@ class InvestigationMedia(models.Model):
 		return str(self.investigation.id)
 
 class Reporting(models.Model):
-	investigation   = models.ForeignKey('Investigation',on_delete=models.PROTECT,blank=False,null=False,related_name='reporting_investigation')
+	investigation   = models.ForeignKey('Investigation',blank=False,null=False,related_name='reporting_investigation')
 	title           = models.CharField(max_length=1000,blank=True,null=True)
 	notes           = models.CharField(max_length=5000,blank=True,null=True)
 
@@ -290,7 +290,7 @@ class Reporting(models.Model):
 		return str(self.investigation.id)
 
 class ReportingMedia(models.Model):
-	reporting                       = models.ForeignKey('Reporting',on_delete=models.PROTECT,blank=False,null=False,related_name='reporting_media')
+	reporting                       = models.ForeignKey('Reporting',blank=False,null=False,related_name='reporting_media')
 	media                           = models.FileField(upload_to='reporting/',blank=True,null=True)
 	
 	is_active          		        = models.BooleanField(null=False,blank=True,default=True)
@@ -304,12 +304,12 @@ class ReportingMedia(models.Model):
 
 
 class PaybackDiscount(models.Model):
-	investigation      = models.ForeignKey('Investigation',on_delete=models.PROTECT,blank=False,null=False,related_name='paybackdiscount_investigation')
+	investigation      = models.ForeignKey('Investigation',blank=False,null=False,related_name='paybackdiscount_investigation')
 	total_cost         = models.FloatField(blank=True,null=True)
 	approved_total_cost= models.FloatField(blank=True,null=True)
-	approved_by		   = models.ForeignKey(UserProfile,on_delete=models.PROTECT,blank=True,null=True,related_name="admin_payback")
+	approved_by		   = models.ForeignKey(UserProfile,blank=True,null=True,related_name="admin_payback")
 	approved_option    = models.CharField(max_length=500,blank=True,null=True,choices=PAYBACKDISCOUNT_CHOICES)
-	accountant_approval= models.ForeignKey(UserProfile,on_delete=models.PROTECT,blank=True,null=True,related_name="accountant_payback")
+	accountant_approval= models.ForeignKey(UserProfile,blank=True,null=True,related_name="accountant_payback")
 	accountant_notes   = models.CharField(max_length=5000,blank=True,null=True)
 	is_completed       = models.BooleanField(null=False,blank=True,default=False)
 
@@ -324,7 +324,7 @@ class PaybackDiscount(models.Model):
 		return str(self.investigation.id)
 
 class PaybackDiscountDetails(models.Model):
-	paybackdiscount = models.ForeignKey('PaybackDiscount',on_delete=models.PROTECT,blank=False,null=False,related_name='paybackdiscount_details')
+	paybackdiscount = models.ForeignKey('PaybackDiscount',blank=False,null=False,related_name='paybackdiscount_details')
 	category        = models.CharField(max_length=100,blank=True,null=True,choices=INVESTIGATION_CATEGORY_CHOICES)
 	name            = models.CharField(max_length=1000,blank=True,null=True)
 	cost            = models.FloatField(blank=True,null=True)
@@ -340,7 +340,7 @@ class PaybackDiscountDetails(models.Model):
 		return str(self.paybackdiscount.investigation.id)
 
 class PaybackDiscountDetailsMedia(models.Model):
-	paybackdiscount 	    		= models.ForeignKey('PaybackDiscount',on_delete=models.PROTECT,blank=False,null=False,related_name='paybackdiscount_media')
+	paybackdiscount 	    		= models.ForeignKey('PaybackDiscount',blank=False,null=False,related_name='paybackdiscount_media')
 	media                           = models.FileField(upload_to='paybackdiscount/',blank=True,null=True)
 	
 	is_active          		        = models.BooleanField(null=False,blank=True,default=True)
@@ -353,12 +353,12 @@ class PaybackDiscountDetailsMedia(models.Model):
 		return str(self.paybackdiscount.investigation.id)
 
 class BuybackPromocodeGift(models.Model):
-	investigation   				= models.ForeignKey('Investigation',on_delete=models.PROTECT,blank=False,null=False,related_name='buybackpromocodegift_investigation')
+	investigation   				= models.ForeignKey('Investigation',blank=False,null=False,related_name='buybackpromocodegift_investigation')
 	total_cost      				= models.FloatField(blank=True,null=True)
 	approved_total_cost             = models.FloatField(blank=True,null=True)
 	approved_promo_code				= models.CharField(max_length=100,blank=True,null=True)
 	approved_option                 = models.CharField(max_length=500,blank=True,null=True,choices=BUYBACKPROMOGIFT_CHOICES)
-	approved_by						= models.ForeignKey(UserProfile,on_delete=models.PROTECT,blank=True,null=True)
+	approved_by						= models.ForeignKey(UserProfile,blank=True,null=True)
 	is_completed                    = models.BooleanField(null=False,blank=True,default=False)
 
 	is_active          		        = models.BooleanField(null=False,blank=True,default=True)
@@ -371,7 +371,7 @@ class BuybackPromocodeGift(models.Model):
 		return str(self.investigation.id)
 
 class BuybackPromocodeGiftDetails(models.Model):
-	buybackpromocodegift 			= models.ForeignKey('BuybackPromocodeGift',on_delete=models.PROTECT,blank=False,null=False,related_name='buybackpromocodegiftdetails')
+	buybackpromocodegift 			= models.ForeignKey('BuybackPromocodeGift',blank=False,null=False,related_name='buybackpromocodegiftdetails')
 	category        	 			= models.CharField(max_length=100,blank=True,null=True,choices=INVESTIGATION_CATEGORY_CHOICES)
 	name            	 			= models.CharField(max_length=1000,blank=True,null=True)
 	cost       				     	= models.FloatField(blank=True,null=True)
@@ -386,7 +386,7 @@ class BuybackPromocodeGiftDetails(models.Model):
 		return str(self.buybackpromocodegift.investigation.id)
 
 class BuybackPromocodeGiftDetailsMedia(models.Model):
-	buybackpromocodegift 			= models.ForeignKey('BuybackPromocodeGift',on_delete=models.PROTECT,blank=False,null=False,related_name='buybackpromocodegift_media')
+	buybackpromocodegift 			= models.ForeignKey('BuybackPromocodeGift',blank=False,null=False,related_name='buybackpromocodegift_media')
 	media                           = models.FileField(upload_to='buybackpromocodegift/',blank=True,null=True)
 	
 	is_active          		        = models.BooleanField(null=False,blank=True,default=True)
@@ -403,7 +403,7 @@ class BuybackPromocodeGiftDetailsMedia(models.Model):
 
 class FollowUp(models.Model): 
 	ticket_no       = models.CharField(max_length=500,blank=True,null=True)
-	investigation   = models.ForeignKey('Investigation',on_delete=models.PROTECT,blank=False,null=False,related_name='followup_investigation') 
+	investigation   = models.ForeignKey('Investigation',blank=False,null=False,related_name='followup_investigation') 
 	instructions    = models.CharField(max_length=500,blank=True,null=True)
 	status      	= models.CharField(max_length=100,blank=True,null=True,choices=FOLLOWUP_STATUS)
 	total_cost		= models.FloatField(blank=True,null=True)
@@ -414,7 +414,7 @@ class FollowUp(models.Model):
 	created         = models.DateTimeField(auto_now_add=True)
 	updated         = models.DateTimeField(auto_now=True)
 	closed			= models.DateTimeField(blank=True,null=True,auto_now=False)
-	closed_by		= models.ForeignKey(UserProfile,on_delete=models.PROTECT,blank=True,null=True)
+	closed_by		= models.ForeignKey(UserProfile,blank=True,null=True)
 
 	def save(self,*args, **kwargs):
 		last_ticket_no  		 = FollowUp.objects.filter(is_active=True).aggregate(t=Max('ticket_no'))['t']
@@ -443,11 +443,11 @@ class FollowUp(models.Model):
 
 
 class FollowUpScheduler(models.Model):
-	follow_up 			= models.ForeignKey('FollowUp',on_delete=models.PROTECT,blank=False,null=False,related_name='follow_up_of_scheduler')
+	follow_up 			= models.ForeignKey('FollowUp',blank=False,null=False,related_name='follow_up_of_scheduler')
 	#cleaning_type & other details get from Investigation Model 
 	start_at		    = models.DateTimeField(blank=True,null=True)
 	end_at			    = models.DateTimeField(blank=True,null=True)
-	customer_address	= models.ForeignKey(Address,on_delete=models.PROTECT,blank=True,null=True)
+	customer_address	= models.ForeignKey(Address,blank=True,null=True)
 	work_status 	    = models.CharField(max_length=50,blank=True,null=True,choices=FOLLOWUP_SHEDULER_STATUS)
 	status      		= models.CharField(max_length=50,blank=True,null=True,default='WAITING',choices=SCHEDULER_CHOICES)
 
@@ -467,7 +467,7 @@ class FollowUpScheduler(models.Model):
 		return str(self.follow_up.investigation.order.order_no)
 
 class FollowUpSection(models.Model):
-	follow_up 			= models.ForeignKey('FollowUp',on_delete=models.PROTECT,blank=False,null=False,related_name='follow_up_of_section')
+	follow_up 			= models.ForeignKey('FollowUp',blank=False,null=False,related_name='follow_up_of_section')
 	section_name 		= models.CharField(max_length=100,blank=False,null=False)
 	section_name_arabic = models.CharField(max_length=100,blank=False,null=False)
 	category		= models.CharField(max_length=100,blank=True,null=True)
@@ -512,7 +512,7 @@ class FollowUpSection(models.Model):
 
 
 class FollowUpSectionKeynote(models.Model):
-	followup_section = models.ForeignKey('FollowUpSection',on_delete=models.PROTECT,blank=False,null=False,related_name='keynotesectionsfollowup')
+	followup_section = models.ForeignKey('FollowUpSection',blank=False,null=False,related_name='keynotesectionsfollowup')
 	sub_area 		   = models.CharField(max_length=100,blank=True,null=True)
 	quantity 		   = models.CharField(max_length=100,blank=True,null=True)
 	completion_status  = models.BooleanField(null=False,blank=True,default=False)
@@ -543,8 +543,8 @@ class Question(models.Model):
 #Storing Feedback of Customer, after cleaning
 
 class FeedBack(models.Model):
-	order 				= models.ForeignKey('Order',on_delete=models.PROTECT,blank=False,null=False,related_name='feed_backs_order')
-	question			= models.ForeignKey('Question',on_delete=models.PROTECT,blank=False,null=False)
+	order 				= models.ForeignKey('Order',blank=False,null=False,related_name='feed_backs_order')
+	question			= models.ForeignKey('Question',blank=False,null=False)
 	rating				= models.IntegerField(blank=True,null=True)
 	response_date		= models.DateTimeField(blank=True,null=True)
 	is_active          	= models.BooleanField(null=False,blank=True,default=True)
@@ -587,7 +587,7 @@ PAYMENT_POLICIES = (
 	)
 
 class XeroInvoice(models.Model):
-	order               = models.ForeignKey('Order',on_delete=models.PROTECT,blank=False,null=False,related_name='xero_invoices_order')
+	order               = models.ForeignKey('Order',blank=False,null=False,related_name='xero_invoices_order')
 	invoice_no          = models.CharField(max_length=500,blank=False,null=False)
 	amount              = models.FloatField(blank=True,null=True)
 	xero_marked_date    = models.DateField(blank=True,null=True)

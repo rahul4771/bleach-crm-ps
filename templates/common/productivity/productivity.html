@@ -5,6 +5,16 @@
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+    <style>
+        /* .modal-dialog {
+            width: 1000px !important;
+        }
+        @media only screen and (max-width: 950px) {
+            .modal-dialog {
+                width: auto !important;
+            }
+        } */
+    </style>
 <div class="wrapper" id="app">
     <!--wrapper-->
     {% if request.user.user_type == 'SALESADMIN' %}
@@ -42,647 +52,745 @@
 
             <div class="main-content-holder">
                 <!--main-content-holder-->
+
+
                 <div class="white-wrapper">
                     <!--white-wrapper-->
-                    <!-- service tiles section -->
-                    <div class="row"  id="smd-service-list">
-                        <div class="col-md-12">
-                            <div class="col-xs-12 col-sm-12 col-md-2 smd-tiles smd-p-1 smd-m-1" onclick="onServiceTypeClick('discount')">
-                                <h2 class="productivity-name smd-fs-16">Discounts</h2>
-                            </div>
-                            {% for service_type in service_types %}
-                                <div class="col-xs-12 col-sm-12 col-md-2  smd-tiles smd-p-1 smd-m-1" onclick="onServiceTypeClick('{{ service_type.name|slugify }}')">
-                                    <h2 class="productivity-name smd-fs-16">{{ service_type.name }}</h2>
-                                </div>
-                            {% endfor %}
-                            <div class="col-xs-12 col-sm-12 col-md-2 smd-p-1 smd-m-1" onclick="onAddNewServiceClick()">
-                               <button class="border-button smd-p-10-px"><i class="fa fa-plus-circle"></i> Add Service Type </button>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- service tiles section -->
-                    <!-- add new service section -->
-                    <div id="smd-add-new-service" class="mt-20 hide">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <button class="blue-button" onclick="onBackButtonClick('add-new-service')"><i class="fa fa-arrow-left"></i> Back</button>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="smd-add-service mt-10">
-                                <div class="col-md-12 smd-card-border">
-                                    <div class="col-md-8">
-                                        <h2 class="productivity-name">Add Service Type</h2>
+                    <div class="row">
+                        <form method="POST" action="">
+                            {% csrf_token %}
+                            <input   type="checkbox" required="required" name="is_active" id="is_active" checked="true" class="hidden-field"/>
+                            <input   type="text" required="required" name="action_type" id="action_type" value="edit_customer_discount" class="hidden-field"/>
+                            <input   type="text" required="required" name="discount_setting_id" id="discount_setting_id" value="{{discount_settings.id}}" class="hidden-field"/>
+                        <div class="col-md-6 ">
+                            <div class="discount-card">
+                            <div class="row ml-10">
+                                
+                                <div class="col-md-12">
+                                    <h2 class="productivity-name"> Discounts</h2>
+                                    <div class="d-flex mt-10">
+                                    <div >
+                                        
+                                        <label class="switch">
+                                          
+                                            <input type="checkbox" id="is_stat" name="is_stat" {% if discount_percentage.is_active == true %}checked{% endif %} onchange="changeDiscountStat()">
+                                            <span class="slider round"></span>
+                                          </label>
+                                      </div>
+                                      <div class="discount-stat">Active</div>
                                     </div>
-                                    <form id="add-new-service-form">                                       
-                                        <div class="col-md-8 mt-10">
-                                            <div class="row">
-                                                <div class="col-xs-12 col-md-4">
-                                                    <label for="new_service_name" class="smd-label">Service name</label>
-                                                </div>
-                                                <div class="col-xs-12 col-md-8">
-                                                    <input id="new_service_name" type="text" class="textBox form-control" name="new_service_name" placeholder="e.g: Kitchen Cleaning" required="required">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-8 mt-10">
-                                            <div class="row">
-                                                <div class="col-xs-12 col-md-4">
-                                                    <label for="new_service_name_arabic" class="smd-label">Service name in arabic</label>
-                                                </div>
-                                                <div class="col-xs-12 col-md-8">
-                                                    <input id="new_service_name_arabic" type="text" class="textBox form-control" name="new_service_name_arabic" placeholder="مثال: تنظيف المطبخ" required="required">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <button class="border-button mt-30" type="submit">
-                                                <i class="fa fa-plus-circle" aria-hidden="true"></i> Add Service
-                                            </button>
-                                        </div>
-                                    </form>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- add new service section -->
-                    <!-- service details section -->
-                    <div id="smd-service-details" class="mt-20 hide">
-                        <div class="row">
-                            <button data-toggle="modal" data-target="#priceRangeManageModal" class="pricerange_manage_button" style="display:none;"></button>
-                            <button data-toggle="modal" data-target="#DeleteModal" class="pricerange_delete_button" style="display:none;"></button>
-                            <button data-toggle="modal" id="manage_addons" data-target="#manageAddonModal"  style="display:none;"></button>
-                            <button data-toggle="modal" id="id_add_delete" data-target="#delete-onModal"  style="display:none;"></button>
-                            <button data-toggle="modal" id="manage_productivity" data-target="#productivityManageModal"  style="display:none;"></button>                           
+                                
+                                <div class="col-md-5 mt-10 ">
+                                    <div class="discount-label">Duration (Days)</div>
+                                    <input   type="number" class="discount-card-sub-input mt-5" placeholder="Duration" required="required" name="duration" value="{{discount_settings.duration}}"/>
+                                </div>
+                                <div class="col-md-5 mt-10">
+                                    <div class="discount-label">Discount (%)</div>
+                                    <input   type="number" class="discount-card-sub-input mt-5" placeholder="Discount in %" required="required" name="discount_percentage" value="{{discount_settings.discount_percentage}}"/>
+                                </div>
+                                <div class="col-md-12  mt-10 mb-10 ">
+                                    <input type="submit" value="Update" class="discount-submit"/>
+                                   
+
+                                </div>
                             
-                            <div class="col-md-12">
-                                <button class="blue-button" onclick="onBackButtonClick()"><i class="fa fa-arrow-left"></i> Back</button>
                             </div>
                         </div>
-                        <div class="row hide" id="discount-panel">
-                            <form method="POST" action="">
-                                {% csrf_token %}
-                                <input   type="checkbox" required="required" name="is_active" id="is_active" checked="true" class="hidden-field"/>
-                                <input   type="text" required="required" name="action_type" id="action_type" value="edit_customer_discount" class="hidden-field"/>
-                                <input   type="text" required="required" name="discount_setting_id" id="discount_setting_id" value="{{discount_settings.id}}" class="hidden-field"/>
-                                <div class="col-md-6 ">
-                                    <div class="discount-card">
-                                        <div class="row ml-10">
-                                            <div class="col-md-12">
-                                                <h2 class="productivity-name"> Discounts</h2>
-                                                <div class="d-flex mt-10">
-                                                    <div>
-                                                        <label class="switch">
-                                                            <input type="checkbox" id="is_stat" name="is_stat" {% if discount_percentage.is_active == true %}checked{% endif %} onchange="changeDiscountStat()">
-                                                            <span class="slider round"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="discount-stat">Active</div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-5 mt-10 ">
-                                                <div class="discount-label">Duration (Days)</div>
-                                                <input   type="number" class="discount-card-sub-input mt-5" placeholder="Duration" required="required" name="duration" value="{{discount_settings.duration}}"/>
-                                            </div>
-                                            <div class="col-md-5 mt-10">
-                                                <div class="discount-label">Discount (%)</div>
-                                                <input   type="number" class="discount-card-sub-input mt-5" placeholder="Discount in %" required="required" name="discount_percentage" value="{{discount_settings.discount_percentage}}"/>
-                                            </div>
-                                            <div class="col-md-12  mt-10 mb-10 ">
-                                                <input type="submit" value="Update" class="discount-submit"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
+                            
+
                         </div>
-                        
+                    </form>
+                    </div>
+                   
+                    <div class="row">
+                        <button data-toggle="modal" data-target="#editModal"  class="pricerange_edit_button" style="display:none;"></button>
+                        <button data-toggle="modal" data-target="#addModal" class="pricerange_add_button" style="display:none;"></button>
+                        <button data-toggle="modal" data-target="#DeleteModal" class="pricerange_delete_button" style="display:none;"></button>
+                        <button data-toggle="modal" id="id_add_add" data-target="#add-onModal"  style="display:none;"></button>
+                        <button data-toggle="modal" id="id_add_edit" data-target="#edit-onModal"  style="display:none;"></button>
+                        <button data-toggle="modal" id="id_add_delete" data-target="#delete-onModal"  style="display:none;"></button>
+
+
+
                         {% for service_type in service_types %}
-
-                        <div class="row hide" id="{{service_type|slugify}}-panel" >
-                            <div class="col-md-12  mt-10" >
-                                <div class="col-md-12 smd-card-border">
-                                    <div class="col-md-6" >
-                                        <div class="d-flex smd-justify-content-between">
-                                            <div>
-                                                <h2 class="productivity-name">{{service_type.name}}</h2>
+                        <div class="col-md-12 mt-10" >
+                            <div style="border: 2px solid #bed0e8;padding: 20px; margin-bottom: 10px;  border-radius: 8px;">
+                                <div class="row" >
+                                
+                                    <div class="col-md-6">
+                                        <h2 class="productivity-name"> {{service_type.name}}</h2>
+                                  <div class="productivity-card-sub">
+                                        {% for service_productivity in service_productivities %}
+                                        {% if service_productivity.service_type == service_type %}
+                                        {% if not service_productivity.is_newkitchen and not service_productivity.is_cabinet and not service_productivity.is_highprice_facade and not service_productivity.is_highprice_window and service_productivity.upholstery_type != 'CURTAIN' %}
+                                        <div class="productivity-sub-top" id="productivityhead_{{service_type.id}}1">
+                                            <div class="productivity-sub-top-item-left">
+                                              Productivity
                                             </div>
-                                            <div>
-                                                <button class="border-button" onclick="viewAddCategoryModal('{{service_type.name}}','{{service_type.id}}')"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add Category</button>
+                                            <div class="productivity-sub-top-item-right"> 
+                                                <img id="id_edit_{{service_productivity.id}}" onclick="editPro({{service_productivity.id}})" class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
+                                                <button  id="id_done_{{service_productivity.id}}" onclick="doneEdit({{service_productivity.id}})" class="productivity-card-done">Done</button>
                                             </div>
                                         </div>
-                                        <div class="d-flex">
-                                            {% for productivity in service_productivities %}
-                                                {% if productivity.service_type_id == service_type.id %}
-                                                    <div class="smd-productivity-tab" id="{{service_type|slugify}}-productivity-tab">
-                                                        <button id="category-tab-{{productivity.name|slugify}}-{{productivity.id}}" class="productivity-tab-item"  onclick="onProductivityTabClick(event)" data-productivity-name="{{productivity.name|slugify}}" data-productivity-id="{{productivity.id}}">{{productivity.name}}</button>
-                                                    </div>
-                                                {% endif %} 
-                                            {% endfor %}
+                                        <div class="productivity-card-sub-content" id="productivitycontent_{{service_type.id}}1">
+                                        <h1 id="id_pro_value_{{service_productivity.id}}" >{{service_productivity.perhour_cleaning}} <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
+                                        <input  id="id_pro_{{service_productivity.id}}" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
                                         </div>
-                                        {% for productivity in service_productivities %}
-                                            {% if productivity.service_type_id == service_type.id %}
-                                                <div class="d-flex smd-justify-content-between smd-mb-1 smd-mt-1 hide" id="productivity-content-{{productivity.name|slugify}}-{{productivity.id}}">
-                                                    <div class="productivity-card-sub" >
-                                                        <div class="productivity-sub-top-item-left">
-                                                            Productivity
-                                                        </div>
-                                                        <div class="productivity-sub-top-item-right"> 
-                                                            {% if productivity.perhour_cleaning != none%}
-                                                                <h1 id="productivity-perhour-{{productivity.id}}">
-                                                                    {{productivity.perhour_cleaning}} <span class="productivity-card-sub-content-text">sqm/man/hr</span>
-                                                                </h1>
-                                                            {% else %}
-                                                                <h1 id="productivity-perhour-{{productivity.id}}">
-                                                                    --
-                                                                </h1>
-                                                            {% endif %}
-                                                        </div>
-                                                    </div>
-                                                     <div>
-                                                        <button class="border-button"
-                                                            onclick="viewEditProductivityModal({
-                                                                id: {{ productivity.id|default:'null' }},
-                                                                name: '{{ productivity.name|escapejs }}',
-                                                                service_type_id: {{ productivity.service_type_id|default:'null' }},
-                                                                description: '{{ productivity.description|default_if_none:''|escapejs }}',
-                                                                cleaning_hours: {{ productivity.cleaning_hours|default:'null' }},
-                                                                max_cleaners: {{ productivity.max_cleaners|default:'null' }},
-                                                                max_hours: {{ productivity.max_hours|default:'null' }},
-                                                                min_cleaners: {{ productivity.min_cleaners|default:'null' }},
-                                                                min_hours: {{ productivity.min_hours|default:'null' }},
-                                                                is_active: '{{ productivity.is_active}}'
-                                                            })">
-                                                            <i class="fa fa-pen" aria-hidden="true"></i> Edit Category
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                <div id="productivity-price-range-{{productivity.name|slugify}}-{{productivity.id}}" class="productivity-card-content hide">
-                                                    {% for service_price_range in service_price_ranges %}
-                                                        {% if service_price_range.service_type_id == service_type.id and service_price_range.service_productivity_id == productivity.id %}
-                                                            <div class="row productivity-card-items">
-                                                                <div class="col-md-3 productivity-card-items-1">
-                                                                    {{service_price_range.name}}
-                                                                </div>
-                                                                <div class="col-md-3 productivity-card-items-2">
-                                                                    {{service_price_range.minimum_area|floatformat:'2'}}-{{service_price_range.maximum_area|floatformat:'2'}}
-                                                                </div>
-                                                                <div class="col-md-3 productivity-card-items-3">
-                                                                    {{service_price_range.price|floatformat:'3'}} KD
-                                                                </div>
-                                                                <div class="col-md-3 productivity-card-items-4">
-                                                                    <button onclick="edit_price_range(this);" class="img-button" data-service-type-name="{{service_price_range.service_type.name}}" data-service-type-id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum-area="{{service_price_range.minimum_area}}" data-maximum-area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit-price="{{service_price_range.unit_price|default_if_none:''}}"  data-productivity-id="{{service_price_range.service_productivity.id}}" data-productivity-name="{{productivity.name}}">
-                                                                        <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                                                    </button>
-                                                                    <button class="img-button" onclick="delete_price_range(this);" data-id="{{service_price_range.id}}">
-                                                                        <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                    <div class="addNewPrice">
-                                                        <button class="border-button" onclick="add_price_range(this);" data-service-type-name="{{service_type.name}}" data-service-type-id="{{service_type.id}}" data-productivity-id="{{productivity.id}}" data-productivity-name="{{productivity.name}}" ><i class="fa fa-plus-circle" aria-hidden="true"></i> Price Range</button>
-                                                    </div>
-
-                                                </div>
-                                                
-                                             {% endif %}
+                                        {% endif %}
+                                        {% endif %}
                                         {% endfor %}
                                         
+                                        {% for service_productivity in service_productivities %}
+                                        {% if service_productivity.service_type == service_type %}
+                                        {% if not service_price_range.is_cabinet and service_productivity.is_newkitchen or service_productivity.is_highprice_facade or service_productivity.is_highprice_window or service_productivity.upholstery_type == 'CURTAIN' %}
+                                        <div class="productivity-sub-top" id="productivityhead_{{service_type.id}}2" style="display: none;">
+                                            <div class="productivity-sub-top-item-left">
+                                              Productivity
+                                            </div>
+                                            <div class="productivity-sub-top-item-right"> 
+                                                <img id="id_edit_{{service_productivity.id}}" onclick="editPro({{service_productivity.id}})" class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
+                                                <button  id="id_done_{{service_productivity.id}}" onclick="doneEdit({{service_productivity.id}})" class="productivity-card-done">Done</button>
+                                            </div>
+                                        </div>
+                                        <div class="productivity-card-sub-content" id="productivitycontent_{{service_type.id}}2" style="display: none;">
+                                        <h1 id="id_pro_value_{{service_productivity.id}}" >{{service_productivity.perhour_cleaning}} <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
+                                        <input  id="id_pro_{{service_productivity.id}}" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
+                                        </div>
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+    
+                                        {% for service_productivity in service_productivities %}
+                                        {% if service_productivity.service_type == service_type %}
+                                        {% if not service_productivity.is_newkitchen and service_productivity.is_cabinet %}
+                                        <div class="productivity-sub-top" id="productivityhead_{{service_type.id}}3" style="display: none;">
+                                            <div class="productivity-sub-top-item-left">
+                                              Productivity
+                                            </div>
+                                            <div class="productivity-sub-top-item-right"> 
+                                                <img id="id_edit_{{service_productivity.id}}" onclick="editPro({{service_productivity.id}})" class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
+                                                <button  id="id_done_{{service_productivity.id}}" onclick="doneEdit({{service_productivity.id}})" class="productivity-card-done">Done</button>
+                                            </div>
+                                        </div>
+                                        <div class="productivity-card-sub-content" id="productivitycontent_{{service_type.id}}3" style="display: none;">
+                                        <h1 id="id_pro_value_{{service_productivity.id}}" >{{service_productivity.perhour_cleaning}} <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
+                                        <input  id="id_pro_{{service_productivity.id}}" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
+                                       </div>
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+
+                                        {% for service_productivity in service_productivities %}
+                                        {% if service_productivity.service_type == service_type %}
+                                        {% if service_productivity.is_newkitchen and service_productivity.is_cabinet %}
+                                        <div class="productivity-sub-top" id="productivityhead_{{service_type.id}}4" style="display: none;">
+                                            <div class="productivity-sub-top-item-left">
+                                              Productivity
+                                            </div>
+                                            <div class="productivity-sub-top-item-right"> 
+                                                <img id="id_edit_{{service_productivity.id}}" onclick="editPro({{service_productivity.id}})" class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
+                                                <button  id="id_done_{{service_productivity.id}}" onclick="doneEdit({{service_productivity.id}})" class="productivity-card-done">Done</button>
+                                            </div>
+                                        </div>
+                                        <div class="productivity-card-sub-content" id="productivitycontent_{{service_type.id}}4" style="display: none;">
+                                        <h1 id="id_pro_value_{{service_productivity.id}}" >{{service_productivity.perhour_cleaning}} <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
+                                        <input  id="id_pro_{{service_productivity.id}}" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
+                                       </div>
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+                                  </div>
+                                  {% if service_type.name == 'Kitchen Cleaning' %}
+                                  <br><br><br>
+                                  {% endif %}
+
+                                  <div class="productivity-tab">
+                                      <button id="normal_button_id_{{service_type.id}}" class="productivity-tab-item productivity-tab-border"  onclick="viewNormal({{service_type.id}})">{% if service_type.name == 'Upholstery Cleaning' %}Sofa{% elif service_type.name == 'Window Cleaning' %}Old Window{% elif service_type.name == 'Facade Cleaning' %}Old Facade{%elif service_type.name == 'Kitchen Cleaning'%}Old Kitchen{% else %}Normal{% endif %}</button>
+                                      {% if service_type.name == 'Upholstery Cleaning' or service_type.name == 'Kitchen Cleaning' or service_type.name == 'Facade Cleaning' or service_type.name == 'Window Cleaning' %}
+                                      <button id="special_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewSpecial({{service_type.id}})">{% if service_type.name == 'Upholstery Cleaning' %}Curtain{% elif service_type.name == 'Window Cleaning' %}New Window{% elif service_type.name == 'Facade Cleaning' %}New Facade{%elif service_type.name == 'Kitchen Cleaning'%}New Kitchen{% endif %}</button>
+                                      {% endif %}
+                                      {% if service_type.name == 'Kitchen Cleaning' %}
+                                      <button id="veryspecial_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewVerySpecial({{service_type.id}})">{% if service_type.name == 'Kitchen Cleaning' %}Old Kitchen (with cabinet){% endif %}</button>
+                                      {% endif %}
+                                      {% if service_type.name == 'Kitchen Cleaning' %}
+                                      <button id="veryveryspecial_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewVeryVerySpecial({{service_type.id}})">New Kitchen (with Cabinet)</button>
+                                      {% endif %}
+                                    </div>
+    
+                                  <div id="normal_id_{{service_type.id}}" class="productivity-card-content"> <!--normal-->
+                                  {% for service_price_range in service_price_ranges %}
+                                  {% if service_price_range.service_type == service_type %}
+                                  {% if not service_price_range.is_newkitchen and not service_price_range.is_cabinet and not service_price_range.is_highprice_facade and not service_price_range.is_highprice_window and service_price_range.upholstery_type != 'CURTAIN' %}
+                                  <div class="row productivity-card-items">
+                                        <div class="col-md-3 productivity-card-items-1">
+                                            {{service_price_range.name}}
+                                        </div>
+                                        <div class="col-md-3 productivity-card-items-2">
+                                            {{service_price_range.minimum_area|floatformat:'2'}}-{{service_price_range.maximum_area|floatformat:'2'}}
+                                        </div>
+                                        <div class="col-md-3 productivity-card-items-3">
+                                            {{service_price_range.price|floatformat:'3'}} KD
+                                        </div>
+                                        <div class="col-md-3 productivity-card-items-4">
+                                            <button onclick="edit_price_range(this);" class="img-button" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum_area="{{service_price_range.minimum_area}}" data-maximum_area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit_price="{{service_price_range.unit_price|default_if_none:''}}" data-is_newkitchen="{{service_price_range.is_newkitchen}}" data-is_cabinet="{{service_price_range.is_cabinet}}" data-is_highprice_facade="{{service_price_range.is_highprice_facade}}" data-is_highprice_window="{{service_price_range.is_highprice_window}}" data-upholstery_type="{{service_price_range.upholstery_type}}">
+                                                <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
+                                            </button>
+                                            <button class="img-button" onclick="delete_price_range(this);" data-id="{{service_price_range.id}}">
+                                                <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
+                                            </button>
+                                        </div>
+                                    </div>
+                                  {% endif %}
+                                  {% endif %}
+                                  {% endfor %}
+                                  </div>
+    
+    
+                                  <div id="special_id_{{service_type.id}}" class="productivity-card-content none-div"> <!--Special-->
+                                  {% for service_price_range in service_price_ranges %}
+                                  {% if service_price_range.service_type == service_type %}
+                                  {% if not service_price_range.is_cabinet and service_price_range.is_newkitchen or service_price_range.is_highprice_facade or service_price_range.is_highprice_window or service_price_range.upholstery_type == 'CURTAIN' %}
+                                  <div class="row productivity-card-items">
+                                        <div class="col-md-3 productivity-card-items-1">
+                                            {{service_price_range.name}}
+                                        </div>
+                                        <div class="col-md-3 productivity-card-items-2">
+                                            {{service_price_range.minimum_area|floatformat:'2'}}-{{service_price_range.maximum_area|floatformat:'2'}}
+                                        </div>
+                                        <div class="col-md-3 productivity-card-items-3">
+                                            {{service_price_range.price|floatformat:'3'}} KD
+                                        </div>
+                                        <div class="col-md-3 productivity-card-items-4">
+                                            <button onclick="edit_price_range(this);" class="img-button" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum_area="{{service_price_range.minimum_area}}" data-maximum_area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit_price="{{service_price_range.unit_price|default_if_none:''}}" data-is_newkitchen="{{service_price_range.is_newkitchen}}" data-is_cabinet="{{service_price_range.is_cabinet}}" data-is_highprice_facade="{{service_price_range.is_highprice_facade}}" data-is_highprice_window="{{service_price_range.is_highprice_window}}" data-upholstery_type="{{service_price_range.upholstery_type}}">
+                                                <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
+                                            </button>
+                                            <button class="img-button" onclick="delete_price_range(this);" data-id="{{service_price_range.id}}">
+                                                <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
+                                            </button>
+                                        </div>
+                                    </div>
+                                  {% endif %}
+                                  {% endif %}
+                                  {% endfor %}
+                                  </div>
+    
+                                  <div id="veryspecial_id_{{service_type.id}}" class="productivity-card-content none-div"> <!-- very Special-->
+                                    {% for service_price_range in service_price_ranges %}
+                                    {% if service_price_range.service_type == service_type %}
+                                    {% if not service_price_range.is_newkitchen and service_price_range.is_cabinet %}
+                                      <div class="row productivity-card-items">
+                                          <div class="col-md-3 productivity-card-items-1">
+                                              {{service_price_range.name}}
+                                          </div>
+                                          <div class="col-md-3 productivity-card-items-2">
+                                              {{service_price_range.minimum_area|floatformat:'2'}}-{{service_price_range.maximum_area|floatformat:'2'}}
+                                          </div>
+                                          <div class="col-md-3 productivity-card-items-3">
+                                              {{service_price_range.price|floatformat:'3'}} KD
+                                          </div>
+                                          <div class="col-md-3 productivity-card-items-4">
+                                            <button onclick="edit_price_range(this);" class="img-button" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum_area="{{service_price_range.minimum_area}}" data-maximum_area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit_price="{{service_price_range.unit_price|default_if_none:''}}" data-is_newkitchen="{{service_price_range.is_newkitchen}}" data-is_cabinet="{{service_price_range.is_cabinet}}" data-is_highprice_facade="{{service_price_range.is_highprice_facade}}" data-is_highprice_window="{{service_price_range.is_highprice_window}}" data-upholstery_type="{{service_price_range.upholstery_type}}">
+                                                  <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
+                                              </button>
+                                              <button class="img-button" onclick="delete_price_range(this);" data-id="{{service_price_range.id}}">
+                                                  <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
+                                              </button>
+                                          </div>
+                                      </div>
+                                    {% endif %}
+                                    {% endif %}
+                                    {% endfor %}
                                     </div>
 
-                                    <div class="col-md-6">
-                                        <div class="d-flex smd-justify-content-between">
-                                            <div>
-                                                <h2 class="productivity-name">Add-ons</h2>
-                                            </div>
-                                            <div>
-                                                <button class="border-button" onclick="add_add_on(this);" id="{{service_type|slugify}}-add-addon-button" data-service-type-name="{{service_type.name}}" data-service-type-id="{{service_type.id}}"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add Add-on</button>
-                                            </div>
 
+                                    <div id="veryveryspecial_id_{{service_type.id}}" class="productivity-card-content none-div"> <!-- very very Special-->
+                                        {% for service_price_range in service_price_ranges %}
+                                        {% if service_price_range.service_type == service_type %}
+                                        {% if service_price_range.is_newkitchen and service_price_range.is_cabinet %}
+                                          <div class="row productivity-card-items">
+                                              <div class="col-md-3 productivity-card-items-1">
+                                                  {{service_price_range.name}}
+                                              </div>
+                                              <div class="col-md-3 productivity-card-items-2">
+                                                  {{service_price_range.minimum_area|floatformat:'2'}}-{{service_price_range.maximum_area|floatformat:'2'}}
+                                              </div>
+                                              <div class="col-md-3 productivity-card-items-3">
+                                                  {{service_price_range.price|floatformat:'3'}} KD
+                                              </div>
+                                              <div class="col-md-3 productivity-card-items-4">
+                                                <button onclick="edit_price_range(this);" class="img-button" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum_area="{{service_price_range.minimum_area}}" data-maximum_area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit_price="{{service_price_range.unit_price|default_if_none:''}}" data-is_newkitchen="{{service_price_range.is_newkitchen}}" data-is_cabinet="{{service_price_range.is_cabinet}}" data-is_highprice_facade="{{service_price_range.is_highprice_facade}}" data-is_highprice_window="{{service_price_range.is_highprice_window}}" data-upholstery_type="{{service_price_range.upholstery_type}}">
+                                                      <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
+                                                  </button>
+                                                  <button class="img-button" onclick="delete_price_range(this);" data-id="{{service_price_range.id}}">
+                                                      <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
+                                                  </button>
+                                              </div>
+                                          </div>
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
                                         </div>
-                                        <div id="{{service_type|slugify}}-panel-addons" class="hide mt-10">
-                                            {% for service_addon in service_type.service_addons %}
-                                                {% if forloop.first %}
-                                                    <div class="productivity-card-content">
-                                                        <div class="row productivity-card-items2">
-                                                            <div style="font-weight: 600;" class="col-md-2 productivity-card-items-1">
-                                                                Item
-                                                            </div>
-                                                            <div  style="font-weight: 600;" class="col-md-2 productivity-card-items-2">
-                                                                Category Name
-                                                            </div>
-                                                            <div style="font-weight: 600;" class="col-md-2 productivity-card-items-3">
-                                                                Size
-                                                            </div>
-                                                            <div style="font-weight: 600;" class="col-md-2 productivity-card-items-3">
-                                                                Price
-                                                            </div>
-                                                            <div style="font-weight: 600;" class="col-md-2 productivity-card-items-3">
-                                                                Productivity
-                                                            </div>
-                                                            <div class="col-md-2 productivity-card-items-4">
-                                                        
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                {% endif %}
-                                                    <div class="row productivity-card-items">
-                                                        <div class="col-md-2 productivity-card-items-1">
-                                                            {{service_addon.name}}
-                                                        </div>
-                                                        <div class="col-md-2 productivity-card-items-2">
-                                                            {{service_addon.category|default_if_none:''}}
-                                                        </div>
-                                                        <div class="col-md-2 productivity-card-items-3">
-                                                            {{service_addon.size|default_if_none:''}}
-                                                        </div>
-                                                        <div class="col-md-2 productivity-card-items-3">
-                                                            {{service_addon.price|floatformat:'3'|default_if_none:''}} KD
-                                                        </div>
-                                                        <div class="col-md-2 productivity-card-items-3">
-                                                            {{service_addon.productivity|default_if_none:''}}
-                                                        </div>
-                                                        <div class="col-md-2 productivity-card-items-4">
-                                                            <button onclick="edit_add_on(this);" data-service-type-name="{{service_addon.service_type.name}}" data-service-type-id="{{service_addon.service_type.id}}" data-id="{{service_addon.id}}" data-name="{{service_addon.name}}" data-category="{{service_addon.category|default_if_none:''}}" data-size="{{service_addon.size|default_if_none:''}}" data-price="{{service_addon.price}}" data-productivity="{{service_addon.productivity}}" class="img-button" >
-                                                                <img class="productivity-card-edit" src="/static/files/icons/edit.png">
-                                                            </button>
-                                                            <button class="img-button" onclick="delete_add_on(this);" data-id="{{service_addon.id}}">
-                                                                <img class="productivity-card-edit" src="/static/files/icons/delete.png">
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                            {% empty %}
-                                                <div class="mt-10">No add-ons for this service.</div>
+    
+                                  <div class="addNewPrice">
+                                        <button class="border-button" onclick="add_price_range(this);" data-service_type_name="{{service_type.name}}" data-service_type_id="{{service_type.id}}"><i class="fa fa-plus-circle" aria-hidden="true"></i> Price Range</button>
+                                  </div>
+                                    </div>
+                                  
+    
+                                    <div class="col-md-6" style="">
+                                            {% for service_addon in service_addons %}
+                                            
+                                            {% if service_type == service_addon.service_type %}
+                                            {% ifchanged service_addon.service_type %}
+                                            <h2 class="productivity-name mt-10"> Add-on</h2>
+                                            <div class="productivity-card-content">
+                                            <div class="row productivity-card-items2">
+                                                <div style="font-weight: 600;" class="col-md-2 productivity-card-items-1">
+                                                Item
+                                                </div>
+                                                <div  style="font-weight: 600;" class="col-md-2 productivity-card-items-2">
+                                                Category Name
+                                                </div>
+                                                <div style="font-weight: 600;" class="col-md-2 productivity-card-items-3">
+                                                Size
+                                                </div>
+                                                <div style="font-weight: 600;" class="col-md-2 productivity-card-items-3">
+                                                    Price
+                                                </div>
+                                                <div style="font-weight: 600;" class="col-md-2 productivity-card-items-3">
+                                                    Productivity
+                                                </div>
+                                                <div class="col-md-2 productivity-card-items-4">
+                                            
+                                                </div>
+                                            </div>
+                                            {% endifchanged %}
+                                            {% endif %}
+
+                                            {% if service_type == service_addon.service_type %}
+                                            <div class="row productivity-card-items">
+                                                <div class="col-md-2 productivity-card-items-1">
+                                                    {{service_addon.name}}
+                                                </div>
+                                                <div class="col-md-2 productivity-card-items-2">
+                                                    {{service_addon.category|default_if_none:''}}
+                                                </div>
+                                                <div class="col-md-2 productivity-card-items-3">
+                                                    {{service_addon.size|default_if_none:''}}
+                                                </div>
+                                                <div class="col-md-2 productivity-card-items-3">
+                                                    {{service_addon.price|floatformat:'3'|default_if_none:''}} KD
+                                                </div>
+                                                <div class="col-md-2 productivity-card-items-3">
+                                                    {{service_addon.productivity|default_if_none:''}}
+                                                </div>
+                                                <div class="col-md-2 productivity-card-items-4">
+                                                    <button onclick="edit_add_on(this);" data-service_type_name="{{service_addon.service_type.name}}" data-service_type_id="{{service_addon.service_type.id}}" data-id="{{service_addon.id}}" data-name="{{service_addon.name}}" data-category="{{service_addon.category|default_if_none:''}}" data-size="{{service_addon.size|default_if_none:''}}" data-price="{{service_addon.price}}" data-productivity="{{service_addon.productivity}}" class="img-button" >
+                                                        <img class="productivity-card-edit" src="/static/files/icons/edit.png">
+                                                    </button>
+                                                    <button class="img-button" onclick="delete_add_on(this);" data-id="{{service_addon.id}}">
+                                                        <img class="productivity-card-edit" src="/static/files/icons/delete.png">
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            {% endif %}
                                             {% endfor %}
+
+                                        {% if service_type == service_addon.service_type %}
+                                        {% ifchanged service_addon.service_type %}
                                         </div>
+                                        {% endifchanged %}
+                                        {% endif %}
+
+                                        {% comment %}
+                                        <div  class="addNewPrice">
+                                            <button  class="border-button" onclick="add_add_on(this);" data-service_type_name="{{service_type.name}}" data-service_type_id="{{service_type.id}}"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add More</button>
+                                        </div>
+                                        {% endcomment %}
+                                
                                     </div>
+    
+    
                                 </div>
                             </div>
+                           
                         </div>
                         {% endfor %}
+                       
+                        
+                       
+
+
                     </div>
-                <!-- end service details section -->
+
                 </div>
             </div>
 
         </div>
-        <!-- Modal delete -->
-        <div class="modal fade" id="DeleteModal" role="dialog">
-            <div class="modal-dialog cancel-model cancel-order-border" role="document">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-12">
+<!-- Modal delete -->
+  <div class="modal fade" id="DeleteModal" role="dialog">
+    <div class="modal-dialog cancel-model cancel-order-border" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
 
-                            <div class="d-flex cl-modal-icons">
-                                <button data-dismiss="modal" class="img-button">
-                                    <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
-                                </button>
-
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="cancel-model-content">
-                                <h1>Do you want to Delete ?</h1>
-                            </div>
-                        </div>
+                    <div class="d-flex cl-modal-icons">
+                        <button data-dismiss="modal" class="img-button">
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
 
                     </div>
-                    <form method="POST" action="">
-                        {% csrf_token %}
-                    <div class="row">
-                        <input type="hidden" name="action_type" value="delete_price_range">
-                        <input type="hidden" name="price_range_id" id="delete_price_range_id">
-                        <div class="col-md-12 text-center">
-                            <div class="cancel-model-content">
-                                <button class="sent-button"><input class="btn-submit" type="submit" value="Yes"></button>
-                                <button data-dismiss="modal" class="view-button">No</button>
-                            </div>
-                        </div>
-
-                    </div>
-                    </form>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="cancel-model-content">
+                        <h1>Do you want to Delete ?</h1>
+                    </div>
+                </div>
+
+            </div>
+            <form method="POST" action="">
+                {% csrf_token %}
+            <div class="row">
+                <input type="hidden" name="action_type" value="delete_price_range">
+                <input type="hidden" name="price_range" id="delete_price_range_id">
+                <div class="col-md-12 text-center">
+                    <div class="cancel-model-content">
+                        <button class="sent-button"><input class="btn-submit" type="submit" value="Yes"></button>
+                        <button data-dismiss="modal" class="view-button">No</button>
+                    </div>
+                </div>
+
+            </div>
+            </form>
         </div>
-        <!-- Modal edit -->
-        <div class="modal fade" id="editModal" role="dialog">
-            <div class="modal-dialog cancel-model cancel-order-border" role="document">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-12">
+    </div>
+  </div>
+  <!-- Modal edit -->
+  <div class="modal fade" id="editModal" role="dialog">
+    <div class="modal-dialog cancel-model cancel-order-border" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
 
-                            <div class="d-flex cl-modal-icons">
-                                <button data-dismiss="modal" class="img-button">
-                                    <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
-                                </button>
-
-                            </div>
-                        </div>
-                    </div>
-                    <h2 class="productivity-name" id="edit_service_type_name_id"> </h2>
-                    <!-- <h3 class="productivity-name-type"> Normal</h3> -->
-                    <form method="POST" action="">
-                        {% csrf_token %}
-                    <input type="hidden" name="action_type" value="edit_price_range">
-                    <input type="hidden" name="price_range" id="edit_price_range_id">
-                    <input type="hidden" name="service_type" id="edit_service_type_id">
-                    <div class="row mt-10">
-                        <div class="col-md-6 mt-10">
-                            <label > Name</label>
-                            <input name="name" id="edit_name_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
-                        </div>
-                        <div class="col-md-6 mt-10">
-                            <label > Price</label>
-                            <input name="price" id="edit_price_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
-                        </div>
-                        <div class="col-md-6 mt-10">
-                            <label > Minimum Area</label>
-                            <input name="minimum_area" id="edit_minimum_area_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
-                        </div>
-                        <div class="col-md-6 mt-10">
-                            <label > Maximum Area</label>
-                            <input name="maximum_area" id="edit_maximum_area_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
-                        </div>
-                        <div class="col-md-6 mt-10">
-                            <label > Unit Price</label>
-                            <input name="unit_price" id="edit_unit_price_id" type="text" placeholder=" " class="textBox model-text-border">
-                        </div>
-                        <div class="col-md-6 mt-10 kitchen-checkbox">
-                            <label > New Kitchen</label>
-                            <input name="is_newkitchen" id="edit_is_newkitchen_id" type="checkbox">
-                        </div>
-                        <div class="col-md-6 mt-10 kitchen-checkbox">
-                            <label > With Cabinet</label>
-                            <input name="is_cabinet" id="edit_is_withcabinet_id" type="checkbox">
-                        </div>
-                        <div class="col-md-6 mt-10 facade-checkbox">
-                            <label > High Price Facade</label>
-                            <input name="is_highprice_facade" id="edit_is_highprice_facade_id" type="checkbox">
-                        </div>
-                        <div class="col-md-6 mt-10 window-checkbox">
-                            <label > High Price Window</label>
-                            <input name="is_newkitchen" id="edit_is_highprice_window_id" type="checkbox">
-                        </div>
-                        <div class="col-md-6 mt-10 upholstery-checkbox">
-                            <label > Upholstery Type</label>
-                            <select name="upholstery_type" id="edit_upholstery_type_id" class="textBox model-text-border">
-                                <option value="SOFA">SOFA</option>
-                                <option value="CURTAIN">CURTAIN</option>
-                            </select>
-                        </div>
+                    <div class="d-flex cl-modal-icons">
+                        <button data-dismiss="modal" class="img-button">
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
 
                     </div>
-                    <div class="row">
-                        <div class="col-md-12 text-center">
-                            <div class="cancel-model-content">
-                                <button class="sent-button"><input type="submit" class="btn-submit" value="Submit"></button>
-                                <button data-dismiss="modal" class="view-button">Cancel</button>
-                            </div>
-                        </div>
-
-                    </div>
-                    </form>
                 </div>
             </div>
+            <h2 class="productivity-name" id="edit_service_type_name_id"> </h2>
+            <!-- <h3 class="productivity-name-type"> Normal</h3> -->
+            <form method="POST" action="">
+                {% csrf_token %}
+            <input type="hidden" name="action_type" value="edit_price_range">
+            <input type="hidden" name="price_range" id="edit_price_range_id">
+            <input type="hidden" name="service_type" id="edit_service_type_id">
+            <div class="row mt-10">
+                <div class="col-md-6 mt-10">
+                    <label > Name</label>
+                    <input name="name" id="edit_name_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
+                </div>
+                <div class="col-md-6 mt-10">
+                    <label > Price</label>
+                    <input name="price" id="edit_price_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
+                </div>
+                <div class="col-md-6 mt-10">
+                    <label > Minimum Area</label>
+                    <input name="minimum_area" id="edit_minimum_area_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
+                </div>
+                <div class="col-md-6 mt-10">
+                    <label > Maximum Area</label>
+                    <input name="maximum_area" id="edit_maximum_area_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
+                </div>
+                <div class="col-md-6 mt-10">
+                    <label > Unit Price</label>
+                    <input name="unit_price" id="edit_unit_price_id" type="text" placeholder=" " class="textBox model-text-border">
+                </div>
+                <div class="col-md-6 mt-10 kitchen-checkbox">
+                    <label > New Kitchen</label>
+                    <input name="is_newkitchen" id="edit_is_newkitchen_id" type="checkbox">
+                </div>
+                <div class="col-md-6 mt-10 kitchen-checkbox">
+                    <label > With Cabinet</label>
+                    <input name="is_cabinet" id="edit_is_withcabinet_id" type="checkbox">
+                </div>
+                <div class="col-md-6 mt-10 facade-checkbox">
+                    <label > High Price Facade</label>
+                    <input name="is_highprice_facade" id="edit_is_highprice_facade_id" type="checkbox">
+                </div>
+                <div class="col-md-6 mt-10 window-checkbox">
+                    <label > High Price Window</label>
+                    <input name="is_newkitchen" id="edit_is_highprice_window_id" type="checkbox">
+                </div>
+                <div class="col-md-6 mt-10 upholstery-checkbox">
+                    <label > Upholstery Type</label>
+                    <select name="upholstery_type" id="edit_upholstery_type_id" class="textBox model-text-border">
+                        <option value="SOFA">SOFA</option>
+                        <option value="CURTAIN">CURTAIN</option>
+                    </select>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <div class="cancel-model-content">
+                        <button class="sent-button"><input type="submit" class="btn-submit" value="Submit"></button>
+                        <button data-dismiss="modal" class="view-button">Cancel</button>
+                    </div>
+                </div>
+
+            </div>
+            </form>
         </div>
-        <!-- Price Range Manage Modal -->
-        <div class="modal fade" id="priceRangeManageModal" role="dialog">
-            <div class="modal-dialog cancel-model cancel-order-border" role="document">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-12">
-        
-                            <div class="d-flex cl-modal-icons">
-                                <button data-dismiss="modal" class="img-button">
-                                    <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
-                                </button>
-        
-                            </div>
+    </div>
+  </div>
+
+    <!-- Modal add -->
+    <div class="modal fade" id="addModal" role="dialog">
+        <div class="modal-dialog cancel-model cancel-order-border" role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+    
+                        <div class="d-flex cl-modal-icons">
+                            <button data-dismiss="modal" class="img-button">
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+    
                         </div>
                     </div>
-                    <h2 class="productivity-name" id="manage_service_type_name_id"> </h2>
-                    <form id="manage-price-range-form" name="manage-price-range-form" action="">
-                        <input type="hidden" name="service_type" id="manage_service_type_id">
-                        <input type="hidden" name="price_range_id" id="manage_price_range_id">
-                        <div class="row mt-10">
-                            <div class="form-group col-md-6 mt-10">
-                                <label > Name</label>
-                                <input name="name" id="manage_price_range_name" type="text" placeholder=" " required="required" class="textBox model-text-border form-control">
-                            </div>
-                            <div class="form-group col-md-6 mt-10">
-                                <label > Price</label>
-                                <input name="price" id="manage_price" type="text" placeholder=" " required="required" class="textBox model-text-border form-control">
-                            </div>
-                            <div class="form-group col-md-6 mt-10">
-                                <label > Minimum Area</label>
-                                <input name="minimum_area" id="manage_minimum_area" type="text" placeholder=" " required="required" class="textBox model-text-border form-control">
-                            </div>
-                            <div class="form-group col-md-6 mt-10">
-                                <label > Maximum Area</label>
-                                <input name="maximum_area" id="manage_maximum_area" type="text" placeholder=" " required="required" class="textBox model-text-border form-control">
-                            </div>
-                            <div class="form-group col-md-6 mt-10">
-                                <label > Unit Price</label>
-                                <input name="unit_price" id="manage_unit_price" type="text" placeholder=" " class="textBox model-text-border form-control">
-                            </div>
-                            <div class="form-group col-md-6 mt-10">
-                                <label > Productivity</label>
-                                <input name="productivity_id" id="manage_productivity_id" type="hidden" placeholder=" " required="required" class="textBox model-text-border">
-                                <input name="productivity_name" id="manage_productivity_name" type="text" placeholder=" " required="required" class="textBox model-text-border form-control" disabled="true">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 text-center">
-                                <div class="cancel-model-content">
-                                    <button class="sent-button"><input type="submit" class="btn-submit" value="Submit"></button>
-                                    <button  class="view-button" type="reset">Cancel</button>
-                                    <!-- data-dismiss="modal" -->
-                                </div>
-                            </div>
-            
-                        </div>
-                    </form>
                 </div>
+                <h2 class="productivity-name" id="add_service_type_name_id"> </h2>
+                <form method="POST" action="">
+                    {% csrf_token %}
+                <input type="hidden" name="action_type" value="add_price_range">
+                <input type="hidden" name="service_type" id="add_service_type_id">
+                <div class="row mt-10">
+                    <div class="col-md-6 mt-10">
+                        <label > Name</label>
+                        <input name="name" id="add_name_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
+                    </div>
+                    <div class="col-md-6 mt-10">
+                        <label > Price</label>
+                        <input name="price" id="add_price_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
+                    </div>
+                    <div class="col-md-6 mt-10">
+                        <label > Minimum Area</label>
+                        <input name="minimum_area" id="add_minimum_area_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
+                    </div>
+                    <div class="col-md-6 mt-10">
+                        <label > Maximum Area</label>
+                        <input name="maximum_area" id="add_maximum_area_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
+                    </div>
+                    <div class="col-md-6 mt-10">
+                        <label > Unit Price</label>
+                        <input name="unit_price" id="add_unit_price_id" type="text" placeholder=" " class="textBox model-text-border">
+                    </div>
+                    <div class="col-md-6 mt-10 kitchen-checkbox">
+                        <label > New Kitchen</label>
+                        <input name="is_newkitchen" id="add_is_newkitchen_id" type="checkbox">
+                    </div>
+                    <div class="col-md-6 mt-10 kitchen-checkbox">
+                        <label > With Cabinet</label>
+                        <input name="is_cabinet" id="edit_is_withcabinet_id" type="checkbox">
+                    </div>
+                    <div class="col-md-6 mt-10 facade-checkbox">
+                        <label > High Price Facade</label>
+                        <input name="is_highprice_facade" id="add_is_highprice_facade_id" type="checkbox">
+                    </div>
+                    <div class="col-md-6 mt-10 window-checkbox">
+                        <label > High Price Window</label>
+                        <input name="is_newkitchen" id="add_is_highprice_window_id" type="checkbox">
+                    </div>
+                    <div class="col-md-6 mt-10 upholstery-checkbox">
+                        <label > Upholstery Type</label>
+                        <select name="upholstery_type" id="add_upholstery_type_id" class="textBox model-text-border">
+                            <option value="SOFA" selected>SOFA</option>
+                            <option value="CURTAIN">CURTAIN</option>
+                        </select>
+                    </div>
+    
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="cancel-model-content">
+                            <button class="sent-button"><input type="submit" class="btn-submit" value="Submit"></button>
+                            <button data-dismiss="modal" class="view-button">Cancel</button>
+                        </div>
+                    </div>
+    
+                </div>
+                </form>
             </div>
         </div>
-        <!-- Modal edit add-on -->
-        <div class="modal fade" id="manageAddonModal" role="dialog">
-            <div class="modal-dialog cancel-model cancel-order-border" role="document">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-12">
-        
-                            <div class="d-flex cl-modal-icons">
-                                <button data-dismiss="modal" class="img-button">
-                                    <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
-                                </button>
-        
-                            </div>
+      </div>
+      
+      
+      <!-- Modal add-on -->
+    <div class="modal fade" id="add-onModal" role="dialog">
+        <div class="modal-dialog cancel-model cancel-order-border" role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+    
+                        <div class="d-flex cl-modal-icons">
+                            <button data-dismiss="modal" class="img-button">
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+    
                         </div>
                     </div>
-                    <h2 class="productivity-name" id="manage_addon_service_type_name"></h2>
-                    <form id="manage-addon-form" method="POST" action="">
-                        <input type="hidden" name="addon_id" id="addon_id">
-                        <input type="hidden" name="service_type" id="service_type_id">
-                        <div class="row mt-10">
-                            <div class="col-md-6 form-group mt-10">
-                                <label > Item</label>
-                                <input  type="text" name="name" id="addon_name" placeholder=" " required="required" class="textBox model-text-border form-control">
-                            </div>
-                            <div class="col-md-6 form-group mt-10">
-                                <label > Category Name</label>
-                                <input  type="text" name="category" id="addon_category" placeholder=" " class="textBox model-text-border form-control">
-                            </div>
-                            <div class="col-md-6 form-group mt-10">
-                                <label >Size</label>
-                                <input  type="text" name="size" id="addon_size" placeholder=" " class="textBox model-text-border form-control">
-                            </div>
-                            <div class="col-md-6 form-group mt-10">
-                                <label >Price</label>
-                                <input  type="text" name="price" id="addon_price" placeholder=" " required="required" class="textBox model-text-border form-control">
-                            </div>
-                            <div class="col-md-6 form-group mt-10">
-                                <label >Productivity</label>
-                                <input  type="text" name="productivity" id="addon_productivity" placeholder=" " required="required" class="textBox model-text-border form-control">
-                            </div>
-                            
-            
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 text-center">
-                                <div class="cancel-model-content">
-                                    <button class="sent-button"><input type="submit" class="btn-submit" value="Submit"></button>
-                                    <button  class="view-button" type="reset">Cancel</button>
-                                    <!-- data-dismiss="modal" -->
-                                </div>
-                            </div>
-            
-                        </div>
-                    </form>
                 </div>
-            </div>
-        </div>
-        <!-- Modal Add-on delete -->
-        <div class="modal fade" id="delete-onModal" role="dialog">
-            <div class="modal-dialog cancel-model cancel-order-border" role="document">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-12">
-
-                            <div class="d-flex cl-modal-icons">
-                                <button data-dismiss="modal" class="img-button">
-                                    <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
-                                </button>
-
-                            </div>
-                        </div>
+                <h2 class="productivity-name" id="add_service_type_addon_name_id"></h2>
+                <form method="POST" action="">
+                {% csrf_token %}
+                <input type="hidden" name="action_type" value="add_addon">
+                <input type="hidden" name="service_type" id="add_service_type_addon_id">
+                <div class="row mt-10">
+                    <div class="col-md-6 mt-10">
+                        <label > Item</label>
+                        <input  type="text" name="name" placeholder=" " required="required" class="textBox model-text-border">
                     </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="cancel-model-content">
-                                <h1>Do you want to Delete ?</h1>
-                            </div>
-                        </div>
-
+                    <div class="col-md-6 mt-10">
+                        <label > Category Name</label>
+                        <input  type="text" name="category" placeholder=" " class="textBox model-text-border">
                     </div>
-                    <form method="POST" action="">
-                        {% csrf_token %}
-                        <input type="hidden" name="action_type" value="delete_addon">
-                        <input type="hidden" name="addon" id="delete_addon_id">
+                    <div class="col-md-6 mt-10">
+                        <label >Size</label>
+                        <input  type="text" name="size" placeholder=" " class="textBox model-text-border">
+                    </div>
+                    <div class="col-md-6 mt-10">
+                        <label >Price</label>
+                        <input  type="text" name="price" placeholder=" " required="required" class="textBox model-text-border">
+                    </div>
+                    <div class="col-md-6 mt-10">
+                        <label >Productivity</label>
+                        <input  type="text" name="productivity" placeholder=" " required="required" class="textBox model-text-border">
+                    </div>
                     
-                    <div class="row">
-                    
-                        <div class="col-md-12 text-center">
-                            <div class="cancel-model-content">
-                                <button class="sent-button"><input class="btn-submit" type="submit" value="Yes"></button>
-                                <button data-dismiss="modal" class="view-button">No</button>
-                            </div>
+    
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="cancel-model-content">
+                            <button class="sent-button"><input type="submit" class="btn-submit" value="Submit"></button>
+                            <button data-dismiss="modal" class="view-button">Cancel</button>
                         </div>
+                    </div>
+    
+                </div>
+                </form>
+            </div>
+        </div>
+      </div>
+
+
+         <!-- Modal edit add-on -->
+    <div class="modal fade" id="edit-onModal" role="dialog">
+        <div class="modal-dialog cancel-model cancel-order-border" role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+    
+                        <div class="d-flex cl-modal-icons">
+                            <button data-dismiss="modal" class="img-button">
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+    
+                        </div>
+                    </div>
+                </div>
+                <h2 class="productivity-name" id="edit_service_type_name_addon_id"></h2>
+                <form method="POST" action="">
+                {% csrf_token %}
+                <input type="hidden" name="action_type" value="edit_addon">
+                <input type="hidden" name="addon" id="edit_addon_id">
+                <input type="hidden" name="service_type" id="edit_service_type_addon_id">
+                <div class="row mt-10">
+                    <div class="col-md-6 mt-10">
+                        <label > Item</label>
+                        <input  type="text" name="name" id="edit_name_addon_id" placeholder=" " required="required" class="textBox model-text-border">
+                    </div>
+                    <div class="col-md-6 mt-10">
+                        <label > Category Name</label>
+                        <input  type="text" name="category" id="edit_category_addon_id" placeholder=" " class="textBox model-text-border">
+                    </div>
+                    <div class="col-md-6 mt-10">
+                        <label >Size</label>
+                        <input  type="text" name="size" id="edit_size_addon_id" placeholder=" " class="textBox model-text-border">
+                    </div>
+                    <div class="col-md-6 mt-10">
+                        <label >Price</label>
+                        <input  type="text" name="price" id="edit_price_addon_id" placeholder=" " required="required" class="textBox model-text-border">
+                    </div>
+                    <div class="col-md-6 mt-10">
+                        <label >Productivity</label>
+                        <input  type="text" name="productivity" id="edit_productivity_addon_id" placeholder=" " required="required" class="textBox model-text-border">
+                    </div>
+                    
+    
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="cancel-model-content">
+                            <button class="sent-button"><input type="submit" class="btn-submit" value="Submit"></button>
+                            <button data-dismiss="modal" class="view-button">Cancel</button>
+                        </div>
+                    </div>
+    
+                </div>
+                </form>
+            </div>
+        </div>
+      </div>
+
+      <!-- Modal Add-on delete -->
+  <div class="modal fade" id="delete-onModal" role="dialog">
+    <div class="modal-dialog cancel-model cancel-order-border" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="d-flex cl-modal-icons">
+                        <button data-dismiss="modal" class="img-button">
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
 
                     </div>
-                    </form>
                 </div>
             </div>
-        </div>
-         <!-- Modal add category -->
-        <div class="modal fade" id="productivityManageModal" role="dialog">
-            <div class="modal-dialog cancel-model cancel-order-border" role="document">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-12">
-        
-                            <div class="d-flex cl-modal-icons">
-                                <button data-dismiss="modal" class="img-button">
-                                    <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
-                                </button>
-        
-                            </div>
-                        </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="cancel-model-content">
+                        <h1>Do you want to Delete ?</h1>
                     </div>
-                    <h2 class="productivity-name" id="productivity_modal_heading"> </h2>
-                    <form id="manage_productivity_form" name="manage_productivity_form" data-action="">
-                        {% csrf_token %}
-                        <input type="hidden" name="productivity_service_type_id" id="productivity_service_type_id">
-                        <div class="row mt-10">
-                            <div class="form-group col-md-12 mt-10">
-                                <label >Category Name <span class="text-danger">*</span></label>
-                                <input name="productivity_name" id="productivity_name" type="text" placeholder=" " required="required" class="textBox form-control">
-                                 <span id="helpBlock1" class="help-block"></span>
-                            </div>
-                            <div class="form-group col-md-12 mt-10">
-                                <label >Description</label>
-                                <textarea name="productivity_description" id="productivity_description" class="textBox form-control" placeholder="Description"></textarea>
-                                <span id="helpBlock2" class="help-block"></span>
-                            </div>
-                            <div>
-                            <div class="form-group col-md-12 mt-10">
-                                <label >Cleaning Hours</label>
-                                <input name="productivity_cleaning_hours" id="productivity_cleaning_hours" type="text" placeholder=" "  class="textBox form-control">
-                            </div>
-                            <div class="form-group col-md-12 mt-10">
-                                <label >Maximum Cleaners Required</label>
-                                <input name="productivity_max_cleaners" id="productivity_max_cleaners" type="text" placeholder=" "  class="textBox form-control">
-                                 <span id="helpBlock4" class="help-block"></span>
-                            </div>
-                            <div class="form-group col-md-12 mt-10">
-                                <label >Maximum Hours Required</label>
-                                <input name="productivity_max_hours" id="productivity_max_hours" type="text" placeholder=" " class="textBox form-control">
-                            </div>
-                            <div class="form-group col-md-12 mt-10">
-                                <label >Minimum Cleaners Required</label>
-                                <input name="productivity_min_cleaners" id="productivity_min_cleaners" type="text" placeholder=" "  class="textBox form-control">
-                            </div>
-                            <div class="form-group col-md-12 mt-10">
-                                <label >Minimum Hours Required</label>
-                                <input name="productivity_min_hours" id="productivity_min_hours" type="text" placeholder=" "  class="textBox form-control">
-                            </div>
-                            <div class="form-group col-md-12 mt-10">
-                                <label >Status<span class="text-danger">*</span></label>
-                                <select name="status" id="status_id" class="textBox form-control" required>
-                                    <option value="active" selected>Active</option>
-                                    <option value="inactive">Inactive</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 text-center">
-                                <div class="cancel-model-content">
-                                    <button class="sent-button"><input type="submit" class="btn-submit" id="manage_productivity_submit_button" value="Submit"></button>
-                                    <button class="view-button" type="reset">Cancel</button>
-                                </div>
-                            </div>
-            
-                        </div>
-                    </form>
                 </div>
+
             </div>
+            <form method="POST" action="">
+                {% csrf_token %}
+                <input type="hidden" name="action_type" value="delete_addon">
+                <input type="hidden" name="addon" id="delete_addon_id">
+              
+            <div class="row">
+            
+                <div class="col-md-12 text-center">
+                    <div class="cancel-model-content">
+                        <button class="sent-button"><input class="btn-submit" type="submit" value="Yes"></button>
+                        <button data-dismiss="modal" class="view-button">No</button>
+                    </div>
+                </div>
+
+            </div>
+            </form>
         </div>
-        <!-- Modal edit category -->
-       
+    </div>
+  </div>
 </section>
 
 
@@ -690,736 +798,27 @@
 {% endblock %}
 {% block javascript %}
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        document.getElementById("add-new-service-form").addEventListener("submit", function(event) {
-            event.preventDefault();
-
-            const form = event.target;
-            const formData = new FormData(form);
-            let isValid = true;
-
-           
-            form.querySelectorAll("[required]").forEach(input => {
-                const formGroup = input.closest('.row');
-                let helpBlock = formGroup ? formGroup.querySelector('.help-block') : null;
-                if (helpBlock) helpBlock.remove();
-
-                if (!input.value.trim()) {
-                    isValid = false;
-                    if (formGroup) {
-                        formGroup.classList.add("has-error");
-                        const errorSpan = document.createElement("span");
-                        errorSpan.className = "help-block";
-                        errorSpan.textContent = "This field is required.";
-                        input.parentNode.appendChild(errorSpan);
-                    }
-                } else {
-                    if (formGroup) formGroup.classList.remove("has-error");
-                }
-            });
-
-            if (isValid) {
-                fetch("{% url 'common_items:add-service-type' %}", {
-                    method: "POST",
-                    headers: {
-                        "X-CSRFToken": "{{ csrf_token }}",
-                    },
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        window.location.reload();
-                    } else {
-                       if(data.error_field && data.error_message){
-                            const errorInput = form.querySelector(`[name="${data.error_field}"]`);
-                            if (errorInput) {
-                                const formGroup = errorInput.closest('.row');
-                                if (formGroup) {
-                                    formGroup.classList.add("has-error");
-                                    let helpBlock = formGroup.querySelector('.help-block');
-                                    if (!helpBlock) {
-                                        helpBlock = document.createElement("span");
-                                        helpBlock.className = "help-block";
-                                        errorInput.parentNode.appendChild(helpBlock);
-                                    }
-                                    helpBlock.textContent = data.error_message;
-                                }
-                            }
-                       } else {
-                            alert("An error occurred. Please try again.");
-                       }
-                    }
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                });
-            }
-        });
-
-        document.getElementById("manage_productivity_form").addEventListener("submit", function(event) {
-            event.preventDefault();
-
-            const form = event.target;
-            const formData = new FormData(form);
-            let isValid = true;
-            const formAction = form.getAttribute("data-action");
-
-            const descriptionInput = form.querySelector("#productivity_description");
-            const cleaningHoursInput = form.querySelector("#productivity_cleaning_hours");
-            const maxCleanersInput = form.querySelector("#productivity_max_cleaners");
-            const maxHoursInput = form.querySelector("#productivity_max_hours");
-            const minCleanersInput = form.querySelector("#productivity_min_cleaners");
-            const minHoursInput = form.querySelector("#productivity_min_hours");
-
-            form.querySelectorAll("[required]").forEach(input => {
-                clearErrorFromInput(input);
-                if (!input.value.trim()) {
-                    isValid = false;
-                    setErrorOnInput(input, "This field is required.");
-                }
-            });
-
-            if (descriptionInput) {
-                if (descriptionInput.value.length > 500) {
-                    isValid = false;
-                    setErrorOnInput(descriptionInput, "Description cannot exceed 500 characters.");
-                } else {
-                    clearErrorFromInput(descriptionInput);
-                }
-            }
-
-            if (!validateNumberInput(cleaningHoursInput, false, "Please enter a valid non-negative number")) isValid = false;
-            if (!validateNumberInput(maxCleanersInput, true, "Please enter a valid non-negative integer")) isValid = false;
-            if (!validateNumberInput(maxHoursInput, false, "Please enter a valid non-negative number")) isValid = false;
-            if (!validateNumberInput(minCleanersInput, true, "Please enter a valid non-negative integer")) isValid = false;
-            if (!validateNumberInput(minHoursInput, false, "Please enter a valid non-negative number")) isValid = false;
-
-            if (!isValid) return;
-            if (formAction === "add") {
-                addServiceProductivity(form, formData);
-            } else if (formAction === "edit") {
-                const productivityId = form.querySelector("#productivity_id").value;
-                editServiceProductivity(form, productivityId, formData);
-            }
-            
-        });
-
-        document.getElementById("manage_productivity_form").addEventListener("reset", function(event) {
-            event.preventDefault();
-            const form = event.target;
-            form.querySelectorAll(".has-error").forEach(formGroup => {
-                formGroup.classList.remove("has-error");
-                const helpBlock = formGroup.querySelector('.help-block');
-                if (helpBlock) helpBlock.remove();
-            });
-
-            form.reset();
-            const resetButton = form.querySelector("[type='reset']");
-            if (resetButton) {
-                resetButton.setAttribute("data-dismiss", "modal");
-                resetButton.click();
-            }
-
-
-        });
-
-        document.getElementById("manage-price-range-form").addEventListener("submit", function(event) {
-            event.preventDefault();
-            const form = event.target;
-            const formData = new FormData(form);
-            let isValid = true;
-            const formAction = form.getAttribute("data-action");
-
-            form.querySelectorAll("[required]").forEach(input => {
-                const formGroup = input.closest('.form-group');
-                let helpBlock = formGroup ? formGroup.querySelector('.help-block') : null;
-                if (helpBlock) helpBlock.remove();
-
-                if (!input.value.trim()) {
-                    isValid = false;
-                    if (formGroup) {
-                        formGroup.classList.add("has-error");
-                        const errorSpan = document.createElement("span");
-                        errorSpan.className = "help-block";
-                        errorSpan.textContent = "This field is required.";
-                        input.parentNode.appendChild(errorSpan);
-                    }
-                } else {
-                    if (formGroup) formGroup.classList.remove("has-error");
-                    clearErrorFromInput(input);
-                }
-
-            });
-
-            if (!isValid) return;
-                if (formAction === "add") {
-                    addPriceRange(form, formData);
-                } else if (formAction === "edit") {
-                   const priceRangeId = form.querySelector("#manage_price_range_id").value;
-                    editPriceRange(form, formData, priceRangeId);
-                }
-            
-        });
-
-        document.getElementById("manage-price-range-form").addEventListener("reset", function(event) {
-            event.preventDefault();
-            const form = event.target;
-            form.querySelectorAll(".has-error").forEach(formGroup => {
-                formGroup.classList.remove("has-error");
-                const helpBlock = formGroup.querySelector('.help-block');
-                if (helpBlock) helpBlock.remove();
-            });
-
-            form.reset();
-            const resetButton = form.querySelector("[type='reset']");
-            if (resetButton) {
-                resetButton.setAttribute("data-dismiss", "modal");
-                resetButton.click();
-            }
-
-
-        });
-
-        document.getElementById("manage-addon-form").addEventListener("submit", function(event) {
-            event.preventDefault();
-            const form = event.target;
-            const formData = new FormData(form);
-            const formAction = form.getAttribute("data-action");
-            let isValid = true;
-
-            form.querySelectorAll("[required]").forEach(input => {
-                const formGroup = input.closest('.form-group');
-                let helpBlock = formGroup ? formGroup.querySelector('.help-block') : null;
-                if (helpBlock) helpBlock.remove();
-
-                if (!input.value.trim()) {
-                    isValid = false;
-                    if (formGroup) {
-                        formGroup.classList.add("has-error");
-                        const errorSpan = document.createElement("span");
-                        errorSpan.className = "help-block";
-                        errorSpan.textContent = "This field is required.";
-                        input.parentNode.appendChild(errorSpan);
-                    }
-                } else {
-                    if (formGroup) formGroup.classList.remove("has-error");
-                }
-            });
-
-            const categoryInput = form.querySelector("#addon_category");
-            if (categoryInput && categoryInput.value.length > 0) {
-                if (categoryInput.value.trim().length == 0) {
-                    isValid = false;
-                    setErrorOnInput(categoryInput, "Category cannot be empty if provided.");
-                } else {
-                    clearErrorFromInput(categoryInput);
-                }
-
-            }
-            const sizeInput = form.querySelector("#addon_size");
-            if (sizeInput && sizeInput.value.length > 0) {
-                if (sizeInput.value.trim().length == 0) {
-                    isValid = false;
-                    setErrorOnInput(sizeInput, "Size cannot be empty if provided.");
-                } else {
-                    clearErrorFromInput(sizeInput);
-                }
-
-            }
-
-            if (!isValid) return;
-
-            if (isValid) {
-                if(formAction === "add"){
-                    addAddon(form, formData);
-                } else if(formAction === "edit"){
-                    const addonId = form.querySelector("#addon_id").value;
-                    editAddon(form, formData, addonId);
-                } 
-            }
-        });
-
-        document.getElementById("manage-addon-form").addEventListener("reset", function(event) {
-            event.preventDefault();
-            const form = event.target;
-            form.querySelectorAll(".has-error").forEach(formGroup => {
-                formGroup.classList.remove("has-error");
-                const helpBlock = formGroup.querySelector('.help-block');
-                if (helpBlock) helpBlock.remove();
-            });
-
-            form.reset();
-            const resetButton = form.querySelector("[type='reset']");
-            if (resetButton) {
-                resetButton.setAttribute("data-dismiss", "modal");
-                resetButton.click();
-            }
-
-        });
-
-    });
-    
-    function getFormGroup(input) {
-        return input ? (input.closest('.form-group') || input.closest('.row')) : null;
-    }
-
-    function setErrorOnInput(input, message) {
-        const formGroup = getFormGroup(input);
-        if (!formGroup) return;
-        formGroup.classList.add("has-error");
-        let helpBlock = formGroup.querySelector('.help-block');
-        if (!helpBlock) {
-            helpBlock = document.createElement("span");
-            helpBlock.className = "help-block";
-            formGroup.appendChild(helpBlock);
-        }
-        helpBlock.textContent = message;
-    }
-
-    function clearErrorFromInput(input) {
-        const formGroup = getFormGroup(input);
-        if (!formGroup) return;
-        formGroup.classList.remove("has-error");
-        const helpBlock = formGroup.querySelector('.help-block');
-        if (helpBlock) helpBlock.remove();
-    }
-
-    function validateNumberInput(input, integerOnly, message) {
-        if (!input || input.value.length === 0) {
-            clearErrorFromInput(input);
-            return true;
-        }
-        const val = integerOnly ? parseInt(input.value, 10) : parseFloat(input.value);
-        if (isNaN(val) || val < 0) {
-            setErrorOnInput(input, message);
-            return false;
-        }
-        clearErrorFromInput(input);
-        return true;
-    }
-
-    function addServiceProductivity(form, formData) {
-        fetch("{% url 'common_items:add-service-productivity' %}", {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}",
-            },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                window.location.reload();
-            } else {
-                if(data.error_field && data.error_message){
-                    const errorInput = form.querySelector(`[name="${data.error_field}"]`);
-                    if (errorInput) {
-
-                        const formGroup = errorInput.closest('.form-group');
-                        if (formGroup) {
-                            formGroup.classList.add("has-error");
-                            let helpBlock = formGroup.querySelector('.help-block');
-                            if (!helpBlock) {
-                                helpBlock = document.createElement("span");
-                                helpBlock.className = "help-block";
-                                errorInput.parentNode.appendChild(helpBlock);
-                            }
-                            helpBlock.textContent = data.error_message;
-                        }
-                    }
-                } else {
-                    console.log('data', data);
-                    alert("An error occurred. Please try again.");
-                }
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-        });
-    }
-
-    function editServiceProductivity(form, productivityId, formData){
-        const updateUrlTemplate = "{% url 'common_items:update-service-productivity' 'PRODUCTIVITY_ID_PLACEHOLDER' %}";
-        const updateUrl = updateUrlTemplate.replace('PRODUCTIVITY_ID_PLACEHOLDER', encodeURIComponent(productivityId));
-        fetch(updateUrl, {
-            method: "PUT",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}",
-            },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                window.location.reload();
-            } else {
-                if(data.error_field && data.error_message){
-                    console.log("error", data.error_field);
-                    console.log("error", data.error_message);
-                    const errorInput = form.querySelector(`[name="${data.error_field}"]`);
-                    console.log("errorInput",errorInput);
-                    if (errorInput) {
-
-                        const formGroup = errorInput.closest('.form-group');
-                        if (formGroup) {
-                            formGroup.classList.add("has-error");
-                            let helpBlock = formGroup.querySelector('.help-block');
-                            if (!helpBlock) {
-                                helpBlock = document.createElement("span");
-                                helpBlock.className = "help-block";
-                                errorInput.parentNode.appendChild(helpBlock);
-                            }
-                            helpBlock.textContent = data.error_message;
-                        }
-                    }
-                } else {
-                    console.log('data', data);
-                    alert("An error occurred. Please try again.");
-                }
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-        });
-    }
-
-    function addPriceRange(form, formData){
-        fetch("{% url 'common_items:add-service-price-range' %}", {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}",
-            },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                window.location.reload();
-            } else {
-                if(data.error_field && data.error_message){
-                    const errorInput = form.querySelector(`[name="${data.error_field}"]`);
-                    if (errorInput) {
-
-                        const formGroup = errorInput.closest('.form-group');
-                        if (formGroup) {
-                            formGroup.classList.add("has-error");
-                            let helpBlock = formGroup.querySelector('.help-block');
-                            if (!helpBlock) {
-                                helpBlock = document.createElement("span");
-                                helpBlock.className = "help-block";
-                                errorInput.parentNode.appendChild(helpBlock);
-                            }
-                            helpBlock.textContent = data.error_message;
-                        }
-                    }
-                } else {
-                    console.log('data', data);
-                    alert("An error occurred. Please try again.");
-                }
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-        });
-    }
-
-    function editPriceRange(form, formData, priceRangeId){
-        const updateUrlTemplate = "{% url 'common_items:update-service-price-range' 'PRICERANGE_ID_PLACEHOLDER' %}";
-        const updateUrl = updateUrlTemplate.replace('PRICERANGE_ID_PLACEHOLDER', encodeURIComponent(priceRangeId));
-        fetch(updateUrl, {
-            method: "PUT",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}",
-            },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                window.location.reload();
-            } else {
-                if(data.error_field && data.error_message){
-                    const errorInput = form.querySelector(`[name="${data.error_field}"]`);
-                    if (errorInput) {
-
-                        const formGroup = errorInput.closest('.form-group');
-                        if (formGroup) {
-                            formGroup.classList.add("has-error");
-                            let helpBlock = formGroup.querySelector('.help-block');
-                            if (!helpBlock) {
-                                helpBlock = document.createElement("span");
-                                helpBlock.className = "help-block";
-                                errorInput.parentNode.appendChild(helpBlock);
-                            }
-                            helpBlock.textContent = data.error_message;
-                        }
-                    }
-                } else {
-                    console.log('data', data);
-                    alert("An error occurred. Please try again.");
-                }
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-        });
-    }
-    
-    function addAddon(form, formData){
-        fetch("{% url 'common_items:add-service-addons' %}", {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}",
-            },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                window.location.reload();
-            } else {
-                if(data.error_field && data.error_message){
-                    const errorInput = form.querySelector(`[name="${data.error_field}"]`);
-                    if (errorInput) {
-                        const formGroup = errorInput.closest('.form-group');
-                        if (formGroup) {
-                            formGroup.classList.add("has-error");
-                            let helpBlock = formGroup.querySelector('.help-block');
-                            if (!helpBlock) {
-                                helpBlock = document.createElement("span");
-                                helpBlock.className = "help-block";
-                                errorInput.parentNode.appendChild(helpBlock);
-                            }
-                            helpBlock.textContent = data.error_message;
-                        }
-                    }
-                } else {
-                    alert("An error occurred. Please try again.");
-                }
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-        });
-    }
-    
-    function editAddon(form, formData, addonId){
-        const updateUrlTemplate = "{% url 'common_items:update-service-addons' 'ADDON_ID_PLACEHOLDER' %}";
-        const updateUrl = updateUrlTemplate.replace('ADDON_ID_PLACEHOLDER', encodeURIComponent(addonId));
-        fetch(updateUrl, {
-            method: "PUT",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}",
-            },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                window.location.reload();
-            } else {
-                if(data.error_field && data.error_message){
-                    const errorInput = form.querySelector(`[name="${data.error_field}"]`);
-                    if (errorInput) {
-
-                        const formGroup = errorInput.closest('.form-group');
-                        if (formGroup) {
-                            formGroup.classList.add("has-error");
-                            let helpBlock = formGroup.querySelector('.help-block');
-                            if (!helpBlock) {
-                                helpBlock = document.createElement("span");
-                                helpBlock.className = "help-block";
-                                errorInput.parentNode.appendChild(helpBlock);
-                            }
-                            helpBlock.textContent = data.error_message;
-                        }
-                    }
-                } else {
-                    console.log('data', data);
-                    alert("An error occurred. Please try again.");
-                }
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-        });
-    }
-
-    /**
-     * Toggle service details for `serviceType`: hide service list, show the matching panel,
-     * hide other panels, activate the first valid productivity tab and reveal its content and price ranges.
-     */
-    function onServiceTypeClick(serviceType) {
-        const serviceList = document.getElementById("smd-service-list");
-        const serviceDetails = document.getElementById("smd-service-details");
-        const panels = serviceDetails.querySelectorAll(".row");
-        const productivityTabs = serviceDetails.querySelectorAll(`#${serviceType}-productivity-tab`);
-        const addonsPanels = serviceDetails.querySelectorAll("[id$='-panel-addons']");
-        serviceList.classList.add("hide");
-        serviceDetails.classList.remove("hide");
-        
-        addonsPanels.forEach(panel => {
-            if(!panel.classList.contains("hide")){
-                panel.classList.add("hide");
-            }
-            if(panel.id === serviceType + "-panel-addons"){
-                panel.classList.remove("hide");
-            }
-        });
-
-        panels.forEach(element => {
-            if (element.id && element.id.endsWith('-panel')) {
-                if (element.id === serviceType + "-panel") {
-                    element.classList.remove("hide");
-                } else {
-                    element.classList.add("hide");
-                }
-            }
-        });
-
-        if (productivityTabs && productivityTabs.length > 0) {
-            // scope to the current panel (safer)
-            const currentPanel = serviceDetails.querySelector(`#${serviceType}-panel`);
-
-            // hide all productivity contents once (only inside current panel if available)
-            const allProductivityContents = currentPanel
-                ? currentPanel.querySelectorAll("[id^='productivity-content-']")
-                : serviceDetails.querySelectorAll("[id^='productivity-content-']");
-            allProductivityContents.forEach(content => content.classList.add("hide"));
-
-            // remove border from all tab buttons
-            productivityTabs.forEach(tab => {
-                const btn = tab.querySelector(".productivity-tab-item");
-                if (btn) btn.classList.remove("productivity-tab-border");
-            });
-
-            const allProductivityPriceRanges = currentPanel
-                ? currentPanel.querySelectorAll("[id^='productivity-price-range-']")
-                : serviceDetails.querySelectorAll("[id^='productivity-price-range-']");
-            allProductivityPriceRanges.forEach(content => content.classList.add("hide"));
-
-            // find first tab that has a valid button and activate it
-            const firstValidTab = Array.from(productivityTabs).find(tab => {
-                const b = tab.querySelector(".productivity-tab-item");
-                return b && b.getAttribute("data-productivity-name") && b.getAttribute("data-productivity-id");
-            });
-
-            if (firstValidTab) {
-                const btn = firstValidTab.querySelector(".productivity-tab-item");
-                const productivityName = btn.getAttribute("data-productivity-name");
-                const productivityId = btn.getAttribute("data-productivity-id");
-                if (productivityName && productivityId) {
-                    const productivityContent = document.getElementById(`productivity-content-${productivityName}-${productivityId}`);
-                    const productivitPriceRange = document.getElementById(`productivity-price-range-${productivityName}-${productivityId}`);
-                    if (productivityContent) productivityContent.classList.remove("hide");
-                    if (productivitPriceRange) productivitPriceRange.classList.remove("hide");
-                }
-                btn.classList.add("productivity-tab-border");
-            }
-        }        
-
-    }
-
-    /**
-     * Hide all productivity contents and price-range panels, clear active state from tabs,
-     * then show the content and price-range panel for the clicked productivity tab and
-     * mark that tab as active.
-     */
-    function onProductivityTabClick(event){
-        const productivityName = event.currentTarget.getAttribute("data-productivity-name");
-        const productivityId = event.currentTarget.getAttribute("data-productivity-id");
-        const allProductivityContents = document.querySelectorAll("[id^='productivity-content-']");
-        const allProductivityPriceRanges = document.querySelectorAll("[id^='productivity-price-range-']");
-        allProductivityContents.forEach(content => content.classList.add("hide"));
-        allProductivityPriceRanges.forEach(content => content.classList.add("hide"));
-        const allTabs = document.querySelectorAll(".productivity-tab-item");
-        allTabs.forEach(tab => tab.classList.remove("productivity-tab-border"));
-        event.currentTarget.classList.add("productivity-tab-border");
-        if(productivityName && productivityId){
-            const productivityContent = document.getElementById(`productivity-content-${productivityName}-${productivityId}`);
-            const productivitPriceRange = document.getElementById(`productivity-price-range-${productivityName}-${productivityId}`);
-            productivityContent.classList.remove("hide");
-            productivitPriceRange.classList.remove("hide");
-        }
-    }
-
-    /**
-     * Show the service list and hide the service-details view.
-     * If type === 'add-new-service' also hide the add-new-service panel.
-     */
-    function onBackButtonClick(type = null) {
-        const serviceList = document.getElementById("smd-service-list");
-        const serviceDetails = document.getElementById("smd-service-details");
-        const panels = serviceDetails.querySelectorAll(".row");
-        serviceList.classList.remove("hide");
-        serviceDetails.classList.add("hide");
-        if(type && type ==='add-new-service'){
-            const addNewService = document.getElementById("smd-add-new-service");
-            addNewService.classList.add("hide");
-            return;
-         }
-        panels.forEach(element => {
-            if (element.id && element.id.endsWith('-panel')) {
-                element.classList.add("hide");
-            }
-        });
-    }
-   
-    /**
-     * Hide the service list and show the "Add Service Type" panel.
-     */
-    function onAddNewServiceClick(){
-         const serviceList = document.getElementById("smd-service-list");
-         serviceList.classList.add("hide");
-         const addNewService = document.getElementById("smd-add-new-service");
-         addNewService.classList.remove("hide");
-    }
-    
     //add Add-ons
-    function add_add_on(element){
-        const nameEl = document.getElementById('manage_addon_service_type_name');
-        const idEl = document.getElementById('service_type_id');
-
-        const serviceName = element.getAttribute('data-service-type-name') || '';
-        const serviceId = element.getAttribute('data-service-type-id') || '';
-
-        if (nameEl) nameEl.textContent = serviceName;
-        if (idEl) idEl.value = serviceId;
-
-        const trigger = document.getElementById('manage_addons');
-        document.getElementById("manage-addon-form").setAttribute("data-action", "add");
-        if (trigger) trigger.click();
+    function add_add_on(elem){
+        $("#add_service_type_addon_name_id").text($(elem).data('service_type_name'));
+        $("#add_service_type_addon_id").val($(elem).data('service_type_id'));
+        
+        $('#id_add_add').click();
     }
 
     //edit Add-ons
-    function edit_add_on(element){
-        const addonId = element.getAttribute('data-id') || '';
-        const serviceTypeId = element.getAttribute('data-service-type-id') || '';
-        const addonName = element.getAttribute('data-name') || '';
-        const addonCategory = element.getAttribute('data-category') || '';
-        const addonSize = element.getAttribute('data-size') || '';
-        const addonPrice = element.getAttribute('data-price') || '';
-        const serviceTypeName = element.getAttribute('data-service-type-name') || '';
-        const productivity = element.getAttribute('data-productivity') || '';
-       
+    function edit_add_on(elem){
+        $('#edit_addon_id').val($(elem).data('id'));
+        $('#edit_name_addon_id').val($(elem).data('name'));
+        $('#edit_size_addon_id').val($(elem).data('size'));
+        $('#edit_category_addon_id').val($(elem).data('category'));
+        $('#edit_price_addon_id').val($(elem).data('price'));
+        $('#edit_productivity_addon_id').val($(elem).data('productivity'));
+        
+        $("#edit_service_type_name_addon_id").text($(elem).data('service_type_name'));
+        $("#edit_service_type_addon_id").val($(elem).data('service_type_id'));
 
-        const nameEl = document.getElementById('manage_addon_service_type_name');
-        const idEl = document.getElementById('service_type_id');
-
-        if (nameEl) nameEl.textContent = serviceTypeName;
-        if (idEl) idEl.value = serviceTypeId;
-
-        document.getElementById('addon_id').value = addonId;
-        document.getElementById('addon_name').value = addonName;
-        document.getElementById('addon_category').value = addonCategory;
-        document.getElementById('addon_size').value = addonSize;
-        document.getElementById('addon_price').value = addonPrice;
-        document.getElementById('addon_productivity').value = productivity;
-
-        const trigger = document.getElementById('manage_addons');
-        document.getElementById("manage-addon-form").setAttribute("data-action", "edit");
-        if (trigger) trigger.click();
+        $('#id_add_edit').click();
     }
 
     //delete Add-ons
@@ -1444,115 +843,268 @@
        
     }
 
-    //edit price range
-    function edit_price_range(element){
-        const priceRangeId = element.dataset.id || "";
-        const priceRangeName = element.dataset.name || "";
-        const minimumArea = element.dataset.minimumArea || "";
-        const maximumArea = element.dataset.maximumArea || "";
-        const price = element.dataset.price || "";
-        const unitPrice = element.dataset.unitPrice || "";
-        const serviceTypeName = element.dataset.serviceTypeName || "";
-        const serviceTypeId = element.dataset.serviceTypeId || "";
-        const productivityId = element.dataset.productivityId || "";
-        const productivityName = element.dataset.productivityName || "";
 
-        const headingEl = document.getElementById("manage_service_type_name_id");
-        if (headingEl) headingEl.textContent = `Edit ${serviceTypeName}`+ (productivityName ? ` – ${ productivityName} ( ${priceRangeName})` : ` – (${priceRangeName})`); 
-        
-        document.getElementById("manage_price_range_id").value = priceRangeId;
-        document.getElementById("manage_service_type_id").value = serviceTypeId;
-        document.getElementById("manage_productivity_id").value = productivityId;
-        document.getElementById("manage_price_range_name").value = priceRangeName;
-        document.getElementById("manage_minimum_area").value = minimumArea;
-        document.getElementById("manage_maximum_area").value = maximumArea;
-        document.getElementById("manage_price").value = price;
-        document.getElementById("manage_unit_price").value = unitPrice;
-        document.getElementById("manage_productivity_name").value = productivityName;
-        
+  function viewVeryVerySpecial(id) {
+    document.getElementById("veryveryspecial_id_"+id).style.display = "block";
+    document.getElementById("veryspecial_id_"+id).style.display = "none";
+    document.getElementById("normal_id_"+id).style.display = "none";
+    document.getElementById("special_id_"+id).style.display = "none";
+    $("#veryveryspecial_button_id_"+id).addClass("productivity-tab-border");
+    $("#veryspecial_button_id_"+id).removeClass("productivity-tab-border");
+    $("#normal_button_id_"+id).removeClass("productivity-tab-border");
+    $("#special_button_id_"+id).removeClass("productivity-tab-border");
 
-        // Show the modal
-        const manageTrigger = document.querySelector('.pricerange_manage_button');
-        document.getElementById("manage-price-range-form").setAttribute("data-action", "edit");
-        if (manageTrigger) manageTrigger.click();
+    $("#productivityhead_"+id+"1").hide();
+    $("#productivityhead_"+id+"2").hide();
+    $("#productivityhead_"+id+"3").hide();
+    $("#productivityhead_"+id+"4").show();
+    $("#productivitycontent_"+id+"1").hide();
+    $("#productivitycontent_"+id+"2").hide();
+    $("#productivitycontent_"+id+"3").hide();
+    $("#productivitycontent_"+id+"4").show();
+                                }
+
+  function viewVerySpecial(id) {
+    document.getElementById("veryveryspecial_id_"+id).style.display = "none";
+    document.getElementById("veryspecial_id_"+id).style.display = "block";
+    document.getElementById("normal_id_"+id).style.display = "none";
+    document.getElementById("special_id_"+id).style.display = "none";
+    $("#veryveryspecial_button_id_"+id).removeClass("productivity-tab-border");
+    $("#veryspecial_button_id_"+id).addClass("productivity-tab-border");
+    $("#normal_button_id_"+id).removeClass("productivity-tab-border");
+    $("#special_button_id_"+id).removeClass("productivity-tab-border");
+
+    $("#productivityhead_"+id+"1").hide();
+    $("#productivityhead_"+id+"2").hide();
+    $("#productivityhead_"+id+"3").show();
+    $("#productivityhead_"+id+"4").hide();
+    $("#productivitycontent_"+id+"1").hide();
+    $("#productivitycontent_"+id+"2").hide();
+    $("#productivitycontent_"+id+"3").show();
+    $("#productivitycontent_"+id+"4").hide();
+  }
+
+  function viewSpecial(id) {
+    document.getElementById("special_id_"+id).style.display = "block";
+    document.getElementById("normal_id_"+id).style.display = "none";
+    document.getElementById("veryspecial_id_"+id).style.display = "none";
+    document.getElementById("veryveryspecial_id_"+id).style.display = "none";
+    $("#special_button_id_"+id).addClass("productivity-tab-border");
+    $("#normal_button_id_"+id).removeClass("productivity-tab-border");
+    $("#veryspecial_button_id_"+id).removeClass("productivity-tab-border");
+    $("#veryveryspecial_button_id_"+id).removeClass("productivity-tab-border");
+
+    $("#productivityhead_"+id+"1").hide();
+    $("#productivityhead_"+id+"2").show();
+    $("#productivityhead_"+id+"3").hide();
+    $("#productivityhead_"+id+"4").hide();
+    $("#productivitycontent_"+id+"1").hide();
+    $("#productivitycontent_"+id+"2").show();
+    $("#productivitycontent_"+id+"3").hide();
+    $("#productivitycontent_"+id+"4").hide();
+  }
+
+  function viewNormal(id) {
+    document.getElementById("normal_id_"+id).style.display = "block";
+    document.getElementById("special_id_"+id).style.display = "none";
+    document.getElementById("veryspecial_id_"+id).style.display = "none";
+    document.getElementById("veryveryspecial_id_"+id).style.display = "none";
+    $("#normal_button_id_"+id).addClass("productivity-tab-border");
+    $("#special_button_id_"+id).removeClass("productivity-tab-border");
+    $("#veryspecial_button_id_"+id).removeClass("productivity-tab-border");
+    $("#veryveryspecial_button_id_"+id).removeClass("productivity-tab-border");
+    
+    $("#productivityhead_"+id+"1").show();
+    $("#productivityhead_"+id+"2").hide();
+    $("#productivityhead_"+id+"3").hide();
+    $("#productivityhead_"+id+"4").hide();
+    $("#productivitycontent_"+id+"1").show();
+    $("#productivitycontent_"+id+"2").hide();
+    $("#productivitycontent_"+id+"3").hide();
+    $("#productivitycontent_"+id+"4").hide();
+  }
+
+  function editPro(id) {
+    document.getElementById("id_edit_"+id).style.display = "none";
+    document.getElementById("id_done_"+id).style.display = "block";
+    document.getElementById("id_pro_value_"+id).style.display = "none";
+    var valString = $("#id_pro_value_"+id).text()
+    var temp = valString.split(" ");
+    var v = parseFloat(temp[0])
+    $("#id_pro_"+id).val(v);
+    document.getElementById("id_pro_"+id).style.display = "block";
+  }
+  function doneEdit(id) {
+    document.getElementById("id_edit_"+id).style.display = "block";
+    document.getElementById("id_done_"+id).style.display = "none";
+    document.getElementById("id_pro_value_"+id).style.display = "block";
+    document.getElementById("id_pro_"+id).style.display = "none";
+    productivity_id    = id;
+    productivity_value = $("#id_pro_"+id).val();
+
+    // var csrf_header = {'X-CSRFToken':'{{csrf_token}}'};
+    $.ajax({
+            url: "{% url 'common_items:productivity' %}",
+            data: {
+            'productivity_id': productivity_id,
+            'productivity_value':productivity_value,
+            'action_type':'edit_productivity'
+            },
+            dataType: "json",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            
+            success: function(data) {
+                if(data['success'] == true)
+                {
+                    window.location.href="{% url 'common_items:productivity' %}";
+                }
+            }
+        });
+
+}
+
+
+//edit price range
+  function edit_price_range(elem)
+  {
+  $('#edit_price_range_id').val($(elem).data('id'));
+  $('#edit_name_id').val($(elem).data('name'));
+  $('#edit_minimum_area_id').val($(elem).data('minimum_area'));
+  $('#edit_maximum_area_id').val($(elem).data('maximum_area'));
+  $('#edit_price_id').val($(elem).data('price'));
+  $('#edit_unit_price_id').val($(elem).data('unit_price'));
+
+  $("#edit_service_type_name_id").text($(elem).data('service_type_name'));
+  $("#edit_service_type_id").val($(elem).data('service_type_id'));
+
+  servicename = $(elem).data('service_type_name');
+  if(servicename=='Facade Cleaning'){
+      $('.facade-checkbox').show()
+      $('.window-checkbox').hide()
+      $('.upholstery-checkbox').hide()
+      $('.kitchen-checkbox').hide()
+
+      if($(elem).data('is_highprice_facade') == 'True')
+      {
+        $('#edit_is_highprice_facade_id').attr('checked',true)
+      }
+      else
+      {
+       $('#edit_is_highprice_facade_id').attr('checked',false) 
+      }
+    }
+    else if(servicename=='Window Cleaning'){
+      $('.window-checkbox').show()
+      $('.facade-checkbox').hide()
+     
+      $('.upholstery-checkbox').hide()
+      $('.kitchen-checkbox').hide()
+    
+      if($(elem).data('is_highprice_window') == 'True')
+      {
+      $('#edit_is_highprice_window_id').attr('checked',true)
+      }
+      else
+      {
+        $('#edit_is_highprice_window_id').attr('checked',false)
+      }
+    }
+    else if(servicename=='Upholstery Cleaning'){
+      $('.upholstery-checkbox').show()
+      $('.facade-checkbox').hide()
+      $('.window-checkbox').hide()
+    
+      $('.kitchen-checkbox').hide()
+      $('#edit_upholstery_type_id').val($(elem).data('upholstery_type'));
+    }
+    else if(servicename=='Kitchen Cleaning'){
+      $('.kitchen-checkbox').show()
+      $('.facade-checkbox').hide()
+      $('.window-checkbox').hide()
+      $('.upholstery-checkbox').hide()
+ 
+      if($(elem).data('is_newkitchen')=='True')
+      {
+     
+        $('#edit_is_newkitchen_id').attr('checked',true)
+      }
+      else
+      {
+        $('#edit_is_newkitchen_id').attr('checked',false) 
+      }
+      
+      if($(elem).data('is_cabinet')=='True')
+      {
+     
+        $('#edit_is_withcabinet_id').attr('checked',true)
+      }
+      else
+      {
+        $('#edit_is_withcabinet_id').attr('checked',false) 
+      }
+
+    }
+    else{
+      $('.facade-checkbox').hide()
+      $('.window-checkbox').hide()
+      $('.upholstery-checkbox').hide()
+      $('.kitchen-checkbox').hide()
     }
 
-    //Add price range
-    function add_price_range(element){
-        const serviceTypeName = element.dataset.serviceTypeName || "";
-        const serviceTypeId = element.dataset.serviceTypeId || "";
-        const productivityId = element.dataset.productivityId || element.dataset.productivity || "";
-        const productivityName = element.dataset.productivityName || "";
+    $(".pricerange_edit_button").click();
+}
 
-        const headingEl = document.getElementById("manage_service_type_name_id");
-        headingEl.textContent = `Add new price range for ${serviceTypeName}` + (productivityName ? ' — ' + productivityName : "");
 
-        // Set the values in the modal
-        document.getElementById("manage_service_type_id").value = serviceTypeId;
-        document.getElementById("manage_productivity_id").value = productivityId;
-        document.getElementById("manage_productivity_name").value = productivityName;
 
-        // Show the modal
-        const manageTrigger = document.querySelector('.pricerange_manage_button');
-        document.getElementById("manage-price-range-form").setAttribute("data-action", "add");
-        if (manageTrigger) manageTrigger.click();
+//Add price range
+function add_price_range(elem)
+{
+    $("#add_service_type_name_id").text($(elem).data('service_type_name'));
+    $("#add_service_type_id").val($(elem).data('service_type_id'));
+
+    servicename = $(elem).data('service_type_name');
+  
+  if(servicename=='Facade Cleaning'){
+      $('.facade-checkbox').show()
+      $('.window-checkbox').hide()
+      $('.upholstery-checkbox').hide()
+      $('.kitchen-checkbox').hide()
+    }
+    else if(servicename=='Window Cleaning'){
+      $('.window-checkbox').show()
+      $('.facade-checkbox').hide() 
+      $('.upholstery-checkbox').hide()
+      $('.kitchen-checkbox').hide()
+    
+    }
+    else if(servicename=='Upholstery Cleaning'){
+      $('.upholstery-checkbox').show()
+      $('.facade-checkbox').hide()
+      $('.window-checkbox').hide()
+      $('.kitchen-checkbox').hide()
+    }
+    else if(servicename=='Kitchen Cleaning'){
+      $('.kitchen-checkbox').show()
+      $('.facade-checkbox').hide()
+      $('.window-checkbox').hide()
+      $('.upholstery-checkbox').hide()
+    }
+    else{
+      $('.facade-checkbox').hide()
+      $('.window-checkbox').hide()
+      $('.upholstery-checkbox').hide()
+      $('.kitchen-checkbox').hide()
     }
 
-    //Delete Price Range
-    function delete_price_range(element){
-        const id = element.dataset.id || element.getAttribute('data-id') || '';
-        const hiddenInput = document.getElementById('delete_price_range_id');
-        if (hiddenInput) hiddenInput.value = id;
+    $(".pricerange_add_button").click();
+}
 
-        const trigger = document.querySelector('.pricerange_delete_button');
-        if (trigger) trigger.click();
-    }
-
-    function viewAddCategoryModal(serviceTypeName, serviceTypeId){
-        document.getElementById("manage_productivity").click();
-        document.getElementById("productivity_modal_heading").textContent = `Add new category for ${serviceTypeName}`;
-        document.getElementById("productivity_service_type_id").value = serviceTypeId;
-        document.getElementById("manage_productivity_form").setAttribute("data-action", "add");
-    }
-
-    function viewEditProductivityModal(productivity){
-        const {
-            id: pid,
-            name: pname,
-            service_type_id: pservice_type_id,
-            description: pdescription,
-            cleaning_hours: pcleaning_hours,
-            max_cleaners: pmax_cleaners,
-            max_hours: pmax_hours,
-            min_cleaners: pmin_cleaners,
-            min_hours: pmin_hours,
-            is_active: is_active
-        } = productivity;
-        const statusValue = is_active.toLowerCase() === 'true' ? "active" : "inactive"
-
-        document.getElementById("manage_productivity").click();
-        document.getElementById("productivity_modal_heading").textContent = `Edit category for ${pname}`;
-        document.getElementById("productivity_service_type_id").value = pservice_type_id;
-        document.getElementById("manage_productivity_form").setAttribute("data-action", "edit");
-        document.getElementById("productivity_name").value = pname;
-        document.getElementById("productivity_description").value = pdescription;
-        document.getElementById("productivity_cleaning_hours").value = pcleaning_hours;
-        document.getElementById("productivity_max_cleaners").value = pmax_cleaners;
-        document.getElementById("productivity_max_hours").value = pmax_hours;
-        document.getElementById("productivity_min_cleaners").value = pmin_cleaners;
-        document.getElementById("productivity_min_hours").value = pmin_hours;
-        document.getElementById("status_id").value = statusValue;
-        if(document.getElementById("productivity_id")){
-            document.getElementById("productivity_id").value = pid;
-        } else {
-            const hiddenInput = document.createElement("input");
-            hiddenInput.type = "hidden";
-            hiddenInput.name = "productivity_id";
-            hiddenInput.id = "productivity_id";
-            hiddenInput.value = pid;
-            document.getElementById("manage_productivity_form").appendChild(hiddenInput);
-        }
-
-    }
+//Delete Price Range
+function delete_price_range(elem)
+{
+    $('#delete_price_range_id').val($(elem).data('id'));
+    $(".pricerange_delete_button").click();
+}
 </script>
 {% endblock %}

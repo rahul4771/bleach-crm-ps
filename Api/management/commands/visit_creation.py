@@ -11,15 +11,15 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         try:
             # Fetch required objects
-            evaluation = Evaluation.objects.get(evaluation_id='BLC20250610003')
-            order = Order.objects.get(evaluation__evaluation_id='BLC20250610003')
+            evaluation = Evaluation.objects.get(evaluation_id='BLC20251210020')           #change it  step1
+            order = Order.objects.get(evaluation__evaluation_id='BLC20251210020')          #change it step2
             evaluation_details = EvaluationDetails.objects.get(evaluation=evaluation)
             customer_address_id = evaluation.customer.id
-            customer_address = Address.objects.get(customer__id=customer_address_id)
-            order_scheduler_books = EvaluationBook.objects.filter(id__in=[17924])
+            customer_address = Address.objects.filter(customer__id=customer_address_id).first()
+            order_scheduler_books = EvaluationBook.objects.filter(id__in=[19807])         #change it   step3
 
             # Define schedule times
-            start_datetime = datetime.strptime('28/06/2025 11:00 AM', '%d/%m/%Y %I:%M %p')
+            start_datetime = datetime.strptime('05/12/2025 06:00 AM', '%d/%m/%Y %I:%M %p')        #change it  step4
             end_datetime = start_datetime + timedelta(hours=10)
 
             # Create OrderScheduler entries

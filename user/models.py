@@ -149,7 +149,7 @@ class UserProfile(AbstractUser):
     bamboo_employee_id          = models.CharField(max_length=20,blank=True,null=True)
 
 
-    created_by      = models.ForeignKey('self', on_delete=models.PROTECT,blank=True,null=True)
+    created_by      = models.ForeignKey('self',blank=True,null=True)
     is_active       = models.BooleanField(null=False,blank=True,default=True)
     created         = models.DateTimeField(auto_now_add=True)
     updated         = models.DateTimeField(auto_now=True)
@@ -186,7 +186,7 @@ class Governorate(models.Model):
 class Area(models.Model):        
     name            = models.CharField(max_length=100,blank=False,null=False)
     name_arabic     = models.CharField(max_length=100,blank=False,null=False)
-    governorate     = models.ForeignKey('Governorate',on_delete=models.PROTECT,blank=False,null=False)
+    governorate     = models.ForeignKey('Governorate',blank=False,null=False)
     is_active       = models.BooleanField(null=False,blank=True,default=True)
     created         = models.DateTimeField(auto_now_add=True)
     updated         = models.DateTimeField(auto_now=True)
@@ -199,9 +199,9 @@ class Area(models.Model):
 
 
 class Address(models.Model):
-    customer        = models.ForeignKey('UserProfile',on_delete=models.PROTECT,blank=False,null=False,related_name='address_customer')
-    governorate     = models.ForeignKey('Governorate',on_delete=models.PROTECT,blank=False,null=False)
-    area            = models.ForeignKey('Area',on_delete=models.PROTECT,blank=False,null=False)
+    customer        = models.ForeignKey('UserProfile',blank=False,null=False,related_name='address_customer')
+    governorate     = models.ForeignKey('Governorate',blank=False,null=False)
+    area            = models.ForeignKey('Area',blank=False,null=False)
     location        = models.CharField(max_length=100,blank=False,null=False)
     gps_location    = models.TextField(max_length=500,blank=True,null=True)
     block           = models.CharField(max_length=100,blank=False,null=False)
@@ -241,7 +241,7 @@ class Address(models.Model):
         return return_string    
 
 class LeaveSchedule(models.Model):
-    staff           = models.ForeignKey('UserProfile',on_delete=models.PROTECT,blank=False,null=False,related_name='leave_staff')
+    staff           = models.ForeignKey('UserProfile',blank=False,null=False,related_name='leave_staff')
     leave_date      = models.DateField(blank=False,null=False)
     leave_type      = models.CharField(max_length=50,blank=False,null=False,choices=LEAVE_TYPES)
     bamboo_leave_id = models.CharField(max_length=10,blank=True,null=True)
@@ -255,7 +255,7 @@ class LeaveSchedule(models.Model):
     	return self.staff.username+str(self.leave_date)
 
 class ShiftSchedule(models.Model):
-    staff           = models.ForeignKey('UserProfile',on_delete=models.PROTECT,blank=False,null=False,related_name='shift_staff')
+    staff           = models.ForeignKey('UserProfile',blank=False,null=False,related_name='shift_staff')
     
     shift_date      = models.DateField(blank=False,null=False)
     

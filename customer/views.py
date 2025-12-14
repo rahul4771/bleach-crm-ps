@@ -1,3 +1,5 @@
+import os
+from pathlib import Path
 from django.shortcuts import render,redirect
 from django.template.loader import render_to_string
 from django.http import HttpResponse,JsonResponse
@@ -283,9 +285,9 @@ class Quatation(View):
 						url = "https://smsapi.future-club.com/fccsms.aspx"
 
 						if evaluaation.payment_method == 'SUBSCRIPTION':
-							smsurl = "http://127.0.0.1:8000/customer/subscription/invoice/prw"+str(evaluaation.tracking_no)+""+str(evaluaation.customer.username)+""
+							smsurl = "https://my.bleachkw.com/customer/subscription/invoice/prw"+str(evaluaation.tracking_no)+""+str(evaluaation.customer.username)+""
 						else:
-							smsurl = "http://127.0.0.1:8000/customer/invoice/prw"+str(evaluaation.tracking_no)+""+str(evaluaation.customer.username)+""
+							smsurl = "https://my.bleachkw.com/customer/invoice/prw"+str(evaluaation.tracking_no)+""+str(evaluaation.customer.username)+""
 
 						if language == 'ENGLISH':
 
@@ -845,14 +847,7 @@ class CustomerInvoice(View):
 
 		price_ranges 		= ServicePriceRange.objects.filter(is_active=True)
 
-		#service details
-		try:
-			order_details = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details', queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details', queryset=EvaluationBook.objects.filter(is_active=True), to_attr='evaluationbooks')), to_attr='evaluationdetails')).annotate(customerbooking=Sum(Case(When(Q(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING') & Q(evaluation__booking_evaluation__is_bookingcompleted=False), then=1), default=0, output_field=IntegerField()))).get(is_active=True, evaluation__evaluation_id=evaluation_id, evaluation__customer__username=user_name)
-
-		except:
-			order_details = None
-
-		return render(request,"customer/customer_invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,"price_ranges":price_ranges,'order_details':order_details})		
+		return render(request,"customer/customer_invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,"price_ranges":price_ranges})		
 
 	def post(self,request,evaluation_id):
 
@@ -911,13 +906,7 @@ class CustomerSubscriptionInvoice(View):
 		
 		price_ranges 		= ServicePriceRange.objects.filter(is_active=True)
 
-		#service details
-		try:
-			order_details = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details', queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details', queryset=EvaluationBook.objects.filter(is_active=True), to_attr='evaluationbooks')), to_attr='evaluationdetails')).annotate(customerbooking=Sum(Case(When(Q(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING') & Q(evaluation__booking_evaluation__is_bookingcompleted=False), then=1), default=0, output_field=IntegerField()))).get(is_active=True, evaluation__evaluation_id=evaluation_id, evaluation__customer__username=user_name)
-		except:
-			order_details = None
-
-		return render(request,"customer/customer_invoice_subscription.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,"completed_jobs_count":completed_jobs_count,"price_ranges":price_ranges,'order_details':order_details})
+		return render(request,"customer/customer_invoice_subscription.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,"completed_jobs_count":completed_jobs_count,"price_ranges":price_ranges,})
 
 	def post(self,request,evaluation_id):
 		action            = request.POST.get('action_type')
@@ -969,6 +958,7 @@ class PaymentResponseDebit(View):
 
 			evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=int(tracking_no)+1,customer=customer_cart.customer,estimated_cost=customer_cart.total_cost,discount=customer_cart.cart_discount,promocode_amount=customer_cart.promocode_amount,is_promocode_applied=is_promocode_applied,total_cost=customer_cart.final_cost,payment_method='PREPAID',payment_way='ONLINE',quatation_status='APPROVED',quatation_approved_date=timezone.now(),quatation_expiry_date=timezone.now()+timedelta(14))
 
+			print(evaluation.evaluation_id,"evalid")
 
 			#Booking Number
 			booking_id               = CustomerBooking.objects.filter(is_active=True).aggregate(t=Max('booking_id'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
@@ -1639,11 +1629,11 @@ class PaymentResponseDebit(View):
 
 				if order.evaluation.customer.sms_preference == 'ENGLISH':
 
-					message = "Dear Customer, We have successfully received your payment of amount "+ str(amount_paid) +" KD, (Transaction ID: "+ str(request.GET.get('tranid')) +", Ref ID: "+ str(request.GET.get('ref')) +") against the order number "+ str(order.order_no) +". Please find the Payment receipt here http://127.0.0.1:8000/customer/payment/receipt/pvw"+ str(order.evaluation.tracking_no) +""+str(payment_history.id)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+					message = "Dear Customer, We have successfully received your payment of amount "+ str(amount_paid) +" KD, (Transaction ID: "+ str(request.GET.get('tranid')) +", Ref ID: "+ str(request.GET.get('ref')) +") against the order number "+ str(order.order_no) +". Please find the Payment receipt here https://my.bleachkw.com/customer/payment/receipt/pvw"+ str(order.evaluation.tracking_no) +""+str(payment_history.id)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+order.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
 				
 				else:
-					message = "عزيزي العميل، لقد تلقينا مدفوعاتك بنجاح مقابل رقم الطلب "+ order.order_no +". يرجى العثور على إيصال الدفع هنا http://127.0.0.1:8000/customer/payment/receipt/pvw"+request.GET.get('paymentid')+". لأي مساعدة يرجى الاتصال بنا على9651882707 شكرا لاختيارك بليتش الكويت"
+					message = "عزيزي العميل، لقد تلقينا مدفوعاتك بنجاح مقابل رقم الطلب "+ order.order_no +". يرجى العثور على إيصال الدفع هنا https://my.bleachkw.com/customer/payment/receipt/pvw"+request.GET.get('paymentid')+". لأي مساعدة يرجى الاتصال بنا على9651882707 شكرا لاختيارك بليتش الكويت"
 	
 
 					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+order.evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
@@ -1776,9 +1766,9 @@ class PaymentResponseDebit(View):
 				url = "https://smsapi.future-club.com/fccsms.aspx"
 
 				if order.evaluation.payment_method == 'SUBSCRIPTION':
-					smsurl = "http://127.0.0.1:8000/customer/subscription/invoice/prw"+str(order.evaluation.tracking_no)+""+str(order.evaluation.customer.username)+""
+					smsurl = "https://my.bleachkw.com/customer/subscription/invoice/prw"+str(order.evaluation.tracking_no)+""+str(order.evaluation.customer.username)+""
 				else:
-					smsurl = "http://127.0.0.1:8000/customer/invoice/prw"+str(order.evaluation.tracking_no)+""+str(order.evaluation.customer.username)+""
+					smsurl = "https://my.bleachkw.com/customer/invoice/prw"+str(order.evaluation.tracking_no)+""+str(order.evaluation.customer.username)+""
 
 				if order.evaluation.customer.sms_preference == 'ENGLISH':
 
@@ -1849,14 +1839,14 @@ class PaymentReceipt(View):
 
 				duplicate_schedules.append(orderschedule.order_scheduler_book)
 		else:
-		
+
 			customer = payment_history.order.evaluation.customer
 			customer_address = Address.objects.filter(customer__id=customer.id, currently_active=True).first()
-			
+
 			orderschedules = []
 			if customer_address:
 				orderschedules.append(type('OrderSchedule', (), {'customer_address': customer_address})())
-			setattr(payment_history.order, 'orderschedules', orderschedules)		
+			setattr(payment_history.order, 'orderschedules', orderschedules)
 
 		return render(request,"customer/voucher.html",{'payment_history':payment_history,'nonduplicate_schedules':nonduplicate_schedules,})
 
@@ -1961,6 +1951,49 @@ def quatation_html_to_pdf_view(request,evaluation_id):
 		return response
 	return response
 
+def download_quatation_as_pdf(request, evaluation_id):
+    evaluation_id_encrypted = evaluation_id
+    evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
+    user_name = evaluation_id_encrypted[14:]
+
+    try:
+        order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='booksections')),to_attr='evaluationbooks')),to_attr='evaluationdetails')).annotate(customerbooking=Sum(Case(When(Q( Q(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING')&Q(evaluation__booking_evaluation__is_bookingcompleted=False) ),then=1),default=0,output_field=IntegerField()))).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
+    except:
+        order = None
+
+    price_ranges = ServicePriceRange.objects.filter(is_active=True)
+
+    # return render(request,"customer/downloads/quatation_receipt.html",{"order":order,"price_ranges":price_ranges})
+	
+
+    # Render the HTML template with all the existing styles
+    html_string = render_to_string("customer/downloads/quatation_receipt.html", {
+        "order": order, 
+        "price_ranges": price_ranges,
+        "request": request
+    })
+
+    
+    # Create directory if it doesn't exist
+    pdf_dir = Path('media/pdf/quatation')
+    pdf_dir.mkdir(parents=True, exist_ok=True)
+    
+    pdf_path = pdf_dir / 'quatation.pdf'
+    
+    # Create HTML object with base URL for static files
+    html = HTML(
+        string=html_string, 
+        base_url=request.build_absolute_uri('/')
+    )
+    
+    # Write PDF to disk (no additional CSS needed since it's in the template)
+    html.write_pdf(target=str(pdf_path))
+    
+    # Return the PDF file
+    with open(pdf_path, 'rb') as pdf:
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{evaluation_id}_quatation.pdf"'
+        return response
 
 def purchaseorder_html_to_pdf_view(request,purchase_order_id):
 

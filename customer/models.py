@@ -59,7 +59,7 @@ class NewCustomerOtp(models.Model):
 class CustomerCart(models.Model):
 	customer 			= models.ForeignKey(UserProfile,blank=False,null=False,on_delete=models.CASCADE,related_name='cart_customer')
 	cart_id_value		= models.CharField(max_length=10,blank=False,null=False)
-	customer_address	= models.ForeignKey(Address,on_delete=models.PROTECT,blank=True,null=True)
+	customer_address	= models.ForeignKey(Address,blank=True,null=True)
 	total_cost  		= models.CharField(max_length=10,default=0,blank=False,null=False)
 	cart_discount		= models.CharField(max_length=10,default=0,blank=False,null=False)
 	promocode			= models.CharField(max_length=100,blank=True,null=True)
@@ -80,8 +80,8 @@ class CustomerCart(models.Model):
 
 class CartService(models.Model):
 	cart				= models.ForeignKey('CustomerCart',blank=False,null=False,on_delete=models.CASCADE,related_name='cart_service')
-	service_type		= models.ForeignKey(ServiceType,on_delete=models.PROTECT,blank=True,null=True,related_name='cart_service_type')
-	service_price_range = models.ForeignKey(ServicePriceRange,on_delete=models.PROTECT,blank=True,null=True,related_name='cart_service_price_range')
+	service_type		= models.ForeignKey(ServiceType,blank=True,null=True,related_name='cart_service_type')
+	service_price_range = models.ForeignKey(ServicePriceRange,blank=True,null=True,related_name='cart_service_price_range')
 	cleaning_policy		= models.CharField(max_length=20,blank=True,null=True,choices=CLEANING_CHOICES)
 	area_type	 		= models.CharField(max_length=100,blank=True,null=True)
 	cleaning_method 	= models.CharField(max_length=100,blank=True,null=True)
@@ -148,7 +148,7 @@ class CartServiceFloor(models.Model):
 	section_name 		= models.CharField(max_length=100,blank=False,null=False)
 	size        		= models.CharField(max_length=100,blank=True,null=True)
 	unit        		= models.CharField(max_length=100,blank=True,null=True)
-	service_price_range = models.ForeignKey(ServicePriceRange,on_delete=models.PROTECT,blank=True,null=True,related_name='cart_service_floor_price_range')
+	service_price_range = models.ForeignKey(ServicePriceRange,blank=True,null=True,related_name='cart_service_floor_price_range')
 	
 	bathrooms       	= models.CharField(max_length=100,blank=True,null=True)
 	windows   			= models.CharField(max_length=100,blank=True,null=True)

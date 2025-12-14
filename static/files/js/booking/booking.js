@@ -5365,6 +5365,11 @@ try {
     }
   },
   nextFloor(building, floor) {
+     if(this.building[building].floors[floor-1]){
+       ct=this.building[building].floors[floor-1].size.cost
+      showCustomAlert(ct,building,floor)
+      //alert("Building added cost is " + this.building[building].floors[floor-1].size.cost)
+    }
     this.apartment_stat_err=false
     this.building_msg=false
     if(this.building[building].floors[floor-1].apartment && !this.apartmentCompleteChecker(building,floor-1)){

@@ -200,3 +200,19 @@ EMAIL_HOST_PASSWORD = 'Nuc34502'
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 LOGOUT_REDIRECT_URL= 'login'
+
+
+
+#cache clearing code start########################################
+try:
+    MIDDLEWARE += [
+        'bleach_crm_ps.middleware.NoCacheMiddleware',
+    ]
+except NameError:
+    MIDDLEWARE = [
+        'bleach_crm_ps.middleware.NoCacheMiddleware',
+    ]
+
+
+
+#cache clearing code ends#########################################

@@ -1,9 +1,6 @@
 from django.conf.urls import include, url
 from evaluator import views 
 
-app_name = 'evaluator'
-
-
 urlpatterns = [
 
 	url(r'^dashboard/$',views.EvaluatorHome.as_view(),name='evaluatordash-board'),

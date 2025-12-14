@@ -144,7 +144,7 @@
 <table class="main-table">
 <tbody>
 {% for order_schedule in assign_order_schedules %}
-{% if order_schedule.cleaning_team_count == 0 %}
+{% if order_schedule.cleaning_team_count == 0 and order_schedule.days_left_coming >= 0 %}
 <tr {% if order_schedule.days_left_coming < 0 %}class="red-line"{% elif order_schedule.days_left_coming == 0 %}class="orange-line"{% elif order_schedule.days_left_coming == 1 %}class="yellow-line"{% elif order_schedule.days_left_coming >= 2 %}class="green-line"{% endif %}>
 <td data-label="BLC Number" class="bold-text clickable-row" data-href="{% url 'common_items:client-orderdetails' order_schedule.order.id %}">{{order_schedule.order.evaluation.evaluation_id}}</td>
 <td data-label="Customer">{{order_schedule.order.evaluation.customer.name}}</td>

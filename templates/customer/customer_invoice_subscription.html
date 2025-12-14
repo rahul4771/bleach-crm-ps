@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
     <link rel="stylesheet" href="{% static 'files/css/customer/main.css' %}">
     <link rel="stylesheet" href="{% static 'files/css/colors.css' %}">
+    <link rel="shortcut icon" href="{% static 'files/icons/favicon.png' %}">
 
     <title>Bleach Cleaning Services | Invoice</title>
 
@@ -199,7 +200,7 @@
               </div>
               <div class="d-flex pt-1 inv-invoice-details pb-4">
                 <div class="w-50 inv-text-left inv-primary-text">
-                 Total Visit
+                  Total Visit
                 </div>
                 
                 <div class="w-50 inv-text-right inv-primary-text visits-view" onclick="openVisit()">
@@ -301,7 +302,6 @@
      <!-- Note to the customer ends here-->
      {% endif %}
 
-            {% for evaluation_detail in order_details.evaluation.evaluationdetails %}
             {% for orderschedule in nonduplicate_schedules %}            
             {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
             {% if section.order_scheduler_book.service_type.name != 'Kitchen Appliances' %}
@@ -310,10 +310,6 @@
                 <div class="col-md-8 col-print-8">
                   <div class="inv-service-title p-2 inv-text-bold">
                     {{orderschedule.order_scheduler_book.service_type}}-{{section.section_name}}
-                  </div>
-                  <div class="inv-service-title p-2 ">
-                     <span>Location : </span>
-                     <span> {{evaluation_detail.address.apartment}}, {% if evaluation_detail.address.floor %}{{evaluation_detail.address.floor}}, {% else %}{% endif %} {{evaluation_detail.address.building}}, {{evaluation_detail.address.block}}, {{evaluation_detail.address.street}},<br> {% if evaluation_detail.address.avenue %}{{evaluation_detail.address.avenue}}, {% else %}{% endif %} {{evaluation_detail.address.area.name}}, {{evaluation_detail.address.governorate.name}}</span>
                   </div>
                   <div class="d-flex mb-10" > {% if orderschedule.order_scheduler_book.status == 'CANCELLED' %} <div class="status-dot cancel-chip-bg"></div> <div class="ml-2">Cancelled</div> {% endif %}</div>
 
@@ -621,7 +617,7 @@
             </div>
             {% endif %}
             
-            {% endfor %}
+
             {% endfor %}
             {% endfor %} 
           
@@ -994,7 +990,7 @@
                   <i class="fa fa-download" ></i>
                   <a style="text-decoration: none; color: #616161;" href="/customer/invoice/download/paw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}">Download</a>
                 </div> 
-              </div>
+              </div> 
             </div>
           </div>
           

@@ -56,6 +56,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response 
 from rest_framework.status import HTTP_200_OK
 
+from datetime import datetime
+
 from agent.serializers import CleaningScheduleSerializer,FollowupScheduleSerializer,UserProfileShowSerializer
 
 import pytz
@@ -901,9 +903,32 @@ class PaymentDetails(IsAuthenticated,View):
 		tab = request.GET.get('tab')
 		if not tab:
 			tab = 'ALL'
-
+		fromdate9 = now = datetime.now()
+		todate9 = now = datetime.now()
+		fromdate = None
+		todate = None
+		start = now = datetime.now()
+		end = now = datetime.now()
+		date_format = "%Y-%m-%d"  # Assuming your input is like "2025-09-21"
 		#Evaluation Details
 		search                  = request.GET.get('search')
+		fromdate_1               = request.GET.get('fromdate_1')
+		todate_1                 = request.GET.get('todate_1')
+		if fromdate_1:
+			try:
+				fromdate9 = datetime.strptime(fromdate_1, date_format).date()
+			except ValueError:
+				fromdate9 = None
+
+		if todate_1:
+			try:
+				todate9 = datetime.strptime(todate_1, date_format).date()
+			except ValueError:
+				todate9 = None
+
+				# Transactions filter
+		start = timezone.make_aware(datetime.combine(fromdate9, datetime.min.time()))
+		end = timezone.make_aware(datetime.combine(todate9, datetime.max.time()))
 		
 		#sales amount
 		if search:
@@ -926,7 +951,11 @@ class PaymentDetails(IsAuthenticated,View):
 
 			#Transactions
 			try:
-				transactions = PaymentHistory.objects.filter(is_active=True).annotate(cleaning_count=Count('order__order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order__order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())),cleaning_in_progress_count=Sum(Case(When(Q(Q(order__order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order__order_scheduler_order__work_status='CLEANING_IN_PROGRESS')),then=1),default=0,output_field=IntegerField()))).order_by('-paid_date')
+				if fromdate_1:
+					transactions = PaymentHistory.objects.filter(paid_date__range=(start, end)).filter(is_active=True).annotate(cleaning_count=Count('order__order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order__order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())),cleaning_in_progress_count=Sum(Case(When(Q(Q(order__order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order__order_scheduler_order__work_status='CLEANING_IN_PROGRESS')),then=1),default=0,output_field=IntegerField()))).order_by('-paid_date')
+				else:
+					transactions = PaymentHistory.objects.filter(is_active=True).annotate(cleaning_count=Count('order__order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order__order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())),cleaning_in_progress_count=Sum(Case(When(Q(Q(order__order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order__order_scheduler_order__work_status='CLEANING_IN_PROGRESS')),then=1),default=0,output_field=IntegerField()))).order_by('-paid_date')
+
 			except:
 				transactions = None
 
@@ -1298,9 +1327,8 @@ class PaymentDetails(IsAuthenticated,View):
 		for order in normal_due_payments:
 			order.invoice_count = XeroInvoice.objects.filter(is_active=True,order=order).count()
 			order.invoice_nos = list(XeroInvoice.objects.filter(is_active=True, order=order).values_list('invoice_no', flat=True))
-
-
-		return render(request,'common/payment/payments.html',{'total_transactions':total_transactions,'total_transactions_amount':total_transactions_amount,'total_due_amount':total_due_amount,'total_due_orders':total_due_orders,'total_doubtful_due_amount':total_doubtful_due_amount,'total_doubtful_due_orders':total_doubtful_due_orders,'total_normal_due_amount':total_normal_due_amount,'total_normal_due_orders':total_normal_due_orders,'total_subscription_due_amount':total_subscription_due_amount,'total_subscription_due_orders':total_subscription_due_orders,'tab':tab,'invoices':invoices,"search_query":search,"page_range1":page_range1,"page_range2":page_range2,"page_range3":page_range3,"page_range4":page_range4,"entry_per_page1":entry_per_page1,"entry_per_page2":entry_per_page2,"entry_per_page3":entry_per_page3,"entry_per_page4":entry_per_page4,"no_of_entries":no_of_entries,'transactions':transactions,"doubtful_due_payments":doubtful_due_payments,'normal_due_payments':normal_due_payments,'subscription_due_payments':subscription_due_payments})  #'total_neworder_due_orders':total_neworder_due_orders,'neworder_due_payments':neworder_due_payments',total_neworder_due_amount':total_neworder_due_amount,
+			
+		return render(request,'common/payment/payments.html',{'total_transactions':total_transactions,'total_transactions_amount':total_transactions_amount,'total_due_amount':total_due_amount,'total_due_orders':total_due_orders,'total_doubtful_due_amount':total_doubtful_due_amount,'total_doubtful_due_orders':total_doubtful_due_orders,'total_normal_due_amount':total_normal_due_amount,'total_normal_due_orders':total_normal_due_orders,'total_subscription_due_amount':total_subscription_due_amount,'total_subscription_due_orders':total_subscription_due_orders,'tab':tab,'invoices':invoices,"search_query":search,"page_range1":page_range1,"page_range2":page_range2,"page_range3":page_range3,"page_range4":page_range4,"entry_per_page1":entry_per_page1,"entry_per_page2":entry_per_page2,"entry_per_page3":entry_per_page3,"entry_per_page4":entry_per_page4,"no_of_entries":no_of_entries,'transactions':transactions,"doubtful_due_payments":doubtful_due_payments,'normal_due_payments':normal_due_payments,'subscription_due_payments':subscription_due_payments,"start":fromdate_1,"end":todate_1})  #'total_neworder_due_orders':total_neworder_due_orders,'neworder_due_payments':neworder_due_payments',total_neworder_due_amount':total_neworder_due_amount,
 
 	def post(self,request):
 		order_id = request.POST.get('orderid')
@@ -1425,13 +1453,13 @@ class ActiveSubscriptions(IsAuthenticated,View):
 
 			if evaluaation.customer.sms_preference == 'ENGLISH':
 
-				message = "Dear Customer, Please find the Invoice against the order number "+str(evaluaation.evaluation_id)+"  here http://127.0.0.1:8000/customer/subscription/invoice/prw"+str(evaluaation.evaluation_id[3:])+""+str(evaluaation.customer.username)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+				message = "Dear Customer, Please find the Invoice against the order number "+str(evaluaation.evaluation_id)+"  here https://my.bleachkw.com/customer/subscription/invoice/prw"+str(evaluaation.evaluation_id[3:])+""+str(evaluaation.customer.username)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 		
 				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluaation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
 			
 			else:
 
-				message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluaation.evaluation_id)+" في هذا الرابط http://127.0.0.1:8000/customer/subscription/invoice/prw"+str(evaluaation.evaluation_id[3:])+""+str(evaluaation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
+				message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluaation.evaluation_id)+" في هذا الرابط https://my.bleachkw.com/customer/subscription/invoice/prw"+str(evaluaation.evaluation_id[3:])+""+str(evaluaation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
 		
 				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluaation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
 			
@@ -1565,13 +1593,13 @@ class ClientOrderDetails(IsAuthenticated,View):
 
 				if evaluaation.customer.sms_preference == 'ENGLISH':
 
-					message = "Dear Customer, Please find the Invoice against the order number "+str(evaluaation.evaluation_id)+"  here http://127.0.0.1:8000/customer/subscription/invoice/prw"+str(evaluaation.evaluation_id[3:])+""+str(evaluaation.customer.username)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+					message = "Dear Customer, Please find the Invoice against the order number "+str(evaluaation.evaluation_id)+"  here https://my.bleachkw.com/customer/subscription/invoice/prw"+str(evaluaation.evaluation_id[3:])+""+str(evaluaation.customer.username)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 			
 					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluaation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
 				
 				else:
 
-					message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluaation.evaluation_id)+" في هذا الرابط http://127.0.0.1:8000/customer/subscription/invoice/prw"+str(evaluaation.evaluation_id[3:])+""+str(evaluaation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
+					message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluaation.evaluation_id)+" في هذا الرابط https://my.bleachkw.com/customer/subscription/invoice/prw"+str(evaluaation.evaluation_id[3:])+""+str(evaluaation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
 			
 					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluaation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
 				
@@ -1694,9 +1722,9 @@ class MakeQuatationPhase1Edit(IsAuthenticated,View):
 			url = "https://smsapi.future-club.com/fccsms.aspx"
 
 			if evaluation.payment_method == 'SUBSCRIPTION':
-				smsurl = "http://127.0.0.1:8000/customer/subscription/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
+				smsurl = "https://my.bleachkw.com/customer/subscription/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
 			else:
-				smsurl = "http://127.0.0.1:8000/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
+				smsurl = "https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
 
 			if evaluation.customer.sms_preference == 'ENGLISH':
 
@@ -3603,7 +3631,7 @@ class MakeQuatationBase(IsAuthenticated,View):
 
 # 				url     = "https://smsapi.future-club.com/fccsms.aspx"
 
-# 				sms_url = "http://127.0.0.1:8000/customer/booking/invoice/paw"+str(evaluation.evaluation_id [3:14])+str(evaluation.customer.username)
+# 				sms_url = "https://my.bleachkw.com/customer/booking/invoice/paw"+str(evaluation.evaluation_id [3:14])+str(evaluation.customer.username)
 
 # 				if language == 'ENGLISH':
 
@@ -3629,9 +3657,9 @@ class MakeQuatationBase(IsAuthenticated,View):
 # 				url = "https://smsapi.future-club.com/fccsms.aspx"
 
 # 				if evaluation.payment_method == 'SUBSCRIPTION':
-# 					smsurl = "http://127.0.0.1:8000/customer/subscription/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
+# 					smsurl = "https://my.bleachkw.com/customer/subscription/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
 # 				else:
-# 					smsurl = "http://127.0.0.1:8000/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
+# 					smsurl = "https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
 
 # 				if language == 'ENGLISH':
 # 					print(str(evaluation.id),str(evaluation.evaluation_id),str(evaluation.total_cost),str(evaluation.quatation_expiry_date),str(evaluation.customer.username),str(evaluation.tracking_no),"trerr")
@@ -3914,9 +3942,9 @@ class MakeQuatationPhase1Edit(IsAuthenticated,View):
 			url = "https://smsapi.future-club.com/fccsms.aspx"
 
 			if evaluation.payment_method == 'SUBSCRIPTION':
-				smsurl = "http://127.0.0.1:8000/customer/subscription/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
+				smsurl = "https://my.bleachkw.com/customer/subscription/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
 			else:
-				smsurl = "http://127.0.0.1:8000/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
+				smsurl = "https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
 
 			if evaluation.customer.sms_preference == 'ENGLISH':
 
@@ -4936,22 +4964,22 @@ class OrderCancellation(IsAuthenticated,View):
 
 					if evaluation.payment_method == 'SUBSCRIPTION':
 
-						message = "Dear Customer, Please find the Invoice against the order number "+str(evaluation.evaluation_id)+"  here http://127.0.0.1:8000/customer/subscription/invoice/prw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". For any assistance please contact us on [Customer Service Number]. Thank you for choosing Bleach Kuwait."
+						message = "Dear Customer, Please find the Invoice against the order number "+str(evaluation.evaluation_id)+"  here https://my.bleachkw.com/customer/subscription/invoice/prw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". For any assistance please contact us on [Customer Service Number]. Thank you for choosing Bleach Kuwait."
 
 					else:
 
-						message = "Dear Customer, Please find the Invoice against the order number "+str(evaluation.evaluation_id)+"  here http://127.0.0.1:8000/customer/invoice/prw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". For any assistance please contact us on [Customer Service Number]. Thank you for choosing Bleach Kuwait."
+						message = "Dear Customer, Please find the Invoice against the order number "+str(evaluation.evaluation_id)+"  here https://my.bleachkw.com/customer/invoice/prw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". For any assistance please contact us on [Customer Service Number]. Thank you for choosing Bleach Kuwait."
 
 					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
 				
 				else:
 					if evaluation.payment_method == 'SUBSCRIPTION':
 
-						message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط http://127.0.0.1:8000/customer/subscription/invoice/prw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على (Customer Service Number).  شكراً لاختياركم بليتش لخدمات التنظيف"
+						message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط https://my.bleachkw.com/customer/subscription/invoice/prw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على (Customer Service Number).  شكراً لاختياركم بليتش لخدمات التنظيف"
 
 					else:
 
-						message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط http://127.0.0.1:8000/customer/invoice/prw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على (Customer Service Number).  شكراً لاختياركم بليتش لخدمات التنظيف"
+						message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط https://my.bleachkw.com/customer/invoice/prw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على (Customer Service Number).  شكراً لاختياركم بليتش لخدمات التنظيف"
 
 					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
 				
@@ -6188,9 +6216,9 @@ class FineWriteBack(IsAuthenticated,View):
 def send_sms_notification(evaluation, address_str):
 	url = "https://smsapi.future-club.com/fccsms.aspx"
 	sms_url = (
-		f"http://127.0.0.1:8000/customer/booking/invoice/paw{evaluation.evaluation_id[3:14]}{evaluation.customer.username}"
+		f"https://my.bleachkw.com/customer/booking/invoice/paw{evaluation.evaluation_id[3:14]}{evaluation.customer.username}"
 		if hasattr(evaluation, 'customerbooking')
-		else f"http://127.0.0.1:8000/customer/quatation/paw{evaluation.tracking_no}{evaluation.customer.username}"
+		else f"https://my.bleachkw.com/customer/quatation/paw{evaluation.tracking_no}{evaluation.customer.username}"
 	)
 
 	messages_dict = {
@@ -6398,13 +6426,7 @@ def add_service_type(request):
 				name_arabic=service_name_arabic,
 				is_active=is_active
 			)
-			st_obj = {
-				"id": service_type.id,
-				"name": service_type.name,
-				"name_arabic": service_type.name_arabic,
-				"is_active": service_type.is_active,
-			}
-			return JsonResponse({'success': True, 'service_type': st_obj})
+			return JsonResponse({'success': True, 'service_type': service_type.name})
 		except Exception as e:
 			return JsonResponse({'success': False, 'error': str(e)})
 
@@ -6483,7 +6505,39 @@ class ServiceTypeAPIView(APIView):
 		return JsonResponse({"success": True, "message": "Service type deactivated successfully.", "service_type": st_obj})
 
 class ServiceProductivityAPIView(APIView):
-	
+	def delete(self, request, productivity_id=None, *args, **kwargs):
+		# if Django passed it via kwargs
+		if not productivity_id:
+			productivity_id = kwargs.get("productivity_id")
+
+		if not productivity_id:
+			return JsonResponse({"success": False, "error": "productivity_id missing"}, status=400)
+
+		try:
+			sp = ServiceProductivity.objects.get(id=productivity_id)
+		except ServiceProductivity.DoesNotExist:
+			return JsonResponse({"success": False, "error": "ServiceProductivity not found"}, status=404)
+
+		# Parse request body
+		try:
+			raw_body = request.body.decode("utf-8")
+			body_data = json.loads(raw_body) if raw_body else {}
+		except Exception:
+			body_data = {}
+
+		incoming_status = body_data.get("status", 0)
+		sp.is_active = False if int(incoming_status) == 0 else True
+		sp.save()
+
+		sp_data = {
+			"id": sp.id,
+			"name": sp.name,
+			"service_type_id": sp.service_type_id,
+			"is_active": sp.is_active,
+		}
+
+		return JsonResponse({"success": True, "productivity": sp_data})
+
 	def post(self, request, *args, **kwargs):
 		data = getattr(request, "data", request.POST)
 		productivity_service_type_id = data.get("productivity_service_type_id")

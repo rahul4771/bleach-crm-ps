@@ -218,11 +218,10 @@
     <td data-label="Remining" class="red-text" style="text-align:center;font-size:19px;">{{invoice.balance|default_if_none:'0'}}</td>
     {% endif %}
     
+    <td data-label="Remining" class="red-text" style="text-align:center;font-size:19px;">INV{{invoice.invoice_number|default_if_none:'0'}}</td>
     <td data-label="" style="text-align:center;">
     <img src="{% static 'files/images/order_blue.png' %}" align="absmiddle" class="clickable-row" data-href="{% url 'bleach_admin:admin-client-orderdetails' invoice.id %}" width="32.5px" height="32.5px">
     </td>
-    <td data-label="Remining" class="red-text" style="text-align:center;font-size:19px;">{{invoice.balance|default_if_none:'0'}}</td>
-    <td data-label="Remining" class="red-text" style="text-align:center;font-size:19px;">{{invoice.invoice_number|default_if_none:'0'}}</td>
     </tr>
 {% endfor %}
 </tbody>

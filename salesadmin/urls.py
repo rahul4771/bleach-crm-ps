@@ -2,9 +2,6 @@
 from django.conf.urls import include, url
 from salesadmin import views 
 
-app_name = 'bleach_salesadmin'
-
-
 urlpatterns = [
 
 	url(r'^dashboard/$',views.AdminHome.as_view(),name='salesadmindash-board'),

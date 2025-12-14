@@ -67,7 +67,7 @@ class Category(models.Model):
         return self.name
 
 class Segment(models.Model):
-    category        =   models.ForeignKey(Category,on_delete=models.PROTECT,blank=False,null=False,related_name='segment_category')
+    category        =   models.ForeignKey(Category,blank=False,null=False,related_name='segment_category')
     segment_id      =   models.CharField(max_length=50,blank=True,null=True)
     name            =   models.CharField(max_length=100,blank=False,null=False)
     status          =   models.BooleanField(default=True,blank=False,null=False)
@@ -79,8 +79,8 @@ class Segment(models.Model):
         return self.name
 
 class Line(models.Model):
-    category        =   models.ForeignKey(Category,on_delete=models.PROTECT,blank=False,null=False,related_name='line_category')
-    segment         =   models.ForeignKey(Segment,on_delete=models.PROTECT,blank=False,null=False,related_name='line_segment')
+    category        =   models.ForeignKey(Category,blank=False,null=False,related_name='line_category')
+    segment         =   models.ForeignKey(Segment,blank=False,null=False,related_name='line_segment')
     name            =   models.CharField(max_length=100,blank=False,null=False)
     line_id         =   models.CharField(max_length=50,blank=True,null=True)
     status          =   models.BooleanField(default=True,blank=False,null=False)
@@ -109,9 +109,9 @@ class Store(models.Model):
 
 class InventoryItem(models.Model):
     item_type       =   models.CharField(default='ASSETS',max_length=20,blank=False,null=False,choices=ITEM_TYPE_CHOICES)
-    item_category   =   models.ForeignKey(Category,on_delete=models.PROTECT,blank=False,null=False,related_name='item_category')
-    item_segment    =   models.ForeignKey(Segment,on_delete=models.PROTECT,blank=True,null=True,related_name='item_segment')
-    item_line       =   models.ForeignKey(Line,on_delete=models.PROTECT,blank=True,null=True,related_name='item_line')
+    item_category   =   models.ForeignKey(Category,blank=False,null=False,related_name='item_category')
+    item_segment    =   models.ForeignKey(Segment,blank=True,null=True,related_name='item_segment')
+    item_line       =   models.ForeignKey(Line,blank=True,null=True,related_name='item_line')
     name            =   models.CharField(max_length=100,blank=False,null=False)
     item_code       =   models.CharField(max_length=50,blank=False,null=False)
     description     =   models.TextField(max_length=1000,blank=True,null=True)
@@ -132,8 +132,8 @@ class InventoryItem(models.Model):
 
 
 class QuantityStoreDetails(models.Model):
-    item_store           = models.ForeignKey(Store,on_delete=models.PROTECT,blank=True,null=True,related_name='quantity_store')
-    quantity_item        = models.ForeignKey(InventoryItem,on_delete=models.PROTECT,blank=False,null=False,related_name='quantity_store_item')
+    item_store           = models.ForeignKey(Store,blank=True,null=True,related_name='quantity_store')
+    quantity_item        = models.ForeignKey(InventoryItem,blank=False,null=False,related_name='quantity_store_item')
     quantity             = models.FloatField(max_length=10,blank=True,null=True,default=0)
     created              = models.DateTimeField(auto_now_add=True)
 
@@ -144,8 +144,8 @@ class QuantityStoreDetails(models.Model):
         return self.item_store.store_name+' - '+self.quantity_item.name
 
 class InventoryAccessory(models.Model):
-    inventory_item       =  models.ForeignKey(InventoryItem,on_delete=models.PROTECT,blank=False,null=False,related_name='accessory_inventory')
-    inventory_accessory  =  models.ForeignKey(InventoryItem,on_delete=models.PROTECT,blank=False,null=False,related_name='accessory_item')  
+    inventory_item       =  models.ForeignKey(InventoryItem,blank=False,null=False,related_name='accessory_inventory')
+    inventory_accessory  =  models.ForeignKey(InventoryItem,blank=False,null=False,related_name='accessory_item')  
     count                =  models.FloatField(max_length=10,blank=True,null=True,default=0)
     status               =  models.BooleanField(default=True,blank=False,null=False)
     created              =  models.DateTimeField(auto_now_add=True)
@@ -157,8 +157,8 @@ class InventoryAccessory(models.Model):
         return self.inventory_item.name
 
 class InventoryFinshedItem(models.Model):
-    inventory_item           =  models.ForeignKey(InventoryItem,on_delete=models.PROTECT,blank=False,null=False,related_name='finshed_item_inventory')
-    inventory_finished_item  =  models.ForeignKey(InventoryItem,on_delete=models.PROTECT,blank=False,null=False,related_name='finshed_item')  
+    inventory_item           =  models.ForeignKey(InventoryItem,blank=False,null=False,related_name='finshed_item_inventory')
+    inventory_finished_item  =  models.ForeignKey(InventoryItem,blank=False,null=False,related_name='finshed_item')  
     count                    =  models.FloatField(max_length=10,blank=True,null=True,default=0)
     status                   =  models.BooleanField(default=True,blank=False,null=False)
     created                  =  models.DateTimeField(auto_now_add=True)
@@ -170,7 +170,7 @@ class InventoryFinshedItem(models.Model):
         return self.inventory_item
 
 class InventoryItemImages(models.Model):
-    inventory_item  = models.ForeignKey(InventoryItem,on_delete=models.PROTECT,blank=False,null=False,related_name='image_item')
+    inventory_item  = models.ForeignKey(InventoryItem,blank=False,null=False,related_name='image_item')
     item_image      = models.FileField(upload_to='inventory_item_images/',blank=True,null=True,max_length=1000)
     is_default_image= models.BooleanField(default=False,blank=False,null=False)
     created         = models.DateTimeField(auto_now_add=True)   
@@ -182,12 +182,12 @@ class InventoryItemImages(models.Model):
         return self.inventory_item.name
 
 class ItemUnit(models.Model):
-    purchase_order  =   models.ForeignKey('PurchaseOrder',on_delete=models.PROTECT,blank=True,null=True,related_name='purchase_order_unit')
-    item            =   models.ForeignKey(InventoryItem,on_delete=models.PROTECT,blank=False,null=False,related_name='unit_item')
+    purchase_order  =   models.ForeignKey('PurchaseOrder',blank=True,null=True,related_name='purchase_order_unit')
+    item            =   models.ForeignKey(InventoryItem,blank=False,null=False,related_name='unit_item')
     name            =   models.CharField(max_length=100,blank=False,null=False)
     unit_code       =   models.CharField(max_length=50,blank=False,null=False)
     unit_serial_number =   models.CharField(max_length=50,blank=False,null=False)
-    store           =   models.ForeignKey(Store,on_delete=models.PROTECT,blank=True,null=True,related_name='unit_store')
+    store           =   models.ForeignKey(Store,blank=True,null=True,related_name='unit_store')
     purchase_date   =   models.DateField(blank=True,null=True)
     expiry_date     =   models.DateField(blank=True,null=True)
     no_expiry       =   models.BooleanField(default=False,blank=False,null=False)
@@ -204,9 +204,9 @@ class ItemUnit(models.Model):
 
 class Attribute(models.Model):
     # attribute_type      =   models.CharField(max_length=100,blank=False,null=False,choices=ATTRIBUTE_TYPE_CHOICES)
-    attribute_category  =   models.ForeignKey(Category,on_delete=models.PROTECT,blank=True,null=True,related_name='attribute_category')
-    attribute_segment   =   models.ForeignKey(Segment,on_delete=models.PROTECT,blank=True,null=True,related_name='attribute_segment')
-    attribute_line      =   models.ForeignKey(Line,on_delete=models.PROTECT,blank=True,null=True,related_name='attribute_line')
+    attribute_category  =   models.ForeignKey(Category,blank=True,null=True,related_name='attribute_category')
+    attribute_segment   =   models.ForeignKey(Segment,blank=True,null=True,related_name='attribute_segment')
+    attribute_line      =   models.ForeignKey(Line,blank=True,null=True,related_name='attribute_line')
     name                =   models.CharField(max_length=100,blank=False,null=False)
     status              =   models.BooleanField(default=True,blank=False,null=False)
     created             =   models.DateTimeField(auto_now_add=True)
@@ -217,7 +217,7 @@ class Attribute(models.Model):
         return self.name
 
 class AttributeValue(models.Model):
-    attribute           =   models.ForeignKey(Attribute,on_delete=models.PROTECT,blank=True,null=True,related_name='value_attribute')
+    attribute           =   models.ForeignKey(Attribute,blank=True,null=True,related_name='value_attribute')
     name                =   models.CharField(max_length=100,blank=False,null=False)
     is_selected         =   models.BooleanField(default=False,blank=False,null=False)
     status              =   models.BooleanField(default=True,blank=False,null=False)
@@ -229,9 +229,9 @@ class AttributeValue(models.Model):
         return self.name
 
 class ItemAttributes(models.Model):
-    item                =   models.ForeignKey(InventoryItem,on_delete=models.PROTECT,blank=True,null=True,related_name='inventory_item')
-    attribute           =   models.ForeignKey(Attribute,on_delete=models.PROTECT,blank=True,null=True,related_name='inventory_item_attribute')
-    attribute_value     =   models.ForeignKey(AttributeValue,on_delete=models.PROTECT,blank=True,null=True,related_name='inventory_item_attribute_value')
+    item                =   models.ForeignKey(InventoryItem,blank=True,null=True,related_name='inventory_item')
+    attribute           =   models.ForeignKey(Attribute,blank=True,null=True,related_name='inventory_item_attribute')
+    attribute_value     =   models.ForeignKey(AttributeValue,blank=True,null=True,related_name='inventory_item_attribute_value')
     created             =   models.DateTimeField(auto_now_add=True)
     def __unicode__(self):
         return str(self.item.name)
@@ -255,8 +255,8 @@ class Bundle(models.Model):
         return self.name
 
 class BundleItems(models.Model):
-    bundle              = models.ForeignKey(Bundle,on_delete=models.PROTECT,blank=True,null=True,related_name='item_bundle')
-    item                = models.ForeignKey(InventoryItem,on_delete=models.PROTECT,blank=True,null=True,related_name='inventory_item_bundle')
+    bundle              = models.ForeignKey(Bundle,blank=True,null=True,related_name='item_bundle')
+    item                = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='inventory_item_bundle')
     item_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
     item_count          = models.CharField(default=0,max_length=50,blank=True,null=True)
     created             = models.DateTimeField(auto_now_add=True)
@@ -268,8 +268,8 @@ class BundleItems(models.Model):
         return self.bundle.name
 
 class BundleItemUnits(models.Model):
-    bundle_item         = models.ForeignKey(BundleItems,on_delete=models.PROTECT,blank=True,null=True,related_name='bundle_unit_bundle_item')
-    item_unit           = models.ForeignKey(ItemUnit,on_delete=models.PROTECT,blank=True,null=True,related_name='unit_item_bundle')
+    bundle_item         = models.ForeignKey(BundleItems,blank=True,null=True,related_name='bundle_unit_bundle_item')
+    item_unit           = models.ForeignKey(ItemUnit,blank=True,null=True,related_name='unit_item_bundle')
     unit_price          = models.CharField(default=0,max_length=100,blank=False,null=False)
     created             = models.DateTimeField(auto_now_add=True)
 
@@ -296,8 +296,8 @@ class Supplier(models.Model):
         return self.supplier_name
 
 class SupplierItems(models.Model):
-    supplier            = models.ForeignKey(Supplier,on_delete=models.PROTECT,blank=True,null=True,related_name='item_supplier')
-    item                = models.ForeignKey(InventoryItem,on_delete=models.PROTECT,blank=True,null=True,related_name='product_supplier')
+    supplier            = models.ForeignKey(Supplier,blank=True,null=True,related_name='item_supplier')
+    item                = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='product_supplier')
     supplier_item_id    = models.CharField(max_length=50,blank=False,null=False)
     item_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
     item_count          = models.CharField(default=0,max_length=50,blank=True,null=True)
@@ -333,7 +333,7 @@ class ServiceRecipe(models.Model):
         return self.service
 
 class ServiceRecipeIngredients(models.Model):
-    service_type        = models.ForeignKey(ServiceRecipe,on_delete=models.PROTECT,blank=True,null=True,related_name='item_recipe')
+    service_type        = models.ForeignKey(ServiceRecipe,blank=True,null=True,related_name='item_recipe')
     ingredient          = models.CharField(max_length=100,blank=True,null=True)
     service_or_person   = models.CharField(max_length=50,blank=False,null=False)
     quantity            = models.CharField(max_length=10,blank=True,null=True,default=0)
@@ -346,8 +346,8 @@ class ServiceRecipeIngredients(models.Model):
         return self.service_type.service
 
 class ServiceRecipeItems(models.Model):
-    ingredient          = models.ForeignKey(ServiceRecipeIngredients,on_delete=models.PROTECT,blank=True,null=True,related_name='item_ingredient')
-    item                = models.ForeignKey(InventoryItem,on_delete=models.PROTECT,blank=True,null=True,related_name='service_item')
+    ingredient          = models.ForeignKey(ServiceRecipeIngredients,blank=True,null=True,related_name='item_ingredient')
+    item                = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='service_item')
     item_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
     item_count          = models.CharField(default=0,max_length=50,blank=True,null=True)
     service_or_person   = models.CharField(max_length=50,blank=True,null=True)
@@ -359,11 +359,11 @@ class ServiceRecipeItems(models.Model):
         return self.item.name
 
 class PurchaseOrder(models.Model):
-    supplier            = models.ForeignKey(Supplier,on_delete=models.PROTECT,blank=True,null=True,related_name='supplier_purchase_order')
-    store               = models.ForeignKey(Store,on_delete=models.PROTECT,blank=True,null=True,related_name='store_purchase_order')
+    supplier            = models.ForeignKey(Supplier,blank=True,null=True,related_name='supplier_purchase_order')
+    store               = models.ForeignKey(Store,blank=True,null=True,related_name='store_purchase_order')
     purchase_order_id   = models.CharField(max_length=50,blank=False,null=False)
     status              = models.BooleanField(default=True,blank=False,null=False)
-    initiated_by        = models.ForeignKey(UserProfile,on_delete=models.PROTECT,blank=True,null=True,related_name='initiated_by_purchase_order')
+    initiated_by        = models.ForeignKey(UserProfile,blank=True,null=True,related_name='initiated_by_purchase_order')
     discount            = models.CharField(max_length=10,blank=True,null=True)
     tax                 = models.CharField(max_length=10,blank=True,null=True)
     shipping_charge     = models.CharField(max_length=10,blank=True,null=True)
@@ -384,8 +384,8 @@ class PurchaseOrder(models.Model):
 
 
 class PurchaseOrderItems(models.Model):
-    purchase_order      = models.ForeignKey(PurchaseOrder,on_delete=models.PROTECT,blank=True,null=True,related_name='purchase_order_purchase_order_item')
-    product             = models.ForeignKey(SupplierItems,on_delete=models.PROTECT,blank=True,null=True,related_name='product_purchase_order_item')
+    purchase_order      = models.ForeignKey(PurchaseOrder,blank=True,null=True,related_name='purchase_order_purchase_order_item')
+    product             = models.ForeignKey(SupplierItems,blank=True,null=True,related_name='product_purchase_order_item')
     item_count          = models.CharField(default=0,max_length=50,blank=True,null=True)
     added_item_count    = models.CharField(default=0,max_length=50,blank=True,null=True)
     unit_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
@@ -400,14 +400,14 @@ class PurchaseOrderItems(models.Model):
         return self.purchase_order.purchase_order_id
 
 class ItemHistory(models.Model):
-    purchase_order  =   models.ForeignKey(PurchaseOrder,on_delete=models.PROTECT,blank=True,null=True,related_name='purchase_order_item_history')
-    item            =   models.ForeignKey(InventoryItem,on_delete=models.PROTECT,blank=False,null=False,related_name='unit_item_history')
+    purchase_order  =   models.ForeignKey(PurchaseOrder,blank=True,null=True,related_name='purchase_order_item_history')
+    item            =   models.ForeignKey(InventoryItem,blank=False,null=False,related_name='unit_item_history')
     item_action     =   models.CharField(max_length=50,default='PURCHASE ORDER',blank=False,null=False,choices=ITEMHISTORY_CHOICES)
     item_remark     =   models.CharField(max_length=50,blank=True,null=True)
     purchase_date   =   models.DateField(blank=True,null=True)
     quantity        =   models.CharField(max_length=50,blank=False,null=False)
-    quantity_location= models.ForeignKey(Store,on_delete=models.PROTECT,blank=True,null=True,related_name='history_store')
-    added_by        =   models.ForeignKey(UserProfile,on_delete=models.PROTECT,blank=True,null=True,related_name='addedby_item_history')
+    quantity_location= models.ForeignKey(Store,blank=True,null=True,related_name='history_store')
+    added_by        =   models.ForeignKey(UserProfile,blank=True,null=True,related_name='addedby_item_history')
     external_user   =   models.CharField(max_length=100,blank=True,null=True)
     created         =   models.DateTimeField(auto_now_add=True)
 
@@ -418,22 +418,22 @@ class ItemHistory(models.Model):
         return self.item.name+' - '+datetime.strftime(self.created,'%d-%m-%Y')
 
 class CheckOutItems(models.Model):
-    visit                = models.ForeignKey(OrderScheduler,on_delete=models.PROTECT,blank=True,null=True,related_name='visit_checkout')
-    followup             = models.ForeignKey(FollowUpScheduler,on_delete=models.PROTECT,blank=True,null=True,related_name='followup_checkout')
-    service_item         = models.ForeignKey(ServiceRecipeItems,on_delete=models.PROTECT,blank=True,null=True,related_name='service_item_checkout')
-    item                 = models.ForeignKey(InventoryItem,on_delete=models.PROTECT,blank=True,null=True,related_name='item_checkout')
-    item_unit            = models.ForeignKey(ItemUnit,on_delete=models.PROTECT,blank=True,null=True,related_name='item_checkout_unit')
+    visit                = models.ForeignKey(OrderScheduler,blank=True,null=True,related_name='visit_checkout')
+    followup             = models.ForeignKey(FollowUpScheduler,blank=True,null=True,related_name='followup_checkout')
+    service_item         = models.ForeignKey(ServiceRecipeItems,blank=True,null=True,related_name='service_item_checkout')
+    item                 = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='item_checkout')
+    item_unit            = models.ForeignKey(ItemUnit,blank=True,null=True,related_name='item_checkout_unit')
     units                = models.CharField(default=0,max_length=10,blank=False,null=False)
     recommended_quantity = models.CharField(default=0,max_length=10,blank=True,null=True)
     is_swapped_item      = models.BooleanField(default=False,blank=False,null=False)
     is_checked_out       = models.BooleanField(default=False,blank=False,null=False)
     checked_out_date     = models.DateField(blank=True,null=True)
-    is_checked_out_by    = models.ForeignKey(UserProfile,on_delete=models.PROTECT,blank=True,null=True,related_name='item_checked_out_by')
+    is_checked_out_by    = models.ForeignKey(UserProfile,blank=True,null=True,related_name='item_checked_out_by')
     is_collected         = models.BooleanField(default=False,blank=False,null=False)
-    is_collected_by      = models.ForeignKey(UserProfile,on_delete=models.PROTECT,blank=True,null=True,related_name='item_collected_by')
+    is_collected_by      = models.ForeignKey(UserProfile,blank=True,null=True,related_name='item_collected_by')
     is_returned          = models.BooleanField(default=False,blank=False,null=False)
     is_checked_in        = models.BooleanField(default=False,blank=False,null=False)
-    check_in_user        = models.ForeignKey(UserProfile,on_delete=models.PROTECT,blank=True,null=True,related_name='item_checked_in_by')
+    check_in_user        = models.ForeignKey(UserProfile,blank=True,null=True,related_name='item_checked_in_by')
     created              = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
@@ -449,8 +449,8 @@ class CheckOutItems(models.Model):
             return self.followup.follow_up.investigation.order.order_no
 
 class CheckOutItemUnits(models.Model):
-    checkout_item        = models.ForeignKey(CheckOutItems,on_delete=models.PROTECT,blank=True,null=True,related_name='checkoutitem')
-    item_unit            = models.ForeignKey(ItemUnit,on_delete=models.PROTECT,blank=True,null=True,related_name='checkoutitem_unit')
+    checkout_item        = models.ForeignKey(CheckOutItems,blank=True,null=True,related_name='checkoutitem')
+    item_unit            = models.ForeignKey(ItemUnit,blank=True,null=True,related_name='checkoutitem_unit')
     created              = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
@@ -481,11 +481,11 @@ class RequestOrder(models.Model):
     is_received         = models.BooleanField(default=False,blank=False,null=False)
     
     
-    created_by          = models.ForeignKey(UserProfile,on_delete=models.PROTECT,blank=True,null=True,related_name='created_by_request_order')
-    requested_by        = models.ForeignKey(ExternalCustomer,on_delete=models.PROTECT,blank=True,null=True,related_name='requested_by_request_order')
-    approved_by         = models.ForeignKey(UserProfile,on_delete=models.PROTECT,blank=True,null=True,related_name='approved_by_request_order')
-    received_by         = models.ForeignKey(UserProfile,on_delete=models.PROTECT,blank=True,null=True,related_name='send_by_request_order')
-    rejected_by         = models.ForeignKey(UserProfile,on_delete=models.PROTECT,blank=True,null=True,related_name='rejected_by_request_order')
+    created_by          = models.ForeignKey(UserProfile,blank=True,null=True,related_name='created_by_request_order')
+    requested_by        = models.ForeignKey(ExternalCustomer,blank=True,null=True,related_name='requested_by_request_order')
+    approved_by         = models.ForeignKey(UserProfile,blank=True,null=True,related_name='approved_by_request_order')
+    received_by         = models.ForeignKey(UserProfile,blank=True,null=True,related_name='send_by_request_order')
+    rejected_by         = models.ForeignKey(UserProfile,blank=True,null=True,related_name='rejected_by_request_order')
 
     approved_date       = models.DateField(blank=True,null=True)
     rejected_date       = models.DateField(blank=True,null=True)
@@ -502,9 +502,9 @@ class RequestOrder(models.Model):
 
 
 class RequestOrderItems(models.Model):
-    request_order       = models.ForeignKey('RequestOrder',on_delete=models.PROTECT,blank=True,null=True,related_name='items_request_order')
-    product             = models.ForeignKey('InventoryItem',on_delete=models.PROTECT,blank=True,null=True,related_name='product_request_order')
-    product_unit        = models.ForeignKey('ItemUnit',on_delete=models.PROTECT,blank=True,null=True,related_name='product_request_unit')
+    request_order       = models.ForeignKey('RequestOrder',blank=True,null=True,related_name='items_request_order')
+    product             = models.ForeignKey('InventoryItem',blank=True,null=True,related_name='product_request_order')
+    product_unit        = models.ForeignKey('ItemUnit',blank=True,null=True,related_name='product_request_unit')
     item_count          = models.FloatField(default=0,max_length=50,blank=True,null=True)
     is_received         = models.BooleanField(default=False,blank=False,null=False)
     
