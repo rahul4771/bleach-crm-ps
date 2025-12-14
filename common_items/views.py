@@ -7237,8 +7237,8 @@ class ServiceGroupAPIView(APIView):
             sg = ServiceGroup.objects.create(
                 service_name=service_name,
                 service_name_arabic=service_name_arabic,
-              
-                status=is_active
+                status=is_active,
+				imagepath=imagepath
             )
 
             return JsonResponse(

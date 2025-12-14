@@ -71,7 +71,8 @@ createApp({
                 id: null,
                 name: '',
                 name_arabic: '',
-                status: ''
+                status: '',
+                imagepath: null
             },
             serviceFormFields: {
                 name: '',
@@ -651,13 +652,14 @@ createApp({
                 service_name: this.serviceGroupFormFields.name,
                 service_name_arabic: this.serviceGroupFormFields.name_arabic || '',
                 status: this.serviceGroupFormFields.status,
+                imagepath:this.serviceGroupFormFields.imagepath
             };
 
             // Use FormData for file upload
             const formData = new FormData();
             Object.keys(payload).forEach(key => formData.append(key, payload[key]));
-            if (this.serviceGroupFormFields.image) {
-                formData.append('imagepath', this.serviceGroupFormFields.image);
+            if (this.serviceGroupFormFields.imagepath) {
+                formData.append('imagepath', this.serviceGroupFormFields.imagepath);
             }
 
             // Determine action (add or edit)
@@ -1031,9 +1033,9 @@ createApp({
                                 this.validationErrors['manageServiceGroup']['serviceGroupStatus'] = data.error_message;
                             }
 
-                            // if (data.error_field === 'imagepath') {
-                            //     this.validationErrors['manageServiceGroup']['serviceGroupImage'] = data.error_message;
-                            // }
+                            if (data.error_field === 'imagepath') {
+                                this.validationErrors['manageServiceGroup']['serviceGroupImage'] = data.error_message;
+                             }
                         }
 
                     } else {
@@ -1045,6 +1047,7 @@ createApp({
                             : 'Service group added successfully.';
                         data.service_group.avatar = `${this.avatarBaseUrl}?name=${encodeURIComponent(data.service_group.service_name)}&background=${this.colorCodes[data.service_group.id % this.colorCodes.length]}&color=fff`;
                         this.serviceGroups.push(data.service_group);
+                        // Reset form
                         this.resetServiceGroup();
                         setTimeout(() => { this.successMsg = null; }, 5000);
                     }
@@ -1791,6 +1794,7 @@ createApp({
                 name: '',
                 name_arabic: '',
                 status: '',
+                imagepath:''
 
             };
             this.validationErrors['manageServiceGroup'] = {};
@@ -1836,9 +1840,9 @@ createApp({
             return `${day} ${month}, ${year}`;
         },
 
-        //      handleImageUpload(event) {
-        //     this.serviceGroupForm.image = event.target.files[0];
-        // },
+        handleImageUpload(event) {
+          this.serviceGroupForm.imagepath= event.target.files[0];
+        },
         //for submit service group form
         backButtonAction1() {
             this.toggleDivs.showServiceGroupModal = false;

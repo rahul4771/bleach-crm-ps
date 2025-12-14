@@ -459,6 +459,11 @@ class ServiceGroup(models.Model):
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at= models.DateTimeField(auto_now=True)
+    imagepath = models.ImageField(
+        upload_to='service_groups/',
+        blank=True,
+        null=True
+    )
 
     def __str__(self):
         return self.service_name
