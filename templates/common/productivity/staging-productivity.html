@@ -1040,79 +1040,82 @@
 
 
                     <!-- Manage Service Group Modal -->
-                      <!-- Service Group LIST -->
-                            <div class="dashboard-card" id="manage-service-group" v-show="toggleDivs.showServiceGroupView">
+                    <!-- Service Group LIST -->
+                    <div class="dashboard-card" id="manage-service-group" v-show="toggleDivs.showServiceGroupView">
 
-                                <div class="dashboard-card-header">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <h2 v-text="viewServiceGroup.title ? viewServiceGroup.title : 'Add Service Group'"></h2>
+                        <div class="dashboard-card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h2 v-text="viewServiceGroup.title ? viewServiceGroup.title : 'Add Service Group'"></h2>
 
-                                        <button class="btn btn-secondary" @click="backButtonAction('showList')">Back to List</button>
-                                    </div>
+                                <button class="btn btn-secondary" @click="backButtonAction('showList')">Back to
+                                    List</button>
+                            </div>
 
-                                    <div class="export-buttons mb-3">
-                                        <button class="export-btn" @click="handleAddServiceGroupBtnClick">
-                                            <i class="fa fa-plus-circle"></i> Add Service Group
-                                        </button>
-                                    </div>
-                                </div>
+                            <div class="export-buttons mb-3">
+                                <button class="export-btn" @click="handleAddServiceGroupBtnClick">
+                                    <i class="fa fa-plus-circle"></i> Add Service Group
+                                </button>
+                            </div>
+                        </div>
 
-                                <div class="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns">
-                                    <div class="datatable-container">
-                                        <table class="table table-striped table-bordered dt-responsive nowrap datatable-table" style="width:100%">
-                                            <thead>
-                                                <tr>
-                                                    <th><button>Name</button></th>
-                                                    <th><button>Arabic</button></th>
-                                                    <th><button>Status</button></th>
-                                                    <th>Updated Date</th>
-                                                    <th>Actions</th>
-                                                </tr>
-                                            </thead>
+                        <div class="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns">
+                            <div class="datatable-container">
+                                <table class="table table-striped table-bordered dt-responsive nowrap datatable-table"
+                                    style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th><button>Name</button></th>
+                                            <th><button>Arabic</button></th>
+                                            <th><button>Status</button></th>
+                                            <th>Updated Date</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
 
-                                            <tbody>
-                                                <tr v-for="(group, index) in serviceGroups" :key="group.id" :data-index="index">
+                                    <tbody>
+                                        <tr v-for="(group, index) in serviceGroups" :key="group.id" :data-index="index">
 
-                                                     <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <img :src="group.avatar" :alt="group.service_name" class="student-avatar me-3">
-                                                            <div>
-                                                                <div class="student-name" v-text="group.service_name"></div>
-                                                            </div>
-                                                        </div>
-                                                    </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img :src="group.avatar" :alt="group.service_name"
+                                                        class="student-avatar me-3">
+                                                    <div>
+                                                        <div class="student-name" v-text="group.service_name"></div>
+                                                    </div>
+                                                </div>
+                                            </td>
 
-                                                    <td v-text="group.service_name_arabic"></td>
+                                            <td v-text="group.service_name_arabic"></td>
 
-                                                    <td>
-                                                        <span
-                                                            :class="[
+                                            <td>
+                                                <span :class="[
                                                                 'status-badge',
                                                                 group.status == 1 ? 'status-active' : 'status-pending'
-                                                            ]"
-                                                            v-text="group.status == 1 ? 'Active' : 'Inactive'">
-                                                        </span>
-                                                    </td>
+                                                            ]" v-text="group.status == 1 ? 'Active' : 'Inactive'">
+                                                </span>
+                                            </td>
 
-                                                    <td v-text="formatDate(group.updated_at)"></td>
+                                            <td v-text="formatDate(group.updated_at)"></td>
 
-                                                    <td>
-                                                        <button class="btn-action btn-edit" title="Edit" @click="handleEditServiceGroupBtnClick(group)">
-                                                            <i class="fa fa-pen"></i>
-                                                        </button>
+                                            <td>
+                                                <button class="btn-action btn-edit" title="Edit"
+                                                    @click="handleEditServiceGroupBtnClick(group)">
+                                                    <i class="fa fa-pen"></i>
+                                                </button>
 
-                                                        <button class="btn-action btn-delete" title="Delete" @click="removeServiceGroup(group)">
-                                                            <i class="fa fa-trash"></i>
-                                                        </button>
-                                                    </td>
+                                                <button class="btn-action btn-delete" title="Delete"
+                                                    @click="removeServiceGroup(group)">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </td>
 
-                                                </tr>
-                                            </tbody>
+                                        </tr>
+                                    </tbody>
 
-                                        </table>
-                                    </div>
-                                </div>
+                                </table>
                             </div>
+                        </div>
+                    </div>
                     <!-- Service Group FORM -->
                     <div class="dashboard-card" id="manage-service-group" v-show="toggleDivs.showServiceGroupModal">
                         <div class="dashboard-card-header">
@@ -1121,14 +1124,16 @@
                                 <button class="btn btn-secondary" @click="backButtonAction1('showList')">Back to
                                     List</button>
                             </div>
-                        <div class="dashboard-card-body">
-                                <form id="manage-service-group-form" @submit.prevent="submitServiceGroupForm" :data-action="serviceGroupFormFields.id ? 'edit' : 'add'">
+                            <div class="dashboard-card-body">
+                                <form id="manage-service-group-form" @submit.prevent="submitServiceGroupForm"
+                                    :data-action="serviceGroupFormFields.id ? 'edit' : 'add'">
                                     <div class="dashboard-grid grid-cols-3">
 
                                         <!-- Service Name -->
                                         <div class="form-group">
                                             <label for="serviceGroupName" class="form-label">Service Group Name</label>
-                                            <input type="text" id="serviceGroupName" v-model="serviceGroupFormFields.name"
+                                            <input type="text" id="serviceGroupName"
+                                                v-model="serviceGroupFormFields.name"
                                                 placeholder="Enter service group name"
                                                 :class="{'form-control': true, 'is-invalid': validationErrors.manageServiceGroup.serviceGroupName}">
                                             <div class="invalid-feedback"
@@ -1139,8 +1144,10 @@
 
                                         <!-- Arabic Name -->
                                         <div class="form-group">
-                                            <label for="serviceGroupArabicName" class="form-label">Service Group Name (Arabic)</label>
-                                            <input type="text" id="serviceGroupArabicName" v-model="serviceGroupFormFields.name_arabic"
+                                            <label for="serviceGroupArabicName" class="form-label">Service Group Name
+                                                (Arabic)</label>
+                                            <input type="text" id="serviceGroupArabicName"
+                                                v-model="serviceGroupFormFields.name_arabic"
                                                 placeholder="Enter service group name in Arabic" dir="rtl"
                                                 :class="{'form-control': true, 'is-invalid': validationErrors.manageServiceGroup.serviceGroupArabicName}">
                                             <div class="invalid-feedback"
@@ -1164,26 +1171,28 @@
                                             </div>
                                         </div>
 
-                                         <!-- Image -->
+                                        <!-- Image -->
                                         <div class="form-group">
                                             <label for="serviceGroupImage" class="form-label">Image</label>
-                                            <input type="file" id="serviceGroupImage" class="form-control" @change="handleImageUpload"
+                                            <input type="file" id="serviceGroupImage" class="form-control"
+                                                @change="handleImageUpload"
                                                 :class="{'is-invalid': validationErrors.manageServiceGroup.serviceGroupImage}">
                                             <div class="invalid-feedback"
                                                 v-if="validationErrors.manageServiceGroup.serviceGroupImage"
                                                 v-text="validationErrors.manageServiceGroup.serviceGroupImage">
                                             </div>
-                                        </div> 
+                                        </div>
 
                                     </div>
 
                                     <div class="mt-3">
-                                         <button type="submit" class="btn btn-primary">Save Information</button>
-                                        <button type="button" class="btn btn-outline-secondary ms-2" @click="resetServiceGroup">Clear Form</button>
+                                        <button type="submit" class="btn btn-primary">Save Information</button>
+                                        <button type="button" class="btn btn-outline-secondary ms-2"
+                                            @click="resetServiceGroup">Clear Form</button>
                                     </div>
                                 </form>
                             </div>
-                     </div>
+                        </div>
                     </div>
                 </div>
     </section>
