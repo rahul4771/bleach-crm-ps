@@ -7208,6 +7208,21 @@ class MeasurementUnitsAPIView(APIView):
 	
 class ServiceGroupAPIView(APIView):
 
+    def get(self, request):
+		# Fetch service groups
+        service_groups = []
+        for sg in ServiceGroup.objects.all():
+            service_groups.append({
+                'id': sg.id,
+                'service_name': sg.service_name,
+                'service_name_arabic': sg.service_name_arabic,
+                'image_path': sg.image_path.url if sg.image_path else None,
+                'updated_at': sg.updated_at,
+                'status': sg.status,				 
+            })
+
+        return JsonResponse({'service_groups': service_groups})
+	
     def post(self, request, *args, **kwargs):
         data = getattr(request, "data", request.POST)
 
@@ -7217,6 +7232,9 @@ class ServiceGroupAPIView(APIView):
         is_active = True if status == "active" else False
 
         # Image handling
+        image_path = None
+        if request.FILES.get('image_path'):
+           image_path = request.FILES.get('image_path')
         
 
         # Validation
@@ -7237,8 +7255,8 @@ class ServiceGroupAPIView(APIView):
             sg = ServiceGroup.objects.create(
                 service_name=service_name,
                 service_name_arabic=service_name_arabic,
+				            image_path=image_path,
                 status=is_active,
-				imagepath=imagepath
             )
 
             return JsonResponse(
@@ -7248,7 +7266,8 @@ class ServiceGroupAPIView(APIView):
                         "id": sg.id,
                         "service_name": sg.service_name,
                         "service_name_arabic": sg.service_name_arabic,
-                        
+						                  "image_path": sg.image_path.url if sg.image_path else None,
+						                  "updated_at": sg.updated_at,
                         "status": sg.status,
                     },
                 },
@@ -7290,7 +7309,16 @@ class ServiceGroupAPIView(APIView):
         status = data.get("status", "active")
         is_active = True if status == "active" else False
 
-        # Image upload
+								# Image upload
+        image_path = None
+        if request.FILES.get('image_path'):
+									if sg.image_path:
+										try:
+											if os.path.isfile(sg.image_path):
+												os.remove(sg.image_path)
+										except Exception:
+											pass
+									image_path = request.FILES.get('image_path')
         
 
         # Duplicate check (if updated)
@@ -7304,6 +7332,8 @@ class ServiceGroupAPIView(APIView):
         try:
             sg.service_name = service_name
             sg.service_name_arabic = service_name_arabic
+            if image_path:
+               sg.image_path = image_path
             sg.status = is_active
            
             sg.save()
@@ -7315,7 +7345,8 @@ class ServiceGroupAPIView(APIView):
                         "id": sg.id,
                         "service_name": sg.service_name,
                         "service_name_arabic": sg.service_name_arabic,
-                        
+																								"image_path": sg.image_path.url if sg.image_path else None,
+						                  "updated_at": sg.updated_at,                        
                         "status": sg.status,
                     },
                 },
@@ -7324,13 +7355,7 @@ class ServiceGroupAPIView(APIView):
 
         except Exception as e:
             return JsonResponse({"success": False, "error_message": str(e)}, status=500)
-    def get(self, request):
-		# Fetch service groups
-        service_groups = list(ServiceGroup.objects.values(
-            'id', 'service_name', 'service_name_arabic', 'status', 'updated_at'
-        ))
-        return JsonResponse({'service_groups': service_groups})
-	
+    	
     def delete(self, request, *args, **kwargs):
         group_id = kwargs.get("service_group_id")
         group_id = int(group_id)
@@ -7339,22 +7364,23 @@ class ServiceGroupAPIView(APIView):
         if not group_id:
             return JsonResponse({"success": False, "error": "Group id required"}, status=400)
 
-        sg = ServiceGroup.objects.filter(id=group_id)
-        if not sg.exists():
+        sg_qs = ServiceGroup.objects.filter(id=group_id)
+        if not sg_qs.exists():
             return JsonResponse({"success": False, "error": "Service group not found"}, status=404)
 		
         try:
-            sg.update(
-				status=is_active
-			)
-            sg_obj = sg.first()
+            sg_qs.update(
+														status=is_active
+												)
+            sg_obj = sg_qs.first()
             sg_data = {
-				"id": sg_obj.id,
-				"service_name": sg_obj.service_name,
-				"service_name_arabic": sg_obj.service_name_arabic,
-				
-				"status": sg_obj.status,
-			}
+															"id": sg_obj.id,
+															"service_name": sg_obj.service_name,
+															"service_name_arabic": sg_obj.service_name_arabic,
+															"image_path": sg_obj.image_path.url if sg_obj.image_path else None,
+						         "updated_at": sg_obj.updated_at,
+															"status": sg_obj.status,
+													}
             return JsonResponse({"success": True, "service_group": sg_data}, status=201)
         except Exception as e:
             return JsonResponse({"success": False, "error_message": str(e)}, status=500)

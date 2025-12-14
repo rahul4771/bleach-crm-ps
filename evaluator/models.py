@@ -453,17 +453,41 @@ class EvaluationSectionAddons(models.Model):
 
 	def __str__(self):
 		return str(self.evaluation_section)
+
+def service_group_image_path(instance, filename):
+	ext = filename.split('.')[-1].lower()
+	return f"service_groups/{uuid.uuid4().hex}.{ext}"
+
 class ServiceGroup(models.Model):
     service_name = models.CharField(max_length=255, blank=False, null=False)
     service_name_arabic = models.CharField(max_length=255, blank=True, null=True)
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at= models.DateTimeField(auto_now=True)
-    imagepath = models.ImageField(
-        upload_to='service_groups/',
+    image_path = models.ImageField(
+        upload_to=service_group_image_path,
         blank=True,
         null=True
     )
 
     def __str__(self):
         return self.service_name
+	
+    def save(self, *args, **kwargs):
+        super(ServiceGroup, self).save(*args, **kwargs)
+        
+        # Only compress if image exists
+        if self.image_path:
+            file_path = os.path.abspath(os.path.join(MEDIA_ROOT, self.image_path.name))
+			
+            if file_path.lower().endswith('.png'):
+                img = cv2.imread(file_path, cv2.IMREAD_UNCHANGED)
+                if img is not None:
+                  cv2.imwrite(file_path, img, [cv2.IMWRITE_PNG_COMPRESSION, 6])
+            
+            else:
+                img = cv2.imread(file_path)
+
+            	# Check if image was successfully read (avoid errors for non-image files)
+                if img is not None:
+                   cv2.imwrite(file_path, img, [cv2.IMWRITE_JPEG_QUALITY, 20])
