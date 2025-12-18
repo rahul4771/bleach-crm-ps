@@ -77,6 +77,7 @@ createApp({
             serviceFormFields: {
                 name: '',
                 name_arabic: '',
+                servicegroup_id: '',
                 is_active: ''
             },
             categoryFormFields: {
@@ -690,6 +691,9 @@ createApp({
             if (this.serviceFormFields.is_active === '') {
                 this.validationErrors['manageServiceType']['serviceTypeIsActive'] = 'Status is required.';
             }
+            if (this.serviceFormFields.servicegroup_id === '') {
+                this.validationErrors['manageServiceType']['serviceGroup'] = 'Servicegroup is required.';
+            }
 
             if (Object.keys(this.validationErrors['manageServiceType']).length) return;
 
@@ -697,6 +701,7 @@ createApp({
             const payload = {
                 new_service_name: this.serviceFormFields.name,
                 new_service_name_arabic: this.serviceFormFields.name_arabic,
+                new_service_group_id: this.serviceFormFields.servicegroup_id,
                 new_service_is_active: this.serviceFormFields.is_active
             };
 
@@ -1142,6 +1147,9 @@ createApp({
                             if (data.error_field === 'new_service_name_arabic') {
                                 this.validationErrors['manageServiceType']['serviceTypeArabicName'] = data.error_message;
                             }
+                            if (data.error_field === 'new_service_group_id') {
+                                this.validationErrors['manageServiceType']['serviceGroup'] = data.error_message;
+                            }
                             if (data.error_field === 'new_service_is_active') {
                                 this.validationErrors['manageServiceType']['serviceTypeIsActive'] = data.error_message;
                             }
@@ -1184,6 +1192,10 @@ createApp({
                             }
                             if (data.error_field === 'edit_service_name_arabic') {
                                 this.validationErrors['manageServiceType']['serviceTypeArabicName'] = data.error_message;
+                            }
+                            if (data.error_field === 'edit_service_group_id') {
+                                this.validationErrors['manageServiceType']['serviceGroup'] =
+                                    data.error_message;
                             }
                             if (data.error_field === 'edit_service_is_active') {
                                 this.validationErrors['manageServiceType']['serviceTypeIsActive'] = data.error_message;
@@ -1800,7 +1812,7 @@ createApp({
             this.validationErrors['manageServiceGroup'] = {};
         },
         resetNewService() {
-            this.serviceFormFields = { name: '', name_arabic: '', is_active: '' };
+            this.serviceFormFields = { name: '', name_arabic: '', servicegroup_id: '', is_active: '' };
             this.validationErrors['manageServiceType'] = {};
         },
         formatCurrency(value) {

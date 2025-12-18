@@ -117,13 +117,32 @@ BOOK_CHOICES =(
 	('CANCELL_IN_PROGRESS','CANCELL_IN_PROGRESS'),
 	('CANCELLED','CANCELLED'),
 )
+class ServiceGroup(models.Model):
+    service_name = models.CharField(max_length=255, blank=False, null=False)
+    service_name_arabic = models.CharField(max_length=255, blank=True, null=True)
+    status = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at= models.DateTimeField(auto_now=True)
+    imagepath = models.ImageField(
+        upload_to='service_groups/',
+        blank=True,
+        null=True
+    )
 
+    def __str__(self):
+        return self.service_name
 #Different cleaning service types.Eg:General Cleaning,Carpet Cleaning etc
 
 class ServiceType(models.Model):
 	name 			= models.CharField(max_length=100,blank=False,null=False)
 	name_arabic     = models.CharField(max_length=100,blank=False,null=False)
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
+	servicegroup = models.ForeignKey(
+        ServiceGroup,
+        on_delete=models.CASCADE,
+        related_name='service_types',
+        db_column='servicegroup_id'   # optional but keeps DB column explicit
+    )
 	created         = models.DateTimeField(auto_now_add=True)
 	updated         = models.DateTimeField(auto_now=True)
 
@@ -453,17 +472,4 @@ class EvaluationSectionAddons(models.Model):
 
 	def __str__(self):
 		return str(self.evaluation_section)
-class ServiceGroup(models.Model):
-    service_name = models.CharField(max_length=255, blank=False, null=False)
-    service_name_arabic = models.CharField(max_length=255, blank=True, null=True)
-    status = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at= models.DateTimeField(auto_now=True)
-    imagepath = models.ImageField(
-        upload_to='service_groups/',
-        blank=True,
-        null=True
-    )
 
-    def __str__(self):
-        return self.service_name

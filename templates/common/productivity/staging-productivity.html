@@ -169,7 +169,31 @@
                                                 v-text="validationErrors['manageServiceType']['serviceTypeArabicName']">
                                             </div>
                                         </div>
+                                        <div></div>
+                                        <div class="form-group">
+                                            <label for="serviceGroup" class="form-label">Service Group</label>
 
+                                            <select id="serviceGroup"
+                                                    v-model="serviceFormFields.servicegroup_id"
+                                                    :class="{
+                                                        'form-control': true,
+                                                        'is-invalid': validationErrors['manageServiceType']['serviceGroup']
+                                                    }">
+
+                                                <option display value="">Select Service Group</option>
+
+                                                <option v-for="group in serviceGroups"
+                                                        :key="group.id"
+                                                        :value="group.id">
+                                                    {{ group.name }}
+                                                </option>
+                                            </select>
+
+                                            <div class="invalid-feedback"
+                                                v-if="validationErrors['manageServiceType']['serviceGroup']"
+                                                v-text="validationErrors['manageServiceType']['serviceGroup']">
+                                            </div>
+                                        </div>
                                         <div class="form-group">
                                             <label for="serviceTypeIsActive" class="form-label">Status</label>
                                             <select id="serviceTypeIsActive" name="new_service_is_active"

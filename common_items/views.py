@@ -6386,6 +6386,7 @@ def add_service_type(request):
 	if request.method == 'POST':
 		service_name =  request.POST.get('new_service_name')
 		service_name_arabic =  request.POST.get('new_service_name_arabic')
+		servicegroup_id = request.POST.get('new_service_group_id')
 		is_active =  True if request.POST.get('new_service_is_active') == 'active' else False
 
 		# Backend validation for duplicate names
@@ -6393,18 +6394,21 @@ def add_service_type(request):
 			return JsonResponse({'success': False, 'error_field': 'new_service_name', 'error_message': 'Service name already exists.'})
 		if ServiceType.objects.filter(name_arabic__iexact=service_name_arabic).exists():
 			return JsonResponse({'success': False, 'error_field': 'new_service_name_arabic', 'error_message': 'Service name in Arabic already exists.'})
-		
+	    # service_group = ServiceGroup.objects.filter(id=servicegroup_id).first()
+		# if not service_group:
+		# 	return JsonResponse({'success': False, 'error_field': 'new_service_group_id', 'error_message': 'Invalid service group.'})
 		try:
 			service_type = ServiceType.objects.create(
 				name=service_name,
 				name_arabic=service_name_arabic,
+				servicegroup_id=service_group,
 				is_active=is_active
 			)
 			st_obj = {
 				"id": service_type.id,
 				"name": service_type.name,
 				"name_arabic": service_type.name_arabic,
-				"is_active": service_type.is_active,
+				"is_active": service_type.is_active
 			}
 			return JsonResponse({'success': True, 'service_type': st_obj})
 		except Exception as e:
@@ -6429,6 +6433,7 @@ class ServiceTypeAPIView(APIView):
 
 		name = safe_str(data.get("new_service_name"))
 		name_arabic = safe_str(data.get("new_service_name_arabic"))
+		servicegroup_id = safe_str(data.get("new_service_servicegroup_id"))
 		is_active = True if data.get("new_service_is_active") == "active" else False
 
 		if not name:
@@ -6444,10 +6449,20 @@ class ServiceTypeAPIView(APIView):
 
 		if name_arabic and ServiceType.objects.filter(name_arabic__iexact=name_arabic).exclude(id=service_type.id).exists():
 			return JsonResponse({"success": False, "error_field": "new_service_name_arabic", "error_message": "Service type with this name (Arabic) already exists."}, status=400)
+	    # if servicegroup_id:
+        #     service_group = ServiceGroup.objects.filter(id=servicegroup_id).first()
+        #     if not service_group:
+        #         return JsonResponse({
+        #             "success": False,
+        #             "error_field": "edit_service_group_id",
+        #             "error_message": "Invalid service group."
+        #         }, status=400)
+		service_type.servicegroup = service_group
 
 		service_type.name = name
 		if name_arabic is not None:
 			service_type.name_arabic = name_arabic
+			service_type.servicegroup_id= servicegroup_id
 			service_type.is_active = is_active
 		service_type.save()
 		st_obj = {
