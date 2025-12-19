@@ -6411,6 +6411,7 @@ def add_service_type(request):
 				"name": service_type.name,
 				"name_arabic": service_type.name_arabic,
 				"service_group_id": service_type.service_group.id,
+				"updated_at": service_type.updated_at,
 				"is_active": service_type.is_active
 			}
 			return JsonResponse({'success': True, 'service_type': st_obj})
