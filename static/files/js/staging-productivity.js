@@ -72,7 +72,7 @@ createApp({
                 name: '',
                 name_arabic: '',
                 status: '',
-                imagepath: null
+                image_path: null
             },
             serviceFormFields: {
                 name: '',
@@ -653,14 +653,10 @@ createApp({
                 service_name: this.serviceGroupFormFields.name,
                 service_name_arabic: this.serviceGroupFormFields.name_arabic || '',
                 status: this.serviceGroupFormFields.status,
-                imagepath:this.serviceGroupFormFields.imagepath
             };
 
-            // Use FormData for file upload
-            const formData = new FormData();
-            Object.keys(payload).forEach(key => formData.append(key, payload[key]));
-            if (this.serviceGroupFormFields.imagepath) {
-                formData.append('imagepath', this.serviceGroupFormFields.imagepath);
+            if (this.serviceGroupFormFields.image_path) {
+                payload.image_path = this.serviceGroupFormFields.image_path;
             }
 
             // Determine action (add or edit)
@@ -668,10 +664,10 @@ createApp({
             const formAction = form.getAttribute('data-action');
 
             if (formAction === 'add') {
-                this.createServiceGroup(formData); // implement this method to call backend
+                this.createServiceGroup(this.toFormData(payload));
             } else {
                 const serviceId = form.querySelector('input#editing_service_group_id, input[name="editing_service_group_id"]');
-                this.updateServiceGroup(formData, serviceId.value); // implement this method for editing
+                this.updateServiceGroup(this.toFormData(payload), serviceId.value); // implement this method for editing
             }
         },
 
@@ -1040,13 +1036,11 @@ createApp({
 
                             if (data.error_field === 'imagepath') {
                                 this.validationErrors['manageServiceGroup']['serviceGroupImage'] = data.error_message;
-                             }
+                            }
                         }
 
                     } else {
                         // Success handling
-                        console.log("service group", data.service_group);
-
                         this.successMsg = data.service_group
                             ? `Service group "${data.service_group.service_name}" added successfully.`
                             : 'Service group added successfully.';
@@ -1806,7 +1800,7 @@ createApp({
                 name: '',
                 name_arabic: '',
                 status: '',
-                imagepath:''
+                image_path: ''
 
             };
             this.validationErrors['manageServiceGroup'] = {};
@@ -1853,7 +1847,9 @@ createApp({
         },
 
         handleImageUpload(event) {
-          this.serviceGroupForm.imagepath= event.target.files[0];
+            if (event.target.files && event.target.files[0]) {
+                this.serviceGroupFormFields.image_path = event.target.files[0];
+            }
         },
         //for submit service group form
         backButtonAction1() {
@@ -1879,7 +1875,7 @@ createApp({
                 // FIXED FIELDS
                 this.serviceGroupFormFields.name = serviceGroup.service_name || '';
                 this.serviceGroupFormFields.name_arabic = serviceGroup.service_name_arabic || '';
-                this.serviceGroupFormFields.is_active = serviceGroup.status ? 'active' : 'inactive';
+                this.serviceGroupFormFields.status = serviceGroup.status ? 'active' : 'inactive';
 
                 const hiddenName = 'editing_service_group_id';
                 let hidden = form.querySelector(`input[name="${hiddenName}"]`);
@@ -1896,7 +1892,6 @@ createApp({
             }
         },
         removeServiceGroup(serviceGroup) {
-            console.log("removeServiceGroup called", serviceGroup);
             const modal = document.getElementById('delete-modal');
             if (modal) {
                 modal.classList.add('in', 'show');

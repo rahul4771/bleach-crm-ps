@@ -1090,6 +1090,7 @@
                                         <tr>
                                             <th><button>Name</button></th>
                                             <th><button>Arabic</button></th>
+                                            <th>Image</th>
                                             <th><button>Status</button></th>
                                             <th>Updated Date</th>
                                             <th>Actions</th>
@@ -1110,12 +1111,15 @@
                                             </td>
 
                                             <td v-text="group.service_name_arabic"></td>
+                                            <td>
+                                                <img v-if="group.image_path" :src="group.image_path" :alt="group.service_name"
+                                                    class="me-3" style="width: 75px; height: 75px; object-fit: cover; background-color: #fff;">
+                                            </td>
 
                                             <td>
-                                                <span :class="[
-                                                                'status-badge',
-                                                                group.status == 1 ? 'status-active' : 'status-pending'
-                                                            ]" v-text="group.status == 1 ? 'Active' : 'Inactive'">
+                                                <span
+                                                    :class="['status-badge',group.status == 1 ? 'status-active' : 'status-pending']"
+                                                    v-text="group.status == 1 ? 'Active' : 'Inactive'">
                                                 </span>
                                             </td>
 
