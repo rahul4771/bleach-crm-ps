@@ -473,9 +473,6 @@ class EvaluationSectionAddons(models.Model):
 
 	def __str__(self):
 		return str(self.evaluation_section)
-<<<<<<< HEAD
-
-=======
 
 def service_group_image_path(instance, filename):
 	ext = filename.split('.')[-1].lower()
@@ -514,4 +511,3 @@ class ServiceGroup(models.Model):
             	# Check if image was successfully read (avoid errors for non-image files)
                 if img is not None:
                    cv2.imwrite(file_path, img, [cv2.IMWRITE_JPEG_QUALITY, 20])
->>>>>>> 4ddcd03c84f55f4aa0991b75200d145e9de16ae7
