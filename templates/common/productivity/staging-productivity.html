@@ -173,19 +173,16 @@
                                         <div class="form-group">
                                             <label for="serviceGroup" class="form-label">Service Group</label>
 
-                                            <select id="serviceGroup"
-                                                    v-model="serviceFormFields.servicegroup_id"
-                                                    :class="{
+                                            <select id="serviceGroup" v-model="serviceFormFields.servicegroup_id"
+                                                :class="{
                                                         'form-control': true,
                                                         'is-invalid': validationErrors['manageServiceType']['serviceGroup']
                                                     }">
 
                                                 <option display value="">Select Service Group</option>
 
-                                                <option v-for="group in serviceGroups"
-                                                        :key="group.id"
-                                                        :value="group.id">
-                                                    {{ group.name }}
+                                                <option v-for="group in serviceGroups" :key="group.id"
+                                                    :value="group.id" v-text="group.service_name">
                                                 </option>
                                             </select>
 
@@ -1112,8 +1109,9 @@
 
                                             <td v-text="group.service_name_arabic"></td>
                                             <td>
-                                                <img v-if="group.image_path" :src="group.image_path" :alt="group.service_name"
-                                                    class="me-3" style="width: 75px; height: 75px; object-fit: cover; background-color: #fff;">
+                                                <img v-if="group.image_path" :src="group.image_path"
+                                                    :alt="group.service_name" class="me-3"
+                                                    style="width: 75px; height: 75px; object-fit: cover; background-color: #fff;">
                                             </td>
 
                                             <td>
