@@ -163,7 +163,7 @@ class ServiceType(models.Model):
 	name 			= models.CharField(max_length=100,blank=False,null=False)
 	name_arabic     = models.CharField(max_length=100,blank=False,null=False)
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
-	servicegroup = models.ForeignKey(
+	service_group = models.ForeignKey(
         ServiceGroup,
         on_delete=models.CASCADE,
         related_name='service_types',

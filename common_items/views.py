@@ -6410,7 +6410,7 @@ def add_service_type(request):
 				"id": service_type.id,
 				"name": service_type.name,
 				"name_arabic": service_type.name_arabic,
-				"service_group_id": service_type.service_group_id,
+				"service_group_id": service_type.service_group.id,
 				"is_active": service_type.is_active
 			}
 			return JsonResponse({'success': True, 'service_type': st_obj})
@@ -6468,7 +6468,7 @@ class ServiceTypeAPIView(APIView):
 			"id": service_type.id,
 			"name": service_type.name,
 			"name_arabic": service_type.name_arabic,
-			"service_group_id": service_type.service_group_id,
+			"service_group_id": service_type.service_group.id,
 			"is_active": service_type.is_active,
 		}
 
@@ -7055,7 +7055,7 @@ class StagingProductivity(IsAuthenticated,View):
 
 class ProductivityServiceTypeAPIView(APIView):
 	def get(self, request):
-		service_types = list(ServiceType.objects.values('id','name','name_arabic', 'is_active','updated'))
+		service_types = list(ServiceType.objects.values('id','name','name_arabic','service_group_id', 'is_active','updated'))
 
 		service_productivities = []
 		for p in ServiceProductivity.objects.select_related('service_type').all():
@@ -7305,7 +7305,7 @@ class ServiceGroupAPIView(APIView):
 
         sg_qs = ServiceGroup.objects.filter(id=group_id)
         if not sg_qs.exists():
-            return JsonResponse({"success": False, "error": "ServiceGroup not found"}, status=404)
+            return JsonResponse({"success": False, "error": "Service group not found"}, status=404)
 
         sg = sg_qs.first()
 
