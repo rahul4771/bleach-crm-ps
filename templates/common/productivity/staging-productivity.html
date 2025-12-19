@@ -182,6 +182,7 @@
                                                 <option display value="">Select Service Group</option>
 
                                                 <option v-for="group in serviceGroups" :key="group.id"
+                                                    :selected="serviceFormFields.servicegroup_id === group.id"
                                                     :value="group.id" v-text="group.service_name">
                                                 </option>
                                             </select>
