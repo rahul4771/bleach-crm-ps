@@ -6436,7 +6436,7 @@ class ServiceTypeAPIView(APIView):
 
 		name = safe_str(data.get("new_service_name"))
 		name_arabic = safe_str(data.get("new_service_name_arabic"))
-		service_group_id = safe_str(data.get("new_service_servicegroup_id"))
+		service_group_id = safe_str(data.get("new_service_group_id"))
 		is_active = True if data.get("new_service_is_active") == "active" else False
 
 		if not name:
@@ -6454,7 +6454,7 @@ class ServiceTypeAPIView(APIView):
 			return JsonResponse({"success": False, "error_field": "new_service_name_arabic", "error_message": "Service type with this name (Arabic) already exists."}, status=400)
 		
 		if not ServiceGroup.objects.filter(id=service_group_id).first():
-			return JsonResponse({"success": False, "error_field": "new_service_servicegroup_id", "error_message": "Selected invalid service group"}, status=400)
+			return JsonResponse({"success": False, "error_field": "new_service_group_id", "error_message": "Selected invalid service group"}, status=400)
 
 		service_type.name = name
 		if name_arabic is not None:
