@@ -52,8 +52,6 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <h1 class="h1 mb-0 text-gray-800" style="font-size: 30px">Productivity</h1>
-                                <!-- <p class="text-muted mb-0">Advanced data tables with search, sort, and export
-                                    functionality</p> -->
                             </div>
                         </div>
                     </div>
@@ -77,8 +75,20 @@
                                     <i class="fa fa-ruler"></i> Measurement Units
                                 </button>
                                 <button class="export-btn ms-2" @click="handleServiceGroupBtnClick">
-                                    Service Groups
+                                    <i class="fa fa-object-group"></i> Service Groups
                                 </button>
+                            </div>
+                            <div class="dashboard-card mb-3" v-if="serviceGroups && serviceGroups.length > 0">
+                                <div class="dashboard-grid grid-cols-4 mb-3">
+                                    <div>
+                                        <label for="departmentFilter" class="form-label small">Service Group</label>
+                                        <select class="form-select" id="departmentFilter" @change="filterByServiceGroup($event)">
+                                            <option selected="">All Service Groups</option>
+                                            <option v-for="group in serviceGroups" :key="group.id" :value="group.id"
+                                                v-text="group.service_name">
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                             <div
                                 class="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns">

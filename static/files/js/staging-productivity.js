@@ -9,6 +9,7 @@ createApp({
             successMsg: '',
             modalHeading: '',
             serviceTypes: [],
+            serviceTypesWithoutFilter: [],
             productivities: [],
             serviceAddons: [],
             servicePriceRanges: [],
@@ -142,6 +143,14 @@ createApp({
             const form = document.getElementById('manage-service-group-form');
             if (form) {
                 form.setAttribute('data-action', 'add')
+            }
+        },
+        filterByServiceGroup(event) {
+            const selectedGroupId = event.target.value;
+            if (selectedGroupId.toLowerCase() === 'all service groups') {
+                this.serviceTypes = this.serviceTypesWithoutFilter;
+            } else {
+                this.serviceTypes = this.serviceTypesWithoutFilter.filter(serviceType => String(serviceType.service_group_id) === String(selectedGroupId));
             }
         },
 
@@ -960,6 +969,7 @@ createApp({
                                 avatar: `${this.avatarBaseUrl}?name=${encodeURIComponent(serviceType.name)}&background=${this.colorCodes[serviceType.id % this.colorCodes.length]}&color=fff`
                             };
                         });
+                        this.serviceTypesWithoutFilter = [...this.serviceTypes];
                     }
                     if (data.service_productivities) {
                         const grouped = {};
