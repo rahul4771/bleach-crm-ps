@@ -433,3 +433,7 @@ input:checked + .slider:before {
     font-size: 2rem;
     font-weight: 700;
 }
+
+.service-group-active-card {
+    box-shadow: 0 4px 6px #0000001f, 0 2px 4px #0000000f !important;
+}

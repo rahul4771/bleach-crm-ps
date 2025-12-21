@@ -79,25 +79,32 @@
                                 </button>
                             </div>
                             <div class="dashboard-card mb-3" v-if="serviceGroups && serviceGroups.length > 0">
-                                {% comment %} <div class="dashboard-grid grid-cols-4 mb-3">
-                                    <div>
-                                        <label for="departmentFilter" class="form-label small">Service Group</label>
-                                        <select class="form-select" id="departmentFilter" @change="filterByServiceGroup($event)">
-                                            <option selected="">All Service Groups</option>
-                                            <option v-for="group in serviceGroups" :key="group.id" :value="group.id"
-                                                v-text="group.service_name">
-                                        </select>
-                                    </div>
-                                </div> {% endcomment %}
-                                <div class="row" id="smd-service-group-list">
-                                    
-                                    <div class="col-md-12">
-                                        <div v-for="group in serviceGroups"
-                                            :key="group.id"
-                                            class="col-xs-12 col-sm-12 col-md-2 smd-tiles smd-p-1 smd-m-1"
-                                            @click="filterByServiceGroup(group.id)">
-                                            <h6 v-text="group.service_name"></h6>
+                                <div class="dashboard-row">
+                                    <h2 class="h5 fw-semibold text-gray-800 mb-4">Service Groups</h2>
+                                    <div class="dashboard-grid grid-cols-4">
+                                        <!-- All -->
+                                        <div class="dashboard-card mb-4 " @click="filterByServiceGroup('all')"
+                                            :class="{ 'service-group-active-card': activeServiceGroupFilter === 'all' }">
+                                            <div class="dashboard-card-body p-3">
+                                                <div class="d-flex justify-center align-items-center">
+                                                    <div>
+                                                        <h5 class="mb-0">All</h5>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
+                                        <div class="dashboard-card mb-4" v-for="(group, index) in serviceGroups"
+                                            :key="group.id" :data-index="index" @click="filterByServiceGroup(group.id)"
+                                            :class="{ 'service-group-active-card': activeServiceGroupFilter === group.id }">
+                                            <div class="dashboard-card-body p-3">
+                                                <div class="d-flex justify-center align-items-center">
+                                                    <div>
+                                                        <h5 class="mb-0" v-text="group.service_name"></h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -156,7 +163,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Manage Service Types -->
                     <div class="dashboard-card" id="manage-service-type" v-show="toggleDivs.showManageServiceType">
                         <div class="dashboard-card-header">

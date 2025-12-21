@@ -17,6 +17,7 @@ createApp({
             serviceGroups: [],
             serviceTypeId: '',
             serviceGroupId: '',
+            activeServiceGroupFilter: 'all',
             colorCodes: [
                 "6366f1",
                 "10b981",
@@ -146,6 +147,7 @@ createApp({
             }
         },
         filterByServiceGroup(selectedGroupId) {
+            this.activeServiceGroupFilter = selectedGroupId;
             if (selectedGroupId === 'all') { // or any value you want for "all"
                 this.serviceTypes = this.serviceTypesWithoutFilter;
             } else {
