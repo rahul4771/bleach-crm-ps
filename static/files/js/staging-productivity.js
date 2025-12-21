@@ -145,12 +145,13 @@ createApp({
                 form.setAttribute('data-action', 'add')
             }
         },
-        filterByServiceGroup(event) {
-            const selectedGroupId = event.target.value;
-            if (selectedGroupId.toLowerCase() === 'all service groups') {
+        filterByServiceGroup(selectedGroupId) {
+            if (selectedGroupId === 'all') { // or any value you want for "all"
                 this.serviceTypes = this.serviceTypesWithoutFilter;
             } else {
-                this.serviceTypes = this.serviceTypesWithoutFilter.filter(serviceType => String(serviceType.service_group_id) === String(selectedGroupId));
+                this.serviceTypes = this.serviceTypesWithoutFilter.filter(
+                    serviceType => String(serviceType.service_group_id) === String(selectedGroupId)
+                );
             }
         },
 

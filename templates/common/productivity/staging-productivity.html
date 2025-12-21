@@ -79,7 +79,7 @@
                                 </button>
                             </div>
                             <div class="dashboard-card mb-3" v-if="serviceGroups && serviceGroups.length > 0">
-                                <div class="dashboard-grid grid-cols-4 mb-3">
+                                {% comment %} <div class="dashboard-grid grid-cols-4 mb-3">
                                     <div>
                                         <label for="departmentFilter" class="form-label small">Service Group</label>
                                         <select class="form-select" id="departmentFilter" @change="filterByServiceGroup($event)">
@@ -87,6 +87,17 @@
                                             <option v-for="group in serviceGroups" :key="group.id" :value="group.id"
                                                 v-text="group.service_name">
                                         </select>
+                                    </div>
+                                </div> {% endcomment %}
+                                <div class="row" id="smd-service-group-list">
+                                    
+                                    <div class="col-md-12">
+                                        <div v-for="group in serviceGroups"
+                                            :key="group.id"
+                                            class="col-xs-12 col-sm-12 col-md-2 smd-tiles smd-p-1 smd-m-1"
+                                            @click="filterByServiceGroup(group.id)">
+                                            <h6 v-text="group.service_name"></h6>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -145,6 +156,7 @@
                             </div>
                         </div>
                     </div>
+                    
                     <!-- Manage Service Types -->
                     <div class="dashboard-card" id="manage-service-type" v-show="toggleDivs.showManageServiceType">
                         <div class="dashboard-card-header">
