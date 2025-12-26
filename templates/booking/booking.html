@@ -132,7 +132,7 @@
               <v-spacer></v-spacer>
 
               <v-btn color="primary" text @click="reconfirmScheduler">
-                Continue
+                Continue t
               </v-btn>
 
               <v-btn color="primary" text @click="reconfirmation_dialog = false">
@@ -159,7 +159,7 @@
               <v-spacer></v-spacer>
 
               <v-btn color="primary" text @click="resetScheduler">
-                Continue
+                Continue u
               </v-btn>
 
               <v-btn color="primary" text @click="confirmation_dialog = false">
@@ -1629,6 +1629,15 @@
                                             </v-radio-group>
                                           </div>
                                         </div>
+                                        <div class="row">
+                                          <div clas="col-md-6 text-center" v-if="serviceType == 'Rope Access'">
+                                            <v-radio-group row class="p-4">
+                                              <v-radio label="Sky Line" :value="true"></v-radio>
+                                              <v-radio label="Facade Care" :value="false"></v-radio>
+                                              <v-radio label="Facade Reclame" :value="false"></v-radio>
+                                            </v-radio-group>
+                                          </div>
+                                        </div>
                                       </div>
                                       <div class="p-2" v-if="!building[index - 1].floors[floor - 1].apartment">
 
@@ -1640,40 +1649,46 @@
                                               required>
                                             </v-select>
                                           </div>
-                                          <div class="col-md-6">
+                                          <div class="col-md-6"
+                                            v-if="serviceType == 'Rope Access'">
+                                            <v-select :items="['Outside & Inside', 'Outside', 'Inside']" label="Sides"
+                                              :rules="[v => !!v || 'Sides is required']" required
+                                              v-model="otherService.sides"></v-select>
+                                          </div>
+                                          <div class="col-md-6" v-if="serviceType != 'Rope Access'">
                                             <v-select :items="walltypes"
                                               v-model="building[index - 1].floors[floor - 1].wall_type"
                                               :rules="[v => !!v || 'Wall Type is required']" label="Wall Type"
                                               :attach="true" multiple required>
                                             </v-select>
                                           </div>
-                                          <div class="col-md-6">
+                                          <div class="col-md-6" v-if="serviceType != 'Rope Access'">
                                             <v-select :items="floortypes"
                                               v-model="building[index - 1].floors[floor - 1].floor_type"
                                               :rules="[v => !!v || 'Floor Type is required']" label="Floor Type"
                                               :attach="true" multiple required>
                                             </v-select>
                                           </div>
-                                          <div class="col-md-6">
+                                          <div class="col-md-6" v-if="serviceType != 'Rope Access'">
                                             <v-select :items="ceilingtypes"
                                               v-model="building[index - 1].floors[floor - 1].ceiling_type"
                                               :rules="[v => !!v || 'ceiling Type is required']" label="Ceiling Type"
                                               :attach="true" multiple required>
                                             </v-select>
                                           </div>
-                                          <div class="col-md-6">
+                                          <div class="col-md-6" v-if="serviceType != 'Rope Access'">
                                             <v-text-field type="number"
                                               v-model="building[index - 1].floors[floor - 1].no_of_rooms"
                                               label="No of Rooms" class="not-required">
                                             </v-text-field>
                                           </div>
-                                          <div class="col-md-6">
+                                          <div class="col-md-6" v-if="serviceType != 'Rope Access'">
                                             <v-text-field type="number"
                                               v-model="building[index - 1].floors[floor - 1].no_of_bathrooms"
                                               label="No of Bathrooms" class="not-required">
                                             </v-text-field>
                                           </div>
-                                          <div class="col-md-6">
+                                          <div class="col-md-6" v-if="serviceType != 'Rope Access'">
                                             <v-text-field type="number"
                                               v-model="building[index - 1].floors[floor - 1].no_of_windows"
                                               label="No of Windows" class="not-required">
@@ -1703,7 +1718,7 @@
                                               </v-radio>
                                             </v-radio-group>
                                           </div>
-                                          <div class="col-md-6 ">
+                                          <div class="col-md-6 " v-if="serviceType != 'Rope Access'">
                                             <div>
                                               <div>Do you want to clean your Kitchen ? <span style="color:red">*</span>
                                               </div>
@@ -2179,7 +2194,7 @@
 
                                                 <v-btn color="primary"
                                                   v-on:click="nextApartment(index - 1,floor - 1,apindex)" class="mb-2">
-                                                  Continue
+                                                  Continue v
                                                 </v-btn>
 
                                                 <v-btn text @click="e.building[index - 1].floors[floor - 1].e = apindex"
@@ -2199,11 +2214,11 @@
                       </v-alert>
                       <v-btn color="primary" v-on:click="nextFloor(index - 1, floor)" class="mb-2 mt-2"
                         v-if="!building[index - 1].completed && !building[index-1].floors[floor-1].apartment">
-                        Continue
+                        Continue q
                       </v-btn>
                       <v-btn color="primary" v-on:click="nextFloor(index - 1, floor)" class="mb-2 mt-2"
                         v-if="!building[index - 1].completed && building[index-1].floors[floor-1].apartment && building[index-1].floors[floor-1].completed">
-                        Continue
+                        Continue r
                       </v-btn>
                       <!--  <v-btn
                               text
@@ -2217,7 +2232,7 @@
                     </div>
                     </v-stepper>
                     <div
-                      v-if="serviceType == ' General Cleaning' || serviceType=='Hourly Cleaning' || serviceType=='Deep Cleaning' || serviceType=='Storage Area' || serviceType=='Sterilization' || serviceType=='Pest Control' ">
+                      v-if="serviceType == ' General Cleaning' || serviceType=='Hourly Cleaning' || serviceType=='Deep Cleaning' || serviceType=='Storage Area' || serviceType=='Sterilization' || serviceType=='Pest Control' || serviceType =='Rope Access' ">
 
                       <div v-if=" building[index - 1].completed && floorCompleted" class="text-center">
                         <v-alert v-if="floor_msg" class="mt-4" dense text type="error">
@@ -2228,7 +2243,7 @@
                         </v-alert>
                         <v-btn color="primary" :id="'btn-' + index" @click="nextTab(index)" class="mb-2 mt-2"
                           v-if="!buildingsCompleted">
-                          Continue
+                          Continue s
                         </v-btn>
                       </div>
                     </div>
@@ -2453,7 +2468,7 @@
                     </div>
                   </div>
 
-                  <div class="col-md-6" v-if="serviceType == 'Window Cleaning'">
+                  <div class="col-md-6" v-if="serviceType == 'Window Cleaning' || serviceType == 'Outdoor Cleaning'">
                     <v-select :items="['Outside & Inside', 'Outside', 'Inside']" label="Sides"
                       :rules="[v => !!v || 'Size is required']" required v-model="otherService.sides"
                       :attach="true"></v-select>
@@ -2992,7 +3007,7 @@
 
                       </div>
                       <div>
-                        <b >
+                        <b>
                           <% service.service %>
                         </b>
                       </div>
