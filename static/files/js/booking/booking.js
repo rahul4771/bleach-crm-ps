@@ -4923,6 +4923,8 @@ try {
         completed: false,
         paint_residue: false,
         upholsteries: ["Sofa", ""],
+        rope_access_type: null,
+        sides: null
         
         
       });
@@ -4959,6 +4961,8 @@ try {
         kitchen: false,
         kitchens: [],
         keynotes: {},
+        rope_access_type: null,
+        sides: null
       });
     }
   },

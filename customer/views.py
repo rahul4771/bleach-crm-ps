@@ -3158,7 +3158,12 @@ class GetServiceSizePrice(APIView):
 			elif service_price_range.service_type.name == 'Kitchen Cleaning':
 				service_price_range_dict['is_newkitchen']       = service_price_range.is_newkitchen
 				service_price_range_dict['is_cabinet']          = service_price_range.is_cabinet
-
+			elif service_price_range.service_type.name == 'Rope Access':
+				service_price_range_dict['rope_access_type'] = (
+					'Skyline' if service_price_range.service_productivity_id == 22 
+					else 'Facade Care' if service_price_range.service_productivity_id == 23 
+					else 'Facade Reclame' if service_price_range.service_productivity_id == 24 
+					else None)
 			response_dict[counter] = service_price_range_dict
 
 			counter += 1

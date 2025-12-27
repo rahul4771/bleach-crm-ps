@@ -1631,7 +1631,10 @@
                                         </div>
                                         <div class="row">
                                           <div clas="col-md-6 text-center" v-if="serviceType == 'Rope Access'">
-                                            <v-radio-group row class="p-4">
+                                            <v-radio-group row class="p-4"
+                                              v-model="building[index - 1].floors[floor - 1].rope_access_type"
+                                              :rules="[v => !!v || 'Rope Access Type is required']" required>
+                                              <div>Select Rope Access Type <span style="color:red">*</span></div>
                                               <v-radio label="Sky Line" :value="true"></v-radio>
                                               <v-radio label="Facade Care" :value="false"></v-radio>
                                               <v-radio label="Facade Reclame" :value="false"></v-radio>
@@ -1649,11 +1652,11 @@
                                               required>
                                             </v-select>
                                           </div>
-                                          <div class="col-md-6"
-                                            v-if="serviceType == 'Rope Access'">
+                                          <div class="col-md-6" v-if="serviceType == 'Rope Access'">
                                             <v-select :items="['Outside & Inside', 'Outside', 'Inside']" label="Sides"
                                               :rules="[v => !!v || 'Sides is required']" required
-                                              v-model="otherService.sides"></v-select>
+                                              v-model="building[index - 1].floors[floor - 1].sides">
+                                            </v-select>
                                           </div>
                                           <div class="col-md-6" v-if="serviceType != 'Rope Access'">
                                             <v-select :items="walltypes"
