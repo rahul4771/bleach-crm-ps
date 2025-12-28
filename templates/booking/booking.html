@@ -1633,11 +1633,11 @@
                                           <div clas="col-md-6 text-center" v-if="serviceType == 'Rope Access'">
                                             <v-radio-group row class="p-4"
                                               v-model="building[index - 1].floors[floor - 1].rope_access_type"
-                                              :rules="[v => !!v || 'Rope Access Type is required']" required>
+                                              @change="ropeAccessFilter(index - 1, floor - 1)">
                                               <div>Select Rope Access Type <span style="color:red">*</span></div>
-                                              <v-radio label="Sky Line" :value="true"></v-radio>
-                                              <v-radio label="Facade Care" :value="false"></v-radio>
-                                              <v-radio label="Facade Reclame" :value="false"></v-radio>
+                                              <v-radio label="Sky Line" value="Skyline" checked></v-radio>
+                                              <v-radio label="Facade Care" value="Facade Care"></v-radio>
+                                              <v-radio label="Facade Reclame" value="Facade Reclame"></v-radio>
                                             </v-radio-group>
                                           </div>
                                         </div>
@@ -1646,7 +1646,7 @@
 
                                         <div class="row">
                                           <div class="col-md-6">
-                                            <v-select :items="sizeData" item-text="combinedSize"
+                                            <v-select :items="ropeAccessSize" item-text="combinedSize"
                                               v-model="building[index - 1].floors[floor - 1].size" label="Size"
                                               return-object :attach="true" :rules="[v => !!v || 'Size is required']"
                                               required>

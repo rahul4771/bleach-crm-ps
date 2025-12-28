@@ -460,6 +460,7 @@ const app=new Vue({
   kitchenSizeData:[],
   facadeSize:[],
   windowSize:[],
+  ropeAccessSize:[],
   durationData:{},
   billSample:{
     name:'',
@@ -4033,8 +4034,12 @@ getAreaTypes() {
       .then((response) => {
         this.serviceSize = response.data;
         this.parseSize();
-         this.facadeFilter();
-         this.windowFilter();
+        if(this.serviceType == 'Rope Access') {
+          this.ropeAccessFilter();
+          return;
+        }
+        this.facadeFilter();
+        this.windowFilter();
       })
       .catch((error) => {
         console.log(error);
@@ -4218,7 +4223,17 @@ try {
         }
     
     }
-},
+  },
+  ropeAccessFilter(index=null, floor=null){
+
+    if(index !== null && floor !== null && this.building[index] && this.building[index].floors[floor]) {
+        selectedType = this.building[index].floors[floor].rope_access_type || "Skyline";
+    } else {
+        selectedType = "Skyline";
+    }
+    this.ropeAccessSize= this.sizeData.filter(size => size.rope_access_type === selectedType);
+    this.otherService.size={}
+  },
   editItem(a, b) {
     this.edit_item=true
     this.add_new_kitchen=false
@@ -4928,6 +4943,9 @@ try {
         
         
       });
+      if (this.serviceType === 'Rope Access') {
+        this.building[building - 1].floors[i].rope_access_type = "Skyline";
+      }
       this.e.building[building - 1].floors.push({
         floors: [],
         e: 1,
