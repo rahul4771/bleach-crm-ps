@@ -703,6 +703,7 @@
               <v-switch v-model="out_of_shift" label="Out of Shift Cleaning" class="mt-4 ml-2 not-required"
                 @change="clearOutOfShift()"></v-switch>
             </div>
+            asfdghjklkjhgfdsdfghjk,m.,mnvbc
             <!--- Hourly Cleaning Begins Here-->
             <div v-if="current_service==' Hourly Cleaning'">
               <div class="row m-0 justify-center">
@@ -1013,14 +1014,8 @@
                       :rules="[v => !!v || 'Height of the building is required']" required
                       v-model="otherService.height"></v-text-field>
                   </div>
-                  <div class="col-md-6" v-if="
-              serviceType != 'Facade Cleaning' &&
-              serviceType != 'Car Parking Umbrella' &&
-              serviceType != 'Window Cleaning' &&
-              serviceType != 'Rope Access' &&
-              serviceType != 'Outdoor Cleaning' &&
-              serviceType != 'Kitchen Cleaning'
-            ">
+                  <div class="col-md-6"
+                    v-if="serviceType != 'Facade Cleaning' &&serviceType != 'Car Parking Umbrella' &&serviceType != 'Window Cleaning' &&serviceType != 'Rope Access' && serviceType != 'Outdoor Cleaning' &&serviceType != 'Kitchen Cleaning'">
                     <v-text-field label="Age (In months)" type="number" :rules="[v => !!v || 'Age is required']"
                       required v-model="otherService.age"></v-text-field>
                   </div>
@@ -1053,25 +1048,13 @@
                     </v-radio-group>
                   </div>
 
-                  <div class="col-md-6" v-if="
-              serviceType != 'Kitchen Cleaning' &&
-              serviceType != 'Facade Cleaning' &&
-              serviceType != 'Car Parking Umbrella' &&
-              serviceType != 'Window Cleaning' &&
-              serviceType != 'Rope Access' &&
-              serviceType != 'Outdoor Cleaning'
-            ">
+                  <div class="col-md-6"
+                    v-if="serviceType != 'Kitchen Cleaning' && serviceType != 'Facade Cleaning' && serviceType != 'Car Parking Umbrella' && serviceType != 'Window Cleaning' && serviceType != 'Rope Access' && serviceType != 'Outdoor Cleaning'">
                     <v-select :items="materials" label="Material" :rules="[v => !!v || 'Material is required']" required
                       multiple v-model="otherService.material"></v-select>
                   </div>
-                  <div class="col-md-6" v-if="
-              serviceType != 'Kitchen Cleaning' &&
-              serviceType != 'Facade Cleaning' &&
-              serviceType != 'Car Parking Umbrella' &&
-              serviceType != 'Window Cleaning' &&
-              serviceType != 'Rope Access' &&
-              serviceType != 'Outdoor Cleaning'
-            ">
+                  <div class="col-md-6"
+                    v-if="serviceType != 'Kitchen Cleaning' &&serviceType != 'Facade Cleaning' &&serviceType != 'Car Parking Umbrella' &&serviceType != 'Window Cleaning' &&serviceType != 'Rope Access' &&serviceType != 'Outdoor Cleaning'">
                     <v-select :items="colors" label="Color" :rules="[v => !!v || 'Color is required']" required multiple
                       v-model="otherService.color"></v-select>
                   </div>
@@ -1122,14 +1105,8 @@
                     <v-select :items="['Outside & Inside', 'Outside', 'Inside']" label="Sides"
                       :rules="[v => !!v || 'Sides is required']" required v-model="otherService.sides"></v-select>
                   </div>
-                  <div class="col-md-6" v-if="
-              serviceType != 'Kitchen Cleaning' &&
-              serviceType != 'Facade Cleaning' &&
-              serviceType != 'Car Parking Umbrella' &&
-              serviceType != 'Window Cleaning' &&
-              serviceType != 'Rope Access' &&
-              serviceType != 'Outdoor Cleaning'
-            ">
+                  <div class="col-md-6"
+                    v-if="serviceType != 'Kitchen Cleaning' &&serviceType != 'Facade Cleaning' &&serviceType != 'Car Parking Umbrella' &&serviceType != 'Window Cleaning' &&serviceType != 'Rope Access' &&serviceType != 'Outdoor Cleaning'">
                     <div>Any Stain ? <span style="color:red">*</span></div>
                     <v-radio-group v-model="otherService.stain" class="p-2" row>
 
@@ -1155,24 +1132,17 @@
                       :rules="[v => !!v || 'Age of Stain is required']" required
                       v-model="otherService.stain_age"></v-text-field>
                   </div>
-                  <div class="col-md-6" v-if="
-              serviceType == 'Kitchen Cleaning' ||
-              serviceType == 'Facade Cleaning'
-            ">
+                  <div class="col-md-6" v-if="serviceType == 'Kitchen Cleaning' ||serviceType == 'Facade Cleaning'">
                     <v-select :items="walltypes" label="Wall type" :rules="[v => !!v || 'Wall Type is required']"
                       required multiple v-model="otherService.wall_type"></v-select>
                   </div>
-                  <div class="col-md-6" v-if="
-              serviceType == 'Kitchen Cleaning' ||
-              serviceType == 'Car Parking Umbrella'
-            ">
+                  <div class="col-md-6"
+                    v-if="serviceType == 'Kitchen Cleaning' ||serviceType == 'Car Parking Umbrella'">
                     <v-select :items="floortypes" label="Floor Type" :rules="[v => !!v || 'Floor Type is required']"
                       required multiple v-model="otherService.floor_type"></v-select>
                   </div>
-                  <div class="col-md-6" v-if="
-              serviceType == 'Kitchen Cleaning' ||
-              serviceType == 'Car Parking Umbrella'
-            ">
+                  <div class="col-md-6"
+                    v-if="serviceType == 'Kitchen Cleaning' ||serviceType == 'Car Parking Umbrella'">
                     <v-select :items="ceilingtypes" label="Ceiling Type"
                       :rules="[v => !!v || 'Ceiling Type is required']" required multiple
                       v-model="otherService.ceiling_type"></v-select>
@@ -1523,7 +1493,7 @@
                     </div>
                     <div class="text-center">
                       <v-btn depressed color="primary" class="mx-auto" @click="goToCart()" v-if="findAbsoluteCost()>0">
-                        Proceed
+                        Proceed i
                       </v-btn>
                       <v-btn depressed color="primary" class="mx-auto" v-else disabled>
                         Proceed
@@ -2746,7 +2716,7 @@
                 </div>
                 <div class="col-3 offset-5">
                   <v-btn depressed color="primary" class="mx-auto" @click="goToCart()">
-                    Proceed
+                    Proceed o
                   </v-btn>
                 </div>
               </div>
@@ -2805,7 +2775,7 @@
                 </div>
                 <div class="col-3 offset-5">
                   <v-btn depressed color="primary" class="mx-auto" @click="goToCart()">
-                    Proceed
+                    Proceed p
                   </v-btn>
                 </div>
               </div>
@@ -3151,11 +3121,11 @@
               <div class="text-center mt-10 d-flex justify-center">
                 <v-btn class="ma-2" outlined color="primary" @click.once="goToSchedule()"
                   :disabled="schedule_serviceTypes_selected.length>0?false:true" v-if="!scheduleStat">
-                  Schedule
+                  Schedule r
                 </v-btn>
                 <v-btn class="ma-2" outlined color="primary" @click.once="scheduleTogether()"
                   v-if="scheduleStat  && !custBookStat">
-                  Schedule
+                  Schedule s
                 </v-btn>
                 <v-btn class="ma-2 text-white" disabled color="grey" v-if="!checkScheduleStatus() && !custBookStat">
                   Submit
