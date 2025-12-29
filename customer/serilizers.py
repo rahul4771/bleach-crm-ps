@@ -4,6 +4,7 @@ from evaluator.models import ServiceType,Evaluation,EvaluationDetails,Evaluation
 from order.models import Order
 from customer.models import CustomerBooking,CartService,CartSchedule,CartServiceFloor
 from bleachadmin.models import ServicePriceRange
+from .models import UserEmail
 
 class ServiceTypeSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -153,3 +154,9 @@ class CartScheduleSerializer(serializers.ModelSerializer):
 	class Meta:
 		model  = CartSchedule
 		fields = ('cart','start_at','end_at','no_of_cleaners','cleaning_hours','hourly_cleaning_duration')
+
+
+class UserEmailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserEmail
+        fields = ['id', 'email', 'created_at']

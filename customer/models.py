@@ -199,3 +199,9 @@ class SubscriptionMail(models.Model):
 
 	def __str__(self):
 		return str(self.customer_email)
+class UserEmail(models.Model):
+    email = models.EmailField(unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.email
