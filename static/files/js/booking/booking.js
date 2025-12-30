@@ -4170,10 +4170,10 @@ try {
   },
   ropeAccessFilter(index=null, floor=null){
 
-    if(index !== null && floor !== null && this.building[index] && this.building[index].floors[floor]) {
-        selectedType = this.building[index].floors[floor].rope_access_type || "Skyline";
+    if (index !== null && floor !== null && this.building[index] && this.building[index].floors[floor]) {
+      selectedType = this.building[index].floors[floor].rope_access_type || this.ropeAccessTypes[0];
     } else {
-        selectedType = "Skyline";
+      selectedType = this.ropeAccessTypes[0];
     }
     this.ropeAccessSize= this.sizeData.filter(size => size.rope_access_type === selectedType);
     this.otherService.size={}
