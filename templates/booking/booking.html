@@ -1605,9 +1605,8 @@
                                               v-model="building[index - 1].floors[floor - 1].rope_access_type"
                                               @change="ropeAccessFilter(index - 1, floor - 1)">
                                               <div>Select Rope Access Type <span style="color:red">*</span></div>
-                                              <v-radio label="Sky Line" value="Skyline" checked></v-radio>
-                                              <v-radio label="Facade Care" value="Facade Care"></v-radio>
-                                              <v-radio label="Facade Reclame" value="Facade Reclame"></v-radio>
+                                              <v-radio v-for="(type, typeIndex) in ropeAccessTypes" :key="type"
+                                                :label="type" :value="type" :checked="typeIndex === 0"></v-radio>
                                             </v-radio-group>
                                           </div>
                                         </div>

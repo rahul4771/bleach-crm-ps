@@ -620,7 +620,8 @@ hourly_cleaning:{
   cleaners:null
 },
 hourly_slots:true,
-current_service:''
+current_service:'',
+ropeAccessTypes: '',
 
       },
       methods: {
@@ -3981,6 +3982,7 @@ getAreaTypes() {
         this.serviceSize = response.data;
         this.parseSize();
         if(this.serviceType == 'Rope Access') {
+          this.ropeAccessTypes = [...new Set(this.sizeData.map(size => size.rope_access_type))];
           this.ropeAccessFilter();
           return;
         }
