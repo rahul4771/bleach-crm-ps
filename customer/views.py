@@ -4,7 +4,6 @@ from django.http import HttpResponse,JsonResponse
 from django_countries import countries
 from django.core.mail import send_mail,EmailMultiAlternatives
 from django.views import View
-from django.views.decorators.csrf import csrf_exempt
 
 from bleach_crm_ps.utils import get_error
 from agent.views import generate_random_username
@@ -9941,8 +9940,10 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 
         return Response(response_dict, status=200)
 	
-@csrf_exempt
-class UserEmailView(View):
+class UserEmailView(APIView):
+	permission_classes = (AllowAny,)
+	authentication_classes = ()
+	
 	def post(self, request, *args, **kwargs):
 		data = getattr(request, "data", request.POST)
 		email = (data.get("email") or "").strip()
