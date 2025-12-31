@@ -9954,7 +9954,7 @@ class UserEmailView(APIView):
 				{
 					"success": False,
 					"error_field": "email",
-					"error_message": "Email is required."
+					"error_message": "Please enter a valid email address."
 				},
 				status=400
 			)
@@ -9963,11 +9963,9 @@ class UserEmailView(APIView):
 		if UserEmail.objects.filter(email__iexact=email).exists():
 			return JsonResponse(
 				{
-					"success": False,
-					"error_field": "email",
-					"error_message": "Email already exists."
+					"success": True,
 				},
-				status=400
+				status=200
 			)
 
 		try:
