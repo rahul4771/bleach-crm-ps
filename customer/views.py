@@ -4,6 +4,7 @@ from django.http import HttpResponse,JsonResponse
 from django_countries import countries
 from django.core.mail import send_mail,EmailMultiAlternatives
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 
 from bleach_crm_ps.utils import get_error
 from agent.views import generate_random_username
