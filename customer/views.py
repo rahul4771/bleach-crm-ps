@@ -54,7 +54,8 @@ from customer.serilizers import UserProfileEditSerializer,CartServiceShowSeriali
 from bleachadmin.serializers import ServiceAddOnsSerializer
 from agent.serializers import UserProfileShowSerializer
 from Api.serializers import ServicePriceRangeSerializer,OrderScheduleShowSerializer,EvaluationBookAPISerializer,SectionAPISerializer,EvaluationDetailsAPISerializer
-
+from .models import UserEmail
+from customer.serilizers import UserEmailSerializer
 
 def get_client_ip(request):
 	x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -9938,3 +9939,55 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
             response_dict['success'] = True
 
         return Response(response_dict, status=200)
+	
+@csrf_exempt
+class UserEmailView(View):
+	def post(self, request, *args, **kwargs):
+		data = getattr(request, "data", request.POST)
+		email = (data.get("email") or "").strip()
+
+		# Validation
+		if not email:
+			return JsonResponse(
+				{
+					"success": False,
+					"error_field": "email",
+					"error_message": "Email is required."
+				},
+				status=400
+			)
+
+		# Duplicate check
+		if UserEmail.objects.filter(email__iexact=email).exists():
+			return JsonResponse(
+				{
+					"success": False,
+					"error_field": "email",
+					"error_message": "Email already exists."
+				},
+				status=400
+			)
+
+		try:
+			user_email = UserEmail.objects.create(email=email)
+
+			return JsonResponse(
+				{
+					"success": True,
+					"user_email": {
+						"id": user_email.id,
+						"email": user_email.email,
+						"created_at": user_email.created_at,
+					}
+				},
+				status=201
+			)
+
+		except Exception as e:
+			return JsonResponse(
+				{
+					"success": False,
+					"error": str(e)
+				},
+				status=500
+			)
