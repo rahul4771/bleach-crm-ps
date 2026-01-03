@@ -5532,18 +5532,38 @@ try {
         var total_highpricewindow_size = 0;
         var total_lowpricewindow_size = 0;
         var total_highpricefacade_size = 0;
-          var total_lowpricefacade_size = 0;
+        var total_lowpricefacade_size = 0;
+        let selected_service = ''
+        let data = '';
+        
+        if (service_to_select === 'Rope Access') {
+          
+          const firstRopeAccess = this.multiServicesBill[k].bill.find(bill => bill.section.rope_access_type)?.section.rope_access_type;
+          if (firstRopeAccess) {
+
+            if (response.data[firstRopeAccess]) {
+              data = response.data[firstRopeAccess]
+              this.max_cleaners.push(response.data[firstRopeAccess].max_cleaners)
+              this.min_cleaners.push(response.data[firstRopeAccess].min_cleaners)
+              this.max_hours.push(response.data[firstRopeAccess].max_hours)
+              this.min_hours.push(response.data[firstRopeAccess].min_hours)
+              selected_service = this.schedule_serviceTypes[k]
+              this.durationData[this.schedule_serviceTypes[k]] = response.data[firstRopeAccess]
+            }
+          }
+        } else {
+          data = response.data
           this.max_cleaners.push(response.data.max_cleaners)
           this.min_cleaners.push(response.data.min_cleaners)
           this.max_hours.push(response.data.max_hours)
           this.min_hours.push(response.data.min_hours)
-           var selected_service=this.schedule_serviceTypes[k]
-          this.durationData[this.schedule_serviceTypes[k]]=response.data
+          selected_service = this.schedule_serviceTypes[k]
+          this.durationData[this.schedule_serviceTypes[k]] = response.data
+        }
 
           /*   Calculation begins */
       
 
-          var data = response.data;
         //to find total size and manhour
         if (selected_service == "Upholstery Cleaning") {
           var total_sofa_size = this.sofa_size;
