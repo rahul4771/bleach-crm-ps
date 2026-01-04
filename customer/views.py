@@ -9954,7 +9954,8 @@ class UserEmailView(APIView):
 				{
 					"success": False,
 					"error_field": "email",
-					"error_message": "Please enter a valid email address."
+					"error_english_message": "Please enter a valid email address.",
+					"error_arabic_message": "يرجى إدخال عنوان بريد إلكتروني صالح."
 				},
 				status=400
 			)
@@ -9964,6 +9965,9 @@ class UserEmailView(APIView):
 			return JsonResponse(
 				{
 					"success": True,
+					"exists": True,
+					"english_message": "You are already notified.",
+					"arabic_message": "لقد تم إعلامك بالفعل."
 				},
 				status=200
 			)
@@ -9974,6 +9978,9 @@ class UserEmailView(APIView):
 			return JsonResponse(
 				{
 					"success": True,
+					"new": True,
+					"english_message": "We’ll notify you once the service is live!",
+					"arabic_message": "سنقوم بإبلاغك بمجرد تفعيل الخدمة!",
 					"user_email": {
 						"id": user_email.id,
 						"email": user_email.email,
