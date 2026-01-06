@@ -9980,7 +9980,7 @@ class UserEmailView(APIView):
 					"success": True,
 					"new": True,
 					"english_message": "We’ll notify you once the service is live!",
-					"arabic_message": "سنقوم بإبلاغك بمجرد تفعيل الخدمة!",
+					"arabic_message": "سنقوم بإبلاغك بمجرد أن تكون الخدمة متاحة",
 					"user_email": {
 						"id": user_email.id,
 						"email": user_email.email,
