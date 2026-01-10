@@ -1601,12 +1601,21 @@
                                         </div>
                                         <div class="row">
                                           <div clas="col-md-6 text-center" v-if="serviceType == 'Rope Access'">
-                                            <v-radio-group row class="p-4"
+                                            <v-radio-group
+                                              row
+                                              class="p-4"
                                               v-model="building[index - 1].floors[floor - 1].rope_access_type"
-                                              @change="ropeAccessFilter(index - 1, floor - 1)">
+                                              @change="ropeAccessFilter(index - 1, floor - 1)"
+                                              :rules="[v => !!v || 'Rope Access Type is required']"
+                                              required
+                                            >
                                               <div>Select Rope Access Type <span style="color:red">*</span></div>
-                                              <v-radio v-for="(type, typeIndex) in ropeAccessTypes" :key="type"
-                                                :label="type" :value="type" ></v-radio>
+                                              <v-radio
+                                                v-for="(type, typeIndex) in ropeAccessTypes"
+                                                :key="type"
+                                                :label="type"
+                                                :value="type"
+                                              ></v-radio>
                                             </v-radio-group>
                                           </div>
                                         </div>
@@ -3610,7 +3619,7 @@
 <script type="text/javascript"
   src="https://cdn.jsdelivr.net/npm/browser-image-compression@1.0.13/dist/browser-image-compression.js"></script>
 
-<script src="{% static 'files/js/booking/booking_new.js' %}"></script>
+<script src="{% static 'files/js/booking/booking.js' %}"></script>
 
 
 
