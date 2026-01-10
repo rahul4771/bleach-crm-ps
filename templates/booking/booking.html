@@ -132,7 +132,7 @@
               <v-spacer></v-spacer>
 
               <v-btn color="primary" text @click="reconfirmScheduler">
-                Continue t
+                Continue
               </v-btn>
 
               <v-btn color="primary" text @click="reconfirmation_dialog = false">
@@ -159,7 +159,7 @@
               <v-spacer></v-spacer>
 
               <v-btn color="primary" text @click="resetScheduler">
-                Continue u
+                Continue
               </v-btn>
 
               <v-btn color="primary" text @click="confirmation_dialog = false">
@@ -703,7 +703,6 @@
               <v-switch v-model="out_of_shift" label="Out of Shift Cleaning" class="mt-4 ml-2 not-required"
                 @change="clearOutOfShift()"></v-switch>
             </div>
-            asfdghjklkjhgfdsdfghjk,m.,mnvbc
             <!--- Hourly Cleaning Begins Here-->
             <div v-if="current_service==' Hourly Cleaning'">
               <div class="row m-0 justify-center">
@@ -781,6 +780,7 @@
             </div>
             <!--- Hourly Cleaning Ends Here-->
             <div v-if="current_service!=' Hourly Cleaning'">
+            asfdghjklkjhgfdsdfghjk,m.,mnvbc
 
               <div class="row " style="margin:0 !important" v-if="selectedDuration.hours">
                 <div class="col-md-4">
@@ -1606,7 +1606,7 @@
                                               @change="ropeAccessFilter(index - 1, floor - 1)">
                                               <div>Select Rope Access Type <span style="color:red">*</span></div>
                                               <v-radio v-for="(type, typeIndex) in ropeAccessTypes" :key="type"
-                                                :label="type" :value="type" :checked="typeIndex === 0"></v-radio>
+                                                :label="type" :value="type" ></v-radio>
                                             </v-radio-group>
                                           </div>
                                         </div>
@@ -2166,7 +2166,7 @@
 
                                                 <v-btn color="primary"
                                                   v-on:click="nextApartment(index - 1,floor - 1,apindex)" class="mb-2">
-                                                  Continue v
+                                                  Continue
                                                 </v-btn>
 
                                                 <v-btn text @click="e.building[index - 1].floors[floor - 1].e = apindex"
@@ -2186,11 +2186,11 @@
                       </v-alert>
                       <v-btn color="primary" v-on:click="nextFloor(index - 1, floor)" class="mb-2 mt-2"
                         v-if="!building[index - 1].completed && !building[index-1].floors[floor-1].apartment">
-                        Continue q
+                        Continue
                       </v-btn>
                       <v-btn color="primary" v-on:click="nextFloor(index - 1, floor)" class="mb-2 mt-2"
                         v-if="!building[index - 1].completed && building[index-1].floors[floor-1].apartment && building[index-1].floors[floor-1].completed">
-                        Continue r
+                        Continue
                       </v-btn>
                       <!--  <v-btn
                               text
@@ -2215,7 +2215,7 @@
                         </v-alert>
                         <v-btn color="primary" :id="'btn-' + index" @click="nextTab(index)" class="mb-2 mt-2"
                           v-if="!buildingsCompleted">
-                          Continue s
+                          Continue
                         </v-btn>
                       </div>
                     </div>
@@ -3120,11 +3120,11 @@
               <div class="text-center mt-10 d-flex justify-center">
                 <v-btn class="ma-2" outlined color="primary" @click.once="goToSchedule()"
                   :disabled="schedule_serviceTypes_selected.length>0?false:true" v-if="!scheduleStat">
-                  Schedule r
+                  Schedule
                 </v-btn>
                 <v-btn class="ma-2" outlined color="primary" @click.once="scheduleTogether()"
                   v-if="scheduleStat  && !custBookStat">
-                  Schedule s
+                  Schedule
                 </v-btn>
                 <v-btn class="ma-2 text-white" disabled color="grey" v-if="!checkScheduleStatus() && !custBookStat">
                   Submit
@@ -3610,7 +3610,7 @@
 <script type="text/javascript"
   src="https://cdn.jsdelivr.net/npm/browser-image-compression@1.0.13/dist/browser-image-compression.js"></script>
 
-<script src="{% static 'files/js/booking/booking.js' %}"></script>
+<script src="{% static 'files/js/booking/booking_new.js' %}"></script>
 
 
 
