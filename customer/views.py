@@ -3247,6 +3247,17 @@ class GetServiceProductivity(APIView):
 			service_productivity['min_hours'] 		 = 2
 			service_productivity['min_cleaners']     = 1
 			service_productivity['max_cleaners']     = 10
+		elif service_type         == 'Rope Access':
+			serviceproductivities = ServiceProductivity.objects.select_related('service_type').filter(service_type__name=service_type)
+			for serviceproductivity in serviceproductivities:
+				if serviceproductivity.name not in service_productivity:
+					service_productivity[serviceproductivity.name] = {}
+					
+				service_productivity[serviceproductivity.name]['perhour_cleaning']	= serviceproductivity.perhour_cleaning
+				service_productivity[serviceproductivity.name]['max_hours']			= serviceproductivity.max_hours
+				service_productivity[serviceproductivity.name]['min_hours']			= serviceproductivity.min_hours
+				service_productivity[serviceproductivity.name]['min_cleaners']      = serviceproductivity.min_cleaners
+				service_productivity[serviceproductivity.name]['max_cleaners']      = serviceproductivity.max_cleaners
 		else:
 			serviceproductivity = ServiceProductivity.objects.select_related('service_type').get(service_type__name=service_type)
 			service_productivity['perhour_cleaning'] = serviceproductivity.perhour_cleaning
@@ -3304,6 +3315,7 @@ class GetMultipleServiceCleaningSlotes(APIView):
             'Car Parking Umbrella': {'is_carparkingumbrella_skill': True},
             'Window Cleaning': {'is_window_skill': True},
             'Outdoor Cleaning': {'is_outdoor_skill': True},
+			'Rope Access': {'is_window_skill': True},
         }
 
         # Base querysets for cleaners and leaders
@@ -9791,6 +9803,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
                     'Car Parking Umbrella': 'is_carparkingumbrella_skill',
                     'Window Cleaning': 'is_window_skill',
                     'Outdoor Cleaning': 'is_outdoor_skill',
+					# 'Rope Access': 'is_rope_access_skill',
                 }
 
                 if service_type in skill_mapping:
