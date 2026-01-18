@@ -1623,7 +1623,7 @@
                                       <div class="p-2" v-if="!building[index - 1].floors[floor - 1].apartment">
 
                                         <div class="row">
-                                          <div class="col-md-6">
+                                          <div class="col-md-6" v-if="serviceType == 'Rope Access'">
                                             <v-select :items="ropeAccessSize" item-text="combinedSize"
                                               v-model="building[index - 1].floors[floor - 1].size" label="Size"
                                               return-object :attach="true" :rules="[v => !!v || 'Size is required']"
@@ -1634,6 +1634,13 @@
                                             <v-select :items="['Outside & Inside', 'Outside', 'Inside']" label="Sides"
                                               :rules="[v => !!v || 'Sides is required']" required
                                               v-model="building[index - 1].floors[floor - 1].sides">
+                                            </v-select>
+                                          </div>
+                                           <div class="col-md-6" v-if="serviceType != 'Rope Access'">
+                                            <v-select :items="sizeData" item-text="combinedSize"
+                                              v-model="building[index - 1].floors[floor - 1].size" label="Size"
+                                              return-object :attach="true"  :rules="[v => !!v || 'Size is required']"
+                                              required>
                                             </v-select>
                                           </div>
                                           <div class="col-md-6" v-if="serviceType != 'Rope Access'">
