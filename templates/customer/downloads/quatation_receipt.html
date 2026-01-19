@@ -1,0 +1,721 @@
+{% load static %}
+{% load mathfilters %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Bleach Cleaning Services | Quotation</title>
+
+    <style>
+        /* Load Custom Fonts */
+        @font-face {
+            font-family: AvenirLTStd;
+            src: url("{% static 'files/font/AvenirLTStd-Book.otf' %}");
+        }
+
+        @font-face {
+            font-family: FarCasablanca;
+            src: url("{% static 'files/font/Far_Casablanca.otf' %}");
+        }
+
+        /* =====================================================
+   PAGE SETUP (CRITICAL)
+===================================================== */
+        @page {
+            size: A4;
+            margin-top: 4cm;
+            margin-bottom: 2cm;
+            margin-left: 0;
+            margin-right: 0;
+
+            @top-center {
+                content: element(page-header);
+            }
+
+            @bottom-center {
+                content: "";
+                background-image: url("{% static 'files/images/customer/fo2.png' %}");
+                background-repeat: no-repeat;
+                background-size: 100%;
+                background-position: center;
+                height: 2cm;
+                width: 100%;
+            }
+        }
+
+
+        /* =====================================================
+   RESET
+===================================================== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12px;
+            line-height: 1;
+            color: #555;
+        }
+
+        /* =====================================================
+   RUNNING HEADER
+===================================================== */
+        header {
+            position: running(page-header);
+            width: 100%;
+        }
+        
+
+        /* =====================================================
+   HEADER CONTENT
+===================================================== */
+        .pdf-header {
+            width: 100%;
+        }
+
+        .pdf-header img {
+            height: 45px;
+            display: block;
+            margin-bottom: 0px;
+        }
+
+        /* =====================================================
+   LAYOUT
+===================================================== */
+        #container {
+            width: 100%;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        section {
+            width: 100%;
+            page-break-inside: auto;
+        }
+
+        /* =====================================================
+   TITLE
+===================================================== */
+        #qu-text {
+            text-align: center;
+            font-family: AvenirLTStd, Arial, sans-serif;
+            font-weight: 100;
+            font-size: 48px;
+            color: #289BAC !important;
+            margin-top: -18px;
+            margin-bottom: 20px;
+        }
+
+        /* =====================================================
+   CUSTOMER SECTION
+===================================================== */
+        #customer_container {
+            display: table;
+            width: 100%;
+            background: #EDF1F6;
+            padding: 20px;
+            margin-top: 18px;
+            margin-bottom: 25px;
+            page-break-inside: avoid;
+        }
+
+        #left_id,
+        #right_id {
+            display: table-cell;
+            width: 50%;
+            vertical-align: top;
+            font-size: 10px;
+            padding: 5px 10px;
+        }
+
+        #left_id div,
+        #right_id div {
+            margin-bottom: 15px;
+        }
+
+        #left_id2 div {
+            margin-bottom: 10px;
+        }
+
+        #left_id2 {
+            float: left;
+            width: 380px;
+        }
+
+        #right_id2 {
+            float: right;
+            right: 0;
+            width: 350px;
+
+        }
+
+        #customer-text {
+            font-weight: bold;
+            font-size: 16px;
+            float: left;
+
+        }
+
+        #customer-name {
+            font-family: AvenirLTStd !important;
+            font-weight: bold;
+            font-size: 14px;
+            float: right;
+            right: 0;
+
+        }
+
+        #address-text {
+            font-family: AvenirLTStd !important;
+            font-size: 14px;
+            display: inline-block;
+
+        }
+
+        #customer-address {
+            font-family: AvenirLTStd !important;
+            text-align: right;
+            font-size: 14px;
+            float: right;
+            right: 0;
+            width: 250px;
+        }
+
+        #customer-address2 {
+            font-family: AvenirLTStd !important;
+            text-align: right;
+            font-size: 14px;
+            float: right;
+            right: 0;
+            width: 250px;
+        }
+
+        #contact-text {
+            font-family: AvenirLTStd !important;
+            font-size: 14px;
+            display: inline-block;
+        }
+
+        #id_instruction {
+            margin-top: 20px;
+            font-family: AvenirLTStd !important;
+            font-size: 14px;
+
+        }
+
+        #contact-text2 {
+            font-family: AvenirLTStd !important;
+            font-size: 14px;
+            display: inline-block;
+        }
+
+        #cus-head {
+            font-family: AvenirLTStd !important;
+            font-size: 18px;
+            display: inline-block;
+        }
+
+        #contact-number {
+            text-align: right;
+            font-size: 14px;
+            float: right;
+            right: 0;
+            font-family: AvenirLTStd !important;
+        }
+
+        #contact-number2 {
+            text-align: right;
+            font-size: 14px;
+            float: right;
+            right: 0;
+            font-family: AvenirLTStd !important;
+        }
+
+        #quotation_data {
+            float: right;
+            right: 0;
+            width: 350px;
+            margin-top: 10px;
+        }
+
+        #quotation_data div {
+            margin-bottom: 10px;
+        }
+
+        /* =====================================================
+   TABLE
+===================================================== */
+        #table_section {
+            margin-top: 25px;
+            margin-bottom: 25px;
+        }
+
+        #soa_table2 {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #soa_table2 thead {
+            display: table-header-group;
+        }
+
+        #soa_table2 th {
+            background-color: #EDF1F6;
+            color: #303030 !important;
+            font-weight: 400;
+            border: 0.5px solid #528CE6;
+            padding: 8px;
+            font-family: AvenirLTStd !important;
+            text-align: center;
+        }
+
+        #soa_table2 td {
+            vertical-align: middle;
+            border: 0.5px solid #528CE6;
+            padding: 15px;
+            font-family: AvenirLTStd !important;
+        }
+
+        #soa_table2 tr {
+            page-break-inside: avoid;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        /* =====================================================
+   PAYMENT & TOTAL SECTIONS
+===================================================== */
+
+        #paymentmode-sec {
+            font-weight: bold;
+            margin-top: 10px;
+            font-family: AvenirLTStd, Arial, sans-serif;
+            font-size: 16px;
+            width: 100%;
+            float: left;
+            margin-left: 10px;
+        }
+
+        #lastsection {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            float: left;
+            width: 400px;
+            margin-left: 10px;
+            page-break-inside: avoid;
+        }
+
+        #lastsection div {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        #paymenttime {
+            font-size: 14px;
+            font-family: AvenirLTStd, Arial, sans-serif;
+        }
+
+        #paymenttime-amount {
+            font-family: AvenirLTStd !important;
+            font-size: 14px;
+            float: right;
+            right: 0;
+            display: flex;
+        }
+
+        #total-section {
+            margin-top: 10px;
+            float: right;
+            right: 0;
+            width: 300px;
+            page-break-inside: avoid;
+        }
+
+        #total-section div {
+            font-family: AvenirLTStd !important;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        #final-section{
+            margin-left: 300px;
+            margin-top: 20px;
+            float: right;
+            right: 0;
+            width: 300px;
+        }
+
+        #total_id {
+            font-weight: 400;
+            font-size: 16px;
+            color: #289BAC;
+            font-family: AvenirLTStd, Arial, sans-serif;
+        }
+
+        #total_amount {
+            font-size: 40px;
+            font-weight: 300;
+            color: #289BAC;
+            margin: 0;
+            text-align: center;
+            font-family: AvenirLTStd, Arial, sans-serif;
+        }
+
+        #kd-font {
+            font-size: 30px;
+            font-weight: 100;
+        }
+
+        /* Clear floats after sections */
+        #paymentmode-sec::after,
+        #lastsection::after,
+        #total-section::after,
+        #final-section::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        .bold {
+            font-weight: 600 !important;
+        }
+
+        .mr-4 {
+            margin-right: 4rem !important;
+        }
+
+        .d-flex {
+            display: flex !important;
+        }
+
+        .space-between {
+            justify-content: space-between !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =====================================================
+     RUNNING HEADER
+===================================================== -->
+    <header>
+        <div class="pdf-header">
+            <img src="{% static 'files/images/customer/logo3.png' %}" alt="Bleach Logo">
+        </div>
+    </header>
+    <div id="container">
+
+        <!-- ================= TITLE ================= -->
+        <section>
+            <h1 id="qu-text">QUOTATION</h1>
+        </section>
+
+        <!-- ================= CUSTOMER ================= -->
+        <section id="customer_container">
+            {% for evaluation_detail in order.evaluation.evaluationdetails %}
+            {% if forloop.first %}
+            <div id="left_id">
+                <div>
+                    <span id="contact-text">Customer</span>
+                    <span id="customer-name">{{evaluation_detail.evaluation.customer.name}}</span>
+                </div>
+                <div>
+                    <span id="contact-text">Contact No</span>
+                    <span id="contact-number">{{evaluation_detail.evaluation.customer.mobile_number}}</span>
+                </div>
+                <div>
+                    <span id="contact-text">Email</span>
+                    <span id="contact-number">{{evaluation_detail.evaluation.customer.email}}</span>
+                </div>
+                <div>
+                    <span id="address-text">Address </span>
+                    <span id="customer-address">
+                        {{evaluation_detail.address.apartment}},
+                        {% if evaluation_detail.address.floor%}
+                        {{evaluation_detail.address.floor}}
+                        {% else %}
+                        {% endif %}
+                        {{evaluation_detail.address.building}},{{evaluation_detail.address.block}},
+                        {{evaluation_detail.address.street}},
+                        {% if evaluation_detail.address.avenue%}
+                        {{evaluation_detail.address.avenue}}
+                        <br>
+                        {% else %}
+                        {% endif%}
+                        <br>
+                        {{evaluation_detail.address.area.name}}, {{evaluation_detail.address.governorate.name}}
+                    </span>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+
+            <div id="right_id">
+                <div>
+                    <span id="contact-text">Quotation Number</span>
+                    <span id="contact-number"> <b>{{order.order_no}}</b> </span>
+                </div>
+                <div>
+                    <span id="contact-text">Initiated Date</span>
+                    <span id="contact-number">{{order.evaluation.created|date:'d-m-Y'}}</span>
+                </div>
+                <div>
+                    <span id="contact-text">Due Date</span>
+                    <span id="contact-number">{{order.evaluation.quatation_expiry_date|date:'d-m-Y'}}</span>
+                </div>
+                {% if order.evaluation.evaluator %}
+                <div>
+                    <span id="contact-text">Evaluator</span>
+                    <span id="contact-number">{{order.evaluation.evaluator.name}}</span>
+                </div>
+                {% endif %}
+                <div>
+                    <span id="contact-text">Payment Policy</span>
+                    <span id="contact-number">{{order.evaluation.payment_method}}</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TABLE ================= -->
+        <section id="table_section">
+            <table id="soa_table2">
+                <thead>
+                    <tr>
+                        <th style="width:40%">Service</th>
+                        <th>Size</th>
+                        <th>Visit</th>
+                        <th>Unit Price</th>
+                        <th>Net Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for evaluation_detail in order.evaluation.evaluationdetails %}
+                    {% for evaluation_book in evaluation_detail.evaluationbooks %}
+                    {% for book_section in evaluation_book.booksections %}
+                    {% if book_section.evaluation_book.service_type.name != 'Kitchen Appliances' %}
+                    <tr>
+                        <td>{{ evaluation_book.service_type }} - {{ book_section.section_name }}</td>
+                        <td class="text-center">
+                            {{ book_section.size }}
+                            {% if evaluation_book.service_type.name == 'Upholstery Cleaning' %}
+
+                                {% for price_range in price_ranges %}
+                                    {% if price_range.name == book_section.size and price_range.service_type == evaluation_book.service_type and price_range.upholstery_type == book_section.upholstery_type %}
+                                        ({{ price_range.minimum_area|floatformat:'0' }}-{{ price_range.maximum_area|floatformat:'0' }}
+                                        {% if price_range.upholstery_type == 'SOFA' %}Seater{% endif %})
+                                    {% endif %}
+                                {% endfor %}
+
+                            {% else %}
+
+                                {% for price_range in price_ranges %}
+                                    {% if price_range.name == book_section.size and price_range.service_type == evaluation_book.service_type and evaluation_book.service_type.name != 'Mattress Cleaning' and price_range.is_newkitchen == book_section.new_kitchen and price_range.is_cabinet == book_section.is_cabinet and price_range.is_highprice_facade == book_section.is_highprice_facade and price_range.is_highprice_window == book_section.is_highprice_window %}
+                                        ({{ price_range.minimum_area|floatformat:'0' }}-{{ price_range.maximum_area|floatformat:'0' }} Sqm)
+                                    {% endif %}
+                                {% endfor %}
+
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if evaluation_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}
+                            {{ book_section.section_cleanings|floatformat:"-1" }}{% endif %}
+                        </td>
+                        <td class="text-right">{{ book_section.section_cost|floatformat:"3" }}</td>
+                        <td class="text-right">{{ book_section.section_net_cost|floatformat:"3" }}</td>
+                    </tr>
+                    {% endif %}
+
+                    {% if book_section.sectionaddons %}
+                    {% for addon in book_section.sectionaddons %}
+                    <!-- ADDONS BEGINS HERE -->
+                    <tr>
+                        <td>
+                            {{book_section.section_name}} - {{addon.name}} (x{{addon.quantity|default_if_none:'1'}})
+                            <div class="d-flex mb-10"> {% if evaluation_book.status == 'CANCELLED' %} <div
+                                    class="status-dot cancel-chip-bg"></div>
+                                <div class="ml-2">Cancelled</div> {% endif %}
+                            </div>
+
+                        </td>
+                        <td>
+                            {{addon.size|default_if_none:'-'}}
+                        </td>
+                        <td style="text-align: right;">
+                            {% if evaluation_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else
+                            %}{{book_section.section_cleanings|floatformat:"-1"}}{% endif %}
+                        </td>
+                        <td style="text-align: right;">
+                            {{addon.addon_cost|floatformat:'3'}}
+                        </td>
+                        <td style="text-align: right;">
+                            {{addon.addon_net_cost|floatformat:'3'}}
+                        </td>
+                    </tr>
+                    <!-- ADDONS ENDS HERE -->
+                    {% endfor %}
+                    {% endif %}
+
+                    {% endfor %}
+                    {% endfor %}
+                    {% endfor %}
+
+                    <tr>
+                        <td colspan="4"> Sub Total</td>
+                        <td style="text-align: right;">{{order.evaluation.estimated_cost|floatformat:'3'}} KD</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- ================= TOTAL ================= -->
+        {% if order.evaluation.payment_method == 'BREAKDOWN' %}
+        <section id="paymentmode-sec">
+            <span> BREAKDOWN Payment Mode</span>
+        </section>
+        <section id="lastsection" >
+            <div>
+                <span id="paymenttime">
+                    Payment Before Cleaning
+                </span>
+                <span id="paymenttime-amount">
+                    <strong>{{order.evaluation.before_cleaning_amount|floatformat:'3'}}</strong> KD
+                </span>
+            </div>
+            <div>
+                <span id="paymenttime">
+                    Payment After Cleaning
+                </span>
+                <span id="paymenttime-amount">
+                    <strong>{{order.evaluation.after_cleaning_amount|floatformat:'3'}}</strong> KD
+                </span>
+            </div>
+        </section>
+        {% endif %}
+
+        {% if order.evaluation.payment_method == 'PREPAID' %}
+        <section id="lastsection">
+            <div class="mr-4">
+                <span id="paymenttime">
+                    Payment Before Cleaning
+                </span>
+                <span id="paymenttime-amount" >
+                    <strong>{{order.total_amount|floatformat:"3"}}</strong> KD
+                </span>
+            </div>
+        </section>
+        {% endif %}
+
+        {% if order.evaluation.payment_method == 'POSTPAID' %}
+        <section id="lastsection">
+            <div class="mr-4">
+                <span id="paymenttime">
+                    Payment After Cleaning
+                </span>
+                <span id="paymenttime-amount" >
+                    <strong>{{order.total_amount|floatformat:"3"}}</strong> KD
+                </span>
+            </div>
+        </section>
+        {% endif %}
+
+        <section id="total-section">
+            <div class="d-flex space-between">
+                <span id="paymenttime">
+                    <strong>Sub Total</strong>
+                </span>
+                <span id="paymenttime-amount">
+                    <strong>{{order.evaluation.estimated_cost|floatformat:'3'}}</strong>
+                </span>
+            </div>
+
+            {% if order.evaluation.discount != 0 %}
+            <div class="d-flex space-between">
+                <span id="paymenttime">
+                    <strong>Discount</strong>
+                </span>
+                <span id="paymenttime-amount">
+                    <strong>-{{order.evaluation.discount|floatformat:"3"}}</strong>
+                </span>
+            </div>
+            {% endif %}
+
+            {% if order.evaluation.additional_charge != 0 %}
+            <div class="d-flex space-between">
+                <span id="paymenttime">
+                    <strong>Additional Charge(s)</strong>
+                </span>
+                <span id="paymenttime-amount">
+                    <strong>{{order.evaluation.additional_charge|floatformat:"3"}}</strong>
+                </span>
+            </div>
+            {% endif %}
+
+            {% if order.evaluation.credit_amount != 0 %}
+            <div class="d-flex space-between">
+                <span id="paymenttime">
+                    <strong>Credit Added</strong>
+                </span>
+                <span id="paymenttime-amount">
+                    <strong>-{{order.evaluation.credit_amount|floatformat:"3"}}</strong>
+                </span>
+            </div>
+            {% endif %}
+
+            {% if order.evaluation.fine_amount != 0 %}
+            <div class="d-flex space-between">
+                <span id="paymenttime">
+                    <strong>Fine</strong>
+                </span>
+                <span id="paymenttime-amount">
+                    <strong>-{{order.evaluation.fine_amount|floatformat:'3'}}</strong>
+                </span>
+            </div>
+            {% endif %}
+
+            {% if order.evaluation.writeback_amount != 0 %}
+            <div class="d-flex space-between">
+                <span id="paymenttime">
+                    <strong>Write-Off Amount</strong>
+                </span>
+                <span id="paymenttime-amount">
+                    <strong>-{{order.evaluation.writeback_amount|floatformat:'3'}}</strong>
+                </span>
+            </div>
+            {% endif %}
+
+            {% if order.evaluation.is_promocode_applied == True %}
+            <div class="d-flex space-between">
+                <span id="paymenttime">
+                    <strong>Coupon Added</strong>
+                </span>
+                <span id="paymenttime-amount">
+                    <strong>-{{order.evaluation.promocode_amount|floatformat:"3"}}</strong>
+                </span>
+            </div>
+            {% endif %}
+
+        </section>
+        <section id="final-section">
+            <span id="total_id">Total</span>
+            <h1 id="total_amount">
+                {{order.total_amount|floatformat:"3"}} <span id="kd-font">KD</span>
+            </h1>
+        </section>
+        <div class="page-bottom-spacer"></div>  
+    </div>
+    
+</body>
+
+</html>
