@@ -92,5 +92,11 @@ urlpatterns = [
         url(r'^add-measurement-unit/$', views.MeasurementUnitsAPIView.as_view(), name='add-measurement-unit'),
 		url(r'^update-measurement-unit/(?P<measurement_unit_id>[-\w]+)$', views.MeasurementUnitsAPIView.as_view(), name='update-measurement-unit'),
         url(r'^delete-measurement-unit/(?P<measurement_unit_id>[-\w]+)$', views.MeasurementUnitsAPIView.as_view(), name='delete-measurement-unit'),
+        url(r'^create-service-group/$', views.ServiceGroupAPIView.as_view(), name='create-service-group'),
+        url(r'^staging/productivity/get-service-groups/$', views.ServiceGroupAPIView.as_view(), name='get-service-groups'),
+        url(r'^delete-service-group/(?P<service_group_id>[-\w]+)/$', views.ServiceGroupAPIView.as_view(), name='delete-group-type'),
+        url(r'^update-service-group/(?P<service_group_id>[-\w]+)/$', views.ServiceGroupAPIView.as_view(), name='update-service-group'),
+    
+        ]
 		url(r'^staging/booking/(?P<evaluation_detail_id>[-\w]+)/$',views.StagingBooking.as_view(),name='staging-booking')        
 	]

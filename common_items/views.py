@@ -30,7 +30,7 @@ from django.db.models import Prefetch
 from django.contrib import messages
 
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
-from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons,CleaningMethod,CleaningSection,ServiceType,AreaType
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons,CleaningMethod,CleaningSection,ServiceType,AreaType,ServiceGroup 
 from order.models import Promocode,OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia,CancellOrderAmountHistory,XeroInvoice
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
@@ -49,6 +49,8 @@ from Api.models import XeroConnection
 
 from django.core.mail import send_mail,EmailMultiAlternatives
 from django.template.loader import render_to_string
+
+
 
 #restframe work 
 from rest_framework.views import APIView
@@ -6384,6 +6386,7 @@ def add_service_type(request):
 	if request.method == 'POST':
 		service_name =  request.POST.get('new_service_name')
 		service_name_arabic =  request.POST.get('new_service_name_arabic')
+		service_group_id = request.POST.get('new_service_group_id')
 		is_active =  True if request.POST.get('new_service_is_active') == 'active' else False
 
 		# Backend validation for duplicate names
@@ -6392,17 +6395,24 @@ def add_service_type(request):
 		if ServiceType.objects.filter(name_arabic__iexact=service_name_arabic).exists():
 			return JsonResponse({'success': False, 'error_field': 'new_service_name_arabic', 'error_message': 'Service name in Arabic already exists.'})
 		
+		service_group = ServiceGroup.objects.filter(id=service_group_id).first()
+		if not service_group:
+			return JsonResponse({'success': False, 'error_field': 'new_service_group_id', 'error_message': 'Invalid service group.'})
+		
 		try:
 			service_type = ServiceType.objects.create(
 				name=service_name,
 				name_arabic=service_name_arabic,
+				service_group=service_group,
 				is_active=is_active
 			)
 			st_obj = {
 				"id": service_type.id,
 				"name": service_type.name,
 				"name_arabic": service_type.name_arabic,
-				"is_active": service_type.is_active,
+				"service_group_id": service_type.service_group.id,
+				"updated_at": service_type.updated_at,
+				"is_active": service_type.is_active
 			}
 			return JsonResponse({'success': True, 'service_type': st_obj})
 		except Exception as e:
@@ -6427,6 +6437,7 @@ class ServiceTypeAPIView(APIView):
 
 		name = safe_str(data.get("new_service_name"))
 		name_arabic = safe_str(data.get("new_service_name_arabic"))
+		service_group_id = safe_str(data.get("new_service_group_id"))
 		is_active = True if data.get("new_service_is_active") == "active" else False
 
 		if not name:
@@ -6442,16 +6453,23 @@ class ServiceTypeAPIView(APIView):
 
 		if name_arabic and ServiceType.objects.filter(name_arabic__iexact=name_arabic).exclude(id=service_type.id).exists():
 			return JsonResponse({"success": False, "error_field": "new_service_name_arabic", "error_message": "Service type with this name (Arabic) already exists."}, status=400)
+		
+		if not ServiceGroup.objects.filter(id=service_group_id).first():
+			return JsonResponse({"success": False, "error_field": "new_service_group_id", "error_message": "Selected invalid service group"}, status=400)
 
 		service_type.name = name
 		if name_arabic is not None:
 			service_type.name_arabic = name_arabic
+			service_type.service_group= ServiceGroup.objects.get(id=service_group_id)
 			service_type.is_active = is_active
+		
 		service_type.save()
+		
 		st_obj = {
 			"id": service_type.id,
 			"name": service_type.name,
 			"name_arabic": service_type.name_arabic,
+			"service_group_id": service_type.service_group.id,
 			"is_active": service_type.is_active,
 		}
 
@@ -7038,7 +7056,7 @@ class StagingProductivity(IsAuthenticated,View):
 
 class ProductivityServiceTypeAPIView(APIView):
 	def get(self, request):
-		service_types = list(ServiceType.objects.values('id','name','name_arabic', 'is_active','updated'))
+		service_types = list(ServiceType.objects.values('id','name','name_arabic','service_group_id', 'is_active','updated'))
 
 		service_productivities = []
 		for p in ServiceProductivity.objects.select_related('service_type').all():
@@ -7203,6 +7221,186 @@ class MeasurementUnitsAPIView(APIView):
 			return JsonResponse({"success": True, "measurement_unit": mu_data}, status=201)
 		except Exception as e:
 			return JsonResponse({"success": False, "error_message": str(e)}, status=500)
+	
+class ServiceGroupAPIView(APIView):
+
+    def get(self, request):
+		# Fetch service groups
+        service_groups = []
+        for sg in ServiceGroup.objects.all():
+            service_groups.append({
+                'id': sg.id,
+                'service_name': sg.service_name,
+                'service_name_arabic': sg.service_name_arabic,
+                'image_path': sg.image_path.url if sg.image_path else None,
+                'updated_at': sg.updated_at,
+                'status': sg.status,				 
+            })
+
+        return JsonResponse({'service_groups': service_groups})
+	
+    def post(self, request, *args, **kwargs):
+        data = getattr(request, "data", request.POST)
+
+        service_name = (data.get("service_name") or "").strip()
+        service_name_arabic = (data.get("service_name_arabic") or "").strip()
+        status = data.get("status", "active")
+        is_active = True if status == "active" else False
+
+        # Image handling
+        image_path = None
+        if request.FILES.get('image_path'):
+           image_path = request.FILES.get('image_path')
+        
+
+        # Validation
+        if not service_name:
+            return JsonResponse(
+                {"success": False, "error_field": "service_name", "error_message": "Service name is required."},
+                status=400,
+            )
+
+        # Duplicate name check
+        if ServiceGroup.objects.filter(service_name__iexact=service_name).exists():
+            return JsonResponse(
+                {"success": False, "error_field": "service_name", "error_message": "Service group already exists."},
+                status=400,
+            )
+
+        try:
+            sg = ServiceGroup.objects.create(
+                service_name=service_name,
+                service_name_arabic=service_name_arabic,
+				            image_path=image_path,
+                status=is_active,
+            )
+
+            return JsonResponse(
+                {
+                    "success": True,
+                    "service_group": {
+                        "id": sg.id,
+                        "service_name": sg.service_name,
+                        "service_name_arabic": sg.service_name_arabic,
+                        "image_path": sg.image_path.url if sg.image_path else None,
+                        "updated_at": sg.updated_at,
+                        "status": sg.status,
+                    },
+                },
+                status=201,
+            )
+
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)}, status=500)
+
+    def put(self, request, *args, **kwargs):
+        data = getattr(request, "data", request.data)
+
+        group_id = kwargs.get("service_group_id")
+
+        # Validate group_id
+        try:
+            group_id = int(group_id)
+        except:
+            return JsonResponse({"success": False, "error": "group_id required"}, status=400)
+
+        sg_qs = ServiceGroup.objects.filter(id=group_id)
+        if not sg_qs.exists():
+            return JsonResponse({"success": False, "error": "Service group not found"}, status=404)
+
+        sg = sg_qs.first()
+
+        # Form fields
+        def clean(val):
+            return val.strip() if isinstance(val, str) and val.strip() else None
+
+        service_name = clean(data.get("service_name"))
+        if not service_name:
+            return JsonResponse(
+                {"success": False, "error_field": "service_name", "error_message": "Service name is required."},
+                status=400,
+            )
+
+        service_name_arabic = clean(data.get("service_name_arabic")) or ""
+        status = data.get("status", "active")
+        is_active = True if status == "active" else False
+
+								# Image upload
+        image_path = None
+        if request.FILES.get('image_path'):
+									if sg.image_path:
+										try:
+											if os.path.isfile(sg.image_path):
+												os.remove(sg.image_path)
+										except Exception:
+											pass
+									image_path = request.FILES.get('image_path')
+        
+
+        # Duplicate check (if updated)
+        if sg.service_name.lower() != service_name.lower():
+            if ServiceGroup.objects.filter(service_name__iexact=service_name).exclude(id=group_id).exists():
+                return JsonResponse(
+                    {"success": False, "error_field": "service_name", "error_message": "Service group already exists."},
+                    status=400,
+                )
+
+        try:
+            sg.service_name = service_name
+            sg.service_name_arabic = service_name_arabic
+            if image_path:
+               sg.image_path = image_path
+            sg.status = is_active
+           
+            sg.save()
+
+            return JsonResponse(
+                {
+                    "success": True,
+                    "service_group": {
+                        "id": sg.id,
+                        "service_name": sg.service_name,
+                        "service_name_arabic": sg.service_name_arabic,
+						"image_path": sg.image_path.url if sg.image_path else None,
+						"updated_at": sg.updated_at,                        
+                        "status": sg.status,
+                    },
+                },
+                status=201,
+            )
+
+        except Exception as e:
+            return JsonResponse({"success": False, "error_message": str(e)}, status=500)
+    	
+    def delete(self, request, *args, **kwargs):
+        group_id = kwargs.get("service_group_id")
+        group_id = int(group_id)
+        is_active = 0
+
+        if not group_id:
+            return JsonResponse({"success": False, "error": "Group id required"}, status=400)
+
+        sg_qs = ServiceGroup.objects.filter(id=group_id)
+        if not sg_qs.exists():
+            return JsonResponse({"success": False, "error": "Service group not found"}, status=404)
+		
+        try:
+            sg_qs.update(
+														status=is_active
+												)
+            sg_obj = sg_qs.first()
+            sg_data = {
+              "id": sg_obj.id,
+              "service_name": sg_obj.service_name,
+              "service_name_arabic": sg_obj.service_name_arabic,
+              "image_path": sg_obj.image_path.url if sg_obj.image_path else None,
+              "updated_at": sg_obj.updated_at,
+              "status": sg_obj.status,
+             }
+            return JsonResponse({"success": True, "service_group": sg_data}, status=201)
+        except Exception as e:
+            return JsonResponse({"success": False, "error_message": str(e)}, status=500)
+
 
 class StagingBooking(IsAuthenticated,View):
 	def get(self,request,evaluation_detail_id):
