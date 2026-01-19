@@ -98,3 +98,5 @@ urlpatterns = [
         url(r'^update-service-group/(?P<service_group_id>[-\w]+)/$', views.ServiceGroupAPIView.as_view(), name='update-service-group'),
     
         ]
+		url(r'^staging/booking/(?P<evaluation_detail_id>[-\w]+)/$',views.StagingBooking.as_view(),name='staging-booking')        
+	]
