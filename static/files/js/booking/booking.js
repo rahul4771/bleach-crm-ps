@@ -185,9 +185,9 @@ const app=new Vue({
   rules: {
     required: v => !!v || 'this field is required',
   },
-  url:'',
+  // url:'',
    // url:'https://my.bleachkw.com',
-    //url:'http://127.0.0.1:8000',
+    url:'http://127.0.0.1:8000',
     slot_loader:false,
     kitchenData:{
         wall_type:'',
@@ -259,6 +259,9 @@ const app=new Vue({
       name: "Window Cleaning",
     },
     {
+      name: "Rope Access",
+    },
+    {
       name: "Outdoor Cleaning",
     },
   ],
@@ -283,6 +286,9 @@ const app=new Vue({
       },
       {
         name: "Window Cleaning",
+      },
+      {
+        name: "Rope Access",
       },
       {
         name: "Outdoor Cleaning",
@@ -454,6 +460,7 @@ const app=new Vue({
   kitchenSizeData:[],
   facadeSize:[],
   windowSize:[],
+  ropeAccessSize:[],
   durationData:{},
   billSample:{
     name:'',
@@ -613,7 +620,8 @@ hourly_cleaning:{
   cleaners:null
 },
 hourly_slots:true,
-current_service:''
+current_service:'',
+ropeAccessTypes: '',
 
       },
       methods: {
@@ -663,7 +671,6 @@ current_service:''
          }
          if(total_cost)
          {
-          console.log("absolute amount is "+total_cost)
          return total_cost
          }
          else{
@@ -708,11 +715,9 @@ current_service:''
 
           }
           if(totalcost){
-            console.log("added amount if  is "+totalcost)
             return totalcost
           }
           else{
-            console.log("added amount else is "+totalcost)
             return 0
           }
         //}
@@ -738,7 +743,6 @@ current_service:''
             for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
               section_cost=section_cost+this.multiServicesBill[i].bill[j].section_cost
             }
-            console.log("section cost"+i+" is "+section_cost)
             
             if(this.multiServicesBill[i].cleaning_policy=='SUBSCRIPTION' && this.multiServicesBill[i].schedule_details){
               if(Object.keys(this.multiServicesBill[i].schedule_details).length>0){
@@ -753,7 +757,6 @@ current_service:''
             }
           
           }
-          console.log("full amount is "+fullamount)
           return fullamount
         },
         resetAllData(){
@@ -1126,7 +1129,6 @@ current_service:''
               // if(Array.isArray(this.scheduleGroup[sch])){
              if(this.scheduleGroup[sch].includes(this.schedule_serviceTypes_selected[k])){
                var index=this.scheduleGroup[sch].indexOf(this.schedule_serviceTypes_selected[k])
-               console.log("index is"+index)
                this.scheduleGroup[sch].splice(index,1)
              }
               // }
@@ -1283,7 +1285,6 @@ current_service:''
               // if(Array.isArray(this.scheduleGroup[sch])){
              if(this.scheduleGroup[sch].includes(this.schedule_serviceTypes_selected[k])){
                var index=this.scheduleGroup[sch].indexOf(this.schedule_serviceTypes_selected[k])
-               console.log("index is"+index)
                this.scheduleGroup[sch].splice(1,index)
              }
             // }
@@ -1353,9 +1354,7 @@ current_service:''
           
         },
         checkFixedSlots(slot,index){
-          console.log("fixed slot is "+this.fixedSlots[slot])
           var duration=this.visits[index].slots.length*2
-          console.log("duration : "+duration)
           var startTime=''
           var end=''
           var endTime=''
@@ -1364,24 +1363,19 @@ current_service:''
            // console.log("found the slot")
            this.visits[index].slots=[]
             var start=this.fixedSlots[slot]
-             console.log("start is"+start)
              startTime=moment(start,'DD-MM-YYYY hh:mm A').format('hh:mm A')
              end=moment(start,'DD-MM-YYYY hh:mm A').add(duration,'hours')
              endTime=moment(end).format('hh:mm A')
              totalTime=startTime+' - '+endTime
-             console.log("START time is"+moment(start)+'end time :'+end)
-            console.log("fixed time is"+totalTime)
            
             this.visits[index].status='fixed'
            this.visits[index].dateTime=slot.split(' ')[0]+' '+startTime
             
             var counter=startTime
             var limit=endTime
-            console.log("counter"+counter+'limit :'+limit)
             while(moment(counter,'hh:mm A').isBefore(moment(limit,'hh:mm A')))
             {
             for(var i in this.slotFormat){
-              console.log("slot format:"+this.slotFormat[i].start_time+'counter :'+counter)
               if(this.slotFormat[i].start_time==counter){
                 this.visits[index].slots.push(parseInt(i))
               }
@@ -1399,14 +1393,12 @@ current_service:''
         getCombinedSlot(slots){
           var min=Math.min(...slots)
           var max=Math.max(...slots)
-          console.log("aray:"+slots+"min is"+min+"max is"+max)
           var combined = this.slotFormat[String(min)].start_time+' - '+this.slotFormat[String(max)].end_time
           return combined
         },
         getCombinedOnetimeSlot(slots){
           var min=Math.min(...slots)
           var max=Math.max(...slots)
-          console.log("aray:"+slots+"min is"+min+"max is"+max)
           var combined = this.slotFormat[parseInt(min)].start_time+' - '+this.slotFormat[parseInt(max)].end_time
           return combined
         },
@@ -1579,7 +1571,6 @@ current_service:''
             var day=moment(this.monthly_starting_date,'YYYY-MM-DD').add(count,"days")
           
            var dayNo=day.format('DD')
-           console.log("dayno"+dayNo)
            if(dayNo!=undefined)
            {
            if(this.selected_monthly_date.includes(String(dayNo)))
@@ -1777,7 +1768,6 @@ console.log(response)
   },
   uploadFile(){
     this.$refs.item-image.input.click()
-    console.log("ref is "+ this.$refs.imageComp)
   },
   goToPayment(){
     if(this.activePayment=='debit'){
@@ -1790,14 +1780,11 @@ console.log(response)
     }
   },
   selectPayment(pay){
-    console.log("pay is "+pay)
     this.activePayment=pay
-    console.log("pay is "+this.activePayment)
   },
    getFiles(obj){
      this.scale=60
      this.quality=60
-      console.log(obj)
       this.imageObj=obj
      
       if(obj.compressed){
@@ -1826,7 +1813,6 @@ console.log(response)
       })
     },
      getAreas(){
-       console.log("governorate is "+this.serviceDetails.address_details.governorate)
        var governorate=this.serviceDetails.address_details.governorate
       axios
       .get(
@@ -1840,7 +1826,6 @@ console.log(response)
       
       for(var i=0;i<this.serviceTypesData.length;i++){
         if(this.serviceTypesData[i].name==service){
-          console.log("i found")
           return this.serviceTypesData[i].id
         }
       }
@@ -2301,7 +2286,6 @@ console.log(response)
       
         if(this.$refs['kitchenFloor-building-'+(building)+'floor-'+(floor)][0].validate())
      { 
-        console.log("kitchen data is  "+JSON.stringify(this.kitchenData))
         this.building[building].floors[floor].kitchens.push(this.kitchenData)
           this.forceRerender();
           this.kitchenData={
@@ -2322,7 +2306,6 @@ console.log(response)
     addApartmentKitchen(building,floor,apartment){
       
        
-        console.log("kitchen data is  "+JSON.stringify(this.kitchenData))
         this.building[building].floors[floor].apartments[apartment].kitchens.push(this.kitchenData)
           this.forceRerender();
           this.kitchenData={
@@ -2344,7 +2327,6 @@ console.log(response)
       
         if(this.$refs['KitchenForm-building-'+building+'floor'-floor].validate())
      { 
-        console.log("kitchen data is  "+JSON.stringify(this.kitchenData))
         var temp = { ...this.kitchenData }
         this.building[building].floors[floor].kitchens.push(temp)
           this.forceRerender();
@@ -2379,7 +2361,6 @@ console.log(response)
     addMoreKitchenApartment(building,floor,apartment){
       
        
-        console.log("kitchen data is  "+JSON.stringify(this.kitchenData))
         var temp = { ...this.kitchenData }
         this.building[building].floors[floor].apartments[apartment].kitchens.push(temp)
           this.forceRerender();
@@ -2538,13 +2519,11 @@ console.log(response)
     this.recalcApartmentPrice(this.currentBuilding,this.currentFloor,this.currentApartment)
     },
     deleteKitchen(building,floor,service){
-        console.log("called me..buildin is "+building+"floor is "+floor+"service is"+service)
         this.building[building].floors[floor].kitchens.splice(service,1)
         this.forceRerender();
          this.recalcPrice(building,floor);
     },
      deleteApartmentKitchen(building,floor,apartment,service){
-        console.log("called me..buildin is "+building+"floor is "+floor+"service is"+service)
         this.building[building].floors[floor].apartments[apartment].kitchens.splice(service,1)
         this.forceRerender();
          this.recalcApartmentPrice(building,floor,apartment);
@@ -2559,7 +2538,6 @@ console.log(response)
       $('.more-services').hide()
       if(this.otherService.is_cabinet)
       {
-      console.log("type test passed new");
       for (var i = 0; i < this.sizeData.length; i++) {
         if (this.sizeData[i].is_newkitchen && this.sizeData[i].is_cabinet) {
           this.sizeFilteredData.push(this.sizeData[i]);
@@ -2578,7 +2556,6 @@ console.log(response)
       $('.more-services').show()
       if(this.otherService.is_cabinet)
       {
-      console.log("type test passed old");
       for (var i = 0; i < this.sizeData.length; i++) {
         if (!this.sizeData[i].is_newkitchen && this.sizeData[i].is_cabinet) {
           this.sizeFilteredData.push(this.sizeData[i]);
@@ -2603,7 +2580,6 @@ console.log(response)
       .then((response) => {
         this.kitchenSize = response.data;
         this.kitchenSizeData = [];
-    console.log("servuc size is " + this.kitchenSize);
     for (var i in this.kitchenSize) {
       this.kitchenSize[i]["combinedSize"] =
         this.kitchenSize[i].name +
@@ -2621,7 +2597,6 @@ console.log(response)
           if(this.kitchenData.is_cabinet)
 
           {
-      console.log("type test passed new");
       for (var i = 0; i < this.kitchenSizeData.length; i++) {
         if (this.kitchenSizeData[i].is_newkitchen && this.kitchenSizeData[i].is_cabinet) {
           this.sizeFilteredData.push(this.kitchenSizeData[i]);
@@ -2638,7 +2613,6 @@ console.log(response)
     }
     if (this.kitchenData.type == "old") {
       $('.more-services').show()
-      console.log("type test passed old");
       if(this.kitchenData.is_cabinet)
       {
       for (var i = 0; i < this.kitchenSizeData.length; i++) {
@@ -2734,8 +2708,7 @@ console.log(response)
         var nextSlot = parseInt(slot) + 3;
         var prevSlot = parseInt(slot) - 3;
         var stat = false;
-        console.log("next slot is" + nextSlot);
-        console.log("prev slot is" + prevSlot);
+        
         for (
           var i = 0;
           i < this.time_slot[this.slotDate].selectedSlot.length;
@@ -2834,7 +2807,6 @@ removeOneTimeSlot(slot){
         tempSlots.splice(slotindex,1)
       }
     }
-    console.log("duble slot is "+this.selected_double_slots+"tempslot:"+tempSlots)
     this.one_time_slots[this.oneTimeDateSelected].slots=[...tempSlots]
 
   }
@@ -2855,7 +2827,6 @@ removeOneTimeSlot(slot){
           tempSlots.splice(slotindex,1)
         }
       }
-      console.log("duble slot is "+this.selected_double_slots+"tempslot:"+tempSlots)
       this.selected_double_slots=[...tempSlots]
     }
   },
@@ -2904,9 +2875,7 @@ removeOneTimeSlot(slot){
  
 },
 checkSelectedDate(){
-  console.log("called me")
   for(var i in this.selected_onetime_slots){
-    console.log("i is "+i)
     if(i==this.oneTimeDateSelected){
       return true
     }
@@ -3056,7 +3025,6 @@ checkSelectedDate(){
           this.forceRerender();
           this.countSlots();
         } else {
-          console.log("slot cannot be selected");
         }
       } else {
         if (slot > 0) {
@@ -3066,7 +3034,6 @@ checkSelectedDate(){
             this.forceRerender();
             this.countSlots();
           } else {
-            console.log("slot cannot be selected");
           }
         }
       }
@@ -3090,12 +3057,10 @@ checkSelectedDate(){
     this.forceRerender();
   },
   updateSize() {
-    console.log("updatin size");
     this.upholsterySize = [];
     for (var i = 0; i < this.sizeData.length; i++) {
       if (this.sizeData[i].upholstery_type == this.otherService.type) {
         this.upholsterySize.push(this.sizeData[i]);
-        console.log("updated size");
       }
     }
   },
@@ -3107,13 +3072,10 @@ checkSelectedDate(){
     this.new_kitchen_cabinet_size=0
     this.old_kitchen_cabinet_size=0
     this.old_kitchen_nocabinet_size=0
-    console.log("called me & "+this.schedule_serviceTypes_selected)
     for(var j=0;j<this.schedule_serviceTypes_selected.length;j++)
     {
-      console.log("i m inside loop")
         var serIndex=this.schedule_serviceTypes_selected[j]
        if(this.multiServicesBill[serIndex].service=='Upholstery Cleaning'){
-        console.log("i m inside upholsdtery")
          for (var i=0;i < this.multiServicesBill[serIndex].bill.length; i++) {
                 if(this.multiServicesBill[serIndex].bill[i].section.type=='SOFA'){
                   this.sofa_size=this.sofa_size+ parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size)
@@ -3124,7 +3086,6 @@ checkSelectedDate(){
           }
        }
        else if(this.multiServicesBill[serIndex].service=='Kitchen Cleaning'){
-        console.log("i m inside kitchen")
          for (var i=0;i < this.multiServicesBill[serIndex].bill.length; i++) {
                 if(this.multiServicesBill[serIndex].bill[i].section.type=='old'){
                   if(this.multiServicesBill[serIndex].bill[i].is_cabinet){
@@ -3151,19 +3112,15 @@ checkSelectedDate(){
        }
        else{
 
-       console.log("i m inside")
     for (var i=0;i < this.multiServicesBill[serIndex].bill.length; i++) {
       this.total_size=0
       if(this.multiServicesBill[serIndex].bill[i].section.size)
       {
-     console.log("section sixze is"+this.multiServicesBill[serIndex].bill[i].section.size.max_size)
       this.total_size=this.total_size + parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size);
-      console.log("section total sixze is"+this.total_size)
       }
     }
     }
     }
-    console.log("total size is "+this.total_size)
   },
   findTotalSize() {
     this.total_size = 0
@@ -3211,7 +3168,7 @@ checkSelectedDate(){
     }
     }
     }
-    console.log("total size is "+this.total_size)
+    // console.log("total size is "+this.total_size)
   },
   selectService(service) {
     this.serviceChange=false
@@ -3232,7 +3189,7 @@ checkSelectedDate(){
    
     
     if(this.selectedService.name=='Kitchen Cleaning'){
-     console.log("i m coming once")
+    //  console.log("i m coming once")
      this.otherService.type='old'
    /*   $('.more-services').html(`
       <div class="owl-carousel"  id="otherServiceCarousel" v-if="serviceChange" >
@@ -3402,6 +3359,13 @@ this.infectionControlServices=[]
     <div class="text-center pt-2 service-title">
     Window Cleaning
   </div></div>
+  
+    <div class="sr-service-card m-2 p-2"  onclick="selectService('Rope Access',this)">
+    <i class="far fa-circle inactive-icon"></i>
+    <img src="/static/files/icons/booking/icons/RopeAccess.png" class="service-icon"> 
+    <div class="text-center pt-2 service-title">
+    Rope Access
+  </div></div>
  
     <div class="sr-service-card m-2 p-2"  onclick="selectService('Outdoor Cleaning',this)">
     <i class="far fa-circle inactive-icon"></i>
@@ -3485,7 +3449,7 @@ this.infectionControlServices=[]
         }
         else{
            if(item=='Pest Control'){
-                    console.log("infection dsdsdsdsd");
+                    // console.log("infection dsdsdsdsd");
           /*     for(var i=0;i<this.services.length;i++){
          if(this.services[i].name=='Sterilization'){
              this.infectionControlServices.push(this.services[i])
@@ -3567,7 +3531,7 @@ responsive:{
       )
       .then((response) => {
         this.submit_loader=false
-        console.log("booking details is "+response)
+        // console.log("booking details is "+response)
         this.phase2Result=response.data
         if(response.data.success)
         {
@@ -3607,7 +3571,7 @@ responsive:{
       var groupData={}
     for(var i=0;i<this.scheduleGroup[sch].length;i++){
       var data=this.scheduleGroup[sch]
-      console.log("service details is"+JSON.stringify(this.serviceDetails))
+      // console.log("service details is"+JSON.stringify(this.serviceDetails))
       groupData[i]={...this.serviceDetails.service_details[data[i]]}
       totalCost=totalCost+this.serviceDetails.service_details[data[i]].total_cost
     }
@@ -3625,7 +3589,7 @@ responsive:{
    )
    .then((response) => {
      this.submit_loader=false
-     console.log("booking details is "+response)
+    //  console.log("booking details is "+response)
      this.phase2Result=response.data
      groupData={}
      if(response.data.success)
@@ -3633,7 +3597,7 @@ responsive:{
      this.responseText='Booking Successful'
      this.snackbar=true
   
-   console.log("got response")
+  //  console.log("got response")
       var schedule_keys=Object.keys(this.scheduleGroup)
       if(sch==this.scheduleGroup[schedule_keys[schedule_keys.length-1]])
       {
@@ -3658,7 +3622,6 @@ responsive:{
      console.log(error);
      return error
    });
-    console.log("firing next ")
 
 
   }
@@ -3678,7 +3641,7 @@ responsive:{
     )
     .then((response) => {
       this.submit_loader=false
-      console.log("booking details is "+response)
+      // console.log("booking details is "+response)
       this.phase2Result=response.data
       groupData={}
       if(response.data.success)
@@ -3686,7 +3649,7 @@ responsive:{
       this.responseText='Booking Successful'
       this.snackbar=true
     
-    console.log("got response")
+    // console.log("got response")
    
        this.uploadImages()
        return response
@@ -3720,7 +3683,6 @@ responsive:{
        )
        .then((response) => {
          
-         console.log("booking details is "+response)
          this.phase2Result=response.data
          if(response.data.success)
          {
@@ -3913,7 +3875,6 @@ setTimeout(function() {
   getMultipleSlots(){
     this.slot_loader=true
     var schedule_services=this.schedule_serviceTypes
-    console.log("schedule types is "+schedule_services)
     if(this.checkKitchen()){
       schedule_services.push('Kitchen Cleaning')
     }
@@ -4020,8 +3981,13 @@ getAreaTypes() {
       .then((response) => {
         this.serviceSize = response.data;
         this.parseSize();
-         this.facadeFilter();
-         this.windowFilter();
+        if(this.serviceType == 'Rope Access') {
+          this.ropeAccessTypes = [...new Set(this.sizeData.map(size => size.rope_access_type))];
+          this.ropeAccessFilter();
+          return;
+        }
+        this.facadeFilter();
+        this.windowFilter();
       })
       .catch((error) => {
         console.log(error);
@@ -4047,7 +4013,6 @@ getAreaTypes() {
   },
   parseSize() {
     this.sizeData = [];
-    console.log("servuc size is " + this.serviceSize);
     for (var i in this.serviceSize) {
       this.serviceSize[i]["combinedSize"] =
         this.serviceSize[i].name +
@@ -4066,7 +4031,6 @@ getAreaTypes() {
   async onImageFileChanged(event) {
     
     this.ImageDetails.service=this.selectedService.name;
-    console.log("orginal file size is"+event.target.files[0].size)
     var file=event.target.files[0]
  
   const options = {
@@ -4077,8 +4041,7 @@ getAreaTypes() {
 }
 try {
   const compressedFile = await imageCompression(event.target.files[0], options);
-  console.log('compressedFile instanceof Blob', compressedFile instanceof Blob); // true
-  console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`); // smaller than maxSizeMB
+  
 
   await this.uploadImgToArray(compressedFile,event.target.files[0].name); // write your own logic
 } catch (error) {
@@ -4091,7 +4054,6 @@ try {
     file.lastModifiedDate = Date.now();
   
   var converted_file = new File([file],  fileName,{lastModified: Date.now()});
-    console.log("file size is "+converted_file.size)
     this.ImageDetails.url = URL.createObjectURL(converted_file);
     this.ImageDetails.file = converted_file;
     this.imageData.push(this.ImageDetails);
@@ -4205,7 +4167,17 @@ try {
         }
     
     }
-},
+  },
+  ropeAccessFilter(index=null, floor=null){
+
+    if (index !== null && floor !== null && this.building[index] && this.building[index].floors[floor]) {
+      selectedType = this.building[index].floors[floor].rope_access_type || this.ropeAccessTypes[0];
+    } else {
+      selectedType = this.ropeAccessTypes[0];
+    }
+    this.ropeAccessSize= this.sizeData.filter(size => size.rope_access_type === selectedType);
+    this.otherService.size={}
+  },
   editItem(a, b) {
     this.edit_item=true
     this.add_new_kitchen=false
@@ -4314,7 +4286,6 @@ try {
     var max_size_data=[]
     var max_size_val=[]
     if (this.serviceType == "Upholstery Cleaning") {
-      console.log("service test passed");
      /* if (this.otherService.type == "CURTAIN") {
         for (var item = 0; item < this.sizeData.length; item++) {
           console.log("type test passed");
@@ -4358,10 +4329,8 @@ try {
       }*/
       if (this.otherService.type == "SOFA") {
         for (var item = 0; item < this.sizeData.length; item++) {
-          console.log("type test passed");
           if (this.sizeData[item].upholstery_type == "SOFA") {
             for (var item = 0; item < this.sizeData.length; item++) {
-          console.log("type test passed");
          
           if (this.sizeData[item].upholstery_type == "SOFA") {
              max_size_data.push(this.sizeData[item].max_size)
@@ -4379,13 +4348,11 @@ try {
                 max_size:this.otherService.size
               };
               sizeFound=true
-              console.log("size test passed");
             }
           }
         }
         var max_val=Math.max(...max_size_data)
         var left_size=0
-        console.log('max val is '+max_val)
         if(!sizeFound && this.otherService.size>0){
           left_size=this.otherService.size-max_val
           
@@ -4411,14 +4378,12 @@ try {
       }
       if (this.otherService.type == "CURTAIN") {
         for (var item = 0; item < this.sizeData.length; item++) {
-          console.log("type test passed");
           if (this.sizeData[item].upholstery_type == "CURTAIN") {
             if (
               this.otherService.size >= this.sizeData[item].min_size &&
               this.otherService.size <= this.sizeData[item].max_size
             ) {
               this.otherService.size = this.sizeData[item];
-              console.log("size test passed");
             }
           }
         }
@@ -4569,7 +4534,6 @@ try {
           for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
             servcost = servcost + this.multiServicesBill[i].bill[j].section_cost
           }
-          console.log("serv cost is "+servcost)
           this.multiServicesBill[i]['total_cost']=servcost
      }
 
@@ -4582,7 +4546,6 @@ try {
   },
   goToServices(){
     
-    console.log('i m here')
     
   this.activeTab='Services'
   setTimeout(function (){
@@ -4845,8 +4808,7 @@ try {
     };
     this.e = {
       building: [],
-    },
-      console.log("service type is" + this.serviceType);
+    };
   },
   addSectionFloor(section) {
     this.serviceSection.sections[section] = {
@@ -4910,9 +4872,14 @@ try {
         completed: false,
         paint_residue: false,
         upholsteries: ["Sofa", ""],
+        rope_access_type: null,
+        sides: null
         
         
       });
+      if (this.serviceType === 'Rope Access') {
+        this.building[building - 1].floors[i].rope_access_type = "Skyline";
+      }
       this.e.building[building - 1].floors.push({
         floors: [],
         e: 1,
@@ -4946,6 +4913,8 @@ try {
         kitchen: false,
         kitchens: [],
         keynotes: {},
+        rope_access_type: null,
+        sides: null
       });
     }
   },
@@ -5034,8 +5003,7 @@ try {
   nextTab(build) {
     this.floor_msg=false
     this.building_msg=false
-    console.log("building tab is "+build)
-    console.log("building tab no is "+this.no_of_building)
+    
     
     if(!this.floorCompleteChecker(build-1)){
       this.floor_msg=true
@@ -5054,7 +5022,6 @@ try {
      
     
     } else {
-      console.log("id is " + build);
       document.querySelector("#tab" + (build + 1)).click();
     }
   }
@@ -5070,7 +5037,6 @@ try {
     }
 
     var balance = parseInt(this.selectedDuration) - currentTotal;
-    console.log("balance is " + balance);
     if (balance > 0) {
       for (var j = 0; j < this.splitData.length; j++) {
         if (!this.splitData[j].fixed) {
@@ -5091,7 +5057,6 @@ try {
       }
 
       var balanceamount = balance - balCounter;
-      console.log("balance amount is " + balanceamount);
       if (balanceamount > 0) {
         var fullDays = 0;
         var lastDayHour = 0;
@@ -5359,7 +5324,6 @@ try {
     if(index>0){
     
       if(!this.floorCompleteChecker(index-1)){
-        console.log("i clicked tab"+index)
         document.querySelector("#tab" + (index-1)).click();
       }
     }
@@ -5372,10 +5336,8 @@ try {
     }
     else{
     this.floor_msg=false
-      console.log('validate is '+this.$refs.form)
      if(this.$refs['building-'+building+'floor-'+(floor-1)][0].validate())
      { 
-      console.log('validation passsed')
     this.building[building].floors[floor-1].section_cost=this.building[building].floors[floor-1].size.cost
     this.e.building[building].e = floor + 1;
     this.building[building].floors[floor - 1].completed = true;
@@ -5442,7 +5404,6 @@ try {
     }
       if (floor == this.building[building].floors.length) {
           this.building[building].completed = true;
-          console.log("floor is " + floor);
           this.floorCompleted=true;
         }
         else{
@@ -5480,7 +5441,6 @@ try {
 
   },
   calcTotal(){
-    console.log("i m inside total cost ")
       this.totalCost = 0;
       
       for (var i = 0; i < this.multiServicesBill.length; i++) {
@@ -5494,7 +5454,6 @@ try {
       this.totalCost = this.totalCost + this.multiServicesBill[i].bill[j].section_net_cost;
         }
     }
-    console.log("i m inside total cost and it is "+this.totalCost)
   },
    recalcApartmentPrice(building,floor,apartment) {
     /*this.totalCost = 0;
@@ -5573,21 +5532,38 @@ try {
         var total_highpricewindow_size = 0;
         var total_lowpricewindow_size = 0;
         var total_highpricefacade_size = 0;
-          var total_lowpricefacade_size = 0;
+        var total_lowpricefacade_size = 0;
+        let selected_service = ''
+        let data = '';
+        
+        if (service_to_select === 'Rope Access') {
+          
+          const firstRopeAccess = this.multiServicesBill[k].bill.find(bill => bill.section.rope_access_type)?.section.rope_access_type;
+          if (firstRopeAccess) {
+
+            if (response.data[firstRopeAccess]) {
+              data = response.data[firstRopeAccess]
+              this.max_cleaners.push(response.data[firstRopeAccess].max_cleaners)
+              this.min_cleaners.push(response.data[firstRopeAccess].min_cleaners)
+              this.max_hours.push(response.data[firstRopeAccess].max_hours)
+              this.min_hours.push(response.data[firstRopeAccess].min_hours)
+              selected_service = this.schedule_serviceTypes[k]
+              this.durationData[this.schedule_serviceTypes[k]] = response.data[firstRopeAccess]
+            }
+          }
+        } else {
+          data = response.data
           this.max_cleaners.push(response.data.max_cleaners)
           this.min_cleaners.push(response.data.min_cleaners)
           this.max_hours.push(response.data.max_hours)
           this.min_hours.push(response.data.min_hours)
-           var selected_service=this.schedule_serviceTypes[k]
-          console.log(response.data)
-          this.durationData[this.schedule_serviceTypes[k]]=response.data
+          selected_service = this.schedule_serviceTypes[k]
+          this.durationData[this.schedule_serviceTypes[k]] = response.data
+        }
 
           /*   Calculation begins */
-         console.log("selected service is"+selected_service)
       
 
-          var data = response.data;
-        console.log(data);
         //to find total size and manhour
         if (selected_service == "Upholstery Cleaning") {
           var total_sofa_size = this.sofa_size;
@@ -5596,7 +5572,6 @@ try {
           var manhour =
             parseInt(total_sofa_size / data["sofa_perhour_cleaning"]) +
             parseInt(total_chair_size / data["chair_perhour_cleaning"]);
-            console.log("up manhour is "+manhour)
         } else if (selected_service == "Facade Cleaning") {
           for(var b=0;b<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;b++){
             if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.size.is_highprice_facade){
@@ -5645,7 +5620,6 @@ try {
                 }
             
             }
-            console.log("addon manhour is"+addon_manhour)
             manhour=parseInt(manhour)+parseInt(addon_manhour)
         }
         else if(selected_service =='Kitchen Appliances'){
@@ -5663,7 +5637,6 @@ try {
             }
         
         }
-        console.log("addon manhour is"+addon_manhour)
         var manhour=parseInt(addon_manhour)
         }
         
@@ -5686,7 +5659,30 @@ try {
               total_lowpricewindow_size /
                 data["lowpricewindow_perhour_cleaning"]
             );
-        } else {
+        } else if (selected_service == "Rope Access") {
+          var total_highprice_ropeaccess_size = 0;
+          var total_lowprice_ropeaccess_size = 0;
+          
+          for(var b=0;b<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;b++){
+            if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.size.is_highprice_ropeaccess){
+              total_highprice_ropeaccess_size = total_highprice_ropeaccess_size + this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.size.max_size
+            }
+            else{
+              total_lowprice_ropeaccess_size = total_lowprice_ropeaccess_size + this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.size.max_size
+            }
+          }
+          
+          var manhour = 
+            parseInt(
+              total_highprice_ropeaccess_size / 
+                data["highprice_ropeaccess_perhour_cleaning"]
+            ) +
+            parseInt(
+              total_lowprice_ropeaccess_size / 
+                data["lowprice_ropeaccess_perhour_cleaning"]
+            );
+        }
+        else {
           //var total_estimated_size = this.total_size;
           for(var ose=0;ose<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;ose++){
             if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ose].section.size){
@@ -5694,7 +5690,6 @@ try {
             }
           }
           var productivity = data["perhour_cleaning"];
-          console.log("productivity is "+productivity)
           var manhour = parseInt(total_estimated_size / productivity);
           var new_kit_cab_size=0
           var new_kit_nocab_size=0
@@ -5730,13 +5725,9 @@ try {
         if(manhour<2){
           manhour=2
         }
-        console.log("size estimated is" + total_estimated_size);
-         console.log("sofa size estimated is" + total_sofa_size);
-           console.log("chair size estimated is" + total_chair_size)
-           console.log("manhour  estimated is" + manhour);
+      
         //optimal finding
         this.totalmanhour=this.totalmanhour+manhour
-        console.log("total man hour is "+this.totalmanhour)
         var r = 2 ** (this.totalmanhour.toString().length + 1);
         var mod = this.totalmanhour % r;
 
@@ -5745,10 +5736,6 @@ try {
         } else {
            this.n = this.totalmanhour - mod;
         }
-        console.log(manhour, "manhour");
-        console.log(r, "r");
-        console.log(mod, "mod");
-        console.log(this.n, "n");
          
         this.maxCleaners.push(response.data.max_cleaners)
        resolve("done")
@@ -5781,7 +5768,6 @@ try {
     /** Loop ends here  */
     Promise.all(promises)
 .then(responses =>{
-  console.log("i am ready")
     var manhour=this.totalmanhour
     // var n=this.n
     if(this.cleaningPolicy=='Subscription')
@@ -5803,7 +5789,6 @@ try {
         pair = [i, n / i];
       }
     }
-    console.log(pair, "pair");
     //pair convert to 3's multiple
     var convertion_r = 2;
     var convertion_mod = pair[1] % convertion_r;
@@ -5811,19 +5796,13 @@ try {
     var lowest_cleaner=Math.min(...this.maxCleaners)
 
     if (convertion_mod > parseInt(convertion_r / 2)) {
-      console.log(manhour, "divider");
-      console.log(pair[1] + (convertion_r - convertion_mod), "divident");
-      console.log(
-        parseInt(manhour / (pair[1] + (convertion_r - convertion_mod))),
-        "division"
-      );
+     
       pair = [
         Math.round(manhour / (pair[1] + (convertion_r - convertion_mod))),
         pair[1] + (convertion_r - convertion_mod),
       ];
     } else {
-      console.log(manhour, "divider");
-      console.log(pair[1] - convertion_mod, "divident");
+     
 
       if (pair[1] - convertion_mod == 0) {
         pair = [Math.round(manhour / 2), 2];
@@ -5835,11 +5814,9 @@ try {
       }
     }
 
-    console.log(pair, "newpair");
 
     //var max_cleaners = data["max_cleaners"];
     //max_cleaners=10;
-    console.log("lowest cleaner is "+lowest_cleaner)
     var duration_list = [];
     var lower_loop = 0;
     var upper_loop = 0;
@@ -5961,7 +5938,6 @@ try {
         duration_list.push([middle_element, middle_hours + 4]);
       }
     }
-    console.log(duration_list);
 
     for (i = 0; i < duration_list.length; i++) {
       var total_duration = duration_list[i][1];
@@ -5970,9 +5946,7 @@ try {
       var converted_hours = Math.floor(total_minutes / 60);
       var converted_minutes = total_minutes % 60;
       var total_cleaners = duration_list[i][0];
-      console.log(converted_hours, "converted_hours");
-      console.log(converted_minutes, "converted_minutes");
-      console.log(total_cleaners, "total_cleaners");
+     
       this.setDuration(converted_hours, total_cleaners);
     }
     this.sortDuration()
@@ -5980,18 +5954,15 @@ try {
   },
   newHourCalculation(n){
    
-    console.log(n,"man hour")
         
    
      if (n%2 == 1){
       n = n+1
      } 
-     console.log("min man data is"+this.min_cleaners+" maxman:"+this.max_cleaners+"minhr:"+this.min_hours+"maxhr:"+this.max_hours)
         var minman=Math.max(...this.min_cleaners)
        var maxman=Math.max(...this.max_cleaners)
         var minhr=Math.max(...this.min_hours)
         var maxhr=Math.max(...this.max_hours)
-        console.log("min man is"+minman+" maxman:"+maxman+"minhr:"+minhr+"maxhr:"+maxhr)
    
     
     
@@ -6088,7 +6059,6 @@ try {
       }
           
       this.cleaning_set=cleaningset
-  console.log(cleaningset,"new cleaning set")
  this.selectedDuration={
     cleaners:this.cleaning_set[0][1],
     hours:this.cleaning_set[0][0],
@@ -6101,18 +6071,15 @@ try {
 },
 subscriptionHourCalculation(n){
    
-  console.log(n,"man hour")
       
  
    if (n%2 == 1){
     n = n+1
    } 
-   console.log("min man data is"+this.min_cleaners+" maxman:"+this.max_cleaners+"minhr:"+this.min_hours+"maxhr:"+this.max_hours)
       var minman=Math.max(...this.min_cleaners)
      var maxman=Math.max(...this.max_cleaners)
       var minhr=Math.max(...this.min_hours)
       var maxhr=Math.max(...this.max_hours)
-      console.log("min man is"+minman+" maxman:"+maxman+"minhr:"+minhr+"maxhr:"+maxhr)
  
   
   
@@ -6234,7 +6201,6 @@ mounted() {
   this.getAreaTypes()
   this.getIp()
   this.getGovernorate()
-  console.log("current time is" + moment().format());
 
   this.dateSelected = moment().format().split("T")[0];
   this.today = moment().format().split("T")[0];

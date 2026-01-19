@@ -258,6 +258,9 @@ $(document).ready(function(){
         name: "Window Cleaning",
       },
       {
+        name: "Rope Access",
+      },
+      {
         name: "Outdoor Cleaning",
       },
     ],
@@ -282,6 +285,9 @@ $(document).ready(function(){
         },
         {
           name: "Window Cleaning",
+        },
+        {
+          name: "Rope Access",
         },
         {
           name: "Outdoor Cleaning",
@@ -3449,6 +3455,13 @@ $(document).ready(function(){
       <img src="/static/files/icons/booking/icons/WindowCleaning.png" class="service-icon"> 
       <div class="text-center pt-2 service-title">
       Window Cleaning
+    </div></div>
+    
+      <div class="sr-service-card m-2 p-2"  onclick="selectService('Rope Access',this)">
+      <i class="far fa-circle inactive-icon"></i>
+      <img src="/static/files/icons/booking/icons/RopeAccess.png" class="service-icon"> 
+      <div class="text-center pt-2 service-title">
+      Rope Access
     </div></div>
    
       <div class="sr-service-card m-2 p-2"  onclick="selectService('Outdoor Cleaning',this)">
