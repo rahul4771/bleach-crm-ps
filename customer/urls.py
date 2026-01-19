@@ -92,5 +92,6 @@ urlpatterns = [
 		#website APIs
 		url(r'^find-dates/$',views.FindDates.as_view(),name='find-dates'),
 		url(r'^cart/(?P<token>\w+)/$',views.CartAPI.as_view(),name='customer-cart'),
-		url(r'^cart/schedule/(?P<token>\w+)/$',views.CartScheduleAPI.as_view(),name='customer-cart-schedule')
+		url(r'^cart/schedule/(?P<token>\w+)/$',views.CartScheduleAPI.as_view(),name='customer-cart-schedule'),
+        url(r'^add-user-email/$', views.UserEmailView.as_view(), name='add-user-email')
 	]
