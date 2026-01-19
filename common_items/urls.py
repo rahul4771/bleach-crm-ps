@@ -92,4 +92,5 @@ urlpatterns = [
         url(r'^add-measurement-unit/$', views.MeasurementUnitsAPIView.as_view(), name='add-measurement-unit'),
 		url(r'^update-measurement-unit/(?P<measurement_unit_id>[-\w]+)$', views.MeasurementUnitsAPIView.as_view(), name='update-measurement-unit'),
         url(r'^delete-measurement-unit/(?P<measurement_unit_id>[-\w]+)$', views.MeasurementUnitsAPIView.as_view(), name='delete-measurement-unit'),
+		url(r'^staging/booking/(?P<evaluation_detail_id>[-\w]+)/$',views.StagingBooking.as_view(),name='staging-booking')        
 	]
