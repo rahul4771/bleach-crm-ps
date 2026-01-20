@@ -9954,26 +9954,20 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 
         return Response(response_dict, status=200)
 #dynamic booking view
-def booking_dynamic(request):
-    return render(request, 'booking/booking_dynamic.html')
+class BookingDynamicView(View):
+    def get(self, request):
+        return render(request, 'booking/booking_dynamic.html')
 
-class BookingDynamicAPIView(APIView):
-
-    def get(self, request, *args, **kwargs):
-
+class ServiceTypeOnlyAPIView(APIView):
+    def get(self, request):
         service_types = list(
             ServiceType.objects.values(
                 'id',
-                'name',
-                'name_arabic',
-                'is_active',
-                'updated'
+                'name'
+               
             )
         )
 
-        return Response(
-            {
-                'service_types': service_types
-            },
-            status=status.HTTP_200_OK
-        )
+        return JsonResponse({'service_types': service_types})
+
+	

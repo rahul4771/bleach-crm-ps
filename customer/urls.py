@@ -93,6 +93,7 @@ urlpatterns = [
 		url(r'^cart/(?P<token>\w+)/$',views.CartAPI.as_view(),name='customer-cart'),
 		url(r'^cart/schedule/(?P<token>\w+)/$',views.CartScheduleAPI.as_view(),name='customer-cart-schedule'),
         #dynamic booking
-        url(r'^api/get-service-types/$',views.BookingDynamicAPIView.as_view(),name='api_get_service_types'),
-        url(r'^booking/dynamic$',views.booking_dynamic,name='booking_dynamic'),
+		url(r'^booking/dynamic/$',views.BookingDynamicView.as_view(),name='booking-dynamic'),
+        url(r'^booking/dynamic/get-service-types/$',views.ServiceTypeOnlyAPIView.as_view(),name='get-service-types'),
+       
 	]
