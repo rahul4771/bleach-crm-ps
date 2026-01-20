@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dynamic Booking</title>
+    
+
+    <style>
+        .service-item {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <h2>All Service Types</h2>
+
+    <p v-if="serviceTypes.length === 0">
+        No service types available
+    </p>
+
+    <ul>
+        <li v-for="(serviceType , index) in serviceTypes" :key="serviceType.id" class="service-item">
+            {{ serviceType.name }}
+        </li>
+    </ul>
+</div>
+</body>
+</html>
+<script src="{% static 'files/js/booking/booking_dynamic.js' %}"></script>
+{% endblock %}
