@@ -13,7 +13,7 @@ new Vue({
                     this.serviceTypes = data.service_types;
                 })
                 .catch(error => {
-                    console.error('Error fetching service types:', error);
+                    console.error(error);
                 });
         }
     },

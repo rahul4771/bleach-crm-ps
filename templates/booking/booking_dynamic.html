@@ -1,35 +1,184 @@
+
 {% extends "base.html" %}
+{% load static %}
+
 {% block content %}
 
-{% load static %}
-<!DOCTYPE html>
-<html>
+<<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Dynamic Booking</title>
-    
+  <meta charset="UTF-8">
+  <title>Booking Page (Static)</title>
 
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+  <!-- Booking CSS -->
+  <link rel="stylesheet" href="booking.css">
+</head>
+
+<body>
+
+<div class="wrapper" id="app">
+
+  <!-- PAYMENT FLOAT TAG -->
+  <div class="payment-tag">
+    <i class="fas fa-shopping-cart"></i>
+    <span class="payment-tag-text ml-2">120 KD</span>
+  </div>
+
+  <!-- PAGE HEADER -->
+  <div class="booking-container">
+    <h1 class="page-main-title">Book a Service</h1>
+    <p class="sr-sub-heading">Choose service, date and slot</p>
+  </div>
+
+  <!-- SERVICE SELECTION -->
+  <div class="container booking-container">
+    <div class="row">
+
+      <div class="col-md-4">
+        <div class="sr-service-card sr-service-card-active">
+          <img src="https://via.placeholder.com/50" class="service-icon">
+          <div class="service-card-text text-center mt-2">Hourly Cleaning</div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="sr-service-card">
+          <img src="https://via.placeholder.com/50" class="service-icon">
+          <div class="service-card-text text-center mt-2">Deep Cleaning</div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="sr-service-card">
+          <img src="https://via.placeholder.com/50" class="service-icon">
+          <div class="service-card-text text-center mt-2">Kitchen Cleaning</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SLOT SELECTION -->
+  <div class="container booking-container">
+    <h4 class="primary-text">Available Time Slots</h4>
+
+    <div class="row slots-container">
+
+      <div class="col-md-4">
+        <div class="time-slot duration p-2">08:00 - 10:00</div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="time-slot duration-active p-2">10:00 - 12:00</div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="time-slot duration-inactive p-2">12:00 - 14:00</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MONTHLY CALENDAR -->
+  <div class="container booking-container">
+    <h4 class="primary-text">Select Date</h4>
+
+    <div class="custom_cal">
+      <div class="d-flex">
+        <div class="cal-column">
+          <div class="monthly-day">1</div>
+        </div>
+        <div class="cal-column">
+          <div class="monthly-day-active">2</div>
+        </div>
+        <div class="cal-column">
+          <div class="monthly-day">3</div>
+        </div>
+        <div class="cal-column">
+          <div class="monthly-day">4</div>
+        </div>
+        <div class="cal-column">
+          <div class="monthly-day">5</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAYMENT SUMMARY -->
+  <div class="container booking-container">
+    <div class="sr-card payment-card-limit p-3">
+      <h4 class="payment-total-heading">Payment Summary</h4>
+
+      <div class="d-flex justify-between mt-2">
+        <span class="payment-key-text">Service Cost</span>
+        <span class="payment-value-text">100 KD</span>
+      </div>
+
+      <div class="dashed-top mt-2 mb-2"></div>
+
+      <div class="d-flex justify-between">
+        <span class="payment-key-text">Total</span>
+        <span class="payment-value-text">120 KD</span>
+      </div>
+
+      <div class="text-center mt-3">
+        <button class="sr-next-btn">Proceed</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
+ 
+
+
+
+{% comment %} <!DOCTYPE html>
+<link rel="stylesheet" href="{% static 'files/css/booking/booking.css' %}">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dynamic Booking</title>
+
+    {% load static %}
+
+    <!-- Vue 2 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    
     <style>
-        .service-item {
-            margin-bottom: 10px;
-            font-weight: bold;
+        body {
+            font-family: Arial, sans-serif;
+            background: #fff;
+            color: #000;
+        }
+        li {
+            font-size: 16px;
+            margin: 6px 0;
         }
     </style>
 </head>
 <body>
+
 <div id="app">
     <h2>All Service Types</h2>
 
-    <p v-if="serviceTypes.length === 0">
-        No service types available
-    </p>
-
+    {% verbatim %}
     <ul>
-        <li v-for="(serviceType , index) in serviceTypes" :key="serviceType.id" class="service-item">
+        <li v-for="serviceType in serviceTypes"
+            :key="serviceType.id">
             {{ serviceType.name }}
         </li>
     </ul>
+    {% endverbatim %}
 </div>
-</body>
-</html>
+
 <script src="{% static 'files/js/booking/booking_dynamic.js' %}"></script>
-{% endblock %}
+
+</body>
+</html>  {% endcomment %}

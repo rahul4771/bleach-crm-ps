@@ -1265,3 +1265,30 @@ cursor:pointer;
 .p-2 {
     padding: .5rem!important;
 }
+/* booking_dynamic.css */
+.fake-input {
+  background: #f4f4f4;
+  padding: 12px;
+  border-radius: 6px;
+  color: #777;
+}
+
+.fake-textarea {
+  background: #f4f4f4;
+  height: 80px;
+  padding: 12px;
+  border-radius: 6px;
+  color: #777;
+}
+/* .dashboard-head {
+  display: block !important;
+  color: #222 !important;
+  font-size: 26px !important;
+  font-weight: 600;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 10;
+} */
+.topspace {
+  margin-top: 90px !important;
+}
