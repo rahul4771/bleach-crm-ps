@@ -451,7 +451,7 @@
     
                                                     </div>
                                                 </div>
-                                                <a onclick="flip(this)" data-id="{{worker.id}}">View Skills</a>
+                                                <a onclick="viewSkills(this)" data-id="{{worker.id}}">View Skills</a>
                                                 <p class="resource-card-text">Daily Occupancy {{workers_date}}</p>
                                                 <br>
                                                 <div class="row ml-5 m-pr-0" id="slote_details{{worker.id}}">
@@ -534,7 +534,10 @@
                                                     </div>
                                                 </div>
                                                 <div id="id_skill_list_{{worker.id}}" class="skil-list">
-                                                    <div class="row mt-10">
+                                                    <div class="row mt-10" id="id_skill_list_{{worker.id}}">
+                                                       <!-- All service types will be listed here -->
+                                                    </div>
+                                                    {% comment %} <div class="row mt-10">
     
                                                         {% if worker.is_general_skill %}
                                                         <div class="col-xs-6 mb-5">
@@ -607,10 +610,10 @@
                                                             Window Cleaning
                                                         </div>
                                                         {% endif %}
+                                                         {% endcomment %}
     
-    
-                                                    </div>
-                                                </div>
+                                                    
+                                                </div> 
                                                 <div id="id_skill_edit_list_{{worker.id}}" class="skil-list-edit">
                                                     <div class="row mt-10">
                                                         <input type="hidden" id="{{worker.id}}" name="user_id"  value="{{worker.id}}">
@@ -856,5 +859,31 @@
             query=query.replace('&','?');
             window.location.href=url+query;  
             }
+         
+function viewSkills(el) {
+    const workerId = el.getAttribute('data-id');
+
+    flip(el);
+
+    fetch('/common/get-service-types/')
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                let html = '';
+                data.service_types.forEach(service => {
+                    html += `
+                        <div class="col-xs-6 mb-5">
+                            ${service.name}
+                        </div>
+                    `;
+                });
+
+                document.getElementById(`id_skill_list_${workerId}`).innerHTML = html;
+            }
+        })
+        .catch(err => console.error(err));
+}
+
+
 </script>
 {% endblock %}

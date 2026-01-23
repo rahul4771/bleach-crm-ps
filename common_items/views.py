@@ -6419,6 +6419,14 @@ def add_service_type(request):
 			return JsonResponse({'success': False, 'error': str(e)})
 
 class ServiceTypeAPIView(APIView):
+	def get(self, request, *args, **kwargs):
+		try:
+			service_types = ServiceType.objects.filter(is_active=True).values('id', 'name', 'name_arabic').order_by('name')
+			service_types_list = list(service_types)
+			return JsonResponse({"success": True, "service_types": service_types_list})
+		except Exception as e:
+			return JsonResponse({"success": False, "error": str(e)}, status=400)
+
 	def put(self, request, *args, **kwargs):
 
 		data = getattr(request, "data", None) or request.data or {}
@@ -6499,6 +6507,10 @@ class ServiceTypeAPIView(APIView):
 		}
 
 		return JsonResponse({"success": True, "message": "Service type deactivated successfully.", "service_type": st_obj})
+
+		#get service type
+	
+			
 
 class ServiceProductivityAPIView(APIView):
 	

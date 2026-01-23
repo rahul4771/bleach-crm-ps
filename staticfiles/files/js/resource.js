@@ -21,6 +21,7 @@ const app = new Vue({
       { solt: 11, check: false, start_time: "08:00 PM", end_time: "10:00 PM" },
       { solt: 12, check: false, start_time: "10:00 PM", end_time: "12:00 AM" },
     ],
+      
   },
   methods: {
     setSolt(s,e){
@@ -99,13 +100,16 @@ const appCard = new Vue({
   delimiters: ["<%", "%>"],
   mounted() {
     console.log("vue app vue card");
+    this.getServiceTypes();
   },
 
   data: {
     userid:[],
+    serviceTypes: [],
+  
     //url:"http://localhost:8000/"
-    url:"https://my.bleachkw.com"
-    //url : 'http://127.0.0.1:8000'
+    // url:"https://my.bleachkw.com"
+    url : 'http://127.0.0.1:8000'
 
   },
   methods: {
@@ -185,7 +189,30 @@ const appCard = new Vue({
                 console.log(error);
               });
       
-    }
+    },
+    getServiceTypes() {
+      console.log('Fetching service types...');
+      fetch('/common/get-service-types/')
+        .then(response => {
+          console.log('Response status:', response.status);
+          if (!response.ok) throw new Error('Network response was not ok');
+          return response.json();
+        })
+        .then(data => {
+          console.log('Full response data:', data);
+          if(data.success) {
+            this.serviceTypes = data.service_types;
+            console.log('Service Types loaded:', this.serviceTypes);
+          } else {
+            console.error('API returned success=false:', data);
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching service types:', error);
+        });
+    },
+    
+  
   },
 });
 
