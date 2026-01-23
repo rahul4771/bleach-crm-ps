@@ -9,8 +9,15 @@
 
 <!-- Booking CSS (same as booking.html) -->
 <link rel="stylesheet" href="{% static 'files/css/booking/booking.css' %}">
+<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
 
-<div class="wrapper">
+<style>
+[v-cloak] {
+  display: none !important;
+}
+</style>>
+
+<div class="wrapper" id="app" v-cloak>
 
   <!-- Payment Tag -->
   <div class="payment-tag">
@@ -26,7 +33,6 @@
       <div class="welcome-wrapper">
         <h1 class="dashboard-head">Booking</h1>
       </div>
-
     </div>
 
     <div class="booking-container">
@@ -35,8 +41,8 @@
 
           <!-- Tabs -->
           <div class="d-flex sr-tabs">
-            <div class="p-3 sr-tab-active">Services</div>
-            <div class="p-3 sr-tab">Cart</div>
+            <div class="p-3 sr-tab" v-bind:class="{ 'sr-tab-active': activeTabs.service }">Services</div>
+            <div class="p-3 sr-tab" v-bind:class="{ 'sr-tab-active': activeTabs.cart }">Cart</div>
           </div>
 
           <!-- CATEGORY -->
@@ -158,5 +164,10 @@
 
   {% include "evaluator/common/footer.html" %}
 </div>
+
+<!-- Vue.js and required scripts -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+<script src="{% static 'files/js/booking/booking_dynamic.js' %}"></script>
 
 {% endblock %}
