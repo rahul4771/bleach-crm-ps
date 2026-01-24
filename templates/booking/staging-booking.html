@@ -23,141 +23,145 @@
   }
 </style>
 
-<div class="wrapper" id="app" v-cloak>
+<div id="app" v-cloak>
+  <v-app>
+    <div class="wrapper">
 
-  <!-- Payment Tag -->
-  <div class="payment-tag">
-    <i class="fas fa-shopping-cart mr-10"></i>
-    <span class="ml-2 payment-tag-text">0 KD</span>
-  </div>
-
-  <!-- Header (static include like booking.html) -->
-  {% include "evaluator/common/header.html" %}
-
-  <section class="content">
-    <div class="container-fluid space">
-      <div class="welcome-wrapper">
-        <h1 class="dashboard-head">Booking</h1>
+      <!-- Payment Tag -->
+      <div class="payment-tag">
+        <i class="fas fa-shopping-cart mr-10"></i>
+        <span class="ml-2 payment-tag-text">0 KD</span>
       </div>
-    </div>
 
-    <div class="booking-container">
-      <div class="white-wrapper booking-card">
-        <div class="container">
+      <!-- Header (static include like booking.html) -->
+      {% include "evaluator/common/header.html" %}
 
-          <!-- Tabs -->
-          <div class="d-flex sr-tabs">
-            <div class="p-3 sr-tab" v-bind:class="{ 'sr-tab-active': activeTabs.service }">Services</div>
-            <div class="p-3 sr-tab" v-bind:class="{ 'sr-tab-active': activeTabs.cart }">Cart</div>
+      <section class="content">
+        <div class="container-fluid space">
+          <div class="welcome-wrapper">
+            <h1 class="dashboard-head">Booking</h1>
           </div>
-
-          <!-- CATEGORY -->
-          <h5 class="pt-4">Category</h5>
-          <div class="d-flex gap-3">
-            <div class="owl-carousel" id="category-carousel" v-if="activeTabs.service">
-              <!-- sr-service-card-active -->
-              <div class="sr-service-card" v-for="service in serviceGroups" :key="service.id">
-                <!-- inactive-icon active-icon -->
-                <i class="far fa-circle"></i>
-                <img :src="`https://my.bleachkw.com${mediaUrl}${service.image_path}`" class="service-icon">
-                <div class="text-center pt-2 service-title" v-text="service.service_name"></div>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- SERVICE TYPE -->
-          <h5 class="pt-4">Service Type</h5>
-          <div class="d-flex gap-3">
-
-            <div class="sr-service-card">Service Type 1</div>
-            <div class="sr-service-card">Service Type 2</div>
-            <div class="sr-service-card">Service Type 3</div>
-
-          </div>
-
-          <!-- LOCATION -->
-          <h5 class="pt-4">What's your place like?</h5>
-
-          <div class="row">
-            <div class="col-md-4">
-              <div class="fake-input">Location Type</div>
-            </div>
-            <div class="col-md-4">
-              <div class="fake-input">Area Type</div>
-            </div>
-            <div class="col-md-4">
-              <div class="fake-input">No of Building</div>
-            </div>
-          </div>
-
-          <!-- BUILDING -->
-          <div class="mt-4">
-            <h6>Building 1</h6>
-            <div class="row">
-              <div class="col-md-4">
-                <div class="fake-input">No of Floors</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- FLOOR DETAILS -->
-          <h5 class="pt-4">Floor Details</h5>
-          <div class="row g-4">
-            <div class="col-md-4">
-              <div class="fake-input">Size</div>
-            </div>
-
-            <div class="col-md-4">
-              <div class="fake-input">Wall type</div>
-            </div>
-
-            <div class="col-md-4">
-              <div class="fake-input">Floor type</div>
-            </div>
-
-            <div class="col-md-4">
-              <div class="fake-input">Ceiling type</div>
-            </div>
-
-            <div class="col-md-4">
-              <div class="fake-input">No of rooms</div>
-            </div>
-
-            <div class="col-md-4">
-              <div class="fake-input">No of bathrooms</div>
-            </div>
-
-            <div class="col-md-4">
-              <div class="fake-input">No of windows</div>
-            </div>
-          </div>
-
-
-          <!-- IMAGES -->
-          <h5 class="pt-4">Add Images</h5>
-          <div class="addImg">
-            <div class="item_image">
-              <i class="fa fa-plus ImageIcon"></i>
-            </div>
-          </div>
-
-          <!-- NOTES -->
-          <h5 class="pt-4">Notes</h5>
-          <div class="fake-textarea">Enter notes here...</div>
-
-          <!-- BUTTON -->
-          <div class="text-center mt-4">
-            <button class="btn btn-primary px-5">Proceed</button>
-          </div>
-
         </div>
-      </div>
+
+        <div class="booking-container">
+          <div class="white-wrapper booking-card">
+            <div class="container">
+
+              <!-- Tabs -->
+              <div class="d-flex sr-tabs">
+                <div class="p-3 sr-tab" v-bind:class="{ 'sr-tab-active': activeTabs.service }">Services</div>
+                <div class="p-3 sr-tab" v-bind:class="{ 'sr-tab-active': activeTabs.cart }">Cart</div>
+              </div>
+
+              <!-- CATEGORY -->
+              <h5 class="pt-4">Category</h5>
+              <div class="d-flex gap-3">
+                <div class="owl-carousel" id="category-carousel" v-if="activeTabs.service">
+                  <!-- sr-service-card-active -->
+                  <div class="sr-service-card" v-for="service in serviceGroups" :key="service.id">
+                    <!-- inactive-icon active-icon -->
+                    <i class="far fa-circle"></i>
+                    <img :src="`https://my.bleachkw.com${mediaUrl}${service.image_path}`" class="service-icon">
+                    <div class="text-center pt-2 service-title" v-text="service.service_name"></div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- SERVICE TYPE -->
+              <h5 class="pt-4">Service Type</h5>
+              <div class="d-flex gap-3">
+
+                <div class="sr-service-card">Service Type 1</div>
+                <div class="sr-service-card">Service Type 2</div>
+                <div class="sr-service-card">Service Type 3</div>
+
+              </div>
+
+              <!-- LOCATION -->
+              <h5 class="pt-4">What's your place like?</h5>
+
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="fake-input">Location Type</div>
+                </div>
+                <div class="col-md-4">
+                  <div class="fake-input">Area Type</div>
+                </div>
+                <div class="col-md-4">
+                  <div class="fake-input">No of Building</div>
+                </div>
+              </div>
+
+              <!-- BUILDING -->
+              <div class="mt-4">
+                <h6>Building 1</h6>
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="fake-input">No of Floors</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- FLOOR DETAILS -->
+              <h5 class="pt-4">Floor Details</h5>
+              <div class="row g-4">
+                <div class="col-md-4">
+                  <div class="fake-input">Size</div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="fake-input">Wall type</div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="fake-input">Floor type</div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="fake-input">Ceiling type</div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="fake-input">No of rooms</div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="fake-input">No of bathrooms</div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="fake-input">No of windows</div>
+                </div>
+              </div>
+
+
+              <!-- IMAGES -->
+              <h5 class="pt-4">Add Images</h5>
+              <div class="addImg">
+                <div class="item_image">
+                  <i class="fa fa-plus ImageIcon"></i>
+                </div>
+              </div>
+
+              <!-- NOTES -->
+              <h5 class="pt-4">Notes</h5>
+              <div class="fake-textarea">Enter notes here...</div>
+
+              <!-- BUTTON -->
+              <div class="text-center mt-4">
+                <button class="btn btn-primary px-5">Proceed</button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      {% include "evaluator/common/footer.html" %}
     </div>
-
-  </section>
-
-  {% include "evaluator/common/footer.html" %}
+  </v-app>
 </div>
 
 <!-- Vue.js and required scripts -->
