@@ -78,6 +78,30 @@ new Vue({
                     }
                 });
             });
+        },
+        'activeTabs.service'(newVal) {
+            if (newVal) {
+                this.$nextTick(() => {
+                    const $carousel = $('#category-carousel');
+                    if ($carousel.hasClass('owl-loaded')) {
+                        $carousel.trigger('destroy.owl.carousel');
+                        $carousel.removeClass('owl-loaded owl-hidden');
+                        $carousel.find('.owl-stage-outer').children().unwrap();
+                    }
+                    $carousel.owlCarousel({
+                        items: 4,
+                        loop: false,
+                        margin: 10,
+                        nav: true,
+                        dots: false,
+                        responsive: {
+                            0: { items: 1 },
+                            600: { items: 2 },
+                            1000: { items: 4 }
+                        }
+                    });
+                });
+            }
         }
     }
 });
