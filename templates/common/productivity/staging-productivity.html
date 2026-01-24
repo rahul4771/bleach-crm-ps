@@ -52,8 +52,6 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <h1 class="h1 mb-0 text-gray-800" style="font-size: 30px">Productivity</h1>
-                                <!-- <p class="text-muted mb-0">Advanced data tables with search, sort, and export
-                                    functionality</p> -->
                             </div>
                         </div>
                     </div>
@@ -76,6 +74,39 @@
                                 <button class="export-btn ms-2" @click="handleMeasurementUnitsBtnClick">
                                     <i class="fa fa-ruler"></i> Measurement Units
                                 </button>
+                                <button class="export-btn ms-2" @click="handleServiceGroupBtnClick">
+                                    <i class="fa fa-object-group"></i> Service Groups
+                                </button>
+                            </div>
+                            <div class="dashboard-card mb-3" v-if="serviceGroups && serviceGroups.length > 0">
+                                <div class="dashboard-row">
+                                    <h2 class="h5 fw-semibold text-gray-800 mb-4">Service Groups</h2>
+                                    <div class="dashboard-grid grid-cols-4">
+                                        <!-- All -->
+                                        <div class="dashboard-card mb-4 " @click="filterByServiceGroup('all')"
+                                            :class="{ 'service-group-active-card': activeServiceGroupFilter === 'all' }">
+                                            <div class="dashboard-card-body p-3">
+                                                <div class="d-flex justify-center align-items-center">
+                                                    <div>
+                                                        <h5 class="mb-0">All</h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="dashboard-card mb-4" v-for="(group, index) in serviceGroups"
+                                            :key="group.id" :data-index="index" @click="filterByServiceGroup(group.id)"
+                                            :class="{ 'service-group-active-card': activeServiceGroupFilter === group.id }">
+                                            <div class="dashboard-card-body p-3">
+                                                <div class="d-flex justify-center align-items-center">
+                                                    <div>
+                                                        <h5 class="mb-0" v-text="group.service_name"></h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
                             </div>
                             <div
                                 class="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns">
@@ -132,6 +163,7 @@
                             </div>
                         </div>
                     </div>
+
                     <!-- Manage Service Types -->
                     <div class="dashboard-card" id="manage-service-type" v-show="toggleDivs.showManageServiceType">
                         <div class="dashboard-card-header">
@@ -166,7 +198,29 @@
                                                 v-text="validationErrors['manageServiceType']['serviceTypeArabicName']">
                                             </div>
                                         </div>
+                                        <div></div>
+                                        <div class="form-group">
+                                            <label for="serviceGroup" class="form-label">Service Group</label>
 
+                                            <select id="serviceGroup" v-model="serviceFormFields.servicegroup_id"
+                                                :class="{
+                                                        'form-control': true,
+                                                        'is-invalid': validationErrors['manageServiceType']['serviceGroup']
+                                                    }">
+
+                                                <option display value="">Select Service Group</option>
+
+                                                <option v-for="group in serviceGroups" :key="group.id"
+                                                    :selected="serviceFormFields.servicegroup_id === group.id"
+                                                    :value="group.id" v-text="group.service_name">
+                                                </option>
+                                            </select>
+
+                                            <div class="invalid-feedback"
+                                                v-if="validationErrors['manageServiceType']['serviceGroup']"
+                                                v-text="validationErrors['manageServiceType']['serviceGroup']">
+                                            </div>
+                                        </div>
                                         <div class="form-group">
                                             <label for="serviceTypeIsActive" class="form-label">Status</label>
                                             <select id="serviceTypeIsActive" name="new_service_is_active"
@@ -1034,8 +1088,169 @@
                             </div>
                         </div>
                     </div>
+
+
+                    <!-- Manage Service Group Modal -->
+                    <!-- Service Group LIST -->
+                    <div class="dashboard-card" id="manage-service-group" v-show="toggleDivs.showServiceGroupView">
+
+                        <div class="dashboard-card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h2 v-text="viewServiceGroup.title ? viewServiceGroup.title : 'Add Service Group'"></h2>
+
+                                <button class="btn btn-secondary" @click="backButtonAction('showList')">Back to
+                                    List</button>
+                            </div>
+
+                            <div class="export-buttons mb-3">
+                                <button class="export-btn" @click="handleAddServiceGroupBtnClick">
+                                    <i class="fa fa-plus-circle"></i> Add Service Group
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns">
+                            <div class="datatable-container">
+                                <table class="table table-striped table-bordered dt-responsive nowrap datatable-table"
+                                    style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th><button>Name</button></th>
+                                            <th><button>Arabic</button></th>
+                                            <th>Image</th>
+                                            <th><button>Status</button></th>
+                                            <th>Updated Date</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <tr v-for="(group, index) in serviceGroups" :key="group.id" :data-index="index">
+
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img :src="group.avatar" :alt="group.service_name"
+                                                        class="student-avatar me-3">
+                                                    <div>
+                                                        <div class="student-name" v-text="group.service_name"></div>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <td v-text="group.service_name_arabic"></td>
+                                            <td>
+                                                <img v-if="group.image_path" :src="group.image_path"
+                                                    :alt="group.service_name" class="me-3"
+                                                    style="width: 75px; height: 75px; object-fit: cover; background-color: #fff;">
+                                            </td>
+
+                                            <td>
+                                                <span
+                                                    :class="['status-badge',group.status == 1 ? 'status-active' : 'status-pending']"
+                                                    v-text="group.status == 1 ? 'Active' : 'Inactive'">
+                                                </span>
+                                            </td>
+
+                                            <td v-text="formatDate(group.updated_at)"></td>
+
+                                            <td>
+                                                <button class="btn-action btn-edit" title="Edit"
+                                                    @click="handleEditServiceGroupBtnClick(group)">
+                                                    <i class="fa fa-pen"></i>
+                                                </button>
+
+                                                <button class="btn-action btn-delete" title="Delete"
+                                                    @click="removeServiceGroup(group)">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Service Group FORM -->
+                    <div class="dashboard-card" id="manage-service-group" v-show="toggleDivs.showServiceGroupModal">
+                        <div class="dashboard-card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h2 v-text="viewServiceGroup.title ? viewServiceGroup.title : 'Add Service Group'"></h2>
+                                <button class="btn btn-secondary" @click="backButtonAction1('showList')">Back to
+                                    List</button>
+                            </div>
+                            <div class="dashboard-card-body">
+                                <form id="manage-service-group-form" @submit.prevent="submitServiceGroupForm"
+                                    :data-action="serviceGroupFormFields.id ? 'edit' : 'add'">
+                                    <div class="dashboard-grid grid-cols-3">
+
+                                        <!-- Service Name -->
+                                        <div class="form-group">
+                                            <label for="serviceGroupName" class="form-label">Service Group Name</label>
+                                            <input type="text" id="serviceGroupName"
+                                                v-model="serviceGroupFormFields.name"
+                                                placeholder="Enter service group name"
+                                                :class="{'form-control': true, 'is-invalid': validationErrors.manageServiceGroup.serviceGroupName}">
+                                            <div class="invalid-feedback"
+                                                v-if="validationErrors.manageServiceGroup.serviceGroupName"
+                                                v-text="validationErrors.manageServiceGroup.serviceGroupName">
+                                            </div>
+                                        </div>
+
+                                        <!-- Arabic Name -->
+                                        <div class="form-group">
+                                            <label for="serviceGroupArabicName" class="form-label">Service Group Name
+                                                (Arabic)</label>
+                                            <input type="text" id="serviceGroupArabicName"
+                                                v-model="serviceGroupFormFields.name_arabic"
+                                                placeholder="Enter service group name in Arabic" dir="rtl"
+                                                :class="{'form-control': true, 'is-invalid': validationErrors.manageServiceGroup.serviceGroupArabicName}">
+                                            <div class="invalid-feedback"
+                                                v-if="validationErrors.manageServiceGroup.serviceGroupArabicName"
+                                                v-text="validationErrors.manageServiceGroup.serviceGroupArabicName">
+                                            </div>
+                                        </div>
+
+                                        <!-- Status -->
+                                        <div class="form-group">
+                                            <label for="serviceGroupStatus" class="form-label">Status</label>
+                                            <select id="serviceGroupStatus" v-model="serviceGroupFormFields.status"
+                                                :class="{'form-control': true, 'is-invalid': validationErrors.manageServiceGroup.serviceGroupStatus}">
+                                                <option value="" disabled>Choose an option</option>
+                                                <option value="active">Active</option>
+                                                <option value="inactive">Inactive</option>
+                                            </select>
+                                            <div class="invalid-feedback"
+                                                v-if="validationErrors.manageServiceGroup.serviceGroupStatus"
+                                                v-text="validationErrors.manageServiceGroup.serviceGroupStatus">
+                                            </div>
+                                        </div>
+
+                                        <!-- Image -->
+                                        <div class="form-group">
+                                            <label for="serviceGroupImage" class="form-label">Image</label>
+                                            <input type="file" id="serviceGroupImage" class="form-control"
+                                                @change="handleImageUpload"
+                                                :class="{'is-invalid': validationErrors.manageServiceGroup.serviceGroupImage}">
+                                            <div class="invalid-feedback"
+                                                v-if="validationErrors.manageServiceGroup.serviceGroupImage"
+                                                v-text="validationErrors.manageServiceGroup.serviceGroupImage">
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="mt-3">
+                                        <button type="submit" class="btn btn-primary">Save Information</button>
+                                        <button type="button" class="btn btn-outline-secondary ms-2"
+                                            @click="resetServiceGroup">Clear Form</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
     </section>
 
 </div>
