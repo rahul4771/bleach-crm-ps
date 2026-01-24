@@ -84,6 +84,10 @@ new Vue({
                     console.log('=== END reinitServiceCarousel ===');
                 }, 100);
             });
+        },
+        // select service type
+        selectServiceType(typeId) {
+            this.activeTabs.activeServiceTypeId = typeId;
         }
     },
 

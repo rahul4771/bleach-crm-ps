@@ -73,17 +73,32 @@
 
               <!-- SERVICE TYPE -->
               <h5 class="pt-4">Service Type</h5>
-              <div class="d-flex gap-3">
-                <div class="owl-carousel" id="service-carousel" :key="activeTabs.activeServiceGroupId"
-                  v-if="filteredServiceTypes.length > 0">
-                  <div class="sr-service-card m-2 p-2 service-one" v-for="type in filteredServiceTypes" :key="type.id">
-                    <i
-                      :class="activeTabs.activeServiceTypeId === type.id ? 'fa fa-check-circle active-icon' : 'far fa-circle inactive-icon'"></i>
-                    <img src="/static/files/icons/booking/icons/detailed_cleaning.png" class="service-icon">
-                    <div class="text-center pt-2 service-title" v-text="type.name"></div>
+                <div class="d-flex gap-3">
+                  <div class="owl-carousel"
+                      id="service-carousel"
+                      :key="activeTabs.activeServiceGroupId"
+                      v-if="filteredServiceTypes.length > 0">
+
+                    <div class="sr-service-card m-2 p-2 service-one"
+                        v-for="type in filteredServiceTypes"
+                        :key="type.id"
+                        @click="selectServiceType(type.id)"
+                        :class="{'sr-service-card-active': activeTabs.activeServiceTypeId === type.id}">
+
+                      <i :class="activeTabs.activeServiceTypeId === type.id
+                        ? 'fa fa-check-circle active-icon'
+                        : 'far fa-circle inactive-icon'"></i>
+
+                      <img src="/static/files/icons/booking/icons/detailed_cleaning.png"
+                          class="service-icon">
+
+                      <div class="text-center pt-2 service-title"
+                          v-text="type.name"></div>
+                    </div>
+
                   </div>
                 </div>
-              </div>
+
 
               <!-- LOCATION -->
               <h5 class="pt-4">What's your place like?</h5>
