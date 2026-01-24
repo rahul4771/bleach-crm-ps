@@ -60,10 +60,10 @@
               <div class="d-flex gap-3">
                 <div class="owl-carousel" id="category-carousel" v-if="activeTabs.service">
                   <div class="sr-service-card" v-for="service in serviceGroups" :key="service.id"
-                    @click="activeTabs.activeServiceId = service.id"
-                    :class="{'sr-service-card-active': activeTabs.activeServiceId === service.id}">
+                    @click="selectServiceGroup(service.id)"
+                    :class="{'sr-service-card-active': activeTabs.activeServiceGroupId === service.id}">
                     <i
-                      :class="activeTabs.activeServiceId === service.id ? 'fa fa-check-circle active-icon' : 'far fa-circle inactive-icon'"></i>
+                      :class="activeTabs.activeServiceGroupId === service.id ? 'fa fa-check-circle active-icon' : 'far fa-circle inactive-icon'"></i>
                     <img :src="`https://my.bleachkw.com${mediaUrl}${service.image_path}`" class="service-icon">
                     <div class="text-center pt-2 service-title" v-text="service.service_name"></div>
                   </div>
@@ -74,11 +74,15 @@
               <!-- SERVICE TYPE -->
               <h5 class="pt-4">Service Type</h5>
               <div class="d-flex gap-3">
-
-                <div class="sr-service-card">Service Type 1</div>
-                <div class="sr-service-card">Service Type 2</div>
-                <div class="sr-service-card">Service Type 3</div>
-
+                <div class="owl-carousel" id="service-carousel" :key="activeTabs.activeServiceGroupId" v-if="filteredServiceTypes.length > 0">
+                    <div class="sr-service-card m-2 p-2 service-one"
+                      v-for="type in filteredServiceTypes"
+                      :key="type.id">
+                      <i :class="activeTabs.activeServiceTypeId === type.id ? 'fa fa-check-circle active-icon' : 'far fa-circle inactive-icon'"></i>
+                      <img src="/static/files/icons/booking/icons/detailed_cleaning.png" class="service-icon">
+                      <div class="text-center pt-2 service-title" v-text="type.name"></div>
+                    </div>
+                </div>
               </div>
 
               <!-- LOCATION -->
