@@ -97,6 +97,6 @@ urlpatterns = [
         url(r'^delete-service-group/(?P<service_group_id>[-\w]+)/$', views.ServiceGroupAPIView.as_view(), name='delete-group-type'),
         url(r'^update-service-group/(?P<service_group_id>[-\w]+)/$', views.ServiceGroupAPIView.as_view(), name='update-service-group'),
 		url(r'^staging/booking/(?P<evaluation_detail_id>[-\w]+)/$',views.StagingBooking.as_view(),name='staging-booking'),
-         url(r'^staging/dynamic/get-service-types/$',views.StagingBookingAPIView.as_view(),name='get-service-types'),      
+        url(r'^staging/dynamic/get-service-types/$',views.StagingBookingAPIView.as_view(),name='get-service-types'),      
     
         ]

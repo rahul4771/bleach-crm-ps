@@ -4,17 +4,23 @@
 {% block content %}
 
 <!-- External styles -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+  integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+  crossorigin="anonymous" />
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+<!-- Owl Carousel CSS -->
+<link rel="stylesheet" href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.carousel.css' %}">
+<link rel="stylesheet"
+  href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.theme.default.min.css' %}">
 <!-- Booking CSS (same as booking.html) -->
 <link rel="stylesheet" href="{% static 'files/css/booking/booking.css' %}">
-<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
 
 <style>
-[v-cloak] {
-  display: none !important;
-}
+  [v-cloak] {
+    display: none !important;
+  }
 </style>
 
 <div class="wrapper" id="app" v-cloak>
@@ -48,25 +54,14 @@
           <!-- CATEGORY -->
           <h5 class="pt-4">Category</h5>
           <div class="d-flex gap-3">
-
-            <div class="sr-service-card sr-service-card-active">
-              <img src="{% static 'files/icons/booking/icons/detailed_cleaning.png' %}" class="service-icon">
-              <div class="service-title">Detailed Cleaning</div>
-            </div>
-
-            <div class="sr-service-card">
-              <img src="{% static 'files/icons/booking/icons/UpholsteryCleaning.png' %}" class="service-icon">
-              <div class="service-title">Special Care</div>
-            </div>
-
-            <div class="sr-service-card">
-              <img src="{% static 'files/icons/booking/icons/kitchen.png' %}" class="service-icon">
-              <div class="service-title">Kitchen Cleaning</div>
-            </div>
-
-            <div class="sr-service-card">
-              <img src="{% static 'files/icons/booking/icons/sanitisation.png' %}" class="service-icon">
-              <div class="service-title">Pest Control</div>
+            <div class="owl-carousel" id="category-carousel" v-if="activeTabs.service">
+              <!-- sr-service-card-active -->
+              <div class="sr-service-card" v-for="service in serviceGroups" :key="service.id">
+                <!-- inactive-icon active-icon -->
+                <i class="far fa-circle"></i>
+                <img :src="`https://my.bleachkw.com${mediaUrl}${service.image_path}`" class="service-icon">
+                <div class="text-center pt-2 service-title" v-text="service.service_name"></div>
+              </div>
             </div>
 
           </div>
@@ -166,6 +161,13 @@
 </div>
 
 <!-- Vue.js and required scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+  integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="text/javascript"
+  src="https://cdn.jsdelivr.net/npm/browser-image-compression@1.0.13/dist/browser-image-compression.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
 <script src="{% static 'files/js/booking/staging-booking.js' %}"></script>

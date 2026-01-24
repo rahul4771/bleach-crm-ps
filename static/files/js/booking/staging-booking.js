@@ -7,6 +7,7 @@ new Vue({
             schedule: false,
             service: true,
         },
+        mediaUrl:'',
         serviceGroups: [],
         serviceTypes: [],
         snackbar: false // Add snackbar property used in template
@@ -14,9 +15,10 @@ new Vue({
 
     methods: {
         getServiceTypes() {
-            fetch('/staging/dynamic/get-service-types/')
+            fetch('/common/staging/dynamic/get-service-types/')
                 .then(response => response.json())
                 .then(data => {
+                    this.mediaUrl = data.MEDIA_URL;
                     this.serviceGroups = data.service_groups ?? [];
                     this.serviceTypes = data.service_types ?? [];
                 })
@@ -30,5 +32,43 @@ new Vue({
 
     mounted() {
         this.getServiceTypes();
+        this.$nextTick(() => {
+            $('#category-carousel').owlCarousel({
+                items: 4,
+                loop: false,
+                margin: 10,
+                nav: true,
+                dots: false,
+                responsive: {
+                    0: { items: 1 },
+                    600: { items: 2 },
+                    1000: { items: 4 }
+                }
+            });
+        });
+    },
+    watch: {
+        serviceGroups() {
+            this.$nextTick(() => {
+                const $carousel = $('#category-carousel');
+                if ($carousel.hasClass('owl-loaded')) {
+                    $carousel.trigger('destroy.owl.carousel');
+                    $carousel.removeClass('owl-loaded owl-hidden');
+                    $carousel.find('.owl-stage-outer').children().unwrap();
+                }
+                $carousel.owlCarousel({
+                    items: 4,
+                    loop: false,
+                    margin: 10,
+                    nav: true,
+                    dots: false,
+                    responsive: {
+                        0: { items: 1 },
+                        600: { items: 2 },
+                        1000: { items: 4 }
+                    }
+                });
+            });
+        }
     }
 });
