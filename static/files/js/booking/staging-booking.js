@@ -8,13 +8,17 @@ new Vue({
             service: true,
             activeServiceId: null
         },
-        mediaUrl:'',
+        mediaUrl: '',
         serviceGroups: [],
         serviceTypes: [],
         snackbar: false // Add snackbar property used in template
     },
 
     methods: {
+        /**
+         * Fetches service types and groups from the server, sets media URL, and selects the first service by default.
+         * Also handles error by showing a snackbar notification.
+         */
         getServiceTypes() {
             fetch('/common/staging/dynamic/get-service-types/')
                 .then(response => response.json())
