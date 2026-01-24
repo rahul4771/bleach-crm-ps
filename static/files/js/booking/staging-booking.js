@@ -7,6 +7,7 @@ new Vue({
             schedule: false,
             service: true,
         },
+        serviceGroups: [],
         serviceTypes: [],
         snackbar: false // Add snackbar property used in template
     },
@@ -16,8 +17,8 @@ new Vue({
             fetch('/staging/dynamic/get-service-types/')
                 .then(response => response.json())
                 .then(data => {
-                    // console.log("data", data.service_types)
-                    this.serviceTypes = data.service_types;
+                    this.serviceGroups = data.service_groups ?? [];
+                    this.serviceTypes = data.service_types ?? [];
                 })
                 .catch(error => {
                     console.error('Error fetching service types:', error);
