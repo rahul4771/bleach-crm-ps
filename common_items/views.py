@@ -7405,3 +7405,8 @@ class ServiceGroupAPIView(APIView):
 class StagingBooking(IsAuthenticated,View):
 	def get(self,request,evaluation_detail_id):
 		return render(request,"booking/staging-booking.html")
+
+class StagingBookingAPIView(APIView):
+	def get(self, request):
+		service_types = list(ServiceType.objects.values('id','name','name_arabic','service_group_id', 'is_active','updated'))
+		return JsonResponse({"service_types": service_types}, status=200)
