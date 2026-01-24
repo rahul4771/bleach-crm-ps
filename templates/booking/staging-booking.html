@@ -49,18 +49,21 @@
 
               <!-- Tabs -->
               <div class="d-flex sr-tabs">
-                <div class="p-3 sr-tab" v-bind:class="{ 'sr-tab-active': activeTabs.service }">Services</div>
-                <div class="p-3 sr-tab" v-bind:class="{ 'sr-tab-active': activeTabs.cart }">Cart</div>
+                <div class="p-3 sr-tab" v-bind:class="{ 'sr-tab-active': activeTabs.service }"
+                  @click="activeTabs.service = true; activeTabs.cart = false">Services</div>
+                <div class="p-3 sr-tab" v-bind:class="{ 'sr-tab-active': activeTabs.cart }"
+                  @click="activeTabs.cart = true; activeTabs.service = false">Cart</div>
               </div>
 
               <!-- CATEGORY -->
               <h5 class="pt-4">Category</h5>
               <div class="d-flex gap-3">
                 <div class="owl-carousel" id="category-carousel" v-if="activeTabs.service">
-                  <!-- sr-service-card-active -->
-                  <div class="sr-service-card" v-for="service in serviceGroups" :key="service.id">
-                    <!-- inactive-icon active-icon -->
-                    <i class="far fa-circle"></i>
+                  <div class="sr-service-card" v-for="service in serviceGroups" :key="service.id"
+                    @click="activeTabs.activeServiceId = service.id"
+                    :class="{'sr-service-card-active': activeTabs.activeServiceId === service.id}">
+                    <i
+                      :class="activeTabs.activeServiceId === service.id ? 'fa fa-check-circle active-icon' : 'far fa-circle inactive-icon'"></i>
                     <img :src="`https://my.bleachkw.com${mediaUrl}${service.image_path}`" class="service-icon">
                     <div class="text-center pt-2 service-title" v-text="service.service_name"></div>
                   </div>

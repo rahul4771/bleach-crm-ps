@@ -6,6 +6,7 @@ new Vue({
             cart: false,
             schedule: false,
             service: true,
+            activeServiceId: null
         },
         mediaUrl:'',
         serviceGroups: [],
@@ -21,6 +22,10 @@ new Vue({
                     this.mediaUrl = data.MEDIA_URL;
                     this.serviceGroups = data.service_groups ?? [];
                     this.serviceTypes = data.service_types ?? [];
+                    // Select first service by default
+                    if (this.serviceGroups.length > 0) {
+                        this.activeTabs.activeServiceId = this.serviceGroups[0].id;
+                    }
                 })
                 .catch(error => {
                     console.error('Error fetching service types:', error);
