@@ -115,7 +115,11 @@
                   </v-select>
                 </div>
                 <div class="col-md-4">
-                  <v-select label="No of Building"></v-select>
+                  <v-select 
+                    v-model="selectedNoOfBuildings"
+                    :items="buildingNumbers"
+                    label="No of Building">
+                  </v-select>
                 </div>
               </div>
 
