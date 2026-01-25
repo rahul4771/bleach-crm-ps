@@ -106,7 +106,11 @@
                   </v-select>
                 </div>
                 <div class="col-md-4">
-                  <v-select label="Area Type"></v-select>
+                  <v-select 
+                    v-model="selectedAreaType"
+                    :items="area_types"
+                    label="Area Type">
+                  </v-select>
                 </div>
                 <div class="col-md-4">
                   <v-select label="No of Building"></v-select>

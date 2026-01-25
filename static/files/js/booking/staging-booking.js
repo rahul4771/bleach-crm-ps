@@ -92,6 +92,23 @@ new Vue({
                 });
         },
 
+        /**
+         * Fetches area types from the backend and updates the areaTypes property.
+         * Uses the Fetch API to make a GET request to /customer/ajax/getareatypes.
+         * On success, sets this.areaTypes to the returned array.
+         * On error, logs the error to the console.
+         */
+        getAreaTypes() {
+            fetch('/customer/ajax/getareatypes')
+                .then(response => response.json())
+                .then(data => {
+                    this.areaTypes = data['area_types'];
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        },
+
         // =====================
         // Carousel Logic
         // =====================
@@ -119,6 +136,7 @@ new Vue({
     },
     mounted() {
         this.getServiceTypes();
+        this.getAreaTypes();
         this.$nextTick(() => {
             $('#category-carousel').owlCarousel(this.carouselSettings);
             $('#service-carousel').owlCarousel(this.carouselSettings);
