@@ -124,6 +124,31 @@
                 <div class="p-4">
                   <h5 class="pt-4">Floor Details</h5>
                   <div class="row g-4">
+                    <div class="col-md-12">
+                      <v-radio-group row>
+                        <div>Any Apartments ? <span style="color:red">*</span></div>
+                        <v-radio :value="true" class="ml-2">
+                          <template v-slot:label>
+                            <div>
+                              Yes<strong class="success--text"></strong>
+                            </div>
+                          </template>
+                        </v-radio>
+                        <v-radio :value="false">
+                          <template v-slot:label>
+                            <div>
+                              No
+                              <strong class="primary--text"></strong>
+                            </div>
+                          </template>
+                        </v-radio>
+                      </v-radio-group>
+                    </div>
+
+                    <div class="col-md-4">
+                      <v-select label="No of Apartments"></v-select>
+                    </div>
+
                     <div class="col-md-4">
                       <v-select label="Size"></v-select>
                     </div>
