@@ -233,6 +233,10 @@ new Vue({
             if (typeSet === 'primary') return this.primaryLocationTypes;
             if (typeSet === 'secondary') return this.secondaryLocationTypes;
             return [];
+        },
+        // Computed property to determine if location type dropdown should be shown
+        showLocationTypeDropdown() {
+            return this.allowedLocationTypes.length > 0;
         }
     }
 });
