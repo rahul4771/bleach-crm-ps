@@ -2,17 +2,13 @@ new Vue({
     el: '#app',
     vuetify: new Vuetify(),
     data: {
-        activeTabs: {
-            activeServiceGroupId: null,
-            activeServiceTypeId: null,
-            cart: false,
-            schedule: false,
-            service: true,
-        },
+        snackbar: false, // Add snackbar property used in template
         mediaUrl: '',
+        selectedLocationType: null,
+        selectedAreaType: null,
+        areaTypes: [],
         serviceGroups: [],
         serviceTypes: [],
-        snackbar: false, // Add snackbar property used in template
         // Define location types
         primaryLocationTypes: [
             { value: 'Post Construction', text: 'Post Construction' },
@@ -24,6 +20,13 @@ new Vue({
             { value: 'Fully Furnished', text: 'Fully Furnished' },
             { value: 'Empty Area', text: 'Empty Area' }
         ],
+        activeTabs: {
+            activeServiceGroupId: null,
+            activeServiceTypeId: null,
+            cart: false,
+            schedule: false,
+            service: true,
+        },
         // Map service type to location type set (by name; adjust as needed)
         serviceLocationTypeMap: {
             'Deep Cleaning': 'primary',
@@ -50,10 +53,9 @@ new Vue({
                 1000: { items: 4 }
             }
         },
-        selectedLocationType: null
     },
     methods: {
-        
+
         // =====================
         // Selection Logic
         // =====================
