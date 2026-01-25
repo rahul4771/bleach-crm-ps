@@ -12,7 +12,33 @@ new Vue({
         mediaUrl: '',
         serviceGroups: [],
         serviceTypes: [],
-        snackbar: false // Add snackbar property used in template
+        snackbar: false, // Add snackbar property used in template
+
+        // Define location types
+        primaryLocationTypes: [
+            { value: 'Post Construction', text: 'Post Construction' },
+            { value: 'Post Renovation', text: 'Post Renovation' },
+            { value: 'Fully Furnished', text: 'Fully Furnished' },
+            { value: 'Empty Area', text: 'Empty Area' }
+        ],
+        secondaryLocationTypes: [
+            { value: 'Fully Furnished', text: 'Fully Furnished' },
+            { value: 'Empty Area', text: 'Empty Area' }
+        ],
+
+        // Map service type to location type set (by name; adjust as needed)
+        serviceLocationTypeMap: {
+            'Deep Cleaning': 'primary',
+            'Window Cleaning': 'primary',
+            'Rope Access': 'primary',
+            'Kitchen Cleaning': 'primary',
+            'Sterilization': 'primary',
+            'General Cleaning': 'secondary',
+            'Upholstery Cleaning': 'secondary',
+            'Mattress Cleaning': 'secondary',
+            'Carpet Cleaning': 'secondary',
+            'Pest Control': 'secondary'
+        }
     },
 
     methods: {
@@ -46,13 +72,13 @@ new Vue({
             this.activeTabs.activeServiceGroupId = groupId;
         },
         reinitServiceCarousel() {
-            
+
             // Wait for Vue to mount the new carousel element
             this.$nextTick(() => {
                 setTimeout(() => {
                     const $carousel = $('#service-carousel');
                     const itemsCount = $carousel.find('.sr-service-card').length;
-                    
+
                     if (itemsCount > 0 && !$carousel.hasClass('owl-loaded')) {
                         $carousel.owlCarousel({
                             items: 4,
@@ -165,16 +191,12 @@ new Vue({
             }
         },
         filteredServiceTypes(newVal) {
-            
-            
             // Set the first filtered service type as active
             if (newVal.length > 0) {
                 this.activeTabs.activeServiceTypeId = newVal[0].id;
             } else {
                 this.activeTabs.activeServiceTypeId = null;
             }
-            
-          
             this.reinitServiceCarousel();
         }
     },
@@ -184,9 +206,7 @@ new Vue({
             // Filter service types by the selected service group and remove duplicates
             const result = this.serviceTypes
                 .filter(t => {
-                    const match = t.service_group_id === this.activeTabs.activeServiceGroupId;
-                    if (match) console.log('Filtered - Service Type:', t.name, 'Group ID:', t.service_group_id);
-                    return match;
+                    return t.service_group_id === this.activeTabs.activeServiceGroupId;
                 })
                 .filter(t => {
                     if (seen.has(t.name)) {
@@ -195,8 +215,24 @@ new Vue({
                     seen.add(t.name);
                     return true;
                 });
-            
             return result;
+        },
+        // Computed property for allowed location types for the selected service
+        allowedLocationTypes() {
+            const activeType = this.serviceTypes.find(
+                t => t.id === this.activeTabs.activeServiceTypeId
+            );
+            if (!activeType) {
+                return [];
+            }
+            const mapKey = activeType.name ? activeType.name.trim() : '';
+            const typeSet = this.serviceLocationTypeMap[mapKey];
+            if (!typeSet) {
+                return [];
+            }
+            if (typeSet === 'primary') return this.primaryLocationTypes;
+            if (typeSet === 'secondary') return this.secondaryLocationTypes;
+            return [];
         }
     }
 });
