@@ -6,7 +6,10 @@ new Vue({
         mediaUrl: '',
         selectedLocationType: null,
         selectedAreaType: null,
+        selectedLocationType: null,
+        selectedNoOfBuildings: null,
         areaTypes: [],
+        buildingNumbers: Array.from({ length: 15 }, (_, i) => i + 1),
         serviceGroups: [],
         serviceTypes: [],
         // Define location types
@@ -53,9 +56,6 @@ new Vue({
                 1000: { items: 4 }
             }
         },
-        selectedLocationType: null,
-        areaTypes: [],
-        selectedAreaType: null
     },
     methods: {
 
