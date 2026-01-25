@@ -53,6 +53,9 @@ new Vue({
                 1000: { items: 4 }
             }
         },
+        selectedLocationType: null,
+        areaTypes: [],
+        selectedAreaType: null
     },
     methods: {
 
@@ -97,17 +100,29 @@ new Vue({
         /**
          * Fetches area types from the backend and updates the areaTypes property.
          * Uses the Fetch API to make a GET request to /customer/ajax/getareatypes.
-         * On success, sets this.areaTypes to the returned array.
+         * Transforms the response to match v-select format: { value, text }
+         * On success, sets this.area_types to the formatted array.
          * On error, logs the error to the console.
          */
         getAreaTypes() {
             fetch('/customer/ajax/getareatypes')
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
-                    this.areaTypes = data['area_types'];
+                    // Transform API response to v-select format
+                    if (data.area_types && Array.isArray(data.area_types)) {
+                        this.areaTypes = data.area_types.map(item => ({
+                            value: item.id,
+                            text: item.name
+                        }));
+                    }
                 })
                 .catch(error => {
-                    console.log(error);
+                    console.error('Error fetching area types:', error);
                 });
         },
 
