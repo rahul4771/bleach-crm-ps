@@ -1,6 +1,7 @@
 new Vue({
     el: '#app',
     vuetify: new Vuetify(),
+    delimiters: ['[[', ']]'],
     data: {
         snackbar: false, // Add snackbar property used in template
         mediaUrl: '',
@@ -8,8 +9,11 @@ new Vue({
         selectedAreaType: null,
         selectedLocationType: null,
         selectedNoOfBuildings: null,
+        selectedNoOfFloors: null,
+        tab: null,
         areaTypes: [],
         buildingNumbers: Array.from({ length: 15 }, (_, i) => i + 1),
+        floorNumbers: Array.from({ length: 15 }, (_, i) => i + 1),
         serviceGroups: [],
         serviceTypes: [],
         // Define location types
@@ -227,6 +231,12 @@ new Vue({
         // Computed property to determine if location type dropdown should be shown
         showLocationTypeDropdown() {
             return this.allowedLocationTypes.length > 0;
+        },
+        // Computed property for building tabs
+        buildingTabs() {
+            if (!this.selectedNoOfBuildings) return [];
+            const count = parseInt(this.selectedNoOfBuildings);
+            return Array.from({ length: count }, (_, i) => `Building ${i + 1}`);
         }
     }
 });
