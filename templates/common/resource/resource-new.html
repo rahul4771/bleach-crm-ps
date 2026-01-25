@@ -7,6 +7,24 @@
     .date-wrapper-inner-resource {
      right: 0px !important; 
 }
+.skil-list {
+      max-height: 200px;   /* Set the height of the box */
+      overflow-y: auto;    /* Enable vertical scroll */
+     
+      padding: 10px;
+  }
+
+  /* Optional: nicer scrollbar for Chrome/Edge */
+  .skil-list::-webkit-scrollbar {
+      width: 8px;
+  }
+  .skil-list::-webkit-scrollbar-thumb {
+      background-color: #888;
+      border-radius: 4px;
+  }
+  .skil-list::-webkit-scrollbar-thumb:hover {
+      background-color: #555;
+  }
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
@@ -530,7 +548,7 @@
                                                     </div>
                                                 </div>
                                                 <div id="id_skill_list_{{worker.id}}" class="skil-list">
-                                                    <div class="row mt-10" id="id_skill_list_{{worker.id}}">
+                                                    <div class="row mt-10">
                                                        <!-- All service types will be listed here -->
                                                     </div>
                                                     {% comment %} <div class="row mt-10">
