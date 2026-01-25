@@ -13,7 +13,30 @@ new Vue({
         serviceGroups: [],
         serviceTypes: [],
         snackbar: false, // Add snackbar property used in template
-
+        // Define location types
+        primaryLocationTypes: [
+            { value: 'Post Construction', text: 'Post Construction' },
+            { value: 'Post Renovation', text: 'Post Renovation' },
+            { value: 'Fully Furnished', text: 'Fully Furnished' },
+            { value: 'Empty Area', text: 'Empty Area' }
+        ],
+        secondaryLocationTypes: [
+            { value: 'Fully Furnished', text: 'Fully Furnished' },
+            { value: 'Empty Area', text: 'Empty Area' }
+        ],
+        // Map service type to location type set (by name; adjust as needed)
+        serviceLocationTypeMap: {
+            'Deep Cleaning': 'primary',
+            'Window Cleaning': 'primary',
+            'Rope Access': 'primary',
+            'Kitchen Cleaning': 'primary',
+            'Sterilization': 'primary',
+            'General Cleaning': 'secondary',
+            'Upholstery Cleaning': 'secondary',
+            'Mattress Cleaning': 'secondary',
+            'Carpet Cleaning': 'secondary',
+            'Pest Control': 'secondary'
+        },
         // Reusable carousel settings
         carouselSettings: {
             items: 4,
@@ -27,35 +50,23 @@ new Vue({
                 1000: { items: 4 }
             }
         },
-
-        // Define location types
-        primaryLocationTypes: [
-            { value: 'Post Construction', text: 'Post Construction' },
-            { value: 'Post Renovation', text: 'Post Renovation' },
-            { value: 'Fully Furnished', text: 'Fully Furnished' },
-            { value: 'Empty Area', text: 'Empty Area' }
-        ],
-        secondaryLocationTypes: [
-            { value: 'Fully Furnished', text: 'Fully Furnished' },
-            { value: 'Empty Area', text: 'Empty Area' }
-        ],
-
-        // Map service type to location type set (by name; adjust as needed)
-        serviceLocationTypeMap: {
-            'Deep Cleaning': 'primary',
-            'Window Cleaning': 'primary',
-            'Rope Access': 'primary',
-            'Kitchen Cleaning': 'primary',
-            'Sterilization': 'primary',
-            'General Cleaning': 'secondary',
-            'Upholstery Cleaning': 'secondary',
-            'Mattress Cleaning': 'secondary',
-            'Carpet Cleaning': 'secondary',
-            'Pest Control': 'secondary'
-        }
+        selectedLocationType: null
     },
-
     methods: {
+        
+        // =====================
+        // Selection Logic
+        // =====================
+        selectServiceGroup(groupId) {
+            this.activeTabs.activeServiceGroupId = groupId;
+        },
+        selectServiceType(typeId) {
+            this.activeTabs.activeServiceTypeId = typeId;
+        },
+
+        // =====================
+        // Data Fetching & Initialization
+        // =====================
         /**
          * Fetches service types and groups from the server, sets media URL, and selects the first service by default.
          * Also handles error by showing a snackbar notification.
@@ -67,7 +78,6 @@ new Vue({
                     this.mediaUrl = data.MEDIA_URL;
                     this.serviceGroups = data.service_groups ?? [];
                     this.serviceTypes = data.service_types ?? [];
-
                     // Select first service by default
                     if (this.serviceTypes.length > 0) {
                         this.activeTabs.activeServiceTypeId = this.serviceTypes[0].id;
@@ -78,15 +88,14 @@ new Vue({
                 })
                 .catch(error => {
                     console.error('Error fetching service types:', error);
-                    // Optionally show error in snackbar
                     this.snackbar = true;
                 });
         },
-        selectServiceGroup(groupId) {
-            this.activeTabs.activeServiceGroupId = groupId;
-        },
+
+        // =====================
+        // Carousel Logic
+        // =====================
         reinitServiceCarousel() {
-            // Wait for Vue to mount the new carousel element
             this.$nextTick(() => {
                 setTimeout(() => {
                     const $carousel = $('#service-carousel');
@@ -97,25 +106,17 @@ new Vue({
                 }, 100);
             });
         },
-
-        // Reusable method to destroy/reset an Owl Carousel
         resetOwlCarousel($carousel) {
             if ($carousel.hasClass('owl-loaded')) {
                 $carousel.trigger('destroy.owl.carousel');
                 $carousel.removeData('owl.carousel');
                 $carousel.removeClass('owl-loaded owl-hidden');
-                // Unwrap the owl-stage structure
                 $carousel.find('.owl-stage-outer').children().unwrap();
                 $carousel.find('.owl-stage-outer').unwrap();
                 $carousel.find('.owl-nav, .owl-dots, .owl-next, .owl-prev').remove();
             }
         },
-        // select service type
-        selectServiceType(typeId) {
-            this.activeTabs.activeServiceTypeId = typeId;
-        }
     },
-
     mounted() {
         this.getServiceTypes();
         this.$nextTick(() => {
