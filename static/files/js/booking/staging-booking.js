@@ -14,6 +14,20 @@ new Vue({
         serviceTypes: [],
         snackbar: false, // Add snackbar property used in template
 
+        // Reusable carousel settings
+        carouselSettings: {
+            items: 4,
+            loop: false,
+            margin: 10,
+            nav: true,
+            dots: false,
+            responsive: {
+                0: { items: 1 },
+                600: { items: 2 },
+                1000: { items: 4 }
+            }
+        },
+
         // Define location types
         primaryLocationTypes: [
             { value: 'Post Construction', text: 'Post Construction' },
@@ -72,29 +86,29 @@ new Vue({
             this.activeTabs.activeServiceGroupId = groupId;
         },
         reinitServiceCarousel() {
-
             // Wait for Vue to mount the new carousel element
             this.$nextTick(() => {
                 setTimeout(() => {
                     const $carousel = $('#service-carousel');
                     const itemsCount = $carousel.find('.sr-service-card').length;
-
                     if (itemsCount > 0 && !$carousel.hasClass('owl-loaded')) {
-                        $carousel.owlCarousel({
-                            items: 4,
-                            loop: false,
-                            margin: 10,
-                            nav: true,
-                            dots: false,
-                            responsive: {
-                                0: { items: 1 },
-                                600: { items: 2 },
-                                1000: { items: 4 }
-                            }
-                        });
+                        $carousel.owlCarousel(this.carouselSettings);
                     }
                 }, 100);
             });
+        },
+
+        // Reusable method to destroy/reset an Owl Carousel
+        resetOwlCarousel($carousel) {
+            if ($carousel.hasClass('owl-loaded')) {
+                $carousel.trigger('destroy.owl.carousel');
+                $carousel.removeData('owl.carousel');
+                $carousel.removeClass('owl-loaded owl-hidden');
+                // Unwrap the owl-stage structure
+                $carousel.find('.owl-stage-outer').children().unwrap();
+                $carousel.find('.owl-stage-outer').unwrap();
+                $carousel.find('.owl-nav, .owl-dots, .owl-next, .owl-prev').remove();
+            }
         },
         // select service type
         selectServiceType(typeId) {
@@ -105,30 +119,8 @@ new Vue({
     mounted() {
         this.getServiceTypes();
         this.$nextTick(() => {
-            $('#category-carousel').owlCarousel({
-                items: 4,
-                loop: false,
-                margin: 10,
-                nav: true,
-                dots: false,
-                responsive: {
-                    0: { items: 1 },
-                    600: { items: 2 },
-                    1000: { items: 4 }
-                }
-            });
-            $('#service-carousel').owlCarousel({
-                items: 4,
-                loop: false,
-                margin: 10,
-                nav: true,
-                dots: false,
-                responsive: {
-                    0: { items: 1 },
-                    600: { items: 2 },
-                    1000: { items: 4 }
-                }
-            });
+            $('#category-carousel').owlCarousel(this.carouselSettings);
+            $('#service-carousel').owlCarousel(this.carouselSettings);
         });
     },
     watch: {
@@ -136,27 +128,8 @@ new Vue({
             setTimeout(() => {
                 this.$nextTick(() => {
                     const $carousel = $('#category-carousel');
-                    if ($carousel.hasClass('owl-loaded')) {
-                        $carousel.trigger('destroy.owl.carousel');
-                        $carousel.removeData('owl.carousel');
-                        $carousel.removeClass('owl-loaded owl-hidden');
-                        // Unwrap the owl-stage structure
-                        $carousel.find('.owl-stage-outer').children().unwrap();
-                        $carousel.find('.owl-stage-outer').unwrap();
-                        $carousel.find('.owl-nav, .owl-dots, .owl-next, .owl-prev').remove();
-                    }
-                    $carousel.owlCarousel({
-                        items: 4,
-                        loop: false,
-                        margin: 10,
-                        nav: true,
-                        dots: false,
-                        responsive: {
-                            0: { items: 1 },
-                            600: { items: 2 },
-                            1000: { items: 4 }
-                        }
-                    });
+                    this.resetOwlCarousel($carousel);
+                    $carousel.owlCarousel(this.carouselSettings);
                 });
             }, 50);
         },
@@ -165,27 +138,8 @@ new Vue({
                 setTimeout(() => {
                     this.$nextTick(() => {
                         const $carousel = $('#category-carousel');
-                        if ($carousel.hasClass('owl-loaded')) {
-                            $carousel.trigger('destroy.owl.carousel');
-                            $carousel.removeData('owl.carousel');
-                            $carousel.removeClass('owl-loaded owl-hidden');
-                            // Unwrap the owl-stage structure
-                            $carousel.find('.owl-stage-outer').children().unwrap();
-                            $carousel.find('.owl-stage-outer').unwrap();
-                            $carousel.find('.owl-nav, .owl-dots, .owl-next, .owl-prev').remove();
-                        }
-                        $carousel.owlCarousel({
-                            items: 4,
-                            loop: false,
-                            margin: 10,
-                            nav: true,
-                            dots: false,
-                            responsive: {
-                                0: { items: 1 },
-                                600: { items: 2 },
-                                1000: { items: 4 }
-                            }
-                        });
+                        this.resetOwlCarousel($carousel);
+                        $carousel.owlCarousel(this.carouselSettings);
                     });
                 }, 50);
             }
