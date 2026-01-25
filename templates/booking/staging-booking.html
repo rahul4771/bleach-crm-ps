@@ -201,25 +201,80 @@
                         </v-radio-group>
                       </div>
                     </div>
-                  </div>
 
-                  <div>
-                    <h5 class="pt-4">Add Notes</h5>
-                    <div class="row g-4">
-                      <div class="col-md-4">
-                        <v-select label="Field Name"></v-select>
-                      </div>
+                    <div class="col-md-12">
+                      <h5 class="pt-4">Kichen Details</h5>
+                      <div class="col-md-12">
+                        <div class="row kitchen-box p-4">
 
-                      <div class="col-md-4">
-                        <v-select label="value"></v-select>
-                      </div>
+                          <div class="col-md-12 d-flex">
+                            <div style="margin-top: 16px; padding-top: 4px;">Do you want to clean the Cabinet ? <span
+                                style="color:red">*</span></div>
+                            <v-radio-group class="p-2" row>
+                              <v-radio :value="true">
+                                <template v-slot:label>
+                                  <div>Yes<strong class="success--text"></strong></div>
+                                </template>
+                              </v-radio>
+                              <v-radio :value="false">
+                                <template v-slot:label>
+                                  <div>No <strong class="primary--text"></strong></div>
+                                </template>
+                              </v-radio>
+                            </v-radio-group>
+                          </div>
 
-                      <div class="text-center mt-4">
-                        <button class="btn btn-primary px-5">Add</button>
+                          <div class="col-md-12 d-flex">
+                            <v-radio-group row required>
+                              <v-radio label="Used Kitchen" value="old"></v-radio>
+                              <v-radio label="New Kitchen" value="new"></v-radio>
+                            </v-radio-group>
+                          </div>
+
+                          <div class="col-md-6">
+                            <v-select label="Size"></v-select>
+                          </div>
+
+                          <div class="col-md-6">
+                            <div class="d-flex">
+                              <div style="margin-top: 16px; padding-top: 4px;">Oil Residue? <span
+                                  style="color:red">*</span></div>
+                              <v-radio-group class="p-2" row>
+                                <v-radio :value="true">
+                                  <template v-slot:label>
+                                    <div>Yes<strong class="success--text"></strong></div>
+                                  </template>
+                                </v-radio>
+                                <v-radio :value="false">
+                                  <template v-slot:label>
+                                    <div>No <strong class="primary--text"></strong></div>
+                                  </template>
+                                </v-radio>
+                              </v-radio-group>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-md-12">
+                            <h5 class="pt-4">Add Notes</h5>
+                            <div class="row g-4">
+                              <div class="col-md-4">
+                                <v-select label="Field Name"></v-select>
+                              </div>
+
+                              <div class="col-md-4">
+                                <v-select label="value"></v-select>
+                              </div>
+
+                              <div class="text-center mt-4">
+                                <button class="btn btn-primary px-5">Add</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
               </v-stepper>
 
 
