@@ -99,26 +99,16 @@
 
               <div class="row">
                 <div class="col-md-4" v-if="showLocationTypeDropdown">
-                  <v-select 
-                    v-model="selectedLocationType"
-                    :items="allowedLocationTypes"
-                    label="Location Type">
+                  <v-select v-model="selectedLocationType" :items="allowedLocationTypes" label="Location Type">
                   </v-select>
                 </div>
                 <div class="col-md-4">
-                  <v-select 
-                    v-model="selectedAreaType"
-                    :items="areaTypes"
-                    item-text="text"
-                    item-value="value"
+                  <v-select v-model="selectedAreaType" :items="areaTypes" item-text="text" item-value="value"
                     label="Area Type">
                   </v-select>
                 </div>
                 <div class="col-md-4">
-                  <v-select 
-                    v-model="selectedNoOfBuildings"
-                    :items="buildingNumbers"
-                    label="No of Building">
+                  <v-select v-model="selectedNoOfBuildings" :items="buildingNumbers" label="No of Building">
                   </v-select>
                 </div>
               </div>
@@ -134,10 +124,7 @@
                   <v-tab-item v-for="building in buildingTabs" :key="building">
                     <div class="row mt-3">
                       <div class="col-md-4">
-                        <v-select 
-                          v-model="selectedNoOfFloors"
-                          :items="floorNumbers"
-                          label="No of Floors">
+                        <v-select v-model="selectedNoOfFloors" :items="floorNumbers" label="No of Floors">
                         </v-select>
                       </div>
                     </div>
@@ -146,69 +133,15 @@
               </div>
 
               <!-- FLOOR DETAILS -->
-              <v-stepper>
-                <div class="p-4">
-                  <h5 class="pt-4">Floor Details</h5>
-                  <div class="row g-4">
-                    <div class="col-md-12">
-                      <v-radio-group row>
-                        <div>Any Apartments ? <span style="color:red">*</span></div>
-                        <v-radio :value="true" class="ml-2">
-                          <template v-slot:label>
-                            <div>
-                              Yes<strong class="success--text"></strong>
-                            </div>
-                          </template>
-                        </v-radio>
-                        <v-radio :value="false">
-                          <template v-slot:label>
-                            <div>
-                              No
-                              <strong class="primary--text"></strong>
-                            </div>
-                          </template>
-                        </v-radio>
-                      </v-radio-group>
-                    </div>
-                    <div class="col-md-12">
-                      <div class="col-md-4 p-0">
-                        <v-select label="No of Apartments"></v-select>
-                      </div>
-                    </div>
-
-                    <div class="col-md-4">
-                      <v-select label="Size"></v-select>
-                    </div>
-
-                    <div class="col-md-4">
-                      <v-select label="Wall type"></v-select>
-                    </div>
-
-                    <div class="col-md-4">
-                      <v-select label="Floor type"></v-select>
-                    </div>
-
-                    <div class="col-md-4">
-                      <v-select label="Ceiling type"></v-select>
-                    </div>
-
-                    <div class="col-md-4">
-                      <v-select label="No of rooms"></v-select>
-                    </div>
-
-                    <div class="col-md-4">
-                      <v-select label="No of bathrooms"></v-select>
-                    </div>
-
-                    <div class="col-md-4">
-                      <v-select label="No of windows"></v-select>
-                    </div>
-
-                    <div class="col-md-6">
-                      <div class="d-flex ">
-                        <div style="margin-top: 16px; padding-top: 4px;">Do you want to clean your Kitchen ? <span
-                            style="color:red">*</span></div>
+              <div v-if="selectedNoOfFloors">
+                <div v-for="floorIndex in Array.from({length: selectedNoOfFloors}, (_, i) => i + 1)" :key="floorIndex" class="floor-section mt-4">
+                  <v-stepper>
+                    <div class="p-4">
+                      <h5 class="pt-4">Floor [[ floorIndex ]] Details</h5>
+                      <div class="row g-4">
+                      <div class="col-md-12">
                         <v-radio-group row>
+                          <div>Any Apartments ? <span style="color:red">*</span></div>
                           <v-radio :value="true" class="ml-2">
                             <template v-slot:label>
                               <div>
@@ -226,45 +159,72 @@
                           </v-radio>
                         </v-radio-group>
                       </div>
-                    </div>
-
-
-                    <div class="col-md-12">
-                      <h5 class="pt-4">Kichen Details</h5>
                       <div class="col-md-12">
-                        <div class="row kitchen-box p-4">
+                        <div class="col-md-4 p-0">
+                          <v-select label="No of Apartments"></v-select>
+                        </div>
+                      </div>
 
-                          <div class="col-md-12 d-flex">
-                            <div style="margin-top: 16px; padding-top: 4px;">Do you want to clean the Cabinet ? <span
-                                style="color:red">*</span></div>
-                            <v-radio-group class="p-2" row>
-                              <v-radio :value="true">
-                                <template v-slot:label>
-                                  <div>Yes<strong class="success--text"></strong></div>
-                                </template>
-                              </v-radio>
-                              <v-radio :value="false">
-                                <template v-slot:label>
-                                  <div>No <strong class="primary--text"></strong></div>
-                                </template>
-                              </v-radio>
-                            </v-radio-group>
-                          </div>
+                      <div class="col-md-4">
+                        <v-select label="Size"></v-select>
+                      </div>
 
-                          <div class="col-md-12 d-flex">
-                            <v-radio-group row required>
-                              <v-radio label="Used Kitchen" value="old"></v-radio>
-                              <v-radio label="New Kitchen" value="new"></v-radio>
-                            </v-radio-group>
-                          </div>
+                      <div class="col-md-4">
+                        <v-select label="Wall type"></v-select>
+                      </div>
 
-                          <div class="col-md-6">
-                            <v-select label="Size"></v-select>
-                          </div>
+                      <div class="col-md-4">
+                        <v-select label="Floor type"></v-select>
+                      </div>
 
-                          <div class="col-md-6">
-                            <div class="d-flex">
-                              <div style="margin-top: 16px; padding-top: 4px;">Oil Residue? <span
+                      <div class="col-md-4">
+                        <v-select label="Ceiling type"></v-select>
+                      </div>
+
+                      <div class="col-md-4">
+                        <v-select label="No of rooms"></v-select>
+                      </div>
+
+                      <div class="col-md-4">
+                        <v-select label="No of bathrooms"></v-select>
+                      </div>
+
+                      <div class="col-md-4">
+                        <v-select label="No of windows"></v-select>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="d-flex ">
+                          <div style="margin-top: 16px; padding-top: 4px;">Do you want to clean your Kitchen ? <span
+                              style="color:red">*</span></div>
+                          <v-radio-group row>
+                            <v-radio :value="true" class="ml-2">
+                              <template v-slot:label>
+                                <div>
+                                  Yes<strong class="success--text"></strong>
+                                </div>
+                              </template>
+                            </v-radio>
+                            <v-radio :value="false">
+                              <template v-slot:label>
+                                <div>
+                                  No
+                                  <strong class="primary--text"></strong>
+                                </div>
+                              </template>
+                            </v-radio>
+                          </v-radio-group>
+                        </div>
+                      </div>
+
+
+                      <div class="col-md-12">
+                        <h5 class="pt-4">Kichen Details</h5>
+                        <div class="col-md-12">
+                          <div class="row kitchen-box p-4">
+
+                            <div class="col-md-12 d-flex">
+                              <div style="margin-top: 16px; padding-top: 4px;">Do you want to clean the Cabinet ? <span
                                   style="color:red">*</span></div>
                               <v-radio-group class="p-2" row>
                                 <v-radio :value="true">
@@ -279,36 +239,67 @@
                                 </v-radio>
                               </v-radio-group>
                             </div>
+
+                            <div class="col-md-12 d-flex">
+                              <v-radio-group row required>
+                                <v-radio label="Used Kitchen" value="old"></v-radio>
+                                <v-radio label="New Kitchen" value="new"></v-radio>
+                              </v-radio-group>
+                            </div>
+
+                            <div class="col-md-6">
+                              <v-select label="Size"></v-select>
+                            </div>
+
+                            <div class="col-md-6">
+                              <div class="d-flex">
+                                <div style="margin-top: 16px; padding-top: 4px;">Oil Residue? <span
+                                    style="color:red">*</span></div>
+                                <v-radio-group class="p-2" row>
+                                  <v-radio :value="true">
+                                    <template v-slot:label>
+                                      <div>Yes<strong class="success--text"></strong></div>
+                                    </template>
+                                  </v-radio>
+                                  <v-radio :value="false">
+                                    <template v-slot:label>
+                                      <div>No <strong class="primary--text"></strong></div>
+                                    </template>
+                                  </v-radio>
+                                </v-radio-group>
+                              </div>
+                            </div>
                           </div>
-                        </div>
 
-                        <div class="row">
-                          <div class="col-md-12">
-                            <h5 class="pt-4">Add Notes</h5>
-                            <div class="row g-4">
-                              <div class="col-md-4">
-                                <v-select label="Field Name"></v-select>
-                              </div>
+                          <div class="row">
+                            <div class="col-md-12">
+                              <h5 class="pt-4">Add Notes</h5>
+                              <div class="row g-4">
+                                <div class="col-md-4">
+                                  <v-select label="Field Name"></v-select>
+                                </div>
 
-                              <div class="col-md-4">
-                                <v-select label="value"></v-select>
-                              </div>
+                                <div class="col-md-4">
+                                  <v-select label="value"></v-select>
+                                </div>
 
-                              <div class="text-center mt-4">
-                                <button class="btn btn-primary px-5">Add</button>
+                                <div class="text-center mt-4">
+                                  <button class="btn btn-primary px-5">Add</button>
+                                </div>
                               </div>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-              </v-stepper>
-              <div class="p-4">
-                <div class="col-md-12">
-                  <div class="text-center mt-4">
-                    <button class="btn btn-primary px-5">Continue</button>
+                  </v-stepper>
+
+                  <div class="p-4">
+                    <div class="col-md-12">
+                      <div class="text-center mt-4">
+                        <button class="btn btn-primary px-5">Continue</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
