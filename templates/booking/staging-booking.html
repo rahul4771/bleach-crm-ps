@@ -162,20 +162,31 @@
                         </div>
                         <div class="col-md-12" v-if="floorApartments[floorIndex] === true">
                           <div class="col-md-4 p-0">
-                            <v-select label="No of Apartments"
+                            <v-select v-model="floorApartmentCounts[floorIndex]" label="No of Apartments"
                               :items="Array.from({length: 15}, (_, i) => i + 1)"></v-select>
                           </div>
                         </div>
 
-                        <div class="col-md-12">
+                        <!-- APARTMENT DETAILS LOOP -->
+                        <div class="col-md-12" v-if="floorApartments[floorIndex] === true && floorApartmentCounts[floorIndex]">
+                          <div v-for="apartmentIndex in Array.from({length: floorApartmentCounts[floorIndex]}, (_, i) => i + 1)" 
+                            :key="`floor-${floorIndex}-apt-${apartmentIndex}`"
+                            class="apartment-section mt-4 p-4" style="border: 1px solid #ddd; border-radius: 4px;">
+                            <h6>Floor [[ floorIndex ]] - Apartment [[ apartmentIndex ]]</h6>
+                            <floor-details-form :floor-index="floorIndex" :apartment-index="apartmentIndex"></floor-details-form>
+                          </div>
+                        </div>
+
+                        <!-- FLOOR DETAILS (if no apartments) -->
+                        <div class="col-md-12" v-if="floorApartments[floorIndex] === false">
                           <floor-details-form :floor-index="floorIndex"></floor-details-form>
                         </div>
-                        
+
                         <div class="col-md-6">
                           <div class="d-flex ">
                             <div style="margin-top: 16px; padding-top: 4px;">Do you want to clean your Kitchen ? <span
                                 style="color:red">*</span></div>
-                            <v-radio-group row>
+                            <v-radio-group row v-model="floorKitchenPreference[floorIndex]">
                               <v-radio :value="true" class="ml-2">
                                 <template v-slot:label>
                                   <div>
@@ -196,7 +207,7 @@
                         </div>
 
 
-                        <div class="col-md-12">
+                        <div class="col-md-12" v-if="floorKitchenPreference[floorIndex] === true">
                           <h5 class="pt-4">Kichen Details</h5>
                           <div class="col-md-12">
                             <div class="row kitchen-box p-4">

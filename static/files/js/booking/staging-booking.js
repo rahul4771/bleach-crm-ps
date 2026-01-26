@@ -12,6 +12,8 @@ new Vue({
         selectedNoOfFloors: null,
         tab: null,
         floorApartments: {}, // Track apartment selection for each floor
+        floorApartmentCounts: {}, // Track number of apartments per floor
+        floorKitchenPreference: {}, // Track kitchen cleaning preference
         areaTypes: [],
         buildingNumbers: Array.from({ length: 15 }, (_, i) => i + 1),
         floorNumbers: Array.from({ length: 15 }, (_, i) => i + 1),
@@ -193,6 +195,22 @@ new Vue({
                 this.activeTabs.activeServiceTypeId = null;
             }
             this.reinitServiceCarousel();
+        },
+        selectedNoOfFloors(newVal) {
+            if (newVal) {
+                // Initialize floorApartments and floorApartmentCounts with default values
+                for (let i = 1; i <= newVal; i++) {
+                    if (this.floorApartments[i] === undefined) {
+                        this.$set(this.floorApartments, i, false); // Default: No apartments
+                    }
+                    if (this.floorApartmentCounts[i] === undefined) {
+                        this.$set(this.floorApartmentCounts, i, null); // No apartments count
+                    }
+                    if (this.floorKitchenPreference[i] === undefined) {
+                        this.$set(this.floorKitchenPreference, i, false); // Default: No kitchen
+                    }
+                }
+            }
         }
     },
     computed: {

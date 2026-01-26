@@ -3,6 +3,11 @@ Vue.component('FloorDetailsForm', {
     floorIndex: {
       type: Number,
       required: true
+    },
+    apartmentIndex: {
+      type: Number,
+      required: false,
+      default: null
     }
   },
   data() {
