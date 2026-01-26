@@ -140,7 +140,7 @@
                       <h5 class="pt-4">Floor [[ floorIndex ]] Details</h5>
                       <div class="row g-4">
                       <div class="col-md-12">
-                        <v-radio-group row>
+                        <v-radio-group row v-model="floorApartments[floorIndex]">
                           <div>Any Apartments ? <span style="color:red">*</span></div>
                           <v-radio :value="true" class="ml-2">
                             <template v-slot:label>
@@ -159,9 +159,9 @@
                           </v-radio>
                         </v-radio-group>
                       </div>
-                      <div class="col-md-12">
+                      <div class="col-md-12" v-if="floorApartments[floorIndex] === true">
                         <div class="col-md-4 p-0">
-                          <v-select label="No of Apartments"></v-select>
+                          <v-select label="No of Apartments" :items="Array.from({length: 15}, (_, i) => i + 1)"></v-select>
                         </div>
                       </div>
 

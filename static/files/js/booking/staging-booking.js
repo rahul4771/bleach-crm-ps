@@ -11,6 +11,7 @@ new Vue({
         selectedNoOfBuildings: null,
         selectedNoOfFloors: null,
         tab: null,
+        floorApartments: {}, // Track apartment selection for each floor
         areaTypes: [],
         buildingNumbers: Array.from({ length: 15 }, (_, i) => i + 1),
         floorNumbers: Array.from({ length: 15 }, (_, i) => i + 1),
