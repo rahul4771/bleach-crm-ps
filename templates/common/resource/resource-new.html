@@ -25,6 +25,28 @@
   .skil-list::-webkit-scrollbar-thumb:hover {
       background-color: #555;
   }
+
+  .skil-list-edit {
+      max-height: 200px;   /* Set the height of the box */
+      overflow-y: auto;    /* Enable vertical scroll */
+      overflow-x: hidden;  /* Hide horizontal scroll */
+      padding: 10px;
+  }
+
+  .skil-list-edit::-webkit-scrollbar {
+      width: 8px;
+  }
+
+
+  .skil-list-edit::-webkit-scrollbar-thumb {
+          background-color: #888;
+      border-radius: 4px;
+  }
+
+  .skil-list-edit::-webkit-scrollbar-thumb:hover {
+      background-color: #555;
+  }
+
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
@@ -331,7 +353,7 @@
                                                             </div>
 
                                                             <div>
-                                                                <div style="margin-left: 10px;" class="resource-user-details text-left">
+                                                                <div style="margin-left: 12px;" class="resource-user-details text-left">
                                                                     <h2>{{worker.name}}</h2>
                                                                     <h6>{% if worker.user_type == 'TEAMINCHARGE' %}
                                                                         Cleaning Agent
@@ -764,11 +786,41 @@
 
 
     function editShow(element) {
-   
-        document.getElementById("id_done_"+$(element).data('id')).style.display = "block";
-        document.getElementById("id_skill_edit_list_"+$(element).data('id')).style.display = "none";
-        document.getElementById("id_skill_list_"+$(element).data('id')).style.display = "none";
-        document.getElementById("id_skill_edit_list_"+$(element).data('id')).style.display = "block";
+        const workerId = $(element).data('id');
+        
+        document.getElementById("id_done_"+workerId).style.display = "block";
+        document.getElementById("id_skill_list_"+workerId).style.display = "none";
+        document.getElementById("id_skill_edit_list_"+workerId).style.display = "none";
+
+        // Fetch service types from backend
+        fetch('/common/get-service-types/')
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    let html = '<div class="row mt-10"><input type="hidden" id="' + workerId + '" name="user_id" value="' + workerId + '">';
+                    html += '{% csrf_token %}';
+                    
+                    data.service_types.forEach(service => {
+                        const fieldName = service.field_name;
+                        const serviceName = service.name;
+                        const isChecked = document.getElementById(fieldName + '_' + workerId)?.checked ? 'checked' : '';
+                        
+                        html += `
+                            <div class="col-xs-6 mb-5">
+                                <label class="c-container">${serviceName}
+                                    <input type="checkbox" id="${fieldName}_${workerId}" ${isChecked} name="${fieldName}">
+                                    <span class="c-checkmark"></span>
+                                </label>
+                            </div>
+                        `;
+                    });
+                    
+                    html += '</div>';
+                    document.getElementById('id_skill_edit_list_'+workerId).innerHTML = html;
+                    document.getElementById("id_skill_edit_list_"+workerId).style.display = "block";
+                }
+            })
+            .catch(err => console.error(err));
     }
     function editDone(id) {
         console.log(id)
@@ -887,7 +939,11 @@ function viewSkills(el) {
                 data.service_types.forEach(service => {
                     html += `
                         <div class="col-xs-6 mb-5">
-                            ${service.name}
+                        <ul>
+                            <li><span class="primary">
+                                ${service.name}
+                            </span></li>
+                        </ul>
                         </div>
                     `;
                 });
@@ -900,4 +956,22 @@ function viewSkills(el) {
 
 
 </script>
+<style>
+  ul {
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    
+    text-align: left;      /* right alignment */
+    line-height: 1.0;       /* reduce line spacing */
+    margin-bottom: 4px;     /* optional: tighter spacing */
+  }
+
+  .primary {
+    font-weight: bold;
+    color: #2c3e50;
+  }
+</style>
 {% endblock %}
