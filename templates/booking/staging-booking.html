@@ -133,8 +133,8 @@
               </div>
 
               <!-- FLOOR DETAILS -->
-              <v-stepper class="p-4">
-                <div v-if="selectedNoOfFloors">
+              <v-stepper class="p-4" v-if="selectedNoOfFloors">
+                <div>
                   <div v-for="floorIndex in Array.from({length: selectedNoOfFloors}, (_, i) => i + 1)" :key="floorIndex"
                     class="floor-section mt-4">
                     <v-stepper class="p-4">
@@ -184,6 +184,7 @@
                         <div class="col-md-12" v-if="floorApartments[floorIndex] === false">
                           <floor-details-form :floor-index="floorIndex"></floor-details-form>
                         </div>
+                      </div>
                     </v-stepper>
 
                     <div class="p-2">
