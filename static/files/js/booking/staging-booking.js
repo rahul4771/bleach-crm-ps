@@ -10,10 +10,17 @@ new Vue({
         selectedAreaType: null,
         selectedLocationType: null,
         selectedNoOfBuildings: null,
-        selectedNoOfFloors: null,
+        selectedNoOfFloors: {}, // Track floors per building
         tab: null,
         floorApartments: {}, // Track apartment selection for each floor
         floorApartmentCounts: {}, // Track number of apartments per floor
+        floorSize: {}, // Track floor size per building-floor
+        floorWallType: {}, // Track wall type per building-floor
+        floorFloorType: {}, // Track floor type per building-floor
+        floorCeilingType: {}, // Track ceiling type per building-floor
+        floorRooms: {}, // Track number of rooms per building-floor
+        floorBathrooms: {}, // Track number of bathrooms per building-floor
+        floorWindows: {}, // Track number of windows per building-floor
         floorKitchenPreference: {}, // Track kitchen cleaning preference
         floorCabinetCleaning: {}, // Track cabinet cleaning preference
         floorKitchenCondition: {}, // Track kitchen condition (old/new)
@@ -166,6 +173,91 @@ new Vue({
                 $carousel.find('.owl-nav, .owl-dots, .owl-next, .owl-prev').remove();
             }
         },
+
+        // =====================
+        // Data Initialization Helpers
+        // =====================
+        initializeBuildingData(buildingIndex) {
+            // Array of property names to initialize
+            const properties = [
+                'floorApartments', 'floorApartmentCounts', 'floorSize', 'floorWallType',
+                'floorFloorType', 'floorCeilingType', 'floorRooms', 'floorBathrooms',
+                'floorWindows', 'floorKitchenPreference', 'floorCabinetCleaning',
+                'floorKitchenCondition', 'floorKitchenSize', 'floorOilResidue',
+                'floorNoteFieldName', 'floorNoteValue', 'floorNotes', 'floorGeneralNotes'
+            ];
+
+            // Initialize each property for the building if not already initialized
+            properties.forEach(prop => {
+                if (!this[prop][buildingIndex]) {
+                    this.$set(this[prop], buildingIndex, {});
+                }
+            });
+        },
+
+        initializeFloorData(buildingIndex, floorIndex, apartmentCount) {
+            // Define default values for each property
+            const floorDefaults = {
+                floorApartments: false,
+                floorApartmentCounts: null,
+                floorSize: null,
+                floorWallType: null,
+                floorFloorType: null,
+                floorCeilingType: null,
+                floorRooms: null,
+                floorBathrooms: null,
+                floorWindows: null,
+                floorKitchenPreference: false,
+                floorCabinetCleaning: false,
+                floorKitchenCondition: null,
+                floorKitchenSize: null,
+                floorOilResidue: false,
+                floorNoteFieldName: null,
+                floorNoteValue: null,
+                floorNotes: [],
+                floorGeneralNotes: null
+            };
+
+            // Properties that should be indexed by apartment when apartments exist
+            const apartmentLevelProperties = [
+                'floorSize', 'floorWallType', 'floorFloorType', 'floorCeilingType',
+                'floorRooms', 'floorBathrooms', 'floorWindows'
+            ];
+
+            // Set default values for each floor property
+            Object.keys(floorDefaults).forEach(prop => {
+                if (this[prop][buildingIndex][floorIndex] === undefined) {
+                    // If apartments exist and this is an apartment-level property, create object for apartments
+                    if (apartmentCount && apartmentLevelProperties.includes(prop)) {
+                        const apartmentData = {};
+                        for (let i = 1; i <= apartmentCount; i++) {
+                            apartmentData[i] = floorDefaults[prop];
+                        }
+                        this.$set(this[prop][buildingIndex], floorIndex, apartmentData);
+                    } else {
+                        this.$set(this[prop][buildingIndex], floorIndex, floorDefaults[prop]);
+                    }
+                }
+            });
+
+            // If apartments exist and were not set before, initialize them now
+            if (apartmentCount) {
+                const apartmentLevelProperties = [
+                    'floorSize', 'floorWallType', 'floorFloorType', 'floorCeilingType',
+                    'floorRooms', 'floorBathrooms', 'floorWindows'
+                ];
+
+                apartmentLevelProperties.forEach(prop => {
+                    if (!Array.isArray(this[prop][buildingIndex][floorIndex]) && typeof this[prop][buildingIndex][floorIndex] !== 'object') {
+                        const apartmentData = {};
+                        for (let i = 1; i <= apartmentCount; i++) {
+                            apartmentData[i] = floorDefaults[prop];
+                        }
+                        this.$set(this[prop][buildingIndex], floorIndex, apartmentData);
+                    }
+                });
+            }
+        },
     },
     mounted() {
         this.getServiceTypes();
@@ -205,42 +297,39 @@ new Vue({
             }
             this.reinitServiceCarousel();
         },
-        selectedNoOfFloors(newVal) {
-            if (newVal) {
-                // Initialize floorApartments and floorApartmentCounts with default values
-                for (let i = 1; i <= newVal; i++) {
-                    if (this.floorApartments[i] === undefined) {
-                        this.$set(this.floorApartments, i, false); // Default: No apartments
+        selectedNoOfFloors: {
+            deep: true,
+            handler(newVal) {
+                if (!newVal || Object.keys(newVal).length === 0) return;
+
+                // Initialize data for all floors in all buildings
+                for (let buildingIndex in newVal) {
+                    const floorCount = newVal[buildingIndex];
+                    if (!floorCount) continue;
+
+                    // Initialize building-level data structures
+                    this.initializeBuildingData(buildingIndex);
+
+                    // Initialize floor-level data
+                    for (let i = 1; i <= floorCount; i++) {
+                        const apartmentCount = this.floorApartmentCounts[buildingIndex] && this.floorApartmentCounts[buildingIndex][i];
+                        this.initializeFloorData(buildingIndex, i, apartmentCount);
                     }
-                    if (this.floorApartmentCounts[i] === undefined) {
-                        this.$set(this.floorApartmentCounts, i, null); // No apartments count
-                    }
-                    if (this.floorKitchenPreference[i] === undefined) {
-                        this.$set(this.floorKitchenPreference, i, false); // Default: No kitchen
-                    }
-                    if (this.floorCabinetCleaning[i] === undefined) {
-                        this.$set(this.floorCabinetCleaning, i, false); // Default: No cabinet cleaning
-                    }
-                    if (this.floorKitchenCondition[i] === undefined) {
-                        this.$set(this.floorKitchenCondition, i, null); // Default: No condition selected
-                    }
-                    if (this.floorKitchenSize[i] === undefined) {
-                        this.$set(this.floorKitchenSize, i, null); // Default: No size selected
-                    }
-                    if (this.floorOilResidue[i] === undefined) {
-                        this.$set(this.floorOilResidue, i, false); // Default: No oil residue
-                    }
-                    if (this.floorNoteFieldName[i] === undefined) {
-                        this.$set(this.floorNoteFieldName, i, null); // Default: No field name
-                    }
-                    if (this.floorNoteValue[i] === undefined) {
-                        this.$set(this.floorNoteValue, i, null); // Default: No value
-                    }
-                    if (this.floorNotes[i] === undefined) {
-                        this.$set(this.floorNotes, i, []); // Default: Empty notes array
-                    }
-                    if (this.floorGeneralNotes[i] === undefined) {
-                        this.$set(this.floorGeneralNotes, i, null); // Default: No general notes
+                }
+            }
+        },
+        floorApartmentCounts: {
+            deep: true,
+            handler(newVal) {
+                if (!newVal) return;
+
+                // When apartment count changes, reinitialize floor data with new apartment count
+                for (let buildingIndex in newVal) {
+                    for (let floorIndex in newVal[buildingIndex]) {
+                        const apartmentCount = newVal[buildingIndex][floorIndex];
+                        if (apartmentCount) {
+                            this.initializeFloorData(buildingIndex, parseInt(floorIndex), apartmentCount);
+                        }
                     }
                 }
             }

@@ -1,5 +1,5 @@
 Vue.component('notes-form', {
-    props: ['floorIndex'],
+    props: ['floorIndex', 'buildingIndex'],
     data() {
         return {
             fieldNameOptions: [
@@ -21,7 +21,7 @@ Vue.component('notes-form', {
                         <div class="row g-4">
                             <div class="col-md-4">
                                 <v-select 
-                                    v-model="$root.floorNoteFieldName[floorIndex]"
+                                    v-model="$root.floorNoteFieldName[buildingIndex][floorIndex]"
                                     :items="fieldNameOptions" 
                                     label="Field Name">
                                 </v-select>
@@ -29,7 +29,7 @@ Vue.component('notes-form', {
 
                             <div class="col-md-4">
                                 <v-text-field 
-                                    v-model="$root.floorNoteValue[floorIndex]"
+                                    v-model="$root.floorNoteValue[buildingIndex][floorIndex]"
                                     label="Value">
                                 </v-text-field>
                             </div>
@@ -45,25 +45,25 @@ Vue.component('notes-form', {
     `,
     methods: {
         addNote() {
-            if (!this.$root.floorNoteFieldName[this.floorIndex] || !this.$root.floorNoteValue[this.floorIndex]) {
+            if (!this.$root.floorNoteFieldName[this.buildingIndex][this.floorIndex] || !this.$root.floorNoteValue[this.buildingIndex][this.floorIndex]) {
                 alert('Please fill in all fields');
                 return;
             }
             
             // Initialize notes array if doesn't exist
-            if (!this.$root.floorNotes[this.floorIndex]) {
-                this.$root.$set(this.$root.floorNotes, this.floorIndex, []);
+            if (!this.$root.floorNotes[this.buildingIndex][this.floorIndex]) {
+                this.$root.$set(this.$root.floorNotes[this.buildingIndex], this.floorIndex, []);
             }
             
             // Add note to array
-            this.$root.floorNotes[this.floorIndex].push({
-                fieldName: this.$root.floorNoteFieldName[this.floorIndex],
-                value: this.$root.floorNoteValue[this.floorIndex]
+            this.$root.floorNotes[this.buildingIndex][this.floorIndex].push({
+                fieldName: this.$root.floorNoteFieldName[this.buildingIndex][this.floorIndex],
+                value: this.$root.floorNoteValue[this.buildingIndex][this.floorIndex]
             });
             
             // Clear inputs
-            this.$root.$set(this.$root.floorNoteFieldName, this.floorIndex, null);
-            this.$root.$set(this.$root.floorNoteValue, this.floorIndex, null);
+            this.$root.$set(this.$root.floorNoteFieldName[this.buildingIndex], this.floorIndex, null);
+            this.$root.$set(this.$root.floorNoteValue[this.buildingIndex], this.floorIndex, null);
         }
     }
 });

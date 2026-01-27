@@ -1,5 +1,5 @@
 Vue.component('kitchen-preference-form', {
-    props: ['floorIndex'],
+    props: ['floorIndex', 'buildingIndex'],
     template: `
         <div class="col-md-6">
             <div class="d-flex">
@@ -7,7 +7,7 @@ Vue.component('kitchen-preference-form', {
                     Do you want to clean your Kitchen ? 
                     <span style="color:red">*</span>
                 </div>
-                <v-radio-group row v-model="$root.floorKitchenPreference[floorIndex]">
+                <v-radio-group row v-model="$root.floorKitchenPreference[buildingIndex][floorIndex]">
                     <v-radio :value="true" class="ml-2">
                         <template v-slot:label>
                             <div>

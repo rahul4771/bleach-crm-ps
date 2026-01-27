@@ -121,10 +121,10 @@
                   </v-tab>
                 </v-tabs>
                 <v-tabs-items v-model="tab">
-                  <v-tab-item v-for="building in buildingTabs" :key="building">
+                  <v-tab-item v-for="(building, buildingIndex) in buildingTabs" :key="building">
                     <div class="row mt-3">
                       <div class="col-md-4">
-                        <v-select v-model="selectedNoOfFloors" :items="floorNumbers" label="No of Floors">
+                        <v-select v-model="selectedNoOfFloors[buildingIndex + 1]" :items="floorNumbers" label="No of Floors">
                         </v-select>
                       </div>
                     </div>
@@ -133,15 +133,15 @@
               </div>
 
               <!-- FLOOR DETAILS -->
-              <v-stepper class="p-4" v-if="selectedNoOfFloors">
+              <v-stepper class="p-4" v-if="selectedNoOfFloors[tab + 1]">
                 <div>
-                  <div v-for="floorIndex in Array.from({length: selectedNoOfFloors}, (_, i) => i + 1)" :key="floorIndex"
+                  <div v-for="floorIndex in Array.from({length: selectedNoOfFloors[tab + 1]}, (_, i) => i + 1)" :key="floorIndex"
                     class="floor-section mt-4">
                     <v-stepper class="p-4">
                       <h5 class="pt-4">Floor [[ floorIndex ]] Details</h5>
                       <div class="row g-4">
                         <div class="col-md-12">
-                          <v-radio-group row v-model="floorApartments[floorIndex]">
+                          <v-radio-group row v-model="floorApartments[tab + 1][floorIndex]">
                             <div>Any Apartments ? <span style="color:red">*</span></div>
                             <v-radio :value="true" class="ml-2">
                               <template v-slot:label>
@@ -160,29 +160,29 @@
                             </v-radio>
                           </v-radio-group>
                         </div>
-                        <div class="col-md-12" v-if="floorApartments[floorIndex] === true">
+                        <div class="col-md-12" v-if="floorApartments[tab + 1][floorIndex] === true">
                           <div class="col-md-4 p-0">
-                            <v-select v-model="floorApartmentCounts[floorIndex]" label="No of Apartments"
+                            <v-select v-model="floorApartmentCounts[tab + 1][floorIndex]" label="No of Apartments"
                               :items="Array.from({length: 15}, (_, i) => i + 1)"></v-select>
                           </div>
                         </div>
 
                         <!-- APARTMENT DETAILS LOOP -->
                         <div class="col-md-12"
-                          v-if="floorApartments[floorIndex] === true && floorApartmentCounts[floorIndex]">
+                          v-if="floorApartments[tab + 1][floorIndex] === true && floorApartmentCounts[tab + 1][floorIndex]">
                           <div
-                            v-for="apartmentIndex in Array.from({length: floorApartmentCounts[floorIndex]}, (_, i) => i + 1)"
+                            v-for="apartmentIndex in Array.from({length: floorApartmentCounts[tab + 1][floorIndex]}, (_, i) => i + 1)"
                             :key="`floor-${floorIndex}-apt-${apartmentIndex}`" class="apartment-section mt-4 p-4"
                             style="border: 1px solid #ddd; border-radius: 4px;">
                             <h6>Floor [[ floorIndex ]] - Apartment [[ apartmentIndex ]]</h6>
                             <floor-details-form :floor-index="floorIndex"
-                              :apartment-index="apartmentIndex"></floor-details-form>
+                              :apartment-index="apartmentIndex" :building-index="tab + 1"></floor-details-form>
                           </div>
                         </div>
 
                         <!-- FLOOR DETAILS (if no apartments) -->
-                        <div class="col-md-12" v-if="floorApartments[floorIndex] === false">
-                          <floor-details-form :floor-index="floorIndex"></floor-details-form>
+                        <div class="col-md-12" v-if="floorApartments[tab + 1][floorIndex] === false">
+                          <floor-details-form :floor-index="floorIndex" :building-index="tab + 1"></floor-details-form>
                         </div>
                       </div>
                     </v-stepper>
