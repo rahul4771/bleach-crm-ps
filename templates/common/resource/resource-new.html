@@ -805,14 +805,14 @@
                     html += '{% csrf_token %}';
                     
                     data.service_types.forEach(service => {
-                        const fieldName = service.field_name;
                         const serviceName = service.name;
-                        const isChecked = document.getElementById(fieldName + '_' + workerId)?.checked ? 'checked' : '';
+                        const serviceId = service.id;
+                        const isChecked = document.getElementById('service_' + serviceId + '_' + workerId)?.checked ? 'checked' : '';
                         
                         html += `
                             <div class="col-xs-6 mb-5">
                                 <label class="c-container">${serviceName}
-                                    <input type="checkbox" id="${fieldName}_${workerId}" ${isChecked} name="${fieldName}">
+                                    <input type="checkbox" id="service_${serviceId}_${workerId}" value="${serviceId}" ${isChecked} name="service_type_${workerId}">
                                     <span class="c-checkmark"></span>
                                 </label>
                             </div>
@@ -963,7 +963,7 @@
         })
         .catch(err => console.error(err));
 } {% endcomment %}
-function editDone(workerId) {
+function saveEdit(workerId) {
     let selectedServiceTypes = [];
 
     document.querySelectorAll(`#id_skill_edit_list_${workerId} input[type="checkbox"]:checked`)
@@ -990,20 +990,110 @@ function editDone(workerId) {
             console.log('✅ Skills saved successfully for employee:', workerId);
             console.log('Selected service types:', selectedServiceTypes);
             
+            // Show success message
+            showSuccessMessage(`✅ ${data.message || 'Skills saved successfully!'}`);
+            console.log('Details:', data.details);
+            
             document.getElementById("id_done_"+workerId).style.display = "none";
             document.getElementById("id_skill_edit_list_"+workerId).style.display = "none";
             document.getElementById("id_skill_list_"+workerId).style.display = "block";
 
-            viewSkills({ getAttribute: () => workerId });
+            // Small delay before refreshing view
+            setTimeout(() => {
+                viewSkills({ getAttribute: () => workerId });
+            }, 500);
         } else {
             console.error('❌ Failed to save skills. Error:', data.error);
-            alert('Error saving skills: ' + (data.error || 'Unknown error'));
+            showErrorMessage(data.error || 'Unknown error occurred');
         }
     })
     .catch(err => {
         console.error('❌ Network error while saving skills:', err);
-        alert('Network error: ' + err.message);
+        showErrorMessage('Network error: ' + err.message);
     });
+}
+
+// Helper function to show success message
+function showSuccessMessage(message) {
+    const msgDiv = document.createElement('div');
+    msgDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #4CAF50;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        z-index: 10000;
+        font-size: 14px;
+        font-weight: bold;
+        animation: slideIn 0.3s ease-in-out;
+    `;
+    msgDiv.textContent = message;
+    document.body.appendChild(msgDiv);
+    
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+        msgDiv.style.animation = 'slideOut 0.3s ease-in-out';
+        setTimeout(() => msgDiv.remove(), 300);
+    }, 3000);
+}
+
+// Helper function to show error message
+function showErrorMessage(message) {
+    const msgDiv = document.createElement('div');
+    msgDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #f44336;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        z-index: 10000;
+        font-size: 14px;
+        font-weight: bold;
+        animation: slideIn 0.3s ease-in-out;
+    `;
+    msgDiv.textContent = message;
+    document.body.appendChild(msgDiv);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        msgDiv.style.animation = 'slideOut 0.3s ease-in-out';
+        setTimeout(() => msgDiv.remove(), 300);
+    }, 5000);
+}
+
+// Add CSS animations
+if (!document.getElementById('msgAnimations')) {
+    const style = document.createElement('style');
+    style.id = 'msgAnimations';
+    style.textContent = `
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
 }
 
 function viewSkills(el) {

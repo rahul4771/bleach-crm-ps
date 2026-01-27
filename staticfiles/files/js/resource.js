@@ -21,7 +21,6 @@ const app = new Vue({
       { solt: 11, check: false, start_time: "08:00 PM", end_time: "10:00 PM" },
       { solt: 12, check: false, start_time: "10:00 PM", end_time: "12:00 AM" },
     ],
-      
   },
   methods: {
     setSolt(s,e){
@@ -100,119 +99,61 @@ const appCard = new Vue({
   delimiters: ["<%", "%>"],
   mounted() {
     console.log("vue app vue card");
-    this.getServiceTypes();
   },
 
   data: {
     userid:[],
-    serviceTypes: [],
-  
     //url:"http://localhost:8000/"
-    // url:"https://my.bleachkw.com"
-    url : 'http://127.0.0.1:8000'
+    url:"https://my.bleachkw.com"
+    //url : 'http://127.0.0.1:8000'
 
   },
   methods: {
-    saveEdit(id){
-      var userData = new FormData()
-
-      userData.append("user_id",id)
-      userData.append("csrfmiddlewaretoken",$("input[name=csrfmiddlewaretoken]").val())
-
-      if($("#is_general_skill_"+id+":checked").val()=="on"){
-        userData.append('is_general_skill','True')
-      }else{
-        userData.append('is_general_skill','False')
-      }
-      if($("#is_deep_skill_"+id+":checked").val()=="on"){
-        userData.append('is_deep_skill','True')
-      }else{
-        userData.append('is_deep_skill','False')
-      }
-      if($("#is_upholstery_skill_"+id+":checked").val()=="on"){
-        userData.append('is_upholstery_skill','True')
-      }else{
-        userData.append('is_upholstery_skill','False')
-      }
-      if($("#is_kitchen_skill_"+id+":checked").val()=="on"){
-        userData.append('is_kitchen_skill','True')
-      }else{
-        userData.append('is_kitchen_skill','False')
-      }
-      if($("#is_sterilization_skill_"+id+":checked").val()=="on"){
-        userData.append('is_sterilization_skill','True')
-      }else{
-        userData.append('is_sterilization_skill','False')
-      }
-      if($("#is_carpet_skill_"+id+":checked").val()=="on"){
-        userData.append('is_carpet_skill','True')
-      }else{
-        userData.append('is_carpet_skill','False')
-      }
-      if($("#is_mattress_skill_"+id+":checked").val()=="on"){
-        userData.append('is_mattress_skill','True')
-      }else{
-        userData.append('is_mattress_skill','False')
-      }
-      if($("#is_facade_skill_"+id+":checked").val()=="on"){
-        userData.append('is_facade_skill','True')
-      }else{
-        userData.append('is_facade_skill','False')
-      }
-      if($("#is_storagearea_skill_"+id+":checked").val()=="on"){
-        userData.append('is_storagearea_skill','True')
-      }else{
-        userData.append('is_storagearea_skill','False')
-      }
-      if($("#is_carparkingumbrella_skill_"+id+":checked").val()=="on"){
-        userData.append('is_carparkingumbrella_skill','True')
-      }else{
-        userData.append('is_carparkingumbrella_skill','False')
-      }
-      if($("#is_outdoor_skill_"+id+":checked").val()=="on"){
-        userData.append('is_outdoor_skill','True')
-      }else{
-        userData.append('is_outdoor_skill','False')
-      }
-      if($("#is_window_skill_"+id+":checked").val()=="on"){
-        userData.append('is_window_skill','True')
-      }else{
-        userData.append('is_window_skill','False')
-      }
-
-      console.log(id,"udt")
-      axios.post(this.url+"/api/resource-skills/",userData).then((response) => {
-        // editDone(id)
-        location.reload();
-              })
-               .catch((error) => {
-                console.log(error);
-              });
+    // saveEdit(id){
+    //   // Collect all checked skill checkboxes
+    //   let selectedServiceTypes = [];
       
-    },
-    getServiceTypes() {
-      console.log('Fetching service types...');
-      fetch('/common/get-service-types/')
-        .then(response => {
-          console.log('Response status:', response.status);
-          if (!response.ok) throw new Error('Network response was not ok');
-          return response.json();
-        })
-        .then(data => {
-          console.log('Full response data:', data);
-          if(data.success) {
-            this.serviceTypes = data.service_types;
-            console.log('Service Types loaded:', this.serviceTypes);
-          } else {
-            console.error('API returned success=false:', data);
-          }
-        })
-        .catch(error => {
-          console.error('Error fetching service types:', error);
-        });
-    },
-    
-  
+    //   // Find all checked service type checkboxes for this employee
+    //   $(`input[name="service_type_${id}"]:checked`).each(function() {
+    //     selectedServiceTypes.push($(this).val());
+    //   });
+
+    //   console.log('Saving skills for employee:', id);
+    //   console.log('Selected service types:', selectedServiceTypes);
+
+    //   // Send to new endpoint with service type IDs
+    //   fetch('/common/save-employee-skills/', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       'X-CSRFToken': $("input[name=csrfmiddlewaretoken]").val()
+    //     },
+    //     body: JSON.stringify({
+    //       employee_id: id,
+    //       service_type_ids: selectedServiceTypes
+    //     })
+    //   })
+    //   .then(res => res.json())
+    //   .then(data => {
+    //     if (data.success) {
+    //       console.log('✅ Skills saved successfully!');
+    //       console.log('Details:', data.details);
+          
+    //       // Show success message with operation details
+    //       alert(`✅ ${data.message}\nEmployee: ${data.details.employee_name}`);
+          
+    //       // Reload page to reflect changes
+    //       location.reload();
+    //     } else {
+    //       console.error('❌ Failed to save skills:', data.error);
+    //       alert(`❌ Error: ${data.error}`);
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.error('❌ Network error while saving skills:', error);
+    //     alert('❌ Network error: ' + error.message);
+    //   });
+    // },
   },
 });
 

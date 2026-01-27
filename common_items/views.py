@@ -7420,30 +7420,75 @@ class StagingBooking(IsAuthenticated,View):
 		return render(request,"booking/staging-booking.html")
     
 class SaveEmployeeSkillsAPIView(APIView):
-    def post(self, request, *args, **kwargs):
-        try:
-            employee_id = request.data.get('employee_id')
-            service_type_ids = request.data.get('service_type_ids', [])
+	def post(self, request, *args, **kwargs):
+		try:
+			# Use request.data for APIView (DRF handles parsing)
+			employee_id = request.data.get('employee_id')
+			service_type_ids = request.data.get('service_type_ids', [])
 
-            employee = UserProfile.objects.get(id=employee_id)
+			# Validate employee_id
+			if not employee_id:
+				return JsonResponse({
+					"success": False, 
+					"error": "Employee ID is required"
+				}, status=400)
 
-            # 1️⃣ Mark all existing skills as INACTIVE
-            Skills.objects.filter(employee=employee).update(status='INACTIVE')
+			employee = UserProfile.objects.get(id=employee_id)
 
-            # 2️⃣ Activate or create selected skills
-            for st_id in service_type_ids:
-                skill, created = Skills.objects.get_or_create(
-                    employee=employee,
-                    service_type_id=st_id,
-                    defaults={'status': 'ACTIVE'}
-                )
-                if not created:
-                    skill.status = 'ACTIVE'
-                    skill.save()
+			# Validate service types
+			if not service_type_ids or len(service_type_ids) == 0:
+				return JsonResponse({
+					"success": False, 
+					"error": "Please select at least one service type"
+				}, status=400)
 
-            return JsonResponse({"success": True})
-        except Exception as e:
-            return JsonResponse({"success": False, "error": str(e)}, status=400)
+			# 1️⃣ Mark all existing skills as INACTIVE
+			Skills.objects.filter(employee=employee).update(status='INACTIVE')
+
+			# 2️⃣ Activate or create selected skills
+			created_count = 0
+			updated_count = 0
+			
+			for st_id in service_type_ids:
+				try:
+					service_type = ServiceType.objects.get(id=st_id)
+					skill, created = Skills.objects.get_or_create(
+						employee=employee,
+						service_type=service_type,
+						defaults={'status': 'ACTIVE'}
+					)
+					if created:
+						created_count += 1
+					else:
+						skill.status = 'ACTIVE'
+						skill.save()
+						updated_count += 1
+				except ServiceType.DoesNotExist:
+					return JsonResponse({
+						"success": False, 
+						"error": f"Service type with ID {st_id} not found"
+					}, status=400)
+
+			return JsonResponse({
+				"success": True,
+				"message": f"✅ Skills saved successfully! Created: {created_count}, Updated: {updated_count}",
+				"details": {
+					"created": created_count,
+					"updated": updated_count,
+					"total": created_count + updated_count,
+					"employee_name": employee.name
+				}
+			})
+		except UserProfile.DoesNotExist:
+			return JsonResponse({
+				"success": False, 
+				"error": f"❌ Employee not found"
+			}, status=400)
+		except Exception as e:
+			return JsonResponse({
+				"success": False, 
+				"error": f"❌ Error saving skills: {str(e)}"
+			}, status=400)
 
 class EmployeeSkillsAPIView(APIView):
     def get(self, request, *args, **kwargs):
