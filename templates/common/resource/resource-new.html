@@ -654,78 +654,78 @@
                                                     <div class="row mt-10">
                                                         <input type="hidden" id="{{worker.id}}" name="user_id"  value="{{worker.id}}">
                                                         {% csrf_token %}
-                                                        <div class="col-xs-6 mb-5">
+                                                        {% comment %} <div class="col-xs-6 mb-5">
                                                             <label class="c-container">General Cleaning
                                                                 <input type="checkbox" id="is_general_skill_{{worker.id}}"  {% if worker.is_general_skill %}checked{% endif %} name="is_general_skill">
                                                                 <span class="c-checkmark"></span>
                                                             </label>
-                                                        </div>
-                                                        <div class="col-xs-6 mb-5">
+                                                        </div> {% endcomment %}
+                                                        {% comment %} <div class="col-xs-6 mb-5">
                                                             <label class="c-container">Deep Cleaning
                                                                 <input type="checkbox" id="is_deep_skill_{{worker.id}}" {% if worker.is_deep_skill %}checked{% endif %} name="is_deep_skill">
                                                                 <span class="c-checkmark"></span>
                                                             </label>
-                                                        </div>
-                                                        <div class="col-xs-6 mb-5">
+                                                        </div> {% endcomment %}
+                                                        {% comment %} <div class="col-xs-6 mb-5">
                                                             <label class="c-container">Upholstery Cleaning
                                                                 <input type="checkbox" id="is_upholstery_skill_{{worker.id}}" {% if worker.is_upholstery_skill %}checked{% endif %} name="is_upholstery_skill">
                                                                 <span class="c-checkmark"></span>
                                                             </label>
-                                                        </div>
-                                                        <div class="col-xs-6 mb-5">
+                                                        </div> {% endcomment %}
+                                                        {% comment %} <div class="col-xs-6 mb-5">
                                                             <label class="c-container">Kitchen Cleaning
                                                                 <input type="checkbox" id="is_kitchen_skill_{{worker.id}}" {% if worker.is_kitchen_skill %}checked{% endif %} name="is_kitchen_skill">
                                                                 <span class="c-checkmark"></span>
                                                             </label>
-                                                        </div>
-                                                        <div class="col-xs-6 mb-5">
+                                                        </div> {% endcomment %}
+                                                        {% comment %} <div class="col-xs-6 mb-5">
                                                             <label class="c-container">Sterilization Cleaning
                                                                 <input type="checkbox" id="is_sterilization_skill_{{worker.id}}" {% if worker.is_sterilization_skill %}checked{% endif %} name="is_sterilization_skill">
                                                                 <span class="c-checkmark"></span>
                                                             </label>
-                                                        </div>
-                                                        <div class="col-xs-6 mb-5">
+                                                        </div> {% endcomment %}
+                                                        {% comment %} <div class="col-xs-6 mb-5">
                                                             <label class="c-container">Carpet Cleaning
                                                                 <input type="checkbox"  id="is_carpet_skill_{{worker.id}}"  {% if worker.is_carpet_skill %}checked{% endif %} name="is_carpet_skill">
                                                                 <span class="c-checkmark"></span>
                                                             </label>
-                                                        </div>
-                                                        <div class="col-xs-6 mb-5">
+                                                        </div> {% endcomment %}
+                                                        {% comment %} <div class="col-xs-6 mb-5">
                                                             <label class="c-container">Mattress Cleaning
                                                                 <input type="checkbox" id="is_mattress_skill_{{worker.id}}" {% if worker.is_mattress_skill %}checked{% endif %} name="is_mattress_skill">
                                                                 <span class="c-checkmark"></span>
                                                             </label>
-                                                        </div>
-                                                        <div class="col-xs-6 mb-5">
+                                                        </div> {% endcomment %}
+                                                        {% comment %} <div class="col-xs-6 mb-5">
                                                             <label class="c-container">Facade Cleaning
                                                                 <input type="checkbox" id="is_facade_skill_{{worker.id}}" {% if worker.is_facade_skill %}checked{% endif %} name="is_facade_skill">
                                                                 <span class="c-checkmark"></span>
                                                             </label>
-                                                        </div>
-                                                        <div class="col-xs-6 mb-5">
+                                                        </div> {% endcomment %}
+                                                        {% comment %} <div class="col-xs-6 mb-5">
                                                             <label class="c-container">Storage Area Cleaning
                                                                 <input type="checkbox" id="is_storagearea_skill_{{worker.id}}" {% if worker.is_storagearea_skill %}checked{% endif %} name="is_storagearea_skill">
                                                                 <span class="c-checkmark"></span>
                                                             </label>
-                                                        </div>
-                                                        <div class="col-xs-6 mb-5">
+                                                        </div> {% endcomment %}
+                                                        {% comment %} <div class="col-xs-6 mb-5">
                                                             <label class="c-container">Car Parking Umbrella
                                                                 <input type="checkbox" id="is_carparkingumbrella_skill_{{worker.id}}" {% if worker.is_carparkingumbrella_skill %}checked{% endif %} name="is_carparkingumbrella_skill">
                                                                 <span class="c-checkmark"></span>
                                                             </label>
-                                                        </div>
-                                                        <div class="col-xs-6 mb-5">
+                                                        </div> {% endcomment %}
+                                                        {% comment %} <div class="col-xs-6 mb-5">
                                                             <label class="c-container">Outdoor Cleaning
                                                                 <input type="checkbox" id="is_outdoor_skill_{{worker.id}}" {% if worker.is_outdoor_skill %}checked{% endif %} name="is_outdoor_skill">
                                                                 <span class="c-checkmark"></span>
                                                             </label>
-                                                        </div>
-                                                        <div class="col-xs-6 mb-5">
+                                                        </div> {% endcomment %}
+                                                        {% comment %} <div class="col-xs-6 mb-5">
                                                             <label class="c-container">Window Cleaning
                                                                 <input type="checkbox" id="is_window_skill_{{worker.id}}" {% if worker.is_window_skill %}checked{% endif %} name="is_window_skill">
                                                                 <span class="c-checkmark"></span>
                                                             </label>
-                                                        </div>
+                                                        </div> {% endcomment %}
     
                                                     </div>
                                                 </div>
@@ -788,6 +788,8 @@
     function editShow(element) {
         const workerId = $(element).data('id');
         
+        console.log('Opening edit mode for employee:', workerId);
+        
         document.getElementById("id_done_"+workerId).style.display = "block";
         document.getElementById("id_skill_list_"+workerId).style.display = "none";
         document.getElementById("id_skill_edit_list_"+workerId).style.display = "none";
@@ -797,6 +799,8 @@
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
+                    console.log('✅ Service types fetched successfully:', data.service_types);
+                    
                     let html = '<div class="row mt-10"><input type="hidden" id="' + workerId + '" name="user_id" value="' + workerId + '">';
                     html += '{% csrf_token %}';
                     
@@ -818,17 +822,23 @@
                     html += '</div>';
                     document.getElementById('id_skill_edit_list_'+workerId).innerHTML = html;
                     document.getElementById("id_skill_edit_list_"+workerId).style.display = "block";
+                } else {
+                    console.error('❌ Failed to fetch service types. Error:', data.error);
+                    alert('Error loading service types: ' + (data.error || 'Unknown error'));
                 }
             })
-            .catch(err => console.error(err));
+            .catch(err => {
+                console.error('❌ Network error while fetching service types:', err);
+                alert('Network error: ' + err.message);
+            });
     }
-    function editDone(id) {
+    {% comment %} function editDone(id) {
         console.log(id)
         document.getElementById("id_done_"+id).style.display = "none";
         document.getElementById("id_skill_edit_list_"+id).style.display = "block";
         document.getElementById("id_skill_list_"+id).style.display = "block";
         document.getElementById("id_skill_edit_list_"+id).style.display = "none";
-    }
+    } {% endcomment %}
     function flip(element) {
         $('#front_id_'+$(element).data('id')).closest('.flip-container').toggleClass('flip-hover');
         $('#front_id_'+$(element).data('id')).css('transform, rotateY(180deg)');
@@ -926,7 +936,7 @@
             window.location.href=url+query;  
             }
          
-function viewSkills(el) {
+{% comment %} function viewSkills(el) {
     const workerId = el.getAttribute('data-id');
 
     flip(el);
@@ -952,7 +962,93 @@ function viewSkills(el) {
             }
         })
         .catch(err => console.error(err));
+} {% endcomment %}
+function editDone(workerId) {
+    let selectedServiceTypes = [];
+
+    document.querySelectorAll(`#id_skill_edit_list_${workerId} input[type="checkbox"]:checked`)
+        .forEach(cb => {
+            selectedServiceTypes.push(cb.value);
+        });
+
+    console.log('Saving skills for employee:', workerId, 'Service types:', selectedServiceTypes);
+
+    fetch('/common/save-employee-skills/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            employee_id: workerId,
+            service_type_ids: selectedServiceTypes
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            console.log('✅ Skills saved successfully for employee:', workerId);
+            console.log('Selected service types:', selectedServiceTypes);
+            
+            document.getElementById("id_done_"+workerId).style.display = "none";
+            document.getElementById("id_skill_edit_list_"+workerId).style.display = "none";
+            document.getElementById("id_skill_list_"+workerId).style.display = "block";
+
+            viewSkills({ getAttribute: () => workerId });
+        } else {
+            console.error('❌ Failed to save skills. Error:', data.error);
+            alert('Error saving skills: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(err => {
+        console.error('❌ Network error while saving skills:', err);
+        alert('Network error: ' + err.message);
+    });
 }
+
+function viewSkills(el) {
+    const workerId = el.getAttribute('data-id');
+    flip(el);
+
+    console.log('Fetching skills for employee:', workerId);
+
+    fetch(`/common/get-employee-skills/?employee_id=${workerId}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                console.log('✅ Skills fetched successfully:', data.skills);
+                
+                if (data.skills && data.skills.length > 0) {
+                    let html = '';
+                    data.skills.forEach(skill => {
+                        console.log('Displaying skill:', skill.name);
+                        html += `
+                            <div class="col-xs-6 mb-5">
+                                <ul>
+                                    <li>
+                                        <span class="primary">${skill.name}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        `;
+                    });
+                    document.getElementById(`id_skill_list_${workerId}`).innerHTML = html;
+                } else {
+                    console.log('⚠️ No skills found for employee:', workerId);
+                    document.getElementById(`id_skill_list_${workerId}`).innerHTML = '<span class="text-muted">No skills assigned</span>';
+                }
+            } else {
+                console.error('❌ Failed to fetch skills. Error:', data.error);
+                alert('Error fetching skills: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(err => {
+            console.error('❌ Network error while fetching skills:', err);
+            alert('Network error: ' + err.message);
+        });
+}
+
+
 
 
 </script>

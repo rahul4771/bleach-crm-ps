@@ -29,7 +29,7 @@ from django.db.models.functions import Cast,TruncDate,ExtractMonth,ExtractYear,C
 from django.db.models import Prefetch
 from django.contrib import messages
 
-from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
+from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule,Skills
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons,CleaningMethod,CleaningSection,ServiceType,AreaType,ServiceGroup 
 from order.models import Promocode,OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia,CancellOrderAmountHistory,XeroInvoice
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
@@ -61,6 +61,7 @@ from rest_framework.status import HTTP_200_OK
 from agent.serializers import CleaningScheduleSerializer,FollowupScheduleSerializer,UserProfileShowSerializer
 
 import pytz
+
 
 utc=pytz.UTC
 
@@ -7417,3 +7418,50 @@ class ServiceGroupAPIView(APIView):
 class StagingBooking(IsAuthenticated,View):
 	def get(self,request,evaluation_detail_id):
 		return render(request,"booking/staging-booking.html")
+    
+class SaveEmployeeSkillsAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        try:
+            employee_id = request.data.get('employee_id')
+            service_type_ids = request.data.get('service_type_ids', [])
+
+            employee = UserProfile.objects.get(id=employee_id)
+
+            # 1️⃣ Mark all existing skills as INACTIVE
+            Skills.objects.filter(employee=employee).update(status='INACTIVE')
+
+            # 2️⃣ Activate or create selected skills
+            for st_id in service_type_ids:
+                skill, created = Skills.objects.get_or_create(
+                    employee=employee,
+                    service_type_id=st_id,
+                    defaults={'status': 'ACTIVE'}
+                )
+                if not created:
+                    skill.status = 'ACTIVE'
+                    skill.save()
+
+            return JsonResponse({"success": True})
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)}, status=400)
+
+class EmployeeSkillsAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        employee_id = request.GET.get('employee_id')
+
+        skills = Skills.objects.filter(
+            employee_id=employee_id,
+            status='ACTIVE'
+        ).select_related('service_type')
+
+        data = [
+            {
+                "id": skill.service_type.id,
+                "name": skill.service_type.name
+            }
+            for skill in skills
+        ]
+
+        return JsonResponse({"success": True, "skills": data})
+	
+	
