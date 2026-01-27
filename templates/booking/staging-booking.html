@@ -133,11 +133,11 @@
               </div>
 
               <!-- FLOOR DETAILS -->
-              <div v-if="selectedNoOfFloors">
-                <div v-for="floorIndex in Array.from({length: selectedNoOfFloors}, (_, i) => i + 1)" :key="floorIndex"
-                  class="floor-section mt-4">
-                  <v-stepper>
-                    <div class="p-4">
+              <v-stepper class="p-4">
+                <div v-if="selectedNoOfFloors">
+                  <div v-for="floorIndex in Array.from({length: selectedNoOfFloors}, (_, i) => i + 1)" :key="floorIndex"
+                    class="floor-section mt-4">
+                    <v-stepper class="p-4">
                       <h5 class="pt-4">Floor [[ floorIndex ]] Details</h5>
                       <div class="row g-4">
                         <div class="col-md-12">
@@ -184,24 +184,27 @@
                         <div class="col-md-12" v-if="floorApartments[floorIndex] === false">
                           <floor-details-form :floor-index="floorIndex"></floor-details-form>
                         </div>
-                  </v-stepper>
+                    </v-stepper>
 
-                  <div class="p-4">
-                    <div class="col-md-12">
-                      <div class="text-center mt-4">
-                        <button class="btn btn-primary px-5">Continue</button>
+                    <div class="p-2">
+                      <div class="col-md-12">
+                        <div class="text-center mt-4">
+                          <button class="btn btn-primary px-5">Continue</button>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </v-stepper>
 
 
               <!-- IMAGES -->
-              <h5 class="pt-4">Add Images</h5>
-              <div class="addImg">
-                <div class="item_image">
-                  <i class="fa fa-plus ImageIcon"></i>
+              <div class="col-md-12">
+                <h5 class="pt-4">Add Images</h5>
+                <div class="addImg">
+                  <div class="item_image">
+                    <i class="fa fa-plus ImageIcon"></i>
+                  </div>
                 </div>
               </div>
 
