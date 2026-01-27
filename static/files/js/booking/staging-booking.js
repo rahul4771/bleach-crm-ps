@@ -5,6 +5,7 @@ new Vue({
     data: {
         snackbar: false, // Add snackbar property used in template
         mediaUrl: '',
+        generalNotes: '', // Track general notes
         selectedLocationType: null,
         selectedAreaType: null,
         selectedLocationType: null,
@@ -14,6 +15,14 @@ new Vue({
         floorApartments: {}, // Track apartment selection for each floor
         floorApartmentCounts: {}, // Track number of apartments per floor
         floorKitchenPreference: {}, // Track kitchen cleaning preference
+        floorCabinetCleaning: {}, // Track cabinet cleaning preference
+        floorKitchenCondition: {}, // Track kitchen condition (old/new)
+        floorKitchenSize: {}, // Track kitchen size
+        floorOilResidue: {}, // Track oil residue preference
+        floorNoteFieldName: {}, // Track notes field name per floor
+        floorNoteValue: {}, // Track notes value per floor
+        floorNotes: {}, // Track all notes per floor
+        floorGeneralNotes: {}, // Track general notes per floor
         areaTypes: [],
         buildingNumbers: Array.from({ length: 15 }, (_, i) => i + 1),
         floorNumbers: Array.from({ length: 15 }, (_, i) => i + 1),
@@ -208,6 +217,30 @@ new Vue({
                     }
                     if (this.floorKitchenPreference[i] === undefined) {
                         this.$set(this.floorKitchenPreference, i, false); // Default: No kitchen
+                    }
+                    if (this.floorCabinetCleaning[i] === undefined) {
+                        this.$set(this.floorCabinetCleaning, i, false); // Default: No cabinet cleaning
+                    }
+                    if (this.floorKitchenCondition[i] === undefined) {
+                        this.$set(this.floorKitchenCondition, i, null); // Default: No condition selected
+                    }
+                    if (this.floorKitchenSize[i] === undefined) {
+                        this.$set(this.floorKitchenSize, i, null); // Default: No size selected
+                    }
+                    if (this.floorOilResidue[i] === undefined) {
+                        this.$set(this.floorOilResidue, i, false); // Default: No oil residue
+                    }
+                    if (this.floorNoteFieldName[i] === undefined) {
+                        this.$set(this.floorNoteFieldName, i, null); // Default: No field name
+                    }
+                    if (this.floorNoteValue[i] === undefined) {
+                        this.$set(this.floorNoteValue, i, null); // Default: No value
+                    }
+                    if (this.floorNotes[i] === undefined) {
+                        this.$set(this.floorNotes, i, []); // Default: Empty notes array
+                    }
+                    if (this.floorGeneralNotes[i] === undefined) {
+                        this.$set(this.floorGeneralNotes, i, null); // Default: No general notes
                     }
                 }
             }

@@ -30,6 +30,14 @@ Vue.component('FloorDetailsForm', {
       <form-select label="No of rooms" :items="roomOptions"></form-select>
       <form-select label="No of bathrooms" :items="bathroomOptions"></form-select>
       <form-select label="No of windows" :items="windowOptions"></form-select>
+      <kitchen-preference-form :floor-index="floorIndex"></kitchen-preference-form> 
+      <div class="col-md-12" v-if="$root.floorKitchenPreference[floorIndex] === true">
+        <h5 class="pt-4">Kitchen Details</h5>
+        <div class="col-md-12">
+          <kitchen-details-form :floor-index="floorIndex" :apartment-index="apartmentIndex"></kitchen-details-form>
+        </div>
+      </div>    
+      <notes-form :floor-index="floorIndex"></notes-form>
     </div>
   `
 });

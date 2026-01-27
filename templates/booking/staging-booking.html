@@ -168,12 +168,15 @@
                         </div>
 
                         <!-- APARTMENT DETAILS LOOP -->
-                        <div class="col-md-12" v-if="floorApartments[floorIndex] === true && floorApartmentCounts[floorIndex]">
-                          <div v-for="apartmentIndex in Array.from({length: floorApartmentCounts[floorIndex]}, (_, i) => i + 1)" 
-                            :key="`floor-${floorIndex}-apt-${apartmentIndex}`"
-                            class="apartment-section mt-4 p-4" style="border: 1px solid #ddd; border-radius: 4px;">
+                        <div class="col-md-12"
+                          v-if="floorApartments[floorIndex] === true && floorApartmentCounts[floorIndex]">
+                          <div
+                            v-for="apartmentIndex in Array.from({length: floorApartmentCounts[floorIndex]}, (_, i) => i + 1)"
+                            :key="`floor-${floorIndex}-apt-${apartmentIndex}`" class="apartment-section mt-4 p-4"
+                            style="border: 1px solid #ddd; border-radius: 4px;">
                             <h6>Floor [[ floorIndex ]] - Apartment [[ apartmentIndex ]]</h6>
-                            <floor-details-form :floor-index="floorIndex" :apartment-index="apartmentIndex"></floor-details-form>
+                            <floor-details-form :floor-index="floorIndex"
+                              :apartment-index="apartmentIndex"></floor-details-form>
                           </div>
                         </div>
 
@@ -181,107 +184,6 @@
                         <div class="col-md-12" v-if="floorApartments[floorIndex] === false">
                           <floor-details-form :floor-index="floorIndex"></floor-details-form>
                         </div>
-
-                        <div class="col-md-6">
-                          <div class="d-flex ">
-                            <div style="margin-top: 16px; padding-top: 4px;">Do you want to clean your Kitchen ? <span
-                                style="color:red">*</span></div>
-                            <v-radio-group row v-model="floorKitchenPreference[floorIndex]">
-                              <v-radio :value="true" class="ml-2">
-                                <template v-slot:label>
-                                  <div>
-                                    Yes<strong class="success--text"></strong>
-                                  </div>
-                                </template>
-                              </v-radio>
-                              <v-radio :value="false">
-                                <template v-slot:label>
-                                  <div>
-                                    No
-                                    <strong class="primary--text"></strong>
-                                  </div>
-                                </template>
-                              </v-radio>
-                            </v-radio-group>
-                          </div>
-                        </div>
-
-
-                        <div class="col-md-12" v-if="floorKitchenPreference[floorIndex] === true">
-                          <h5 class="pt-4">Kichen Details</h5>
-                          <div class="col-md-12">
-                            <div class="row kitchen-box p-4">
-
-                              <div class="col-md-12 d-flex">
-                                <div style="margin-top: 16px; padding-top: 4px;">Do you want to clean the Cabinet ?
-                                  <span style="color:red">*</span>
-                                </div>
-                                <v-radio-group class="p-2" row>
-                                  <v-radio :value="true">
-                                    <template v-slot:label>
-                                      <div>Yes<strong class="success--text"></strong></div>
-                                    </template>
-                                  </v-radio>
-                                  <v-radio :value="false">
-                                    <template v-slot:label>
-                                      <div>No <strong class="primary--text"></strong></div>
-                                    </template>
-                                  </v-radio>
-                                </v-radio-group>
-                              </div>
-
-                              <div class="col-md-12 d-flex">
-                                <v-radio-group row required>
-                                  <v-radio label="Used Kitchen" value="old"></v-radio>
-                                  <v-radio label="New Kitchen" value="new"></v-radio>
-                                </v-radio-group>
-                              </div>
-
-                              <div class="col-md-6">
-                                <v-select label="Size"></v-select>
-                              </div>
-
-                              <div class="col-md-6">
-                                <div class="d-flex">
-                                  <div style="margin-top: 16px; padding-top: 4px;">Oil Residue? <span
-                                      style="color:red">*</span></div>
-                                  <v-radio-group class="p-2" row>
-                                    <v-radio :value="true">
-                                      <template v-slot:label>
-                                        <div>Yes<strong class="success--text"></strong></div>
-                                      </template>
-                                    </v-radio>
-                                    <v-radio :value="false">
-                                      <template v-slot:label>
-                                        <div>No <strong class="primary--text"></strong></div>
-                                      </template>
-                                    </v-radio>
-                                  </v-radio-group>
-                                </div>
-                              </div>
-                            </div>
-
-                            <div class="row">
-                              <div class="col-md-12">
-                                <h5 class="pt-4">Add Notes</h5>
-                                <div class="row g-4">
-                                  <div class="col-md-4">
-                                    <v-select label="Field Name"></v-select>
-                                  </div>
-
-                                  <div class="col-md-4">
-                                    <v-select label="value"></v-select>
-                                  </div>
-
-                                  <div class="text-center mt-4">
-                                    <button class="btn btn-primary px-5">Add</button>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
                   </v-stepper>
 
                   <div class="p-4">
@@ -306,7 +208,7 @@
               <!-- NOTES -->
               <div>
                 <div class="col-md-12">
-                  <v-textarea name="input-7-1" label="Notes"
+                  <v-textarea v-model="generalNotes" name="input-7-1" label="Notes"
                     hint="Do you any other projects or contracts on same location ?  Please mention if you have any specific request.">
                   </v-textarea>
                 </div>
@@ -340,6 +242,9 @@
 <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
 <script src="{% static 'files/js/booking/components/form-select.js' %}"></script>
 <script src="{% static 'files/js/booking/components/floor-details-form.js' %}"></script>
+<script src="{% static 'files/js/booking/components/kitchen-preference-form.js' %}"></script>
+<script src="{% static 'files/js/booking/components/kitchen-details-form.js' %}"></script>
+<script src="{% static 'files/js/booking/components/notes-form.js' %}"></script>
 <script src="{% static 'files/js/booking/staging-booking.js' %}"></script>
 
 {% endblock %}
