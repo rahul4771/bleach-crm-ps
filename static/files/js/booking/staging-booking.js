@@ -201,9 +201,9 @@ new Vue({
                 floorApartments: false,
                 floorApartmentCounts: null,
                 floorSize: null,
-                floorWallType: null,
-                floorFloorType: null,
-                floorCeilingType: null,
+                floorWallType: [],
+                floorFloorType: [],
+                floorCeilingType: [],
                 floorRooms: null,
                 floorBathrooms: null,
                 floorWindows: null,
@@ -231,7 +231,7 @@ new Vue({
                     if (apartmentCount && apartmentLevelProperties.includes(prop)) {
                         const apartmentData = {};
                         for (let i = 1; i <= apartmentCount; i++) {
-                            apartmentData[i] = floorDefaults[prop];
+                            apartmentData[i] = Array.isArray(floorDefaults[prop]) ? [] : floorDefaults[prop];
                         }
                         this.$set(this[prop][buildingIndex], floorIndex, apartmentData);
                     } else {
