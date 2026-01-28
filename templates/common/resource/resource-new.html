@@ -794,43 +794,57 @@
         document.getElementById("id_skill_list_"+workerId).style.display = "none";
         document.getElementById("id_skill_edit_list_"+workerId).style.display = "none";
 
-        // Fetch service types from backend
-        fetch('/common/get-service-types/')
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    console.log('✅ Service types fetched successfully:', data.service_types);
+        // Fetch both service types and existing skills for this employee
+        Promise.all([
+            fetch('/common/get-service-types/').then(res => res.json()),
+            fetch(`/common/get-employee-skills/?employee_id=${workerId}`).then(res => res.json())
+        ])
+        .then(([serviceTypesData, skillsData]) => {
+            if (serviceTypesData.success && skillsData.success) {
+                console.log('✅ Service types fetched:', serviceTypesData.service_types);
+                console.log('✅ Existing skills fetched:', skillsData.skills);
+                
+                // Create a set of existing skill IDs for quick lookup
+                const existingSkillIds = new Set(skillsData.skills.map(skill => skill.id));
+                console.log('Existing skill IDs:', Array.from(existingSkillIds));
+                
+                let html = '<div class="row mt-10"><input type="hidden" id="' + workerId + '" name="user_id" value="' + workerId + '">';
+                html += '{% csrf_token %}';
+                
+                serviceTypesData.service_types.forEach(service => {
+                    const serviceName = service.name;
+                    const serviceId = service.id;
+                    const isChecked = existingSkillIds.has(serviceId) ? 'checked' : '';
                     
-                    let html = '<div class="row mt-10"><input type="hidden" id="' + workerId + '" name="user_id" value="' + workerId + '">';
-                    html += '{% csrf_token %}';
+                    console.log(`Service: ${serviceName} (${serviceId}) - Checked: ${isChecked ? 'YES' : 'NO'}`);
                     
-                    data.service_types.forEach(service => {
-                        const serviceName = service.name;
-                        const serviceId = service.id;
-                        const isChecked = document.getElementById('service_' + serviceId + '_' + workerId)?.checked ? 'checked' : '';
-                        
-                        html += `
-                            <div class="col-xs-6 mb-5">
-                                <label class="c-container">${serviceName}
-                                    <input type="checkbox" id="service_${serviceId}_${workerId}" value="${serviceId}" ${isChecked} name="service_type_${workerId}">
-                                    <span class="c-checkmark"></span>
-                                </label>
-                            </div>
-                        `;
-                    });
-                    
-                    html += '</div>';
-                    document.getElementById('id_skill_edit_list_'+workerId).innerHTML = html;
-                    document.getElementById("id_skill_edit_list_"+workerId).style.display = "block";
-                } else {
-                    console.error('❌ Failed to fetch service types. Error:', data.error);
-                    alert('Error loading service types: ' + (data.error || 'Unknown error'));
+                    html += `
+                        <div class="col-xs-6 mb-5">
+                            <label class="c-container">${serviceName}
+                                <input type="checkbox" id="service_${serviceId}_${workerId}" value="${serviceId}" ${isChecked} name="service_type_${workerId}">
+                                <span class="c-checkmark"></span>
+                            </label>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                document.getElementById('id_skill_edit_list_'+workerId).innerHTML = html;
+                document.getElementById("id_skill_edit_list_"+workerId).style.display = "block";
+            } else {
+                console.error('❌ Failed to fetch data');
+                if (!serviceTypesData.success) {
+                    alert('Error loading service types: ' + (serviceTypesData.error || 'Unknown error'));
                 }
-            })
-            .catch(err => {
-                console.error('❌ Network error while fetching service types:', err);
-                alert('Network error: ' + err.message);
-            });
+                if (!skillsData.success) {
+                    alert('Error loading existing skills: ' + (skillsData.error || 'Unknown error'));
+                }
+            }
+        })
+        .catch(err => {
+            console.error('❌ Network error:', err);
+            alert('Network error: ' + err.message);
+        });
     }
     {% comment %} function editDone(id) {
         console.log(id)
@@ -990,8 +1004,9 @@ function saveEdit(workerId) {
             console.log('✅ Skills saved successfully for employee:', workerId);
             console.log('Selected service types:', selectedServiceTypes);
             
-            // Show success message
-            showSuccessMessage(`✅ ${data.message || 'Skills saved successfully!'}`);
+            // Show success message with detailed breakdown
+            const message = `✅ ${data.message}\n👤 Employee: ${data.details.employee_name}`;
+            showSuccessMessage(message);
             console.log('Details:', data.details);
             
             document.getElementById("id_done_"+workerId).style.display = "none";

@@ -7435,50 +7435,53 @@ class SaveEmployeeSkillsAPIView(APIView):
 
 			employee = UserProfile.objects.get(id=employee_id)
 
-			# Validate service types
-			if not service_type_ids or len(service_type_ids) == 0:
-				return JsonResponse({
-					"success": False, 
-					"error": "Please select at least one service type"
-				}, status=400)
+			# Get count of existing skills before deactivation (for tracking deactivated items)
+			existing_skills_count = Skills.objects.filter(employee=employee).count()
 
 			# 1️⃣ Mark all existing skills as INACTIVE
-			Skills.objects.filter(employee=employee).update(status='INACTIVE')
+			deactivate_result = Skills.objects.filter(employee=employee).update(status='INACTIVE')
+			deactivated_count = deactivate_result  # Count of records updated to INACTIVE
 
 			# 2️⃣ Activate or create selected skills
 			created_count = 0
 			updated_count = 0
 			
-			for st_id in service_type_ids:
-				try:
-					service_type = ServiceType.objects.get(id=st_id)
-					skill, created = Skills.objects.get_or_create(
-						employee=employee,
-						service_type=service_type,
-						defaults={'status': 'ACTIVE'}
-					)
-					if created:
-						created_count += 1
-					else:
-						skill.status = 'ACTIVE'
-						skill.save()
-						updated_count += 1
-				except ServiceType.DoesNotExist:
-					return JsonResponse({
-						"success": False, 
-						"error": f"Service type with ID {st_id} not found"
-					}, status=400)
+			if service_type_ids and len(service_type_ids) > 0:
+				for st_id in service_type_ids:
+					try:
+						service_type = ServiceType.objects.get(id=st_id)
+						skill, created = Skills.objects.get_or_create(
+							employee=employee,
+							service_type=service_type,
+							defaults={'status': 'ACTIVE'}
+						)
+						if created:
+							created_count += 1
+						else:
+							skill.status = 'ACTIVE'
+							skill.save()
+							updated_count += 1
+					except ServiceType.DoesNotExist:
+						return JsonResponse({
+							"success": False, 
+							"error": f"Service type with ID {st_id} not found"
+						}, status=400)
+
+			# Calculate how many were actually deactivated (not reactivated)
+			final_deactivated_count = deactivated_count - updated_count
 
 			return JsonResponse({
 				"success": True,
-				"message": f"✅ Skills saved successfully! Created: {created_count}, Updated: {updated_count}",
+				# "message": f"✅ Skills updated! Added: {created_count}, Reactivated: {updated_count}, Deactivated: {final_deactivated_count}",
 				"details": {
 					"created": created_count,
-					"updated": updated_count,
-					"total": created_count + updated_count,
+					"reactivated": updated_count,
+					"deactivated": final_deactivated_count,
+					"total_active": created_count + updated_count,
 					"employee_name": employee.name
 				}
 			})
+					
 		except UserProfile.DoesNotExist:
 			return JsonResponse({
 				"success": False, 
