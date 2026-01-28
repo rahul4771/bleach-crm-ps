@@ -733,6 +733,15 @@
                                                 <div class="back-button" >
                                                     <button onclick="flipBack(this)" data-id="{{worker.id}}" class="resource-card-button">Back</button>
                                                 </div>
+                                                <div id="custom-alert" class="alert-box hidden">
+                                                    <div class="alert-content">
+                                                        <span class="alert-icon">✅</span>
+                                                        <div class="alert-text">
+                                                        <p id="alert-message"></p>
+                                                        <p id="alert-employee" class="employee-name"></p>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -846,6 +855,7 @@
             alert('Network error: ' + err.message);
         });
     }
+
     {% comment %} function editDone(id) {
         console.log(id)
         document.getElementById("id_done_"+id).style.display = "none";
@@ -1001,12 +1011,14 @@ function saveEdit(workerId) {
     .then(res => res.json())
     .then(data => {
         if (data.success) {
+            showAlert(data);
             console.log('✅ Skills saved successfully for employee:', workerId);
             console.log('Selected service types:', selectedServiceTypes);
             
             // Show success message with detailed breakdown
-            const message = `✅ ${data.message}\n👤 Employee: ${data.details.employee_name}`;
-            showSuccessMessage(message);
+            //const message = `✅ ${data.message}\n👤 Employee: ${data.details.employee_name}`;
+            //showSuccessMessage(message)
+
             console.log('Details:', data.details);
             
             document.getElementById("id_done_"+workerId).style.display = "none";
@@ -1019,31 +1031,32 @@ function saveEdit(workerId) {
             }, 500);
         } else {
             console.error('❌ Failed to save skills. Error:', data.error);
-            showErrorMessage(data.error || 'Unknown error occurred');
+            //showErrorMessage(data.error || 'Unknown error occurred');
         }
     })
     .catch(err => {
         console.error('❌ Network error while saving skills:', err);
-        showErrorMessage('Network error: ' + err.message);
+        //showErrorMessage('Network error: ' + err.message);
     });
 }
 
 // Helper function to show success message
-function showSuccessMessage(message) {
+ {% comment %} function showSuccessMessage(message) {
     const msgDiv = document.createElement('div');
     msgDiv.style.cssText = `
         position: fixed;
         top: 20px;
         right: 20px;
-        background-color: #4CAF50;
-        color: white;
+        background: #e8f9f0;
+        color: #1e8449;
+        border-left: 6px solid #2ecc71;
         padding: 15px 20px;
-        border-radius: 5px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        z-index: 10000;
-        font-size: 14px;
-        font-weight: bold;
-        animation: slideIn 0.3s ease-in-out;
+        border-radius: 8px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        font-family: Arial, sans-serif;
+        min-width: 280px;
+        z-index: 9999;
+        animation: slideIn 0.4s ease forwards;
     `;
     msgDiv.textContent = message;
     document.body.appendChild(msgDiv);
@@ -1080,7 +1093,7 @@ function showErrorMessage(message) {
         msgDiv.style.animation = 'slideOut 0.3s ease-in-out';
         setTimeout(() => msgDiv.remove(), 300);
     }, 5000);
-}
+} 
 
 // Add CSS animations
 if (!document.getElementById('msgAnimations')) {
@@ -1089,7 +1102,7 @@ if (!document.getElementById('msgAnimations')) {
     style.textContent = `
         @keyframes slideIn {
             from {
-                transform: translateX(400px);
+                transform: translateX(120%);
                 opacity: 0;
             }
             to {
@@ -1103,13 +1116,12 @@ if (!document.getElementById('msgAnimations')) {
                 opacity: 1;
             }
             to {
-                transform: translateX(400px);
-                opacity: 0;
-            }
+            opacity: 0;
+            transform: translateX(120%);
         }
     `;
     document.head.appendChild(style);
-}
+} {% endcomment %}
 
 function viewSkills(el) {
     const workerId = el.getAttribute('data-id');

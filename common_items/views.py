@@ -7472,7 +7472,7 @@ class SaveEmployeeSkillsAPIView(APIView):
 
 			return JsonResponse({
 				"success": True,
-				# "message": f"✅ Skills updated! Added: {created_count}, Reactivated: {updated_count}, Deactivated: {final_deactivated_count}",
+				 "message": f"✅ Skills updated! Added: {created_count}, Reactivated: {updated_count}, Deactivated: {final_deactivated_count}",
 				"details": {
 					"created": created_count,
 					"reactivated": updated_count,
