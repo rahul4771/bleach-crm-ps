@@ -35,6 +35,10 @@ new Vue({
         floorNumbers: Array.from({ length: 15 }, (_, i) => i + 1),
         serviceGroups: [],
         serviceTypes: [],
+        serviceType: null,
+        serviceSize: [],
+        sizeData: [],
+        ropeAccessTypes: [],
         // Define location types
         primaryLocationTypes: [
             { value: 'Post Construction', text: 'Post Construction' },
@@ -147,6 +151,79 @@ new Vue({
                 .catch(error => {
                     console.error('Error fetching area types:', error);
                 });
+        },
+
+        /**
+         * Fetches service size and price data based on the current service type.
+         * Normalizes 'Hourly Cleaning' to 'General Cleaning' before making the request.
+         * After fetching, parses the size data and applies appropriate filters based on service type.
+         */
+        getSize() {
+            let service = this.serviceType;
+            if (service == 'Hourly Cleaning') {
+                service = 'General Cleaning';
+            }
+            
+            fetch(this.mediaUrl + "/customer/ajax/getservicesizeprice?service_type=" + service)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    this.serviceSize = data;
+                    this.parseSize();
+                    
+                    if (this.serviceType == 'Rope Access') {
+                        this.ropeAccessTypes = [...new Set(this.sizeData.map(size => size.rope_access_type))];
+                        this.ropeAccessFilter();
+                        return;
+                    }
+                    
+                    this.facadeFilter();
+                    this.windowFilter();
+                })
+                .catch((error) => {
+                    console.error('Error fetching size data:', error);
+                    this.snackbar = true;
+                });
+        },
+
+        /**
+         * Parses the serviceSize data fetched from the server.
+         * Can be customized based on the structure of serviceSize.
+         */
+        parseSize() {
+            // Basic implementation - adjust based on your actual data structure
+            this.sizeData = this.serviceSize;
+        },
+
+        /**
+         * Filters size data for rope access type services.
+         * Implement filtering logic based on rope access requirements.
+         */
+        ropeAccessFilter() {
+            // Add rope access specific filtering logic here
+            console.log('Applying rope access filter');
+        },
+
+        /**
+         * Filters size data for facade cleaning services.
+         * Implement filtering logic based on facade requirements.
+         */
+        facadeFilter() {
+            // Add facade specific filtering logic here
+            console.log('Applying facade filter');
+        },
+
+        /**
+         * Filters size data for window cleaning services.
+         * Implement filtering logic based on window requirements.
+         */
+        windowFilter() {
+            // Add window specific filtering logic here
+            console.log('Applying window filter');
         },
 
         // =====================
@@ -268,6 +345,18 @@ new Vue({
         });
     },
     watch: {
+        'activeTabs.activeServiceTypeId'(newVal) {
+            if (newVal) {
+                // Find the service type name and call getSize
+                const serviceType = this.serviceTypes.find(st => st.id === newVal);
+                if (serviceType) {
+                    this.serviceType = serviceType.name;
+                    if (this.mediaUrl) {
+                        this.getSize();
+                    }
+                }
+            }
+        },
         serviceGroups() {
             setTimeout(() => {
                 this.$nextTick(() => {
