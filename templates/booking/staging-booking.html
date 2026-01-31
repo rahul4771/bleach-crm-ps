@@ -30,7 +30,7 @@
       <!-- Payment Tag -->
       <div class="payment-tag">
         <i class="fas fa-shopping-cart mr-10"></i>
-        <span class="ml-2 payment-tag-text">0 KD</span>
+        <span class="ml-2 payment-tag-text">[[ totalSectionCost.toFixed(2) ]] KD</span>
       </div>
 
       <!-- Header (static include like booking.html) -->
@@ -198,11 +198,43 @@
                           v-if="floorApartments[tab + 1][floorIndex] === true && floorApartmentCounts[tab + 1][floorIndex]">
                           <div
                             v-for="apartmentIndex in Array.from({length: floorApartmentCounts[tab + 1][floorIndex]}, (_, i) => i + 1)"
-                            :key="`floor-${floorIndex}-apt-${apartmentIndex}`" class="apartment-section mt-4 p-4"
-                            style="border: 1px solid #ddd; border-radius: 4px;">
-                            <h6>Floor [[ floorIndex ]] - Apartment [[ apartmentIndex ]]</h6>
-                            <floor-details-form :floor-index="floorIndex"
-                              :apartment-index="apartmentIndex" :building-index="tab + 1"></floor-details-form>
+                            :key="`floor-${floorIndex}-apt-${apartmentIndex}`" class="apartment-section mt-4">
+                            
+                            <!-- COMPLETED APARTMENT SUMMARY -->
+                            <div v-if="isApartmentCompleted(tab + 1, floorIndex, apartmentIndex) && !isApartmentActive(tab + 1, floorIndex, apartmentIndex)"
+                                 class="completed-floor-card p-4"
+                                 style="border: 1px solid #e0e0e0; border-radius: 8px; background-color: #f9f9f9;">
+                              <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center flex-grow-1">
+                                  <v-icon color="success" size="40" class="mr-3">mdi-check-circle</v-icon>
+                                  <div>
+                                    <h6 class="mb-0">Floor [[ floorIndex ]] - Apartment [[ apartmentIndex ]]</h6>
+                                    <small class="text-muted">Fill the details for Apartment [[ apartmentIndex ]]</small>
+                                    <div class="mt-2">
+                                      <strong>Section Name</strong>
+                                      <div>Building [[ tab + 1 ]] Floor [[ floorIndex ]] Apartment [[ apartmentIndex ]]</div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="ml-3 d-flex align-items-center">
+                                  <v-btn icon @click="editApartment(tab + 1, floorIndex, apartmentIndex)">
+                                    <v-icon>mdi-pencil</v-icon>
+                                  </v-btn>
+                                </div>
+                              </div>
+                            </div>
+
+                            <!-- ACTIVE APARTMENT FORM -->
+                            <div v-if="isApartmentActive(tab + 1, floorIndex, apartmentIndex)" class="p-4"
+                                 style="border: 1px solid #ddd; border-radius: 4px;">
+                              <h6>Floor [[ floorIndex ]] - Apartment [[ apartmentIndex ]]</h6>
+                              <floor-details-form :floor-index="floorIndex"
+                                :apartment-index="apartmentIndex" :building-index="tab + 1"></floor-details-form>
+                              
+                              <div class="text-center mt-4">
+                                <button class="btn btn-primary px-5" @click="calculateFloorCost(tab + 1, floorIndex, apartmentIndex)">Continue</button>
+                              </div>
+                            </div>
                           </div>
                         </div>
 
@@ -213,7 +245,7 @@
                       </div>
                     </v-stepper>
 
-                    <div class="p-2" v-if="isFloorActive(tab + 1, floorIndex)">
+                    <div class="p-2" v-if="isFloorActive(tab + 1, floorIndex) && floorApartments[tab + 1][floorIndex] === false">
                       <div class="col-md-12">
                         <div class="text-center mt-4">
                           <button class="btn btn-primary px-5" @click="calculateFloorCost(tab + 1, floorIndex)">Continue</button>

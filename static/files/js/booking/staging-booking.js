@@ -33,6 +33,8 @@ new Vue({
         floorSectionCost: {}, // Track calculated section cost per floor
         completedFloors: {}, // Track completed floors per building
         activeFloor: {}, // Track currently active floor per building
+        completedApartments: {}, // Track completed apartments per building/floor
+        activeApartment: {}, // Track currently active apartment per building/floor
         areaTypes: [],
         buildingNumbers: Array.from({ length: 15 }, (_, i) => i + 1),
         floorNumbers: Array.from({ length: 15 }, (_, i) => i + 1),
@@ -261,18 +263,30 @@ new Vue({
         },
 
         /**
-         * Calculates the total cost for a specific floor including base size cost and kitchen costs.
+         * Calculates the total cost for a specific floor or apartment including base size cost and kitchen costs.
          * @param {number} buildingIndex - The building index (1-based)
          * @param {number} floorIndex - The floor index (1-based)
+         * @param {number} apartmentIndex - Optional apartment index (1-based)
          */
-        calculateFloorCost(buildingIndex, floorIndex) {
+        calculateFloorCost(buildingIndex, floorIndex, apartmentIndex = null) {
             // Initialize cost structure if needed
             if (!this.floorSectionCost[buildingIndex]) {
                 this.$set(this.floorSectionCost, buildingIndex, {});
             }
+            if (!this.floorSectionCost[buildingIndex][floorIndex]) {
+                this.$set(this.floorSectionCost[buildingIndex], floorIndex, apartmentIndex ? {} : 0);
+            }
 
-            // Get the floor size object from windowSize data
-            const selectedSizeName = this.floorSize[buildingIndex] && this.floorSize[buildingIndex][floorIndex];
+            // Get the floor/apartment size object from windowSize data
+            let selectedSizeName;
+            if (apartmentIndex) {
+                selectedSizeName = this.floorSize[buildingIndex] && 
+                                  this.floorSize[buildingIndex][floorIndex] && 
+                                  this.floorSize[buildingIndex][floorIndex][apartmentIndex];
+            } else {
+                selectedSizeName = this.floorSize[buildingIndex] && this.floorSize[buildingIndex][floorIndex];
+            }
+
             const sizeObject = this.windowSize.find(size => 
                 size.combinedSize === selectedSizeName || size.name === selectedSizeName
             );
@@ -301,17 +315,42 @@ new Vue({
             }
 
             // Store the calculated cost
-            this.$set(this.floorSectionCost[buildingIndex], floorIndex, sectionCost);
-
-            // Mark floor as completed
-            if (!this.completedFloors[buildingIndex]) {
-                this.$set(this.completedFloors, buildingIndex, {});
+            if (apartmentIndex) {
+                if (typeof this.floorSectionCost[buildingIndex][floorIndex] !== 'object') {
+                    this.$set(this.floorSectionCost[buildingIndex], floorIndex, {});
+                }
+                this.$set(this.floorSectionCost[buildingIndex][floorIndex], apartmentIndex, sectionCost);
+            } else {
+                this.$set(this.floorSectionCost[buildingIndex], floorIndex, sectionCost);
             }
-            this.$set(this.completedFloors[buildingIndex], floorIndex, true);
 
-            // Clear active floor
-            if (this.activeFloor[buildingIndex]) {
-                this.$set(this.activeFloor[buildingIndex], floorIndex, false);
+            // Mark floor/apartment as completed
+            if (apartmentIndex) {
+                // Mark apartment as completed
+                if (!this.completedApartments[buildingIndex]) {
+                    this.$set(this.completedApartments, buildingIndex, {});
+                }
+                if (!this.completedApartments[buildingIndex][floorIndex]) {
+                    this.$set(this.completedApartments[buildingIndex], floorIndex, {});
+                }
+                this.$set(this.completedApartments[buildingIndex][floorIndex], apartmentIndex, true);
+                
+                // Clear active apartment
+                if (this.activeApartment[buildingIndex] && 
+                    this.activeApartment[buildingIndex][floorIndex]) {
+                    this.$set(this.activeApartment[buildingIndex][floorIndex], apartmentIndex, false);
+                }
+            } else {
+                // Mark floor as completed
+                if (!this.completedFloors[buildingIndex]) {
+                    this.$set(this.completedFloors, buildingIndex, {});
+                }
+                this.$set(this.completedFloors[buildingIndex], floorIndex, true);
+                
+                // Clear active floor
+                if (this.activeFloor[buildingIndex]) {
+                    this.$set(this.activeFloor[buildingIndex], floorIndex, false);
+                }
             }
 
             console.log(`Floor ${floorIndex} in Building ${buildingIndex} - Total Cost: ${sectionCost}`);
@@ -345,6 +384,41 @@ new Vue({
             }
             // If not explicitly set, show if not completed
             return !this.isFloorCompleted(buildingIndex, floorIndex);
+        },
+
+        /**
+         * Check if an apartment is completed
+         */
+        isApartmentCompleted(buildingIndex, floorIndex, apartmentIndex) {
+            return this.completedApartments[buildingIndex] && 
+                   this.completedApartments[buildingIndex][floorIndex] && 
+                   this.completedApartments[buildingIndex][floorIndex][apartmentIndex];
+        },
+
+        /**
+         * Check if an apartment is active/being edited
+         */
+        isApartmentActive(buildingIndex, floorIndex, apartmentIndex) {
+            if (this.activeApartment[buildingIndex] && 
+                this.activeApartment[buildingIndex][floorIndex] && 
+                this.activeApartment[buildingIndex][floorIndex][apartmentIndex]) {
+                return true;
+            }
+            // If not explicitly set, show if not completed
+            return !this.isApartmentCompleted(buildingIndex, floorIndex, apartmentIndex);
+        },
+
+        /**
+         * Edit a completed apartment - reopens the apartment for editing
+         */
+        editApartment(buildingIndex, floorIndex, apartmentIndex) {
+            if (!this.activeApartment[buildingIndex]) {
+                this.$set(this.activeApartment, buildingIndex, {});
+            }
+            if (!this.activeApartment[buildingIndex][floorIndex]) {
+                this.$set(this.activeApartment[buildingIndex], floorIndex, {});
+            }
+            this.$set(this.activeApartment[buildingIndex][floorIndex], apartmentIndex, true);
         },
 
         // =====================
@@ -383,7 +457,7 @@ new Vue({
                 'floorWindows', 'floorKitchenPreference', 'floorCabinetCleaning',
                 'floorKitchenCondition', 'floorKitchenSize', 'floorOilResidue',
                 'floorNoteFieldName', 'floorNoteValue', 'floorNotes', 'floorGeneralNotes',
-                'floorSectionCost', 'completedFloors', 'activeFloor'
+                'floorSectionCost', 'completedFloors', 'activeFloor', 'completedApartments', 'activeApartment'
             ];
 
             // Initialize each property for the building if not already initialized
@@ -589,6 +663,28 @@ new Vue({
             if (!this.selectedNoOfBuildings) return [];
             const count = parseInt(this.selectedNoOfBuildings);
             return Array.from({ length: count }, (_, i) => `Building ${i + 1}`);
+        },
+        // Computed property for total section cost across all completed floors
+        totalSectionCost() {
+            let total = 0;
+            for (let buildingIndex in this.floorSectionCost) {
+                for (let floorIndex in this.floorSectionCost[buildingIndex]) {
+                    const cost = this.floorSectionCost[buildingIndex][floorIndex];
+                    if (typeof cost === 'number') {
+                        // Floor-level cost (no apartments)
+                        total += cost;
+                    } else if (typeof cost === 'object') {
+                        // Apartment-level costs
+                        for (let apartmentIndex in cost) {
+                            const apartmentCost = cost[apartmentIndex];
+                            if (apartmentCost && typeof apartmentCost === 'number') {
+                                total += apartmentCost;
+                            }
+                        }
+                    }
+                }
+            }
+            return total;
         }
     }
 });
