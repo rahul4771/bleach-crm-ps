@@ -30,6 +30,9 @@ new Vue({
         floorNoteValue: {}, // Track notes value per floor
         floorNotes: {}, // Track all notes per floor
         floorGeneralNotes: {}, // Track general notes per floor
+        floorSectionCost: {}, // Track calculated section cost per floor
+        completedFloors: {}, // Track completed floors per building
+        activeFloor: {}, // Track currently active floor per building
         areaTypes: [],
         buildingNumbers: Array.from({ length: 15 }, (_, i) => i + 1),
         floorNumbers: Array.from({ length: 15 }, (_, i) => i + 1),
@@ -257,6 +260,93 @@ new Vue({
             }
         },
 
+        /**
+         * Calculates the total cost for a specific floor including base size cost and kitchen costs.
+         * @param {number} buildingIndex - The building index (1-based)
+         * @param {number} floorIndex - The floor index (1-based)
+         */
+        calculateFloorCost(buildingIndex, floorIndex) {
+            // Initialize cost structure if needed
+            if (!this.floorSectionCost[buildingIndex]) {
+                this.$set(this.floorSectionCost, buildingIndex, {});
+            }
+
+            // Get the floor size object from windowSize data
+            const selectedSizeName = this.floorSize[buildingIndex] && this.floorSize[buildingIndex][floorIndex];
+            const sizeObject = this.windowSize.find(size => 
+                size.combinedSize === selectedSizeName || size.name === selectedSizeName
+            );
+
+            // Base cost from size
+            let sectionCost = 0;
+            if (sizeObject && sizeObject.cost) {
+                sectionCost = parseFloat(sizeObject.cost) || 0;
+            }
+
+            // Add kitchen cost if kitchen cleaning is selected
+            if (this.floorKitchenPreference[buildingIndex] && 
+                this.floorKitchenPreference[buildingIndex][floorIndex]) {
+                
+                const kitchenSizeName = this.floorKitchenSize[buildingIndex] && 
+                                       this.floorKitchenSize[buildingIndex][floorIndex];
+                
+                // Find kitchen size cost from windowSize data
+                const kitchenSizeObject = this.windowSize.find(size => 
+                    size.combinedSize === kitchenSizeName || size.name === kitchenSizeName
+                );
+                
+                if (kitchenSizeObject && kitchenSizeObject.cost) {
+                    sectionCost += parseFloat(kitchenSizeObject.cost) || 0;
+                }
+            }
+
+            // Store the calculated cost
+            this.$set(this.floorSectionCost[buildingIndex], floorIndex, sectionCost);
+
+            // Mark floor as completed
+            if (!this.completedFloors[buildingIndex]) {
+                this.$set(this.completedFloors, buildingIndex, {});
+            }
+            this.$set(this.completedFloors[buildingIndex], floorIndex, true);
+
+            // Clear active floor
+            if (this.activeFloor[buildingIndex]) {
+                this.$set(this.activeFloor[buildingIndex], floorIndex, false);
+            }
+
+            console.log(`Floor ${floorIndex} in Building ${buildingIndex} - Total Cost: ${sectionCost}`);
+            
+            return sectionCost;
+        },
+
+        /**
+         * Edit a completed floor - reopens the floor for editing
+         */
+        editFloor(buildingIndex, floorIndex) {
+            if (!this.activeFloor[buildingIndex]) {
+                this.$set(this.activeFloor, buildingIndex, {});
+            }
+            this.$set(this.activeFloor[buildingIndex], floorIndex, true);
+        },
+
+        /**
+         * Check if a floor is completed
+         */
+        isFloorCompleted(buildingIndex, floorIndex) {
+            return this.completedFloors[buildingIndex] && this.completedFloors[buildingIndex][floorIndex];
+        },
+
+        /**
+         * Check if a floor is active/being edited
+         */
+        isFloorActive(buildingIndex, floorIndex) {
+            if (this.activeFloor[buildingIndex] && this.activeFloor[buildingIndex][floorIndex]) {
+                return true;
+            }
+            // If not explicitly set, show if not completed
+            return !this.isFloorCompleted(buildingIndex, floorIndex);
+        },
+
         // =====================
         // Carousel Logic
         // =====================
@@ -292,7 +382,8 @@ new Vue({
                 'floorFloorType', 'floorCeilingType', 'floorRooms', 'floorBathrooms',
                 'floorWindows', 'floorKitchenPreference', 'floorCabinetCleaning',
                 'floorKitchenCondition', 'floorKitchenSize', 'floorOilResidue',
-                'floorNoteFieldName', 'floorNoteValue', 'floorNotes', 'floorGeneralNotes'
+                'floorNoteFieldName', 'floorNoteValue', 'floorNotes', 'floorGeneralNotes',
+                'floorSectionCost', 'completedFloors', 'activeFloor'
             ];
 
             // Initialize each property for the building if not already initialized

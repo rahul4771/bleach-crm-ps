@@ -137,7 +137,33 @@
                 <div>
                   <div v-for="floorIndex in Array.from({length: selectedNoOfFloors[tab + 1]}, (_, i) => i + 1)" :key="floorIndex"
                     class="floor-section mt-4">
-                    <v-stepper class="p-4">
+                    
+                    <!-- COMPLETED FLOOR SUMMARY -->
+                    <div v-if="isFloorCompleted(tab + 1, floorIndex) && !isFloorActive(tab + 1, floorIndex)" 
+                         class="completed-floor-card p-4" 
+                         style="border: 1px solid #e0e0e0; border-radius: 8px; background-color: #f9f9f9;">
+                      <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center flex-grow-1">
+                          <v-icon color="success" size="40" class="mr-3">mdi-check-circle</v-icon>
+                          <div>
+                            <h6 class="mb-0">Floor [[ floorIndex ]]</h6>
+                            <small class="text-muted">Fill the details for Floor [[ floorIndex ]]</small>
+                            <div class="mt-2">
+                              <strong>Section Name</strong>
+                              <div>Building [[ tab + 1 ]] Floor [[ floorIndex ]]</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="ml-3 d-flex align-items-center">
+                          <v-btn icon @click="editFloor(tab + 1, floorIndex)">
+                            <v-icon>mdi-pencil</v-icon>
+                          </v-btn>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- ACTIVE FLOOR FORM -->
+                    <v-stepper class="p-4" v-if="isFloorActive(tab + 1, floorIndex)">
                       <h5 class="pt-4">Floor [[ floorIndex ]] Details</h5>
                       <div class="row g-4">
                         <div class="col-md-12">
@@ -187,10 +213,10 @@
                       </div>
                     </v-stepper>
 
-                    <div class="p-2">
+                    <div class="p-2" v-if="isFloorActive(tab + 1, floorIndex)">
                       <div class="col-md-12">
                         <div class="text-center mt-4">
-                          <button class="btn btn-primary px-5">Continue</button>
+                          <button class="btn btn-primary px-5" @click="calculateFloorCost(tab + 1, floorIndex)">Continue</button>
                         </div>
                       </div>
                     </div>

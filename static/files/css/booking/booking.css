@@ -1265,6 +1265,9 @@ cursor:pointer;
 .p-2 {
     padding: .5rem!important;
 }
+.align-items-center{
+    align-items: center !important;
+}
 
 /* Multi-select chips overflow handling */
 .chips-overflow-hidden .v-select__selections {

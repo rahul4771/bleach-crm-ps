@@ -2,6 +2,7 @@ Vue.component('notes-form', {
     props: ['floorIndex', 'buildingIndex'],
     data() {
         return {
+            editingIndex: null,
             fieldNameOptions: [
                 'Bedrooms',
                 'Bathrooms',
@@ -63,15 +64,58 @@ Vue.component('notes-form', {
                                 </v-text-field>
                             </div>
 
-                            <div class="text-center mt-4">
-                                <button class="btn btn-primary px-5" @click="addNote">Add</button>
+                            <div class="col-md-2 d-flex align-items-center">
+                                <v-btn color="primary" @click="addNote" class="px-5">
+                                    {{ editingIndex !== null ? 'Update' : 'Add' }}
+                                </v-btn>
+                                <v-btn v-if="editingIndex !== null" text color="error" @click="cancelEdit" class="ml-2">
+                                    Cancel
+                                </v-btn>
                             </div>
+                        </div>
+
+                        <!-- Display Added Notes -->
+                        <div v-if="notesList.length > 0" class="mt-4">
+                            <h6 class="mb-3">Added Notes:</h6>
+                            <v-simple-table>
+                                <template v-slot:default>
+                                    <thead>
+                                        <tr>
+                                            <th class="text-left">Field Name</th>
+                                            <th class="text-left">Value</th>
+                                            <th class="text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(note, index) in notesList" :key="index">
+                                            <td>{{ note.fieldName }}</td>
+                                            <td>{{ note.value }}</td>
+                                            <td class="text-center">
+                                                <v-btn icon small color="primary" @click="editNote(index)" class="mr-2">
+                                                    <v-icon small>mdi-pencil</v-icon>
+                                                </v-btn>
+                                                <v-btn icon small color="error" @click="removeNote(index)">
+                                                    <v-icon small>mdi-delete</v-icon>
+                                                </v-btn>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </template>
+                            </v-simple-table>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     `,
+    computed: {
+        notesList() {
+            if (!this.$root.floorNotes[this.buildingIndex] || !this.$root.floorNotes[this.buildingIndex][this.floorIndex]) {
+                return [];
+            }
+            return this.$root.floorNotes[this.buildingIndex][this.floorIndex];
+        }
+    },
     methods: {
         addNote() {
             if (!this.$root.floorNoteFieldName[this.buildingIndex][this.floorIndex] || !this.$root.floorNoteValue[this.buildingIndex][this.floorIndex]) {
@@ -84,15 +128,42 @@ Vue.component('notes-form', {
                 this.$root.$set(this.$root.floorNotes[this.buildingIndex], this.floorIndex, []);
             }
 
-            // Add note to array
-            this.$root.floorNotes[this.buildingIndex][this.floorIndex].push({
-                fieldName: this.$root.floorNoteFieldName[this.buildingIndex][this.floorIndex],
-                value: this.$root.floorNoteValue[this.buildingIndex][this.floorIndex]
-            });
+            if (this.editingIndex !== null) {
+                // Update existing note
+                this.$root.$set(
+                    this.$root.floorNotes[this.buildingIndex][this.floorIndex],
+                    this.editingIndex,
+                    {
+                        fieldName: this.$root.floorNoteFieldName[this.buildingIndex][this.floorIndex],
+                        value: this.$root.floorNoteValue[this.buildingIndex][this.floorIndex]
+                    }
+                );
+                this.editingIndex = null;
+            } else {
+                // Add new note
+                this.$root.floorNotes[this.buildingIndex][this.floorIndex].push({
+                    fieldName: this.$root.floorNoteFieldName[this.buildingIndex][this.floorIndex],
+                    value: this.$root.floorNoteValue[this.buildingIndex][this.floorIndex]
+                });
+            }
 
             // Clear inputs
             this.$root.$set(this.$root.floorNoteFieldName[this.buildingIndex], this.floorIndex, null);
             this.$root.$set(this.$root.floorNoteValue[this.buildingIndex], this.floorIndex, null);
+        },
+        editNote(index) {
+            const note = this.notesList[index];
+            this.$root.$set(this.$root.floorNoteFieldName[this.buildingIndex], this.floorIndex, note.fieldName);
+            this.$root.$set(this.$root.floorNoteValue[this.buildingIndex], this.floorIndex, note.value);
+            this.editingIndex = index;
+        },
+        cancelEdit() {
+            this.editingIndex = null;
+            this.$root.$set(this.$root.floorNoteFieldName[this.buildingIndex], this.floorIndex, null);
+            this.$root.$set(this.$root.floorNoteValue[this.buildingIndex], this.floorIndex, null);
+        },
+        removeNote(index) {
+            this.$root.floorNotes[this.buildingIndex][this.floorIndex].splice(index, 1);
         }
     }
 });
