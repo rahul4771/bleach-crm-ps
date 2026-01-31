@@ -16,7 +16,6 @@ Vue.component('FloorDetailsForm', {
   },
   data() {
     return {
-      sizeOptions: ['Small', 'Medium', 'Large'],
       wallTypeOptions: ["Bricks", "Glass", "Concrete", "Ceramic", "Gypsum", "Fabric", "Rubber", "Stone", "Terrazo", "Stainless", "Vinyl", "Wooden", "Others"],
       floorTypeOptions: ["Marble", "Glass", "Stone", "Ceramic", "Concrete", "Bricks", "Wooden", "Terrazo", "Others"],
       ceilingTypeOptions: ["Wooden", "Glass", "Concrete", "Ceramic", "Gypsum", "Foam", "Plastic", "Fabric", "Rubber", "Stainless", "Vinyl", "Others"],
@@ -28,6 +27,12 @@ Vue.component('FloorDetailsForm', {
     }
   },
   computed: {
+    sizeOptions() {
+      // Directly access and format windowSize from root
+      if (this.$root.windowSize && this.$root.windowSize.length > 0) {
+        return this.$root.windowSize.map(size => size.combinedSize || size.name || size);
+      }
+    },
     getCurrentSize() {
       const data = this.$root.floorSize;
       if (!data || !data[this.buildingIndex] || !data[this.buildingIndex][this.floorIndex]) return null;

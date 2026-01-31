@@ -39,6 +39,11 @@ new Vue({
         serviceSize: [],
         sizeData: [],
         ropeAccessTypes: [],
+        windowSize: [],
+        window_check: false,
+        otherService: {
+            size: {}
+        },
         // Define location types
         primaryLocationTypes: [
             { value: 'Post Construction', text: 'Post Construction' },
@@ -163,8 +168,8 @@ new Vue({
             if (service == 'Hourly Cleaning') {
                 service = 'General Cleaning';
             }
-            
-            fetch(this.mediaUrl + "/customer/ajax/getservicesizeprice?service_type=" + service)
+
+            fetch(`/customer/ajax/getservicesizeprice?service_type=${service}`)
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -174,14 +179,14 @@ new Vue({
                 .then((data) => {
                     this.serviceSize = data;
                     this.parseSize();
-                    
+
                     if (this.serviceType == 'Rope Access') {
                         this.ropeAccessTypes = [...new Set(this.sizeData.map(size => size.rope_access_type))];
                         this.ropeAccessFilter();
                         return;
                     }
-                    
-                    this.facadeFilter();
+
+                    // this.facadeFilter();
                     this.windowFilter();
                 })
                 .catch((error) => {
@@ -192,11 +197,21 @@ new Vue({
 
         /**
          * Parses the serviceSize data fetched from the server.
-         * Can be customized based on the structure of serviceSize.
+         * Creates a combinedSize property for each size item that includes name and size range.
          */
         parseSize() {
-            // Basic implementation - adjust based on your actual data structure
-            this.sizeData = this.serviceSize;
+            this.sizeData = [];
+            for (var i in this.serviceSize) {
+                this.serviceSize[i]["combinedSize"] =
+                    this.serviceSize[i].name +
+                    " ( " +
+                    this.serviceSize[i].min_size +
+                    " sq. m - " +
+                    this.serviceSize[i].max_size +
+                    " sq. m )";
+                this.sizeData.push(this.serviceSize[i]);
+            }
+            this.serviceSize = {};
         },
 
         /**
@@ -222,8 +237,24 @@ new Vue({
          * Implement filtering logic based on window requirements.
          */
         windowFilter() {
-            // Add window specific filtering logic here
-            console.log('Applying window filter');
+            this.windowSize = []
+            this.otherService.size = {}
+            if (this.window_check) {
+                for (var i = 0; i < this.sizeData.length; i++) {
+                    if (this.sizeData[i].is_highprice_window) {
+                        this.windowSize.push(this.sizeData[i])
+                    }
+                }
+            }
+            else {
+
+                for (var i = 0; i < this.sizeData.length; i++) {
+                    if (!this.sizeData[i].is_highprice_window) {
+                        this.windowSize.push(this.sizeData[i])
+                    }
+                }
+
+            }
         },
 
         // =====================
