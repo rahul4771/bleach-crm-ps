@@ -39,6 +39,7 @@ new Vue({
         cartItemIdCounter: 0, // Counter for generating unique IDs
         noteIdCounter: 0, // Counter for generating unique note IDs
         scheduleTogether: false, // Track schedule together toggle
+        cleaningPolicy: null, // Track selected cleaning policy
         areaTypes: [],
         buildingNumbers: Array.from({ length: 15 }, (_, i) => i + 1),
         floorNumbers: Array.from({ length: 15 }, (_, i) => i + 1),

@@ -79,7 +79,7 @@
             <div class="container">
 
               <!-- Tabs -->
-              <div class="d-flex sr-tabs">
+              <div class="d-flex sr-tabs" v-if="!activeTabs.schedule">
                 <div class="p-3 sr-tab" v-bind:class="{ 'sr-tab-active': activeTabs.service }"
                   @click="activeTabs.service = true; activeTabs.cart = false">Services</div>
                 <div class="p-3 sr-tab" v-bind:class="{ 'sr-tab-active': activeTabs.cart }"
@@ -87,12 +87,12 @@
               </div>
 
               <!-- CART SECTION -->
-              <div v-if="activeTabs.cart">
+              <div v-if="activeTabs.cart" :key="'cart-section'">
                 <h3 class="pt-4 mb-4">Services</h3>
                 
                 <!-- Schedule Together Toggle -->
                 <div class="d-flex align-items-center mb-4">
-                  <v-switch v-model="scheduleTogether" class="mt-0"></v-switch>
+                  <v-switch v-model="scheduleTogether" class="mt-0 pt-0"></v-switch>
                   <span class="ml-2">Schedule Together</span>
                 </div>
 
@@ -139,8 +139,35 @@
 
                 <!-- Action Buttons -->
                 <div class="text-center mt-5 mb-4">
-                  <v-btn outlined color="primary" class="px-5 mr-3" x-large>SCHEDULE</v-btn>
+                  <v-btn outlined color="primary" class="px-5 mr-3" x-large @click="activeTabs.schedule = true; activeTabs.cart = false; activeTabs.service = false">SCHEDULE</v-btn>
                   <v-btn color="grey" class="px-5" x-large disabled>SUBMIT</v-btn>
+                </div>
+              </div>
+
+              <!-- SCHEDULE SECTION -->
+              <div v-if="activeTabs.schedule">
+                <!-- Back Button -->
+                <div class="mt-4 mb-4">
+                  <v-btn outlined class="px-4" @click="activeTabs.cart = true; activeTabs.schedule = false; activeTabs.service = false">
+                    <v-icon left>mdi-arrow-left</v-icon>
+                    BACK
+                  </v-btn>
+                </div>
+
+                <!-- Cleaning Policy Dropdown -->
+                <div class="row">
+                  <div class="col-md-4">
+                    <v-select 
+                      v-model="cleaningPolicy" 
+                      :items="['SUBSCRIPTION', 'ONE TIME SERVICE']" 
+                      label="Cleaning Policy"
+                      required
+                      outlined>
+                      <template v-slot:label>
+                        Cleaning Policy <span style="color: red;">*</span>
+                      </template>
+                    </v-select>
+                  </div>
                 </div>
               </div>
 
