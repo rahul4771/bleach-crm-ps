@@ -35,6 +35,10 @@ new Vue({
         activeFloor: {}, // Track currently active floor per building
         completedApartments: {}, // Track completed apartments per building/floor
         activeApartment: {}, // Track currently active apartment per building/floor
+        cartItems: [], // Track items added to cart
+        cartItemIdCounter: 0, // Counter for generating unique IDs
+        noteIdCounter: 0, // Counter for generating unique note IDs
+        scheduleTogether: false, // Track schedule together toggle
         areaTypes: [],
         buildingNumbers: Array.from({ length: 15 }, (_, i) => i + 1),
         floorNumbers: Array.from({ length: 15 }, (_, i) => i + 1),
@@ -355,7 +359,64 @@ new Vue({
 
             console.log(`Floor ${floorIndex} in Building ${buildingIndex} - Total Cost: ${sectionCost}`);
             
+            // Add to cart
+            this.addToCart(buildingIndex, floorIndex, apartmentIndex, sectionCost);
+            
             return sectionCost;
+        },
+
+        /**
+         * Add completed floor/apartment to cart
+         */
+        addToCart(buildingIndex, floorIndex, apartmentIndex, cost) {
+            // Get service type name
+            const serviceType = this.serviceTypes.find(st => st.id === this.activeTabs.activeServiceTypeId);
+            const serviceName = serviceType ? serviceType.name : 'Service';
+            
+            // Get size name
+            let selectedSizeName;
+            if (apartmentIndex) {
+                selectedSizeName = this.floorSize[buildingIndex]?.[floorIndex]?.[apartmentIndex];
+            } else {
+                selectedSizeName = this.floorSize[buildingIndex]?.[floorIndex];
+            }
+            
+            // Create location string
+            let location = `Building ${buildingIndex} Floor ${floorIndex}`;
+            if (apartmentIndex) {
+                location += ` Apartment ${apartmentIndex}`;
+            }
+            
+            // Extract just the size name without the range
+            let sizeName = selectedSizeName;
+            if (selectedSizeName) {
+                const match = selectedSizeName.match(/^([^(]+)/);
+                if (match) {
+                    sizeName = match[1].trim();
+                }
+            }
+            
+            // Add to cart
+            this.cartItems.push({
+                id: ++this.cartItemIdCounter, // Unique ID for each cart item
+                serviceName: serviceName,
+                location: location,
+                sizeName: sizeName || 'N/A',
+                cost: cost,
+                buildingIndex: buildingIndex,
+                floorIndex: floorIndex,
+                apartmentIndex: apartmentIndex
+            });
+        },
+
+        /**
+         * Remove item from cart
+         */
+        removeCartItem(id) {
+            const index = this.cartItems.findIndex(item => item.id === id);
+            if (index !== -1) {
+                this.cartItems.splice(index, 1);
+            }
         },
 
         /**
@@ -576,11 +637,18 @@ new Vue({
             if (newVal) {
                 setTimeout(() => {
                     this.$nextTick(() => {
-                        const $carousel = $('#category-carousel');
-                        this.resetOwlCarousel($carousel);
-                        $carousel.owlCarousel(this.carouselSettings);
+                        const $categoryCarousel = $('#category-carousel');
+                        const $serviceCarousel = $('#service-carousel');
+                        
+                        this.resetOwlCarousel($categoryCarousel);
+                        $categoryCarousel.owlCarousel(this.carouselSettings);
+                        
+                        this.resetOwlCarousel($serviceCarousel);
+                        if (this.filteredServiceTypes.length > 0) {
+                            $serviceCarousel.owlCarousel(this.carouselSettings);
+                        }
                     });
-                }, 50);
+                }, 100);
             }
         },
         filteredServiceTypes(newVal) {

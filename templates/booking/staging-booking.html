@@ -21,6 +21,37 @@
   [v-cloak] {
     display: none !important;
   }
+  /* Hide owl carousel navigation by default */
+  .booking-card .owl-carousel .owl-nav,
+  .booking-card .owl-nav,
+  .owl-carousel .owl-nav button,
+  .owl-prev,
+  .owl-next {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+  }
+  /* Show navigation only when services tab is active */
+  .booking-card[data-active-tab="service"] .owl-carousel .owl-nav,
+  .booking-card[data-active-tab="service"] .owl-nav {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  .booking-card[data-active-tab="service"] .owl-carousel .owl-nav button {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  /* Extra safeguard: hide on cart tab */
+  .booking-card[data-active-tab="cart"] .owl-carousel .owl-nav,
+  .booking-card[data-active-tab="cart"] .owl-nav,
+  .booking-card[data-active-tab="cart"] .owl-prev,
+  .booking-card[data-active-tab="cart"] .owl-next {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+  }
 </style>
 
 <div id="app" v-cloak>
@@ -44,7 +75,7 @@
         </div>
 
         <div class="booking-container">
-          <div class="white-wrapper booking-card">
+          <div class="white-wrapper booking-card" :data-active-tab="activeTabs.service ? 'service' : 'cart'">
             <div class="container">
 
               <!-- Tabs -->
@@ -55,9 +86,69 @@
                   @click="activeTabs.cart = true; activeTabs.service = false">Cart</div>
               </div>
 
+              <!-- CART SECTION -->
+              <div v-if="activeTabs.cart">
+                <h3 class="pt-4 mb-4">Services</h3>
+                
+                <!-- Schedule Together Toggle -->
+                <div class="d-flex align-items-center mb-4">
+                  <v-switch v-model="scheduleTogether" class="mt-0"></v-switch>
+                  <span class="ml-2">Schedule Together</span>
+                </div>
+
+                <!-- Cart Items -->
+                <div class="row">
+                  <div class="col-md-4" v-for="(cartItem, index) in cartItems" :key="cartItem.id">
+                    <v-card class="mb-3" outlined>
+                      <v-card-title class="d-flex justify-content-between align-items-start">
+                        <span>[[ cartItem.serviceName ]]</span>
+                        <v-btn icon small @click="removeCartItem(cartItem.id)">
+                          <v-icon small>mdi-delete</v-icon>
+                        </v-btn>
+                      </v-card-title>
+                      <v-card-text>
+                        <div class="mb-2"><strong>[[ cartItem.location ]]</strong></div>
+                        <div class="d-flex justify-content-between">
+                          <span>[[ cartItem.sizeName ]]</span>
+                          <span class="text-primary font-weight-bold">KD [[ cartItem.cost.toFixed(2) ]]</span>
+                        </div>
+                      </v-card-text>
+                      <v-divider></v-divider>
+                      <v-card-actions class="d-flex justify-content-between px-4">
+                        <span class="font-weight-bold">Total</span>
+                        <span class="text-primary font-weight-bold">KD [[ cartItem.cost.toFixed(2) ]]</span>
+                      </v-card-actions>
+                    </v-card>
+                  </div>
+
+                  <!-- Add More Services Card -->
+                  <div class="col-md-4">
+                    <v-card class="mb-3 d-flex align-items-center justify-content-center" 
+                            outlined 
+                            style="min-height: 200px; cursor: pointer;"
+                            @click="activeTabs.service = true; activeTabs.cart = false">
+                      <v-card-text class="text-center">
+                        <v-btn fab color="primary" class="mb-3">
+                          <v-icon large>mdi-plus</v-icon>
+                        </v-btn>
+                        <div class="text-muted">Add More Services</div>
+                      </v-card-text>
+                    </v-card>
+                  </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="text-center mt-5 mb-4">
+                  <v-btn outlined color="primary" class="px-5 mr-3" x-large>SCHEDULE</v-btn>
+                  <v-btn color="grey" class="px-5" x-large disabled>SUBMIT</v-btn>
+                </div>
+              </div>
+
+              <!-- SERVICES SECTION -->
+              <div v-if="activeTabs.service">
               <!-- CATEGORY -->
               <h5 class="pt-4">Category</h5>
-              <div class="owl-carousel" id="category-carousel" v-if="activeTabs.service">
+              <div class="owl-carousel" id="category-carousel">
                 <div class="sr-service-card" v-for="service in serviceGroups" :key="service.id"
                   @click="selectServiceGroup(service.id)"
                   :class="{'sr-service-card-active': activeTabs.activeServiceGroupId === service.id}">
@@ -66,7 +157,7 @@
                     <img :src="`https://my.bleachkw.com${mediaUrl}${service.image_path}`" class="service-icon">
                     <div class="text-center pt-2 service-title" v-text="service.service_name"></div>
                   </div>
-                </div>
+              </div>
 
               <!-- SERVICE TYPE -->
               <h5 class="pt-4">Service Type</h5>
@@ -86,10 +177,11 @@
                     <div class="text-center pt-2 service-title" v-text="type.name"></div>
                   </div>
 
-                </div>
+              </div>
 
 
               <!-- LOCATION -->
+              <div :key="activeTabs.service ? 'service-form' : 'hidden'">
               <h5 class="pt-4">What's your place like?</h5>
 
               <div class="row">
@@ -130,7 +222,7 @@
               <!-- FLOOR DETAILS -->
               <v-stepper class="p-4" v-if="selectedNoOfFloors[tab + 1]">
                 <div>
-                  <div v-for="floorIndex in Array.from({length: selectedNoOfFloors[tab + 1]}, (_, i) => i + 1)" :key="floorIndex"
+                  <div v-for="floorIndex in Array.from({length: selectedNoOfFloors[tab + 1]}, (_, i) => i + 1)" :key="`building-${tab + 1}-floor-${floorIndex}`"
                     class="floor-section mt-4">
                     
                     <!-- COMPLETED FLOOR SUMMARY -->
@@ -193,7 +285,7 @@
                           v-if="floorApartments[tab + 1][floorIndex] === true && floorApartmentCounts[tab + 1][floorIndex]">
                           <div
                             v-for="apartmentIndex in Array.from({length: floorApartmentCounts[tab + 1][floorIndex]}, (_, i) => i + 1)"
-                            :key="`floor-${floorIndex}-apt-${apartmentIndex}`" class="apartment-section mt-4">
+                            :key="`building-${tab + 1}-floor-${floorIndex}-apt-${apartmentIndex}`" class="apartment-section mt-4">
                             
                             <!-- COMPLETED APARTMENT SUMMARY -->
                             <div v-if="isApartmentCompleted(tab + 1, floorIndex, apartmentIndex) && !isApartmentActive(tab + 1, floorIndex, apartmentIndex)"
@@ -280,6 +372,11 @@
               <div class="text-center mt-4">
                 <button class="btn btn-primary px-5">Proceed</button>
               </div>
+              </div>
+              <!-- END LOCATION FORM WRAPPER -->
+
+              </div>
+              <!-- END SERVICES SECTION -->
 
             </div>
           </div>

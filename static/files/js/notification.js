@@ -9,11 +9,12 @@
 
 
 
-$('#thumbnails')
-    .append($('<div class="inv-noti-container inv-noti-success"><div class="d-flex"><div class="inv-msg-div">'+msg+'</div><div onclick="closeNotification()"  class="right-pos inv-pointer"><i class="fa fa-times" aria-hidden="true"></i></div></div></div>')
-        .hide()
-        .fadeIn(2000)
-    );
+// Removed orphaned code that referenced undefined 'msg' variable
+// $('#thumbnails')
+//     .append($('<div class="inv-noti-container inv-noti-success"><div class="d-flex"><div class="inv-msg-div">'+msg+'</div><div onclick="closeNotification()"  class="right-pos inv-pointer"><i class="fa fa-times" aria-hidden="true"></i></div></div></div>')
+//         .hide()
+//         .fadeIn(2000)
+//     );
 
 function showNotification(msg,type){
     if(type == 'success'){

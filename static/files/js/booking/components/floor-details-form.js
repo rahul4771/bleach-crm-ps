@@ -84,6 +84,15 @@ Vue.component('FloorDetailsForm', {
       return this.apartmentIndex
         ? data[this.buildingIndex][this.floorIndex][this.apartmentIndex]
         : data[this.buildingIndex][this.floorIndex];
+    },
+    allWallTypeSelected() {
+      return this.getCurrentWallType.length === this.wallTypeOptions.length;
+    },
+    allFloorTypeSelected() {
+      return this.getCurrentFloorType.length === this.floorTypeOptions.length;
+    },
+    allCeilingTypeSelected() {
+      return this.getCurrentCeilingType.length === this.ceilingTypeOptions.length;
     }
   },
   methods: {

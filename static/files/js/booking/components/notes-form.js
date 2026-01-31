@@ -87,14 +87,14 @@ Vue.component('notes-form', {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="(note, index) in notesList" :key="index">
+                                        <tr v-for="(note, index) in notesList" :key="note.id">
                                             <td>{{ note.fieldName }}</td>
                                             <td>{{ note.value }}</td>
                                             <td class="text-center">
-                                                <v-btn icon small color="primary" @click="editNote(index)" class="mr-2">
+                                                <v-btn icon small color="primary" @click="editNote(note.id)" class="mr-2">
                                                     <v-icon small>mdi-pencil</v-icon>
                                                 </v-btn>
-                                                <v-btn icon small color="error" @click="removeNote(index)">
+                                                <v-btn icon small color="error" @click="removeNote(note.id)">
                                                     <v-icon small>mdi-delete</v-icon>
                                                 </v-btn>
                                             </td>
@@ -198,15 +198,23 @@ Vue.component('notes-form', {
                 
                 if (this.editingIndex !== null) {
                     // Update existing note
-                    this.$root.$set(
-                        this.$root.floorNotes[this.buildingIndex][this.floorIndex][this.apartmentIndex],
-                        this.editingIndex,
-                        { fieldName, value }
-                    );
+                    const noteIndex = this.$root.floorNotes[this.buildingIndex][this.floorIndex][this.apartmentIndex]
+                        .findIndex(n => n.id === this.editingIndex);
+                    if (noteIndex !== -1) {
+                        this.$root.$set(
+                            this.$root.floorNotes[this.buildingIndex][this.floorIndex][this.apartmentIndex],
+                            noteIndex,
+                            { id: this.editingIndex, fieldName, value }
+                        );
+                    }
                     this.editingIndex = null;
                 } else {
-                    // Add new note
-                    this.$root.floorNotes[this.buildingIndex][this.floorIndex][this.apartmentIndex].push({ fieldName, value });
+                    // Add new note with unique ID
+                    this.$root.floorNotes[this.buildingIndex][this.floorIndex][this.apartmentIndex].push({ 
+                        id: ++this.$root.noteIdCounter,
+                        fieldName, 
+                        value 
+                    });
                 }
                 
                 // Clear inputs
@@ -216,15 +224,23 @@ Vue.component('notes-form', {
                 // Floor-level notes
                 if (this.editingIndex !== null) {
                     // Update existing note
-                    this.$root.$set(
-                        this.$root.floorNotes[this.buildingIndex][this.floorIndex],
-                        this.editingIndex,
-                        { fieldName, value }
-                    );
+                    const noteIndex = this.$root.floorNotes[this.buildingIndex][this.floorIndex]
+                        .findIndex(n => n.id === this.editingIndex);
+                    if (noteIndex !== -1) {
+                        this.$root.$set(
+                            this.$root.floorNotes[this.buildingIndex][this.floorIndex],
+                            noteIndex,
+                            { id: this.editingIndex, fieldName, value }
+                        );
+                    }
                     this.editingIndex = null;
                 } else {
-                    // Add new note
-                    this.$root.floorNotes[this.buildingIndex][this.floorIndex].push({ fieldName, value });
+                    // Add new note with unique ID
+                    this.$root.floorNotes[this.buildingIndex][this.floorIndex].push({ 
+                        id: ++this.$root.noteIdCounter,
+                        fieldName, 
+                        value 
+                    });
                 }
                 
                 // Clear inputs
@@ -232,8 +248,9 @@ Vue.component('notes-form', {
                 this.$root.$set(this.$root.floorNoteValue[this.buildingIndex], this.floorIndex, null);
             }
         },
-        editNote(index) {
-            const note = this.notesList[index];
+        editNote(noteId) {
+            const note = this.notesList.find(n => n.id === noteId);
+            if (!note) return;
             if (this.apartmentIndex) {
                 this.ensureDataStructure('floorNoteFieldName');
                 this.ensureDataStructure('floorNoteValue');
@@ -243,7 +260,7 @@ Vue.component('notes-form', {
                 this.$root.$set(this.$root.floorNoteFieldName[this.buildingIndex], this.floorIndex, note.fieldName);
                 this.$root.$set(this.$root.floorNoteValue[this.buildingIndex], this.floorIndex, note.value);
             }
-            this.editingIndex = index;
+            this.editingIndex = noteId;
         },
         cancelEdit() {
             this.editingIndex = null;
@@ -255,11 +272,19 @@ Vue.component('notes-form', {
                 this.$root.$set(this.$root.floorNoteValue[this.buildingIndex], this.floorIndex, null);
             }
         },
-        removeNote(index) {
+        removeNote(noteId) {
             if (this.apartmentIndex) {
-                this.$root.floorNotes[this.buildingIndex][this.floorIndex][this.apartmentIndex].splice(index, 1);
+                const notes = this.$root.floorNotes[this.buildingIndex][this.floorIndex][this.apartmentIndex];
+                const index = notes.findIndex(n => n.id === noteId);
+                if (index !== -1) {
+                    notes.splice(index, 1);
+                }
             } else {
-                this.$root.floorNotes[this.buildingIndex][this.floorIndex].splice(index, 1);
+                const notes = this.$root.floorNotes[this.buildingIndex][this.floorIndex];
+                const index = notes.findIndex(n => n.id === noteId);
+                if (index !== -1) {
+                    notes.splice(index, 1);
+                }
             }
         }
     }
