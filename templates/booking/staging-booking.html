@@ -57,11 +57,10 @@
 
               <!-- CATEGORY -->
               <h5 class="pt-4">Category</h5>
-              <div class="d-flex gap-3">
-                <div class="owl-carousel" id="category-carousel" v-if="activeTabs.service">
-                  <div class="sr-service-card" v-for="service in serviceGroups" :key="service.id"
-                    @click="selectServiceGroup(service.id)"
-                    :class="{'sr-service-card-active': activeTabs.activeServiceGroupId === service.id}">
+              <div class="owl-carousel" id="category-carousel" v-if="activeTabs.service">
+                <div class="sr-service-card" v-for="service in serviceGroups" :key="service.id"
+                  @click="selectServiceGroup(service.id)"
+                  :class="{'sr-service-card-active': activeTabs.activeServiceGroupId === service.id}">
                     <i
                       :class="activeTabs.activeServiceGroupId === service.id ? 'fa fa-check-circle active-icon' : 'far fa-circle inactive-icon'"></i>
                     <img :src="`https://my.bleachkw.com${mediaUrl}${service.image_path}`" class="service-icon">
@@ -69,17 +68,14 @@
                   </div>
                 </div>
 
-              </div>
-
               <!-- SERVICE TYPE -->
               <h5 class="pt-4">Service Type</h5>
-              <div class="d-flex gap-3">
-                <div class="owl-carousel" id="service-carousel" :key="activeTabs.activeServiceGroupId"
-                  v-if="filteredServiceTypes.length > 0">
+              <div class="owl-carousel" id="service-carousel" :key="activeTabs.activeServiceGroupId"
+                v-if="filteredServiceTypes.length > 0">
 
-                  <div class="sr-service-card m-2 p-2 service-one" v-for="type in filteredServiceTypes" :key="type.id"
-                    @click="selectServiceType(type.id)"
-                    :class="{'sr-service-card-active': activeTabs.activeServiceTypeId === type.id}">
+                <div class="sr-service-card m-2 p-2 service-one" v-for="type in filteredServiceTypes" :key="type.id"
+                  @click="selectServiceType(type.id)"
+                  :class="{'sr-service-card-active': activeTabs.activeServiceTypeId === type.id}">
 
                     <i :class="activeTabs.activeServiceTypeId === type.id
                         ? 'fa fa-check-circle active-icon'
@@ -91,7 +87,6 @@
                   </div>
 
                 </div>
-              </div>
 
 
               <!-- LOCATION -->
@@ -241,17 +236,22 @@
                         <!-- FLOOR DETAILS (if no apartments) -->
                         <div class="col-md-12" v-if="floorApartments[tab + 1][floorIndex] === false">
                           <floor-details-form :floor-index="floorIndex" :building-index="tab + 1"></floor-details-form>
+                          <div class="text-center mt-4">
+                            <button class="btn btn-primary px-5" @click="calculateFloorCost(tab + 1, floorIndex)">Continue</button>
+                          </div>
+                        </div>
+
+                        <!-- FLOOR CONTINUE BUTTON (when all apartments are completed) -->
+                        <div class="col-md-12 text-center mt-4" 
+                             v-if="floorApartments[tab + 1][floorIndex] === true && 
+                                   floorApartmentCounts[tab + 1][floorIndex] && 
+                                   allApartmentsCompleted(tab + 1, floorIndex) && 
+                                   !isFloorCompleted(tab + 1, floorIndex)">
+                          <button class="btn btn-primary px-5" @click="calculateFloorCost(tab + 1, floorIndex)">Continue to Next Floor</button>
                         </div>
                       </div>
                     </v-stepper>
 
-                    <div class="p-2" v-if="isFloorActive(tab + 1, floorIndex) && floorApartments[tab + 1][floorIndex] === false">
-                      <div class="col-md-12">
-                        <div class="text-center mt-4">
-                          <button class="btn btn-primary px-5" @click="calculateFloorCost(tab + 1, floorIndex)">Continue</button>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </v-stepper>

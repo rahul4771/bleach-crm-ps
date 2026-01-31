@@ -1,5 +1,5 @@
 Vue.component('notes-form', {
-    props: ['floorIndex', 'buildingIndex'],
+    props: ['floorIndex', 'buildingIndex', 'apartmentIndex'],
     data() {
         return {
             editingIndex: null,
@@ -51,7 +51,7 @@ Vue.component('notes-form', {
                         <div class="row g-4">
                             <div class="col-md-4">
                                 <v-select 
-                                    v-model="$root.floorNoteFieldName[buildingIndex][floorIndex]"
+                                    v-model="currentFieldName"
                                     :items="fieldNameOptions" 
                                     label="Field Name">
                                 </v-select>
@@ -59,7 +59,7 @@ Vue.component('notes-form', {
 
                             <div class="col-md-4">
                                 <v-text-field 
-                                    v-model="$root.floorNoteValue[buildingIndex][floorIndex]"
+                                    v-model="currentValue"
                                     label="Value">
                                 </v-text-field>
                             </div>
@@ -110,60 +110,157 @@ Vue.component('notes-form', {
     `,
     computed: {
         notesList() {
-            if (!this.$root.floorNotes[this.buildingIndex] || !this.$root.floorNotes[this.buildingIndex][this.floorIndex]) {
-                return [];
+            if (this.apartmentIndex) {
+                // Apartment-specific notes
+                if (!this.$root.floorNotes[this.buildingIndex] || 
+                    !this.$root.floorNotes[this.buildingIndex][this.floorIndex] ||
+                    !this.$root.floorNotes[this.buildingIndex][this.floorIndex][this.apartmentIndex]) {
+                    return [];
+                }
+                return this.$root.floorNotes[this.buildingIndex][this.floorIndex][this.apartmentIndex];
+            } else {
+                // Floor-level notes
+                if (!this.$root.floorNotes[this.buildingIndex] || !this.$root.floorNotes[this.buildingIndex][this.floorIndex]) {
+                    return [];
+                }
+                return this.$root.floorNotes[this.buildingIndex][this.floorIndex];
             }
-            return this.$root.floorNotes[this.buildingIndex][this.floorIndex];
+        },
+        currentFieldName: {
+            get() {
+                if (this.apartmentIndex) {
+                    return this.$root.floorNoteFieldName[this.buildingIndex]?.[this.floorIndex]?.[this.apartmentIndex];
+                }
+                return this.$root.floorNoteFieldName[this.buildingIndex]?.[this.floorIndex];
+            },
+            set(value) {
+                if (this.apartmentIndex) {
+                    this.ensureDataStructure('floorNoteFieldName');
+                    this.$root.$set(this.$root.floorNoteFieldName[this.buildingIndex][this.floorIndex], this.apartmentIndex, value);
+                } else {
+                    this.$root.$set(this.$root.floorNoteFieldName[this.buildingIndex], this.floorIndex, value);
+                }
+            }
+        },
+        currentValue: {
+            get() {
+                if (this.apartmentIndex) {
+                    return this.$root.floorNoteValue[this.buildingIndex]?.[this.floorIndex]?.[this.apartmentIndex];
+                }
+                return this.$root.floorNoteValue[this.buildingIndex]?.[this.floorIndex];
+            },
+            set(value) {
+                if (this.apartmentIndex) {
+                    this.ensureDataStructure('floorNoteValue');
+                    this.$root.$set(this.$root.floorNoteValue[this.buildingIndex][this.floorIndex], this.apartmentIndex, value);
+                } else {
+                    this.$root.$set(this.$root.floorNoteValue[this.buildingIndex], this.floorIndex, value);
+                }
+            }
         }
     },
     methods: {
+        ensureDataStructure(propName) {
+            if (!this.$root[propName][this.buildingIndex]) {
+                this.$root.$set(this.$root[propName], this.buildingIndex, {});
+            }
+            if (!this.$root[propName][this.buildingIndex][this.floorIndex]) {
+                this.$root.$set(this.$root[propName][this.buildingIndex], this.floorIndex, {});
+            }
+        },
         addNote() {
-            if (!this.$root.floorNoteFieldName[this.buildingIndex][this.floorIndex] || !this.$root.floorNoteValue[this.buildingIndex][this.floorIndex]) {
+            const fieldName = this.apartmentIndex 
+                ? this.$root.floorNoteFieldName[this.buildingIndex]?.[this.floorIndex]?.[this.apartmentIndex]
+                : this.$root.floorNoteFieldName[this.buildingIndex]?.[this.floorIndex];
+            
+            const value = this.apartmentIndex
+                ? this.$root.floorNoteValue[this.buildingIndex]?.[this.floorIndex]?.[this.apartmentIndex]
+                : this.$root.floorNoteValue[this.buildingIndex]?.[this.floorIndex];
+
+            if (!fieldName || !value) {
                 alert('Please fill in all fields');
                 return;
             }
 
-            // Initialize notes array if doesn't exist
+            // Initialize notes structure
+            if (!this.$root.floorNotes[this.buildingIndex]) {
+                this.$root.$set(this.$root.floorNotes, this.buildingIndex, {});
+            }
             if (!this.$root.floorNotes[this.buildingIndex][this.floorIndex]) {
-                this.$root.$set(this.$root.floorNotes[this.buildingIndex], this.floorIndex, []);
+                this.$root.$set(this.$root.floorNotes[this.buildingIndex], this.floorIndex, this.apartmentIndex ? {} : []);
             }
-
-            if (this.editingIndex !== null) {
-                // Update existing note
-                this.$root.$set(
-                    this.$root.floorNotes[this.buildingIndex][this.floorIndex],
-                    this.editingIndex,
-                    {
-                        fieldName: this.$root.floorNoteFieldName[this.buildingIndex][this.floorIndex],
-                        value: this.$root.floorNoteValue[this.buildingIndex][this.floorIndex]
-                    }
-                );
-                this.editingIndex = null;
+            
+            if (this.apartmentIndex) {
+                // Apartment-specific notes
+                if (!this.$root.floorNotes[this.buildingIndex][this.floorIndex][this.apartmentIndex]) {
+                    this.$root.$set(this.$root.floorNotes[this.buildingIndex][this.floorIndex], this.apartmentIndex, []);
+                }
+                
+                if (this.editingIndex !== null) {
+                    // Update existing note
+                    this.$root.$set(
+                        this.$root.floorNotes[this.buildingIndex][this.floorIndex][this.apartmentIndex],
+                        this.editingIndex,
+                        { fieldName, value }
+                    );
+                    this.editingIndex = null;
+                } else {
+                    // Add new note
+                    this.$root.floorNotes[this.buildingIndex][this.floorIndex][this.apartmentIndex].push({ fieldName, value });
+                }
+                
+                // Clear inputs
+                this.$root.$set(this.$root.floorNoteFieldName[this.buildingIndex][this.floorIndex], this.apartmentIndex, null);
+                this.$root.$set(this.$root.floorNoteValue[this.buildingIndex][this.floorIndex], this.apartmentIndex, null);
             } else {
-                // Add new note
-                this.$root.floorNotes[this.buildingIndex][this.floorIndex].push({
-                    fieldName: this.$root.floorNoteFieldName[this.buildingIndex][this.floorIndex],
-                    value: this.$root.floorNoteValue[this.buildingIndex][this.floorIndex]
-                });
+                // Floor-level notes
+                if (this.editingIndex !== null) {
+                    // Update existing note
+                    this.$root.$set(
+                        this.$root.floorNotes[this.buildingIndex][this.floorIndex],
+                        this.editingIndex,
+                        { fieldName, value }
+                    );
+                    this.editingIndex = null;
+                } else {
+                    // Add new note
+                    this.$root.floorNotes[this.buildingIndex][this.floorIndex].push({ fieldName, value });
+                }
+                
+                // Clear inputs
+                this.$root.$set(this.$root.floorNoteFieldName[this.buildingIndex], this.floorIndex, null);
+                this.$root.$set(this.$root.floorNoteValue[this.buildingIndex], this.floorIndex, null);
             }
-
-            // Clear inputs
-            this.$root.$set(this.$root.floorNoteFieldName[this.buildingIndex], this.floorIndex, null);
-            this.$root.$set(this.$root.floorNoteValue[this.buildingIndex], this.floorIndex, null);
         },
         editNote(index) {
             const note = this.notesList[index];
-            this.$root.$set(this.$root.floorNoteFieldName[this.buildingIndex], this.floorIndex, note.fieldName);
-            this.$root.$set(this.$root.floorNoteValue[this.buildingIndex], this.floorIndex, note.value);
+            if (this.apartmentIndex) {
+                this.ensureDataStructure('floorNoteFieldName');
+                this.ensureDataStructure('floorNoteValue');
+                this.$root.$set(this.$root.floorNoteFieldName[this.buildingIndex][this.floorIndex], this.apartmentIndex, note.fieldName);
+                this.$root.$set(this.$root.floorNoteValue[this.buildingIndex][this.floorIndex], this.apartmentIndex, note.value);
+            } else {
+                this.$root.$set(this.$root.floorNoteFieldName[this.buildingIndex], this.floorIndex, note.fieldName);
+                this.$root.$set(this.$root.floorNoteValue[this.buildingIndex], this.floorIndex, note.value);
+            }
             this.editingIndex = index;
         },
         cancelEdit() {
             this.editingIndex = null;
-            this.$root.$set(this.$root.floorNoteFieldName[this.buildingIndex], this.floorIndex, null);
-            this.$root.$set(this.$root.floorNoteValue[this.buildingIndex], this.floorIndex, null);
+            if (this.apartmentIndex) {
+                this.$root.$set(this.$root.floorNoteFieldName[this.buildingIndex][this.floorIndex], this.apartmentIndex, null);
+                this.$root.$set(this.$root.floorNoteValue[this.buildingIndex][this.floorIndex], this.apartmentIndex, null);
+            } else {
+                this.$root.$set(this.$root.floorNoteFieldName[this.buildingIndex], this.floorIndex, null);
+                this.$root.$set(this.$root.floorNoteValue[this.buildingIndex], this.floorIndex, null);
+            }
         },
         removeNote(index) {
-            this.$root.floorNotes[this.buildingIndex][this.floorIndex].splice(index, 1);
+            if (this.apartmentIndex) {
+                this.$root.floorNotes[this.buildingIndex][this.floorIndex][this.apartmentIndex].splice(index, 1);
+            } else {
+                this.$root.floorNotes[this.buildingIndex][this.floorIndex].splice(index, 1);
+            }
         }
     }
 });

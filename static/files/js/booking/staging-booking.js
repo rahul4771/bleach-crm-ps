@@ -421,19 +421,16 @@ new Vue({
             this.$set(this.activeApartment[buildingIndex][floorIndex], apartmentIndex, true);
         },
 
-        // =====================
-        // Carousel Logic
-        // =====================
-        reinitServiceCarousel() {
-            this.$nextTick(() => {
-                setTimeout(() => {
-                    const $carousel = $('#service-carousel');
-                    const itemsCount = $carousel.find('.sr-service-card').length;
-                    if (itemsCount > 0 && !$carousel.hasClass('owl-loaded')) {
-                        $carousel.owlCarousel(this.carouselSettings);
-                    }
-                }, 100);
-            });
+        allApartmentsCompleted(buildingIndex, floorIndex) {
+            const apartmentCount = this.floorApartmentCounts[buildingIndex] && this.floorApartmentCounts[buildingIndex][floorIndex];
+            if (!apartmentCount) return false;
+            
+            for (let i = 1; i <= apartmentCount; i++) {
+                if (!this.isApartmentCompleted(buildingIndex, floorIndex, i)) {
+                    return false;
+                }
+            }
+            return true;
         },
         resetOwlCarousel($carousel) {
             if ($carousel.hasClass('owl-loaded')) {
@@ -444,6 +441,19 @@ new Vue({
                 $carousel.find('.owl-stage-outer').unwrap();
                 $carousel.find('.owl-nav, .owl-dots, .owl-next, .owl-prev').remove();
             }
+        },
+
+        reinitServiceCarousel() {
+            setTimeout(() => {
+                this.$nextTick(() => {
+                    const $carousel = $('#service-carousel');
+                    this.resetOwlCarousel($carousel);
+                    const itemsCount = this.filteredServiceTypes.length;
+                    if (itemsCount > 0 && !$carousel.hasClass('owl-loaded')) {
+                        $carousel.owlCarousel(this.carouselSettings);
+                    }
+                });
+            }, 100);
         },
 
         // =====================
