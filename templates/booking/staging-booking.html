@@ -100,23 +100,23 @@
                 <div class="row">
                   <div class="col-md-4" v-for="(cartItem, index) in cartItems" :key="cartItem.id">
                     <v-card class="mb-3" outlined>
-                      <v-card-title class="d-flex justify-content-between align-items-start">
-                        <span>[[ cartItem.serviceName ]]</span>
-                        <v-btn icon small @click="removeCartItem(cartItem.id)">
+                      <v-card-title class="d-flex justify-content-between align-items-start pb-2">
+                        <span class="font-weight-bold">[[ cartItem.serviceName ]]</span>
+                        <v-btn icon small @click="removeCartItem(cartItem.id)" class="ml-auto">
                           <v-icon small>mdi-delete</v-icon>
                         </v-btn>
                       </v-card-title>
-                      <v-card-text>
-                        <div class="mb-2"><strong>[[ cartItem.location ]]</strong></div>
-                        <div class="d-flex justify-content-between">
+                      <v-card-text class="pt-0">
+                        <div class="mb-3">[[ cartItem.location ]]</div>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
                           <span>[[ cartItem.sizeName ]]</span>
-                          <span class="text-primary font-weight-bold">KD [[ cartItem.cost.toFixed(2) ]]</span>
+                          <span class="font-weight-bold ml-auto">KD [[ cartItem.cost.toFixed(2) ]]</span>
                         </div>
                       </v-card-text>
                       <v-divider></v-divider>
-                      <v-card-actions class="d-flex justify-content-between px-4">
+                      <v-card-actions class="d-flex justify-content-between align-items-center px-4">
                         <span class="font-weight-bold">Total</span>
-                        <span class="text-primary font-weight-bold">KD [[ cartItem.cost.toFixed(2) ]]</span>
+                        <span class="font-weight-bold ml-auto">KD [[ cartItem.cost.toFixed(2) ]]</span>
                       </v-card-actions>
                     </v-card>
                   </div>
@@ -370,7 +370,7 @@
 
               <!-- BUTTON -->
               <div class="text-center mt-4">
-                <button class="btn btn-primary px-5">Proceed</button>
+                <button class="btn btn-primary px-5" @click="activeTabs.cart = true; activeTabs.service = false">Proceed</button>
               </div>
               </div>
               <!-- END LOCATION FORM WRAPPER -->
