@@ -57,7 +57,8 @@ new Vue({
             { id: 3, start_time: '12:00', end_time: '14:00' },
             { id: 4, start_time: '14:00', end_time: '16:00' },
             { id: 5, start_time: '16:00', end_time: '18:00' },
-            { id: 6, start_time: '18:00', end_time: '20:00' }
+            { id: 6, start_time: '18:00', end_time: '20:00' },
+            { id: 7, start_time: '20:00', end_time: '22:00' }
         ],
         // Scheduling data
         visits: [], // Array of visit dates and slots
@@ -70,6 +71,7 @@ new Vue({
         altweekStat: false, // Alternate week status
         altdaysStat: false, // Alternate days status
         no_of_visits: 0, // Number of visits for subscription
+        customDateSelected: [], // Array of custom selected dates for Custom subscription
         scheduleDialog: false,
         scheduleDateSat: false,
         schedule_err_msg: false,
@@ -667,7 +669,8 @@ new Vue({
                 };
                 
                 // Adjust costs for subscription services
-                if (this.serviceDetails.service_details[serviceIndex].cleaning_policy === 'SUBSCRIPTION') {
+                const normalizedPolicy = bill.cleaning_policy;
+                if (normalizedPolicy === 'SUBSCRIPTION') {
                     const totalCost = parseFloat(bill.total_cost) * parseInt(visitCount);
                     this.serviceDetails.service_details[serviceIndex].total_cost = totalCost;
                     this.serviceDetails.service_details[serviceIndex].estimated_cost = totalCost;
@@ -707,7 +710,8 @@ new Vue({
                     const sectionDetail = this.serviceDetails.service_details[serviceIndex].sections[sectionIndex];
                     
                     // Adjust section costs for subscription
-                    if (this.serviceDetails.service_details[serviceIndex].cleaning_policy === 'SUBSCRIPTION') {
+                    const servicePolicyNormalized = this.serviceDetails.service_details[serviceIndex].cleaning_policy;
+                    if (servicePolicyNormalized === 'SUBSCRIPTION') {
                         sectionDetail.sectiononly_net_cost *= parseInt(visitCount);
                         sectionDetail.section_net_cost *= parseInt(visitCount);
                     }
@@ -1550,7 +1554,7 @@ new Vue({
             }
             
             // Additional validation for subscription services
-            if (this.cleaningPolicy === 'SUBSCRIPTION') {
+            if (this.normalizedCleaningPolicy === 'SUBSCRIPTION') {
                 if (!this.subStat) return false;
                 if (!this.no_of_visits || this.no_of_visits < 1) return false;
                 if (this.subStat === 'Weekly' && this.prefDay.length === 0) return false;
@@ -1572,6 +1576,12 @@ new Vue({
         selectedDays() {
             // For now, return an array with one day. You can expand this for multi-day selection
             return this.dateSelected ? [this.dateSelected] : [];
+        },
+        normalizedCleaningPolicy() {
+            // Normalize user-friendly values to backend format
+            if (this.cleaningPolicy === 'Subscription') return 'SUBSCRIPTION';
+            if (this.cleaningPolicy === 'One Time Service') return 'ONE TIME SERVICE';
+            return this.cleaningPolicy;
         }
     }
 });
