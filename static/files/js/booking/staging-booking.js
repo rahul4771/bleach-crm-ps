@@ -466,6 +466,368 @@ new Vue({
             }
         },
 
+        addToSchedule() {
+            // Set schedule status
+            this.scheduleStatus = this.scheduleStat;
+            
+            // Configure schedule format for selected service types
+            this.schedule_serviceTypes_selected.forEach(serviceType => {
+                this.scheduleFormat.individual[serviceType] = {
+                    starting_date: this.visits[0].dateTime,
+                    visits: this.visits
+                };
+            });
+            
+            const cleanersCount = this.selectedDuration.cleaners;
+            
+            // Update billing information for each selected service type
+            this.schedule_serviceTypes_selected.forEach(serviceType => {
+                const billDetails = this.multiServicesBill[serviceType];
+                billDetails.cleaning_policy = 'SUBSCRIPTION';
+                billDetails.schedule_details = {};
+                billDetails.cleaners = cleanersCount;
+                
+                // Add schedule details for each visit
+                this.visits.forEach((visit, index) => {
+                    const minSlot = Math.min(...visit.slots);
+                    billDetails.schedule_details[index + 1] = {
+                        date: visit.date,
+                        time: this.slotFormat[minSlot].start_time,
+                        no_of_cleaners: this.selectedDuration.cleaners,
+                        cleaning_hours: this.selectedDuration.hours,
+                        hourly_cleaning_duration: parseInt(this.hourly_cleaning.hourly_duration) || null
+                    };
+                });
+                
+                billDetails.shift_availability_check = !this.out_of_shift;
+            });
+            
+            // Remove selected service types from existing schedule groups
+            this.schedule_serviceTypes_selected.forEach(selectedService => {
+                for (const groupKey in this.scheduleGroup) {
+                    if (this.scheduleGroup[groupKey].includes(selectedService)) {
+                        const serviceIndex = this.scheduleGroup[groupKey].indexOf(selectedService);
+                        if (serviceIndex > -1) {
+                            this.scheduleGroup[groupKey].splice(serviceIndex, 1);
+                        }
+                    }
+                }
+            });
+            
+            // Create new schedule group with selected services
+            const newGroupId = Object.keys(this.scheduleGroup).length;
+            this.scheduleGroup[newGroupId] = [...this.schedule_serviceTypes_selected];
+            
+            // Reset state
+            this.visits = [];
+            this.selected_double_slots = [];
+            this.selectedDuration = {
+                cleaners: '',
+                hours: '',
+                slots: ''
+            };
+            this.fixedSlots = {};
+            this.reselectDateIndex = null;
+            this.reselectDate = {};
+            this.subStat = '';
+            this.cleaningPolicy = '';
+            this.no_of_visits = '';
+            this.schedule_serviceTypes_selected = [];
+            this.scheduleDateSat = false;
+            this.activeTab = 'Cart';
+        },
+
+        addOneTimeToSchedule() {
+            // Set schedule status
+            this.scheduleStatus = this.scheduleStat;
+            
+            // Configure one-time scheduling for selected service types
+            this.schedule_serviceTypes_selected.forEach(serviceType => {
+                this.onetime_scheduled[serviceType] = {
+                    slot: this.selected_onetime_slots
+                };
+            });
+            
+            // Update billing information for each selected service type
+            this.schedule_serviceTypes_selected.forEach(serviceType => {
+                const billDetails = this.multiServicesBill[serviceType];
+                billDetails.cleaning_policy = 'ONE TIME SERVICE';
+                billDetails.schedule_details = {};
+                billDetails.cleaners = this.selectedDuration.cleaners;
+                billDetails.shift_availability_check = !this.out_of_shift;
+                
+                // Handle multiple dates with continuous date grouping
+                if (Object.keys(this.selected_onetime_slots).length > 1) {
+                    this.findContDate();
+                    let scheduleCount = 0;
+                    
+                    for (const groupKey in this.date_group) {
+                        const dates = this.date_group[groupKey];
+                        
+                        if (dates.length > 0) {
+                            // Find earliest date and calculate total cleaning hours
+                            let minDate = dates[0];
+                            let totalCleaningHours = this.selected_onetime_slots[dates[0]].slots.length * 2;
+                            
+                            for (let i = 1; i < dates.length; i++) {
+                                const currentDate = dates[i];
+                                if (moment(currentDate, 'YYYY-MM-DD').isBefore(moment(minDate, 'YYYY-MM-DD'))) {
+                                    minDate = currentDate;
+                                }
+                                totalCleaningHours += this.selected_onetime_slots[currentDate].slots.length * 2;
+                            }
+                            
+                            // Format date and add to schedule details
+                            const [year, month, day] = minDate.split('-');
+                            const formattedDate = `${day}-${month}-${year}`;
+                            const minSlot = Math.min(...this.selected_onetime_slots[minDate].slots);
+                            
+                            billDetails.schedule_details[scheduleCount + 1] = {
+                                date: formattedDate,
+                                time: this.slotFormat[parseInt(minSlot)].start_time,
+                                no_of_cleaners: this.selectedDuration.cleaners,
+                                cleaning_hours: totalCleaningHours,
+                                hourly_cleaning_duration: null
+                            };
+                            
+                            scheduleCount++;
+                        }
+                    }
+                } else {
+                    // Handle single date or non-continuous dates
+                    let scheduleCount = 0;
+                    
+                    for (const dateKey in this.selected_onetime_slots) {
+                        const [year, month, day] = dateKey.split('-');
+                        const formattedDate = `${day}-${month}-${year}`;
+                        const minSlot = Math.min(...this.selected_onetime_slots[dateKey].slots);
+                        const cleaningHours = this.selected_onetime_slots[dateKey].slots.length * 2;
+                        
+                        billDetails.schedule_details[scheduleCount + 1] = {
+                            date: formattedDate,
+                            time: this.slotFormat[parseInt(minSlot)].start_time,
+                            no_of_cleaners: this.selectedDuration.cleaners,
+                            cleaning_hours: cleaningHours,
+                            hourly_cleaning_duration: null
+                        };
+                        
+                        scheduleCount++;
+                    }
+                }
+            });
+            
+            // Remove selected service types from existing schedule groups
+            this.schedule_serviceTypes_selected.forEach(selectedService => {
+                for (const groupKey in this.scheduleGroup) {
+                    if (this.scheduleGroup[groupKey].includes(selectedService)) {
+                        const serviceIndex = this.scheduleGroup[groupKey].indexOf(selectedService);
+                        if (serviceIndex > -1) {
+                            this.scheduleGroup[groupKey].splice(serviceIndex, 1);
+                        }
+                    }
+                }
+            });
+            
+            // Create new schedule group with selected services
+            const newGroupId = Object.keys(this.scheduleGroup).length;
+            this.scheduleGroup[newGroupId] = [...this.schedule_serviceTypes_selected];
+            
+            // Reset state
+            this.selected_onetime_slots = {};
+            this.currentSlotDay = 1;
+            this.onetime_scheduled = {};
+            this.oneTimeSelectionStat = false;
+            this.schedule_serviceTypes_selected = [];
+            this.oneTimeDateSelected = this.today;
+            this.dateSelected = this.today;
+            this.formatDate();
+            this.one_time_slots = {};
+            this.activeTab = 'Cart';
+        },
+
+        arrangeData() {
+            // Populate service details from multi-service bill
+            this.multiServicesBill.forEach((bill, serviceIndex) => {
+                const serviceId = this.getServiceId(bill.service);
+                const visitCount = Object.keys(bill.schedule_details).length;
+                
+                // Initialize service detail entry
+                this.serviceDetails.service_details[serviceIndex] = {
+                    service_type: serviceId,
+                    cleaning_policy: bill.cleaning_policy,
+                    schedule_details: bill.schedule_details,
+                    location_type: bill.location_type,
+                    area_type: bill.area_type,
+                    evaluator_note: bill.evaluator_note,
+                    estimated_cost: bill.total_cost,
+                    total_cost: bill.total_cost,
+                    number_of_cleaners: bill.cleaners,
+                    cleaning_hours: parseInt(this.selectedDuration.hours),
+                    sections: {}
+                };
+                
+                // Adjust costs for subscription services
+                if (this.serviceDetails.service_details[serviceIndex].cleaning_policy === 'SUBSCRIPTION') {
+                    const totalCost = parseFloat(bill.total_cost) * parseInt(visitCount);
+                    this.serviceDetails.service_details[serviceIndex].total_cost = totalCost;
+                    this.serviceDetails.service_details[serviceIndex].estimated_cost = totalCost;
+                }
+                
+                // Process each section in the bill
+                bill.bill.forEach((billItem, sectionIndex) => {
+                    const section = billItem.section;
+                    
+                    // Initialize section data
+                    this.serviceDetails.service_details[serviceIndex].sections[sectionIndex] = {
+                        section_name: billItem.section_name,
+                        size: section.size.name,
+                        wall_type: '',
+                        floor_type: '',
+                        ceiling_type: '',
+                        cement_residue: section.cement_residue,
+                        oil_residue: section.residue,
+                        section_cost: billItem.section_cost,
+                        sectiononly_cost: billItem.sectiononly_cost,
+                        sectiononly_net_cost: billItem.sectiononly_cost,
+                        section_net_cost: billItem.section_net_cost,
+                        keynotes: {},
+                        addons: {},
+                        new_kitchen: false,
+                        is_cabinet: false,
+                        is_highprice_facade: false,
+                        is_highprice_window: false,
+                        colour: '',
+                        material: '',
+                        cause_of_stain: '',
+                        upholstery_type: '',
+                        age: '',
+                        age_of_stain: ''
+                    };
+                    
+                    const sectionDetail = this.serviceDetails.service_details[serviceIndex].sections[sectionIndex];
+                    
+                    // Adjust section costs for subscription
+                    if (this.serviceDetails.service_details[serviceIndex].cleaning_policy === 'SUBSCRIPTION') {
+                        sectionDetail.sectiononly_net_cost *= parseInt(visitCount);
+                        sectionDetail.section_net_cost *= parseInt(visitCount);
+                    }
+                    
+                    // Set boolean flags
+                    if (section.size.is_highprice_facade) sectionDetail.is_highprice_facade = true;
+                    if (section.size.is_highprice_window) sectionDetail.is_highprice_window = true;
+                    if (section.size.is_newkitchen) sectionDetail.new_kitchen = true;
+                    if (section.is_cabinet) sectionDetail.is_cabinet = true;
+                    
+                    // Set optional properties
+                    if (section.stain_age) sectionDetail.age_of_stain = section.stain_age;
+                    if (section.color) sectionDetail.colour = section.color.join();
+                    if (section.material) sectionDetail.material = section.material.join();
+                    if (section.stain_reason) sectionDetail.cause_of_stain = section.stain_reason;
+                    if (section.type === 'SOFA' || section.type === 'CURTAIN') {
+                        sectionDetail.upholstery_type = section.type;
+                    }
+                    if (section.wall_type) sectionDetail.wall_type = section.wall_type.join();
+                    if (section.ceiling_type) sectionDetail.ceiling_type = section.ceiling_type.join();
+                    if (section.floor_type) sectionDetail.floor_type = section.floor_type.join();
+                    if (section.age) sectionDetail.age = section.age;
+                    
+                    // Process keynotes
+                    let keynoteCounter = 1;
+                    
+                    if (section.no_of_bathrooms) {
+                        sectionDetail.keynotes[keynoteCounter++] = {
+                            sub_area: 'bathroom',
+                            quantity: section.no_of_bathrooms
+                        };
+                    }
+                    
+                    if (section.no_of_rooms) {
+                        sectionDetail.keynotes[keynoteCounter++] = {
+                            sub_area: 'rooms',
+                            quantity: section.no_of_rooms
+                        };
+                    }
+                    
+                    if (section.no_of_windows) {
+                        sectionDetail.keynotes[keynoteCounter++] = {
+                            sub_area: 'windows',
+                            quantity: section.no_of_windows
+                        };
+                    }
+                    
+                    // Process custom keynote data
+                    if (section.keynote_data && section.keynote_data.length > 0) {
+                        section.keynote_data.forEach(keynote => {
+                            sectionDetail.keynotes[keynoteCounter++] = {
+                                sub_area: keynote.name,
+                                quantity: keynote.value
+                            };
+                        });
+                    }
+                    
+                    // Process addons
+                    let addonCounter = 0;
+                    
+                    if (section.addons) {
+                        section.addons.forEach(addon => {
+                            if (addon.selected) {
+                                addonCounter++;
+                                sectionDetail.addons[addonCounter] = {
+                                    name: addon.details.name,
+                                    addon_cost: addon.details.price,
+                                    addon_net_cost: addon.details.price * addon.quantity,
+                                    quantity: addon.quantity,
+                                    size: '',
+                                    other_details: ''
+                                };
+                                
+                                if (addon.details.category && addon.selected_size) {
+                                    sectionDetail.addons[addonCounter].size = addon.selected_size.size;
+                                }
+                            }
+                        });
+                    }
+                    
+                    // Process kitchen as addon
+                    if (section.kitchen && section.kitchens) {
+                        let newIndex = Object.keys(sectionDetail.addons).length;
+                        
+                        section.kitchens.forEach(kitchen => {
+                            newIndex++;
+                            sectionDetail.addons[newIndex] = {
+                                name: 'kitchen',
+                                addon_cost: kitchen.size.cost,
+                                addon_net_cost: kitchen.size.cost,
+                                quantity: 1,
+                                size: kitchen.size.name,
+                                other_details: JSON.stringify({
+                                    size: kitchen.size.name,
+                                    max_size: kitchen.size.max_size,
+                                    type: kitchen.type,
+                                    residue: kitchen.residue,
+                                    is_cabinet: kitchen.is_cabinet
+                                })
+                            };
+                        });
+                    }
+                });
+            });
+            
+            // Set shift availability check
+            this.serviceDetails.shift_availability_check = this.multiServicesBill[0].shift_availability_check;
+            
+            // Calculate total cost
+            let totalCost = 0;
+            for (const serviceKey in this.serviceDetails.service_details) {
+                totalCost += parseInt(this.serviceDetails.service_details[serviceKey].total_cost);
+            }
+            
+            this.serviceDetails.total_cost = totalCost;
+            this.serviceDetails.estimated_cost = totalCost;
+            
+            this.bookMultipleService();
+        },
+
         // =====================
         // Selection Logic
         // =====================
@@ -485,11 +847,17 @@ new Vue({
          */
         getServiceTypes() {
             fetch('/common/staging/dynamic/get-service-types/')
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     this.mediaUrl = data.MEDIA_URL;
                     this.serviceGroups = data.service_groups ?? [];
                     this.serviceTypes = data.service_types ?? [];
+                    
                     // Select first service by default
                     if (this.serviceTypes.length > 0) {
                         this.activeTabs.activeServiceTypeId = this.serviceTypes[0].id;
@@ -540,31 +908,30 @@ new Vue({
          */
         getSize() {
             let service = this.serviceType;
-            if (service == 'Hourly Cleaning') {
+            if (service === 'Hourly Cleaning') {
                 service = 'General Cleaning';
             }
 
             fetch(`/customer/ajax/getservicesizeprice?service_type=${service}`)
-                .then((response) => {
+                .then(response => {
                     if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     return response.json();
                 })
-                .then((data) => {
+                .then(data => {
                     this.serviceSize = data;
                     this.parseSize();
 
-                    if (this.serviceType == 'Rope Access') {
+                    if (this.serviceType === 'Rope Access') {
                         this.ropeAccessTypes = [...new Set(this.sizeData.map(size => size.rope_access_type))];
                         this.ropeAccessFilter();
                         return;
                     }
 
-                    // this.facadeFilter();
                     this.windowFilter();
                 })
-                .catch((error) => {
+                .catch(error => {
                     console.error('Error fetching size data:', error);
                     this.snackbar = true;
                 });
@@ -983,17 +1350,21 @@ new Vue({
         },
 
         confirmSlotSelection() {
+            // Validate slot selection
             if (this.selected_double_slots.length === 0) {
                 alert('Please select at least one time slot');
                 return;
             }
+            
+            // Validate date selection
             if (!this.dateSelected) {
                 alert('Please select a date');
                 return;
             }
-            // Close dialog and proceed
+            
+            // Close dialog and process selection
             this.scheduleDialog = false;
-            // You can add additional logic here for what happens after slot confirmation
+            this.findVisits();
         }
     },
     mounted() {
@@ -1015,14 +1386,14 @@ new Vue({
     },
     watch: {
         'activeTabs.activeServiceTypeId'(newVal) {
-            if (newVal) {
-                // Find the service type name and call getSize
-                const serviceType = this.serviceTypes.find(st => st.id === newVal);
-                if (serviceType) {
-                    this.serviceType = serviceType.name;
-                    if (this.mediaUrl) {
-                        this.getSize();
-                    }
+            if (!newVal) return;
+            
+            // Find the service type name and call getSize
+            const serviceType = this.serviceTypes.find(st => st.id === newVal);
+            if (serviceType) {
+                this.serviceType = serviceType.name;
+                if (this.mediaUrl) {
+                    this.getSize();
                 }
             }
         },
@@ -1167,13 +1538,24 @@ new Vue({
             return total;
         },
         canSchedule() {
-            if (!this.cleaningPolicy || !this.dateSelected) return false;
-            if (this.selected_double_slots.length !== Math.ceil(this.selectedDuration.hours / 2)) return false;
+            // Basic validation
+            if (!this.cleaningPolicy || !this.dateSelected) {
+                return false;
+            }
+            
+            // Validate slot selection matches required duration
+            const requiredSlots = Math.ceil(this.selectedDuration.hours / 2);
+            if (this.selected_double_slots.length !== requiredSlots) {
+                return false;
+            }
+            
+            // Additional validation for subscription services
             if (this.cleaningPolicy === 'SUBSCRIPTION') {
                 if (!this.subStat) return false;
                 if (!this.no_of_visits || this.no_of_visits < 1) return false;
                 if (this.subStat === 'Weekly' && this.prefDay.length === 0) return false;
             }
+            
             return true;
         },
         selectedDateFormatted() {
