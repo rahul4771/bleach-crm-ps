@@ -21,6 +21,7 @@
   [v-cloak] {
     display: none !important;
   }
+
   /* Hide owl carousel navigation by default */
   .booking-card .owl-carousel .owl-nav,
   .booking-card .owl-nav,
@@ -31,6 +32,7 @@
     visibility: hidden !important;
     opacity: 0 !important;
   }
+
   /* Show navigation only when services tab is active */
   .booking-card[data-active-tab="service"] .owl-carousel .owl-nav,
   .booking-card[data-active-tab="service"] .owl-nav {
@@ -38,11 +40,13 @@
     visibility: visible !important;
     opacity: 1 !important;
   }
+
   .booking-card[data-active-tab="service"] .owl-carousel .owl-nav button {
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
   }
+
   /* Extra safeguard: hide on cart tab */
   .booking-card[data-active-tab="cart"] .owl-carousel .owl-nav,
   .booking-card[data-active-tab="cart"] .owl-nav,
@@ -89,7 +93,7 @@
               <!-- CART SECTION -->
               <div v-if="activeTabs.cart" :key="'cart-section'">
                 <h3 class="pt-4 mb-4">Services</h3>
-                
+
                 <!-- Schedule Together Toggle -->
                 <div class="d-flex align-items-center mb-4">
                   <v-switch v-model="scheduleTogether" class="mt-0 pt-0"></v-switch>
@@ -123,10 +127,9 @@
 
                   <!-- Add More Services Card -->
                   <div class="col-md-4">
-                    <v-card class="mb-3 d-flex align-items-center justify-content-center" 
-                            outlined 
-                            style="min-height: 200px; cursor: pointer;"
-                            @click="activeTabs.service = true; activeTabs.cart = false">
+                    <v-card class="mb-3 d-flex align-items-center justify-content-center" outlined
+                      style="min-height: 200px; cursor: pointer;"
+                      @click="activeTabs.service = true; activeTabs.cart = false">
                       <v-card-text class="text-center">
                         <v-btn fab color="primary" class="mb-3">
                           <v-icon large>mdi-plus</v-icon>
@@ -139,7 +142,8 @@
 
                 <!-- Action Buttons -->
                 <div class="text-center mt-5 mb-4">
-                  <v-btn outlined color="primary" class="px-5 mr-3" x-large @click="activeTabs.schedule = true; activeTabs.cart = false; activeTabs.service = false">SCHEDULE</v-btn>
+                  <v-btn outlined color="primary" class="px-5 mr-3" x-large
+                    @click="activeTabs.schedule = true; activeTabs.cart = false; activeTabs.service = false">SCHEDULE</v-btn>
                   <v-btn color="grey" class="px-5" x-large disabled>SUBMIT</v-btn>
                 </div>
               </div>
@@ -148,52 +152,69 @@
               <div v-if="activeTabs.schedule">
                 <!-- Back Button -->
                 <div class="mt-4 mb-4">
-                  <v-btn outlined class="px-4" @click="activeTabs.cart = true; activeTabs.schedule = false; activeTabs.service = false">
+                  <v-btn outlined class="px-4"
+                    @click="activeTabs.cart = true; activeTabs.schedule = false; activeTabs.service = false">
                     <v-icon left>mdi-arrow-left</v-icon>
                     BACK
                   </v-btn>
                 </div>
 
-                <!-- Cleaning Policy Dropdown -->
+                <!-- Cleaning Policy and Subscription Fields in a single row -->
                 <div class="row">
                   <div class="col-md-4">
-                    <v-select 
-                      v-model="cleaningPolicy" 
-                      :items="['SUBSCRIPTION', 'ONE TIME SERVICE']" 
-                      label="Cleaning Policy"
-                      required
-                      outlined>
+                    <v-select v-model="cleaningPolicy" :items="['SUBSCRIPTION', 'ONE TIME SERVICE']"
+                      label="Cleaning Policy" required outlined>
                       <template v-slot:label>
-                        Cleaning Policy <span style="color: red;">*</span>
+                        Cleaning Policy
                       </template>
                     </v-select>
                   </div>
+
+                  <!-- Subscription Fields (shown when SUBSCRIPTION is selected) -->
+                  <template v-if="cleaningPolicy === 'SUBSCRIPTION'">
+                    <div class="col-md-4">
+                      <v-select v-model="subStat" :items="['Daily','Weekly','Monthly','Custom']"
+                        label="Subscription Plan" required outlined>
+                        <template v-slot:label>
+                          Subscription Plan
+                        </template>
+                      </v-select>
+                    </div>
+                    <div class="col-md-4">
+                      <v-text-field v-model.number="no_of_visits" type="number" label="No of Visits" required outlined
+                        min="1">
+                        <template v-slot:label>
+                          No of Visits
+                        </template>
+                      </v-text-field>
+                    </div>
+                  </template>
                 </div>
               </div>
 
               <!-- SERVICES SECTION -->
               <div v-if="activeTabs.service">
-              <!-- CATEGORY -->
-              <h5 class="pt-4">Category</h5>
-              <div class="owl-carousel" id="category-carousel">
-                <div class="sr-service-card" v-for="service in serviceGroups" :key="service.id"
-                  @click="selectServiceGroup(service.id)"
-                  :class="{'sr-service-card-active': activeTabs.activeServiceGroupId === service.id}">
+                <!-- CATEGORY -->
+                <h5 class="pt-4">Category</h5>
+                <div class="owl-carousel" id="category-carousel">
+                  <div class="sr-service-card" v-for="service in serviceGroups" :key="service.id"
+                    @click="selectServiceGroup(service.id)"
+                    :class="{'sr-service-card-active': activeTabs.activeServiceGroupId === service.id}">
                     <i
                       :class="activeTabs.activeServiceGroupId === service.id ? 'fa fa-check-circle active-icon' : 'far fa-circle inactive-icon'"></i>
                     <img :src="`https://my.bleachkw.com${mediaUrl}${service.image_path}`" class="service-icon">
                     <div class="text-center pt-2 service-title" v-text="service.service_name"></div>
                   </div>
-              </div>
+                </div>
 
-              <!-- SERVICE TYPE -->
-              <h5 class="pt-4">Service Type</h5>
-              <div class="owl-carousel" id="service-carousel" :key="activeTabs.activeServiceGroupId"
-                v-if="filteredServiceTypes.length > 0">
+                <!-- SERVICE TYPE -->
+                <h5 class="pt-4">Service Type</h5>
+                <div class="owl-carousel" id="service-carousel" :key="activeTabs.activeServiceGroupId"
+                  v-if="filteredServiceTypes.length > 0">
 
-                <div class="sr-service-card m-2 p-2 service-one" v-for="type in filteredServiceTypes" :key="type.id"
-                  @click="selectServiceType(type.id)"
-                  :class="{'sr-service-card-active': activeTabs.activeServiceTypeId === type.id}">
+                  <div class="sr-service-card m-2 p-2 service-one" v-for="type in filteredServiceTypes" :key="type.id"
+                    @click="selectServiceType(type.id)"
+                    :class="{'sr-service-card-active': activeTabs.activeServiceTypeId === type.id}">
 
                     <i :class="activeTabs.activeServiceTypeId === type.id
                         ? 'fa fa-check-circle active-icon'
@@ -204,203 +225,212 @@
                     <div class="text-center pt-2 service-title" v-text="type.name"></div>
                   </div>
 
-              </div>
-
-
-              <!-- LOCATION -->
-              <div :key="activeTabs.service ? 'service-form' : 'hidden'">
-              <h5 class="pt-4">What's your place like?</h5>
-
-              <div class="row">
-                <div class="col-md-4" v-if="showLocationTypeDropdown">
-                  <v-select v-model="selectedLocationType" :items="allowedLocationTypes" label="Location Type">
-                  </v-select>
                 </div>
-                <div class="col-md-4">
-                  <v-select v-model="selectedAreaType" :items="areaTypes" item-text="text" item-value="value"
-                    label="Area Type">
-                  </v-select>
-                </div>
-                <div class="col-md-4">
-                  <v-select v-model="selectedNoOfBuildings" :items="buildingNumbers" label="No of Building">
-                  </v-select>
-                </div>
-              </div>
 
-              <!-- BUILDING -->
-              <div class="mt-4" v-if="selectedNoOfBuildings">
-                <v-tabs v-model="tab">
-                  <v-tab v-for="building in buildingTabs" :key="building">
-                    [[ building ]]
-                  </v-tab>
-                </v-tabs>
-                <v-tabs-items v-model="tab">
-                  <v-tab-item v-for="(building, buildingIndex) in buildingTabs" :key="building">
-                    <div class="row mt-3">
-                      <div class="col-md-4">
-                        <v-select v-model="selectedNoOfFloors[buildingIndex + 1]" :items="floorNumbers" label="No of Floors">
-                        </v-select>
-                      </div>
+
+                <!-- LOCATION -->
+                <div :key="activeTabs.service ? 'service-form' : 'hidden'">
+                  <h5 class="pt-4">What's your place like?</h5>
+
+                  <div class="row">
+                    <div class="col-md-4" v-if="showLocationTypeDropdown">
+                      <v-select v-model="selectedLocationType" :items="allowedLocationTypes" label="Location Type">
+                      </v-select>
                     </div>
-                  </v-tab-item>
-                </v-tabs-items>
-              </div>
+                    <div class="col-md-4">
+                      <v-select v-model="selectedAreaType" :items="areaTypes" item-text="text" item-value="value"
+                        label="Area Type">
+                      </v-select>
+                    </div>
+                    <div class="col-md-4">
+                      <v-select v-model="selectedNoOfBuildings" :items="buildingNumbers" label="No of Building">
+                      </v-select>
+                    </div>
+                  </div>
 
-              <!-- FLOOR DETAILS -->
-              <v-stepper class="p-4" v-if="selectedNoOfFloors[tab + 1]">
-                <div>
-                  <div v-for="floorIndex in Array.from({length: selectedNoOfFloors[tab + 1]}, (_, i) => i + 1)" :key="`building-${tab + 1}-floor-${floorIndex}`"
-                    class="floor-section mt-4">
-                    
-                    <!-- COMPLETED FLOOR SUMMARY -->
-                    <div v-if="isFloorCompleted(tab + 1, floorIndex) && !isFloorActive(tab + 1, floorIndex)" 
-                         class="completed-floor-card p-4" 
-                         style="border: 1px solid #e0e0e0; border-radius: 8px; background-color: #f9f9f9;">
-                      <div class="d-flex align-items-center justify-content-between">
-                        <div class="d-flex align-items-center flex-grow-1">
-                          <v-icon color="success" size="40" class="mr-3">mdi-check-circle</v-icon>
-                          <div>
-                            <h6 class="mb-0">Floor [[ floorIndex ]]</h6>
-                            <small class="text-muted">Fill the details for Floor [[ floorIndex ]]</small>
-                            <div class="mt-2">
-                              <strong>Section Name</strong>
-                              <div>Building [[ tab + 1 ]] Floor [[ floorIndex ]]</div>
+                  <!-- BUILDING -->
+                  <div class="mt-4" v-if="selectedNoOfBuildings">
+                    <v-tabs v-model="tab">
+                      <v-tab v-for="building in buildingTabs" :key="building">
+                        [[ building ]]
+                      </v-tab>
+                    </v-tabs>
+                    <v-tabs-items v-model="tab">
+                      <v-tab-item v-for="(building, buildingIndex) in buildingTabs" :key="building">
+                        <div class="row mt-3">
+                          <div class="col-md-4">
+                            <v-select v-model="selectedNoOfFloors[buildingIndex + 1]" :items="floorNumbers"
+                              label="No of Floors">
+                            </v-select>
+                          </div>
+                        </div>
+                      </v-tab-item>
+                    </v-tabs-items>
+                  </div>
+
+                  <!-- FLOOR DETAILS -->
+                  <v-stepper class="p-4" v-if="selectedNoOfFloors[tab + 1]">
+                    <div>
+                      <div v-for="floorIndex in Array.from({length: selectedNoOfFloors[tab + 1]}, (_, i) => i + 1)"
+                        :key="`building-${tab + 1}-floor-${floorIndex}`" class="floor-section mt-4">
+
+                        <!-- COMPLETED FLOOR SUMMARY -->
+                        <div v-if="isFloorCompleted(tab + 1, floorIndex) && !isFloorActive(tab + 1, floorIndex)"
+                          class="completed-floor-card p-4"
+                          style="border: 1px solid #e0e0e0; border-radius: 8px; background-color: #f9f9f9;">
+                          <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center flex-grow-1">
+                              <v-icon color="success" size="40" class="mr-3">mdi-check-circle</v-icon>
+                              <div>
+                                <h6 class="mb-0">Floor [[ floorIndex ]]</h6>
+                                <small class="text-muted">Fill the details for Floor [[ floorIndex ]]</small>
+                                <div class="mt-2">
+                                  <strong>Section Name</strong>
+                                  <div>Building [[ tab + 1 ]] Floor [[ floorIndex ]]</div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="ml-3 d-flex align-items-center">
+                              <v-btn icon @click="editFloor(tab + 1, floorIndex)">
+                                <v-icon>mdi-pencil</v-icon>
+                              </v-btn>
                             </div>
                           </div>
                         </div>
-                        <div class="ml-3 d-flex align-items-center">
-                          <v-btn icon @click="editFloor(tab + 1, floorIndex)">
-                            <v-icon>mdi-pencil</v-icon>
-                          </v-btn>
-                        </div>
-                      </div>
-                    </div>
 
-                    <!-- ACTIVE FLOOR FORM -->
-                    <v-stepper class="p-4" v-if="isFloorActive(tab + 1, floorIndex)">
-                      <h5 class="pt-4">Floor [[ floorIndex ]] Details</h5>
-                      <div class="row g-4">
-                        <div class="col-md-12">
-                          <v-radio-group row v-model="floorApartments[tab + 1][floorIndex]">
-                            <div>Any Apartments ? <span style="color:red">*</span></div>
-                            <v-radio :value="true" class="ml-2">
-                              <template v-slot:label>
-                                <div>
-                                  Yes<strong class="success--text"></strong>
-                                </div>
-                              </template>
-                            </v-radio>
-                            <v-radio :value="false">
-                              <template v-slot:label>
-                                <div>
-                                  No
-                                  <strong class="primary--text"></strong>
-                                </div>
-                              </template>
-                            </v-radio>
-                          </v-radio-group>
-                        </div>
-                        <div class="col-md-12" v-if="floorApartments[tab + 1][floorIndex] === true">
-                          <div class="col-md-4 p-0">
-                            <v-select v-model="floorApartmentCounts[tab + 1][floorIndex]" label="No of Apartments"
-                              :items="Array.from({length: 15}, (_, i) => i + 1)"></v-select>
-                          </div>
-                        </div>
+                        <!-- ACTIVE FLOOR FORM -->
+                        <v-stepper class="p-4" v-if="isFloorActive(tab + 1, floorIndex)">
+                          <h5 class="pt-4">Floor [[ floorIndex ]] Details</h5>
+                          <div class="row g-4">
+                            <div class="col-md-12">
+                              <v-radio-group row v-model="floorApartments[tab + 1][floorIndex]">
+                                <div>Any Apartments ? <span style="color:red">*</span></div>
+                                <v-radio :value="true" class="ml-2">
+                                  <template v-slot:label>
+                                    <div>
+                                      Yes<strong class="success--text"></strong>
+                                    </div>
+                                  </template>
+                                </v-radio>
+                                <v-radio :value="false">
+                                  <template v-slot:label>
+                                    <div>
+                                      No
+                                      <strong class="primary--text"></strong>
+                                    </div>
+                                  </template>
+                                </v-radio>
+                              </v-radio-group>
+                            </div>
+                            <div class="col-md-12" v-if="floorApartments[tab + 1][floorIndex] === true">
+                              <div class="col-md-4 p-0">
+                                <v-select v-model="floorApartmentCounts[tab + 1][floorIndex]" label="No of Apartments"
+                                  :items="Array.from({length: 15}, (_, i) => i + 1)"></v-select>
+                              </div>
+                            </div>
 
-                        <!-- APARTMENT DETAILS LOOP -->
-                        <div class="col-md-12"
-                          v-if="floorApartments[tab + 1][floorIndex] === true && floorApartmentCounts[tab + 1][floorIndex]">
-                          <div
-                            v-for="apartmentIndex in Array.from({length: floorApartmentCounts[tab + 1][floorIndex]}, (_, i) => i + 1)"
-                            :key="`building-${tab + 1}-floor-${floorIndex}-apt-${apartmentIndex}`" class="apartment-section mt-4">
-                            
-                            <!-- COMPLETED APARTMENT SUMMARY -->
-                            <div v-if="isApartmentCompleted(tab + 1, floorIndex, apartmentIndex) && !isApartmentActive(tab + 1, floorIndex, apartmentIndex)"
-                                 class="completed-floor-card p-4"
-                                 style="border: 1px solid #e0e0e0; border-radius: 8px; background-color: #f9f9f9;">
-                              <div class="d-flex align-items-center justify-content-between">
-                                <div class="d-flex align-items-center flex-grow-1">
-                                  <v-icon color="success" size="40" class="mr-3">mdi-check-circle</v-icon>
-                                  <div>
-                                    <h6 class="mb-0">Floor [[ floorIndex ]] - Apartment [[ apartmentIndex ]]</h6>
-                                    <small class="text-muted">Fill the details for Apartment [[ apartmentIndex ]]</small>
-                                    <div class="mt-2">
-                                      <strong>Section Name</strong>
-                                      <div>Building [[ tab + 1 ]] Floor [[ floorIndex ]] Apartment [[ apartmentIndex ]]</div>
+                            <!-- APARTMENT DETAILS LOOP -->
+                            <div class="col-md-12"
+                              v-if="floorApartments[tab + 1][floorIndex] === true && floorApartmentCounts[tab + 1][floorIndex]">
+                              <div
+                                v-for="apartmentIndex in Array.from({length: floorApartmentCounts[tab + 1][floorIndex]}, (_, i) => i + 1)"
+                                :key="`building-${tab + 1}-floor-${floorIndex}-apt-${apartmentIndex}`"
+                                class="apartment-section mt-4">
+
+                                <!-- COMPLETED APARTMENT SUMMARY -->
+                                <div
+                                  v-if="isApartmentCompleted(tab + 1, floorIndex, apartmentIndex) && !isApartmentActive(tab + 1, floorIndex, apartmentIndex)"
+                                  class="completed-floor-card p-4"
+                                  style="border: 1px solid #e0e0e0; border-radius: 8px; background-color: #f9f9f9;">
+                                  <div class="d-flex align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center flex-grow-1">
+                                      <v-icon color="success" size="40" class="mr-3">mdi-check-circle</v-icon>
+                                      <div>
+                                        <h6 class="mb-0">Floor [[ floorIndex ]] - Apartment [[ apartmentIndex ]]</h6>
+                                        <small class="text-muted">Fill the details for Apartment [[ apartmentIndex
+                                          ]]</small>
+                                        <div class="mt-2">
+                                          <strong>Section Name</strong>
+                                          <div>Building [[ tab + 1 ]] Floor [[ floorIndex ]] Apartment [[ apartmentIndex
+                                            ]]</div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="ml-3 d-flex align-items-center">
+                                      <v-btn icon @click="editApartment(tab + 1, floorIndex, apartmentIndex)">
+                                        <v-icon>mdi-pencil</v-icon>
+                                      </v-btn>
                                     </div>
                                   </div>
                                 </div>
-                                <div class="ml-3 d-flex align-items-center">
-                                  <v-btn icon @click="editApartment(tab + 1, floorIndex, apartmentIndex)">
-                                    <v-icon>mdi-pencil</v-icon>
-                                  </v-btn>
+
+                                <!-- ACTIVE APARTMENT FORM -->
+                                <div v-if="isApartmentActive(tab + 1, floorIndex, apartmentIndex)" class="p-4"
+                                  style="border: 1px solid #ddd; border-radius: 4px;">
+                                  <h6>Floor [[ floorIndex ]] - Apartment [[ apartmentIndex ]]</h6>
+                                  <floor-details-form :floor-index="floorIndex" :apartment-index="apartmentIndex"
+                                    :building-index="tab + 1"></floor-details-form>
+
+                                  <div class="text-center mt-4">
+                                    <button class="btn btn-primary px-5"
+                                      @click="calculateFloorCost(tab + 1, floorIndex, apartmentIndex)">Continue</button>
+                                  </div>
                                 </div>
                               </div>
                             </div>
 
-                            <!-- ACTIVE APARTMENT FORM -->
-                            <div v-if="isApartmentActive(tab + 1, floorIndex, apartmentIndex)" class="p-4"
-                                 style="border: 1px solid #ddd; border-radius: 4px;">
-                              <h6>Floor [[ floorIndex ]] - Apartment [[ apartmentIndex ]]</h6>
+                            <!-- FLOOR DETAILS (if no apartments) -->
+                            <div class="col-md-12" v-if="floorApartments[tab + 1][floorIndex] === false">
                               <floor-details-form :floor-index="floorIndex"
-                                :apartment-index="apartmentIndex" :building-index="tab + 1"></floor-details-form>
-                              
+                                :building-index="tab + 1"></floor-details-form>
                               <div class="text-center mt-4">
-                                <button class="btn btn-primary px-5" @click="calculateFloorCost(tab + 1, floorIndex, apartmentIndex)">Continue</button>
+                                <button class="btn btn-primary px-5"
+                                  @click="calculateFloorCost(tab + 1, floorIndex)">Continue</button>
                               </div>
                             </div>
-                          </div>
-                        </div>
 
-                        <!-- FLOOR DETAILS (if no apartments) -->
-                        <div class="col-md-12" v-if="floorApartments[tab + 1][floorIndex] === false">
-                          <floor-details-form :floor-index="floorIndex" :building-index="tab + 1"></floor-details-form>
-                          <div class="text-center mt-4">
-                            <button class="btn btn-primary px-5" @click="calculateFloorCost(tab + 1, floorIndex)">Continue</button>
-                          </div>
-                        </div>
-
-                        <!-- FLOOR CONTINUE BUTTON (when all apartments are completed) -->
-                        <div class="col-md-12 text-center mt-4" 
-                             v-if="floorApartments[tab + 1][floorIndex] === true && 
+                            <!-- FLOOR CONTINUE BUTTON (when all apartments are completed) -->
+                            <div class="col-md-12 text-center mt-4" v-if="floorApartments[tab + 1][floorIndex] === true && 
                                    floorApartmentCounts[tab + 1][floorIndex] && 
                                    allApartmentsCompleted(tab + 1, floorIndex) && 
                                    !isFloorCompleted(tab + 1, floorIndex)">
-                          <button class="btn btn-primary px-5" @click="calculateFloorCost(tab + 1, floorIndex)">Continue to Next Floor</button>
-                        </div>
+                              <button class="btn btn-primary px-5"
+                                @click="calculateFloorCost(tab + 1, floorIndex)">Continue to Next Floor</button>
+                            </div>
+                          </div>
+                        </v-stepper>
+
                       </div>
-                    </v-stepper>
+                    </div>
+                  </v-stepper>
 
+
+                  <!-- IMAGES -->
+                  <div class="col-md-12">
+                    <h5 class="pt-4">Add Images</h5>
+                    <div class="addImg">
+                      <div class="item_image">
+                        <i class="fa fa-plus ImageIcon"></i>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- NOTES -->
+                  <div>
+                    <div class="col-md-12">
+                      <v-textarea v-model="generalNotes" name="input-7-1" label="Notes"
+                        hint="Do you any other projects or contracts on same location ?  Please mention if you have any specific request.">
+                      </v-textarea>
+                    </div>
+                  </div>
+
+                  <!-- BUTTON -->
+                  <div class="text-center mt-4">
+                    <button class="btn btn-primary px-5"
+                      @click="activeTabs.cart = true; activeTabs.service = false">Proceed</button>
                   </div>
                 </div>
-              </v-stepper>
-
-
-              <!-- IMAGES -->
-              <div class="col-md-12">
-                <h5 class="pt-4">Add Images</h5>
-                <div class="addImg">
-                  <div class="item_image">
-                    <i class="fa fa-plus ImageIcon"></i>
-                  </div>
-                </div>
-              </div>
-
-              <!-- NOTES -->
-              <div>
-                <div class="col-md-12">
-                  <v-textarea v-model="generalNotes" name="input-7-1" label="Notes"
-                    hint="Do you any other projects or contracts on same location ?  Please mention if you have any specific request.">
-                  </v-textarea>
-                </div>
-              </div>
-
-              <!-- BUTTON -->
-              <div class="text-center mt-4">
-                <button class="btn btn-primary px-5" @click="activeTabs.cart = true; activeTabs.service = false">Proceed</button>
-              </div>
-              </div>
-              <!-- END LOCATION FORM WRAPPER -->
+                <!-- END LOCATION FORM WRAPPER -->
 
               </div>
               <!-- END SERVICES SECTION -->
