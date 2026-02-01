@@ -463,8 +463,6 @@
             <!-- Calendar Section -->
             <div class="col-md-5">
               <v-card class="pa-4" elevation="2" color="primary" dark>
-                <div class="text-h6 mb-2">[[ selectedYear ]]</div>
-                <div class="text-h3 mb-4">[[ selectedDateFormatted ]]</div>
                 <v-date-picker
                   v-model="dateSelected"
                   :min="new Date().toISOString().substr(0, 10)"
