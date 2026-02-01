@@ -293,6 +293,48 @@ new Vue({
             this.scheduleDateSat = true;
         },
 
+        findCustomVisits() {
+            if (this.current_service === 'Hourly Cleaning') {
+                this.findHourlyCost();
+            }
+            
+            const requiredSlots = Math.ceil(this.selectedDuration.hours / 2);
+            if (this.selected_double_slots.length !== requiredSlots) {
+                this.slot_msg = true;
+                return;
+            }
+            
+            this.slot_msg = false;
+            
+            if (this.customDateSelected.length === 0 || this.selected_double_slots.length === 0) {
+                this.schedule_err_msg = true;
+                return;
+            }
+            
+            const startSlot = Math.min(...this.selected_double_slots);
+            
+            this.customDateSelected.forEach(selectedDate => {
+                const day = moment(selectedDate, 'YYYY-MM-DD');
+                const dayName = day.format('ddd');
+                const formattedDate = day.format('DD-MM-YYYY');
+                const dateTime = `${formattedDate} ${this.slotFormat[startSlot].start_time}`;
+                
+                this.visits.push({
+                    date: formattedDate,
+                    slots: this.selected_double_slots,
+                    day: dayName,
+                    dateTime: dateTime
+                });
+                
+                this.visitDateTime.push(dateTime);
+            });
+            
+            this.checkAvailablility();
+            this.customDialog = false;
+            this.scheduleDateSat = true;
+            this.schedule_err_msg = false;
+        },
+
         findHourlyCost() {
             const rate = this.hourly_cleaning.hourly_duration <= this.HOURLY_CLEANING_THRESHOLD 
                 ? this.HOURLY_CLEANING_LOW_RATE 
@@ -376,6 +418,51 @@ new Vue({
                 this.selected_double_slots.splice(index, 1);
             } else {
                 this.selected_double_slots.push(slotId);
+            }
+        },
+
+        calcSlots() {
+            this.double_slots = [];
+            this.selected_double_slots = [];
+            
+            // Slot configuration: maps hour increments to available durations
+            const SLOT_DURATIONS = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24];
+            const HOUR_INCREMENTS = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22];
+            
+            // Calculate available double slots based on 2-hour increments
+            HOUR_INCREMENTS.forEach(hourIncrement => {
+                if (SLOT_DURATIONS.includes(2)) {
+                    const slotNumber = (parseInt(hourIncrement) + 2) / 2;
+                    const slotKey = String(slotNumber);
+                    
+                    if (this.slotFormat[slotKey]) {
+                        this.double_slots.push(this.slotFormat[slotKey]);
+                    }
+                }
+            });
+        },
+
+        selectPrefDay(day) {
+            const dayIndex = this.prefDay.indexOf(day);
+            
+            if (dayIndex === -1) {
+                // Day not selected, add it
+                this.prefDay.push(day);
+            } else {
+                // Day already selected, remove it
+                this.prefDay.splice(dayIndex, 1);
+            }
+        },
+
+        selectMonthlyDate(date) {
+            const dateIndex = this.selected_monthly_date.indexOf(date);
+            
+            if (dateIndex === -1) {
+                // Date not selected, add it
+                this.selected_monthly_date.push(date);
+            } else {
+                // Date already selected, remove it
+                this.selected_monthly_date.splice(dateIndex, 1);
             }
         },
 
