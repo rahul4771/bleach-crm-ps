@@ -10,12 +10,12 @@ new Vue({
         HOURLY_CLEANING_LOW_RATE: 15,
         HOURLY_CLEANING_HIGH_RATE: 25,
         HOURLY_CLEANING_THRESHOLD: 2,
-        
+
         // UI State
         snackbar: false,
         mediaUrl: '',
         generalNotes: '',
-        
+
         // Location Selection
         selectedLocationType: null,
         selectedAreaType: null,
@@ -79,7 +79,56 @@ new Vue({
         slotStat: { available_slotes: [], busy_slotes: [] },
         autofixStat: false,
         out_of_shift: false,
-        slotFormat: {}, // Slot time format mapping
+        slotFormat: {
+            "1": {
+                start_time: '12:00 AM',
+                end_time: '02:00 AM'
+            },
+            "2": {
+                start_time: '02:00 AM',
+                end_time: '04:00 AM'
+            },
+            "3": {
+                start_time: '04:00 AM',
+                end_time: '06:00 AM'
+            },
+            "4": {
+                start_time: '06:00 AM',
+                end_time: '08:00 AM'
+            },
+            "5": {
+                start_time: '08:00 AM',
+                end_time: '10:00 AM'
+            },
+            "6": {
+                start_time: '10:00 AM',
+                end_time: '12:00 PM'
+            },
+            "7": {
+                start_time: '12:00 PM',
+                end_time: '02:00 PM'
+            },
+            "8": {
+                start_time: '02:00 PM',
+                end_time: '04:00 PM'
+            },
+            "9": {
+                start_time: '04:00 PM',
+                end_time: '06:00 PM'
+            },
+            "10": {
+                start_time: '06:00 PM',
+                end_time: '08:00 PM'
+            },
+            "11": {
+                start_time: '08:00 PM',
+                end_time: '10:00 PM'
+            },
+            "12": {
+                start_time: '10:00 PM',
+                end_time: '12:00 AM'
+            }
+        }, 
         schedule_serviceTypes_selected: [],
         schedule_serviceTypes: [],
         current_service: '',
@@ -154,45 +203,45 @@ new Vue({
             if (this.current_service === 'Hourly Cleaning') {
                 this.findHourlyCost();
             }
-            
+
             const requiredSlots = Math.ceil(this.selectedDuration.hours / 2);
             if (this.selected_double_slots.length !== requiredSlots) {
                 this.slot_msg = true;
                 return;
             }
-            
+
             this.slot_msg = false;
-            
+
             if (this.selected_double_slots.length === 0 || !this.dateSelected) {
                 this.schedule_err_msg = true;
                 return;
             }
-            
+
             this.scheduleDialog = false;
             const startSlot = Math.min(...this.selected_double_slots);
-            
+
             if (this.subStat === 'Weekly') {
                 this.calculateWeeklyVisits(startSlot);
             } else if (this.subStat === 'Daily') {
                 this.calculateDailyVisits(startSlot);
             }
-            
+
             this.scheduleDateSat = true;
         },
-        
+
         calculateWeeklyVisits(startSlot) {
             let dayCount = 0;
             let visitCount = 0;
             const targetVisits = parseInt(this.no_of_visits);
-            
+
             while (dayCount < this.MAX_VISIT_ITERATIONS && visitCount < targetVisits) {
                 const day = moment(this.dateSelected, 'YYYY-MM-DD').add(dayCount, 'days');
                 const dayName = day.format('ddd');
-                
+
                 if (this.prefDay.includes(dayName)) {
                     const formattedDate = day.format('DD-MM-YYYY');
                     const dateTime = `${formattedDate} ${this.slotFormat[startSlot].start_time}`;
-                    
+
                     this.visits.push({
                         date: formattedDate,
                         slots: this.selected_double_slots,
@@ -202,7 +251,7 @@ new Vue({
                     this.visitDateTime.push(dateTime);
                     visitCount++;
                 }
-                
+
                 // Handle alternate week scheduling
                 if (this.altweekStat && dayName === 'Sat') {
                     dayCount += this.ALTERNATE_WEEK_SKIP_DAYS;
@@ -210,22 +259,22 @@ new Vue({
                     dayCount++;
                 }
             }
-            
+
             if (visitCount > 0) {
                 this.checkAvailablility();
             }
         },
-        
+
         calculateDailyVisits(startSlot) {
             let dayCount = 0;
             let visitCount = 0;
             const targetVisits = parseInt(this.no_of_visits);
-            
+
             while (dayCount < this.MAX_VISIT_ITERATIONS && visitCount < targetVisits) {
                 const day = moment(this.dateSelected, 'YYYY-MM-DD').add(dayCount, 'days');
                 const formattedDate = day.format('DD-MM-YYYY');
                 const dateTime = `${formattedDate} ${this.slotFormat[startSlot].start_time}`;
-                
+
                 this.visits.push({
                     date: formattedDate,
                     slots: this.selected_double_slots,
@@ -233,11 +282,11 @@ new Vue({
                 });
                 this.visitDateTime.push(dateTime);
                 visitCount++;
-                
+
                 // Handle alternate day scheduling
                 dayCount += this.altdaysStat ? this.ALTERNATE_DAY_SKIP_DAYS : 1;
             }
-            
+
             if (visitCount > 0) {
                 this.checkAvailablility();
             }
@@ -247,50 +296,50 @@ new Vue({
             if (this.current_service === 'Hourly Cleaning') {
                 this.findHourlyCost();
             }
-            
+
             const requiredSlots = Math.ceil(this.selectedDuration.hours / 2);
             if (this.selected_double_slots.length !== requiredSlots) {
                 this.slot_msg = true;
                 return;
             }
-            
+
             this.slot_msg = false;
-            
+
             if (this.selected_monthly_date.length === 0 || this.selected_double_slots.length === 0) {
                 this.schedule_err_msg = true;
                 return;
             }
-            
+
             let dayCount = 0;
             let visitCount = 0;
             const targetVisits = parseInt(this.no_of_visits);
             const startSlot = Math.min(...this.selected_double_slots);
-            
+
             while (dayCount < this.MAX_VISIT_ITERATIONS && visitCount < targetVisits) {
                 const day = moment(this.monthly_starting_date, 'YYYY-MM-DD').add(dayCount, 'days');
                 const dayNumber = day.format('DD');
-                
+
                 if (dayNumber && this.selected_monthly_date.includes(String(dayNumber))) {
                     const formattedDate = day.format('DD-MM-YYYY');
                     const dateTime = `${formattedDate} ${this.slotFormat[startSlot].start_time}`;
-                    
+
                     this.visits.push({
                         date: formattedDate,
                         slots: this.selected_double_slots,
                         dateTime: dateTime
                     });
-                    
+
                     this.visitDateTime.push(dateTime);
                     visitCount++;
                 }
-                
+
                 dayCount++;
             }
-            
+
             if (visitCount > 0) {
                 this.checkAvailablility();
             }
-            
+
             this.monthlyDialog = false;
             this.scheduleDateSat = true;
         },
@@ -299,38 +348,38 @@ new Vue({
             if (this.current_service === 'Hourly Cleaning') {
                 this.findHourlyCost();
             }
-            
+
             const requiredSlots = Math.ceil(this.selectedDuration.hours / 2);
             if (this.selected_double_slots.length !== requiredSlots) {
                 this.slot_msg = true;
                 return;
             }
-            
+
             this.slot_msg = false;
-            
+
             if (this.customDateSelected.length === 0 || this.selected_double_slots.length === 0) {
                 this.schedule_err_msg = true;
                 return;
             }
-            
+
             const startSlot = Math.min(...this.selected_double_slots);
-            
+
             this.customDateSelected.forEach(selectedDate => {
                 const day = moment(selectedDate, 'YYYY-MM-DD');
                 const dayName = day.format('ddd');
                 const formattedDate = day.format('DD-MM-YYYY');
                 const dateTime = `${formattedDate} ${this.slotFormat[startSlot].start_time}`;
-                
+
                 this.visits.push({
                     date: formattedDate,
                     slots: this.selected_double_slots,
                     day: dayName,
                     dateTime: dateTime
                 });
-                
+
                 this.visitDateTime.push(dateTime);
             });
-            
+
             this.checkAvailablility();
             this.customDialog = false;
             this.scheduleDateSat = true;
@@ -338,16 +387,16 @@ new Vue({
         },
 
         findHourlyCost() {
-            const rate = this.hourly_cleaning.hourly_duration <= this.HOURLY_CLEANING_THRESHOLD 
-                ? this.HOURLY_CLEANING_LOW_RATE 
+            const rate = this.hourly_cleaning.hourly_duration <= this.HOURLY_CLEANING_THRESHOLD
+                ? this.HOURLY_CLEANING_LOW_RATE
                 : this.HOURLY_CLEANING_HIGH_RATE;
             const totalCost = rate * parseInt(this.hourly_cleaning.cleaners);
-            
+
             const serviceKey = this.schedule_serviceTypes_selected[0];
             const billItems = this.multiServicesBill[serviceKey].bill;
             const sectionLength = billItems.length;
             const costPerSection = totalCost / sectionLength;
-            
+
             for (let i = 0; i < sectionLength; i++) {
                 const billItem = billItems[i];
                 billItem.section_net_cost = costPerSection;
@@ -357,17 +406,17 @@ new Vue({
                 billItem.sectiononly_cost = costPerSection;
                 billItem.sectiononly_net_cost = costPerSection;
             }
-            
+
             this.multiServicesBill[serviceKey].total_cost = totalCost;
         },
 
         checkAvailablility() {
             let serviceTypes = this.schedule_serviceTypes;
-            
+
             if (this.current_service === 'Hourly Cleaning') {
                 serviceTypes = ['General Cleaning'];
             }
-            
+
             fetch('/customer/ajax/multipleservice/multipledates/cleaningslotes/', {
                 method: 'POST',
                 headers: {
@@ -381,29 +430,29 @@ new Vue({
                     cleaning_datetimes: this.visitDateTime
                 })
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                this.slotStat = data;
-                
-                // Mark available visits as 'fixed'
-                this.visits.forEach(visit => {
-                    if (this.slotStat.available_slotes.includes(visit.dateTime)) {
-                        visit.status = 'fixed';
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
+                    return response.json();
+                })
+                .then(data => {
+                    this.slotStat = data;
+
+                    // Mark available visits as 'fixed'
+                    this.visits.forEach(visit => {
+                        if (this.slotStat.available_slotes.includes(visit.dateTime)) {
+                            visit.status = 'fixed';
+                        }
+                    });
+
+                    // Set autofix status based on busy slots
+                    this.autofixStat = this.slotStat.busy_slotes.length === 0;
+                })
+                .catch(error => {
+                    console.error('Error checking availability:', error);
+                    this.snackbar = true;
                 });
-                
-                // Set autofix status based on busy slots
-                this.autofixStat = this.slotStat.busy_slotes.length === 0;
-            })
-            .catch(error => {
-                console.error('Error checking availability:', error);
-                this.snackbar = true;
-            });
         },
 
         getCombinedSlot(slots) {
@@ -423,20 +472,90 @@ new Vue({
             }
         },
 
+        selectDuration(duration) {
+            duration.slots = duration.hours / 2;
+            this.selectedDuration = duration;
+            this.resetOneTime()
+            this.calcSlots()
+            this.getMultipleSlots();
+        },
+
+        resetOneTime(){
+            this.onetimerender=false
+            this.one_time_slots={}
+            this.date_group={}
+            this.one_time_slots[this.oneTimeDateSelected]={
+                slots:[]
+            }
+            this.selected_onetime_slots={}
+            this.currentSlotDay=1
+            this.onetimerender=true
+        },
+
+        getMultipleSlots() {
+            this.slot_loader = true;
+            let scheduleServices = this.schedule_serviceTypes;
+            
+            if (this.checkKitchen()) {
+                scheduleServices.push('Kitchen Cleaning');
+            }
+            
+            fetch(this.url + "/customer/ajax/getmultipleservicecleaningslotes", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    service_types: scheduleServices,
+                    cleaning_date: this.slotDate,
+                    number_of_cleaners: this.selectedDuration.cleaners
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    this.slot_loader = false;
+                    this.timeSlots = data.slotes;
+                    this.parseOneTimeSlots();
+                    
+                    if (data.Error) {
+                        this.errMsg = data['Error'];
+                    } else {
+                        this.errMsg = '';
+                    }
+                    
+                    if (!this.time_slot.hasOwnProperty(this.slotDate)) {
+                        this.time_slot[this.slotDate] = {
+                            selectedSlot: []
+                        };
+                    }
+                    
+                    this.parseSize();
+                })
+                .catch(error => {
+                    console.error('Error fetching multiple slots:', error);
+                    this.slot_loader = false;
+                });
+        },
+
         calcSlots() {
             this.double_slots = [];
             this.selected_double_slots = [];
-            
+
             // Slot configuration: maps hour increments to available durations
             const SLOT_DURATIONS = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24];
             const HOUR_INCREMENTS = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22];
-            
+
             // Calculate available double slots based on 2-hour increments
             HOUR_INCREMENTS.forEach(hourIncrement => {
                 if (SLOT_DURATIONS.includes(2)) {
                     const slotNumber = (parseInt(hourIncrement) + 2) / 2;
                     const slotKey = String(slotNumber);
-                    
+
                     if (this.slotFormat[slotKey]) {
                         this.double_slots.push(this.slotFormat[slotKey]);
                     }
@@ -446,7 +565,7 @@ new Vue({
 
         selectPrefDay(day) {
             const dayIndex = this.prefDay.indexOf(day);
-            
+
             if (dayIndex === -1) {
                 // Day not selected, add it
                 this.prefDay.push(day);
@@ -458,7 +577,7 @@ new Vue({
 
         selectMonthlyDate(date) {
             const dateIndex = this.selected_monthly_date.indexOf(date);
-            
+
             if (dateIndex === -1) {
                 // Date not selected, add it
                 this.selected_monthly_date.push(date);
@@ -471,7 +590,7 @@ new Vue({
         addToSchedule() {
             // Set schedule status
             this.scheduleStatus = this.scheduleStat;
-            
+
             // Configure schedule format for selected service types
             this.schedule_serviceTypes_selected.forEach(serviceType => {
                 this.scheduleFormat.individual[serviceType] = {
@@ -479,16 +598,16 @@ new Vue({
                     visits: this.visits
                 };
             });
-            
+
             const cleanersCount = this.selectedDuration.cleaners;
-            
+
             // Update billing information for each selected service type
             this.schedule_serviceTypes_selected.forEach(serviceType => {
                 const billDetails = this.multiServicesBill[serviceType];
                 billDetails.cleaning_policy = 'SUBSCRIPTION';
                 billDetails.schedule_details = {};
                 billDetails.cleaners = cleanersCount;
-                
+
                 // Add schedule details for each visit
                 this.visits.forEach((visit, index) => {
                     const minSlot = Math.min(...visit.slots);
@@ -500,10 +619,10 @@ new Vue({
                         hourly_cleaning_duration: parseInt(this.hourly_cleaning.hourly_duration) || null
                     };
                 });
-                
+
                 billDetails.shift_availability_check = !this.out_of_shift;
             });
-            
+
             // Remove selected service types from existing schedule groups
             this.schedule_serviceTypes_selected.forEach(selectedService => {
                 for (const groupKey in this.scheduleGroup) {
@@ -515,11 +634,11 @@ new Vue({
                     }
                 }
             });
-            
+
             // Create new schedule group with selected services
             const newGroupId = Object.keys(this.scheduleGroup).length;
             this.scheduleGroup[newGroupId] = [...this.schedule_serviceTypes_selected];
-            
+
             // Reset state
             this.visits = [];
             this.selected_double_slots = [];
@@ -542,14 +661,14 @@ new Vue({
         addOneTimeToSchedule() {
             // Set schedule status
             this.scheduleStatus = this.scheduleStat;
-            
+
             // Configure one-time scheduling for selected service types
             this.schedule_serviceTypes_selected.forEach(serviceType => {
                 this.onetime_scheduled[serviceType] = {
                     slot: this.selected_onetime_slots
                 };
             });
-            
+
             // Update billing information for each selected service type
             this.schedule_serviceTypes_selected.forEach(serviceType => {
                 const billDetails = this.multiServicesBill[serviceType];
@@ -557,20 +676,20 @@ new Vue({
                 billDetails.schedule_details = {};
                 billDetails.cleaners = this.selectedDuration.cleaners;
                 billDetails.shift_availability_check = !this.out_of_shift;
-                
+
                 // Handle multiple dates with continuous date grouping
                 if (Object.keys(this.selected_onetime_slots).length > 1) {
                     this.findContDate();
                     let scheduleCount = 0;
-                    
+
                     for (const groupKey in this.date_group) {
                         const dates = this.date_group[groupKey];
-                        
+
                         if (dates.length > 0) {
                             // Find earliest date and calculate total cleaning hours
                             let minDate = dates[0];
                             let totalCleaningHours = this.selected_onetime_slots[dates[0]].slots.length * 2;
-                            
+
                             for (let i = 1; i < dates.length; i++) {
                                 const currentDate = dates[i];
                                 if (moment(currentDate, 'YYYY-MM-DD').isBefore(moment(minDate, 'YYYY-MM-DD'))) {
@@ -578,12 +697,12 @@ new Vue({
                                 }
                                 totalCleaningHours += this.selected_onetime_slots[currentDate].slots.length * 2;
                             }
-                            
+
                             // Format date and add to schedule details
                             const [year, month, day] = minDate.split('-');
                             const formattedDate = `${day}-${month}-${year}`;
                             const minSlot = Math.min(...this.selected_onetime_slots[minDate].slots);
-                            
+
                             billDetails.schedule_details[scheduleCount + 1] = {
                                 date: formattedDate,
                                 time: this.slotFormat[parseInt(minSlot)].start_time,
@@ -591,20 +710,20 @@ new Vue({
                                 cleaning_hours: totalCleaningHours,
                                 hourly_cleaning_duration: null
                             };
-                            
+
                             scheduleCount++;
                         }
                     }
                 } else {
                     // Handle single date or non-continuous dates
                     let scheduleCount = 0;
-                    
+
                     for (const dateKey in this.selected_onetime_slots) {
                         const [year, month, day] = dateKey.split('-');
                         const formattedDate = `${day}-${month}-${year}`;
                         const minSlot = Math.min(...this.selected_onetime_slots[dateKey].slots);
                         const cleaningHours = this.selected_onetime_slots[dateKey].slots.length * 2;
-                        
+
                         billDetails.schedule_details[scheduleCount + 1] = {
                             date: formattedDate,
                             time: this.slotFormat[parseInt(minSlot)].start_time,
@@ -612,12 +731,12 @@ new Vue({
                             cleaning_hours: cleaningHours,
                             hourly_cleaning_duration: null
                         };
-                        
+
                         scheduleCount++;
                     }
                 }
             });
-            
+
             // Remove selected service types from existing schedule groups
             this.schedule_serviceTypes_selected.forEach(selectedService => {
                 for (const groupKey in this.scheduleGroup) {
@@ -629,11 +748,11 @@ new Vue({
                     }
                 }
             });
-            
+
             // Create new schedule group with selected services
             const newGroupId = Object.keys(this.scheduleGroup).length;
             this.scheduleGroup[newGroupId] = [...this.schedule_serviceTypes_selected];
-            
+
             // Reset state
             this.selected_onetime_slots = {};
             this.currentSlotDay = 1;
@@ -652,7 +771,7 @@ new Vue({
             this.multiServicesBill.forEach((bill, serviceIndex) => {
                 const serviceId = this.getServiceId(bill.service);
                 const visitCount = Object.keys(bill.schedule_details).length;
-                
+
                 // Initialize service detail entry
                 this.serviceDetails.service_details[serviceIndex] = {
                     service_type: serviceId,
@@ -667,7 +786,7 @@ new Vue({
                     cleaning_hours: parseInt(this.selectedDuration.hours),
                     sections: {}
                 };
-                
+
                 // Adjust costs for subscription services
                 const normalizedPolicy = bill.cleaning_policy;
                 if (normalizedPolicy === 'SUBSCRIPTION') {
@@ -675,11 +794,11 @@ new Vue({
                     this.serviceDetails.service_details[serviceIndex].total_cost = totalCost;
                     this.serviceDetails.service_details[serviceIndex].estimated_cost = totalCost;
                 }
-                
+
                 // Process each section in the bill
                 bill.bill.forEach((billItem, sectionIndex) => {
                     const section = billItem.section;
-                    
+
                     // Initialize section data
                     this.serviceDetails.service_details[serviceIndex].sections[sectionIndex] = {
                         section_name: billItem.section_name,
@@ -706,22 +825,22 @@ new Vue({
                         age: '',
                         age_of_stain: ''
                     };
-                    
+
                     const sectionDetail = this.serviceDetails.service_details[serviceIndex].sections[sectionIndex];
-                    
+
                     // Adjust section costs for subscription
                     const servicePolicyNormalized = this.serviceDetails.service_details[serviceIndex].cleaning_policy;
                     if (servicePolicyNormalized === 'SUBSCRIPTION') {
                         sectionDetail.sectiononly_net_cost *= parseInt(visitCount);
                         sectionDetail.section_net_cost *= parseInt(visitCount);
                     }
-                    
+
                     // Set boolean flags
                     if (section.size.is_highprice_facade) sectionDetail.is_highprice_facade = true;
                     if (section.size.is_highprice_window) sectionDetail.is_highprice_window = true;
                     if (section.size.is_newkitchen) sectionDetail.new_kitchen = true;
                     if (section.is_cabinet) sectionDetail.is_cabinet = true;
-                    
+
                     // Set optional properties
                     if (section.stain_age) sectionDetail.age_of_stain = section.stain_age;
                     if (section.color) sectionDetail.colour = section.color.join();
@@ -734,31 +853,31 @@ new Vue({
                     if (section.ceiling_type) sectionDetail.ceiling_type = section.ceiling_type.join();
                     if (section.floor_type) sectionDetail.floor_type = section.floor_type.join();
                     if (section.age) sectionDetail.age = section.age;
-                    
+
                     // Process keynotes
                     let keynoteCounter = 1;
-                    
+
                     if (section.no_of_bathrooms) {
                         sectionDetail.keynotes[keynoteCounter++] = {
                             sub_area: 'bathroom',
                             quantity: section.no_of_bathrooms
                         };
                     }
-                    
+
                     if (section.no_of_rooms) {
                         sectionDetail.keynotes[keynoteCounter++] = {
                             sub_area: 'rooms',
                             quantity: section.no_of_rooms
                         };
                     }
-                    
+
                     if (section.no_of_windows) {
                         sectionDetail.keynotes[keynoteCounter++] = {
                             sub_area: 'windows',
                             quantity: section.no_of_windows
                         };
                     }
-                    
+
                     // Process custom keynote data
                     if (section.keynote_data && section.keynote_data.length > 0) {
                         section.keynote_data.forEach(keynote => {
@@ -768,10 +887,10 @@ new Vue({
                             };
                         });
                     }
-                    
+
                     // Process addons
                     let addonCounter = 0;
-                    
+
                     if (section.addons) {
                         section.addons.forEach(addon => {
                             if (addon.selected) {
@@ -784,18 +903,18 @@ new Vue({
                                     size: '',
                                     other_details: ''
                                 };
-                                
+
                                 if (addon.details.category && addon.selected_size) {
                                     sectionDetail.addons[addonCounter].size = addon.selected_size.size;
                                 }
                             }
                         });
                     }
-                    
+
                     // Process kitchen as addon
                     if (section.kitchen && section.kitchens) {
                         let newIndex = Object.keys(sectionDetail.addons).length;
-                        
+
                         section.kitchens.forEach(kitchen => {
                             newIndex++;
                             sectionDetail.addons[newIndex] = {
@@ -816,19 +935,19 @@ new Vue({
                     }
                 });
             });
-            
+
             // Set shift availability check
             this.serviceDetails.shift_availability_check = this.multiServicesBill[0].shift_availability_check;
-            
+
             // Calculate total cost
             let totalCost = 0;
             for (const serviceKey in this.serviceDetails.service_details) {
                 totalCost += parseInt(this.serviceDetails.service_details[serviceKey].total_cost);
             }
-            
+
             this.serviceDetails.total_cost = totalCost;
             this.serviceDetails.estimated_cost = totalCost;
-            
+
             this.bookMultipleService();
         },
 
@@ -861,7 +980,7 @@ new Vue({
                     this.mediaUrl = data.MEDIA_URL;
                     this.serviceGroups = data.service_groups ?? [];
                     this.serviceTypes = data.service_types ?? [];
-                    
+
                     // Select first service by default
                     if (this.serviceTypes.length > 0) {
                         this.activeTabs.activeServiceTypeId = this.serviceTypes[0].id;
@@ -982,11 +1101,11 @@ new Vue({
         windowFilter() {
             this.windowSize = [];
             this.otherService.size = {};
-            
-            const filterCondition = this.window_check 
-                ? size => size.is_highprice_window 
+
+            const filterCondition = this.window_check
+                ? size => size.is_highprice_window
                 : size => !size.is_highprice_window;
-            
+
             this.windowSize = this.sizeData.filter(filterCondition);
         },
 
@@ -1008,14 +1127,14 @@ new Vue({
             // Get the floor/apartment size object from windowSize data
             let selectedSizeName;
             if (apartmentIndex) {
-                selectedSizeName = this.floorSize[buildingIndex] && 
-                                  this.floorSize[buildingIndex][floorIndex] && 
-                                  this.floorSize[buildingIndex][floorIndex][apartmentIndex];
+                selectedSizeName = this.floorSize[buildingIndex] &&
+                    this.floorSize[buildingIndex][floorIndex] &&
+                    this.floorSize[buildingIndex][floorIndex][apartmentIndex];
             } else {
                 selectedSizeName = this.floorSize[buildingIndex] && this.floorSize[buildingIndex][floorIndex];
             }
 
-            const sizeObject = this.windowSize.find(size => 
+            const sizeObject = this.windowSize.find(size =>
                 size.combinedSize === selectedSizeName || size.name === selectedSizeName
             );
 
@@ -1026,17 +1145,17 @@ new Vue({
             }
 
             // Add kitchen cost if kitchen cleaning is selected
-            if (this.floorKitchenPreference[buildingIndex] && 
+            if (this.floorKitchenPreference[buildingIndex] &&
                 this.floorKitchenPreference[buildingIndex][floorIndex]) {
-                
-                const kitchenSizeName = this.floorKitchenSize[buildingIndex] && 
-                                       this.floorKitchenSize[buildingIndex][floorIndex];
-                
+
+                const kitchenSizeName = this.floorKitchenSize[buildingIndex] &&
+                    this.floorKitchenSize[buildingIndex][floorIndex];
+
                 // Find kitchen size cost from windowSize data
-                const kitchenSizeObject = this.windowSize.find(size => 
+                const kitchenSizeObject = this.windowSize.find(size =>
                     size.combinedSize === kitchenSizeName || size.name === kitchenSizeName
                 );
-                
+
                 if (kitchenSizeObject && kitchenSizeObject.cost) {
                     sectionCost += parseFloat(kitchenSizeObject.cost) || 0;
                 }
@@ -1062,9 +1181,9 @@ new Vue({
                     this.$set(this.completedApartments[buildingIndex], floorIndex, {});
                 }
                 this.$set(this.completedApartments[buildingIndex][floorIndex], apartmentIndex, true);
-                
+
                 // Clear active apartment
-                if (this.activeApartment[buildingIndex] && 
+                if (this.activeApartment[buildingIndex] &&
                     this.activeApartment[buildingIndex][floorIndex]) {
                     this.$set(this.activeApartment[buildingIndex][floorIndex], apartmentIndex, false);
                 }
@@ -1074,7 +1193,7 @@ new Vue({
                     this.$set(this.completedFloors, buildingIndex, {});
                 }
                 this.$set(this.completedFloors[buildingIndex], floorIndex, true);
-                
+
                 // Clear active floor
                 if (this.activeFloor[buildingIndex]) {
                     this.$set(this.activeFloor[buildingIndex], floorIndex, false);
@@ -1082,10 +1201,10 @@ new Vue({
             }
 
             console.log(`Floor ${floorIndex} in Building ${buildingIndex} - Total Cost: ${sectionCost}`);
-            
+
             // Add to cart
             this.addToCart(buildingIndex, floorIndex, apartmentIndex, sectionCost);
-            
+
             return sectionCost;
         },
 
@@ -1096,7 +1215,7 @@ new Vue({
             // Get service type name
             const serviceType = this.serviceTypes.find(st => st.id === this.activeTabs.activeServiceTypeId);
             const serviceName = serviceType ? serviceType.name : 'Service';
-            
+
             // Get size name
             let selectedSizeName;
             if (apartmentIndex) {
@@ -1104,13 +1223,13 @@ new Vue({
             } else {
                 selectedSizeName = this.floorSize[buildingIndex]?.[floorIndex];
             }
-            
+
             // Create location string
             let location = `Building ${buildingIndex} Floor ${floorIndex}`;
             if (apartmentIndex) {
                 location += ` Apartment ${apartmentIndex}`;
             }
-            
+
             // Extract just the size name without the range
             let sizeName = selectedSizeName;
             if (selectedSizeName) {
@@ -1119,7 +1238,7 @@ new Vue({
                     sizeName = match[1].trim();
                 }
             }
-            
+
             // Add to cart
             this.cartItems.push({
                 id: ++this.cartItemIdCounter, // Unique ID for each cart item
@@ -1175,17 +1294,17 @@ new Vue({
          * Check if an apartment is completed
          */
         isApartmentCompleted(buildingIndex, floorIndex, apartmentIndex) {
-            return this.completedApartments[buildingIndex] && 
-                   this.completedApartments[buildingIndex][floorIndex] && 
-                   this.completedApartments[buildingIndex][floorIndex][apartmentIndex];
+            return this.completedApartments[buildingIndex] &&
+                this.completedApartments[buildingIndex][floorIndex] &&
+                this.completedApartments[buildingIndex][floorIndex][apartmentIndex];
         },
 
         /**
          * Check if an apartment is active/being edited
          */
         isApartmentActive(buildingIndex, floorIndex, apartmentIndex) {
-            if (this.activeApartment[buildingIndex] && 
-                this.activeApartment[buildingIndex][floorIndex] && 
+            if (this.activeApartment[buildingIndex] &&
+                this.activeApartment[buildingIndex][floorIndex] &&
                 this.activeApartment[buildingIndex][floorIndex][apartmentIndex]) {
                 return true;
             }
@@ -1209,7 +1328,7 @@ new Vue({
         allApartmentsCompleted(buildingIndex, floorIndex) {
             const apartmentCount = this.floorApartmentCounts[buildingIndex] && this.floorApartmentCounts[buildingIndex][floorIndex];
             if (!apartmentCount) return false;
-            
+
             for (let i = 1; i <= apartmentCount; i++) {
                 if (!this.isApartmentCompleted(buildingIndex, floorIndex, i)) {
                     return false;
@@ -1359,13 +1478,13 @@ new Vue({
                 alert('Please select at least one time slot');
                 return;
             }
-            
+
             // Validate date selection
             if (!this.dateSelected) {
                 alert('Please select a date');
                 return;
             }
-            
+
             // Close dialog and process selection
             this.scheduleDialog = false;
             this.findVisits();
@@ -1374,7 +1493,7 @@ new Vue({
     mounted() {
         this.getServiceTypes();
         this.getAreaTypes();
-        
+
         // Initialize slot format mapping
         this.availableSlots.forEach(slot => {
             this.slotFormat[slot.id] = {
@@ -1382,7 +1501,7 @@ new Vue({
                 end_time: slot.end_time
             };
         });
-        
+
         this.$nextTick(() => {
             $('#category-carousel').owlCarousel(this.carouselSettings);
             $('#service-carousel').owlCarousel(this.carouselSettings);
@@ -1391,7 +1510,7 @@ new Vue({
     watch: {
         'activeTabs.activeServiceTypeId'(newVal) {
             if (!newVal) return;
-            
+
             // Find the service type name and call getSize
             const serviceType = this.serviceTypes.find(st => st.id === newVal);
             if (serviceType) {
@@ -1416,10 +1535,10 @@ new Vue({
                     this.$nextTick(() => {
                         const $categoryCarousel = $('#category-carousel');
                         const $serviceCarousel = $('#service-carousel');
-                        
+
                         this.resetOwlCarousel($categoryCarousel);
                         $categoryCarousel.owlCarousel(this.carouselSettings);
-                        
+
                         this.resetOwlCarousel($serviceCarousel);
                         if (this.filteredServiceTypes.length > 0) {
                             $serviceCarousel.owlCarousel(this.carouselSettings);
@@ -1546,20 +1665,20 @@ new Vue({
             if (!this.cleaningPolicy || !this.dateSelected) {
                 return false;
             }
-            
+
             // Validate slot selection matches required duration
             const requiredSlots = Math.ceil(this.selectedDuration.hours / 2);
             if (this.selected_double_slots.length !== requiredSlots) {
                 return false;
             }
-            
+
             // Additional validation for subscription services
             if (this.normalizedCleaningPolicy === 'SUBSCRIPTION') {
                 if (!this.subStat) return false;
                 if (!this.no_of_visits || this.no_of_visits < 1) return false;
                 if (this.subStat === 'Weekly' && this.prefDay.length === 0) return false;
             }
-            
+
             return true;
         },
         selectedDateFormatted() {
