@@ -190,6 +190,14 @@
                     </div>
                   </template>
                 </div>
+
+                <!-- Select Slots Button (shown when ONE TIME SERVICE is selected) -->
+                <div v-if="cleaningPolicy === 'ONE TIME SERVICE'" class="mt-4">
+                  <v-btn color="primary" class="px-5" large @click="scheduleDialog = true">
+                    <v-icon left>mdi-calendar</v-icon>
+                    SELECT SLOTS
+                  </v-btn>
+                </div>
               </div>
 
               <!-- SERVICES SECTION -->
@@ -443,6 +451,72 @@
 
       {% include "evaluator/common/footer.html" %}
     </div>
+
+    <!-- Slot Selection Dialog -->
+    <v-dialog v-model="scheduleDialog" max-width="1200px" persistent>
+      <v-card>
+        <v-card-title class="text-h5 grey lighten-3">
+          Choose Cleaning Slots
+        </v-card-title>
+        <v-card-text class="pa-6">
+          <div class="row">
+            <!-- Calendar Section -->
+            <div class="col-md-5">
+              <v-card class="pa-4" elevation="2" color="primary" dark>
+                <div class="text-h6 mb-2">[[ selectedYear ]]</div>
+                <div class="text-h3 mb-4">[[ selectedDateFormatted ]]</div>
+                <v-date-picker
+                  v-model="dateSelected"
+                  :min="new Date().toISOString().substr(0, 10)"
+                  full-width
+                  color="white"
+                  header-color="primary"
+                  @change="onDateChange"
+                ></v-date-picker>
+              </v-card>
+            </div>
+
+            <!-- Slots Section -->
+            <div class="col-md-7">
+              <div class="mb-3">
+                <strong>No of Days : </strong>[[ selectedDays.length ]]
+              </div>
+              <div class="mb-2">
+                <strong>Select Day 1</strong>
+              </div>
+              <div class="mb-3 text-muted">
+                Please Select 1 slot(s)
+              </div>
+              
+              <!-- Time Slots Grid -->
+              <div class="row">
+                <div class="col-md-4 mb-3" v-for="slot in availableSlots" :key="slot.id">
+                  <v-btn
+                    block
+                    outlined
+                    :color="isSlotSelected(slot.id) ? 'primary' : ''"
+                    :class="{'primary white--text': isSlotSelected(slot.id)}"
+                    @click="toggleSlot(slot.id)"
+                    style="height: 60px;"
+                  >
+                    [[ formatSlotTime(slot.start_time) ]] - [[ formatSlotTime(slot.end_time) ]]
+                  </v-btn>
+                </div>
+              </div>
+            </div>
+          </div>
+        </v-card-text>
+        <v-card-actions class="pa-4 justify-end">
+          <v-btn color="grey" outlined @click="cancelSlotSelection" class="px-5">
+            CANCEL
+          </v-btn>
+          <v-btn color="primary" @click="confirmSlotSelection" class="px-5 ml-3">
+            NEXT
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </v-app>
 </div>
 

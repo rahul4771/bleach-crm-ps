@@ -40,6 +40,40 @@ new Vue({
         noteIdCounter: 0, // Counter for generating unique note IDs
         scheduleTogether: false, // Track schedule together toggle
         cleaningPolicy: null, // Track selected cleaning policy
+        dateMenu: false, // Date picker menu state
+        availableSlots: [ // Available time slots
+            { id: 1, start_time: '08:00', end_time: '10:00' },
+            { id: 2, start_time: '10:00', end_time: '12:00' },
+            { id: 3, start_time: '12:00', end_time: '14:00' },
+            { id: 4, start_time: '14:00', end_time: '16:00' },
+            { id: 5, start_time: '16:00', end_time: '18:00' },
+            { id: 6, start_time: '18:00', end_time: '20:00' }
+        ],
+        // Scheduling data
+        visits: [], // Array of visit dates and slots
+        visitDateTime: [], // Array of formatted datetime strings
+        dateSelected: null, // Selected start date
+        selected_double_slots: [], // Selected time slots
+        selectedDuration: { hours: 0, cleaners: 1 }, // Duration and cleaners
+        subStat: null, // Subscription status: 'Weekly', 'Daily', or null for one-time
+        prefDay: [], // Preferred days for weekly cleaning
+        altweekStat: false, // Alternate week status
+        altdaysStat: false, // Alternate days status
+        no_of_visits: 0, // Number of visits for subscription
+        scheduleDialog: false,
+        scheduleDateSat: false,
+        schedule_err_msg: false,
+        slot_msg: false,
+        slotStat: { available_slotes: [], busy_slotes: [] },
+        autofixStat: false,
+        out_of_shift: false,
+        slotFormat: {}, // Slot time format mapping
+        schedule_serviceTypes_selected: [],
+        schedule_serviceTypes: [],
+        current_service: '',
+        hourly_cleaning: { hourly_duration: 0, cleaners: 1 },
+        multiServicesBill: {},
+        url: '', // Base URL for API calls
         areaTypes: [],
         buildingNumbers: Array.from({ length: 15 }, (_, i) => i + 1),
         floorNumbers: Array.from({ length: 15 }, (_, i) => i + 1),
@@ -100,6 +134,168 @@ new Vue({
         },
     },
     methods: {
+
+        // =====================
+        // Scheduling & Visit Management
+        // =====================
+        findVisits() {
+            if (this.current_service == 'Hourly Cleaning') {
+                this.findHourlyCost();
+            }
+            if (this.selected_double_slots.length == Math.ceil(this.selectedDuration.hours / 2)) {
+                if (this.selected_double_slots.length > 0 && this.dateSelected) {
+                    this.scheduleDialog = false;
+
+                    /* Weekly Cleaning calculator */
+                    if (this.subStat == 'Weekly') {
+                        var count = 0;
+                        var visitcount = 0;
+
+                        while (count < 999) {
+                            var day = moment(this.dateSelected, 'YYYY-MM-DD').add(count, "days");
+                            var dayname = day.format('ddd');
+                            var startSlot = Math.min(...this.selected_double_slots);
+                            var dateTime = day.format('DD-MM-YYYY') + ' ' + this.slotFormat[startSlot].start_time;
+                            
+                            if (this.prefDay.includes(dayname)) {
+                                this.visits.push({
+                                    date: day.format('DD-MM-YYYY'),
+                                    slots: this.selected_double_slots,
+                                    day: dayname,
+                                    dateTime: day.format('DD-MM-YYYY') + ' ' + this.slotFormat[startSlot].start_time
+                                });
+                                this.visitDateTime.push(dateTime);
+                                visitcount++;
+                            }
+                            
+                            if (visitcount == parseInt(this.no_of_visits)) {
+                                this.checkAvailablility();
+                                break;
+                            }
+                            
+                            if (this.altweekStat && dayname == 'Sat') {
+                                count = count + 8;
+                            } else {
+                                count++;
+                            }
+                        }
+                    }
+                    /* Daily Cleaning calculator */
+                    else if (this.subStat == 'Daily') {
+                        var count = 0;
+                        var visitcount = 0;
+                        
+                        while (count < 999) {
+                            var day = moment(this.dateSelected, 'YYYY-MM-DD').add(count, "days");
+                            var startSlot = Math.min(...this.selected_double_slots);
+                            var dateTime = day.format('DD-MM-YYYY') + ' ' + this.slotFormat[startSlot].start_time;
+                            
+                            this.visits.push({
+                                date: day.format('DD-MM-YYYY'),
+                                slots: this.selected_double_slots,
+                                dateTime: day.format('DD-MM-YYYY') + ' ' + this.slotFormat[startSlot].start_time
+                            });
+                            this.visitDateTime.push(dateTime);
+                            visitcount++;
+                            
+                            if (visitcount == parseInt(this.no_of_visits)) {
+                                this.checkAvailablility();
+                                break;
+                            }
+                            
+                            if (this.altdaysStat) {
+                                count = count + 2;
+                            } else {
+                                count++;
+                            }
+                        }
+                    }
+                    this.scheduleDateSat = true;
+                } else {
+                    this.schedule_err_msg = true;
+                }
+                this.slot_msg = false;
+            } else {
+                this.slot_msg = true;
+            }
+        },
+
+        findHourlyCost() {
+            if (this.hourly_cleaning.hourly_duration <= 2) {
+                var total_cost = 15 * parseInt(this.hourly_cleaning.cleaners);
+            } else {
+                var total_cost = 25 * parseInt(this.hourly_cleaning.cleaners);
+            }
+            var section_length = this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill.length;
+            
+            for (var i = 0; i < section_length; i++) {
+                this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill[i].section_net_cost = total_cost / section_length;
+                this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill[i].section_cost = total_cost / section_length;
+                this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill[i].section.section_net_cost = total_cost / section_length;
+                this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill[i].section.section_cost = total_cost / section_length;
+                this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill[i].sectiononly_cost = total_cost / section_length;
+                this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill[i].sectiononly_net_cost = total_cost / section_length;
+                this.multiServicesBill[this.schedule_serviceTypes_selected[0]].total_cost = total_cost;
+            }
+        },
+
+        checkAvailablility() {
+            var schedule_serviceTypes = this.schedule_serviceTypes;
+            
+            if (this.current_service == 'Hourly Cleaning') {
+                schedule_serviceTypes = [];
+                schedule_serviceTypes.push('General Cleaning');
+            }
+            
+            fetch('/customer/ajax/multipleservice/multipledates/cleaningslotes/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    number_of_cleaners: this.selectedDuration.cleaners,
+                    cleaning_hours: this.selectedDuration.hours,
+                    service_types: schedule_serviceTypes,
+                    shift_availability_check: !this.out_of_shift,
+                    cleaning_datetimes: this.visitDateTime
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                this.slotStat = data;
+                
+                for (var i = 0; i < this.visits.length; i++) {
+                    if (this.slotStat.available_slotes.includes(this.visits[i].dateTime)) {
+                        this.visits[i].status = 'fixed';
+                    }
+                }
+                
+                if (this.slotStat.busy_slotes.length > 0) {
+                    this.autofixStat = false;
+                } else {
+                    this.autofixStat = true;
+                }
+            })
+            .catch(error => {
+                console.error('Error checking availability:', error);
+            });
+        },
+
+        getCombinedSlot(slots) {
+            var min = Math.min(...slots);
+            var max = Math.max(...slots);
+            var combined = this.slotFormat[String(min)].start_time + ' - ' + this.slotFormat[String(max)].end_time;
+            return combined;
+        },
+
+        toggleSlot(slotId) {
+            const index = this.selected_double_slots.indexOf(slotId);
+            if (index > -1) {
+                this.selected_double_slots.splice(index, 1);
+            } else {
+                this.selected_double_slots.push(slotId);
+            }
+        },
 
         // =====================
         // Selection Logic
@@ -603,10 +799,59 @@ new Vue({
                 });
             }
         },
+
+        // =====================
+        // Slot Selection Dialog Methods
+        // =====================
+        isSlotSelected(slotId) {
+            return this.selected_double_slots.includes(slotId);
+        },
+
+        formatSlotTime(time) {
+            // Convert 24-hour format to 12-hour format with AM/PM
+            const [hours, minutes] = time.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+            return `${hour12.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+        },
+
+        onDateChange(date) {
+            this.dateSelected = date;
+        },
+
+        cancelSlotSelection() {
+            this.scheduleDialog = false;
+            this.selected_double_slots = [];
+            this.dateSelected = null;
+        },
+
+        confirmSlotSelection() {
+            if (this.selected_double_slots.length === 0) {
+                alert('Please select at least one time slot');
+                return;
+            }
+            if (!this.dateSelected) {
+                alert('Please select a date');
+                return;
+            }
+            // Close dialog and proceed
+            this.scheduleDialog = false;
+            // You can add additional logic here for what happens after slot confirmation
+        }
     },
     mounted() {
         this.getServiceTypes();
         this.getAreaTypes();
+        
+        // Initialize slot format mapping
+        this.availableSlots.forEach(slot => {
+            this.slotFormat[slot.id] = {
+                start_time: slot.start_time,
+                end_time: slot.end_time
+            };
+        });
+        
         this.$nextTick(() => {
             $('#category-carousel').owlCarousel(this.carouselSettings);
             $('#service-carousel').owlCarousel(this.carouselSettings);
@@ -764,6 +1009,31 @@ new Vue({
                 }
             }
             return total;
+        },
+        canSchedule() {
+            if (!this.cleaningPolicy || !this.dateSelected) return false;
+            if (this.selected_double_slots.length !== Math.ceil(this.selectedDuration.hours / 2)) return false;
+            if (this.cleaningPolicy === 'SUBSCRIPTION') {
+                if (!this.subStat) return false;
+                if (!this.no_of_visits || this.no_of_visits < 1) return false;
+                if (this.subStat === 'Weekly' && this.prefDay.length === 0) return false;
+            }
+            return true;
+        },
+        selectedDateFormatted() {
+            if (!this.dateSelected) return '';
+            const date = new Date(this.dateSelected);
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return `${days[date.getDay()]}, ${months[date.getMonth()]} ${date.getDate()}`;
+        },
+        selectedYear() {
+            if (!this.dateSelected) return new Date().getFullYear();
+            return new Date(this.dateSelected).getFullYear();
+        },
+        selectedDays() {
+            // For now, return an array with one day. You can expand this for multi-day selection
+            return this.dateSelected ? [this.dateSelected] : [];
         }
     }
 });
