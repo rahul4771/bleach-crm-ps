@@ -565,7 +565,7 @@
                                                     <div onclick="editShow(this)" data-id="{{worker.id}}" class="skill-edit" id="edit_id_{{worker.id}}">
                                                         <img src="{% static 'files/icons/edit.png' %}">
                                                     </div>
-                                                    <div   @click="saveEdit({{worker.id}})" data-id="{{worker.id}}" id="id_done_{{worker.id}}" class="skill-edit-done">
+                                                    <div onclick="saveEdit({{worker.id}})" data-id="{{worker.id}}" id="id_done_{{worker.id}}" class="skill-edit-done">
                                                         <button class="resource-card-button">Done</button>
                                                     </div>
                                                 </div>
@@ -959,7 +959,49 @@
             query=query.replace('&','?');
             window.location.href=url+query;  
             }
+
+    // CSRF helper (Django)
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
          
+// Show custom styled alert notification
+function showStyledAlert(message, type = 'success') {
+    // Remove existing alert if any
+    const existingAlert = document.querySelector('.custom-alert');
+    if (existingAlert) existingAlert.remove();
+
+    const alertBox = document.createElement('div');
+    alertBox.className = `custom-alert custom-alert-${type}`;
+    alertBox.innerHTML = `
+        <div class="alert-content">
+            <span class="alert-icon">✓</span>
+            <span class="alert-message">${message}</span>
+            
+        </div>
+    `;
+    document.body.appendChild(alertBox);
+
+    // Auto remove after 4 seconds
+    setTimeout(() => {
+        if (alertBox.parentElement) {
+            alertBox.style.opacity = '0';
+            setTimeout(() => alertBox.remove(), 300);
+        }
+    }, 4000);
+}
+
 {% comment %} function viewSkills(el) {
     const workerId = el.getAttribute('data-id');
 
@@ -1011,13 +1053,11 @@ function saveEdit(workerId) {
     .then(res => res.json())
     .then(data => {
         if (data.success) {
-            showAlert(data);
             console.log('✅ Skills saved successfully for employee:', workerId);
             console.log('Selected service types:', selectedServiceTypes);
             
-            // Show success message with detailed breakdown
-            //const message = `✅ ${data.message}\n👤 Employee: ${data.details.employee_name}`;
-            //showSuccessMessage(message)
+            // Show styled success alert
+            showStyledAlert('Skills updated Successfully!', 'success');
 
             console.log('Details:', data.details);
             
@@ -1031,12 +1071,12 @@ function saveEdit(workerId) {
             }, 500);
         } else {
             console.error('❌ Failed to save skills. Error:', data.error);
-            //showErrorMessage(data.error || 'Unknown error occurred');
+            showStyledAlert('Error: ' + (data.error || 'Failed to save skills'), 'error');
         }
     })
     .catch(err => {
         console.error('❌ Network error while saving skills:', err);
-        //showErrorMessage('Network error: ' + err.message);
+        showStyledAlert('Network error: ' + err.message, 'error');
     });
 }
 
@@ -1170,6 +1210,77 @@ function viewSkills(el) {
 
 </script>
 <style>
+  /* Custom Alert Styles */
+  .custom-alert {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    min-width: 320px;
+    padding: 16px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 10000;
+    font-family: 'Inter', Arial, sans-serif;
+    animation: slideInAlert 0.3s ease-out;
+    transition: opacity 0.3s ease;
+  }
+
+  .custom-alert-success {
+    background-color: #4caf50;
+    color: white;
+    border-left: 4px solid #45a049;
+  }
+
+  .custom-alert-error {
+    background-color: #f44336;
+    color: white;
+    border-left: 4px solid #da190b;
+  }
+
+  .alert-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .alert-icon {
+    font-size: 20px;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+
+  .alert-message {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .alert-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .alert-close:hover {
+    opacity: 0.8;
+  }
+
+  @keyframes slideInAlert {
+    from {
+      transform: translateX(400px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
   ul {
     padding: 0;
     margin: 0;
