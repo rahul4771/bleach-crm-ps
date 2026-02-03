@@ -166,7 +166,7 @@
                     <div class="form-group">
                       <label class="mb-2" style="font-size: 12px; color: #888;">Cleaning Policy <span style="color: red;">*</span></label>
                       <v-select v-model="cleaningPolicy" :items="['Subscription', 'One Time Service']"
-                        outlined dense hide-details>
+                        solo hide-details style="background: transparent;">
                       </v-select>
                     </div>
                   </div>
@@ -177,7 +177,7 @@
                       <div class="form-group">
                         <label class="mb-2" style="font-size: 12px; color: #888;">Subscription Plan <span style="color: red;">*</span></label>
                         <v-select v-model="subStat" :items="['Daily','Weekly','Monthly','Custom']"
-                          outlined dense hide-details>
+                          solo hide-details style="background: transparent;">
                         </v-select>
                       </div>
                     </div>
@@ -203,14 +203,14 @@
                       <div class="form-group">
                         <label class="mb-2" style="font-size: 12px; color: #888;">No of Visits <span style="color: red;">*</span></label>
                         <v-text-field v-model.number="no_of_visits" type="number" 
-                          outlined dense hide-details min="1">
+                          solo hide-details min="1" style="background: transparent;">
                         </v-text-field>
                       </div>
                     </div>
                   </template>
                 </div>
 
-                <!-- Preferred Days Section (shown when Weekly subscription is selected) -->
+                <!-- Preferred Days Section (shown only when Weekly subscription is selected) -->
                 <div v-if="cleaningPolicy === 'Subscription' && subStat === 'Weekly'" class="mt-4 mb-4">
                   <h6 class="mb-3" style="color: #7e8a9c; font-weight: 500;">Preferred Days</h6>
                   <div class="d-flex flex-wrap gap-2">
@@ -225,13 +225,58 @@
                   </div>
                 </div>
 
-                <!-- Choose Starting Date Button - shown only when required fields are filled, now after Preferred Days -->
-                <div class="mb-4" v-if="cleaningPolicy && (cleaningPolicy === 'One Time Service' || (cleaningPolicy === 'Subscription' && subStat && (subStat === 'Custom' || no_of_visits > 0)))">
-                  <v-btn color="primary" class="px-5" large 
-                    @click="cleaningPolicy === 'Subscription' ? (scheduleDialog = true) : (oneTimeSlotDialog = true)"
+                <!-- CHOOSE A STARTING DATE button for Weekly, Daily subscriptions -->
+                <div v-if="cleaningPolicy === 'Subscription' && (subStat === 'Weekly' || subStat === 'Daily') && no_of_visits > 0" class="mb-4">
+                  <v-btn color="primary" class="px-5" large
+                    @click="scheduleDialog = true"
                     style="text-transform: uppercase; font-weight: 600;">
                     <v-icon left>mdi-calendar</v-icon>
-                    [[ cleaningPolicy === 'Subscription' ? 'CHOOSE A STARTING DATE' : 'SELECT SLOTS' ]]
+                    CHOOSE A STARTING DATE
+                  </v-btn>
+                </div>
+
+                <!-- Starting Date field and SELECT VISIT DATES button for Subscription/Monthly -->
+                <div v-if="cleaningPolicy === 'Subscription' && subStat === 'Monthly' && no_of_visits > 0" class="mb-4">
+                  <div class="d-flex align-items-center mb-4">
+                    <v-icon left color="grey" style="font-size: 28px; margin-right: 12px;">mdi-calendar</v-icon>
+                    <label style="font-size: 18px; color: #888; margin-bottom: 0;">Starting Date <span style="color: red;">*</span></label>
+                  </div>
+                  <v-text-field
+                    v-model="monthlyStartDate"
+                    type="date"
+                    solo
+                    flat
+                    hide-details
+                    placeholder="dd-mm-yyyy"
+                    style="max-width: 500px; background: transparent;"
+                  ></v-text-field>
+                  <div class="mt-4">
+                    <v-btn color="primary" class="px-5"
+                      @click="scheduleDialog = true"
+                      style="text-transform: uppercase; font-weight: 600;">
+                      <v-icon left>mdi-calendar</v-icon>
+                      SELECT VISIT DATES
+                    </v-btn>
+                  </div>
+                </div>
+
+                <!-- SELECT VISIT DATES button for Custom subscription -->
+                <div v-if="cleaningPolicy === 'Subscription' && subStat === 'Custom'" class="mb-4">
+                  <v-btn color="primary" class="px-5" large
+                    @click="scheduleDialog = true"
+                    style="text-transform: uppercase; font-weight: 600;">
+                    <v-icon left>mdi-calendar</v-icon>
+                    SELECT VISIT DATES
+                  </v-btn>
+                </div>
+
+                <!-- SELECT SLOTS button for One-Time Service -->
+                <div v-if="cleaningPolicy === 'One Time Service'" class="mb-4">
+                  <v-btn color="primary" class="px-5" large
+                    @click="oneTimeSlotDialog = true"
+                    style="text-transform: uppercase; font-weight: 600;">
+                    <v-icon left>mdi-calendar</v-icon>
+                    SELECT SLOTS
                   </v-btn>
                 </div>
               </div>
