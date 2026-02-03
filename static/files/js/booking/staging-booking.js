@@ -916,7 +916,7 @@ new Vue({
 
             // Middle slots - check if either adjacent slot is selected
             return selectedSlots.includes(String(prevSlot)) ||
-                   selectedSlots.includes(String(nextSlot));
+                selectedSlots.includes(String(nextSlot));
         },
 
         /**
@@ -1074,6 +1074,102 @@ new Vue({
             const ampm = hour >= 12 ? 'PM' : 'AM';
             const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
             return `${hour12.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+        },
+
+        /**
+         * Counts total number of one-time slots selected across all dates.
+         * @returns {number} Total count of selected slots
+         */
+        oneTimeSlotCounter() {
+            let counter = 0;
+            for (const dateKey in this.oneTimeSlots) {
+                counter += this.oneTimeSlots[dateKey].slots.length;
+            }
+            return counter;
+        },
+
+        /**
+         * Submits selected one-time slots after validation.
+         * Checks that the total selected slots match the required slots based on cleaning duration.
+         * Populates selectedOnetimeSlots with valid slots and closes the dialog on success.
+         */
+        submitOneTimeSlots() {
+            this.slotMsg = false;
+            const slotCount = this.oneTimeSlotCounter();
+            const slotsRequired = Math.ceil(this.selectedDuration.hours / 2);
+
+            if (slotCount === slotsRequired) {
+                this.selectedOnetimeSlots = {};
+
+                for (const dateKey in this.oneTimeSlots) {
+                    if (this.oneTimeSlots[dateKey].slots.length > 0) {
+                        this.selectedOnetimeSlots[dateKey] = {
+                            slots: this.oneTimeSlots[dateKey].slots
+                        };
+                    }
+                }
+
+                this.oneTimeSlotDialog = false;
+                this.oneTimeSelectionStat = true;
+            } else {
+                this.slotMsg = true;
+            }
+        },
+
+        /**
+         * Processes next slot selection in multi-day one-time slot booking flow.
+         * Validates selected slots for current day, stores them with day count,
+         * and advances to next day if more days remain, or completes selection.
+         */
+        nextSlotSelection() {
+            this.slotMsg = false;
+            const slotCount = this.oneTimeSlotCounter();
+            const slotsRequired = Math.ceil(this.selectedDuration.hours / 2);
+
+            if (slotCount === slotsRequired) {
+                for (const dateKey in this.oneTimeSlots) {
+                    if (this.oneTimeSlots[dateKey].slots.length > 0) {
+                        this.selectedOnetimeSlots[dateKey] = {
+                            slots: this.oneTimeSlots[dateKey].slots,
+                            dayCount: this.currentSlotDay
+                        };
+                    }
+                }
+
+                if (this.currentSlotDay > this.cleaningSet.length) {
+                    this.oneTimeSlotDialog = false;
+                    this.oneTimeSelectionStat = true;
+                } else {
+                    this.currentSlotDay++;
+                    if (this.currentSlotDay <= this.cleaningSet.length) {
+                        this.oneTimeDateSelected = moment(this.oneTimeDateSelected, 'YYYY-MM-DD')
+                            .add(1, 'days')
+                            .format('YYYY-MM-DD');
+                        this.oneTimeNewDateChange();
+                    }
+                }
+            } else {
+                this.slotMsg = true;
+            }
+        },
+
+        /**
+         * Handles date change for one-time slot selection.
+         * Resets slots for the newly selected date and fetches available slots from server.
+         * Converts date format from YYYY-MM-DD to DD-MM-YYYY for API calls.
+         */
+        oneTimeNewDateChange() {
+            this.oneTimeSlots = {};
+            this.oneTimeSlots[this.oneTimeDateSelected] = {
+                slots: []
+            };
+
+            const dateParts = this.oneTimeDateSelected.split('-');
+            const year = dateParts[0];
+            const month = dateParts[1];
+            const day = dateParts[2];
+            this.slotDate = `${day}-${month}-${year}`;
+            this.getMultipleSlots();
         },
 
         // =================================================
@@ -1278,7 +1374,7 @@ new Vue({
             this.activeTabs.activeServiceTypeId = typeId;
         },
 
-              
+
 
         /**
          * Parses the serviceSize data fetched from the server.
