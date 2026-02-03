@@ -56,6 +56,155 @@
     visibility: hidden !important;
     opacity: 0 !important;
   }
+
+  /* ============================================
+     UNIVERSAL CALENDAR STYLING FOR ALL v-date-picker
+     ============================================ */
+  
+  /* Remove all borders from picker and date picker components */
+  .v-picker {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .v-date-picker {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .v-picker__body,
+  .v-picker__title {
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Blue header with white text */
+  .v-picker__title {
+    background: linear-gradient(135deg, #3B5998 0%, #4A6CB5 100%) !important;
+    color: white !important;
+    padding: 24px !important;
+    font-size: 32px !important;
+    font-weight: 300 !important;
+    letter-spacing: -0.5px !important;
+  }
+
+  /* White calendar body */
+  .v-picker__body {
+    background: white !important;
+    padding: 16px !important;
+  }
+
+  /* Calendar table styling */
+  .v-date-picker-table {
+    background: white !important;
+    border: none !important;
+  }
+
+  /* Calendar header (day names) */
+  .v-date-picker-table__weekday {
+    color: #999 !important;
+    font-weight: 500 !important;
+    font-size: 12px !important;
+    padding: 8px 0 !important;
+  }
+
+  /* Calendar day numbers */
+  .v-date-picker-table tbody tr td {
+    padding: 4px !important;
+    height: auto !important;
+    border: none !important;
+  }
+
+  .v-date-picker-table .v-btn {
+    height: 32px !important;
+    min-width: 32px !important;
+    width: 100% !important;
+    font-size: 13px !important;
+    color: #333 !important;
+    margin: 2px 0 !important;
+    border: none !important;
+  }
+
+  /* Selected/Active date styling - outlined circle */
+  .v-date-picker-table .v-btn.v-btn--active {
+    background: transparent !important;
+    color: #4A6CB5 !important;
+    border: 2px solid #4A6CB5 !important;
+    border-radius: 50% !important;
+    font-weight: 600 !important;
+  }
+
+  /* Future dates */
+  .v-date-picker-table .v-btn:not(.v-btn--active):not(:disabled) {
+    color: #333 !important;
+    border: none !important;
+  }
+
+  /* Calendar navigation header */
+  .v-date-picker-header {
+    background: white !important;
+    color: #333 !important;
+    border: none !important;
+    padding: 12px 0 !important;
+    margin-bottom: 8px !important;
+  }
+
+  /* Month/Year navigation buttons */
+  .v-date-picker-header__btn {
+    color: #333 !important;
+    font-size: 14px !important;
+    min-width: 24px !important;
+    border: none !important;
+  }
+
+  .v-date-picker-header__btn:hover {
+    background: #f5f5f5 !important;
+    border-radius: 4px !important;
+  }
+
+  /* Month/Year title in header */
+  .v-date-picker-header__value {
+    color: #333 !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+  }
+
+  /* Disabled dates */
+  .v-date-picker-table .v-btn:disabled {
+    color: #ccc !important;
+    opacity: 0.6 !important;
+    border: none !important;
+  }
+
+  /* Current date (today) styling - subtle outline */
+  .v-date-picker-table .v-btn.v-btn--outlined {
+    border-color: #4A6CB5 !important;
+    color: #4A6CB5 !important;
+  }
+
+  /* Specific overrides for date-picker in menus */
+  .v-menu .v-date-picker {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .v-menu .v-picker {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .v-menu .v-date-picker .v-picker__title {
+    background: linear-gradient(135deg, #3B5998 0%, #4A6CB5 100%) !important;
+  }
+
+  .v-menu .v-date-picker .v-picker__body {
+    background: white !important;
+    border: none !important;
+  }
 </style>
 
 <div id="app" v-cloak>
@@ -514,66 +663,99 @@
     </div>
 
     <!-- One-Time Slot Selection Dialog -->
-    <v-dialog v-model="oneTimeSlotDialog" max-width="1400px" persistent>
+    <v-dialog v-model="oneTimeSlotDialog" max-width="1200px" persistent>
       <v-card>
         <v-card-title class="text-h5 grey lighten-3">
           Choose Cleaning Slots
         </v-card-title>
         <v-card-text class="pa-6">
-          <div class="row">
-            <!-- Calendar Section -->
-            <div class="col-md-5">
-              <v-card class="pa-4" elevation="2" color="primary" dark style="border-radius: 8px;">
-                <div class="text-center mb-3">
-                  <h2 style="font-size: 24px; font-weight: 300; margin-bottom: 4px;">2026</h2>
-                  <h1 style="font-size: 48px; font-weight: 500; line-height: 1.2;">
-                    [[ dateSelected ? moment(dateSelected).format('ddd, MMM D') : 'Select Date' ]]
-                  </h1>
-                </div>
+          <!-- MAIN LAYOUT: DATE PICKER LEFT, SLOTS AND INFO RIGHT -->
+          <div style="display: flex; gap: 40px; align-items: flex-start;">
+            
+            <!-- LEFT SIDE: DATE PICKER IN BOX -->
+            <div style="flex: 0 0 320px;">
+              <div class="onetime-date-section" style="background: #f5f5f5; padding: 20px; border-radius: 8px;">
                 <v-date-picker
-                  v-model="dateSelected"
-                  :min="new Date().toISOString().substr(0, 10)"
-                  full-width
-                  color="white"
-                  header-color="primary"
-                  @change="onDateChange"
-                  no-title
-                  class="elevation-0"
-                  style="background: transparent;"
+                  v-model="oneTimeDateSelected"
+                  @input="oneTimeNewDateChange()"
+                  :min-date="today"
+                  readonly-input
+                  color="primary"
                 ></v-date-picker>
-              </v-card>
+              </div>
             </div>
 
-            <!-- Slots Section -->
-            <div class="col-md-7">
-              <!-- Header Info -->
-              <div class="mb-4">
-                <p class="mb-2" style="font-size: 16px; color: #666;">
-                  <strong>No of Days :</strong> 1
+            <!-- RIGHT SIDE: INFO AND SLOTS -->
+            <div style="flex: 1; min-width: 0;">
+              <!-- INFO SECTION -->
+              <div style="margin-bottom: 24px;">
+                <p style="font-weight: 500; font-size: 13px; margin-bottom: 12px; color: #666;">
+                  No of Days : [[ cleaningSet && cleaningSet.length || 1 ]]
                 </p>
-                <h6 class="mb-2" style="font-size: 18px; font-weight: 500; color: #333;">
-                  Select Day 1
-                </h6>
-                <p style="font-size: 14px; color: #666;">
-                  Please Select 1 slot(s)
+                <p style="font-weight: 600; font-size: 15px; margin-bottom: 6px;">
+                  Select Day [[ currentSlotDay ]]
+                </p>
+                <p style="font-size: 13px; color: #666;" v-if="cleaningSet && cleaningSet.length > 0 && cleaningSet[currentSlotDay - 1]">
+                  Please Select [[ Math.ceil(cleaningSet[currentSlotDay - 1][0]/2) ]] slot(s)
                 </p>
               </div>
-              
-              <!-- Time Slots Grid -->
-              <div class="row">
-                <div class="col-md-4 mb-3" v-for="slot in availableSlots" :key="slot.id">
-                  <v-btn
-                    block
-                    outlined
-                    large
-                    :color="isSlotSelected(slot.id) ? 'primary' : 'grey'"
-                    :class="{'primary white--text': isSlotSelected(slot.id)}"
-                    @click="toggleSlot(slot.id)"
-                    style="height: 70px; font-size: 14px; border-radius: 8px;"
+
+              <!-- SLOTS SECTION -->
+              <div class="slots-container" v-if="oneTimeRender && availableSlotes && availableSlotes.length > 0">
+                <div class="slots-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+                  <button 
+                    v-for="slotNo in availableSlotes" 
+                    :key="slotNo"
+                    :class="{
+                      'slot-btn': true,
+                      'slot-selected': checkOneTimeSlot(slotFormat[String(slotNo)].startTime, slotFormat[String(slotNo)].endTime, slotNo),
+                      'slot-disabled': !checkOneTimeSlotStat(slotFormat[String(slotNo)].startTime, slotFormat[String(slotNo)].endTime, slotNo)
+                    }"
+                    @click="!checkOneTimeSlotStat(slotFormat[String(slotNo)].startTime, slotFormat[String(slotNo)].endTime, slotNo) || addOneTimeSlot(slotFormat[String(slotNo)].startTime, slotFormat[String(slotNo)].endTime, slotNo)"
+                    :disabled="!checkOneTimeSlotStat(slotFormat[String(slotNo)].startTime, slotFormat[String(slotNo)].endTime, slotNo)"
+                    class="btn py-2"
+                    style="border-radius: 4px; font-size: 12px; font-weight: 500; border: 2px solid #e0e0e0; background: white; cursor: pointer; transition: all 0.2s; padding: 8px 6px; text-align: center;"
                   >
-                    [[ formatSlotTime(slot.start_time) ]] - [[ formatSlotTime(slot.end_time) ]]
-                  </v-btn>
+                    [[ slotFormat[String(slotNo)].startTime ]] - [[ slotFormat[String(slotNo)].endTime ]]
+                  </button>
                 </div>
+              </div>
+              <div v-else style="color: #999; padding: 20px; text-align: center;">
+                Loading time slots...
+              </div>
+            </div>
+          </div>
+
+          <!-- ERROR MESSAGE -->
+          <div class="error-message mt-6" v-if="slotMsg && cleaningSet && cleaningSet.length > 0 && cleaningSet[currentSlotDay - 1]">
+            <v-alert type="error" dense>
+              ⚠ Please select [[ Math.ceil(cleaningSet[currentSlotDay - 1][0]/2) ]] consecutive slots
+            </v-alert>
+          </div>
+
+          <!-- SELECTED SLOTS SUMMARY -->
+          <div class="slots-summary mt-6" v-if="oneTimeSlots[oneTimeDateSelected] && cleaningSet && cleaningSet.length > 0 && cleaningSet[currentSlotDay - 1]">
+            <h4 style="font-size: 16px; font-weight: 500; margin-bottom: 12px;">
+              Selected Slots: [[ oneTimeSlotCounter() ]] / [[ Math.ceil(cleaningSet[currentSlotDay - 1][0]/2) ]]
+            </h4>
+            
+            <div class="selected-slots-list" v-if="oneTimeSlots[oneTimeDateSelected].slots.length > 0">
+              <p class="mb-3">
+                <strong>Time Range:</strong> [[ getCombinedSlot(oneTimeSlots[oneTimeDateSelected].slots) ]]
+              </p>
+              
+              <div class="slot-chips d-flex flex-wrap gap-2">
+                <v-chip 
+                  v-for="slot in oneTimeSlots[oneTimeDateSelected].slots"
+                  :key="slot"
+                  closable
+                  @click:close="removeOneTimeSlot(slot)"
+                  color="primary"
+                  text-color="white"
+                  class="mb-2"
+                >
+                  [[ slotFormat[parseInt(slot)].startTime ]] - [[ slotFormat[parseInt(slot)].endTime ]]
+                </v-chip>
               </div>
             </div>
           </div>
@@ -590,13 +772,24 @@
             CANCEL
           </v-btn>
           <v-btn 
+            v-if="currentSlotDay <= cleaningSet.length"
             color="primary" 
-            @click="confirmOneTimeSlotSelection" 
+            @click="nextSlotSelection" 
             class="px-6 ml-3" 
             large
             style="text-transform: uppercase;"
           >
             NEXT
+          </v-btn>
+          <v-btn 
+            v-else
+            color="primary" 
+            @click="submitOneTimeSlots" 
+            class="px-6 ml-3" 
+            large
+            style="text-transform: uppercase;"
+          >
+            SUBMIT
           </v-btn>
         </v-card-actions>
       </v-card>

@@ -80,6 +80,17 @@ new Vue({
         slotStat: { availableSlotes: [], busySlotes: [] },
         autofixStat: false,
         outOfShift: false,
+        editScheduleStat: false, // Flag to track if schedule is being edited
+        
+        // One-Time Slot Properties
+        oneTimeDateSelected: null, // Selected date for one-time slot booking (YYYY-MM-DD format)
+        oneTimeRender: true, // Flag to control rendering of one-time slots
+        oneTimeSlots: {}, // Object storing selected slots keyed by date
+        availableSlotes: [], // Array of available slot numbers for current date
+        currentSlotDay: 1, // Current day being selected in multi-day one-time booking
+        cleaningSet: [], // Array of cleaning hour requirements per day
+        today: moment().format('YYYY-MM-DD'), // Today's date in YYYY-MM-DD format
+        
         slotFormat: {
             "1": {
                 startTime: '12:00 AM',
@@ -872,7 +883,11 @@ new Vue({
                 totalSlotsSelected += this.oneTimeSlots[dateKey].slots.length;
             }
 
-            // Get required slots for current day
+            // Get required slots for current day - safely check if cleaningSet is initialized
+            if (!this.cleaningSet || !this.cleaningSet[this.currentSlotDay - 1] || !this.cleaningSet[this.currentSlotDay - 1][0]) {
+                return true; // Allow selection if cleaningSet not yet populated
+            }
+            
             const requiredSlots = Math.ceil((this.cleaningSet[this.currentSlotDay - 1][0]) / 2);
 
             // Check if we haven't exceeded the required number of slots
@@ -1169,7 +1184,73 @@ new Vue({
             const month = dateParts[1];
             const day = dateParts[2];
             this.slotDate = `${day}-${month}-${year}`;
-            this.getMultipleSlots();
+            
+            // Load available slots for the selected date
+            this.loadAvailableSlots();
+        },
+
+        /**
+         * Loads available time slots for the currently selected date.
+         * Populates availableSlotes array with all 12 slot numbers (1-12).
+         */
+        loadAvailableSlots() {
+            // Populate available slots (1-12 represent 2-hour time slots)
+            this.availableSlotes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+            
+            // Populate slot format with time mappings for each slot
+            const slotTimes = [
+                { startTime: '12:00 AM', endTime: '02:00 AM' },
+                { startTime: '02:00 AM', endTime: '04:00 AM' },
+                { startTime: '04:00 AM', endTime: '06:00 AM' },
+                { startTime: '06:00 AM', endTime: '08:00 AM' },
+                { startTime: '08:00 AM', endTime: '10:00 AM' },
+                { startTime: '10:00 AM', endTime: '12:00 PM' },
+                { startTime: '12:00 PM', endTime: '02:00 PM' },
+                { startTime: '02:00 PM', endTime: '04:00 PM' },
+                { startTime: '04:00 PM', endTime: '06:00 PM' },
+                { startTime: '06:00 PM', endTime: '08:00 PM' },
+                { startTime: '08:00 PM', endTime: '10:00 PM' },
+                { startTime: '10:00 PM', endTime: '12:00 AM' }
+            ];
+            
+            this.availableSlotes.forEach((slotNo, index) => {
+                this.slotFormat[String(slotNo)] = slotTimes[index];
+            });
+            
+            this.oneTimeRender = true;
+        },
+
+        /**
+         * Adds a one-time slot to the current date selection.
+         * Checks if slot can be added based on adjacency and capacity constraints.
+         * @param {string} start - Start time (HH:MM AM/PM format)
+         * @param {string} end - End time (HH:MM AM/PM format)
+         * @param {number} slot - Slot number (1-12)
+         */
+        addOneTimeSlot(start, end, slot) {
+            // Check if slot can be added
+            if (!this.checkOneTimeSlotStat(start, end, slot)) {
+                return;
+            }
+
+            // Initialize slots array for this date if it doesn't exist
+            if (!this.oneTimeSlots[this.oneTimeDateSelected]) {
+                this.oneTimeSlots[this.oneTimeDateSelected] = {
+                    slots: []
+                };
+            }
+
+            const slots = this.oneTimeSlots[this.oneTimeDateSelected].slots;
+            const slotStr = String(slot);
+
+            // Add slot if not already selected
+            if (!slots.includes(slotStr)) {
+                slots.push(slotStr);
+                // Sort slots numerically
+                slots.sort((a, b) => parseInt(a) - parseInt(b));
+            }
+
+            this.oneTimeRender = true;
         },
 
         // =================================================
@@ -1832,6 +1913,10 @@ new Vue({
         this.getServiceTypes();
         this.getAreaTypes();
 
+        // Initialize one-time slot dialog
+        this.oneTimeDateSelected = this.today;
+        this.loadAvailableSlots();
+
         // Initialize slot format mapping
         this.availableSlots.forEach(slot => {
             this.slotFormat[slot.id] = {
@@ -1846,6 +1931,21 @@ new Vue({
         });
     },
     watch: {
+        oneTimeSlotDialog(newVal) {
+            if (newVal) {
+                // Initialize when dialog opens
+                this.oneTimeDateSelected = this.today;
+                this.currentSlotDay = 1;
+                this.oneTimeSlots = {};
+                
+                // Initialize cleaningSet with default values if not set
+                if (!this.cleaningSet || this.cleaningSet.length === 0) {
+                    this.cleaningSet = [[4]]; // Default: 4 hours (2 slots) for first day
+                }
+                
+                this.loadAvailableSlots();
+            }
+        },
         'activeTabs.activeServiceTypeId'(newVal) {
             if (!newVal) return;
 
