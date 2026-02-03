@@ -64,76 +64,76 @@ new Vue({
         visits: [], // Array of visit dates and slots
         visitDateTime: [], // Array of formatted datetime strings
         dateSelected: null, // Selected start date
-        selected_double_slots: [], // Selected time slots
+        selectedDoubleSlots: [], // Selected time slots
         selectedDuration: { hours: 0, cleaners: 1 }, // Duration and cleaners
         subStat: null, // Subscription status: 'Weekly', 'Daily', or null for one-time
         prefDay: [], // Preferred days for weekly cleaning
         altweekStat: false, // Alternate week status
         altdaysStat: false, // Alternate days status
-        no_of_visits: 0, // Number of visits for subscription
+        noOfVisits: 0, // Number of visits for subscription
         customDateSelected: [], // Array of custom selected dates for Custom subscription
         scheduleDialog: false,
         oneTimeSlotDialog: false, // Dialog for one-time service slot selection
         scheduleDateSat: false,
-        schedule_err_msg: false,
-        slot_msg: false,
-        slotStat: { available_slotes: [], busy_slotes: [] },
+        scheduleErrMsg: false,
+        slotMsg: false,
+        slotStat: { availableSlotes: [], busySlotes: [] },
         autofixStat: false,
-        out_of_shift: false,
+        outOfShift: false,
         slotFormat: {
             "1": {
-                start_time: '12:00 AM',
-                end_time: '02:00 AM'
+                startTime: '12:00 AM',
+                endTime: '02:00 AM'
             },
             "2": {
-                start_time: '02:00 AM',
-                end_time: '04:00 AM'
+                startTime: '02:00 AM',
+                endTime: '04:00 AM'
             },
             "3": {
-                start_time: '04:00 AM',
-                end_time: '06:00 AM'
+                startTime: '04:00 AM',
+                endTime: '06:00 AM'
             },
             "4": {
-                start_time: '06:00 AM',
-                end_time: '08:00 AM'
+                startTime: '06:00 AM',
+                endTime: '08:00 AM'
             },
             "5": {
-                start_time: '08:00 AM',
-                end_time: '10:00 AM'
+                startTime: '08:00 AM',
+                endTime: '10:00 AM'
             },
             "6": {
-                start_time: '10:00 AM',
-                end_time: '12:00 PM'
+                startTime: '10:00 AM',
+                endTime: '12:00 PM'
             },
             "7": {
-                start_time: '12:00 PM',
-                end_time: '02:00 PM'
+                startTime: '12:00 PM',
+                endTime: '02:00 PM'
             },
             "8": {
-                start_time: '02:00 PM',
-                end_time: '04:00 PM'
+                startTime: '02:00 PM',
+                endTime: '04:00 PM'
             },
             "9": {
-                start_time: '04:00 PM',
-                end_time: '06:00 PM'
+                startTime: '04:00 PM',
+                endTime: '06:00 PM'
             },
             "10": {
-                start_time: '06:00 PM',
-                end_time: '08:00 PM'
+                startTime: '06:00 PM',
+                endTime: '08:00 PM'
             },
             "11": {
-                start_time: '08:00 PM',
-                end_time: '10:00 PM'
+                startTime: '08:00 PM',
+                endTime: '10:00 PM'
             },
             "12": {
-                start_time: '10:00 PM',
-                end_time: '12:00 AM'
+                startTime: '10:00 PM',
+                endTime: '12:00 AM'
             }
         },
-        schedule_serviceTypes_selected: [],
-        schedule_serviceTypes: [],
-        current_service: '',
-        hourly_cleaning: { hourly_duration: 0, cleaners: 1 },
+        scheduleServiceTypesSelected: [],
+        scheduleServiceTypes: [],
+        currentService: '',
+        hourlyCleaning: { hourlyDuration: 0, cleaners: 1 },
         multiServicesBill: {},
         url: '', // Base URL for API calls
         areaTypes: [],
@@ -299,7 +299,7 @@ new Vue({
          * Checks availability of cleaning slots for selected dates and times.
          */
         checkAvailablility() {
-            let serviceTypes = this.schedule_serviceTypes;
+            let serviceTypes = this.scheduleServiceTypes;
 
             if (this.current_service === 'Hourly Cleaning') {
                 serviceTypes = ['General Cleaning'];
@@ -347,8 +347,8 @@ new Vue({
          * Fetches available time slots for multiple services.
          */
         getMultipleSlots() {
-            this.slot_loader = true;
-            let scheduleServices = this.schedule_serviceTypes;
+            this.slotLoader = true;
+            let scheduleServices = this.scheduleServiceTypes;
 
             if (this.checkKitchen()) {
                 scheduleServices.push('Kitchen Cleaning');
@@ -372,7 +372,7 @@ new Vue({
                     return response.json();
                 })
                 .then(data => {
-                    this.slot_loader = false;
+                    this.slotLoader = false;
                     this.timeSlots = data.slotes;
                     this.parseOneTimeSlots();
 
@@ -382,8 +382,8 @@ new Vue({
                         this.errMsg = '';
                     }
 
-                    if (!this.time_slot.hasOwnProperty(this.slotDate)) {
-                        this.time_slot[this.slotDate] = {
+                    if (!this.timeSlot.hasOwnProperty(this.slotDate)) {
+                        this.timeSlot[this.slotDate] = {
                             selectedSlot: []
                         };
                     }
@@ -392,7 +392,7 @@ new Vue({
                 })
                 .catch(error => {
                     console.error('Error fetching multiple slots:', error);
-                    this.slot_loader = false;
+                    this.slotLoader = false;
                 });
         },
 
@@ -409,20 +409,20 @@ new Vue({
             }
 
             const requiredSlots = Math.ceil(this.selectedDuration.hours / 2);
-            if (this.selected_double_slots.length !== requiredSlots) {
-                this.slot_msg = true;
+            if (this.selectedDoubleSlots.length !== requiredSlots) {
+                this.slotMsg = true;
                 return;
             }
 
-            this.slot_msg = false;
+            this.slotMsg = false;
 
-            if (this.selected_double_slots.length === 0 || !this.dateSelected) {
-                this.schedule_err_msg = true;
+            if (this.selectedDoubleSlots.length === 0 || !this.dateSelected) {
+                this.scheduleErrMsg = true;
                 return;
             }
 
             this.scheduleDialog = false;
-            const startSlot = Math.min(...this.selected_double_slots);
+            const startSlot = Math.min(...this.selectedDoubleSlots);
 
             if (this.subStat === 'Weekly') {
                 this.calculateWeeklyVisits(startSlot);
@@ -444,11 +444,11 @@ new Vue({
 
                 if (this.prefDay.includes(dayName)) {
                     const formattedDate = day.format('DD-MM-YYYY');
-                    const dateTime = `${formattedDate} ${this.slotFormat[startSlot].start_time}`;
+                    const dateTime = `${formattedDate} ${this.slotFormat[startSlot].startTime}`;
 
                     this.visits.push({
                         date: formattedDate,
-                        slots: this.selected_double_slots,
+                        slots: this.selectedDoubleSlots,
                         day: dayName,
                         dateTime: dateTime
                     });
@@ -477,11 +477,11 @@ new Vue({
             while (dayCount < this.MAX_VISIT_ITERATIONS && visitCount < targetVisits) {
                 const day = moment(this.dateSelected, 'YYYY-MM-DD').add(dayCount, 'days');
                 const formattedDate = day.format('DD-MM-YYYY');
-                const dateTime = `${formattedDate} ${this.slotFormat[startSlot].start_time}`;
+                const dateTime = `${formattedDate} ${this.slotFormat[startSlot].startTime}`;
 
                 this.visits.push({
                     date: formattedDate,
-                    slots: this.selected_double_slots,
+                    slots: this.selectedDoubleSlots,
                     dateTime: dateTime
                 });
                 this.visitDateTime.push(dateTime);
@@ -502,34 +502,34 @@ new Vue({
             }
 
             const requiredSlots = Math.ceil(this.selectedDuration.hours / 2);
-            if (this.selected_double_slots.length !== requiredSlots) {
-                this.slot_msg = true;
+            if (this.selectedDoubleSlots.length !== requiredSlots) {
+                this.slotMsg = true;
                 return;
             }
 
-            this.slot_msg = false;
+            this.slotMsg = false;
 
-            if (this.selected_monthly_date.length === 0 || this.selected_double_slots.length === 0) {
-                this.schedule_err_msg = true;
+            if (this.selectedMonthlyDate.length === 0 || this.selectedDoubleSlots.length === 0) {
+                this.scheduleErrMsg = true;
                 return;
             }
 
             let dayCount = 0;
             let visitCount = 0;
-            const targetVisits = parseInt(this.no_of_visits);
-            const startSlot = Math.min(...this.selected_double_slots);
+            const targetVisits = parseInt(this.noOfVisits);
+            const startSlot = Math.min(...this.selectedDoubleSlots);
 
             while (dayCount < this.MAX_VISIT_ITERATIONS && visitCount < targetVisits) {
-                const day = moment(this.monthly_starting_date, 'YYYY-MM-DD').add(dayCount, 'days');
+                const day = moment(this.monthlyStartingDate, 'YYYY-MM-DD').add(dayCount, 'days');
                 const dayNumber = day.format('DD');
 
-                if (dayNumber && this.selected_monthly_date.includes(String(dayNumber))) {
+                if (dayNumber && this.selectedMonthlyDate.includes(String(dayNumber))) {
                     const formattedDate = day.format('DD-MM-YYYY');
-                    const dateTime = `${formattedDate} ${this.slotFormat[startSlot].start_time}`;
+                    const dateTime = `${formattedDate} ${this.slotFormat[startSlot].startTime}`;
 
                     this.visits.push({
                         date: formattedDate,
-                        slots: this.selected_double_slots,
+                        slots: this.selectedDoubleSlots,
                         dateTime: dateTime
                     });
 
@@ -554,29 +554,29 @@ new Vue({
             }
 
             const requiredSlots = Math.ceil(this.selectedDuration.hours / 2);
-            if (this.selected_double_slots.length !== requiredSlots) {
-                this.slot_msg = true;
+            if (this.selectedDoubleSlots.length !== requiredSlots) {
+                this.slotMsg = true;
                 return;
             }
 
-            this.slot_msg = false;
+            this.slotMsg = false;
 
-            if (this.customDateSelected.length === 0 || this.selected_double_slots.length === 0) {
-                this.schedule_err_msg = true;
+            if (this.customDateSelected.length === 0 || this.selectedDoubleSlots.length === 0) {
+                this.scheduleErrMsg = true;
                 return;
             }
 
-            const startSlot = Math.min(...this.selected_double_slots);
+            const startSlot = Math.min(...this.selectedDoubleSlots);
 
             this.customDateSelected.forEach(selectedDate => {
                 const day = moment(selectedDate, 'YYYY-MM-DD');
                 const dayName = day.format('ddd');
                 const formattedDate = day.format('DD-MM-YYYY');
-                const dateTime = `${formattedDate} ${this.slotFormat[startSlot].start_time}`;
+                const dateTime = `${formattedDate} ${this.slotFormat[startSlot].startTime}`;
 
                 this.visits.push({
                     date: formattedDate,
-                    slots: this.selected_double_slots,
+                    slots: this.selectedDoubleSlots,
                     day: dayName,
                     dateTime: dateTime
                 });
@@ -587,16 +587,16 @@ new Vue({
             this.checkAvailablility();
             this.customDialog = false;
             this.scheduleDateSat = true;
-            this.schedule_err_msg = false;
+            this.scheduleErrMsg = false;
         },
 
         findHourlyCost() {
-            const rate = this.hourly_cleaning.hourly_duration <= this.HOURLY_CLEANING_THRESHOLD
+            const rate = this.hourlyCleaning.hourlyDuration <= this.HOURLY_CLEANING_THRESHOLD
                 ? this.HOURLY_CLEANING_LOW_RATE
                 : this.HOURLY_CLEANING_HIGH_RATE;
-            const totalCost = rate * parseInt(this.hourly_cleaning.cleaners);
+            const totalCost = rate * parseInt(this.hourlyCleaning.cleaners);
 
-            const serviceKey = this.schedule_serviceTypes_selected[0];
+            const serviceKey = this.scheduleServiceTypesSelected[0];
             const billItems = this.multiServicesBill[serviceKey].bill;
             const sectionLength = billItems.length;
             const costPerSection = totalCost / sectionLength;
@@ -619,7 +619,7 @@ new Vue({
             this.scheduleStatus = this.scheduleStat;
 
             // Configure schedule format for selected service types
-            this.schedule_serviceTypes_selected.forEach(serviceType => {
+            this.scheduleServiceTypesSelected.forEach(serviceType => {
                 this.scheduleFormat.individual[serviceType] = {
                     starting_date: this.visits[0].dateTime,
                     visits: this.visits
@@ -629,29 +629,29 @@ new Vue({
             const cleanersCount = this.selectedDuration.cleaners;
 
             // Update billing information for each selected service type
-            this.schedule_serviceTypes_selected.forEach(serviceType => {
+            this.scheduleServiceTypesSelected.forEach(serviceType => {
                 const billDetails = this.multiServicesBill[serviceType];
-                billDetails.cleaning_policy = 'SUBSCRIPTION';
-                billDetails.schedule_details = {};
+                billDetails.cleaningPolicy = 'SUBSCRIPTION';
+                billDetails.scheduleDetails = {};
                 billDetails.cleaners = cleanersCount;
 
                 // Add schedule details for each visit
                 this.visits.forEach((visit, index) => {
                     const minSlot = Math.min(...visit.slots);
-                    billDetails.schedule_details[index + 1] = {
+                    billDetails.scheduleDetails[index + 1] = {
                         date: visit.date,
-                        time: this.slotFormat[minSlot].start_time,
-                        no_of_cleaners: this.selectedDuration.cleaners,
-                        cleaning_hours: this.selectedDuration.hours,
-                        hourly_cleaning_duration: parseInt(this.hourly_cleaning.hourly_duration) || null
+                        time: this.slotFormat[minSlot].startTime,
+                        noOfCleaners: this.selectedDuration.cleaners,
+                        cleaningHours: this.selectedDuration.hours,
+                        hourlyCleaningDuration: parseInt(this.hourlyCleaning.hourlyDuration) || null
                     };
                 });
 
-                billDetails.shift_availability_check = !this.out_of_shift;
+                billDetails.shiftAvailabilityCheck = !this.outOfShift;
             });
 
             // Remove selected service types from existing schedule groups
-            this.schedule_serviceTypes_selected.forEach(selectedService => {
+            this.scheduleServiceTypesSelected.forEach(selectedService => {
                 for (const groupKey in this.scheduleGroup) {
                     if (this.scheduleGroup[groupKey].includes(selectedService)) {
                         const serviceIndex = this.scheduleGroup[groupKey].indexOf(selectedService);
@@ -664,11 +664,11 @@ new Vue({
 
             // Create new schedule group with selected services
             const newGroupId = Object.keys(this.scheduleGroup).length;
-            this.scheduleGroup[newGroupId] = [...this.schedule_serviceTypes_selected];
+            this.scheduleGroup[newGroupId] = [...this.scheduleServiceTypesSelected];
 
             // Reset state
             this.visits = [];
-            this.selected_double_slots = [];
+            this.selectedDoubleSlots = [];
             this.selectedDuration = {
                 cleaners: '',
                 hours: '',
@@ -679,8 +679,8 @@ new Vue({
             this.reselectDate = {};
             this.subStat = '';
             this.cleaningPolicy = '';
-            this.no_of_visits = '';
-            this.schedule_serviceTypes_selected = [];
+            this.noOfVisits = '';
+            this.scheduleServiceTypesSelected = [];
             this.scheduleDateSat = false;
             this.activeTab = 'Cart';
         },
@@ -690,52 +690,52 @@ new Vue({
             this.scheduleStatus = this.scheduleStat;
 
             // Configure one-time scheduling for selected service types
-            this.schedule_serviceTypes_selected.forEach(serviceType => {
-                this.onetime_scheduled[serviceType] = {
-                    slot: this.selected_onetime_slots
+            this.scheduleServiceTypesSelected.forEach(serviceType => {
+                this.oneTimeScheduled[serviceType] = {
+                    slot: this.selectedOnetimeSlots
                 };
             });
 
             // Update billing information for each selected service type
-            this.schedule_serviceTypes_selected.forEach(serviceType => {
+            this.scheduleServiceTypesSelected.forEach(serviceType => {
                 const billDetails = this.multiServicesBill[serviceType];
-                billDetails.cleaning_policy = 'ONE TIME SERVICE';
-                billDetails.schedule_details = {};
+                billDetails.cleaningPolicy = 'ONE TIME SERVICE';
+                billDetails.scheduleDetails = {};
                 billDetails.cleaners = this.selectedDuration.cleaners;
                 billDetails.shift_availability_check = !this.out_of_shift;
 
                 // Handle multiple dates with continuous date grouping
-                if (Object.keys(this.selected_onetime_slots).length > 1) {
+                if (Object.keys(this.selectedOnetimeSlots).length > 1) {
                     this.findContDate();
                     let scheduleCount = 0;
 
-                    for (const groupKey in this.date_group) {
-                        const dates = this.date_group[groupKey];
+                    for (const groupKey in this.dateGroup) {
+                        const dates = this.dateGroup[groupKey];
 
                         if (dates.length > 0) {
                             // Find earliest date and calculate total cleaning hours
                             let minDate = dates[0];
-                            let totalCleaningHours = this.selected_onetime_slots[dates[0]].slots.length * 2;
+                            let totalCleaningHours = this.selectedOnetimeSlots[dates[0]].slots.length * 2;
 
                             for (let i = 1; i < dates.length; i++) {
                                 const currentDate = dates[i];
                                 if (moment(currentDate, 'YYYY-MM-DD').isBefore(moment(minDate, 'YYYY-MM-DD'))) {
                                     minDate = currentDate;
                                 }
-                                totalCleaningHours += this.selected_onetime_slots[currentDate].slots.length * 2;
+                                totalCleaningHours += this.selectedOnetimeSlots[currentDate].slots.length * 2;
                             }
 
                             // Format date and add to schedule details
                             const [year, month, day] = minDate.split('-');
                             const formattedDate = `${day}-${month}-${year}`;
-                            const minSlot = Math.min(...this.selected_onetime_slots[minDate].slots);
+                            const minSlot = Math.min(...this.selectedOnetimeSlots[minDate].slots);
 
-                            billDetails.schedule_details[scheduleCount + 1] = {
+                            billDetails.scheduleDetails[scheduleCount + 1] = {
                                 date: formattedDate,
-                                time: this.slotFormat[parseInt(minSlot)].start_time,
-                                no_of_cleaners: this.selectedDuration.cleaners,
-                                cleaning_hours: totalCleaningHours,
-                                hourly_cleaning_duration: null
+                                time: this.slotFormat[parseInt(minSlot)].startTime,
+                                noOfCleaners: this.selectedDuration.cleaners,
+                                cleaningHours: totalCleaningHours,
+                                hourlyCleaningDuration: null
                             };
 
                             scheduleCount++;
@@ -745,18 +745,18 @@ new Vue({
                     // Handle single date or non-continuous dates
                     let scheduleCount = 0;
 
-                    for (const dateKey in this.selected_onetime_slots) {
+                    for (const dateKey in this.selectedOnetimeSlots) {
                         const [year, month, day] = dateKey.split('-');
                         const formattedDate = `${day}-${month}-${year}`;
-                        const minSlot = Math.min(...this.selected_onetime_slots[dateKey].slots);
-                        const cleaningHours = this.selected_onetime_slots[dateKey].slots.length * 2;
+                        const minSlot = Math.min(...this.selectedOnetimeSlots[dateKey].slots);
+                        const cleaningHours = this.selectedOnetimeSlots[dateKey].slots.length * 2;
 
-                        billDetails.schedule_details[scheduleCount + 1] = {
+                        billDetails.scheduleDetails[scheduleCount + 1] = {
                             date: formattedDate,
-                            time: this.slotFormat[parseInt(minSlot)].start_time,
-                            no_of_cleaners: this.selectedDuration.cleaners,
-                            cleaning_hours: cleaningHours,
-                            hourly_cleaning_duration: null
+                            time: this.slotFormat[parseInt(minSlot)].startTime,
+                            noOfCleaners: this.selectedDuration.cleaners,
+                            cleaningHours: cleaningHours,
+                            hourlyCleaningDuration: null
                         };
 
                         scheduleCount++;
@@ -765,7 +765,7 @@ new Vue({
             });
 
             // Remove selected service types from existing schedule groups
-            this.schedule_serviceTypes_selected.forEach(selectedService => {
+            this.scheduleServiceTypesSelected.forEach(selectedService => {
                 for (const groupKey in this.scheduleGroup) {
                     if (this.scheduleGroup[groupKey].includes(selectedService)) {
                         const serviceIndex = this.scheduleGroup[groupKey].indexOf(selectedService);
@@ -778,18 +778,18 @@ new Vue({
 
             // Create new schedule group with selected services
             const newGroupId = Object.keys(this.scheduleGroup).length;
-            this.scheduleGroup[newGroupId] = [...this.schedule_serviceTypes_selected];
+            this.scheduleGroup[newGroupId] = [...this.scheduleServiceTypesSelected];
 
             // Reset state
-            this.selected_onetime_slots = {};
+            this.selectedOnetimeSlots = {};
             this.currentSlotDay = 1;
-            this.onetime_scheduled = {};
+            this.oneTimeScheduled = {};
             this.oneTimeSelectionStat = false;
-            this.schedule_serviceTypes_selected = [];
+            this.scheduleServiceTypesSelected = [];
             this.oneTimeDateSelected = this.today;
             this.dateSelected = this.today;
             this.formatDate();
-            this.one_time_slots = {};
+            this.oneTimeSlots = {};
             this.activeTab = 'Cart';
         },
 
@@ -798,14 +798,172 @@ new Vue({
         // =================================================
 
         /**
+         * Parses one-time service slots from the server response.
+         * Converts slot data into available slots array and formatted time slots.
+         */
+        parseOneTimeSlots() {
+            this.parsedTimeSlots = [];
+            this.availableSlotes = [];
+
+            for (const slotIndex in this.timeSlots) {
+                if (this.timeSlots[slotIndex].includes(2)) {
+                    const slotNo = (parseInt(slotIndex) + 2) / 2;
+                    this.availableSlotes.push(slotNo);
+                    this.parsedTimeSlots.push(this.slotFormat[String(slotNo)]);
+                }
+            }
+        },
+
+        /**
+         * Checks if a one-time slot is already selected for the current date.
+         * @param {string} start - Start time of the slot (HH:MM format)
+         * @param {string} end - End time of the slot (HH:MM format)
+         * @param {string|number} slot - Slot identifier
+         * @returns {boolean} True if slot is selected, false otherwise
+         */
+        checkOneTimeSlot(start, end, slot) {
+            let currSlot = '';
+
+            // Find the slot number that matches the start time
+            for (const slotKey in this.slotFormat) {
+                if (this.slotFormat[slotKey].startTime === start) {
+                    currSlot = slotKey;
+                    break;
+                }
+            }
+
+            // Check if current slot is in the selected slots for this date
+            if (this.oneTimeSlots[this.oneTimeDateSelected] &&
+                this.oneTimeSlots[this.oneTimeDateSelected].slots.includes(currSlot)) {
+                return true;
+            }
+
+            return false;
+        },
+
+        /**
+         * Checks the status of a one-time slot considering adjacency and capacity constraints.
+         * Validates whether a slot can be selected based on:
+         * - Total slots selected vs required slots
+         * - Slot adjacency to already selected slots
+         * - Special handling for edge slots (1 and 12)
+         * @param {string} start - Start time of the slot (HH:MM format)
+         * @param {string} end - End time of the slot (HH:MM format)
+         * @param {number} slot - Slot number (1-12)
+         * @returns {boolean} True if slot can be selected, false otherwise
+         */
+        checkOneTimeSlotStat(start, end, slot) {
+            let currSlot = '';
+
+            // Find the slot number that matches the start time
+            for (const slotKey in this.slotFormat) {
+                if (this.slotFormat[slotKey].startTime === start) {
+                    currSlot = slotKey;
+                    break;
+                }
+            }
+
+            const prevSlot = parseInt(currSlot) - 1;
+            const nextSlot = parseInt(currSlot) + 1;
+
+            // Count total slots already selected across all dates
+            let totalSlotsSelected = 0;
+            for (const dateKey in this.oneTimeSlots) {
+                totalSlotsSelected += this.oneTimeSlots[dateKey].slots.length;
+            }
+
+            // Get required slots for current day
+            const requiredSlots = Math.ceil((this.cleaningSet[this.currentSlotDay - 1][0]) / 2);
+
+            // Check if we haven't exceeded the required number of slots
+            if (totalSlotsSelected >= requiredSlots) {
+                return false;
+            }
+
+            // Get selected slots for current date
+            const selectedSlotsForDate = this.oneTimeSlots[this.oneTimeDateSelected];
+
+            // If no slots are selected yet for this date, allow selection
+            if (!selectedSlotsForDate || selectedSlotsForDate.slots.length === 0) {
+                return true;
+            }
+
+            // Check adjacency based on slot position
+            return this.isSlotAdjacent(slot, prevSlot, nextSlot, selectedSlotsForDate);
+        },
+
+        /**
+         * Checks if a slot is adjacent to already selected slots.
+         * Enforces continuous slot selection rule.
+         * @param {number} slot - Slot number (1-12)
+         * @param {number} prevSlot - Previous slot number
+         * @param {number} nextSlot - Next slot number
+         * @param {object} selectedSlotsForDate - Object containing selected slots for the date
+         * @returns {boolean} True if slot is adjacent or can be selected, false otherwise
+         */
+        isSlotAdjacent(slot, prevSlot, nextSlot, selectedSlotsForDate) {
+            const selectedSlots = selectedSlotsForDate.slots;
+
+            // First slot - check if next slot is selected
+            if (slot === 1) {
+                return selectedSlots.includes(String(nextSlot));
+            }
+
+            // Last slot - check if previous slot is selected
+            if (slot === 12) {
+                return selectedSlots.includes(String(prevSlot));
+            }
+
+            // Middle slots - check if either adjacent slot is selected
+            return selectedSlots.includes(String(prevSlot)) ||
+                   selectedSlots.includes(String(nextSlot));
+        },
+
+        /**
+         * Removes a one-time slot and enforces contiguous slot selection.
+         * If both adjacent slots exist, removes all slots above the removed slot.
+         * @param {number|string} slot - The slot number to remove
+         */
+        removeOneTimeSlot(slot) {
+            this.oneTimeRender = false;
+
+            // Safety check for valid data structure
+            if (!this.oneTimeSlots || !this.oneTimeSlots[this.oneTimeDateSelected]) {
+                this.oneTimeRender = true;
+                return;
+            }
+
+            const slots = this.oneTimeSlots[this.oneTimeDateSelected].slots;
+            const slotNum = parseInt(slot);
+            const prevSlot = slotNum - 1;
+            const nextSlot = slotNum + 1;
+
+            // Remove the selected slot
+            const index = slots.indexOf(slot);
+            if (index > -1) {
+                slots.splice(index, 1);
+            }
+
+            // If both adjacent slots exist, enforce contiguous selection
+            // by removing all slots above the removed slot
+            if (slots.includes(String(nextSlot)) && slots.includes(String(prevSlot))) {
+                this.oneTimeSlots[this.oneTimeDateSelected].slots = slots.filter(
+                    s => parseInt(s) <= slotNum
+                );
+            }
+
+            this.oneTimeRender = true;
+        },
+
+        /**
          * Toggles selection of a time slot.
          */
         toggleSlot(slotId) {
-            const index = this.selected_double_slots.indexOf(slotId);
+            const index = this.selectedDoubleSlots.indexOf(slotId);
             if (index > -1) {
-                this.selected_double_slots.splice(index, 1);
+                this.selectedDoubleSlots.splice(index, 1);
             } else {
-                this.selected_double_slots.push(slotId);
+                this.selectedDoubleSlots.push(slotId);
             }
         },
 
@@ -824,8 +982,8 @@ new Vue({
          * Calculates available time slots based on duration.
          */
         calcSlots() {
-            this.double_slots = [];
-            this.selected_double_slots = [];
+            this.doubleSlots = [];
+            this.selectedDoubleSlots = [];
 
             // Slot configuration: maps hour increments to available durations
             const SLOT_DURATIONS = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24];
@@ -838,7 +996,7 @@ new Vue({
                     const slotKey = String(slotNumber);
 
                     if (this.slotFormat[slotKey]) {
-                        this.double_slots.push(this.slotFormat[slotKey]);
+                        this.doubleSlots.push(this.slotFormat[slotKey]);
                     }
                 }
             });
@@ -848,15 +1006,15 @@ new Vue({
          * Resets one-time slot selection state.
          */
         resetOneTime() {
-            this.onetimerender = false;
-            this.one_time_slots = {};
-            this.date_group = {};
-            this.one_time_slots[this.oneTimeDateSelected] = {
+            this.oneTimeRender = false;
+            this.oneTimeSlots = {};
+            this.dateGroup = {};
+            this.oneTimeSlots[this.oneTimeDateSelected] = {
                 slots: []
             };
-            this.selected_onetime_slots = {};
+            this.selectedOnetimeSlots = {};
             this.currentSlotDay = 1;
-            this.onetimerender = true;
+            this.oneTimeRender = true;
         },
 
         /**
@@ -865,8 +1023,8 @@ new Vue({
         getCombinedSlot(slots) {
             const minSlot = Math.min(...slots);
             const maxSlot = Math.max(...slots);
-            const startTime = this.slotFormat[String(minSlot)].start_time;
-            const endTime = this.slotFormat[String(maxSlot)].end_time;
+            const startTime = this.slotFormat[String(minSlot)].startTime;
+            const endTime = this.slotFormat[String(maxSlot)].endTime;
             return `${startTime} - ${endTime}`;
         },
 
@@ -889,14 +1047,14 @@ new Vue({
          * Toggles selection of a date for monthly scheduling.
          */
         selectMonthlyDate(date) {
-            const dateIndex = this.selected_monthly_date.indexOf(date);
+            const dateIndex = this.selectedMonthlyDate.indexOf(date);
 
             if (dateIndex === -1) {
                 // Date not selected, add it
-                this.selected_monthly_date.push(date);
+                this.selectedMonthlyDate.push(date);
             } else {
                 // Date already selected, remove it
-                this.selected_monthly_date.splice(dateIndex, 1);
+                this.selectedMonthlyDate.splice(dateIndex, 1);
             }
         },
 
@@ -904,7 +1062,7 @@ new Vue({
          * Checks if a slot is currently selected.
          */
         isSlotSelected(slotId) {
-            return this.selected_double_slots.includes(slotId);
+            return this.selectedDoubleSlots.includes(slotId);
         },
 
         /**
@@ -1512,7 +1670,7 @@ new Vue({
         // Slot Selection Dialog Methods
         // =====================
         isSlotSelected(slotId) {
-            return this.selected_double_slots.includes(slotId);
+            return this.selectedDoubleSlots.includes(slotId);
         },
 
         formatSlotTime(time) {
@@ -1530,13 +1688,13 @@ new Vue({
 
         cancelSlotSelection() {
             this.scheduleDialog = false;
-            this.selected_double_slots = [];
+            this.selectedDoubleSlots = [];
             this.dateSelected = null;
         },
 
         confirmSlotSelection() {
             // Validate slot selection
-            if (this.selected_double_slots.length === 0) {
+            if (this.selectedDoubleSlots.length === 0) {
                 alert('Please select at least one time slot');
                 return;
             }
@@ -1554,7 +1712,7 @@ new Vue({
 
         confirmOneTimeSlotSelection() {
             // Validate slot selection
-            if (this.selected_double_slots.length === 0) {
+            if (this.selectedDoubleSlots.length === 0) {
                 alert('Please select at least one time slot');
                 return;
             }
@@ -1570,7 +1728,7 @@ new Vue({
             // You can add additional logic here for one-time service
             console.log('One-time slot selected:', {
                 date: this.dateSelected,
-                slots: this.selected_double_slots
+                slots: this.selectedDoubleSlots
             });
         }
     },
@@ -1752,7 +1910,7 @@ new Vue({
 
             // Validate slot selection matches required duration
             const requiredSlots = Math.ceil(this.selectedDuration.hours / 2);
-            if (this.selected_double_slots.length !== requiredSlots) {
+            if (this.selectedDoubleSlots.length !== requiredSlots) {
                 return false;
             }
 

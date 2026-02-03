@@ -190,7 +190,7 @@
                   <!-- No of Visits field (shown for Daily, Weekly, Monthly) -->
                   <div class="col-md-3" v-if="subStat !== 'Custom' && cleaningPolicy === 'Subscription'">
                     <div>
-                      <v-text-field label="No of Visits" type="number" v-model="no_of_visits" dense></v-text-field>
+                      <v-text-field label="No of Visits" type="number" v-model="noOfVisits" dense></v-text-field>
                     </div>
                   </div>
                 </div>
@@ -221,7 +221,7 @@
                 </div>
 
                 <!-- CHOOSE A STARTING DATE button for Weekly, Daily subscriptions -->
-                <div class="row m-0" v-if="cleaningPolicy === 'Subscription' && (subStat === 'Weekly' || subStat === 'Daily') && no_of_visits > 0">
+                <div class="row m-0" v-if="cleaningPolicy === 'Subscription' && (subStat === 'Weekly' || subStat === 'Daily') && noOfVisits > 0">
                   <div class="col-md-12">
                     <v-btn tile color="primary" @click="scheduleDialog = true">
                       <v-icon left>mdi-calendar</v-icon>
@@ -231,7 +231,7 @@
                 </div>
 
                 <!-- Starting Date field and SELECT VISIT DATES button for Subscription/Monthly -->
-                <div v-if="cleaningPolicy === 'Subscription' && subStat === 'Monthly' && no_of_visits > 0" class="row m-0">
+                <div v-if="cleaningPolicy === 'Subscription' && subStat === 'Monthly' && noOfVisits > 0" class="row m-0">
                   <div class="col-md-3">
                     <v-menu v-model="monthlyMenu" :close-on-content-click="false" :nudge-right="40"
                       transition="scale-transition" offset-y min-width="auto">
@@ -631,7 +631,7 @@
                 <h6 class="mb-0" style="font-size: 16px; font-weight: 500;">Select 1 Slots</h6>
                 <div class="d-flex align-items-center">
                   <v-switch
-                    v-model="out_of_shift"
+                    v-model="outOfShift"
                     class="mt-0 pt-0 mr-2"
                     hide-details
                     color="grey"
