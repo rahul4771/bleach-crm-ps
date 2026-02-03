@@ -73,6 +73,7 @@ new Vue({
         no_of_visits: 0, // Number of visits for subscription
         customDateSelected: [], // Array of custom selected dates for Custom subscription
         scheduleDialog: false,
+        oneTimeSlotDialog: false, // Dialog for one-time service slot selection
         scheduleDateSat: false,
         schedule_err_msg: false,
         slot_msg: false,
@@ -128,7 +129,7 @@ new Vue({
                 start_time: '10:00 PM',
                 end_time: '12:00 AM'
             }
-        }, 
+        },
         schedule_serviceTypes_selected: [],
         schedule_serviceTypes: [],
         current_service: '',
@@ -196,9 +197,212 @@ new Vue({
     },
     methods: {
 
-        // =====================
-        // Scheduling & Visit Management
-        // =====================
+        // =================================================
+        // 1. API CALLS & SERVER COMMUNICATION
+        // =================================================
+
+        /**
+         * Fetches service types and groups from the server, sets media URL, and selects the first service by default.
+         * Also handles error by showing a snackbar notification.
+         */
+        getServiceTypes() {
+            fetch('/common/staging/dynamic/get-service-types/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    this.mediaUrl = data.MEDIA_URL;
+                    this.serviceGroups = data.service_groups ?? [];
+                    this.serviceTypes = data.service_types ?? [];
+
+                    // Select first service by default
+                    if (this.serviceTypes.length > 0) {
+                        this.activeTabs.activeServiceTypeId = this.serviceTypes[0].id;
+                    }
+                    if (this.serviceGroups.length > 0) {
+                        this.activeTabs.activeServiceGroupId = this.serviceGroups[0].id;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching service types:', error);
+                    this.snackbar = true;
+                });
+        },
+
+        /**
+         * Fetches area types from the backend and updates the areaTypes property.
+         * Uses the Fetch API to make a GET request to /customer/ajax/getareatypes.
+         * Transforms the response to match v-select format: { value, text }
+         * On success, sets this.area_types to the formatted array.
+         * On error, logs the error to the console.
+         */
+        getAreaTypes() {
+            fetch('/customer/ajax/getareatypes')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Transform API response to v-select format
+                    if (data.area_types && Array.isArray(data.area_types)) {
+                        this.areaTypes = data.area_types.map(item => ({
+                            value: item.id,
+                            text: item.name
+                        }));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching area types:', error);
+                });
+        },
+
+        /**
+         * Fetches service size and price data based on the current service type.
+         */
+        getSize() {
+            let service = this.serviceType;
+            if (service === 'Hourly Cleaning') {
+                service = 'General Cleaning';
+            }
+
+            fetch(`/customer/ajax/getservicesizeprice?service_type=${service}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    this.serviceSize = data;
+                    this.parseSize();
+
+                    if (this.serviceType === 'Rope Access') {
+                        this.ropeAccessTypes = [...new Set(this.sizeData.map(size => size.rope_access_type))];
+                        this.ropeAccessFilter();
+                        return;
+                    }
+
+                    this.windowFilter();
+                })
+                .catch(error => {
+                    console.error('Error fetching size data:', error);
+                    this.snackbar = true;
+                });
+        },
+
+        /**
+         * Checks availability of cleaning slots for selected dates and times.
+         */
+        checkAvailablility() {
+            let serviceTypes = this.schedule_serviceTypes;
+
+            if (this.current_service === 'Hourly Cleaning') {
+                serviceTypes = ['General Cleaning'];
+            }
+
+            fetch('/customer/ajax/multipleservice/multipledates/cleaningslotes/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    number_of_cleaners: this.selectedDuration.cleaners,
+                    cleaning_hours: this.selectedDuration.hours,
+                    service_types: serviceTypes,
+                    shift_availability_check: !this.out_of_shift,
+                    cleaning_datetimes: this.visitDateTime
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    this.slotStat = data;
+
+                    // Mark available visits as 'fixed'
+                    this.visits.forEach(visit => {
+                        if (this.slotStat.available_slotes.includes(visit.dateTime)) {
+                            visit.status = 'fixed';
+                        }
+                    });
+
+                    // Set autofix status based on busy slots
+                    this.autofixStat = this.slotStat.busy_slotes.length === 0;
+                })
+                .catch(error => {
+                    console.error('Error checking availability:', error);
+                    this.snackbar = true;
+                });
+        },
+
+        /**
+         * Fetches available time slots for multiple services.
+         */
+        getMultipleSlots() {
+            this.slot_loader = true;
+            let scheduleServices = this.schedule_serviceTypes;
+
+            if (this.checkKitchen()) {
+                scheduleServices.push('Kitchen Cleaning');
+            }
+
+            fetch(this.url + "/customer/ajax/getmultipleservicecleaningslotes", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    service_types: scheduleServices,
+                    cleaning_date: this.slotDate,
+                    number_of_cleaners: this.selectedDuration.cleaners
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    this.slot_loader = false;
+                    this.timeSlots = data.slotes;
+                    this.parseOneTimeSlots();
+
+                    if (data.Error) {
+                        this.errMsg = data['Error'];
+                    } else {
+                        this.errMsg = '';
+                    }
+
+                    if (!this.time_slot.hasOwnProperty(this.slotDate)) {
+                        this.time_slot[this.slotDate] = {
+                            selectedSlot: []
+                        };
+                    }
+
+                    this.parseSize();
+                })
+                .catch(error => {
+                    console.error('Error fetching multiple slots:', error);
+                    this.slot_loader = false;
+                });
+        },
+
+        // =================================================
+        // 2. SCHEDULING & VISIT CALCULATION
+        // =================================================
+
+        /**
+         * Main visit calculation entry point.
+         */
         findVisits() {
             if (this.current_service === 'Hourly Cleaning') {
                 this.findHourlyCost();
@@ -410,183 +614,6 @@ new Vue({
             this.multiServicesBill[serviceKey].total_cost = totalCost;
         },
 
-        checkAvailablility() {
-            let serviceTypes = this.schedule_serviceTypes;
-
-            if (this.current_service === 'Hourly Cleaning') {
-                serviceTypes = ['General Cleaning'];
-            }
-
-            fetch('/customer/ajax/multipleservice/multipledates/cleaningslotes/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    number_of_cleaners: this.selectedDuration.cleaners,
-                    cleaning_hours: this.selectedDuration.hours,
-                    service_types: serviceTypes,
-                    shift_availability_check: !this.out_of_shift,
-                    cleaning_datetimes: this.visitDateTime
-                })
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    this.slotStat = data;
-
-                    // Mark available visits as 'fixed'
-                    this.visits.forEach(visit => {
-                        if (this.slotStat.available_slotes.includes(visit.dateTime)) {
-                            visit.status = 'fixed';
-                        }
-                    });
-
-                    // Set autofix status based on busy slots
-                    this.autofixStat = this.slotStat.busy_slotes.length === 0;
-                })
-                .catch(error => {
-                    console.error('Error checking availability:', error);
-                    this.snackbar = true;
-                });
-        },
-
-        getCombinedSlot(slots) {
-            const minSlot = Math.min(...slots);
-            const maxSlot = Math.max(...slots);
-            const startTime = this.slotFormat[String(minSlot)].start_time;
-            const endTime = this.slotFormat[String(maxSlot)].end_time;
-            return `${startTime} - ${endTime}`;
-        },
-
-        toggleSlot(slotId) {
-            const index = this.selected_double_slots.indexOf(slotId);
-            if (index > -1) {
-                this.selected_double_slots.splice(index, 1);
-            } else {
-                this.selected_double_slots.push(slotId);
-            }
-        },
-
-        selectDuration(duration) {
-            duration.slots = duration.hours / 2;
-            this.selectedDuration = duration;
-            this.resetOneTime()
-            this.calcSlots()
-            this.getMultipleSlots();
-        },
-
-        resetOneTime(){
-            this.onetimerender=false
-            this.one_time_slots={}
-            this.date_group={}
-            this.one_time_slots[this.oneTimeDateSelected]={
-                slots:[]
-            }
-            this.selected_onetime_slots={}
-            this.currentSlotDay=1
-            this.onetimerender=true
-        },
-
-        getMultipleSlots() {
-            this.slot_loader = true;
-            let scheduleServices = this.schedule_serviceTypes;
-            
-            if (this.checkKitchen()) {
-                scheduleServices.push('Kitchen Cleaning');
-            }
-            
-            fetch(this.url + "/customer/ajax/getmultipleservicecleaningslotes", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    service_types: scheduleServices,
-                    cleaning_date: this.slotDate,
-                    number_of_cleaners: this.selectedDuration.cleaners
-                })
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    this.slot_loader = false;
-                    this.timeSlots = data.slotes;
-                    this.parseOneTimeSlots();
-                    
-                    if (data.Error) {
-                        this.errMsg = data['Error'];
-                    } else {
-                        this.errMsg = '';
-                    }
-                    
-                    if (!this.time_slot.hasOwnProperty(this.slotDate)) {
-                        this.time_slot[this.slotDate] = {
-                            selectedSlot: []
-                        };
-                    }
-                    
-                    this.parseSize();
-                })
-                .catch(error => {
-                    console.error('Error fetching multiple slots:', error);
-                    this.slot_loader = false;
-                });
-        },
-
-        calcSlots() {
-            this.double_slots = [];
-            this.selected_double_slots = [];
-
-            // Slot configuration: maps hour increments to available durations
-            const SLOT_DURATIONS = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24];
-            const HOUR_INCREMENTS = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22];
-
-            // Calculate available double slots based on 2-hour increments
-            HOUR_INCREMENTS.forEach(hourIncrement => {
-                if (SLOT_DURATIONS.includes(2)) {
-                    const slotNumber = (parseInt(hourIncrement) + 2) / 2;
-                    const slotKey = String(slotNumber);
-
-                    if (this.slotFormat[slotKey]) {
-                        this.double_slots.push(this.slotFormat[slotKey]);
-                    }
-                }
-            });
-        },
-
-        selectPrefDay(day) {
-            const dayIndex = this.prefDay.indexOf(day);
-
-            if (dayIndex === -1) {
-                // Day not selected, add it
-                this.prefDay.push(day);
-            } else {
-                // Day already selected, remove it
-                this.prefDay.splice(dayIndex, 1);
-            }
-        },
-
-        selectMonthlyDate(date) {
-            const dateIndex = this.selected_monthly_date.indexOf(date);
-
-            if (dateIndex === -1) {
-                // Date not selected, add it
-                this.selected_monthly_date.push(date);
-            } else {
-                // Date already selected, remove it
-                this.selected_monthly_date.splice(dateIndex, 1);
-            }
-        },
-
         addToSchedule() {
             // Set schedule status
             this.scheduleStatus = this.scheduleStat;
@@ -766,7 +793,139 @@ new Vue({
             this.activeTab = 'Cart';
         },
 
-        arrangeData() {
+        // =================================================
+        // 3. SLOT MANAGEMENT
+        // =================================================
+
+        /**
+         * Toggles selection of a time slot.
+         */
+        toggleSlot(slotId) {
+            const index = this.selected_double_slots.indexOf(slotId);
+            if (index > -1) {
+                this.selected_double_slots.splice(index, 1);
+            } else {
+                this.selected_double_slots.push(slotId);
+            }
+        },
+
+        /**
+         * Sets the selected duration and recalculates slots.
+         */
+        selectDuration(duration) {
+            duration.slots = duration.hours / 2;
+            this.selectedDuration = duration;
+            this.resetOneTime();
+            this.calcSlots();
+            this.getMultipleSlots();
+        },
+
+        /**
+         * Calculates available time slots based on duration.
+         */
+        calcSlots() {
+            this.double_slots = [];
+            this.selected_double_slots = [];
+
+            // Slot configuration: maps hour increments to available durations
+            const SLOT_DURATIONS = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24];
+            const HOUR_INCREMENTS = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22];
+
+            // Calculate available double slots based on 2-hour increments
+            HOUR_INCREMENTS.forEach(hourIncrement => {
+                if (SLOT_DURATIONS.includes(2)) {
+                    const slotNumber = (parseInt(hourIncrement) + 2) / 2;
+                    const slotKey = String(slotNumber);
+
+                    if (this.slotFormat[slotKey]) {
+                        this.double_slots.push(this.slotFormat[slotKey]);
+                    }
+                }
+            });
+        },
+
+        /**
+         * Resets one-time slot selection state.
+         */
+        resetOneTime() {
+            this.onetimerender = false;
+            this.one_time_slots = {};
+            this.date_group = {};
+            this.one_time_slots[this.oneTimeDateSelected] = {
+                slots: []
+            };
+            this.selected_onetime_slots = {};
+            this.currentSlotDay = 1;
+            this.onetimerender = true;
+        },
+
+        /**
+         * Combines multiple slot IDs into a time range string.
+         */
+        getCombinedSlot(slots) {
+            const minSlot = Math.min(...slots);
+            const maxSlot = Math.max(...slots);
+            const startTime = this.slotFormat[String(minSlot)].start_time;
+            const endTime = this.slotFormat[String(maxSlot)].end_time;
+            return `${startTime} - ${endTime}`;
+        },
+
+        /**
+         * Toggles selection of a preferred day for weekly scheduling.
+         */
+        selectPrefDay(day) {
+            const dayIndex = this.prefDay.indexOf(day);
+
+            if (dayIndex === -1) {
+                // Day not selected, add it
+                this.prefDay.push(day);
+            } else {
+                // Day already selected, remove it
+                this.prefDay.splice(dayIndex, 1);
+            }
+        },
+
+        /**
+         * Toggles selection of a date for monthly scheduling.
+         */
+        selectMonthlyDate(date) {
+            const dateIndex = this.selected_monthly_date.indexOf(date);
+
+            if (dateIndex === -1) {
+                // Date not selected, add it
+                this.selected_monthly_date.push(date);
+            } else {
+                // Date already selected, remove it
+                this.selected_monthly_date.splice(dateIndex, 1);
+            }
+        },
+
+        /**
+         * Checks if a slot is currently selected.
+         */
+        isSlotSelected(slotId) {
+            return this.selected_double_slots.includes(slotId);
+        },
+
+        /**
+         * Formats time from 24-hour to 12-hour format with AM/PM.
+         */
+        formatSlotTime(time) {
+            const [hours, minutes] = time.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+            return `${hour12.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+        },
+
+        // =================================================
+        // 4. COST CALCULATION & BILLING
+        // =================================================
+
+        /**
+         * Calculates cost for hourly cleaning services.
+         */
+        findHourlyCost() {
             // Populate service details from multi-service bill
             this.multiServicesBill.forEach((bill, serviceIndex) => {
                 const serviceId = this.getServiceId(bill.service);
@@ -961,104 +1120,7 @@ new Vue({
             this.activeTabs.activeServiceTypeId = typeId;
         },
 
-        // =====================
-        // Data Fetching & Initialization
-        // =====================
-        /**
-         * Fetches service types and groups from the server, sets media URL, and selects the first service by default.
-         * Also handles error by showing a snackbar notification.
-         */
-        getServiceTypes() {
-            fetch('/common/staging/dynamic/get-service-types/')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    this.mediaUrl = data.MEDIA_URL;
-                    this.serviceGroups = data.service_groups ?? [];
-                    this.serviceTypes = data.service_types ?? [];
-
-                    // Select first service by default
-                    if (this.serviceTypes.length > 0) {
-                        this.activeTabs.activeServiceTypeId = this.serviceTypes[0].id;
-                    }
-                    if (this.serviceGroups.length > 0) {
-                        this.activeTabs.activeServiceGroupId = this.serviceGroups[0].id;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching service types:', error);
-                    this.snackbar = true;
-                });
-        },
-
-        /**
-         * Fetches area types from the backend and updates the areaTypes property.
-         * Uses the Fetch API to make a GET request to /customer/ajax/getareatypes.
-         * Transforms the response to match v-select format: { value, text }
-         * On success, sets this.area_types to the formatted array.
-         * On error, logs the error to the console.
-         */
-        getAreaTypes() {
-            fetch('/customer/ajax/getareatypes')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    // Transform API response to v-select format
-                    if (data.area_types && Array.isArray(data.area_types)) {
-                        this.areaTypes = data.area_types.map(item => ({
-                            value: item.id,
-                            text: item.name
-                        }));
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching area types:', error);
-                });
-        },
-
-        /**
-         * Fetches service size and price data based on the current service type.
-         * Normalizes 'Hourly Cleaning' to 'General Cleaning' before making the request.
-         * After fetching, parses the size data and applies appropriate filters based on service type.
-         */
-        getSize() {
-            let service = this.serviceType;
-            if (service === 'Hourly Cleaning') {
-                service = 'General Cleaning';
-            }
-
-            fetch(`/customer/ajax/getservicesizeprice?service_type=${service}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    this.serviceSize = data;
-                    this.parseSize();
-
-                    if (this.serviceType === 'Rope Access') {
-                        this.ropeAccessTypes = [...new Set(this.sizeData.map(size => size.rope_access_type))];
-                        this.ropeAccessFilter();
-                        return;
-                    }
-
-                    this.windowFilter();
-                })
-                .catch(error => {
-                    console.error('Error fetching size data:', error);
-                    this.snackbar = true;
-                });
-        },
+              
 
         /**
          * Parses the serviceSize data fetched from the server.
@@ -1488,6 +1550,28 @@ new Vue({
             // Close dialog and process selection
             this.scheduleDialog = false;
             this.findVisits();
+        },
+
+        confirmOneTimeSlotSelection() {
+            // Validate slot selection
+            if (this.selected_double_slots.length === 0) {
+                alert('Please select at least one time slot');
+                return;
+            }
+
+            // Validate date selection
+            if (!this.dateSelected) {
+                alert('Please select a date');
+                return;
+            }
+
+            // Close dialog and proceed with one-time booking
+            this.oneTimeSlotDialog = false;
+            // You can add additional logic here for one-time service
+            console.log('One-time slot selected:', {
+                date: this.dateSelected,
+                slots: this.selected_double_slots
+            });
         }
     },
     mounted() {
