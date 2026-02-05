@@ -968,6 +968,83 @@
       </div>
     </div>
 
+    <!-- SUBSCRIPTION SCHEDULE SUMMARY VIEW - Display after slot selection -->
+    <div v-if="showSubscriptionScheduleSummary && visitDateTime && visitDateTime.length > 0" class="schedule-summary-container" style="background: white; padding-top: 60px; padding-bottom: 40px;">
+      <!-- Header with Back Button -->
+      <div style="padding: 0 24px; margin-bottom: 32px;">
+        <v-btn 
+          outlined
+          @click="resetScheduleSelection"
+          style="border: 2px solid #3B5998; color: #3B5998; text-transform: uppercase; font-weight: 500; margin-bottom: 24px;"
+        >
+          <v-icon left>mdi-arrow-left</v-icon>
+          BACK
+        </v-btn>
+        <h2 style="font-size: 32px; font-weight: 300; color: #333; margin: 0;">Schedule</h2>
+      </div>
+
+      <!-- Summary Box -->
+      <div style="background: #f5f5f5; padding: 20px 24px; margin: 0 24px 32px 24px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; gap: 60px; flex: 1;">
+          <div>
+            <p style="font-size: 12px; color: #666; margin-bottom: 6px; font-weight: 500;">Cleaning Policy</p>
+            <p style="font-size: 15px; color: #3B5998; font-weight: 500;">[[ cleaningPolicy ]]</p>
+          </div>
+          <div>
+            <p style="font-size: 12px; color: #666; margin-bottom: 6px; font-weight: 500;">Number Of Visits</p>
+            <p style="font-size: 15px; color: #333; font-weight: 500;">[[ noOfVisits ]]</p>
+          </div>
+          <div>
+            <p style="font-size: 12px; color: #666; margin-bottom: 6px; font-weight: 500;">Starting Date</p>
+            <p style="font-size: 15px; color: #333; font-weight: 500;">[[ dateSelected ]]</p>
+          </div>
+        </div>
+        <div>
+          <v-btn color="primary" @click="resetScheduleSelection" class="px-8" large>
+            RESET
+          </v-btn>
+        </div>
+      </div>
+
+      <!-- Visits List -->
+      <div style="padding: 0 24px; margin-bottom: 24px;">
+        <h4 style="font-size: 14px; font-weight: 600; color: #3B5998; margin-bottom: 16px;">
+          Visits
+        </h4>
+
+        <div class="visits-list" style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 32px;">
+          <div 
+            v-for="(visit, index) in visitDateTime"
+            :key="index"
+            style="background: white; border: 1px solid #d0d0d0; border-radius: 4px; padding: 16px; width: 220px; flex-shrink: 0;"
+          >
+            <p style="font-size: 13px; font-weight: 600; color: #333; margin-bottom: 8px;">
+              Visit [[ index + 1 ]] &nbsp; [[ formatVisitDate(visit) ]]
+            </p>
+            <p style="font-size: 12px; color: #666;">
+              [[ formatVisitTime(visit) ]]
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Message and Button -->
+      <div style="text-align: center;">
+        <p style="font-size: 14px; color: #3B5998; margin-bottom: 24px; font-weight: 500;">
+          Please review your schedule
+        </p>
+        <v-btn 
+          color="primary" 
+          @click="proceedWithSchedule"
+          class="px-12"
+          large
+          style="text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;"
+        >
+          PROCEED
+        </v-btn>
+      </div>
+    </div>
+
     <!-- Slot Selection Dialog -->
     <v-dialog v-model="scheduleDialog" max-width="1200px" persistent>
       <v-card>

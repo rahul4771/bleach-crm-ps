@@ -90,6 +90,7 @@ new Vue({
         currentSlotDay: 1, // Current day being selected in multi-day one-time booking
         cleaningSet: [], // Array of cleaning hour requirements per day
         today: moment().format('YYYY-MM-DD'), // Today's date in YYYY-MM-DD format
+        showSubscriptionScheduleSummary: false, // Flag to show subscription schedule summary after selection
         
         slotFormat: {
             "1": {
@@ -1961,6 +1962,40 @@ new Vue({
             return `${hour12.toString().padStart(2, '0')}:${minutes} ${ampm}`;
         },
 
+        formatVisitDate(visit) {
+            // Format date from visitDateTime format (YYYY-MM-DD HH:MM:SS)
+            if (!visit) return '';
+            const datePart = visit.split(' ')[0];
+            return moment(datePart).format('DD-MM-YYYY');
+        },
+
+        formatVisitTime(visit) {
+            // Extract time from visitDateTime format (YYYY-MM-DD HH:MM:SS)
+            if (!visit) return '';
+            const timePart = visit.split(' ')[1];
+            if (!timePart) return '';
+            const [hours, minutes] = timePart.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+            return `${hour12.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+        },
+
+        proceedWithSchedule() {
+            // Proceed with the schedule and move to next step
+            this.showSubscriptionScheduleSummary = false;
+            this.activeTabs.schedule = false;
+            this.activeTabs.cart = true;
+        },
+
+        resetScheduleSelection() {
+            // Reset the schedule and go back to schedule dialog
+            this.showSubscriptionScheduleSummary = false;
+            this.scheduleDialog = true;
+            this.selectedDoubleSlots = [];
+            this.visitDateTime = [];
+        },
+
         onDateChange(date) {
             this.dateSelected = date;
         },
@@ -1984,9 +2019,10 @@ new Vue({
                 return;
             }
 
-            // Close dialog and process selection
+            // Close dialog and show summary
             this.scheduleDialog = false;
             this.findVisits();
+            this.showSubscriptionScheduleSummary = true;
         },
 
         confirmOneTimeSlotSelection() {
