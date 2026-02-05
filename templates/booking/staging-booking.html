@@ -291,6 +291,55 @@
     background: white !important;
     border: none !important;
   }
+
+  /* Slot Card Styles */
+  .available-slot-card {
+    border: 2px solid #4CAF50;
+    border-radius: 8px;
+    background-color: #f1f8f4;
+    color: #333;
+    transition: all 0.2s ease;
+  }
+
+  .available-slot-card:hover {
+    background-color: #e8f5e9;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
+  }
+
+  .not-available-slot-card {
+    border: 2px solid #f44336;
+    border-radius: 8px;
+    background-color: #ffebee;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .not-available-slot-card:hover {
+    background-color: #ffcdd2;
+    box-shadow: 0 2px 8px rgba(244, 67, 54, 0.2);
+  }
+
+  .schedule-details-head {
+    background-color: #f5f5f5;
+    padding: 16px;
+    border-radius: 4px;
+    margin-bottom: 24px;
+  }
+
+  .schedule-details-head b {
+    color: #3B5998;
+    font-size: 12px;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .schedule-heading {
+    color: #3B5998;
+    font-size: 14px;
+    font-weight: 600;
+    padding-bottom: 8px;
+  }
 </style>
 
 <div id="app" v-cloak>
@@ -341,9 +390,14 @@
                     <v-card class="mb-3" outlined>
                       <v-card-title class="d-flex justify-content-between align-items-start pb-2">
                         <span class="font-weight-bold">[[ cartItem.serviceName ]]</span>
-                        <v-btn icon small @click="removeCartItem(cartItem.id)" class="ml-auto">
-                          <v-icon small>mdi-delete</v-icon>
-                        </v-btn>
+                        <div>
+                          <v-btn icon small @click="editExistingSchedule(cartItem.schedule)" class="mr-2" title="Edit Schedule">
+                            <v-icon small>mdi-pencil</v-icon>
+                          </v-btn>
+                          <v-btn icon small @click="removeCartItem(cartItem.id)" title="Delete">
+                            <v-icon small>mdi-delete</v-icon>
+                          </v-btn>
+                        </div>
                       </v-card-title>
                       <v-card-text class="pt-0">
                         <div class="mb-3">[[ cartItem.location ]]</div>
@@ -394,8 +448,162 @@
                   </v-btn>
                 </div>
 
+                <!-- EDIT SCHEDULE SECTION -->
+                <div v-if="editScheduleStat">
+                  <div class="row schedule-details-head mt-4">
+                    <div class="col-md-2">
+                      <div>
+                        <b>Cleaning Policy</b>
+                      </div>
+                      <div>
+                        [[ editScheduleData.cleaning_policy ]]
+                      </div>
+                    </div>
+
+                    <div class="col-md-2">
+                      <div>
+                        <b>Number Of Visits</b>
+                      </div>
+                      <div>
+                        [[ Object.keys(editScheduleData.schedule_details).length ]]
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <div>
+                        <b>Starting Date</b>
+                      </div>
+                      <div>
+                        [[ editScheduleData.schedule_details[1].date ]]
+                      </div>
+                    </div>
+                    <div class="col-md-2 offset-md-2">
+                      <v-btn color="primary" @click="confirmation_dialog=true">
+                        Reset
+                      </v-btn>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12" class="primary-text schedule-heading mt-2">
+                      <b>Visits</b>
+                    </div>
+                    <div class="col-md-2" v-for="(service,sindex) in editScheduleData.schedule_details"
+                      :key="sindex">
+                      <div class="available-slot-card p-2">
+                        <div class="d-flex">
+                          <div>
+                            <b>Visit [[ sindex ]]</b>
+                          </div>
+                          <div class="ml-auto">
+                            [[ service.date ]]
+                          </div>
+                        </div>
+                        <div class="text-center pt-2">
+                          [[ service.time ]]
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- VISIT MANAGEMENT SECTION (shown when there are visits) -->
+                <div class="row m-0 mt-4" v-if="!editScheduleStat && visits.length > 0">
+                  <div class="col-md-12">
+                    <div v-if="cleaningPolicy !== 'One Time Service'">
+                      <div>
+                        Please Change Unavailable Slots
+                      </div>
+                      <div class="row mt-2">
+                        <div class="col-md-2" v-for="(visit,vindex) in visits" :key="vindex">
+                          <div class="available-slot-card p-2"
+                            v-if="slotStat.availableSlotes && slotStat.availableSlotes.includes(visit.dateTime) || visit.status === 'fixed'">
+                            <div class="d-flex">
+                              <div>
+                                <b>Visit [[ (vindex+1) ]]</b>
+                              </div>
+                              <div class="ml-auto">
+                                [[ visit.date ]]
+                              </div>
+                            </div>
+                            <div class="text-center pt-2">
+                              [[ getCombinedSlot(visit.slots) ]]
+                            </div>
+                          </div>
+                          <div class="not-available-slot-card p-2"
+                            v-if="slotStat.availableSlotes && !slotStat.availableSlotes.includes(visit.dateTime) && !checkFixedSlots(visit.dateTime,vindex) && visit.status !== 'fixed'">
+                            <div class="d-flex">
+                              <div>
+                                <b>Visit [[ (vindex+1) ]]</b>
+                              </div>
+                              <div class="ml-auto">
+                                [[ visit.date ]]
+                              </div>
+                            </div>
+                            <div class="text-center pt-2">
+                              [[ getCombinedSlot(visit.slots) ]]
+                            </div>
+                          </div>
+
+                          <!-- autofixed slots-->
+                          <div class="available-slot-card p-2"
+                            v-if="checkFixedSlots(visit.dateTime,vindex) && slotStat.availableSlotes && !slotStat.availableSlotes.includes(visit.dateTime)">
+                            <div class="d-flex">
+                              <div>
+                                <b>Visit [[ (vindex+1) ]]</b>
+                              </div>
+                              <div class="ml-auto">
+                                [[ visit.date ]]
+                              </div>
+                            </div>
+                            <div class="text-center pt-2">
+                              [[ checkFixedSlots(visit.dateTime,vindex) ]]
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="text-center mt-4" v-if="visits.length > 0 && !autofixStat && cleaningPolicy !== 'One Time Service'">
+                        <v-btn color="primary" @click="autoFix()">
+                          Autofix
+                        </v-btn>
+                      </div>
+                      <div class="text-center mt-4" v-if="visits.length > 0 && autofixStat && cleaningPolicy !== 'One Time Service'">
+                        Please select Unavailable dates manually
+                      </div>
+                      <div class="text-center mt-2" v-if="visits.length > 0 && autofixStat && cleaningPolicy !== 'One Time Service'">
+                        <v-btn color="primary" v-if="checkFixStatus()" @click="addToSchedule()">
+                          Proceed
+                        </v-btn>
+                      </div>
+                    </div>
+
+                    <!-- One time cleaning selected slots-->
+                    <div v-if="cleaningPolicy === 'One Time Service'">
+                      <div class="row">
+                        <div class="col-md-2" v-for="(visit,vindex) in selected_onetime_slots" :key="vindex">
+                          <div class="available-slot-card p-2">
+                            <div class="d-flex">
+                              <div></div>
+                              <div class="ml-auto">
+                                [[ vindex ]]
+                              </div>
+                            </div>
+                            <div class="text-center pt-2">
+                              [[ getCombinedOnetimeSlot(visit.slots) ]]
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="text-center mt-4" v-if="oneTimeSelectionStat">
+                    <v-btn color="primary" @click="addOneTimeToSchedule()">
+                      Proceed
+                    </v-btn>
+                  </div>
+                </div>
+
                 <!-- Cleaning Policy, Subscription Plan, Alternate Days/Weeks, and No of Visits - All in one row -->
-                <div class="row m-0" v-if="!scheduleDateSat && !editScheduleStat">
+                <div class="row m-0" v-if="!scheduleDateSat && !editScheduleStat && visits.length === 0">
                   <!-- Cleaning Policy -->
                   <div class="col-md-3">
                     <div>
@@ -672,8 +880,11 @@
                                 <div v-if="isApartmentActive(tab + 1, floorIndex, apartmentIndex)" class="p-4"
                                   style="border: 1px solid #ddd; border-radius: 4px;">
                                   <h6>Floor [[ floorIndex ]] - Apartment [[ apartmentIndex ]]</h6>
-                                  <floor-details-form :floor-index="floorIndex" :apartment-index="apartmentIndex"
-                                    :building-index="tab + 1"></floor-details-form>
+                                  <floor-details-form 
+                                    :floor-index="floorIndex" 
+                                    :apartment-index="apartmentIndex"
+                                    :building-index="tab + 1">
+                                  </floor-details-form>
 
                                   <div class="text-center mt-4">
                                     <button class="btn btn-primary px-5"
@@ -685,8 +896,11 @@
 
                             <!-- FLOOR DETAILS (if no apartments) -->
                             <div class="col-md-12" v-if="floorApartments[tab + 1][floorIndex] === false">
-                              <floor-details-form :floor-index="floorIndex"
-                                :building-index="tab + 1"></floor-details-form>
+                              <floor-details-form 
+                                :floor-index="floorIndex"
+                                :apartment-index="null"
+                                :building-index="tab + 1">
+                              </floor-details-form>
                               <div class="text-center mt-4">
                                 <button class="btn btn-primary px-5"
                                   @click="calculateFloorCost(tab + 1, floorIndex)">Continue</button>
@@ -969,7 +1183,7 @@
     </div>
 
     <!-- SUBSCRIPTION SCHEDULE SUMMARY VIEW - Display after slot selection -->
-    <div v-if="showSubscriptionScheduleSummary && visitDateTime && visitDateTime.length > 0" class="schedule-summary-container" style="background: white; padding-top: 60px; padding-bottom: 40px;">
+    <div v-if="showSubscriptionScheduleSummary || (scheduleDateSat && visitDateTime && visitDateTime.length > 0)" class="schedule-summary-container" style="background: white; padding-top: 60px; padding-bottom: 40px;">
       <!-- Header with Back Button -->
       <div style="padding: 0 24px; margin-bottom: 32px;">
         <v-btn 
@@ -1101,11 +1315,32 @@
           </div>
         </v-card-text>
         <v-card-actions class="pa-4 justify-end">
-          <v-btn color="grey" text @click="cancelSlotSelection" class="px-5" style="text-transform: uppercase;">
+          <v-btn color="grey" text @click="scheduleDialog = false; cancelSlotSelection()" class="px-5" style="text-transform: uppercase;">
             CANCEL
           </v-btn>
-          <v-btn color="primary" @click="confirmSlotSelection" class="px-5 ml-3" style="text-transform: uppercase;">
+          <v-btn color="primary" @click="confirmSlotSelection(); scheduleDialog = false;" class="px-5 ml-3" style="text-transform: uppercase;">
             PROCEED
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Confirmation Dialog for Schedule Reset -->
+    <v-dialog v-model="confirmation_dialog" max-width="400px">
+      <v-card>
+        <v-card-title class="text-h6">
+          Reset Schedule?
+        </v-card-title>
+        <v-card-text>
+          Are you sure you want to reset the schedule? This action cannot be undone.
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="grey" text @click="confirmation_dialog = false">
+            CANCEL
+          </v-btn>
+          <v-btn color="primary" @click="confirmation_dialog = false; editScheduleStat = false;">
+            CONFIRM
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -1116,10 +1351,10 @@
 
 <!-- Vue.js and required scripts -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js' %}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
   integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
   crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js' %}"></script>
 <script type="text/javascript"
   src="https://cdn.jsdelivr.net/npm/browser-image-compression@1.0.13/dist/browser-image-compression.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>

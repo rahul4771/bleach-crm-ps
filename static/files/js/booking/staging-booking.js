@@ -75,15 +75,23 @@ new Vue({
         scheduleDialog: false,
         oneTimeSlotDialog: false, // Dialog for one-time service slot selection
         scheduleDateSat: false,
+        selectedOnetimeSlots: {}, // Object storing selected one-time slots keyed by date
         scheduleErrMsg: false,
         slotMsg: false,
         slotStat: { availableSlotes: [], busySlotes: [] },
         autofixStat: false,
         outOfShift: false,
         editScheduleStat: false, // Flag to track if schedule is being edited
+        editScheduleData: {}, // Data for schedule being edited
+        fixedSlots: {}, // Fixed slots from autoFix
+        confirmation_dialog: false, // Confirmation dialog for schedule reset
+        selected_onetime_slots: [], // Array of selected one-time slots
+        oneTimeSelectionStat: false, // Flag to check if one-time selection is complete
+        monthlyMenu: false, // Monthly menu state
+        monthlyStartDate: null, // Monthly start date selection
         
         // One-Time Slot Properties
-        oneTimeDateSelected: null, // Selected date for one-time slot booking (YYYY-MM-DD format)
+        oneTimeDateSelected: moment().format('YYYY-MM-DD'), // Selected date for one-time slot booking (YYYY-MM-DD format)
         oneTimeRender: true, // Flag to control rendering of one-time slots
         oneTimeSlots: {}, // Object storing selected slots keyed by date
         availableSlotes: [], // Array of available slot numbers for current date
@@ -697,6 +705,28 @@ new Vue({
             this.activeTab = 'Cart';
         },
 
+        /**
+         * Enables edit mode for an existing schedule.
+         * Populates editScheduleData with schedule information and sets editScheduleStat to true.
+         */
+        editExistingSchedule(scheduleData) {
+            this.editScheduleData = scheduleData;
+            this.editScheduleStat = true;
+            this.activeTabs.schedule = true;
+            this.activeTabs.cart = false;
+            this.activeTabs.service = false;
+        },
+
+        /**
+         * Resets the schedule editing state and returns to cart view.
+         */
+        cancelScheduleEdit() {
+            this.editScheduleStat = false;
+            this.editScheduleData = {};
+            this.activeTabs.cart = true;
+            this.activeTabs.schedule = false;
+        },
+
         addOneTimeToSchedule() {
             // Set schedule status
             this.scheduleStatus = this.scheduleStat;
@@ -1045,6 +1075,99 @@ new Vue({
         },
 
         /**
+         * Combines multiple slot IDs into a time range string for one-time slots.
+         */
+        getCombinedOnetimeSlot(slots) {
+            if (!slots || slots.length === 0) return '';
+            const minSlot = Math.min(...slots);
+            const maxSlot = Math.max(...slots);
+            const startTime = this.slotFormat[String(minSlot)].startTime;
+            const endTime = this.slotFormat[String(maxSlot)].endTime;
+            return `${startTime} - ${endTime}`;
+        },
+
+        /**
+         * Checks if fixed slots exist for a given datetime and returns the time range.
+         * Returns false if no fixed slots are found.
+         */
+        checkFixedSlots(slot, index) {
+            const duration = this.visits[index].slots.length * 2;
+            let startTime = '';
+            let endTime = '';
+            let totalTime = '';
+
+            if (this.fixedSlots[slot] && this.fixedSlots[slot] !== 'Not Available') {
+                const start = this.fixedSlots[slot];
+                startTime = moment(start, 'DD-MM-YYYY hh:mm A').format('hh:mm A');
+                const end = moment(start, 'DD-MM-YYYY hh:mm A').add(duration, 'hours');
+                endTime = moment(end).format('hh:mm A');
+                totalTime = startTime + ' - ' + endTime;
+
+                this.visits[index].status = 'fixed';
+                this.visits[index].dateTime = slot.split(' ')[0] + ' ' + startTime;
+                this.visits[index].slots = [];
+
+                let counter = startTime;
+                const limit = endTime;
+                while (moment(counter, 'hh:mm A').isBefore(moment(limit, 'hh:mm A'))) {
+                    for (const i in this.slotFormat) {
+                        if (this.slotFormat[i].start_time === counter) {
+                            this.visits[index].slots.push(parseInt(i));
+                        }
+                    }
+                    counter = moment(counter, 'hh:mm A').add(2, 'hours').format('hh:mm A');
+                }
+
+                return totalTime;
+            } else {
+                return false;
+            }
+        },
+
+        /**
+         * Verifies that all visits have been fixed (scheduled).
+         * Returns true if all visits have status='fixed', false otherwise.
+         */
+        checkFixStatus() {
+            let flag = false;
+            for (let i = 0; i < this.visits.length; i++) {
+                if (this.visits[i].status) {
+                    if (this.visits[i].status === 'fixed') {
+                        flag = true;
+                    } else {
+                        flag = false;
+                        break;
+                    }
+                } else {
+                    flag = false;
+                    break;
+                }
+            }
+            return flag;
+        },
+
+        /**
+         * Calls server API to auto-fix unavailable slots.
+         * Sends request with busy slots and receives fixed slot suggestions.
+         */
+        autoFix() {
+            this.fixedSlots = {};
+            axios.post(this.url + '/customer/ajax/multipleservice/multipledates/cleaningslotes/autofix/', {
+                number_of_cleaners: this.selectedDuration.cleaners,
+                cleaning_hours: this.selectedDuration.hours,
+                service_types: this.scheduleServiceTypes,
+                shift_availability_check: !this.outOfShift,
+                cleaning_datetimes: this.slotStat.busySlotes
+            }).then(response => {
+                this.fixedSlots = response.data.slote_details || {};
+                this.autofixStat = true;
+            }).catch(error => {
+                console.error('Error in autoFix:', error);
+                this.snackbar = true;
+            });
+        },
+
+        /**
          * Toggles selection of a preferred day for weekly scheduling.
          */
         selectPrefDay(day) {
@@ -1106,8 +1229,13 @@ new Vue({
          */
         oneTimeSlotCounter() {
             let counter = 0;
+            if (!this.oneTimeSlots || typeof this.oneTimeSlots !== 'object') {
+                return counter;
+            }
             for (const dateKey in this.oneTimeSlots) {
-                counter += this.oneTimeSlots[dateKey].slots.length;
+                if (this.oneTimeSlots[dateKey] && this.oneTimeSlots[dateKey].slots) {
+                    counter += this.oneTimeSlots[dateKey].slots.length;
+                }
             }
             return counter;
         },
@@ -1748,7 +1876,11 @@ new Vue({
                 cost: cost,
                 buildingIndex: buildingIndex,
                 floorIndex: floorIndex,
-                apartmentIndex: apartmentIndex
+                apartmentIndex: apartmentIndex,
+                schedule: {
+                    cleaning_policy: this.cleaningPolicy,
+                    schedule_details: {}
+                }
             });
         },
 
@@ -1982,6 +2114,24 @@ new Vue({
         },
 
         proceedWithSchedule() {
+            // Update the latest cart item with schedule details
+            if (this.cartItems.length > 0) {
+                const lastCartItem = this.cartItems[this.cartItems.length - 1];
+                lastCartItem.schedule = {
+                    cleaning_policy: this.cleaningPolicy,
+                    schedule_details: {}
+                };
+
+                // Populate schedule details from visits
+                this.visits.forEach((visit, index) => {
+                    const minSlot = Math.min(...visit.slots);
+                    lastCartItem.schedule.schedule_details[index + 1] = {
+                        date: visit.date,
+                        time: this.slotFormat[minSlot].startTime
+                    };
+                });
+            }
+
             // Proceed with the schedule and move to next step
             this.showSubscriptionScheduleSummary = false;
             this.activeTabs.schedule = false;
@@ -1991,9 +2141,200 @@ new Vue({
         resetScheduleSelection() {
             // Reset the schedule and go back to schedule dialog
             this.showSubscriptionScheduleSummary = false;
+            this.scheduleDateSat = false;
             this.scheduleDialog = true;
             this.selectedDoubleSlots = [];
             this.visitDateTime = [];
+            this.visits = [];
+        },
+
+        /**
+         * Proceed with subscription schedule after review
+         * Adds schedule to cart and returns to cart view
+         */
+        proceedWithSchedule() {
+            if (this.visits.length === 0) {
+                alert('No visits scheduled');
+                return;
+            }
+
+            // Add schedule to cart
+            this.addToSchedule();
+        },
+
+        /**
+         * Proceed with one-time service booking after selection
+         * Adds one-time slots to cart and returns to cart view
+         */
+        proceedWithOneTimeBooking() {
+            if (Object.keys(this.selected_onetime_slots).length === 0) {
+                alert('No dates selected');
+                return;
+            }
+
+            // Add one-time service to schedule
+            this.addOneTimeToSchedule();
+        },
+
+        /**
+         * Format time from 24-hour to 12-hour format
+         * @param {string} time - Time string in HH:MM format
+         * @returns {string} Formatted time string with AM/PM
+         */
+        formatSlotTime(time) {
+            if (!time) return '';
+            
+            const [hours, minutes] = time.split(':');
+            const hour = parseInt(hours);
+            const period = hour >= 12 ? 'PM' : 'AM';
+            const displayHour = hour % 12 || 12;
+            
+            return `${displayHour}:${minutes} ${period}`;
+        },
+
+        /**
+         * Format date from YYYY-MM-DD to DD-MM-YYYY
+         * @param {string} dateStr - Date string in YYYY-MM-DD format
+         * @returns {string} Formatted date string
+         */
+        formatDateForDisplay(dateStr) {
+            if (!dateStr) return '';
+            const [year, month, day] = dateStr.split('-');
+            return `${day}-${month}-${year}`;
+        },
+
+        /**
+         * Format visit date for display
+         * @param {object} visit - Visit object containing dateTime
+         * @returns {string} Formatted date string
+         */
+        formatVisitDate(visit) {
+            if (!visit || !visit.dateTime) return '';
+            return visit.dateTime.split(' ')[0];
+        },
+
+        /**
+         * Format visit time for display
+         * @param {object} visit - Visit object containing dateTime
+         * @returns {string} Formatted time string
+         */
+        formatVisitTime(visit) {
+            if (!visit || !visit.dateTime) return '';
+            return visit.dateTime.split(' ')[1];
+        },
+
+        /**
+         * Get visit number from date
+         * @param {string} date - Date string in YYYY-MM-DD format
+         * @returns {number} Visit number
+         */
+        getVisitNumber(date) {
+            const dates = Object.keys(this.selected_onetime_slots);
+            return dates.indexOf(date) + 1;
+        },
+
+        /**
+         * Get earliest date from selected one-time slots
+         * @returns {string} Formatted earliest date
+         */
+        getEarliestDate() {
+            const dates = Object.keys(this.selected_onetime_slots);
+            if (dates.length === 0) return '';
+            
+            const earliest = dates.reduce((min, date) => 
+                moment(date, 'YYYY-MM-DD').isBefore(moment(min, 'YYYY-MM-DD')) ? date : min
+            );
+            
+            return this.formatDateForDisplay(earliest);
+        },
+
+        /**
+         * Calculate total slots selected in one-time booking
+         * @returns {number} Total number of slots selected
+         */
+        calculateTotalSlots() {
+            let total = 0;
+            for (const date in this.selected_onetime_slots) {
+                if (this.selected_onetime_slots[date].slots) {
+                    total += this.selected_onetime_slots[date].slots.length;
+                }
+            }
+            return total;
+        },
+
+        /**
+         * Get combined slot time for display
+         * @param {array} slots - Array of slot numbers
+         * @returns {string} Formatted time range
+         */
+        getCombinedSlotTime(slots) {
+            if (!slots || slots.length === 0) return '';
+            
+            const minSlot = Math.min(...slots);
+            const maxSlot = Math.max(...slots);
+            const startTime = this.slotFormat[minSlot]?.start_time || '';
+            const endTime = this.slotFormat[maxSlot]?.end_time || '';
+            
+            return `${startTime} - ${endTime}`;
+        },
+
+        /**
+         * Get current date in YYYY-MM-DD format
+         * @returns {string} Today's date
+         */
+        getCurrentDate() {
+            return moment().format('YYYY-MM-DD');
+        },
+
+        /**
+         * Check if slot is selected for one-time booking
+         * @param {string} startTime - Slot start time
+         * @param {string} endTime - Slot end time
+         * @param {number} slotNo - Slot number
+         * @returns {boolean} True if slot is selected
+         */
+        checkOneTimeSlot(startTime, endTime, slotNo) {
+            if (!this.oneTimeDateSelected || !this.selectedOnetimeSlots[this.oneTimeDateSelected]) {
+                return false;
+            }
+            return this.selectedOnetimeSlots[this.oneTimeDateSelected].slots.includes(String(slotNo));
+        },
+
+        /**
+         * Check if slot is available for one-time booking
+         * @param {string} startTime - Slot start time
+         * @param {string} endTime - Slot end time
+         * @param {number} slotNo - Slot number
+         * @returns {boolean} True if slot is available
+         */
+        checkOneTimeSlotStat(startTime, endTime, slotNo) {
+            // Safety checks
+            if (!this.oneTimeDateSelected || !this.selectedOnetimeSlots) {
+                return false;
+            }
+
+            const requiredSlots = Math.ceil((this.cleaningSet[this.currentSlotDay - 1]?.[0] || 2) / 2);
+            const currentCount = this.oneTimeSlotCounter();
+            
+            if (currentCount >= requiredSlots) {
+                return false;
+            }
+
+            // Check if already selected
+            if (this.checkOneTimeSlot(startTime, endTime, slotNo)) {
+                return true;
+            }
+
+            // Check if it's adjacent to selected slots
+            if (!this.selectedOnetimeSlots[this.oneTimeDateSelected] || this.selectedOnetimeSlots[this.oneTimeDateSelected].slots.length === 0) {
+                return true;
+            }
+
+            const prevSlot = slotNo - 1;
+            const nextSlot = slotNo + 1;
+            const selectedSlots = this.selectedOnetimeSlots[this.oneTimeDateSelected]?.slots || [];
+
+            return selectedSlots.includes(String(prevSlot)) || selectedSlots.includes(String(nextSlot));
         },
 
         onDateChange(date) {
@@ -2007,6 +2348,10 @@ new Vue({
         },
 
         confirmSlotSelection() {
+            /**
+             * Confirms slot selection and validates input
+             * Closes dialog and triggers visit calculation
+             */
             // Validate slot selection
             if (this.selectedDoubleSlots.length === 0) {
                 alert('Please select at least one time slot');
@@ -2019,10 +2364,20 @@ new Vue({
                 return;
             }
 
-            // Close dialog and show summary
-            this.scheduleDialog = false;
+            // Validate number of visits is set (for subscription)
+            if (this.cleaningPolicy === 'Subscription' && !this.noOfVisits) {
+                alert('Please enter number of visits');
+                return;
+            }
+
+            // Validate subscription plan is selected (for subscription)
+            if (this.cleaningPolicy === 'Subscription' && !this.subStat) {
+                alert('Please select a subscription plan');
+                return;
+            }
+
+            // Close dialog and trigger visit calculation
             this.findVisits();
-            this.showSubscriptionScheduleSummary = true;
         },
 
         confirmOneTimeSlotSelection() {
@@ -2068,24 +2423,37 @@ new Vue({
         });
 
         this.$nextTick(() => {
-            $('#category-carousel').owlCarousel(this.carouselSettings);
-            $('#service-carousel').owlCarousel(this.carouselSettings);
-            this.highlightTodayInDatePicker();
+            try {
+                $('#category-carousel').owlCarousel(this.carouselSettings);
+            } catch (e) {
+                console.warn('Error initializing category carousel:', e);
+            }
+            try {
+                $('#service-carousel').owlCarousel(this.carouselSettings);
+            } catch (e) {
+                console.warn('Error initializing service carousel:', e);
+            }
+            if (typeof this.highlightTodayInDatePicker === 'function') {
+                this.highlightTodayInDatePicker();
+            }
         });
     },
 
     /**
      * Highlights today's date in the v-date-picker component
+     * Safely highlights the current date in the calendar picker with error handling
      */
     highlightTodayInDatePicker() {
-        this.$nextTick(() => {
-            // Get all date buttons in the calendar
-            const dateButtons = document.querySelectorAll('.v-date-picker-table .v-btn');
-            
-            if (dateButtons.length === 0) {
-                console.warn('No date buttons found in calendar');
-                return;
-            }
+        try {
+            this.$nextTick(() => {
+                try {
+                    // Get all date buttons in the calendar
+                    const dateButtons = document.querySelectorAll('.v-date-picker-table .v-btn');
+                    
+                    if (!dateButtons || dateButtons.length === 0) {
+                        console.warn('No date buttons found in calendar');
+                        return;
+                    }
             
             const today = new Date();
             const todayDay = today.getDate().toString();
@@ -2126,7 +2494,13 @@ new Vue({
                     button.removeAttribute('data-today');
                 }
             });
-        });
+                } catch (error) {
+                    console.warn('Error highlighting today in date picker:', error);
+                }
+            });
+        } catch (error) {
+            console.warn('Error in highlightTodayInDatePicker:', error);
+        }
     },
     watch: {
         oneTimeSlotDialog(newVal) {
@@ -2137,6 +2511,8 @@ new Vue({
                 this.currentSlotDay = 1;
                 this.oneTimeSlots = {};
                 this.oneTimeSlots[todayDate] = { slots: [] };
+                this.selectedOnetimeSlots = {};
+                this.selectedOnetimeSlots[todayDate] = { slots: [] };
                 
                 // Initialize cleaningSet with default values if not set
                 if (!this.cleaningSet || this.cleaningSet.length === 0) {
@@ -2148,14 +2524,18 @@ new Vue({
 
                 // Highlight today's date with multiple timing attempts to ensure it works
                 this.$nextTick(() => {
-                    setTimeout(() => {
-                        this.highlightTodayInDatePicker();
-                    }, 150);
+                    if (typeof this.highlightTodayInDatePicker === 'function') {
+                        setTimeout(() => {
+                            this.highlightTodayInDatePicker();
+                        }, 150);
+                    }
                 });
                 
                 // Also try again after a longer delay
                 setTimeout(() => {
-                    this.highlightTodayInDatePicker();
+                    if (typeof this.highlightTodayInDatePicker === 'function') {
+                        this.highlightTodayInDatePicker();
+                    }
                 }, 300);
             }
         },
