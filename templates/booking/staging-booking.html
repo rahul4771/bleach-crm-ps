@@ -178,10 +178,96 @@
     border: none !important;
   }
 
-  /* Current date (today) styling - subtle outline */
+  /* Current date (today) styling - filled circle with distinct appearance */
   .v-date-picker-table .v-btn.v-btn--outlined {
     border-color: #4A6CB5 !important;
     color: #4A6CB5 !important;
+  }
+
+  /* Today's date - highlighted with blue background and white text */
+  .v-date-picker-table .v-btn[aria-current="date"],
+  .v-date-picker-table .v-btn.v-btn--today {
+    background-color: #4A6CB5 !important;
+    color: white !important;
+    border: 2px solid #4A6CB5 !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 4px rgba(74, 108, 181, 0.3) !important;
+  }
+
+  .v-date-picker-table .v-btn[aria-current="date"]:hover,
+  .v-date-picker-table .v-btn.v-btn--today:hover {
+    background-color: #3A5CA5 !important;
+    border-color: #3A5CA5 !important;
+  }
+
+  /* Additional styling for the current date picker */
+  .current-date-picker .v-date-picker-table .v-btn {
+    position: relative;
+  }
+
+  /* Highlight today's date by checking if it matches the 'today' prop */
+  .current-date-picker .v-date-picker-table .v-btn:not(.v-btn--active) {
+    transition: all 0.2s ease;
+  }
+
+  /* Current date indicator - today should always be visually distinct */
+  .current-date-picker .v-date-picker-table .v-btn:not(.v-btn--active) {
+    /* Default styling for non-selected dates */
+  }
+
+  /* Today button styling - filled with primary color to distinguish from other dates */
+  .current-date-picker .v-date-picker-table .v-btn {
+    /* We'll use a more robust selector based on button content */
+  }
+
+  /* Adding a semi-transparent circle for today when not selected */
+  .v-date-picker-header__value {
+    padding-bottom: 4px;
+  }
+
+  /* More prominent today styling - use light blue background when not selected */
+  .v-date-picker-table__date--today:not(.v-btn--active) .v-btn,
+  .v-date-picker-table .v-btn[data-today="true"]:not(.v-btn--active) {
+    background-color: #E3F2FD !important;
+    color: #4A6CB5 !important;
+    border: 2px solid #4A6CB5 !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 4px rgba(74, 108, 181, 0.2) !important;
+    position: relative;
+  }
+
+  /* Add a subtle indicator mark for today */
+  .v-date-picker-table .v-btn[data-today="true"]:not(.v-btn--active)::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background-color: #4A6CB5;
+    border-radius: 50%;
+  }
+
+  /* Today date - when it's also selected */
+  .v-date-picker-table__date--today.v-btn--active .v-btn,
+  .v-date-picker-table .v-btn[data-today="true"].v-btn--active {
+    background-color: #4A6CB5 !important;
+    color: white !important;
+    border: 2px solid #4A6CB5 !important;
+    font-weight: 600 !important;
+  }
+
+  /* Specific overrides for today styling in current date picker */
+  .onetime-date-section .v-date-picker-table .v-btn {
+    transition: all 0.2s ease;
+  }
+
+  /* Force highlight on today's date - use data attribute */
+  [data-today="true"] {
+    background-color: #E3F2FD !important;
+    color: #4A6CB5 !important;
+    border: 2px solid #4A6CB5 !important;
   }
 
   /* Specific overrides for date-picker in menus */
@@ -666,7 +752,7 @@
     <v-dialog v-model="oneTimeSlotDialog" max-width="1200px" persistent>
       <v-card>
         <v-card-title class="text-h5 grey lighten-3">
-          Choose Cleaning Slots
+          Choose Visit Dates--
         </v-card-title>
         <v-card-text class="pa-6">
           <!-- MAIN LAYOUT: DATE PICKER LEFT, SLOTS AND INFO RIGHT -->
@@ -675,12 +761,18 @@
             <!-- LEFT SIDE: DATE PICKER IN BOX -->
             <div style="flex: 0 0 320px;">
               <div class="onetime-date-section" style="background: #f5f5f5; padding: 20px; border-radius: 8px;">
+                <div style="margin-bottom: 12px; font-size: 12px; color: #666; font-weight: 500;">
+                  <span style="display: inline-block; width: 8px; height: 8px; background-color: #4A6CB5; border-radius: 50%; margin-right: 6px; vertical-align: middle;"></span>
+                  Current Date: [[ today ]]
+                </div>
                 <v-date-picker
                   v-model="oneTimeDateSelected"
                   @input="oneTimeNewDateChange()"
-                  :min-date="today"
+                  :min-date="getCurrentDate()"
+                  :today="today"
                   readonly-input
                   color="primary"
+                  class="current-date-picker"
                 ></v-date-picker>
               </div>
             </div>
@@ -795,30 +887,110 @@
       </v-card>
     </v-dialog>
 
+    <!-- SCHEDULE SUMMARY VIEW - Display after slot selection -->
+    <div v-if="selectedOnetimeSlots && Object.keys(selectedOnetimeSlots).length > 0" class="schedule-summary-container" style="background: white; padding-top: 60px; padding-bottom: 40px;">
+      <!-- Header with Back Button -->
+      <div style="padding: 0 24px; margin-bottom: 32px;">
+        <v-btn 
+          outlined
+          @click="resetScheduleSelection"
+          style="border: 2px solid #3B5998; color: #3B5998; text-transform: uppercase; font-weight: 500; margin-bottom: 24px;"
+        >
+          <v-icon left>mdi-arrow-left</v-icon>
+          BACK
+        </v-btn>
+        <h2 style="font-size: 32px; font-weight: 300; color: #333; margin: 0;">Schedule</h2>
+      </div>
+
+      <!-- Summary Box -->
+      <div style="background: #f5f5f5; padding: 20px 24px; margin: 0 24px 32px 24px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; gap: 60px; flex: 1;">
+          <div>
+            <p style="font-size: 12px; color: #666; margin-bottom: 6px; font-weight: 500;">Cleaning Policy</p>
+            <p style="font-size: 15px; color: #3B5998; font-weight: 500;">One Time Service</p>
+          </div>
+          <div>
+            <p style="font-size: 12px; color: #666; margin-bottom: 6px; font-weight: 500;">Number Of Days</p>
+            <p style="font-size: 15px; color: #333; font-weight: 500;">[[ Object.keys(selectedOnetimeSlots).length ]]</p>
+          </div>
+          <div>
+            <p style="font-size: 12px; color: #666; margin-bottom: 6px; font-weight: 500;">Total Slots</p>
+            <p style="font-size: 15px; color: #333; font-weight: 500;">[[ calculateTotalSlots() ]]</p>
+          </div>
+          <div>
+            <p style="font-size: 12px; color: #666; margin-bottom: 6px; font-weight: 500;">Starting Date</p>
+            <p style="font-size: 15px; color: #333; font-weight: 500;">[[ getEarliestDate() ]]</p>
+          </div>
+        </div>
+        <div>
+          <v-btn color="primary" @click="resetScheduleSelection" class="px-8" large>
+            RESET
+          </v-btn>
+        </div>
+      </div>
+
+      <!-- Selected Dates and Slots -->
+      <div style="padding: 0 24px; margin-bottom: 24px;">
+        <h4 style="font-size: 14px; font-weight: 600; color: #3B5998; margin-bottom: 16px;">
+          Selected Dates & Slots
+        </h4>
+
+        <div class="selected-dates-list" style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 32px;">
+          <div 
+            v-for="(slots, date) in selectedOnetimeSlots"
+            :key="date"
+            style="background: white; border: 1px solid #d0d0d0; border-radius: 4px; padding: 16px; width: 220px; flex-shrink: 0;"
+          >
+            <p style="font-size: 13px; font-weight: 600; color: #333; margin-bottom: 8px;">
+              Visit [[ getVisitNumber(date) ]] &nbsp; [[ formatDateForDisplay(date) ]]
+            </p>
+            <p style="font-size: 12px; color: #666;">
+              [[ getCombinedSlotTime(slots.slots) ]]
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Message and Button -->
+      <div style="text-align: center;">
+        <p style="font-size: 14px; color: #3B5998; margin-bottom: 24px; font-weight: 500;">
+          Please select Unavailable dates manually
+        </p>
+        <v-btn 
+          color="primary" 
+          @click="proceedWithOneTimeBooking"
+          class="px-12"
+          large
+          style="text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;"
+        >
+          PROCEED
+        </v-btn>
+      </div>
+    </div>
+
     <!-- Slot Selection Dialog -->
     <v-dialog v-model="scheduleDialog" max-width="1200px" persistent>
       <v-card>
         <v-card-title class="text-h5 grey lighten-3">
-          Choose Visit Dates
+          Choose Visit Dates///
         </v-card-title>
         <v-card-text class="pa-6">
           <div class="row">
             <!-- Calendar Section -->
-            <div class="col-md-5">
-              <v-card class="pa-4" elevation="2" color="primary" dark>
+            <div class="col-md-4">
+              <v-card class="pa-6" >
                 <v-date-picker
                   v-model="dateSelected"
                   :min="new Date().toISOString().substr(0, 10)"
                   full-width
-                  color="white"
-                  header-color="primary"
+                  color="primary"
                   @change="onDateChange"
                 ></v-date-picker>
               </v-card>
             </div>
 
             <!-- Slots Section -->
-            <div class="col-md-7">
+            <div class="col-md-8">
               <!-- Heading and Toggle -->
               <div class="d-flex justify-space-between align-items-center mb-4">
                 <h6 class="mb-0" style="font-size: 16px; font-weight: 500;">Select 1 Slots</h6>

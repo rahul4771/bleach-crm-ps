@@ -63,7 +63,7 @@ new Vue({
         // Scheduling data
         visits: [], // Array of visit dates and slots
         visitDateTime: [], // Array of formatted datetime strings
-        dateSelected: null, // Selected start date
+        dateSelected: moment().format('YYYY-MM-DD'), // Selected start date (default to today)
         selectedDoubleSlots: [], // Selected time slots
         selectedDuration: { hours: 0, cleaners: 1 }, // Duration and cleaners
         subStat: null, // Subscription status: 'Weekly', 'Daily', or null for one-time
@@ -1092,6 +1092,14 @@ new Vue({
         },
 
         /**
+         * Gets the current date in YYYY-MM-DD format.
+         * @returns {string} Current date formatted as YYYY-MM-DD
+         */
+        getCurrentDate() {
+            return moment().format('YYYY-MM-DD');
+        },
+
+        /**
          * Counts total number of one-time slots selected across all dates.
          * @returns {number} Total count of selected slots
          */
@@ -1111,9 +1119,13 @@ new Vue({
         submitOneTimeSlots() {
             this.slotMsg = false;
             const slotCount = this.oneTimeSlotCounter();
-            const slotsRequired = Math.ceil(this.selectedDuration.hours / 2);
+            
+            // Calculate required slots - if no duration set, don't validate slot count
+            const slotsRequired = this.selectedDuration.hours > 0 
+                ? Math.ceil(this.selectedDuration.hours / 2) 
+                : slotCount; // Allow any number of slots if duration not set
 
-            if (slotCount === slotsRequired) {
+            if (slotCount === slotsRequired && slotCount > 0) {
                 this.selectedOnetimeSlots = {};
 
                 for (const dateKey in this.oneTimeSlots) {
@@ -1126,6 +1138,9 @@ new Vue({
 
                 this.oneTimeSlotDialog = false;
                 this.oneTimeSelectionStat = true;
+            } else if (slotCount === 0) {
+                this.slotMsg = true; // Show error if no slots selected
+                alert('Please select at least one time slot');
             } else {
                 this.slotMsg = true;
             }
@@ -1253,9 +1268,96 @@ new Vue({
             this.oneTimeRender = true;
         },
 
+        /**
+         * Calculates total number of slots across all selected dates.
+         * @returns {number} Total number of slots
+         */
+        calculateTotalSlots() {
+            let total = 0;
+            for (const date in this.selectedOnetimeSlots) {
+                total += this.selectedOnetimeSlots[date].slots.length;
+            }
+            return total;
+        },
+
+        /**
+         * Gets the earliest date from selected one-time slots.
+         * @returns {string} Formatted date (DD-MM-YYYY)
+         */
+        getEarliestDate() {
+            const dates = Object.keys(this.selectedOnetimeSlots);
+            if (dates.length === 0) return '';
+            
+            let earliest = dates[0];
+            for (const date of dates) {
+                if (moment(date, 'YYYY-MM-DD').isBefore(moment(earliest, 'YYYY-MM-DD'))) {
+                    earliest = date;
+                }
+            }
+            
+            return this.formatDateForDisplay(earliest);
+        },
+
+        /**
+         * Formats date from YYYY-MM-DD to DD-MM-YYYY format.
+         * @param {string} date - Date in YYYY-MM-DD format
+         * @returns {string} Formatted date in DD-MM-YYYY format
+         */
+        formatDateForDisplay(date) {
+            const [year, month, day] = date.split('-');
+            return `${day}-${month}-${year}`;
+        },
+
+        /**
+         * Gets the visit number for a given date.
+         * @param {string} date - Date in YYYY-MM-DD format
+         * @returns {number} Visit number
+         */
+        getVisitNumber(date) {
+            const dates = Object.keys(this.selectedOnetimeSlots).sort();
+            return dates.indexOf(date) + 1;
+        },
+
+        /**
+         * Gets combined slot time range for a date.
+         * @param {array} slots - Array of slot numbers
+         * @returns {string} Time range string
+         */
+        getCombinedSlotTime(slots) {
+            if (!slots || slots.length === 0) return '';
+            
+            const minSlot = Math.min(...slots.map(s => parseInt(s)));
+            const maxSlot = Math.max(...slots.map(s => parseInt(s)));
+            
+            const startTime = this.slotFormat[String(minSlot)].startTime;
+            const endTime = this.slotFormat[String(maxSlot)].endTime;
+            
+            return `${startTime} - ${endTime}`;
+        },
+
+        /**
+         * Resets the schedule selection and shows the slot selection dialog again.
+         */
+        resetScheduleSelection() {
+            this.selectedOnetimeSlots = {};
+            this.oneTimeSlots = {};
+            this.oneTimeDateSelected = this.getCurrentDate();
+            this.currentSlotDay = 1;
+            this.oneTimeSlotDialog = true;
+            this.loadAvailableSlots();
+        },
+
+        /**
+         * Proceeds with one-time booking after reviewing schedule.
+         */
+        proceedWithOneTimeBooking() {
+            // Trigger the add to schedule logic
+            this.addOneTimeToSchedule();
+        },
+
         // =================================================
         // 4. COST CALCULATION & BILLING
-        // =================================================
+        // ================================================= 
 
         /**
          * Calculates cost for hourly cleaning services.
@@ -1889,32 +1991,36 @@ new Vue({
 
         confirmOneTimeSlotSelection() {
             // Validate slot selection
-            if (this.selectedDoubleSlots.length === 0) {
+            if (this.oneTimeSlotCounter() === 0) {
                 alert('Please select at least one time slot');
                 return;
             }
 
-            // Validate date selection
-            if (!this.dateSelected) {
+            // Validate date selection - check if date exists and is not empty/null
+            if (!this.oneTimeDateSelected || this.oneTimeDateSelected.trim() === '') {
                 alert('Please select a date');
+                return;
+            }
+
+            // Additional check: ensure date is in valid format
+            const selectedDate = moment(this.oneTimeDateSelected);
+            if (!selectedDate.isValid()) {
+                alert('Please select a valid date');
                 return;
             }
 
             // Close dialog and proceed with one-time booking
             this.oneTimeSlotDialog = false;
-            // You can add additional logic here for one-time service
-            console.log('One-time slot selected:', {
-                date: this.dateSelected,
-                slots: this.selectedDoubleSlots
-            });
+            // Process one-time slot selection
+            this.submitOneTimeSlots();
         }
     },
     mounted() {
         this.getServiceTypes();
         this.getAreaTypes();
 
-        // Initialize one-time slot dialog
-        this.oneTimeDateSelected = this.today;
+        // Initialize one-time slot dialog with current date
+        this.oneTimeDateSelected = this.getCurrentDate();
         this.loadAvailableSlots();
 
         // Initialize slot format mapping
@@ -1928,22 +2034,93 @@ new Vue({
         this.$nextTick(() => {
             $('#category-carousel').owlCarousel(this.carouselSettings);
             $('#service-carousel').owlCarousel(this.carouselSettings);
+            this.highlightTodayInDatePicker();
+        });
+    },
+
+    /**
+     * Highlights today's date in the v-date-picker component
+     */
+    highlightTodayInDatePicker() {
+        this.$nextTick(() => {
+            // Get all date buttons in the calendar
+            const dateButtons = document.querySelectorAll('.v-date-picker-table .v-btn');
+            
+            if (dateButtons.length === 0) {
+                console.warn('No date buttons found in calendar');
+                return;
+            }
+            
+            const today = new Date();
+            const todayDay = today.getDate().toString();
+            const todayMonth = today.getMonth();
+            const todayYear = today.getFullYear();
+            
+            // Get the calendar header to verify we're viewing the correct month/year
+            const headerElement = document.querySelector('.v-date-picker-header__value');
+            
+            let isCurrentMonth = true;
+            if (headerElement) {
+                const headerText = headerElement.textContent.trim();
+                const months = ['January', 'February', 'March', 'April', 'May', 'June',
+                              'July', 'August', 'September', 'October', 'November', 'December'];
+                const currentMonth = months[todayMonth];
+                const currentYear = todayYear.toString();
+                isCurrentMonth = headerText.includes(currentMonth) && headerText.includes(currentYear);
+            }
+            
+            // Process all date buttons
+            dateButtons.forEach(button => {
+                const buttonText = button.textContent.trim();
+                
+                // Check if button text matches today's day number and we're in current month
+                if (buttonText === todayDay && isCurrentMonth) {
+                    // Set the data attribute
+                    button.setAttribute('data-today', 'true');
+                    
+                    // Apply inline styles to ensure they work
+                    button.style.backgroundColor = '#E3F2FD';
+                    button.style.color = '#4A6CB5';
+                    button.style.border = '2px solid #4A6CB5';
+                    button.style.fontWeight = '600';
+                    button.style.boxShadow = '0 2px 4px rgba(74, 108, 181, 0.2)';
+                    button.style.borderRadius = '4px';
+                } else {
+                    // Remove today attribute from other buttons
+                    button.removeAttribute('data-today');
+                }
+            });
         });
     },
     watch: {
         oneTimeSlotDialog(newVal) {
             if (newVal) {
-                // Initialize when dialog opens
-                this.oneTimeDateSelected = this.today;
+                // Initialize when dialog opens - use current date, not cached date
+                const todayDate = moment().format('YYYY-MM-DD');
+                this.oneTimeDateSelected = todayDate;
                 this.currentSlotDay = 1;
                 this.oneTimeSlots = {};
+                this.oneTimeSlots[todayDate] = { slots: [] };
                 
                 // Initialize cleaningSet with default values if not set
                 if (!this.cleaningSet || this.cleaningSet.length === 0) {
                     this.cleaningSet = [[4]]; // Default: 4 hours (2 slots) for first day
                 }
-                
+
+                // Load available slots first
                 this.loadAvailableSlots();
+
+                // Highlight today's date with multiple timing attempts to ensure it works
+                this.$nextTick(() => {
+                    setTimeout(() => {
+                        this.highlightTodayInDatePicker();
+                    }, 150);
+                });
+                
+                // Also try again after a longer delay
+                setTimeout(() => {
+                    this.highlightTodayInDatePicker();
+                }, 300);
             }
         },
         'activeTabs.activeServiceTypeId'(newVal) {
@@ -2030,6 +2207,14 @@ new Vue({
                     }
                 }
             }
+        },
+        oneTimeDateSelected(newVal) {
+            // Highlight today's date whenever the selected date changes
+            setTimeout(() => {
+                this.$nextTick(() => {
+                    this.highlightTodayInDatePicker();
+                });
+            }, 50);
         }
     },
     computed: {
