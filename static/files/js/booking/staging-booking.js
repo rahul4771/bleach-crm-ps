@@ -1681,14 +1681,18 @@ const app = new Vue({
                 schedule_serviceTypes = []
                 schedule_serviceTypes.push('General Cleaning')
             }
-            axios.post(this.url + '/customer/ajax/multipleservice/multipledates/cleaningslotes/', {
-                number_of_cleaners: this.selectedDuration.cleaners,
-                cleaning_hours: this.selectedDuration.hours,
-                service_types: schedule_serviceTypes,
-                shift_availability_check: !this.out_of_shift,
-                cleaning_datetimes: this.visitDateTime
-            }).then(response => {
-                this.slotStat = response.data
+            fetch(this.url + '/customer/ajax/multipleservice/multipledates/cleaningslotes/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    number_of_cleaners: this.selectedDuration.cleaners,
+                    cleaning_hours: this.selectedDuration.hours,
+                    service_types: schedule_serviceTypes,
+                    shift_availability_check: !this.out_of_shift,
+                    cleaning_datetimes: this.visitDateTime
+                })
+            }).then(response => response.json()).then(slotStat => {
+                this.slotStat = slotStat
                 for (let i = 0; i < this.visits.length; i++) {
                     if (this.slotStat.available_slotes.includes(this.visits[i].dateTime)) {
                         this.visits[i].status = 'fixed'
@@ -1707,14 +1711,18 @@ const app = new Vue({
         },
         autoFix() {
             this.fixedSlots = {}
-            axios.post(this.url + '/customer/ajax/multipleservice/multipledates/cleaningslotes/autofix/', {
-                number_of_cleaners: this.selectedDuration.cleaners,
-                cleaning_hours: this.selectedDuration.hours,
-                service_types: this.schedule_serviceTypes,
-                shift_availability_check: !this.out_of_shift,
-                cleaning_datetimes: this.slotStat.busy_slotes
-            }).then(response => {
-                this.fixedSlots = response.data.slote_details
+            fetch(this.url + '/customer/ajax/multipleservice/multipledates/cleaningslotes/autofix/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    number_of_cleaners: this.selectedDuration.cleaners,
+                    cleaning_hours: this.selectedDuration.hours,
+                    service_types: this.schedule_serviceTypes,
+                    shift_availability_check: !this.out_of_shift,
+                    cleaning_datetimes: this.slotStat.busy_slotes
+                })
+            }).then(response => response.json()).then(slotData => {
+                this.fixedSlots = slotData.slote_details
                 this.autofixStat = true
 
 
@@ -1779,14 +1787,16 @@ const app = new Vue({
             }
         },
         getIp() {
-            axios.get('https://www.cloudflare.com/cdn-cgi/trace').then((response) => {
-
-                response.data = response.data.trim().split('\n').reduce(function (obj, pair) {
-                    pair = pair.split('=');
-                    return obj[pair[0]] = pair[1], obj;
-                }, {});
-                console.log(response)
-                this.ip_address = response.data.ip
+            fetch('https://www.cloudflare.com/cdn-cgi/trace')
+                .then(response => response.text())
+                .then((data) => {
+                    const response = {}
+                    data.trim().split('\n').forEach(pair => {
+                        const [key, value] = pair.split('=')
+                        response[key] = value
+                    })
+                    console.log(response)
+                    this.ip_address = response.ip
             })
         },
         uploadFile() {
@@ -1825,35 +1835,29 @@ const app = new Vue({
         /* ================================================================
             8. API & SERVER CALL METHODS
             ================================================================
-            Axios HTTP requests for backend communication
+            fetch HTTP requests for backend communication
         ================================================================ */
 
         getServices() {
-            axios
-                .get(
-                    this.url + "/customer/ajax/getservicetypes"
-                )
-                .then((response) => {
-                    this.serviceTypesData = response.data.service_types
+            fetch(this.url + "/customer/ajax/getservicetypes")
+                .then(response => response.json())
+                .then((data) => {
+                    this.serviceTypesData = data.service_types
                 })
         },
         getGovernorate() {
-            axios
-                .get(
-                    this.url + "/customer/ajax/getgovernorates"
-                )
-                .then((response) => {
-                    this.cust_governorates = response.data.governorates
+            fetch(this.url + "/customer/ajax/getgovernorates")
+                .then(response => response.json())
+                .then((data) => {
+                    this.cust_governorates = data.governorates
                 })
         },
         getAreas() {
             const governorate = this.serviceDetails.address_details.governorate
-            axios
-                .get(
-                    this.url + "/customer/ajax/getareas?governorate_id=" + governorate
-                )
-                .then((response) => {
-                    this.cust_areas = response.data.areas
+            fetch(this.url + "/customer/ajax/getareas?governorate_id=" + governorate)
+                .then(response => response.json())
+                .then((data) => {
+                    this.cust_areas = data.areas
                 })
         },
         getServiceId(service) {
@@ -2533,12 +2537,10 @@ const app = new Vue({
         },
         changeNewKitchen() {
             this.kitchenData.size = ''
-            axios
-                .get(
-                    this.url + "/customer/ajax/getservicesizeprice?service_type=Kitchen Cleaning"
-                )
-                .then((response) => {
-                    this.kitchenSize = response.data;
+            fetch(this.url + "/customer/ajax/getservicesizeprice?service_type=Kitchen Cleaning")
+                .then(response => response.json())
+                .then((kitchenSize) => {
+                    this.kitchenSize = kitchenSize;
                     this.kitchenSizeData = [];
                     for (const kitchen of this.kitchenSize) {
                         kitchen["combinedSize"] =
@@ -2605,10 +2607,10 @@ const app = new Vue({
          * Sets otpStat on success, errorStat on failure
          */
         sendOtp() {
-            axios
-                .get(`${this.url}/customer/ajax/addressotpsend?mobile_number=${this.mob_number}`)
-                .then((response) => {
-                    this.otpStat = !response.data.success;
+            fetch(`${this.url}/customer/ajax/addressotpsend?mobile_number=${this.mob_number}`)
+                .then(response => response.json())
+                .then((data) => {
+                    this.otpStat = !data.success;
                     this.errorStat = !this.otpStat;
                 })
                 .catch((error) => {
@@ -2622,12 +2624,12 @@ const app = new Vue({
          * On success, retrieves customer details and sets first address as selected
          */
         verifyOtp() {
-            axios
-                .get(`${this.url}/customer/ajax/addressotpverify?address_otp=${this.mob_otp}`)
-                .then((response) => {
-                    if (response.data.success) {
+            fetch(`${this.url}/customer/ajax/addressotpverify?address_otp=${this.mob_otp}`)
+                .then(response => response.json())
+                .then((data) => {
+                    if (data.success) {
                         this.verificationStat = true;
-                        this.customerDetails = response.data;
+                        this.customerDetails = data;
                         this.selectedAddress = this.customerDetails.customer_addresses?.[0] || null;
                         this.verifyStat = true;
                         this.errorVerifyStat = false;
@@ -2647,12 +2649,12 @@ const app = new Vue({
          * Used for testing without actual OTP delivery
          */
         verifyTest() {
-            axios
-                .get(`${this.url}/customer/ajax/addressotpverifytest?mobile_number=${this.mob_number}`)
-                .then((response) => {
-                    if (response.data.success) {
+            fetch(`${this.url}/customer/ajax/addressotpverifytest?mobile_number=${this.mob_number}`)
+                .then(response => response.json())
+                .then((data) => {
+                    if (data.success) {
                         this.verificationStat = true;
-                        this.customerDetails = response.data;
+                        this.customerDetails = data;
                         this.selectedAddress = this.customerDetails.customer_addresses?.[0] || null;
                         this.verifyStat = true;
                         this.errorVerifyStat = false;
@@ -3402,19 +3404,20 @@ const app = new Vue({
             if (this.scheduleStatus) {
                 posturl = '/customer/evaluatorbookingmultiplephase2/together/'
 
-                axios
-                    .post(
-                        this.url + posturl + this.userid + '/', this.serviceDetails
-
-                    )
-                    .then((response) => {
+                fetch(this.url + posturl + this.userid + '/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(this.serviceDetails)
+                })
+                    .then(response => response.json())
+                    .then((data) => {
                         this.submit_loader = false
                         // console.log("booking details is "+response)
-                        this.phase2Result = response.data
-                        if (response.data.success) {
+                        this.phase2Result = data
+                        if (data.success) {
                             this.responseText = 'Booking Successful'
                             this.snackbar = true
-                            // this.getBookingDetails(response.data.booking_id)
+                            // this.getBookingDetails(data.booking_id)
                             this.last_image_stat = true
                             this.uploadImages()
                             //window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
@@ -3452,23 +3455,23 @@ const app = new Vue({
                     totalCost = totalCost + this.serviceDetails.service_details[data[i]].total_cost
                 }
                 // var res=await this.seperateBookRequest(posturl,totalCost,groupData)
-                const res = await axios
-                    .post(
-                        this.url + posturl + this.userid + '/',
-                        {
-                            estimated_cost: totalCost,
-                            total_cost: totalCost,
-                            service_details: groupData,
-                            shift_availability_check: this.serviceDetails.service_details[0].shift_availability_check
-                        }
-
-                    )
-                    .then((response) => {
+                const res = await fetch(this.url + posturl + this.userid + '/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        estimated_cost: totalCost,
+                        total_cost: totalCost,
+                        service_details: groupData,
+                        shift_availability_check: this.serviceDetails.service_details[0].shift_availability_check
+                    })
+                })
+                    .then(response => response.json())
+                    .then((data) => {
                         this.submit_loader = false
                         //  console.log("booking details is "+response)
-                        this.phase2Result = response.data
+                        this.phase2Result = data
                         groupData = {}
-                        if (response.data.success) {
+                        if (data.success) {
                             this.responseText = 'Booking Successful'
                             this.snackbar = true
 
@@ -3481,11 +3484,11 @@ const app = new Vue({
                                 this.last_image_stat = false
                             }
                             this.uploadImages()
-                            return response
+                            return data
 
                         }
                         else {
-                            this.responseText = response.data.Error
+                            this.responseText = data.Error
                             this.snackbar = true
                         }
 
@@ -3503,17 +3506,17 @@ const app = new Vue({
 
         /* This function is deprecated -> keeping it for future purpose*/
         async seperateBookRequest(posturl, totalCost, groupData) {
-            axios
-                .post(
-                    this.url + posturl + this.userid + '/',
-                    {
-                        estimated_cost: totalCost,
-                        total_cost: totalCost,
-                        service_details: groupData
-                    }
-
-                )
-                .then((response) => {
+            fetch(this.url + posturl + this.userid + '/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    estimated_cost: totalCost,
+                    total_cost: totalCost,
+                    service_details: groupData
+                })
+            })
+                .then(response => response.json())
+                .then((data) => {
                     this.submit_loader = false
                     this.phase2Result = response.data
                     groupData = {}
@@ -3548,15 +3551,16 @@ const app = new Vue({
             const params = Object.fromEntries(urlSearchParams.entries());
 
 
-            axios
-                .post(
-                    this.url + '/customer/evaluatorbookingmultiplephase2/customer/' + this.userid + '/', this.serviceDetails
+            fetch(this.url + '/customer/evaluatorbookingmultiplephase2/customer/' + this.userid + '/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(this.serviceDetails)
+            })
+                .then(response => response.json())
+                .then((data) => {
 
-                )
-                .then((response) => {
-
-                    this.phase2Result = response.data
-                    if (response.data.success) {
+                    this.phase2Result = data
+                    if (data.success) {
                         this.responseText = 'Booking Successful'
                         this.snackbar = true
                         this.last_image_stat = true
@@ -3579,12 +3583,12 @@ const app = new Vue({
                 for (const imageData of serviceImages.images) {
                     image.append('media', imageData.file)
                 }
-                await axios
-                    .post(
-                        this.url + "/customer/bookingmediasave", image
-
-                    )
-                    .then((response) => {
+                await fetch(this.url + "/customer/bookingmediasave", {
+                    method: 'POST',
+                    body: image
+                })
+                    .then(response => response.json())
+                    .then((data) => {
                         // this.submit_loader=false
 
                         if (this.last_image_stat) {
@@ -3604,17 +3608,14 @@ const app = new Vue({
 
         },
         getBookingDetails(bkid) {
-            axios
-                .get(
-                    this.url + "/customer/bookingphase3?booking_id=" + bkid
-
-                )
-                .then((response) => {
-                    this.bookingMultiData = response.data
-                    this.udf3 = response.data.order_details.order_status
-                    const order_no = response.data.order_details.order_no
-                    this.gateway_eval = order_no.substring(3, order_no.length) + response.data.encryption_key
-                    this.gateway_price = response.data.order_details.total_amount
+            fetch(this.url + "/customer/bookingphase3?booking_id=" + bkid)
+                .then(response => response.json())
+                .then((data) => {
+                    this.bookingMultiData = data
+                    this.udf3 = data.order_details.order_status
+                    const order_no = data.order_details.order_no
+                    this.gateway_eval = order_no.substring(3, order_no.length) + data.encryption_key
+                    this.gateway_price = data.order_details.total_amount
 
 
                 })
@@ -3625,13 +3626,15 @@ const app = new Vue({
         async getAddons() {
             this.addons = []
             const ser = 'Kitchen Cleaning'
-            axios.get(this.url + '/customer/ajax/getserviceaddons?service_type=' + ser).then(response => {
-                this.addons = response.data.service_addons
-                this.parseAddons()
-
-            }).catch((error) => {
-                console.log(error)
-            })
+            fetch(this.url + '/customer/ajax/getserviceaddons?service_type=' + ser)
+                .then(response => response.json())
+                .then(data => {
+                    this.addons = data.service_addons
+                    this.parseAddons()
+                })
+                .catch((error) => {
+                    console.log(error)
+                })
         },
         findAddons(addon) {
 
@@ -3737,17 +3740,18 @@ const app = new Vue({
                 schedule_services.push('Kitchen Cleaning')
             }
 
-            axios
-                .post(
-                    this.url + "/customer/ajax/getmultipleservicecleaningslotes", { service_types: schedule_services, cleaning_date: this.slotDate, number_of_cleaners: this.selectedDuration.cleaners }
-
-                )
-                .then((response) => {
+            fetch(this.url + "/customer/ajax/getmultipleservicecleaningslotes", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ service_types: schedule_services, cleaning_date: this.slotDate, number_of_cleaners: this.selectedDuration.cleaners })
+            })
+                .then(response => response.json())
+                .then((data) => {
                     this.slot_loader = false
-                    this.timeSlots = response.data.slotes;
+                    this.timeSlots = data.slotes;
                     this.parseOneTimeSlots()
-                    if (response.data.Error) {
-                        this.errMsg = response.data['Error']
+                    if (data.Error) {
+                        this.errMsg = data['Error']
                     }
                     else {
                         this.errMsg = ''
@@ -3779,18 +3783,15 @@ const app = new Vue({
         },
         getTimeSlots() {
             this.timeSlots = {};
-            axios
-                .get(
-                    this.url + "/customer/ajax/getcleaningslotes?service_type=" +
-                    this.serviceType +
-                    "&number_of_cleaners=" +
-                    this.selectedDuration.cleaners +
-                    "&cleaning_date=" +
-                    this.slotDate
-
-                )
-                .then((response) => {
-                    this.timeSlots = response.data.slotes;
+            fetch(this.url + "/customer/ajax/getcleaningslotes?service_type=" +
+                this.serviceType +
+                "&number_of_cleaners=" +
+                this.selectedDuration.cleaners +
+                "&cleaning_date=" +
+                this.slotDate)
+                .then(response => response.json())
+                .then((data) => {
+                    this.timeSlots = data.slotes;
                     if (!this.time_slot.hasOwnProperty(this.slotDate)) {
                         this.time_slot[this.slotDate] = {
                             selectedSlot: [],
@@ -3804,12 +3805,10 @@ const app = new Vue({
                 });
         },
         getAreaTypes() {
-            axios
-                .get(
-                    this.url + "/customer/ajax/getareatypes"
-                )
-                .then((response) => {
-                    this.area_types = response.data['area_types'];
+            fetch(this.url + "/customer/ajax/getareatypes")
+                .then(response => response.json())
+                .then((data) => {
+                    this.area_types = data['area_types'];
 
                 })
                 .catch((error) => {
@@ -3821,12 +3820,10 @@ const app = new Vue({
             if (service == 'Hourly Cleaning') {
                 service = 'General Cleaning'
             }
-            axios
-                .get(
-                    this.url + "/customer/ajax/getservicesizeprice?service_type=" + service
-                )
-                .then((response) => {
-                    this.serviceSize = response.data;
+            fetch(this.url + "/customer/ajax/getservicesizeprice?service_type=" + service)
+                .then(response => response.json())
+                .then((data) => {
+                    this.serviceSize = data;
                     this.parseSize();
                     if (this.serviceType == 'Rope Access') {
                         this.ropeAccessTypes = [...new Set(this.sizeData.map(size => size.rope_access_type))];
@@ -5345,15 +5342,14 @@ const app = new Vue({
             this.building[building].floors[floor].apartments[apartment].cost = "";
         },
         getKitchenProductivity() {
-            axios
-                .get(
-                    this.url + "/customer/ajax/getserviceproductivity?service_type=" +
-                    'Kitchen Cleaning'
-                ).then(response => {
-                    this.new_kitchen_cabinet_productivity = response.data.newkitchenwithcabinet_perhour_cleaning
-                    this.new_kitchen_nocabinet_productivity = response.data.newkitchenwithout_perhour_cleaning
-                    this.old_kitchen_cabinet_productivity = response.data.oldkitchenwithcabinet_perhour_cleaning
-                    this.old_kitchen_nocabinet_productivity = response.data.oldkitchenwithoutcabinet_perhour_cleaning
+            fetch(this.url + "/customer/ajax/getserviceproductivity?service_type=" +
+                'Kitchen Cleaning')
+                .then(response => response.json())
+                .then(data => {
+                    this.new_kitchen_cabinet_productivity = data.newkitchenwithcabinet_perhour_cleaning
+                    this.new_kitchen_nocabinet_productivity = data.newkitchenwithout_perhour_cleaning
+                    this.old_kitchen_cabinet_productivity = data.oldkitchenwithcabinet_perhour_cleaning
+                    this.old_kitchen_nocabinet_productivity = data.oldkitchenwithoutcabinet_perhour_cleaning
                 })
         },
         checkIsHourly() {
@@ -5379,43 +5375,41 @@ const app = new Vue({
                 else {
                     let service_to_select = this.schedule_serviceTypes[k]
                 }
-                axios
-                    .get(
-                        this.url + "/customer/ajax/getserviceproductivity?service_type=" +
-                        service_to_select
-                    )
-                    .then((response) => {
+                fetch(this.url + "/customer/ajax/getserviceproductivity?service_type=" +
+                    service_to_select)
+                    .then(response => response.json())
+                    .then((data) => {
                         let total_estimated_size = 0
                         let total_highpricewindow_size = 0;
                         let total_lowpricewindow_size = 0;
                         let total_highpricefacade_size = 0;
                         let total_lowpricefacade_size = 0;
                         let selected_service = ''
-                        let data = '';
+                        let responseData = '';
 
                         if (service_to_select === 'Rope Access') {
 
                             const firstRopeAccess = this.multiServicesBill[k].bill.find(bill => bill.section.rope_access_type)?.section.rope_access_type;
                             if (firstRopeAccess) {
 
-                                if (response.data[firstRopeAccess]) {
-                                    data = response.data[firstRopeAccess]
-                                    this.max_cleaners.push(response.data[firstRopeAccess].max_cleaners)
-                                    this.min_cleaners.push(response.data[firstRopeAccess].min_cleaners)
-                                    this.max_hours.push(response.data[firstRopeAccess].max_hours)
-                                    this.min_hours.push(response.data[firstRopeAccess].min_hours)
+                                if (data[firstRopeAccess]) {
+                                    responseData = data[firstRopeAccess]
+                                    this.max_cleaners.push(data[firstRopeAccess].max_cleaners)
+                                    this.min_cleaners.push(data[firstRopeAccess].min_cleaners)
+                                    this.max_hours.push(data[firstRopeAccess].max_hours)
+                                    this.min_hours.push(data[firstRopeAccess].min_hours)
                                     selected_service = this.schedule_serviceTypes[k]
-                                    this.durationData[this.schedule_serviceTypes[k]] = response.data[firstRopeAccess]
+                                    this.durationData[this.schedule_serviceTypes[k]] = data[firstRopeAccess]
                                 }
                             }
                         } else {
-                            data = response.data
-                            this.max_cleaners.push(response.data.max_cleaners)
-                            this.min_cleaners.push(response.data.min_cleaners)
-                            this.max_hours.push(response.data.max_hours)
-                            this.min_hours.push(response.data.min_hours)
+                            responseData = data
+                            this.max_cleaners.push(data.max_cleaners)
+                            this.min_cleaners.push(data.min_cleaners)
+                            this.max_hours.push(data.max_hours)
+                            this.min_hours.push(data.min_hours)
                             selected_service = this.schedule_serviceTypes[k]
-                            this.durationData[this.schedule_serviceTypes[k]] = response.data
+                            this.durationData[this.schedule_serviceTypes[k]] = data
                         }
 
                         /*   Calculation begins */
@@ -5427,8 +5421,8 @@ const app = new Vue({
                             const total_chair_size = this.chair_size;
                             // var total_curtain_size = 750;
                             let manhour =
-                                parseInt(total_sofa_size / data["sofa_perhour_cleaning"]) +
-                                parseInt(total_chair_size / data["chair_perhour_cleaning"]);
+                                parseInt(total_sofa_size / responseData["sofa_perhour_cleaning"]) +
+                                parseInt(total_chair_size / responseData["chair_perhour_cleaning"]);
                         } else if (selected_service == "Facade Cleaning") {
                             for (let b = 0; b < this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length; b++) {
                                 if (this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.size.is_highprice_facade) {
