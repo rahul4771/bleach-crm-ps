@@ -1291,7 +1291,7 @@ const app = new Vue({
                     count = count + 1
 
                     this.date_group[count] = []
-                    for (var g in this.date_group) {
+                    for (const g in this.date_group) {
                         if (this.date_group[g].includes(dates[i])) {
                             found = true;
                             break;
@@ -1308,9 +1308,7 @@ const app = new Vue({
         addAllServiceTypes() {
             this.schedule_serviceTypes_selected = []
             if (this.scheduleStat) {
-                for (var i = 0; i < this.multiServicesBill.length; i++) {
-                    this.schedule_serviceTypes_selected.push(i)
-                }
+                this.schedule_serviceTypes_selected = this.multiServicesBill.map((_, i) => i)
             }
             else {
                 this.schedule_serviceTypes_selected = []
@@ -1859,62 +1857,40 @@ const app = new Vue({
                 })
         },
         getServiceId(service) {
-
-            for (let i = 0; i < this.serviceTypesData.length; i++) {
-                if (this.serviceTypesData[i].name == service) {
-                    return this.serviceTypesData[i].id
-                }
-            }
+            const serviceData = this.serviceTypesData.find(s => s.name === service)
+            return serviceData?.id
         },
         scheduleBooking() {
             this.activeTab = 'Address'
             let count = 0
-            for (const i in this.time_slot) {
-
-                for (let j = 0; j < this.time_slot[i].selectedSlot.length; j++) {
-                    if (this.time_slot[i].selectedSlot[j] == 0) {
-                        let selectedTime = '12:00 am'
-                    }
-                    else if (this.time_slot[i].selectedSlot[j] < 12) {
-                        let selectedTime = this.time_slot[i].selectedSlot[j] + ':00 am'
-                    }
-                    else if (this.time_slot[i].selectedSlot[j] > 12) {
-                        let selectedTime = (parseInt(this.time_slot[i].selectedSlot[j]) - 12) + ':00 pm'
-                    }
-                    else {
-                        let selectedTime = '12:00 pm'
-                    }
+            for (const dateKey in this.time_slot) {
+                for (const slot of this.time_slot[dateKey].selectedSlot) {
+                    let selectedTime = this.formatSlotTime(slot)
                     count = count + 1
                     this.serviceDetails.schedule_details[count] = {
-                        date: i,
+                        date: dateKey,
                         time: selectedTime,
                         cleaning_hours: this.selectedDuration.hours,
                         no_of_cleaners: this.selectedDuration.cleaners
-
                     }
                 }
-
             }
-
-
         },
+        
+        formatSlotTime(slot) {
+            if (slot === 0) return '12:00 am'
+            if (slot < 12) return `${slot}:00 am`
+            if (slot > 12) return `${slot - 12}:00 pm`
+            return '12:00 pm'
+        },
+
         checkScheduleStatus() {
-            let flag = false
-            for (let i = 0; i < this.multiServicesBill.length; i++) {
-                if (Object.keys(this.multiServicesBill[i].schedule_details).length < 1) {
-                    flag = false
-                    break
-                }
-                else {
-                    flag = true
-                }
-            }
-            return flag
+            return this.multiServicesBill.every(service => Object.keys(service.schedule_details).length > 0)
         },
         arrangeData() {
-            for (let i = 0; i < this.multiServicesBill.length; i++) {
+            for (const [i, service] of this.multiServicesBill.entries()) {
 
-                const service_id = this.getServiceId(this.multiServicesBill[i].service)
+                const service_id = this.getServiceId(service.service)
                 this.serviceDetails.service_details[i] = {
                     "service_type": service_id,
                     "cleaning_policy": this.multiServicesBill[i].cleaning_policy,
@@ -1935,19 +1911,19 @@ const app = new Vue({
                     this.serviceDetails.service_details[i].total_cost = parseFloat(this.serviceDetails.service_details[i].total_cost) * parseInt(visits)
                     this.serviceDetails.service_details[i].estimated_cost = parseFloat(this.serviceDetails.service_details[i].total_cost)
                 }
-                for (let j = 0; j < this.multiServicesBill[i].bill.length; j++) {
+                for (const [j, bill] of this.multiServicesBill[i].bill.entries()) {
                     this.serviceDetails.service_details[i].sections[j] = {
-                        "section_name": this.multiServicesBill[i].bill[j].section_name,
-                        "size": this.multiServicesBill[i].bill[j].section.size.name,
+                        "section_name": bill.section_name,
+                        "size": bill.section.size.name,
                         "wall_type": "",
                         "floor_type": '',
                         "ceiling_type": '',
-                        "cement_residue": this.multiServicesBill[i].bill[j].section.cement_residue,
-                        "oil_residue": this.multiServicesBill[i].bill[j].section.residue,
-                        "section_cost": this.multiServicesBill[i].bill[j].section_cost,
-                        "sectiononly_cost": this.multiServicesBill[i].bill[j].sectiononly_cost,
-                        "sectiononly_net_cost": this.multiServicesBill[i].bill[j].sectiononly_cost,
-                        "section_net_cost": this.multiServicesBill[i].bill[j].section_net_cost,
+                        "cement_residue": bill.section.cement_residue,
+                        "oil_residue": bill.section.residue,
+                        "section_cost": bill.section_cost,
+                        "sectiononly_cost": bill.sectiononly_cost,
+                        "sectiononly_net_cost": bill.sectiononly_cost,
+                        "section_net_cost": bill.section_net_cost,
                         "keynotes": {},
                         "addons": {},
                         "new_kitchen": false,
@@ -2039,11 +2015,10 @@ const app = new Vue({
                     }
 
                     if (this.multiServicesBill[i].bill[j].section.keynote_data.length > 0) {
-
-                        for (var ky = 0; ky < this.multiServicesBill[i].bill[j].section.keynote_data.length; ky++) {
+                        for (const keynote of this.multiServicesBill[i].bill[j].section.keynote_data) {
                             this.serviceDetails.service_details[i].sections[j].keynotes[keynotecounter] = {
-                                "sub_area": this.multiServicesBill[i].bill[j].section.keynote_data[ky].name,
-                                "quantity": this.multiServicesBill[i].bill[j].section.keynote_data[ky].value
+                                "sub_area": keynote.name,
+                                "quantity": keynote.value
 
                             }
                             keynotecounter = keynotecounter + 1
@@ -2052,41 +2027,39 @@ const app = new Vue({
                     }
                     var addoncounter = 0
                     if (this.multiServicesBill[i].bill[j].section.addons) {
-
-                        for (add_on = 0; add_on < this.multiServicesBill[i].bill[j].section.addons.length; add_on++) {
-
-                            if (this.multiServicesBill[i].bill[j].section.addons[add_on].selected) {
+                        for (const addon of this.multiServicesBill[i].bill[j].section.addons) {
+                            if (addon.selected) {
                                 addoncounter = addoncounter + 1
                                 this.serviceDetails.service_details[i].sections[j].addons[addoncounter] = {
-                                    name: this.multiServicesBill[i].bill[j].section.addons[add_on].details.name,
-                                    addon_cost: this.multiServicesBill[i].bill[j].section.addons[add_on].details.price,
-                                    addon_net_cost: this.multiServicesBill[i].bill[j].section.addons[add_on].details.price * this.multiServicesBill[i].bill[j].section.addons[add_on].quantity,
-                                    quantity: this.multiServicesBill[i].bill[j].section.addons[add_on].quantity,
+                                    name: addon.details.name,
+                                    addon_cost: addon.details.price,
+                                    addon_net_cost: addon.details.price * addon.quantity,
+                                    quantity: addon.quantity,
                                     size: '',
                                     other_details: ''
                                 }
-                                if (this.multiServicesBill[i].bill[j].section.addons[add_on].details.category) {
-                                    this.serviceDetails.service_details[i].sections[j].addons[addoncounter].size = this.multiServicesBill[i].bill[j].section.addons[add_on].selected_size.size
+                                if (addon.details.category) {
+                                    this.serviceDetails.service_details[i].sections[j].addons[addoncounter].size = addon.selected_size.size
                                 }
                             }
                         }
                     }
                     if (this.multiServicesBill[i].bill[j].section.kitchen) {
-                        var newindex = Object.keys(this.serviceDetails.service_details[i].sections[j].addons).length
-                        for (var k = 0; k < this.multiServicesBill[i].bill[j].section.kitchens.length; k++) {
+                        let newindex = Object.keys(this.serviceDetails.service_details[i].sections[j].addons).length
+                        for (const kitchen of this.multiServicesBill[i].bill[j].section.kitchens) {
                             newindex = newindex + 1
                             this.serviceDetails.service_details[i].sections[j].addons[newindex] = {
                                 name: "kitchen",
-                                addon_cost: this.multiServicesBill[i].bill[j].section.kitchens[k].size.cost,
-                                addon_net_cost: this.multiServicesBill[i].bill[j].section.kitchens[k].size.cost,
+                                addon_cost: kitchen.size.cost,
+                                addon_net_cost: kitchen.size.cost,
                                 quantity: 1,
-                                size: this.multiServicesBill[i].bill[j].section.kitchens[k].size.name,
+                                size: kitchen.size.name,
                                 other_details: JSON.stringify({
-                                    size: this.multiServicesBill[i].bill[j].section.kitchens[k].size.name,
-                                    max_size: this.multiServicesBill[i].bill[j].section.kitchens[k].size.max_size,
-                                    type: this.multiServicesBill[i].bill[j].section.kitchens[k].type,
-                                    residue: this.multiServicesBill[i].bill[j].section.kitchens[k].residue,
-                                    is_cabinet: this.multiServicesBill[i].bill[j].section.kitchens[k].is_cabinet
+                                    size: kitchen.size.name,
+                                    max_size: kitchen.size.max_size,
+                                    type: kitchen.type,
+                                    residue: kitchen.residue,
+                                    is_cabinet: kitchen.is_cabinet
                                 })
                             }
                         }
@@ -2217,10 +2190,10 @@ const app = new Vue({
                         keynotecounter = keynotecounter + 1
                     }
                     if (this.multiServicesBill[i].bill[j].section.keynote_data.length > 0) {
-                        for (var ky = 0; ky < this.multiServicesBill[i].bill[j].section.keynote_data.length; ky++) {
+                        for (const keynote of this.multiServicesBill[i].bill[j].section.keynote_data) {
                             this.serviceDetails.service_details[i].sections[j].keynotes[keynotecounter] = {
-                                "sub_area": this.multiServicesBill[i].bill[j].section.keynote_data[ky].name,
-                                "quantity": this.multiServicesBill[i].bill[j].section.keynote_data[ky].value
+                                "sub_area": keynote.name,
+                                "quantity": keynote.value
 
                             }
                             keynotecounter = keynotecounter + 1
@@ -2229,39 +2202,37 @@ const app = new Vue({
                     }
                     var addoncounter = 0
                     if (this.multiServicesBill[i].bill[j].section.addons) {
-
-                        for (add_on = 0; add_on < this.multiServicesBill[i].bill[j].section.addons.length; add_on++) {
-
-                            if (this.multiServicesBill[i].bill[j].section.addons[add_on].selected) {
+                        for (const addon of this.multiServicesBill[i].bill[j].section.addons) {
+                            if (addon.selected) {
                                 addoncounter = addoncounter + 1
                                 this.serviceDetails.service_details[i].sections[j].addons[addoncounter] = {
-                                    name: this.multiServicesBill[i].bill[j].section.addons[add_on].details.name,
-                                    addon_cost: this.multiServicesBill[i].bill[j].section.addons[add_on].details.price,
-                                    addon_net_cost: this.multiServicesBill[i].bill[j].section.addons[add_on].details.price * this.multiServicesBill[i].bill[j].section.addons[add_on].quantity,
-                                    quantity: this.multiServicesBill[i].bill[j].section.addons[add_on].quantity
+                                    name: addon.details.name,
+                                    addon_cost: addon.details.price,
+                                    addon_net_cost: addon.details.price * addon.quantity,
+                                    quantity: addon.quantity
                                 }
-                                if (this.multiServicesBill[i].bill[j].section.addons[add_on].details.category) {
-                                    this.serviceDetails.service_details[i].sections[j].addons[addoncounter].size = this.multiServicesBill[i].bill[j].section.addons[add_on].selected_size.size
+                                if (addon.details.category) {
+                                    this.serviceDetails.service_details[i].sections[j].addons[addoncounter].size = addon.selected_size.size
                                 }
                             }
                         }
                     }
                     if (this.multiServicesBill[i].bill[j].section.kitchen) {
-                        var newindex = Object.keys(this.serviceDetails.service_details[i].sections[j].addons).length
-                        for (var k = 0; k < this.multiServicesBill[i].bill[j].section.kitchens.length; k++) {
+                        let newindex = Object.keys(this.serviceDetails.service_details[i].sections[j].addons).length
+                        for (const kitchen of this.multiServicesBill[i].bill[j].section.kitchens) {
                             newindex = newindex + 1
                             this.serviceDetails.service_details[i].sections[j].addons[newindex] = {
                                 name: "kitchen",
-                                addon_cost: this.multiServicesBill[i].bill[j].section.kitchens[k].size.cost,
-                                addon_net_cost: this.multiServicesBill[i].bill[j].section.kitchens[k].size.cost,
+                                addon_cost: kitchen.size.cost,
+                                addon_net_cost: kitchen.size.cost,
                                 quantity: 1,
-                                size: this.multiServicesBill[i].bill[j].section.kitchens[k].size.name,
+                                size: kitchen.size.name,
                                 other_details: JSON.stringify({
-                                    size: this.multiServicesBill[i].bill[j].section.kitchens[k].size.name,
-                                    max_size: this.multiServicesBill[i].bill[j].section.kitchens[k].size.max_size,
-                                    type: this.multiServicesBill[i].bill[j].section.kitchens[k].type,
-                                    residue: this.multiServicesBill[i].bill[j].section.kitchens[k].residue,
-                                    is_cabinet: this.multiServicesBill[i].bill[j].section.kitchens[k].is_cabinet
+                                    size: kitchen.size.name,
+                                    max_size: kitchen.size.max_size,
+                                    type: kitchen.type,
+                                    residue: kitchen.residue,
+                                    is_cabinet: kitchen.is_cabinet
 
                                 })
                             }
@@ -2544,35 +2515,19 @@ const app = new Vue({
                 this.parseAddons()
                 $('.more-services').hide()
                 if (this.otherService.is_cabinet) {
-                    for (var i = 0; i < this.sizeData.length; i++) {
-                        if (this.sizeData[i].is_newkitchen && this.sizeData[i].is_cabinet) {
-                            this.sizeFilteredData.push(this.sizeData[i]);
-                        }
-                    }
+                    this.sizeFilteredData = this.sizeData.filter(size => size.is_newkitchen && size.is_cabinet)
                 }
                 else {
-                    for (var i = 0; i < this.sizeData.length; i++) {
-                        if (this.sizeData[i].is_newkitchen && !this.sizeData[i].is_cabinet) {
-                            this.sizeFilteredData.push(this.sizeData[i]);
-                        }
-                    }
+                    this.sizeFilteredData = this.sizeData.filter(size => size.is_newkitchen && !size.is_cabinet)
                 }
             }
             if (this.otherService.type == "old") {
                 $('.more-services').show()
                 if (this.otherService.is_cabinet) {
-                    for (var i = 0; i < this.sizeData.length; i++) {
-                        if (!this.sizeData[i].is_newkitchen && this.sizeData[i].is_cabinet) {
-                            this.sizeFilteredData.push(this.sizeData[i]);
-                        }
-                    }
+                    this.sizeFilteredData = this.sizeData.filter(size => !size.is_newkitchen && size.is_cabinet)
                 }
                 else {
-                    for (var i = 0; i < this.sizeData.length; i++) {
-                        if (!this.sizeData[i].is_newkitchen && !this.sizeData[i].is_cabinet) {
-                            this.sizeFilteredData.push(this.sizeData[i]);
-                        }
-                    }
+                    this.sizeFilteredData = this.sizeData.filter(size => !size.is_newkitchen && !size.is_cabinet)
                 }
             }
         },
@@ -2585,15 +2540,15 @@ const app = new Vue({
                 .then((response) => {
                     this.kitchenSize = response.data;
                     this.kitchenSizeData = [];
-                    for (var i in this.kitchenSize) {
-                        this.kitchenSize[i]["combinedSize"] =
-                            this.kitchenSize[i].name +
+                    for (const kitchen of this.kitchenSize) {
+                        kitchen["combinedSize"] =
+                            kitchen.name +
                             " ( " +
-                            this.kitchenSize[i].min_size +
+                            kitchen.min_size +
                             " sq. m - " +
-                            this.kitchenSize[i].max_size +
+                            kitchen.max_size +
                             " sq. m )";
-                        this.kitchenSizeData.push(this.kitchenSize[i]);
+                        this.kitchenSizeData.push(kitchen);
                     }
                     this.serviceSize = {};
                     if (this.kitchenData.type == "new") {
@@ -3080,12 +3035,7 @@ const app = new Vue({
             this.forceRerender();
         },
         updateSize() {
-            this.upholsterySize = [];
-            for (var i = 0; i < this.sizeData.length; i++) {
-                if (this.sizeData[i].upholstery_type == this.otherService.type) {
-                    this.upholsterySize.push(this.sizeData[i]);
-                }
-            }
+            this.upholsterySize = this.sizeData.filter(size => size.upholstery_type === this.otherService.type)
         },
         findSelectedTotalSize() {
             this.total_size = 0
@@ -3095,35 +3045,35 @@ const app = new Vue({
             this.new_kitchen_cabinet_size = 0
             this.old_kitchen_cabinet_size = 0
             this.old_kitchen_nocabinet_size = 0
-            for (var j = 0; j < this.schedule_serviceTypes_selected.length; j++) {
-                const serIndex = this.schedule_serviceTypes_selected[j]
+            for (const j of this.schedule_serviceTypes_selected) {
+                const serIndex = j
                 if (this.multiServicesBill[serIndex].service == 'Upholstery Cleaning') {
-                    for (var i = 0; i < this.multiServicesBill[serIndex].bill.length; i++) {
-                        if (this.multiServicesBill[serIndex].bill[i].section.type == 'SOFA') {
-                            this.sofa_size = this.sofa_size + parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size)
+                    for (const bill of this.multiServicesBill[serIndex].bill) {
+                        if (bill.section.type == 'SOFA') {
+                            this.sofa_size = this.sofa_size + parseInt(bill.section.size.max_size)
                         }
-                        if (this.multiServicesBill[serIndex].bill[i].section.type == 'CURTAIN') {
-                            this.chair_size = this.chair_size + parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size)
+                        if (bill.section.type == 'CURTAIN') {
+                            this.chair_size = this.chair_size + parseInt(bill.section.size.max_size)
                         }
                     }
                 }
                 else if (this.multiServicesBill[serIndex].service == 'Kitchen Cleaning') {
-                    for (var i = 0; i < this.multiServicesBill[serIndex].bill.length; i++) {
-                        if (this.multiServicesBill[serIndex].bill[i].section.type == 'old') {
-                            if (this.multiServicesBill[serIndex].bill[i].is_cabinet) {
-                                this.old_kitchen_cabinet_size = this.old_kitchen_cabinet_size + parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size)
+                    for (const bill of this.multiServicesBill[serIndex].bill) {
+                        if (bill.section.type == 'old') {
+                            if (bill.is_cabinet) {
+                                this.old_kitchen_cabinet_size = this.old_kitchen_cabinet_size + parseInt(bill.section.size.max_size)
                             }
                             else {
-                                this.old_kitchen_nocabinet_size = this.old_kitchen_nocabinet_size + parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size)
+                                this.old_kitchen_nocabinet_size = this.old_kitchen_nocabinet_size + parseInt(bill.section.size.max_size)
                             }
 
                         }
-                        if (this.multiServicesBill[serIndex].bill[i].section.type == 'new') {
-                            if (this.multiServicesBill[serIndex].bill[i].is_cabinet) {
-                                this.new_kitchen_cabinet_size = this.new_kitchen_cabinet_size + parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size)
+                        if (bill.section.type == 'new') {
+                            if (bill.is_cabinet) {
+                                this.new_kitchen_cabinet_size = this.new_kitchen_cabinet_size + parseInt(bill.section.size.max_size)
                             }
                             else {
-                                this.new_kitchen_nocabinet_size = this.new_kitchen_nocabinet_size + parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size)
+                                this.new_kitchen_nocabinet_size = this.new_kitchen_nocabinet_size + parseInt(bill.section.size.max_size)
                             }
                         }
                     }
@@ -3146,44 +3096,41 @@ const app = new Vue({
             this.total_size = 0
             this.sofa_size = 0
             this.chair_size = 0
-            for (var j = 0; j < this.multiServicesBill.length; j++) {
-                if (this.multiServicesBill[j].service == 'Upholstery Cleaning') {
-                    for (var i = 0; i < this.multiServicesBill[j].bill.length; i++) {
-                        if (this.multiServicesBill[j].bill[i].section.type == 'SOFA') {
-                            this.sofa_size = this.sofa_size + parseInt(this.multiServicesBill[j].bill[i].section.size.max_size)
+            for (const service of this.multiServicesBill) {
+                if (service.service === 'Upholstery Cleaning') {
+                    for (const bill of service.bill) {
+                        if (bill.section.type === 'SOFA') {
+                            this.sofa_size = this.sofa_size + parseInt(bill.section.size.max_size)
                         }
-                        if (this.multiServicesBill[j].bill[i].section.type == 'CURTAIN') {
-                            this.chair_size = this.chair_size + parseInt(this.multiServicesBill[j].bill[i].section.size.max_size)
+                        if (bill.section.type === 'CURTAIN') {
+                            this.chair_size = this.chair_size + parseInt(bill.section.size.max_size)
                         }
                     }
                 }
-                else if (this.multiServicesBill[j].service == 'Kitchen Cleaning') {
-                    for (var i = 0; i < this.multiServicesBill[j].bill.length; i++) {
-                        if (this.multiServicesBill[j].bill[i].section.type == 'old') {
-                            if (this.multiServicesBill[j].bill[i].is_cabinet) {
-                                this.old_kitchen_cabinet_size = this.old_kitchen_cabinet_size + parseInt(this.multiServicesBill[j].bill[i].section.size.max_size)
+                else if (service.service === 'Kitchen Cleaning') {
+                    for (const bill of service.bill) {
+                        if (bill.section.type === 'old') {
+                            if (bill.is_cabinet) {
+                                this.old_kitchen_cabinet_size = this.old_kitchen_cabinet_size + parseInt(bill.section.size.max_size)
                             }
                             else {
-                                this.old_kitchen_nocabinet_size = this.old_kitchen_nocabinet_size + parseInt(this.multiServicesBill[j].bill[i].section.size.max_size)
+                                this.old_kitchen_nocabinet_size = this.old_kitchen_nocabinet_size + parseInt(bill.section.size.max_size)
                             }
 
                         }
-                        if (this.multiServicesBill[j].bill[i].section.type == 'new') {
-                            if (this.multiServicesBill[j].bill[i].is_cabinet) {
-                                this.new_kitchen_cabinet_size = this.new_kitchen_cabinet_size + parseInt(this.multiServicesBill[j].bill[i].section.size.max_size)
+                        if (bill.section.type === 'new') {
+                            if (bill.is_cabinet) {
+                                this.new_kitchen_cabinet_size = this.new_kitchen_cabinet_size + parseInt(bill.section.size.max_size)
                             }
                             else {
-                                this.new_kitchen_nocabinet_size = this.new_kitchen_nocabinet_size + parseInt(this.multiServicesBill[j].bill[i].section.size.max_size)
+                                this.new_kitchen_nocabinet_size = this.new_kitchen_nocabinet_size + parseInt(bill.section.size.max_size)
                             }
                         }
                     }
                 }
                 else {
-
-
-                    for (var i = 0; i < this.multiServicesBill[j].bill.length; i++) {
-
-                        this.total_size = this.total_size + parseInt(this.multiServicesBill[j].bill[i].section.size.max_size);
+                    for (const bill of service.bill) {
+                        this.total_size = this.total_size + parseInt(bill.section.size.max_size)
                     }
                 }
             }
@@ -3625,12 +3572,12 @@ const app = new Vue({
         async uploadImages() {
             const urlSearchParams = new URLSearchParams(window.location.search);
             const params = Object.fromEntries(urlSearchParams.entries());
-            for (var i = 0; i < this.multiServiceImages.length; i++) {
+            for (const [i, serviceImages] of this.multiServiceImages.entries()) {
                 this.submit_loader = true
                 const image = new FormData()
                 image.append('evaluation_book_id', Object.keys(this.phase2Result.evaluation_book_ids)[i])
-                for (var j = 0; j < this.multiServiceImages[i].images.length; j++) {
-                    image.append('media', this.multiServiceImages[i].images[j].file)
+                for (const imageData of serviceImages.images) {
+                    image.append('media', imageData.file)
                 }
                 await axios
                     .post(
