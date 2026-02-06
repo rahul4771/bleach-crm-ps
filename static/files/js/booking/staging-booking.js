@@ -176,7 +176,7 @@ const app = new Vue({
         window_check: false,
         scheduleGroup: {},
 
-        selectedCategory: 'Detailed Cleaning',
+        selectedCategory: '',
         name: '',
         rules: {
             required: v => !!v || 'this field is required',
@@ -212,7 +212,7 @@ const app = new Vue({
         serviceSize: {},
         cartItems: [],
         selectedSlot: [],
-        categories: ['Detailed Cleaning', 'Special Care', 'Kitchen Cleaning', 'Pest Control'],
+        categories: [],
         area_types: [],
         location_types: [
             "Post Construction",
@@ -220,6 +220,7 @@ const app = new Vue({
             "Fully Furnished",
             "Empty Area",
         ],
+        mediaUrl: '',
         services: [
             {
                 name: "General Cleaning",
@@ -268,9 +269,6 @@ const app = new Vue({
             {
                 name: "Deep Cleaning",
             },
-
-
-
             {
                 name: "Facade Cleaning",
             },
@@ -1797,10 +1795,40 @@ const app = new Vue({
                     })
                     console.log(response)
                     this.ip_address = response.ip
-            })
+                })
         },
         uploadFile() {
             this.$refs.item - image.input.click()
+        },
+        getServiceTypes() {
+            fetch('/common/staging/dynamic/get-service-types/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    this.mediaUrl = data.MEDIA_URL;
+                    this.categories = data.service_groups ?? [];
+                    this.serviceTypes = data.service_types ?? [];
+
+                    console.log("this.categories[0].service_name",this.categories[0].service_name)
+
+                    this.selectedCategory = this.categories.length > 0 ? this.categories[0].service_name : null;
+
+                    // Select first service by default
+                    if (this.serviceTypes.length > 0) {
+                        this.activeTabs.activeServiceTypeId = this.serviceTypes[0].id;
+                    }
+                    if (this.serviceGroups.length > 0) {
+                        this.activeTabs.activeServiceGroupId = this.serviceGroups[0].id;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching service types:', error);
+                    this.snackbar = true;
+                });
         },
 
         /* ================================================================
@@ -1880,7 +1908,7 @@ const app = new Vue({
                 }
             }
         },
-        
+
         formatSlotTime(slot) {
             if (slot === 0) return '12:00 am'
             if (slot < 12) return `${slot}:00 am`
@@ -2069,7 +2097,7 @@ const app = new Vue({
                         }
 
                     }
-                   
+
                 }
             }
             this.serviceDetails.shift_availability_check = this.multiServicesBill[0].shift_availability_check
@@ -2542,7 +2570,9 @@ const app = new Vue({
                 .then((kitchenSize) => {
                     this.kitchenSize = kitchenSize;
                     this.kitchenSizeData = [];
-                    for (const kitchen of this.kitchenSize) {
+                    // Ensure kitchenSize is an array
+                    const kitchenArray = Array.isArray(kitchenSize) ? kitchenSize : (kitchenSize.data || []);
+                    for (const kitchen of kitchenArray) {
                         kitchen["combinedSize"] =
                             kitchen.name +
                             " ( " +
@@ -2729,16 +2759,16 @@ const app = new Vue({
          */
         addOneTimeSlot(start, end, slot) {
             this.onetimerender = false;
-            
+
             // Find slot format index by start time
             const slotIndex = Object.keys(this.slotFormat).find(
                 i => this.slotFormat[i].start_time === start
             );
-            
+
             if (slotIndex !== undefined) {
                 this.one_time_slots[this.oneTimeDateSelected].slots.push(slotIndex);
             }
-            
+
             this.onetimerender = true;
         },
 
@@ -2775,11 +2805,11 @@ const app = new Vue({
             const slotIndex = Object.keys(this.slotFormat).find(
                 i => this.slotFormat[i].start_time === start
             );
-            
+
             if (slotIndex === undefined) {
                 return false;
             }
-            
+
             return this.one_time_slots[this.oneTimeDateSelected].slots.includes(slotIndex);
         },
         /**
@@ -2791,20 +2821,20 @@ const app = new Vue({
             this.onetimerender = false;
             const slots = this.one_time_slots[this.oneTimeDateSelected].slots;
             const index = slots.indexOf(slot);
-            
+
             if (index > -1) {
                 slots.splice(index, 1);
             }
-            
+
             // If both adjacent slots exist, remove all higher slots
             const prevSlot = parseInt(slot, 10) - 1;
             const nextSlot = parseInt(slot, 10) + 1;
-            
+
             if (slots.includes(nextSlot) && slots.includes(prevSlot)) {
                 const filteredSlots = slots.filter(s => s <= slot);
                 this.one_time_slots[this.oneTimeDateSelected].slots = filteredSlots;
             }
-            
+
             this.onetimerender = true;
         },
 
@@ -2815,15 +2845,15 @@ const app = new Vue({
          */
         removeDoubleSlot(slot) {
             const index = this.selected_double_slots.indexOf(slot);
-            
+
             if (index > -1) {
                 this.selected_double_slots.splice(index, 1);
             }
-            
+
             // If both adjacent slots exist, remove all higher slots
             const prevSlot = parseInt(slot, 10) - 1;
             const nextSlot = parseInt(slot, 10) + 1;
-            
+
             if (this.selected_double_slots.includes(nextSlot) && this.selected_double_slots.includes(prevSlot)) {
                 const filteredSlots = this.selected_double_slots.filter(s => s <= slot);
                 this.selected_double_slots = filteredSlots;
@@ -2837,21 +2867,21 @@ const app = new Vue({
         checkSlotStat(slot) {
             const maxSlots = this.selectedDuration?.slots || 0;
             const hasSlots = this.selected_double_slots.length > 0;
-            
+
             // Cannot select if already at max slots
             if (this.selected_double_slots.length >= maxSlots) {
                 return false;
             }
-            
+
             // First slot can always be selected if under limit
             if (!hasSlots) {
                 return true;
             }
-            
+
             const slotNum = parseInt(slot, 10);
             const prevSlot = slotNum - 1;
             const nextSlot = slotNum + 1;
-            
+
             // Check adjacency based on slot position
             if (slotNum === 1) {
                 return this.selected_double_slots.includes(nextSlot);
@@ -2881,34 +2911,34 @@ const app = new Vue({
             const currSlotIndex = Object.keys(this.slotFormat).find(
                 i => this.slotFormat[i].start_time === start
             );
-            
+
             if (currSlotIndex === undefined) {
                 return false;
             }
-            
+
             // Count total slots across all dates
             const totalSlots = Object.values(this.one_time_slots).reduce(
                 (sum, dateSlot) => sum + (dateSlot.slots?.length || 0), 0
             );
-            
+
             const maxSlotsRequired = Math.ceil((this.cleaning_set[this.currentSlotDay - 1]?.[0] || 0) / 2);
-            
+
             // Cannot select if max slots reached
             if (totalSlots >= maxSlotsRequired) {
                 return false;
             }
-            
+
             // First slot for this date can always be selected
             const currentDateSlots = this.one_time_slots[this.oneTimeDateSelected].slots;
             if (!currentDateSlots || currentDateSlots.length === 0) {
                 return true;
             }
-            
+
             // Check adjacency for subsequent slots
             const slotNum = parseInt(currSlotIndex, 10);
             const prevSlot = slotNum - 1;
             const nextSlot = slotNum + 1;
-            
+
             if (slot === 1) {
                 return currentDateSlots.includes(String(nextSlot));
             } else if (slot === 12) {
@@ -3192,7 +3222,7 @@ const app = new Vue({
             this.kitchenCleaningServices = []
             this.infectionControlServices = []
             this.selectedCategory = item
-           
+
             if (item == 'Detailed Cleaning') {
                 $('#service-carousel').html(`
       <div class="sr-service-card m-2 p-2 service-one"  onclick="selectService('General Cleaning',this)">
@@ -3261,7 +3291,7 @@ const app = new Vue({
             }
             else {
                 if (item == 'Special Care') {
-                   
+
                     $('#service-carousel').html(`
    
     <div class="sr-service-card m-2 p-2 service-one"  onclick="selectService('Upholstery Cleaning',this)">
@@ -3295,7 +3325,7 @@ const app = new Vue({
                 }
                 else {
                     if (item == 'Kitchen Cleaning') {
-                       
+
                         $('#service-carousel').html(`
    
     <div class="sr-service-card m-2 p-2 service-one"   onclick="selectService('Kitchen Cleaning',this)">
@@ -3325,7 +3355,7 @@ const app = new Vue({
                     }
                     else {
                         if (item == 'Pest Control') {
-                            
+
                             $('#service-carousel').html(`
    
     <div class="sr-service-card m-2 p-2 service-one"  onclick="selectService('Sterilization',this)">
@@ -4447,7 +4477,7 @@ const app = new Vue({
          */
         goToSchedule() {
             // Set current service if hourly cleaning is selected
-            this.current_service = this.is_hourly 
+            this.current_service = this.is_hourly
                 ? this.multiServicesBill[this.schedule_serviceTypes_selected[0]].service
                 : '';
 
@@ -6065,6 +6095,7 @@ const app = new Vue({
     },
     mounted() {
         this.url = api;
+        this.getServiceTypes();
         this.getServices();
         this.getKitchenProductivity();
         this.getAreaTypes();
