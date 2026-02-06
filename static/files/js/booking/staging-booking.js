@@ -1771,46 +1771,6 @@ const app = new Vue({
                 }
             }
         },
-        /*calcSlots(){
-             const slot={
-               "0":[2,4,6,8,10,12,14,16,18,20,22,24],
-               "2":[2,4,6,8,10,12,14,16,18,20,22,24],
-               "4":[2,4,6,8,10,12,14,16,18,20,22,24],
-               "6":[2,4,6,8,10,12,14,16,18,20,22,24],
-               "8":[2,4,6,8,10,12,14,16,18,20,22,24],
-               "10":[2,4,6,8,10,12,14,16,18,20,22,24],
-               "12":[2,4,6,8,10,12,14,16,18,20,22,24],
-               "14":[2,4,6,8,10,12,14,16,18,20,22,24],
-               "16":[2,4,6,8,10,12,14,16,18,20,22,24],
-               "18":[2,4,6,8,10,12,14,16,18,20,22,24],
-               "20":[2,4,6,8,10,12,14,16,18,20,22,24],
-               "22":[2,4,6,8,10,12,14,16,18,20,22,24]
-       
-             }
-             for(var i in slot){
-               if(slot[i].includes(2)){
-                 if(i<12){
-                   startTime=i+'AM'
-                 }
-                 else{
-                   startTimeUnit='PM'
-                 }
-                 let endTime=i+2
-                 if(endTime<12){
-                   sTimeUnit='AM'
-                 }
-                 else{
-                   startTimeUnit='PM'
-                 }
-                 
-                 let startSlot=parseInt(i)+12
-                 this.double_slots.push({
-                   slotNo:i,
-                   slot:
-                 })
-               }
-             }
-        },*/
         selectPrefDay(day) {
             if (!this.prefDay.includes(day)) {
                 this.prefDay.push(day)
@@ -1846,8 +1806,6 @@ const app = new Vue({
                 this.$refs.gateway_submit.click()
             }
             if (this.activePayment == 'credit') {
-                //this.$refs.gateway_credit_submit.click()
-                //console.log("url: "+ "https://testpay.bleach-kw.com/creditcard/payment_form.php?merchant_defined_data1="+this.bookingMultiData.order_details.order_no+"&reference_number="+this.bookingMultiData.order_details.order_no+"&merchant_defined_data2=prepaid&amount="+this.bookingMultiData.order_details.total_amount+"&currency=KWD&transaction_type=sale&bill_to_forename="+this.bookingMultiData.customer_details.customer.name.split(' ')[1]+"&bill_to_surname="+this.bookingMultiData.customer_details.customer.name.split(' ')[2]+"&bill_to_phone=mobile"+this.bookingMultiData.customer_details.customer.mobile_number+"&bill_to_email="+this.bookingMultiData.customer_details.customer.email+"&bill_to_address_country="+this.bookingMultiData.customer_details.customer.nationality+"&bill_to_address_city="+this.bookingMultiData.cleaning_details[0].address.area.name+"&bill_to_address_line1="+this.bookingMultiData.cleaning_details[0].address.governorate.name+"&merchant_defined_data4="+this.bookingMultiData.customer_details.payment_method+"&merchant_defined_data5=NO&merchant_defined_data7=1&merchant_defined_data20=NO&customer_ip_address="+this.ip_address )
                 window.location.href = "https://testpay.bleach-kw.com/creditcard/payment_form.php?merchant_defined_data1=" + this.bookingMultiData.order_details.order_no + "&reference_number=" + this.bookingMultiData.order_details.order_no + "&merchant_defined_data2=prepaid&amount=" + this.bookingMultiData.order_details.total_amount + "&currency=KWD&transaction_type=sale&bill_to_forename=" + this.bookingMultiData.customer_details.customer.name.split(' ')[1] + "&bill_to_surname=" + this.bookingMultiData.customer_details.customer.name.split(' ')[2] + "&bill_to_phone=mobile" + this.bookingMultiData.customer_details.customer.mobile_number + "&bill_to_email=" + this.bookingMultiData.customer_details.customer.email + "&bill_to_address_country=" + this.bookingMultiData.customer_details.customer.nationality + "&bill_to_address_city=" + this.bookingMultiData.cleaning_details[0].address.area.name + "&bill_to_address_line1=" + this.bookingMultiData.cleaning_details[0].address.governorate.name + "&merchant_defined_data4=" + this.bookingMultiData.customer_details.payment_method + "&merchant_defined_data5=NO&merchant_defined_data7=1&merchant_defined_data20=NO&customer_ip_address=" + this.ip_address
             }
         },
@@ -2134,27 +2092,7 @@ const app = new Vue({
                         }
 
                     }
-                    /* if(this.multiServicesBill[i].bill[j].section.kitchen){
-                      var newindex=Object.keys(this.serviceDetails.service_details[i].sections[j].keynotes).length
-                      var kitchencounter=newindex
-                      for(var k=0;k<this.multiServicesBill[i].bill[j].section.kitchens.length;k++){
-                       this.serviceDetails.service_details[i].sections[j].keynotes[kitchencounter]={
-                         "sub_area":'kitchen',
-                         "quantity":JSON.stringify({
-                           size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.name,
-                           max_size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.max_size,
-                           type:this.multiServicesBill[i].bill[j].section.kitchens[k].type,
-                           residue:this.multiServicesBill[i].bill[j].section.kitchens[k].residue,
-                           cost:this.multiServicesBill[i].bill[j].section.kitchens[k].size.cost
-                         })
-                         
-                       
-                       }
-                       kitchencounter=kitchencounter+1
-                       keynotecounter=keynotecounter+1
-                      }
-                     
-                    }*/
+                   
                 }
             }
             this.serviceDetails.shift_availability_check = this.multiServicesBill[0].shift_availability_check
