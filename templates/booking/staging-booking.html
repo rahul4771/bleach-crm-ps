@@ -1490,19 +1490,21 @@
                               v-if="no_of_floors[index - 1]" class="elevation-0">
                               <div v-for="floor in parseInt(no_of_floors[index - 1])" :key="floor">
                                 <v-stepper-step :complete="e.building[index - 1].e > floor" :step="floor"
-                                  style="cursor: pointer" v-text="'Floor '+ floor">
+                                  style="cursor: pointer">
+                                  <span v-text="`Floor ${floor}`"></span>
                                   <div class="d-flex">
-                                    <small v-text="'Fill the details for Floor ' + floor"></small>
+                                    <small v-text="`Fill the details for Floor ${floor}`"></small>
                                     <v-btn @click="openFloor(index,floor)" outlined x-small fab color="primary"
                                       v-if="billingData[floor-1]" style="position: absolute; right: 10px;">
                                       <v-icon>mdi-pencil</v-icon>
                                     </v-btn>
                                   </div>
-
-                                  <div v-if="checkBillingData(index,floor)" class="mt-2"> <v-text-field type="text"
-                                      v-model="billingData[findBillingDataIndex(index,floor)].section_name"
-                                      label="Section Name" class="not-required">
-                                    </v-text-field></div>
+                                  <div v-if="checkBillingData(index,floor)" class="mt-2">
+                                    <div class="text-caption">Section Name</div>
+                                    <div v-text="billingData[findBillingDataIndex(index,floor)].section_name" 
+                                      style="border-bottom: 1px solid #ccc; padding-bottom: 4px; font-weight: 500;">
+                                    </div>
+                                  </div>
                                 </v-stepper-step>
 
                                 <v-stepper-content :step="floor">
@@ -1827,11 +1829,11 @@
                                             v-for="(apartment, apindex) in building[index - 1].floors[floor - 1].apartments"
                                             v-bind:key="apindex">
                                             <v-form
-                                              :ref="'building-'+(index-1)+'floor-'+(floor-1)+'apartment-'+ apindex">
+                                              :ref="`building-${index-1}-floor-${floor-1}-apartment-${apindex}`">
                                               <v-stepper-step
                                                 :complete="e.building[index - 1].floors[floor - 1].e >apindex + 1"
-                                                :step="apindex + 1" style="cursor: pointer"
-                                                v-text="'Apartment ' + (apindex + 1)">
+                                                :step="`${apindex + 1}`" style="cursor: pointer"
+                                                v-text="`Apartment ${apindex + 1}`">
                                               </v-stepper-step>
                                               <div class="d-flex">
 
