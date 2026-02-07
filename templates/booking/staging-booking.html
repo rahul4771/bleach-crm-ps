@@ -2124,11 +2124,11 @@
                       </v-alert>
                       <v-btn color="primary" v-on:click="nextFloor(index - 1, floor)" class="mb-2 mt-2"
                         v-if="!building[index - 1].completed && !building[index-1].floors[floor-1].apartment">
-                        Continue yy
+                        Continue
                       </v-btn>
                       <v-btn color="primary" v-on:click="nextFloor(index - 1, floor)" class="mb-2 mt-2"
                         v-if="!building[index - 1].completed && building[index-1].floors[floor-1].apartment && building[index-1].floors[floor-1].completed">
-                        Continue uu
+                        Continue
                       </v-btn>
 
                       </v-stepper-content>
@@ -2146,7 +2146,7 @@
                         </v-alert>
                         <v-btn color="primary" :id="'btn-' + index" @click="nextTab(index)" class="mb-2 mt-2"
                           v-if="!buildingsCompleted">
-                          Continue ii
+                          Continue
                         </v-btn>
                       </div>
                     </div>
