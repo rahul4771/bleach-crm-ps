@@ -1301,27 +1301,26 @@
                 </div>
                 <div v-if="activeTab == 'Services'">
                   <h5 class="pt-4">Category</h5>
-                  <div class="owl-carousel" :key="'cat_count'+serviceCount" id="category-carousel"
-                    v-if="activeTab == 'Services'">
-                    <div class="sr-service-card" v-for="(item, index) in categories" v-bind:key="index"
+                  <!-- Category displayed as a simple grid without carousel -->
+                  <div class="row m-0" id="category-grid">
+                    <div class="col-md-3 col-6 mb-3" v-for="(item, index) in categories" v-bind:key="'cat_'+index"
                       @click="selectCategory(item.service_name)">
-                      <i
-                        :class="selectedCategory === item.service_name ? 'fa fa-check-circle active-icon' : 'far fa-circle inactive-icon'"></i>
-                      <img :src="`https://my.bleachkw.com${mediaUrl}${item.image_path}`" class="service-icon">
-                      <div class="text-center pt-2 service-title" v-text="item.service_name"></div>
+                      <div class="sr-service-card cursor-pointer">
+                        <i
+                          :class="selectedCategory === item.service_name ? 'fa fa-check-circle active-icon' : 'far fa-circle inactive-icon'"></i>
+                        <img :src="`https://my.bleachkw.com${mediaUrl}${item.image_path}`" class="service-icon">
+                        <div class="text-center pt-2 service-title" v-text="item.service_name"></div>
+                      </div>
                     </div>
-
                   </div>
                   <h5 class="pt-4">Service Type</h5>
-
-
-
-                  <div class="owl-carousel" id="service-carousel" :key="'serv_count'+serviceCount">
-                    <div class="sr-service-card m-2 p-2 service-one" onclick="selectService('General Cleaning',this)">
-                      <i class="far fa-circle inactive-icon"></i>
-                      <img src="/static/files/icons/booking/icons/detailed_cleaning.png" class="service-icon">
-                      <div class="text-center pt-2 service-title">
-                        General Cleaning
+                  <!-- Service Type displayed as carousel with navigation -->
+                  <div class="owl-carousel" id="service-carousel">
+                    <div class="sr-service-card" v-for="(service, index) in filteredServices" v-bind:key="'serv_'+index"
+                      @click="selectServiceType(service)">
+                      <i class="far fa-circle inactive-icon" v-if="!selectedService || !selectedService.name || selectedService.name != service.name"></i>
+                      <i class="fa fa-check-circle active-icon" v-if="selectedService && selectedService.name && selectedService.name == service.name"></i>
+                      <div class="text-center pt-2 service-title" v-text="service.name">
                       </div>
                     </div>
                   </div>
