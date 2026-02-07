@@ -2141,7 +2141,7 @@
                     </div>
                     </v-stepper>
                     <div
-                      v-if="serviceType == ' General Cleaning' || serviceType=='Hourly Cleaning' || serviceType=='Deep Cleaning' || serviceType=='Storage Area' || serviceType=='Sterilization' || serviceType=='Pest Control' || serviceType =='Rope Access' ">
+                      v-if="serviceType == 'General Cleaning' || serviceType=='Hourly Cleaning' || serviceType=='Deep Cleaning' || serviceType=='Storage Area' || serviceType=='Sterilization' || serviceType=='Pest Control' || serviceType =='Rope Access' ">
 
                       <div v-if=" building[index - 1].completed && floorCompleted" class="text-center">
                         <v-alert v-if="floor_msg" class="mt-4" dense text type="error">

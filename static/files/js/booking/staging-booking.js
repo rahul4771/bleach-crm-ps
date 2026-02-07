@@ -95,7 +95,6 @@ const app = new Vue({
         serviceImages: new FormData(),
         activePayment: 'debit',
         imageUrl: '',
-        imageObj: '',
         images: [],
         contact_platform: [],
         serviceDetails: {
@@ -176,32 +175,6 @@ const app = new Vue({
         ],
         mediaUrl: '',
         services: [],
-        currentServices: [
-            {
-                name: "General Cleaning",
-            },
-            {
-                name: "Deep Cleaning",
-            },
-            {
-                name: "Facade Cleaning",
-            },
-            {
-                name: "Storage Area",
-            },
-            {
-                name: "Car Parking Umbrella",
-            },
-            {
-                name: "Window Cleaning",
-            },
-            {
-                name: "Rope Access",
-            },
-            {
-                name: "Outdoor Cleaning",
-            },
-        ],
         buildingsCompleted: false,
         date: null,
         menu: false,
@@ -253,8 +226,6 @@ const app = new Vue({
         upholsterySize2: ["Small", "Medium", "Large"],
         upholsterySize3: ["Small", "Medium", "Large"],
         tab: "tab1",
-        e6: 1,
-        e1: 1,
         serviceType: "",
         serviceTypes: [],
         apartment: [],
@@ -288,7 +259,6 @@ const app = new Vue({
             "Empty Area"
         ],
         splitData: ["8"],
-        selectTest: "",
         selectedDuration: {},
         size: ["SMALL", "MEDIUM", "LARGE"],
         cause_of_stain: ['INK MARK', 'HARD DUST', 'COFFEE & TEA SPILL', 'OIL',
@@ -299,7 +269,6 @@ const app = new Vue({
         materials: ["POLYESTER", "NATURAL FIBER", "SYNTHETIC", "LEATHER", "OLEFIN", "POLYPROPYLENE", "NYLON"],
         colors: ["GREEN", "SILVER", "VIOLET", "WHITE", "BLACK", "BEIGE", "BLUE", "GREY", "RED", "CREAM", "MULTI", "OFF WHITE", "MEROON", "ORANGE", "PINK", "GOLD", "BROWN", "YELLOW", "ROYAL BLUE", "LILAC", "OTHERS"],
 
-        schedules: ["11", "15", "8", "23", "14"],
         imageData: [],
         dob: '',
         serviceData: {
@@ -3345,7 +3314,6 @@ const app = new Vue({
         selectCategory(item) {
             this.ser_counter++
             this.refresh++
-            this.currentServices = []
             this.detailedCleaningServices = []
             this.specialCareServices = []
             this.kitchenCleaningServices = []
