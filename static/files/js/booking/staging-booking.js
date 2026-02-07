@@ -5,13 +5,13 @@ $(document).ready(function () {
 
 function selectService(item, itempt) {
     // Remove active icon from all service cards
-    $('#service-carousel').find('.sr-service-card').each(function() {
+    $('#service-carousel').find('.sr-service-card').each(function () {
         $(this).find('.active-icon').removeClass('active-icon').addClass('inactive-icon').removeClass('fa-check-circle').addClass('fa-circle');
     });
-    
+
     // Add active icon to clicked service card
     $(itempt).find('.inactive-icon').removeClass('inactive-icon').addClass('active-icon').removeClass('fa-circle').addClass('fa-check-circle');
-    
+
     if (typeof app !== 'undefined') {
         app.selectService({ name: item })
     }
@@ -23,7 +23,7 @@ function selectServiceOnly(service) {
     }
 
     // Remove active icon from all service cards
-    $('#service-carousel').find('.sr-service-card').each(function() {
+    $('#service-carousel').find('.sr-service-card').each(function () {
         $(this).find('.active-icon').removeClass('active-icon').addClass('inactive-icon').removeClass('fa-check-circle').addClass('fa-circle');
     });
 }
@@ -556,7 +556,7 @@ const app = new Vue({
         */
         initializeCategoryCarousel() {
             const carousel = $("#category-carousel");
-            
+
             if (!carousel.length) {
                 console.warn("Category carousel element not found");
                 return;
@@ -567,17 +567,17 @@ const app = new Vue({
                 console.warn("Category carousel has no items");
                 return;
             }
-            
+
             // Ensure carousel is visible
             carousel.css({
                 'display': 'block',
                 'visibility': 'visible',
                 'opacity': '1'
             });
-            
+
             // Check if carousel is already initialized
             const isInitialized = carousel.data('owlCarousel') !== undefined;
-            
+
             // If already initialized, just trigger refresh without destroying
             if (isInitialized) {
                 try {
@@ -588,7 +588,7 @@ const app = new Vue({
                 }
                 return;
             }
-            
+
             // Initialize only if not already initialized
             try {
                 carousel.owlCarousel({
@@ -624,7 +624,7 @@ const app = new Vue({
         },
         initializeServiceCarousel() {
             const carousel = $("#service-carousel");
-            
+
             if (!carousel.length) {
                 console.warn("Service carousel element not found");
                 return;
@@ -635,17 +635,17 @@ const app = new Vue({
                 console.warn("Service carousel has no items");
                 return;
             }
-            
+
             // Ensure carousel is visible
             carousel.css({
                 'display': 'block',
                 'visibility': 'visible',
                 'opacity': '1'
             });
-            
+
             // Check if carousel is already initialized
             const isInitialized = carousel.data('owlCarousel') !== undefined;
-            
+
             // If already initialized, just trigger refresh without destroying
             if (isInitialized) {
                 try {
@@ -656,7 +656,7 @@ const app = new Vue({
                 }
                 return;
             }
-            
+
             // Initialize only if not already initialized
             try {
                 carousel.owlCarousel({
@@ -696,20 +696,20 @@ const app = new Vue({
             if (this.carouselInitTimeout) {
                 clearTimeout(this.carouselInitTimeout);
             }
-            
+
             // Prevent simultaneous initialization attempts
             if (this.isInitializingCarousels) {
                 return;
             }
-            
+
             // Set debounced timeout for carousel refresh
             this.carouselInitTimeout = setTimeout(() => {
                 if (this.isInitializingCarousels) {
                     return;
                 }
-                
+
                 this.isInitializingCarousels = true;
-                
+
                 try {
                     // Only refresh service carousel (category is now a static grid)
                     this.initializeServiceCarousel();
@@ -1914,17 +1914,13 @@ const app = new Vue({
                     this.categories = data.service_groups ?? [];
                     this.services = data.service_types ?? [];
 
-                    this.selectedCategory = this.categories.length > 0 ? this.categories[0].service_name : null;
-
-                    // Auto-select first service after data is loaded
-                    this.$nextTick(() => {
-                        if (this.filteredServices && this.filteredServices.length > 0) {
-                            const firstService = this.filteredServices[0];
-                            this.selectedService = firstService;
-                            this.serviceType = firstService.name;
-                            this.getSize();
-                        }
-                    });
+                    // Use selectCategory method for proper initialization with correct timing
+                    // This ensures filteredServices is calculated and getSize() is called properly
+                    if (this.categories.length > 0) {
+                        this.$nextTick(() => {
+                            this.selectCategory(this.categories[0].service_name);
+                        });
+                    }
                 })
                 .catch(error => {
                     console.error('Error fetching service types:', error);
@@ -3328,7 +3324,7 @@ const app = new Vue({
                     this.serviceType = firstService.name;
                     // Get size info for the auto-selected service
                     this.getSize();
-                    
+
                     // Refresh carousel after service is selected
                     this.$nextTick(() => {
                         this.debouncedRefreshCarousels();
@@ -3342,17 +3338,17 @@ const app = new Vue({
                 console.error("Invalid service object");
                 return;
             }
-            
+
             this.selectedService = service;
             this.serviceType = service.name;
             this.serviceCount++;
-            
+
             try {
                 this.getSize();
             } catch (error) {
                 console.error("Error getting service size:", error);
             }
-            
+
             // Use debounced carousel refresh to prevent glitches during rapid switches
             this.$nextTick(() => {
                 this.debouncedRefreshCarousels();
@@ -3786,14 +3782,24 @@ const app = new Vue({
                 });
         },
         getSize() {
-            const service = this.serviceType
+            let service = this.serviceType
             if (service == 'Hourly Cleaning') {
                 service = 'General Cleaning'
             }
             fetch(this.url + "/customer/ajax/getservicesizeprice?service_type=" + service)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        console.error('API error:', response.status, response.statusText);
+                        throw new Error('API returned status ' + response.status);
+                    }
+                    return response.json();
+                })
                 .then((data) => {
-                    this.serviceSize = data;
+                    if (!data || Object.keys(data).length === 0) {
+                        this.serviceSize = {};
+                    } else {
+                        this.serviceSize = data;
+                    }
                     this.parseSize();
                     if (this.serviceType == 'Rope Access') {
                         this.ropeAccessTypes = [...new Set(this.sizeData.map(size => size.rope_access_type))];
@@ -3804,7 +3810,9 @@ const app = new Vue({
                     this.windowFilter();
                 })
                 .catch((error) => {
-                    console.log(error);
+                    console.error('Error fetching size data:', error);
+                    this.snackbar = true;
+                    this.responseText = 'Error loading size options. Please try again.';
                 });
         },
         setDuration(hours, cleaners) {
@@ -4824,6 +4832,10 @@ const app = new Vue({
          * @param {number} build - Building number (1-indexed)
          */
         nextTab(build) {
+            console.log('nextTab called with index:', build);
+            console.log('buildingsCompleted:', this.buildingsCompleted);
+            console.log('building[build-1].completed:', this.building[build - 1]?.completed);
+            console.log('floorCompleted:', this.floorCompleted);
             this.floor_msg = false;
             this.building_msg = false;
 
@@ -6052,10 +6064,10 @@ const app = new Vue({
         this.getMultipleSlots();
 
         this.changeNewKitchen();
-        
+
         // Note: selectCategory is now called automatically inside getServiceTypes()
         // after the service data is fetched, ensuring proper initialization
-        
+
         // Initialize service carousel with proper timing
         this.$nextTick(() => {
             setTimeout(() => {
