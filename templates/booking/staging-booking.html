@@ -1128,7 +1128,7 @@
                         <div class="keynote-item">
                           <v-chip class="ma-2 w-100" color="primary" id="keynote-chip" close label outlined
                             @click:close="removeOthersKeynote(kindex)">
-                            <span v-text="getKeynoteDisplay(keynote.name, keynote.value)"></span>
+                            <span v-text="`${keynote.name} - ${keynote.value}`"></span>
                           </v-chip>
                         </div>
 
@@ -1318,8 +1318,10 @@
                   <div class="owl-carousel" id="service-carousel">
                     <div class="sr-service-card" v-for="(service, index) in filteredServices" v-bind:key="'serv_'+index"
                       @click="selectServiceType(service)">
-                      <i class="far fa-circle inactive-icon" v-if="!selectedService || !selectedService.name || selectedService.name != service.name"></i>
-                      <i class="fa fa-check-circle active-icon" v-if="selectedService && selectedService.name && selectedService.name == service.name"></i>
+                      <i class="far fa-circle inactive-icon"
+                        v-if="!selectedService || !selectedService.name || selectedService.name != service.name"></i>
+                      <i class="fa fa-check-circle active-icon"
+                        v-if="selectedService && selectedService.name && selectedService.name == service.name"></i>
                       <div class="text-center pt-2 service-title" v-text="service.name">
                       </div>
                     </div>
@@ -1774,25 +1776,23 @@
                                             </v-form>
                                           </div>
                                           <div class="col-md-12 mt-2">
-                                            <div>Add Keynotes</div>
-                                            <div class="row  m-0">
+                                            <div><strong>Add Keynotes</strong></div>
+                                            <div class="row  m-0 mb-3">
                                               <div
                                                 v-for="(keynote,kindex) in building[index-1].floors[floor-1].keynote_data"
-                                                v-bind:key="kindex" class="col-md-3">
+                                                v-bind:key="kindex" class="col-md-3 mb-2">
                                                 <div class="keynote-item">
-                                                  <v-chip class="ma-2 w-100" color="primary" id="keynote-chip" close
-                                                    label outlined @click:close="removeKeynote(index-1,floor-1,kindex)"
-                                                    v-text="keynote.name+' - '+keynote.value">
+                                                  <v-chip class="ma-2 w-100" color="primary" label outlined close
+                                                    @click:close="removeKeynote(index-1,floor-1,kindex)">
+                                                    <span v-text="`${keynote.name} - ${keynote.value}`"></span>
                                                   </v-chip>
                                                 </div>
-
                                               </div>
                                             </div>
                                           </div>
                                           <div class="col-md-4">
                                             <v-combobox v-model="keynote_name" :items="keynote_content"
                                               label="Field Name"></v-combobox>
-
                                           </div>
                                           <div class="col-md-4">
                                             <v-text-field v-model="keynote_value" label="Value">
@@ -2069,18 +2069,18 @@
                                                     <!-- Apartment kitchen ends here -->
 
                                                     <div class="col-md-12 mt-2">
-                                                      <div>Add Keynotes</div>
-                                                      <div class="row ">
+                                                      <div><strong>Add Keynotes</strong></div>
+                                                      <div class="row  m-0 mb-3">
                                                         <div v-for="(keynote,kindex) in apartment.keynote_data"
-                                                          v-bind:key="kindex" class="col-md-3">
+                                                          v-bind:key="kindex" class="col-md-3 mb-2">
                                                           <div class="keynote-item">
-                                                            <v-chip class="ma-2 w-100" color="primary" label
-                                                              id="keynote-chip" outlined close
+                                                            <v-chip class="ma-2 w-100" color="primary" label outlined
+                                                              close
                                                               @click:close="removeApartmentKeynote(index-1,floor-1,apindex,kindex)"
-                                                              v-text="keynote.name+' - '+keynote.value">
+                                                             >
+                                                                <span v-text="`${keynote.name} - ${keynote.value}`"></span>
                                                             </v-chip>
                                                           </div>
-
                                                         </div>
                                                       </div>
                                                     </div>
@@ -2561,7 +2561,7 @@
                           <div class="keynote-item">
                             <v-chip class="ma-2 w-100" color="primary" id="keynote-chip" close label outlined
                               @click:close="removeOthersKeynote(kindex)">
-                              <span v-text="getKeynoteDisplay(keynote.name, keynote.value)"></span>
+                              <span v-text="`${keynote.name} - ${keynote.value}`"></span>
                             </v-chip>
                           </div>
 
@@ -2623,17 +2623,6 @@
                   <div class="addImg">
                     <div class="item_image" @click="$refs.itemfile.click()" ref="item-image"
                       v-on:change="onImageFileChanged">
-                      <!--   <image-compressor
-    :done="getFiles"
-    :scale="scale"
-    :quality="quality"
-    ref="imageComp"
-
-    
-      accept="image/*"
-  
-    >
-  </image-compressor>-->
                       <input type="file" ref="itemfile" style="display: none" accept="image/*" id="itemfileselected" />
                       <i class="ImageIcon fa fa-plus"></i>
                     </div>
@@ -2691,7 +2680,6 @@
               <!-- Other service Question-->
               <div class="row" v-if="(serviceType == 'Upholstery Cleaning' ||
                     serviceType == 'Facade Cleaning' ||
-                    serviceType == 'Upholstery Cleaning' ||
                     serviceType == 'Carpet Cleaning' ||
                     serviceType == 'Mattress Cleaning' ||
                     serviceType == 'Kitchen Cleaning' ||

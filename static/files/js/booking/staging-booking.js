@@ -1173,7 +1173,9 @@ const app = new Vue({
          * @param {number} keynote - Keynote index to remove
          */
         removeApartmentKeynote(building, floor, apartment, keynote) {
-            this.building[building].floors[floor].apartments[apartment].keynote_data.splice(keynote, 1);
+            if (this.building[building] && this.building[building].floors[floor] && this.building[building].floors[floor].apartments[apartment] && this.building[building].floors[floor].apartments[apartment].keynote_data) {
+                this.building[building].floors[floor].apartments[apartment].keynote_data.splice(keynote, 1);
+            }
         },
         /**
          * Calculate and populate service types for selected services
@@ -4824,6 +4826,7 @@ const app = new Vue({
          * @returns {boolean} True if all buildings have completed status
          */
         buildingCompleteChecker() {
+            console.log("this.building",this.building)
             return this.building.every(bldg => bldg.completed);
         },
         /**
@@ -4863,6 +4866,11 @@ const app = new Vue({
             if (build == this.no_of_building) {
                 if (this.buildingCompleteChecker()) {
                     this.buildingsCompleted = true;
+                    // Force Vue to detect the change and ensure DOM is updated
+                    this.$nextTick(() => {
+                        // Scroll to top to show the image upload section
+                        window.scrollTo(0, 0);
+                    });
                 } else {
                     this.building_msg = true;
                 }
