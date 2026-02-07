@@ -1920,18 +1920,18 @@ const app = new Vue({
                     if (this.categories.length > 0) {
                         const firstCategory = this.categories[0];
                         this.selectedCategory = firstCategory.service_name;
-                        
+
                         // Wait for Vue reactivity, then directly get first matching service
                         this.$nextTick(() => {
                             const matchingServices = this.services.filter(
                                 service => service.service_group_id === firstCategory.id
                             );
-                            
+
                             if (matchingServices.length > 0) {
                                 const firstService = matchingServices[0];
                                 this.selectedService = firstService;
                                 this.serviceType = firstService.name;
-                                
+
                                 // Now fetch size data
                                 this.$nextTick(() => {
                                     this.getSize();
@@ -4826,7 +4826,7 @@ const app = new Vue({
          * @returns {boolean} True if all buildings have completed status
          */
         buildingCompleteChecker() {
-            console.log("this.building",this.building)
+            console.log("this.building", this.building)
             return this.building.every(bldg => bldg.completed);
         },
         /**
@@ -4866,11 +4866,6 @@ const app = new Vue({
             if (build == this.no_of_building) {
                 if (this.buildingCompleteChecker()) {
                     this.buildingsCompleted = true;
-                    // Force Vue to detect the change and ensure DOM is updated
-                    this.$nextTick(() => {
-                        // Scroll to top to show the image upload section
-                        window.scrollTo(0, 0);
-                    });
                 } else {
                     this.building_msg = true;
                 }
@@ -4878,6 +4873,9 @@ const app = new Vue({
                 // Move to next tab
                 document.querySelector(`#tab${build + 1}`)?.click();
             }
+            console.log("this.buildingsCompleted", this.buildingsCompleted)
+            console.log("this.activeTab", this.activeTab)
+            console.log("this.reset_building ", this.reset_building)
         },
 
         /**
@@ -5368,14 +5366,15 @@ const app = new Vue({
         },
         doSomethingAsync(k) {
             return new Promise((resolve) => {
+                let service_to_select = '';
                 if (this.schedule_serviceTypes[k] == 'Kitchen Appliances') {
-                    let service_to_select = 'Kitchen Cleaning'
+                    service_to_select = 'Kitchen Cleaning'
                 }
                 else if (this.schedule_serviceTypes[k] == 'Hourly Cleaning') {
-                    let service_to_select = 'General Cleaning'
+                    service_to_select = 'General Cleaning'
                 }
                 else {
-                    let service_to_select = this.schedule_serviceTypes[k]
+                    service_to_select = this.schedule_serviceTypes[k]
                 }
                 fetch(this.url + "/customer/ajax/getserviceproductivity?service_type=" +
                     service_to_select)
