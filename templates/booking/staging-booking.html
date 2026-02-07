@@ -1501,7 +1501,7 @@
                                   </div>
                                   <div v-if="checkBillingData(index,floor)" class="mt-2">
                                     <div class="text-caption">Section Name</div>
-                                    <div v-text="billingData[findBillingDataIndex(index,floor)].section_name" 
+                                    <div v-text="billingData[findBillingDataIndex(index,floor)].section_name"
                                       style="border-bottom: 1px solid #ccc; padding-bottom: 4px; font-weight: 500;">
                                     </div>
                                   </div>
@@ -1828,8 +1828,7 @@
                                           <div
                                             v-for="(apartment, apindex) in building[index - 1].floors[floor - 1].apartments"
                                             v-bind:key="apindex">
-                                            <v-form
-                                              :ref="`building-${index-1}-floor-${floor-1}-apartment-${apindex}`">
+                                            <v-form :ref="`building-${index-1}-floor-${floor-1}-apartment-${apindex}`">
                                               <v-stepper-step
                                                 :complete="e.building[index - 1].floors[floor - 1].e >apindex + 1"
                                                 :step="`${apindex + 1}`" style="cursor: pointer"
@@ -2078,9 +2077,9 @@
                                                           <div class="keynote-item">
                                                             <v-chip class="ma-2 w-100" color="primary" label outlined
                                                               close
-                                                              @click:close="removeApartmentKeynote(index-1,floor-1,apindex,kindex)"
-                                                             >
-                                                                <span v-text="`${keynote.name} - ${keynote.value}`"></span>
+                                                              @click:close="removeApartmentKeynote(index-1,floor-1,apindex,kindex)">
+                                                              <span
+                                                                v-text="`${keynote.name} - ${keynote.value}`"></span>
                                                             </v-chip>
                                                           </div>
                                                         </div>
@@ -2125,20 +2124,13 @@
                       </v-alert>
                       <v-btn color="primary" v-on:click="nextFloor(index - 1, floor)" class="mb-2 mt-2"
                         v-if="!building[index - 1].completed && !building[index-1].floors[floor-1].apartment">
-                        Continue
+                        Continue yy
                       </v-btn>
                       <v-btn color="primary" v-on:click="nextFloor(index - 1, floor)" class="mb-2 mt-2"
                         v-if="!building[index - 1].completed && building[index-1].floors[floor-1].apartment && building[index-1].floors[floor-1].completed">
-                        Continue
+                        Continue uu
                       </v-btn>
-                      <!--  <v-btn
-                              text
-                              @click="e.building[index - 1].e = floor - 1"
-                              class="mb-2"
-                              v-if="!building[index - 1].completed"
-                            >
-                              Back
-                            </v-btn>-->
+
                       </v-stepper-content>
                     </div>
                     </v-stepper>
@@ -2154,7 +2146,7 @@
                         </v-alert>
                         <v-btn color="primary" :id="'btn-' + index" @click="nextTab(index)" class="mb-2 mt-2"
                           v-if="!buildingsCompleted">
-                          Continue
+                          Continue ii
                         </v-btn>
                       </div>
                     </div>
@@ -2208,38 +2200,7 @@
                   </div>
                 </div>
               </div>
-              <!-- <div v-if="serviceType=='Kitchen Cleaning'" class="row mb-4">
-                    <div class="col-md-2" v-for="(kitchen,kindex) in otherServices" v-bind:key="kindex" >
-                      <div class="kitchen-chip d-flex" @click="editItem(kitchen,kindex)" v-if="currentItem!=kindex||currentItem==null">
-                        <div v-text="getKitchenTitle(kindex)"></div>
-                       
-                        <div  class="kitchen-chip-icon">
-                          <i class="fas fa-times"></i>
-                        </div>
-                      </div>
-                      <div class="kitchen-chip-active d-flex" @click="editItem(kitchen,kindex)" v-if="currentItem==kindex && currentItem!=null">
-                        <div v-text="getKitchenTitle(kindex)"></div>
-                       
-                        <div  class="kitchen-chip-icon" @click="deleteItem(kindex)">
-                          <i class="fas fa-times"></i>
-                        </div>
-                      </div>
-                   
-                    </div>
-                    <div class="col-md-2" @click="addNewKitchenWithAddon()">
-                      <div class="kitchen-chip-active d-flex"  v-if="add_new_kitchen">
-                        <div v-text="`Kitchen ${getKitchenCount()}`"></div>
-                       
-                        
-                      </div>
-                      <div class="kitchen-chip d-flex" v-if="!add_new_kitchen">
-                        <div v-text="`Kitchen ${getKitchenCount()}`"></div>
-                       
-                        
-                      </div>
-                    </div>
-                     
-                  </div> -->
+
               <v-btn v-if="otherServices.length > 0 " class="mx-2 mt-4" dark color="primary" style="float: right"
                 v-on:click="addNew()" v-text="`Add ${getFirstWord(serviceType)}`">
               </v-btn>
@@ -2601,10 +2562,9 @@
                         Save Changes
                       </v-btn>
                     </div>
-
                     <div class="col-md-12"></div>
-
                   </div>
+                </div>
               </v-form>
               <!-- upholsetry , deep, carpet ends here -->
               <!-- Image Uploading -->
@@ -2623,9 +2583,9 @@
                 </div>
                 <div class="col-md-3">
                   <div class="addImg">
-                    <div class="item_image" @click="$refs.itemfile.click()" ref="item-image"
-                      v-on:change="onImageFileChanged">
-                      <input type="file" ref="itemfile" style="display: none" accept="image/*" id="itemfileselected" />
+                    <div class="item_image" @click="$refs.itemfile.click()">
+                      <input type="file" ref="itemfile" style="display: none" accept="image/*" id="itemfileselected"
+                        @change="onImageFileChanged" />
                       <i class="ImageIcon fa fa-plus"></i>
                     </div>
                   </div>
