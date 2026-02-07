@@ -1914,11 +1914,27 @@ const app = new Vue({
                     this.categories = data.service_groups ?? [];
                     this.services = data.service_types ?? [];
 
-                    // Use selectCategory method for proper initialization with correct timing
-                    // This ensures filteredServices is calculated and getSize() is called properly
+                    // Initialize with first category and service
                     if (this.categories.length > 0) {
+                        const firstCategory = this.categories[0];
+                        this.selectedCategory = firstCategory.service_name;
+                        
+                        // Wait for Vue reactivity, then directly get first matching service
                         this.$nextTick(() => {
-                            this.selectCategory(this.categories[0].service_name);
+                            const matchingServices = this.services.filter(
+                                service => service.service_group_id === firstCategory.id
+                            );
+                            
+                            if (matchingServices.length > 0) {
+                                const firstService = matchingServices[0];
+                                this.selectedService = firstService;
+                                this.serviceType = firstService.name;
+                                
+                                // Now fetch size data
+                                this.$nextTick(() => {
+                                    this.getSize();
+                                });
+                            }
                         });
                     }
                 })
@@ -4832,10 +4848,6 @@ const app = new Vue({
          * @param {number} build - Building number (1-indexed)
          */
         nextTab(build) {
-            console.log('nextTab called with index:', build);
-            console.log('buildingsCompleted:', this.buildingsCompleted);
-            console.log('building[build-1].completed:', this.building[build - 1]?.completed);
-            console.log('floorCompleted:', this.floorCompleted);
             this.floor_msg = false;
             this.building_msg = false;
 
@@ -4848,7 +4860,7 @@ const app = new Vue({
             this.cat_counter = this.cat_counter + 1;
 
             // Check if this is the last building
-            if (build === this.no_of_building) {
+            if (build == this.no_of_building) {
                 if (this.buildingCompleteChecker()) {
                     this.buildingsCompleted = true;
                 } else {
