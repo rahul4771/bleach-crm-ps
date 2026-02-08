@@ -12,6 +12,7 @@
 <link rel="stylesheet"
   href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.theme.default.min.css' %}">
 <link rel="stylesheet" href="{% static 'files/css/booking/booking.css' %}">
+<link rel="stylesheet" href="{% static 'files/css/booking/carousel.css' %}">
 <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
 
 
@@ -818,8 +819,7 @@
           <v-card>
             <v-form :ref="' KitchenForm-building-'+currentBuilding+'floor'-currentFloor" v-model="validKitchenDialog">
               <v-card-title class="headline primary text-white">
-                Add
-                Kitchen
+                Add Kitchen
               </v-card-title>
 
               <v-card-text>
@@ -832,14 +832,7 @@
                   </div>
                   <div class="col-md-12">
                     <div>
-                      Do
-                      you
-                      want
-                      to
-                      clean
-                      the
-                      Cabinet
-                      ?
+                      Do you want to clean the Cabinet ?
                       <span style="color:red">*</span>
                     </div>
                     <v-radio-group v-model="kitchenData.is_cabinet" class="p-2" row v-on:change="changeNewKitchen()">
@@ -868,8 +861,7 @@
 
                   <div class="col-md-6">
                     <div>
-                      Oil
-                      Residue?
+                      Oil Residue?
                       <span style="color:red">*</span>
                     </div>
                     <v-radio-group v-model="kitchenData.residue" class="p-2" row>
@@ -911,8 +903,7 @@
                 </v-btn>
 
                 <v-btn color="primary" v-on:click="updateKitchen()" v-if="!kitchendialogStat">
-                  Save
-                  Changes
+                  Save Changes
                 </v-btn>
 
 
@@ -925,8 +916,7 @@
                   Add
                 </v-btn>
                 <v-btn color="primary" v-on:click="updateKitchenApartment()" v-if="!kitchendialogStat">
-                  Save
-                  Changes
+                  Save Changes
                 </v-btn>
                 <v-btn @click="kitchendialog=false">
                   Close
@@ -1301,16 +1291,14 @@
                 </div>
                 <div v-if="activeTab == 'Services'">
                   <h5 class="pt-4">Category</h5>
-                  <!-- Category displayed as a simple grid without carousel -->
-                  <div class="row m-0" id="category-grid">
-                    <div class="col-md-3 col-6 mb-3" v-for="(item, index) in categories" v-bind:key="'cat_'+index"
+                  <!-- Category displayed as carousel with conditional navigation -->
+                  <div class="owl-carousel" id="category-carousel">
+                    <div class="sr-service-card cursor-pointer" v-for="(item, index) in categories" v-bind:key="'cat_'+index"
                       @click="selectCategory(item.service_name)">
-                      <div class="sr-service-card cursor-pointer">
-                        <i
-                          :class="selectedCategory === item.service_name ? 'fa fa-check-circle active-icon' : 'far fa-circle inactive-icon'"></i>
-                        <img :src="`https://my.bleachkw.com${mediaUrl}${item.image_path}`" class="service-icon">
-                        <div class="text-center pt-2 service-title" v-text="item.service_name"></div>
-                      </div>
+                      <i
+                        :class="selectedCategory === item.service_name ? 'fa fa-check-circle active-icon' : 'far fa-circle inactive-icon'"></i>
+                      <img :src="`https://my.bleachkw.com${mediaUrl}${item.image_path}`" class="service-icon">
+                      <div class="text-center pt-2 service-title" v-text="item.service_name"></div>
                     </div>
                   </div>
                   <h5 class="pt-4">Service Type</h5>

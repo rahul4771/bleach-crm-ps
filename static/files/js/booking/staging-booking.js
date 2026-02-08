@@ -1,6 +1,4 @@
 $(document).ready(function () {
-    // Category carousel will be initialized by Vue after rendering
-    // Service carousel will be initialized by Vue after rendering
 });
 
 function selectService(item, itempt) {
@@ -350,9 +348,7 @@ const app = new Vue({
         n: 0,
         serviceCount: 1,
         errMsg: '',
-        // Carousel debouncing to prevent glitches during rapid switches
-        carouselInitTimeout: null,
-        isInitializingCarousels: false,
+
         kitchen_size: 0,
         sofa_size: 0,
         chair_size: 0,
@@ -506,6 +502,7 @@ const app = new Vue({
         current_service: '',
         ropeAccessTypes: '',
 
+
     },
     computed: {
         filteredServices() {
@@ -519,254 +516,32 @@ const app = new Vue({
         }
     },
     watch: {
-        serviceCount(newVal, oldVal) {
-            // Refresh carousel when services are updated
-            this.$nextTick(() => {
-                setTimeout(() => {
-                    this.initializeServiceCarousel();
-                }, 150);
-            });
+        categories(newVal) {
+            if (newVal && newVal.length > 0) {
+                // Reinitialize carousel when categories change after Vue renders
+                this.$nextTick(() => {
+                    setTimeout(() => {
+                        console.log('Categories updated, reinitializing carousel');
+                        this.initCategoryCarousel();
+                    }, 100);
+                });
+            }
         },
-        selectedCategory(newVal, oldVal) {
-            // Refresh carousel when category changes
-            this.$nextTick(() => {
-                setTimeout(() => {
-                    this.initializeServiceCarousel();
-                }, 150);
-            });
-        },
-        filteredServices(newVal, oldVal) {
-            // Refresh carousel when filtered services change
-            this.$nextTick(() => {
-                this.initializeServiceCarousel();
-            });
-        },
-        categories(newVal, oldVal) {
-            // Reinitialize category carousel when categories load
-            this.$nextTick(() => {
-                setTimeout(() => {
-                    this.initializeCategoryCarousel();
-                }, 150);
-            });
+        filteredServices(newVal) {
+            if (newVal && newVal.length > 0) {
+                // Reinitialize carousel when services change after Vue renders
+                this.$nextTick(() => {
+                    setTimeout(() => {
+                        console.log('Services updated, reinitializing carousel');
+                        this.initServiceCarousel();
+                    }, 100);
+                });
+            }
         }
     },
     methods: {
-        /* ================================================================
-            0. CAROUSEL INITIALIZATION
-            ================================================================
-        */
-        initializeCategoryCarousel() {
-            const carousel = $("#category-carousel");
-
-            if (!carousel.length) {
-                console.warn("Category carousel element not found");
-                return;
-            }
-
-            // Check if carousel has items
-            if (carousel.find('.sr-service-card').length === 0) {
-                console.warn("Category carousel has no items");
-                return;
-            }
-
-            // Ensure carousel is visible
-            carousel.css({
-                'display': 'block',
-                'visibility': 'visible',
-                'opacity': '1'
-            });
-
-            // Check if carousel is already initialized
-            const isInitialized = carousel.data('owlCarousel') !== undefined;
-
-            // If already initialized, just trigger refresh without destroying
-            if (isInitialized) {
-                try {
-                    carousel.trigger('refresh.owl.carousel');
-                    carousel.trigger('resize.owl.carousel');
-                } catch (error) {
-                    console.warn("Error refreshing category carousel:", error);
-                }
-                return;
-            }
-
-            // Initialize only if not already initialized
-            try {
-                carousel.owlCarousel({
-                    loop: false,
-                    margin: 10,
-                    nav: true,
-                    navText: ["<i class='fa fa-chevron-left service-control'></i>",
-                        "<i class='fa fa-chevron-right service-control'></i>"],
-                    dots: false,
-                    responsiveClass: true,
-                    responsive: {
-                        0: {
-                            items: 1
-                        },
-                        480: {
-                            items: 2
-                        },
-                        768: {
-                            items: 3
-                        },
-                        1024: {
-                            items: 4
-                        },
-                        1200: {
-                            items: 5
-                        }
-                    }
-                });
-                carousel.trigger('refresh.owl.carousel');
-            } catch (error) {
-                console.error("Error initializing category carousel:", error);
-            }
-        },
-        initializeServiceCarousel() {
-            const carousel = $("#service-carousel");
-
-            if (!carousel.length) {
-                console.warn("Service carousel element not found");
-                return;
-            }
-
-            // Check if carousel has items
-            const itemCount = carousel.find('.sr-service-card').length;
-            
-            if (itemCount === 0) {
-                return;
-            }
-
-            // Check if carousel is already initialized
-            const isInitialized = carousel.data('owlCarousel') !== undefined;
-
-            // Always destroy if already initialized
-            if (isInitialized) {
-                try {
-                    // Completely destroy carousel
-                    const owlInstance = carousel.data('owlCarousel');
-                    if (owlInstance) {
-                        owlInstance.destroy();
-                    }
-                    
-                    // Remove all Owl Carousel classes and elements
-                    carousel.removeClass('owl-loaded owl-drag owl-rtl owl-ltr owl-touchdrag owl-text-select-on');
-                    carousel.find('.owl-stage-outer').remove();
-                    carousel.find('.owl-nav').remove();
-                    carousel.find('.owl-dots').remove();
-                    carousel.find('.owl-stage').remove();
-                    carousel.find('.owl-item').remove();
-                    
-                    // Reset styles completely
-                    carousel.attr('style', '');
-                    carousel.find('.sr-service-card').removeAttr('style');
-                    
-                    // Clear data
-                    carousel.removeData('owlCarousel');
-                    carousel.removeData('owl');
-                    
-                    // LONGER delay - wait for Vue rendering AND browser repaint
-                    setTimeout(() => {
-                        this.initializeOwlCarousel();
-                    }, 500);
-                } catch (error) {
-                    console.error("Error destroying carousel:", error);
-                    setTimeout(() => {
-                        this.initializeOwlCarousel();
-                    }, 500);
-                }
-                return;
-            }
-
-            // First time initialization
-            this.initializeOwlCarousel();
-        },
-
-        initializeOwlCarousel() {
-            const carousel = $("#service-carousel");
-            
-            if (!carousel.length) {
-                return;
-            }
-
-            const itemCount = carousel.find('.sr-service-card').length;
-
-            try {
-                // Make carousel visible and ensure proper display
-                carousel.css({
-                    'display': 'block',
-                    'visibility': 'visible',
-                    'opacity': '1'
-                });
-
-                // Initialize Owl Carousel
-                carousel.owlCarousel({
-                    loop: false,
-                    margin: 10,
-                    nav: true,
-                    navText: ["<i class='fa fa-chevron-left service-control'></i>",
-                        "<i class='fa fa-chevron-right service-control'></i>"],
-                    dots: false,
-                    responsiveClass: true,
-                    startPosition: 0,
-                    responsive: {
-                        0: {
-                            items: 1
-                        },
-                        480: {
-                            items: 2
-                        },
-                        768: {
-                            items: 3
-                        },
-                        1024: {
-                            items: 4
-                        }
-                    }
-                });
-                
-                // Force immediate layout recalculation
-                setTimeout(() => {
-                    carousel.trigger('refresh.owl.carousel');
-                }, 50);
-            } catch (error) {
-                console.error("Error initializing owl carousel:", error);
-            }
-        },
-        /**
-         * Debounced carousel refresh to prevent glitches during rapid service switches
-         * Prevents multiple simultaneous carousel reinitializations
-         */
-        debouncedRefreshCarousels() {
-            // Clear any pending carousel initialization timeout
-            if (this.carouselInitTimeout) {
-                clearTimeout(this.carouselInitTimeout);
-            }
-
-            // Prevent simultaneous initialization attempts
-            if (this.isInitializingCarousels) {
-                return;
-            }
-
-            // Set debounced timeout for carousel refresh
-            this.carouselInitTimeout = setTimeout(() => {
-                if (this.isInitializingCarousels) {
-                    return;
-                }
-
-                this.isInitializingCarousels = true;
-
-                try {
-                    // Only refresh service carousel (category is now a static grid)
-                    this.initializeServiceCarousel();
-                } catch (error) {
-                    console.error("Error in debounced carousel refresh:", error);
-                } finally {
-                    this.isInitializingCarousels = false;
-                }
-            }, 250);
-        },
+       
+       
         /* ================================================================
             METHODS ORGANIZATION INDEX
             ================================================================
@@ -3411,7 +3186,6 @@ const app = new Vue({
             this.infectionControlServices = []
             this.selectedCategory = item
 
-            // Ensure selectedService is set with proper timing and refresh carousels
             this.$nextTick(() => {
                 if (this.filteredServices && this.filteredServices.length > 0) {
                     const firstService = this.filteredServices[0];
@@ -3419,13 +3193,128 @@ const app = new Vue({
                     this.serviceType = firstService.name;
                     // Get size info for the auto-selected service
                     this.getSize();
-
-                    // Refresh carousel after service is selected
-                    this.$nextTick(() => {
-                        this.debouncedRefreshCarousels();
-                    });
                 }
+                
+                // Reinitialize both carousels after category selection with proper timing
+                this.initCategoryCarousel();
+                
+                // Delay service carousel init to give DOM time to update filteredServices
+                setTimeout(() => {
+                    this.initServiceCarousel();
+                }, 200);
             });
+        },
+
+        initCategoryCarousel() {
+            const $carousel = $('#category-carousel');
+            if ($carousel.length === 0) {
+                console.warn('Category carousel element not found');
+                return;
+            }
+
+            // Count items
+            let itemCount = $carousel.children('.sr-service-card').length;
+            console.log('Category carousel - items found:', itemCount);
+            
+            if (itemCount === 0) {
+                console.warn('No items found in category carousel');
+                return;
+            }
+
+            const isInitialized = $carousel.hasClass('owl-loaded');
+            
+            if (isInitialized) {
+                try {
+                    $carousel.trigger('destroy.owl.carousel');
+                    $carousel.removeData('owl.carousel');
+                    $carousel.removeClass('owl-loaded owl-hidden owl-drag owl-loading owl-configured');
+                } catch (e) {
+                    console.error('Error destroying carousel:', e);
+                }
+            }
+            
+            const showNav = itemCount > 4;
+            console.log('Category carousel - show nav:', showNav);
+            
+            setTimeout(() => {
+                try {
+                    $carousel.owlCarousel({
+                        items: 4,
+                        loop: false,
+                        margin: 10,
+                        nav: showNav,
+                        dots: false,
+                        responsive: {
+                            0: { items: 1 },
+                            600: { items: 2 },
+                            1000: { items: 4 }
+                        }
+                    });
+                    
+                    if (!showNav) {
+                        $carousel.find('.owl-nav').hide();
+                    }
+                    console.log('Category carousel initialized');
+                } catch (e) {
+                    console.error('Error initializing category carousel:', e);
+                }
+            }, 50);
+        },
+
+        initServiceCarousel() {
+            const $carousel = $('#service-carousel');
+            if ($carousel.length === 0) {
+                console.warn('Service carousel element not found');
+                return;
+            }
+
+            // Count items
+            let itemCount = $carousel.children('.sr-service-card').length;
+            console.log('Service carousel - items found:', itemCount);
+            
+            if (itemCount === 0) {
+                console.warn('No items found in service carousel');
+                return;
+            }
+
+            const isInitialized = $carousel.hasClass('owl-loaded');
+            
+            if (isInitialized) {
+                try {
+                    $carousel.trigger('destroy.owl.carousel');
+                    $carousel.removeData('owl.carousel');
+                    $carousel.removeClass('owl-loaded owl-hidden owl-drag owl-loading owl-configured');
+                } catch (e) {
+                    console.error('Error destroying carousel:', e);
+                }
+            }
+            
+            const showNav = itemCount > 4;
+            console.log('Service carousel - show nav:', showNav);
+            
+            setTimeout(() => {
+                try {
+                    $carousel.owlCarousel({
+                        items: 4,
+                        loop: false,
+                        margin: 10,
+                        nav: showNav,
+                        dots: false,
+                        responsive: {
+                            0: { items: 1 },
+                            600: { items: 2 },
+                            1000: { items: 4 }
+                        }
+                    });
+                    
+                    if (!showNav) {
+                        $carousel.find('.owl-nav').hide();
+                    }
+                    console.log('Service carousel initialized');
+                } catch (e) {
+                    console.error('Error initializing service carousel:', e);
+                }
+            }, 50);
         },
 
         selectServiceType(service) {
@@ -3444,9 +3333,9 @@ const app = new Vue({
                 console.error("Error getting service size:", error);
             }
 
-            // Use debounced carousel refresh to prevent glitches during rapid switches
+            // Reinitialize carousel after service selection
             this.$nextTick(() => {
-                this.debouncedRefreshCarousels();
+                this.initServiceCarousel();
             });
         },
 
@@ -3743,34 +3632,6 @@ const app = new Vue({
 
 
             }
-            const delayInMilliseconds = 1000; //1 second
-
-            setTimeout(function () {
-                $('#otherServiceCarousel').owlCarousel({
-                    loop: false,
-
-                    responsiveClass: true,
-
-                    navText: ["<i class='fa fa-chevron-left service-control' @click='prevService()'></i>",
-                        "<i class='fa fa-chevron-right service-control'></i>"],
-                    responsive: {
-                        0: {
-                            items: 1,
-                            nav: true
-                        },
-                        600: {
-                            items: 1,
-                            nav: true
-                        },
-                        1000: {
-                            items: 5,
-                            nav: true,
-                            loop: false
-                        }
-                    }
-                });
-            }, delayInMilliseconds);
-
 
 
         },
@@ -4018,35 +3879,6 @@ const app = new Vue({
             this.dialogmsg = "Add New";
             this.dialogStat = true;
             this.building = [];
-            const delayInMilliseconds = 1000
-            const carousel = $("#otherServiceDialogCarousel");
-            carousel.owlCarousel('destroy');
-            $('.owl-item:empty').remove()
-            setTimeout(function () {
-                $('#otherServiceDialogCarousel').owlCarousel({
-                    loop: false,
-
-                    responsiveClass: true,
-                    navText: ["<i class='fa fa-chevron-left service-control' @click='prevService()'></i>",
-                        "<i class='fa fa-chevron-right service-control'></i>"],
-                    responsive: {
-                        0: {
-                            items: 1,
-                            nav: true
-                        },
-                        600: {
-                            items: 1,
-                            nav: true
-                        },
-                        1000: {
-                            items: 3,
-                            nav: true,
-                            loop: false
-                        }
-                    }
-                });
-            }, delayInMilliseconds);
-            $('#otherServiceDialogCarousel').removeClass('owl-hidden')
         },
         facadeFilter() {
             this.facadeSize = []
@@ -4131,34 +3963,6 @@ const app = new Vue({
             }),
 
                 this.currentItem = b;
-            const delayInMilliseconds = 1000
-            const carousel = $("#otherServiceDialogCarousel");
-            carousel.owlCarousel('destroy');
-            $('.owl-item:empty').remove()
-            setTimeout(function () {
-                $('#otherServiceDialogCarousel').owlCarousel({
-                    loop: false,
-                    navText: ["<i class='fa fa-chevron-left service-control' @click='prevService()'></i>",
-                        "<i class='fa fa-chevron-right service-control'></i>"],
-                    responsiveClass: true,
-                    responsive: {
-                        0: {
-                            items: 1,
-                            nav: true
-                        },
-                        600: {
-                            items: 1,
-                            nav: true
-                        },
-                        1000: {
-                            items: 3,
-                            nav: true,
-                            loop: false
-                        }
-                    }
-                });
-            }, delayInMilliseconds);
-            $('#otherServiceDialogCarousel').removeClass('owl-hidden')
         },
         async saveChanges() {
             this.edit_item = false
@@ -4479,29 +4283,6 @@ const app = new Vue({
 
             $('#tab-1').click()
 
-        },
-        reinitCat() {
-            $('#category-carousel').owlCarousel('destroy');
-            $('#category-carousel').owlCarousel({
-                loop: false,
-
-                responsiveClass: true,
-                responsive: {
-                    0: {
-                        items: 1,
-                        nav: false
-                    },
-                    600: {
-                        items: 4,
-                        nav: false
-                    },
-                    1000: {
-                        items: 5,
-                        nav: false,
-                        loop: false
-                    }
-                }
-            }).trigger('refresh.owl.carousel');
         },
         /**
          * Navigate to Schedule tab and prepare scheduling interface
@@ -6144,20 +5925,22 @@ const app = new Vue({
 
         this.changeNewKitchen();
 
+        // Initialize carousels after data is loaded with extended delay to ensure DOM rendering
+        const self = this;
+        setTimeout(() => {
+            this.$nextTick(() => {
+                console.log('Initializing carousels after DOM update');
+                this.initCategoryCarousel();
+                // Add extra delay for service carousel  
+                setTimeout(() => {
+                    this.initServiceCarousel();
+                }, 200);
+            });
+        }, 1200);
+
         // Note: selectCategory is now called automatically inside getServiceTypes()
         // after the service data is fetched, ensuring proper initialization
-
-        // Initialize service carousel with proper timing
-        this.$nextTick(() => {
-            setTimeout(() => {
-                this.initializeServiceCarousel();
-            }, 500);
-        });
     },
     beforeDestroy() {
-        // Clean up carousel timeout to prevent memory leaks
-        if (this.carouselInitTimeout) {
-            clearTimeout(this.carouselInitTimeout);
-        }
     }
 });
