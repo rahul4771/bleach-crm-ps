@@ -3268,10 +3268,10 @@
                       <!---  for  cleaning with availablity check-->
                       <div class="col-md-2" v-for="(visit,vindex) in visits" v-bind:key="vindex">
                         <div class="available-slot-card p-2"
-                          v-if="slotStat.available_slotes.includes(visit.dateTime)||visit.status=='fixed'">
+                          v-if="isDateTimeAvailable(visit.dateTime) || visit.status=='fixed'">
                           <div class="d-flex">
                             <div>
-                              <b v-text="getVisitNumber(vindex)"></b>
+                              <b v-text="`Visit ${getVisitNumber(vindex)}`"></b>
                             </div>
                             <div class="ml-auto">
                               <span v-text="visit.date"></span>
@@ -3282,11 +3282,11 @@
                           </div>
                         </div>
                         <div class="not-available-slot-card p-2"
-                          v-if="!slotStat.available_slotes.includes(visit.dateTime) && !checkFixedSlots(visit.dateTime,vindex) && visit.status!='fixed'"
+                          v-if="!isDateTimeAvailable(visit.dateTime) && !checkFixedSlots(visit.dateTime,vindex) && visit.status!='fixed'"
                           @click="reselectVisitDate(visit,vindex)">
                           <div class="d-flex">
                             <div>
-                              <b v-text="getVisitNumber(vindex)"></b>
+                              <b v-text="`Visit ${getVisitNumber(vindex)}`"></b>
                             </div>
                             <div class="ml-auto">
                               <span v-text="visit.date"></span>
@@ -3300,10 +3300,10 @@
 
                         <!-- autofixed slots-->
                         <div class="available-slot-card p-2"
-                          v-if="checkFixedSlots(visit.dateTime,vindex) && !slotStat.available_slotes.includes(visit.dateTime)">
+                          v-if="checkFixedSlots(visit.dateTime,vindex) && !isDateTimeAvailable(visit.dateTime)">
                           <div class="d-flex">
                             <div>
-                              <b v-text="getVisitNumber(vindex)"></b>
+                              <b v-text="`Visit ${getVisitNumber(vindex)}`"></b>
                             </div>
                             <div class="ml-auto">
                               <span v-text="visit.date"></span>

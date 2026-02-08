@@ -3460,7 +3460,7 @@ const app = new Vue({
             this.submit_loader = true
             const urlSearchParams = new URLSearchParams(window.location.search);
             const params = Object.fromEntries(urlSearchParams.entries());
-            this.userid = window.location.href.split('/')[5]
+            this.userid = window.location.href.split('/')[6] // Index 6 correctly extracts user ID from URL in common/staging/booking context
             let posturl = ''
             if (this.scheduleStatus) {
                 posturl = '/customer/evaluatorbookingmultiplephase2/together/'
@@ -3500,7 +3500,7 @@ const app = new Vue({
         async seperateMultiBook() {
             const urlSearchParams = new URLSearchParams(window.location.search);
             const params = Object.fromEntries(urlSearchParams.entries());
-            this.userid = window.location.href.split('/')[5]
+            this.userid = window.location.href.split('/')[6]
             let posturl = '/customer/evaluatorbookingmultiplephase2/together/'
 
             for (const sch in this.scheduleGroup) {
@@ -3604,7 +3604,7 @@ const app = new Vue({
         /* Deprecated function ends here */
 
         bookCustService() {
-            this.userid = window.location.href.split('/')[5]
+            this.userid = window.location.href.split('/')[6]
             const urlSearchParams = new URLSearchParams(window.location.search);
             const params = Object.fromEntries(urlSearchParams.entries());
 
