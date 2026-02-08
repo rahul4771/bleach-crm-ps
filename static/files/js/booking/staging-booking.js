@@ -378,7 +378,10 @@ const app = new Vue({
         scheduleDialog: false,
         scheduleDate: '',
         double_slots: [],
-        slotStat: {},
+        slotStat: {
+            available_slotes: [],
+            busy_slotes: []
+        },
         selected_double_slots: [],
         visits: [],
         visitDateTime: [],
@@ -535,9 +538,7 @@ const app = new Vue({
         filteredServices(newVal, oldVal) {
             // Refresh carousel when filtered services change
             this.$nextTick(() => {
-                setTimeout(() => {
-                    this.initializeServiceCarousel();
-                }, 150);
+                this.initializeServiceCarousel();
             });
         },
         categories(newVal, oldVal) {
@@ -631,34 +632,75 @@ const app = new Vue({
             }
 
             // Check if carousel has items
-            if (carousel.find('.sr-service-card').length === 0) {
-                console.warn("Service carousel has no items");
+            const itemCount = carousel.find('.sr-service-card').length;
+            
+            if (itemCount === 0) {
                 return;
             }
-
-            // Ensure carousel is visible
-            carousel.css({
-                'display': 'block',
-                'visibility': 'visible',
-                'opacity': '1'
-            });
 
             // Check if carousel is already initialized
             const isInitialized = carousel.data('owlCarousel') !== undefined;
 
-            // If already initialized, just trigger refresh without destroying
+            // Always destroy if already initialized
             if (isInitialized) {
                 try {
-                    carousel.trigger('refresh.owl.carousel');
-                    carousel.trigger('resize.owl.carousel');
+                    // Completely destroy carousel
+                    const owlInstance = carousel.data('owlCarousel');
+                    if (owlInstance) {
+                        owlInstance.destroy();
+                    }
+                    
+                    // Remove all Owl Carousel classes and elements
+                    carousel.removeClass('owl-loaded owl-drag owl-rtl owl-ltr owl-touchdrag owl-text-select-on');
+                    carousel.find('.owl-stage-outer').remove();
+                    carousel.find('.owl-nav').remove();
+                    carousel.find('.owl-dots').remove();
+                    carousel.find('.owl-stage').remove();
+                    carousel.find('.owl-item').remove();
+                    
+                    // Reset styles completely
+                    carousel.attr('style', '');
+                    carousel.find('.sr-service-card').removeAttr('style');
+                    
+                    // Clear data
+                    carousel.removeData('owlCarousel');
+                    carousel.removeData('owl');
+                    
+                    // LONGER delay - wait for Vue rendering AND browser repaint
+                    setTimeout(() => {
+                        this.initializeOwlCarousel();
+                    }, 500);
                 } catch (error) {
-                    console.warn("Error refreshing service carousel:", error);
+                    console.error("Error destroying carousel:", error);
+                    setTimeout(() => {
+                        this.initializeOwlCarousel();
+                    }, 500);
                 }
                 return;
             }
 
-            // Initialize only if not already initialized
+            // First time initialization
+            this.initializeOwlCarousel();
+        },
+
+        initializeOwlCarousel() {
+            const carousel = $("#service-carousel");
+            
+            if (!carousel.length) {
+                return;
+            }
+
+            const itemCount = carousel.find('.sr-service-card').length;
+
             try {
+                // Make carousel visible and ensure proper display
+                carousel.css({
+                    'display': 'block',
+                    'visibility': 'visible',
+                    'opacity': '1'
+                });
+
+                // Initialize Owl Carousel
                 carousel.owlCarousel({
                     loop: false,
                     margin: 10,
@@ -667,6 +709,7 @@ const app = new Vue({
                         "<i class='fa fa-chevron-right service-control'></i>"],
                     dots: false,
                     responsiveClass: true,
+                    startPosition: 0,
                     responsive: {
                         0: {
                             items: 1
@@ -682,9 +725,13 @@ const app = new Vue({
                         }
                     }
                 });
-                carousel.trigger('refresh.owl.carousel');
+                
+                // Force immediate layout recalculation
+                setTimeout(() => {
+                    carousel.trigger('refresh.owl.carousel');
+                }, 50);
             } catch (error) {
-                console.error("Error initializing service carousel:", error);
+                console.error("Error initializing owl carousel:", error);
             }
         },
         /**
@@ -757,6 +804,38 @@ const app = new Vue({
          */
         isSlotsSelected() {
             return this.currentSlotDay > this.cleaning_set.length;
+        },
+        
+        /**
+         * Get visit number based on index
+         * @param {number} index - Index of the visit
+         * @returns {number} Visit number (1-indexed)
+         */
+        getVisitNumber(index) {
+            return index + 1;
+        },
+
+        /**
+         * Check if a datetime is in available slots
+         * @param {string} dateTime - DateTime string
+         * @returns {boolean} True if datetime is available
+         */
+        isDateTimeAvailable(dateTime) {
+            return this.slotStat && 
+                   Array.isArray(this.slotStat.available_slotes) && 
+                   this.slotStat.available_slotes.includes(dateTime);
+        },
+
+        /**
+         * Get the number of required slots for the current day
+         * @returns {number} Number of slots required based on hours
+         */
+        getRequiredSlots() {
+            if (!this.cleaning_set || this.currentSlotDay < 1) {
+                return 0;
+            }
+            const hours = this.cleaning_set[this.currentSlotDay - 1]?.[0] || 0;
+            return Math.ceil(hours / 2);
         },
 
         /* ================================================================
@@ -1896,7 +1975,6 @@ const app = new Vue({
                         const [key, value] = pair.split('=')
                         response[key] = value
                     })
-                    console.log(response)
                     this.ip_address = response.ip
                 })
         },
@@ -2086,8 +2164,8 @@ const app = new Vue({
 
                     }
                     if (this.serviceDetails.service_details[i].cleaning_policy == 'SUBSCRIPTION') {
-                        this.serviceDetails.service_details[i].sections[j].sectiononly_net_cost = this.serviceDetails.service_details[i].sections[j].sectiononly_net_cost * parseInt(visits)
-                        this.serviceDetails.service_details[i].sections[j].section_net_cost = this.serviceDetails.service_details[i].sections[j].section_net_cost * parseInt(visits)
+                        this.serviceDetails.service_details[i].sections[j].sectiononly_net_cost = this.serviceDetails.service_details[i].sections[j].sectiononly_net_cost * parseInt(this.visits)
+                        this.serviceDetails.service_details[i].sections[j].section_net_cost = this.serviceDetails.service_details[i].sections[j].section_net_cost * parseInt(this.visits)
                     }
                     if (this.multiServicesBill[i].bill[j].section.size.is_highprice_facade) {
                         this.serviceDetails.service_details[i].sections[j].is_highprice_facade = true
@@ -2735,7 +2813,6 @@ const app = new Vue({
                     }
                 })
                 .catch((error) => {
-                    console.log(error);
                 });
             this.sizeFilteredData = [];
 
@@ -3414,7 +3491,6 @@ const app = new Vue({
                     })
                     .catch((error) => {
                         this.responseText = error
-                        console.log(error);
                     });
             }
             else {
@@ -3480,7 +3556,6 @@ const app = new Vue({
                     })
                     .catch((error) => {
                         this.responseText = error
-                        console.log(error);
                         return error
                     });
 
@@ -3523,7 +3598,6 @@ const app = new Vue({
                 })
                 .catch((error) => {
                     this.responseText = error
-                    console.log(error);
                     return error
                 });
         },
@@ -3554,7 +3628,6 @@ const app = new Vue({
                 })
                 .catch((error) => {
                     this.responseText = error
-                    console.log(error);
                 });
         },
         async uploadImages() {
@@ -3582,7 +3655,6 @@ const app = new Vue({
 
                     })
                     .catch((error) => {
-                        console.log(error);
                         if (this.last_image_stat) {
                             window.location.href = '/common/makequatation/phase1/' + params.enquiry_id + '/' + params.evaluation_id
                         }
@@ -3604,7 +3676,6 @@ const app = new Vue({
 
                 })
                 .catch((error) => {
-                    console.log(error);
                 });
         },
         async getAddons() {
@@ -3617,7 +3688,6 @@ const app = new Vue({
                     this.parseAddons()
                 })
                 .catch((error) => {
-                    console.log(error)
                 })
         },
         findAddons(addon) {
@@ -3749,7 +3819,6 @@ const app = new Vue({
                     this.parseSize();
                 })
                 .catch((error) => {
-                    console.log(error);
                 });
         },
         parseOneTimeSlots() {
@@ -3785,7 +3854,6 @@ const app = new Vue({
                     this.parseSize();
                 })
                 .catch((error) => {
-                    console.log(error);
                 });
         },
         getAreaTypes() {
@@ -3796,7 +3864,6 @@ const app = new Vue({
 
                 })
                 .catch((error) => {
-                    console.log(error);
                 });
         },
         getSize() {
@@ -3892,7 +3959,6 @@ const app = new Vue({
 
                 await this.uploadImgToArray(compressedFile, event.target.files[0].name); // write your own logic
             } catch (error) {
-                console.log(error);
             }
 
 
@@ -4826,7 +4892,6 @@ const app = new Vue({
          * @returns {boolean} True if all buildings have completed status
          */
         buildingCompleteChecker() {
-            console.log("this.building", this.building)
             return this.building.every(bldg => bldg.completed);
         },
         /**
@@ -4873,9 +4938,6 @@ const app = new Vue({
                 // Move to next tab
                 document.querySelector(`#tab${build + 1}`)?.click();
             }
-            console.log("this.buildingsCompleted", this.buildingsCompleted)
-            console.log("this.activeTab", this.activeTab)
-            console.log("this.reset_building ", this.reset_building)
         },
 
         /**
@@ -5589,12 +5651,11 @@ const app = new Vue({
                             this.n = this.totalmanhour - mod;
                         }
 
-                        this.maxCleaners.push(response.data.max_cleaners)
+                        this.max_cleaners.push(data.max_cleaners)
                         resolve("done")
 
 
                     }).catch((error) => {
-                        console.log(error);
                     })
             });
         },
@@ -6030,7 +6091,6 @@ const app = new Vue({
                 }
 
             this.cleaning_set = cleaningset
-            console.log(cleaningset, "new cleaning set")
             var sub_cleaners = 0
             for (var cs = 0; cs < this.cleaning_set.length; cs++) {
                 sub_cleaners = sub_cleaners + this.cleaning_set[cs][1]
