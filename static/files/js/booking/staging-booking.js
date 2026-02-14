@@ -369,7 +369,6 @@ const app = new Vue({
         multiServiceImages: [],
         phase2Result: {},
         ip_address: '',
-        owl_items: [],
         prefDay: [],
         scheduleDialog: false,
         scheduleDate: '',
@@ -516,25 +515,23 @@ const app = new Vue({
         }
     },
     watch: {
-        categories(newVal) {
-            if (newVal && newVal.length > 0) {
-                // Reinitialize carousel when categories change after Vue renders
-                this.$nextTick(() => {
-                    setTimeout(() => {
-                        console.log('Categories updated, reinitializing carousel');
-                        this.initCategoryCarousel();
-                    }, 100);
-                });
-            }
+        filteredServices() {
+            // Reinitialize service carousel when services change
+            this.reinitServiceCarousel();
         },
-        filteredServices(newVal) {
-            if (newVal && newVal.length > 0) {
-                // Reinitialize carousel when services change after Vue renders
+        categories() {
+            // Reinitialize category carousel when categories change
+            this.reinitCategoryCarousel();
+        },
+        addons_parsed() {
+            // Reinitialize addons carousel when add-ons change
+            this.reinitAddonsCarousel();
+        },
+        serviceType(newVal) {
+            // Reinitialize addons carousel when service type changes to Kitchen types
+            if (newVal === 'Kitchen Appliances' || newVal === 'Kitchen Cleaning') {
                 this.$nextTick(() => {
-                    setTimeout(() => {
-                        console.log('Services updated, reinitializing carousel');
-                        this.initServiceCarousel();
-                    }, 100);
+                    this.reinitAddonsCarousel();
                 });
             }
         }
@@ -3194,127 +3191,7 @@ const app = new Vue({
                     // Get size info for the auto-selected service
                     this.getSize();
                 }
-                
-                // Reinitialize both carousels after category selection with proper timing
-                this.initCategoryCarousel();
-                
-                // Delay service carousel init to give DOM time to update filteredServices
-                setTimeout(() => {
-                    this.initServiceCarousel();
-                }, 200);
             });
-        },
-
-        initCategoryCarousel() {
-            const $carousel = $('#category-carousel');
-            if ($carousel.length === 0) {
-                console.warn('Category carousel element not found');
-                return;
-            }
-
-            // Count items
-            let itemCount = $carousel.children('.sr-service-card').length;
-            console.log('Category carousel - items found:', itemCount);
-            
-            if (itemCount === 0) {
-                console.warn('No items found in category carousel');
-                return;
-            }
-
-            const isInitialized = $carousel.hasClass('owl-loaded');
-            
-            if (isInitialized) {
-                try {
-                    $carousel.trigger('destroy.owl.carousel');
-                    $carousel.removeData('owl.carousel');
-                    $carousel.removeClass('owl-loaded owl-hidden owl-drag owl-loading owl-configured');
-                } catch (e) {
-                    console.error('Error destroying carousel:', e);
-                }
-            }
-            
-            const showNav = itemCount > 4;
-            console.log('Category carousel - show nav:', showNav);
-            
-            setTimeout(() => {
-                try {
-                    $carousel.owlCarousel({
-                        items: 4,
-                        loop: false,
-                        margin: 10,
-                        nav: showNav,
-                        dots: false,
-                        responsive: {
-                            0: { items: 1 },
-                            600: { items: 2 },
-                            1000: { items: 4 }
-                        }
-                    });
-                    
-                    if (!showNav) {
-                        $carousel.find('.owl-nav').hide();
-                    }
-                    console.log('Category carousel initialized');
-                } catch (e) {
-                    console.error('Error initializing category carousel:', e);
-                }
-            }, 50);
-        },
-
-        initServiceCarousel() {
-            const $carousel = $('#service-carousel');
-            if ($carousel.length === 0) {
-                console.warn('Service carousel element not found');
-                return;
-            }
-
-            // Count items
-            let itemCount = $carousel.children('.sr-service-card').length;
-            console.log('Service carousel - items found:', itemCount);
-            
-            if (itemCount === 0) {
-                console.warn('No items found in service carousel');
-                return;
-            }
-
-            const isInitialized = $carousel.hasClass('owl-loaded');
-            
-            if (isInitialized) {
-                try {
-                    $carousel.trigger('destroy.owl.carousel');
-                    $carousel.removeData('owl.carousel');
-                    $carousel.removeClass('owl-loaded owl-hidden owl-drag owl-loading owl-configured');
-                } catch (e) {
-                    console.error('Error destroying carousel:', e);
-                }
-            }
-            
-            const showNav = itemCount > 4;
-            console.log('Service carousel - show nav:', showNav);
-            
-            setTimeout(() => {
-                try {
-                    $carousel.owlCarousel({
-                        items: 4,
-                        loop: false,
-                        margin: 10,
-                        nav: showNav,
-                        dots: false,
-                        responsive: {
-                            0: { items: 1 },
-                            600: { items: 2 },
-                            1000: { items: 4 }
-                        }
-                    });
-                    
-                    if (!showNav) {
-                        $carousel.find('.owl-nav').hide();
-                    }
-                    console.log('Service carousel initialized');
-                } catch (e) {
-                    console.error('Error initializing service carousel:', e);
-                }
-            }, 50);
         },
 
         selectServiceType(service) {
@@ -3332,11 +3209,143 @@ const app = new Vue({
             } catch (error) {
                 console.error("Error getting service size:", error);
             }
+        },
 
-            // Reinitialize carousel after service selection
-            this.$nextTick(() => {
-                this.initServiceCarousel();
-            });
+        /**
+         * Reinitialize the service carousel after content changes
+         * This is necessary when switching categories as filteredServices changes
+         */
+        reinitServiceCarousel() {
+            const $carousel = $('#service-carousel');
+            
+            // Hide carousel to prevent visual flicker during transition
+            $carousel.css({ 'opacity': '0', 'transition': 'opacity 0.1s' });
+            
+            // Destroy old carousel instance if it exists
+            if ($carousel.hasClass('owl-loaded')) {
+                $carousel.trigger('destroy.owl.carousel').removeClass('owl-loaded owl-drag owl-carousel');
+                $carousel.find('.owl-stage-outer, .owl-stage, .owl-item, .owl-nav, .owl-dots').remove();
+            }
+            
+            // Wait for Vue to render new items, then reinitialize
+            setTimeout(() => {
+                this.$nextTick(() => {
+                    const finalItemsCount = $carousel.find('.sr-service-card').length;
+                    
+                    // Re-initialize carousel if we have items
+                    if (finalItemsCount > 0) {
+                        $carousel.addClass('owl-carousel').owlCarousel({
+                            items: 4,
+                            loop: false,
+                            margin: 10,
+                            nav: true,
+                            dots: false,
+                            responsive: {
+                                0: { items: 1 },
+                                600: { items: 2 },
+                                1000: { items: 4 }
+                            }
+                        });
+                        
+                        // Show carousel again with smooth fade-in
+                        setTimeout(() => {
+                            $carousel.css('opacity', '1');
+                        }, 50);
+                    }
+                });
+            }, 150);
+        },
+
+        /**
+         * Reinitialize the category carousel after content changes
+         */
+        reinitCategoryCarousel() {
+            const $carousel = $('#category-carousel');
+            
+            // Hide carousel to prevent visual flicker during transition
+            $carousel.css({ 'opacity': '0', 'transition': 'opacity 0.1s' });
+            
+            if ($carousel.hasClass('owl-loaded')) {
+                $carousel.trigger('destroy.owl.carousel').removeClass('owl-loaded owl-drag owl-carousel');
+                $carousel.find('.owl-stage-outer, .owl-stage, .owl-item, .owl-nav, .owl-dots').remove();
+            }
+            
+            setTimeout(() => {
+                this.$nextTick(() => {
+                    const finalItemsCount = $carousel.find('.sr-service-card').length;
+                    
+                    if (finalItemsCount > 0) {
+                        $carousel.addClass('owl-carousel').owlCarousel({
+                            items: 4,
+                            loop: false,
+                            margin: 10,
+                            nav: true,
+                            dots: false,
+                            responsive: {
+                                0: { items: 1 },
+                                600: { items: 2 },
+                                1000: { items: 4 }
+                            }
+                        });
+                        
+                        // Show carousel again with smooth fade-in
+                        setTimeout(() => {
+                            $carousel.css('opacity', '1');
+                        }, 50);
+                    }
+                });
+            }, 150);
+        },
+
+        /**
+         * Reinitialize the add-ons carousel after content changes
+         */
+        reinitAddonsCarousel() {
+            setTimeout(() => {
+                this.$nextTick(() => {
+                    // Handle both otherServiceCarousel and otherServiceDialogCarousel
+                    const carouselIds = ['#otherServiceCarousel', '#otherServiceDialogCarousel'];
+                    
+                    carouselIds.forEach(carouselId => {
+                        const $carousel = $(carouselId);
+                        
+                        // Only proceed if the carousel exists in the DOM
+                        if ($carousel.length === 0) {
+                            return;
+                        }
+                        
+                        // Hide carousel to prevent visual flicker during transition
+                        $carousel.css({ 'opacity': '0', 'transition': 'opacity 0.1s' });
+                        
+                        if ($carousel.hasClass('owl-loaded')) {
+                            $carousel.trigger('destroy.owl.carousel').removeClass('owl-loaded owl-drag owl-carousel');
+                            $carousel.find('.owl-stage-outer, .owl-stage, .owl-item, .owl-nav, .owl-dots').remove();
+                        }
+                        
+                        const finalItemsCount = $carousel.find('.more-service-card').length;
+                        
+                        if (finalItemsCount > 0) {
+                            $carousel.addClass('owl-carousel').owlCarousel({
+                                items: 4,
+                                loop: false,
+                                margin: 10,
+                                nav: true,
+                                dots: false,
+                                responsive: {
+                                    0: { items: 1 },
+                                    600: { items: 2 },
+                                    1000: { items: 4 }
+                                }
+                            });
+                            
+                            // Show carousel again with smooth fade-in
+                            setTimeout(() => {
+                                $carousel.css('opacity', '1');
+                            }, 50);
+                        }
+                    });
+                });
+            }, 150);
         },
 
         /* ================================================================
@@ -5925,21 +5934,36 @@ const app = new Vue({
 
         this.changeNewKitchen();
 
-        // Initialize carousels after data is loaded with extended delay to ensure DOM rendering
-        const self = this;
-        setTimeout(() => {
-            this.$nextTick(() => {
-                console.log('Initializing carousels after DOM update');
-                this.initCategoryCarousel();
-                // Add extra delay for service carousel  
-                setTimeout(() => {
-                    this.initServiceCarousel();
-                }, 200);
+        // Initialize owl carousels after Vue has finished rendering
+        this.$nextTick(() => {
+            // Initialize category carousel
+            $('#category-carousel').owlCarousel({
+                items: 4,
+                loop: false,
+                margin: 10,
+                nav: true,
+                dots: false,
+                responsive: {
+                    0: { items: 1 },
+                    600: { items: 2 },
+                    1000: { items: 4 }
+                }
             });
-        }, 1200);
 
-        // Note: selectCategory is now called automatically inside getServiceTypes()
-        // after the service data is fetched, ensuring proper initialization
+            // Initialize service carousel
+            $('#service-carousel').owlCarousel({
+                items: 4,
+                loop: false,
+                margin: 10,
+                nav: true,
+                dots: false,
+                responsive: {
+                    0: { items: 1 },
+                    600: { items: 2 },
+                    1000: { items: 4 }
+                }
+            });
+        });
     },
     beforeDestroy() {
     }
