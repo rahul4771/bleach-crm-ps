@@ -201,19 +201,9 @@
                                                 <label for="favcity">
                                                 <select name="servicetype_filter" id="service_type_filter_id">
                                                 <option value=''>---ALL---</option>
-                                                <option value='is_general_skill' {% if service_type == "is_general_skill" %}selected{% endif %}>General Cleaning</option>
-                                                <option value='is_deep_skill' {% if service_type == "is_deep_skill" %}selected{% endif %}>Deep Cleaning</option>
-                                                <option value='is_upholstery_skill' {% if service_type == "is_upholstery_skill" %}selected{% endif %}>Upholstery Cleaning</option>
-                                                <option value='is_carpet_skill' {% if service_type == "is_carpet_skill" %}selected{% endif %}>Carpet Cleaning</option>
-                                                <option value='is_kitchen_skill' {% if service_type == "is_kitchen_skill" %}selected{% endif %}>Kitchen Cleaning</option>
-                                                <option value='is_sterilization_skill' {% if service_type == "is_sterilization_skill" %}selected{% endif %}>Sterilization</option>
-                                                <option value="is_carpet_skill" {% if service_type == "is_carpet_skill" %}selected{% endif %}>Carpet Cleaning</option>
-                                                <option value="is_mattress_skill" {% if service_type == "is_mattress_skill" %}selected{% endif %}>Mattress Cleaning</option>
-                                                <option value="is_facade_skill" {% if service_type == "is_facade_skill" %}selected{% endif %}>Facade Cleaning</option>
-                                                <option value="is_storagearea_skill" {% if service_type == "is_storagearea_skill" %}selected{% endif %}>Storage Area Cleaning</option>
-                                                <option value="is_carparkingumbrella_skill" {% if service_type == "is_carparkingumbrella_skill" %}selected{% endif %}>Car Parking Umbrella</option>
-                                                <option value="is_outdoor_skill" {% if service_type == "is_outdoor_skill" %}selected{% endif %}>Outdoor Cleaning</option>
-                                                <option value="is_window_skill" {% if service_type == "is_outdoor_skill" %}selected{% endif %}>Window Cleaning</option>
+                                                {% for service in service_types %}
+                                                <option value='{{service.id}}' {% if service.id == selected_service_type_id %}selected{% endif %}>{{service.name}}</option>
+                                                {% endfor %}
                                                 </select>
                                                 </label>
                                   </div><!--ticket-form-right-->

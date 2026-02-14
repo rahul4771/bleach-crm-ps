@@ -2358,6 +2358,24 @@ class ResourceManagement(IsAuthenticated,View):
 		search 		   = request.GET.get('search')
 		staff_type     = request.GET.get('staff_type')
 		service_type   = request.GET.get('service_type')
+		try:
+			service_types = ServiceType.objects.filter(is_active=True).order_by('name')
+		except:
+			service_types = None
+
+		selected_service_type_id = None
+		service_type_filter = None
+		if service_type:
+			if str(service_type).startswith('is_'):
+				service_type_filter = service_type
+			else:
+				try:
+					selected_service_type_id = int(service_type)
+					service_type_obj = ServiceType.objects.filter(is_active=True,id=selected_service_type_id).first()
+					if service_type_obj:
+						service_type_filter = service_type_obj.name
+				except:
+					service_type_filter = None
 		
 
 		filters=[]
@@ -2367,41 +2385,30 @@ class ResourceManagement(IsAuthenticated,View):
 		if staff_type:
 			case2 = Q(user_type=staff_type)
 			filters.append(case2)
-		if service_type:
-			if service_type == 'is_general_skill':
-				case3 = Q(is_general_skill=True)
-			if service_type == 'is_deep_skill':
-				case3 = Q(is_deep_skill=True)
-			if service_type == 'is_upholstery_skill':
-				case3 = Q(is_upholstery_skill=True)
-			if service_type == 'is_carpet_skill':
-				case3 = Q(is_carpet_skill=True)
-			if service_type == 'is_kitchen_skill':
-				case3 = Q(is_kitchen_skill=True)
-			if service_type == 'is_sterilization_skill':
-				case3 = Q(is_sterilization_skill=True)
-			if service_type == 'is_carpet_skill':
-				case3 = Q(is_carpet_skill=True)
-			if service_type == 'is_mattress_skill':
-				case3 = Q(is_mattress_skill=True)
-			if service_type == 'is_facade_skill':
-				case3 = Q(is_facade_skill=True)
-			if service_type == 'is_storagearea_skill':
-				case3 = Q(is_storagearea_skill=True)
-			if service_type == 'is_carparkingumbrella_skill':
-				case3 = Q(is_carparkingumbrella_skill=True)
-			if service_type == 'is_outdoor_skill':
-				case3 = Q(is_outdoor_skill=True)
-			if service_type == 'is_window_skill':
-				case3 = Q(is_window_skill=True)
-			
-			filters.append(case3)
+		if service_type_filter:
+			service_type_map = {
+				'General Cleaning': 'is_general_skill',
+				'Deep Cleaning': 'is_deep_skill',
+				'Upholstery Cleaning': 'is_upholstery_skill',
+				'Carpet Cleaning': 'is_carpet_skill',
+				'Kitchen Cleaning': 'is_kitchen_skill',
+				'Sterilization': 'is_sterilization_skill',
+				'Mattress Cleaning': 'is_mattress_skill',
+				'Facade Cleaning': 'is_facade_skill',
+				'Storage Area Cleaning': 'is_storagearea_skill',
+				'Car Parking Umbrella': 'is_carparkingumbrella_skill',
+				'Outdoor Cleaning': 'is_outdoor_skill',
+				'Window Cleaning': 'is_window_skill',
+			}
+			skill_field = service_type_map.get(service_type_filter, service_type_filter)
+			if str(skill_field).startswith('is_'):
+				filters.append(Q(**{skill_field: True}))
 		
 		if staff_type or service_type or search: 
 		    filters         = functools.reduce(operator.and_,filters)
 		    workers 		= workers.filter(filters)			
 
-		return render(request,'common/resource/resource-new.html',{"workers":workers,"workers_date":workers_date,"service_type":service_type,"staff_type":staff_type,"search":search})
+		return render(request,'common/resource/resource-new.html',{"workers":workers,"workers_date":workers_date,"service_type":service_type,"staff_type":staff_type,"search":search,"service_types":service_types,"selected_service_type_id":selected_service_type_id})
 
 	def post(self,request):
 		
