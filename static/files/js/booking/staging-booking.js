@@ -4283,6 +4283,10 @@ const app = new Vue({
 
 
             this.activeTab = 'Services'
+            
+            // Show carousel navigation arrows
+            $('.owl-nav').show();
+            
             setTimeout(function () {
 
                 app.reinitCat()
@@ -4309,6 +4313,9 @@ const app = new Vue({
 
             this.activeTab = 'Schedule';
             this.currentPageTitle = 'Schedule';
+            
+            // Hide carousel navigation arrows in Schedule tab
+            $('.owl-nav').hide();
 
             if (this.scheduleStat && !this.editScheduleStat) {
                 this.addAllServiceTypes();
@@ -4338,6 +4345,10 @@ const app = new Vue({
          */
         goToBilling() {
             this.activeTab = 'Payment Method';
+            
+            // Hide carousel navigation arrows in Payment Method tab
+            $('.owl-nav').hide();
+            
             this.arrangeData();
         },
         /**
@@ -4347,6 +4358,9 @@ const app = new Vue({
             reinit();
             this.serviceCount++;
             this.activeTab = 'Services';
+            
+            // Show carousel navigation arrows
+            $('.owl-nav').show();
         },
         goToCart() {
             if (this.serviceType == 'Kitchen Appliances') {
@@ -4420,6 +4434,10 @@ const app = new Vue({
 
             this.multiServicesBill.push(sampleServicesBill)
             this.activeTab = 'Cart'
+            
+            // Hide carousel navigation arrows in Cart tab
+            $('.owl-nav').hide();
+            
             window.scrollTo(0, 0);
             sampleServicesBill = {
                 service: '',
