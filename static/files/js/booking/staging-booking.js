@@ -5912,6 +5912,13 @@ const app = new Vue({
                 return count;
             }
             return 0;
+        },
+        getSizeWithoutUnit(sizeString) {
+            if (!sizeString) {
+                return '';
+            }
+            // Remove common size units like SQM, sqm, Sqm, etc.
+            return sizeString.replace(/\s*(SQM|sqm|Sqm|sq\.m|sq m|m²)/gi, '').trim();
         }
     },
     mounted() {
