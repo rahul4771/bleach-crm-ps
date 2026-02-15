@@ -460,6 +460,7 @@ const app = new Vue({
         },
         keynote_name: '',
         keynote_value: '',
+        keynote_err_msg: false,
         scheduleDateSat: false,
         confirmation_dialog: false,
         schedule_err_msg: false,
@@ -962,26 +963,44 @@ const app = new Vue({
          * @param {number} floor - Floor index
          */
         addKeynote(building, floor) {
-            if (this.keynote_name && this.keynote_value) {
+            // Get the form ref (may be array in v-for)
+            let formRef = this.$refs[`keynoteForm-${building}-${floor}`];
+            if (Array.isArray(formRef)) formRef = formRef[0];
+            
+            // Validate the form before adding
+            if (formRef && formRef.validate()) {
                 this.building[building].floors[floor].keynote_data.push({
                     name: this.keynote_name,
                     value: this.keynote_value
                 });
                 this.keynote_name = '';
                 this.keynote_value = '';
+                // Reset form validation
+                this.$nextTick(() => {
+                    formRef.resetValidation();
+                });
             }
         },
         /**
          * Add a keynote to other services
          */
         addOthersKeynote() {
-            if (this.keynote_name && this.keynote_value) {
+            // Get the form ref (may be array)
+            let formRef = this.$refs.keynoteOthersForm;
+            if (Array.isArray(formRef)) formRef = formRef[0];
+            
+            // Validate the form before adding
+            if (formRef && formRef.validate()) {
                 this.otherService.keynote_data.push({
                     name: this.keynote_name,
                     value: this.keynote_value
                 });
                 this.keynote_name = '';
                 this.keynote_value = '';
+                // Reset form validation
+                this.$nextTick(() => {
+                    formRef.resetValidation();
+                });
             }
         },
         /**
@@ -1007,13 +1026,22 @@ const app = new Vue({
          * @param {number} apartment - Apartment index
          */
         addApartmentKeynote(building, floor, apartment) {
-            if (this.keynote_name && this.keynote_value) {
+            // Get the form ref (may be array in v-for)
+            let formRef = this.$refs[`keynoteApartmentForm-${building}-${floor}-${apartment}`];
+            if (Array.isArray(formRef)) formRef = formRef[0];
+            
+            // Validate the form before adding
+            if (formRef && formRef.validate()) {
                 this.building[building].floors[floor].apartments[apartment].keynote_data.push({
                     name: this.keynote_name,
                     value: this.keynote_value
                 });
                 this.keynote_name = '';
                 this.keynote_value = '';
+                // Reset form validation
+                this.$nextTick(() => {
+                    formRef.resetValidation();
+                });
             }
         },
         /**

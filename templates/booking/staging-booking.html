@@ -835,7 +835,8 @@
                       Do you want to clean the Cabinet ?
                       <span style="color:red">*</span>
                     </div>
-                    <v-radio-group v-model="kitchenData.is_cabinet" class="p-2" row v-on:change="changeNewKitchen()">
+                    <v-radio-group v-model="kitchenData.is_cabinet" class="p-2" row v-on:change="changeNewKitchen()"
+                      :rules="[v => v !== null && v !== undefined || 'This field is required']" required>
 
                       <v-radio :value="true">
                         <template v-slot:label>
@@ -864,7 +865,8 @@
                       Oil Residue?
                       <span style="color:red">*</span>
                     </div>
-                    <v-radio-group v-model="kitchenData.residue" class="p-2" row>
+                    <v-radio-group v-model="kitchenData.residue" class="p-2" row
+                      :rules="[v => v !== null && v !== undefined || 'This field is required']" required>
 
                       <v-radio :value="true">
                         <template v-slot:label>
@@ -984,7 +986,8 @@
                   </div>
                   <div class="col-md-12" v-if="serviceType == 'Kitchen Cleaning'">
                     <div>Do you want to clean the Cabinet ? <span style="color:red">*</span></div>
-                    <v-radio-group v-model="otherService.is_cabinet" class="p-2" row v-on:change="changeKitchen()">
+                    <v-radio-group v-model="otherService.is_cabinet" class="p-2" row v-on:change="changeKitchen()"
+                      :rules="[v => v !== null && v !== undefined || 'This field is required']" required>
 
                       <v-radio :value="true">
                         <template v-slot:label>
@@ -1051,9 +1054,14 @@
                   </div>
                   <div class="col-md-6"
                     v-if="serviceType != 'Kitchen Cleaning' &&serviceType != 'Facade Cleaning' &&serviceType != 'Car Parking Umbrella' &&serviceType != 'Window Cleaning' &&serviceType != 'Rope Access' &&serviceType != 'Outdoor Cleaning'">
-                    <div>Any Stain ? <span style="color:red">*</span></div>
-                    <v-radio-group v-model="otherService.stain" class="p-2" row>
-
+                    <div>
+                      <div>Any Stain ? <span style="color:red">*</span></div>
+                    </div>
+                    <v-radio-group v-model="otherService.stain" class="p-2" row
+                      :rules="[v => v !== null && v !== undefined || 'This field is required']" required>
+                      <!-- <template v-slot:label>
+                              <div>Any <strong>Stain ?</strong></div>
+                            </template> -->
                       <v-radio :value="true">
                         <template v-slot:label>
                           <div>Yes<strong class="success--text"></strong></div>
@@ -1093,7 +1101,8 @@
                   </div>
                   <div class="col-md-6" v-if="serviceType == 'Kitchen Cleaning'">
                     <div>Oil Residue? <span style="color:red">*</span></div>
-                    <v-radio-group v-model="otherService.residue" class="p-2" row>
+                    <v-radio-group v-model="otherService.residue" class="p-2" row
+                      :rules="[v => v !== null && v !== undefined || 'This field is required']" required>
 
                       <v-radio :value="true">
                         <template v-slot:label>
@@ -1125,23 +1134,25 @@
                       </div>
                     </div>
                   </div>
-
-                  <div class="col-md-4" v-if="serviceType==' Upholstery Cleaning' || serviceType=='Kitchen Cleaning' ||
-                              serviceType=='Window Cleaning' || serviceType=='Rope Access' ||
-                              serviceType=='Carpet Cleaning'">
-                    <v-combobox v-model=" keynote_name" :items="keynote_content" label="Field Name"></v-combobox>
-                  </div>
-                  <div class="col-md-4"
+                  <v-form ref="keynoteOthersForm"
                     v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning' || serviceType=='Window Cleaning' || serviceType=='Rope Access' || serviceType=='Carpet Cleaning'">
-                    <v-text-field v-model="keynote_value" label="Value">
-                    </v-text-field>
-                  </div>
-                  <div class="col-md-4"
-                    v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning' || serviceType=='Window Cleaning' || serviceType=='Rope Access' || serviceType=='Carpet Cleaning'">
-                    <v-btn color="primary" @click="addOthersKeynote()">
-                      Add
-                    </v-btn>
-                  </div>
+                    <div class="row">
+                      <div class="col-md-4">
+                        <v-combobox v-model="keynote_name" :items="keynote_content" label="Field Name"
+                          :rules="[v => !!v || 'Field Name is required']" required></v-combobox>
+                      </div>
+                      <div class="col-md-4">
+                        <v-text-field v-model="keynote_value" label="Value" :rules="[v => !!v || 'Value is required']"
+                          required>
+                        </v-text-field>
+                      </div>
+                      <div class="col-md-4">
+                        <v-btn color="primary" @click="addOthersKeynote()">
+                          Add
+                        </v-btn>
+                      </div>
+                    </div>
+                  </v-form>
 
                   <div class="col-md-12"></div>
                   <!--more services  only for kitchen cleaning-->
@@ -1293,8 +1304,8 @@
                   <h5 class="pt-4">Category</h5>
                   <!-- Category displayed as carousel with conditional navigation -->
                   <div class="owl-carousel" id="category-carousel">
-                    <div class="sr-service-card cursor-pointer" v-for="(item, index) in categories" v-bind:key="'cat_'+index"
-                      @click="selectCategory(item.service_name)">
+                    <div class="sr-service-card cursor-pointer" v-for="(item, index) in categories"
+                      v-bind:key="'cat_'+index" @click="selectCategory(item.service_name)">
                       <i
                         :class="selectedCategory === item.service_name ? 'fa fa-check-circle active-icon' : 'far fa-circle inactive-icon'"></i>
                       <img :src="`https://my.bleachkw.com${mediaUrl}${item.image_path}`" class="service-icon">
@@ -1503,7 +1514,9 @@
                                         <div class="row">
                                           <div clas="col-md-6">
                                             <v-radio-group v-model="building[index - 1].floors[floor - 1].apartment"
-                                              class="p-4" v-if="serviceType != 'Storage Area'" row>
+                                              class="p-4" v-if="serviceType != 'Storage Area'" row
+                                              :rules="[v => v !== null && v !== undefined || 'This field is required']"
+                                              required>
 
                                               <div>Any Apartments ? <span style="color:red">*</span></div>
 
@@ -1632,7 +1645,9 @@
                                             </div>
                                             <v-radio-group v-model="building[index - 1].floors[floor - 1].kitchen"
                                               class="p-2" v-if="serviceType != 'Storage Area'" row
-                                              @change="changeFloorKitchenStat(index-1,floor-1)">
+                                              @change="changeFloorKitchenStat(index-1,floor-1)"
+                                              :rules="[v => v !== null && v !== undefined || 'This field is required']"
+                                              required>
 
                                               <v-radio :value="true">
                                                 <template v-slot:label>
@@ -1708,7 +1723,9 @@
                                                   <div>Do you want to clean the Cabinet ? <span
                                                       style="color:red">*</span></div>
                                                   <v-radio-group v-model="kitchenData.is_cabinet" class="p-2" row
-                                                    v-on:change="changeNewKitchen()">
+                                                    v-on:change="changeNewKitchen()"
+                                                    :rules="[v => v !== null && v !== undefined || 'This field is required']"
+                                                    required>
 
                                                     <v-radio :value="true">
                                                       <template v-slot:label>
@@ -1741,7 +1758,9 @@
                                                 <div class="col-md-6"
                                                   v-if="building[index - 1].floors[floor - 1].kitchen">
                                                   <div>Oil Residue? <span style="color:red">*</span></div>
-                                                  <v-radio-group v-model="kitchenData.residue" class="p-2" row>
+                                                  <v-radio-group v-model="kitchenData.residue" class="p-2" row
+                                                    :rules="[v => v !== null && v !== undefined || 'This field is required']"
+                                                    required>
 
                                                     <v-radio :value="true">
                                                       <template v-slot:label>
@@ -1780,19 +1799,25 @@
                                               </div>
                                             </div>
                                           </div>
-                                          <div class="col-md-4">
-                                            <v-combobox v-model="keynote_name" :items="keynote_content"
-                                              label="Field Name"></v-combobox>
-                                          </div>
-                                          <div class="col-md-4">
-                                            <v-text-field v-model="keynote_value" label="Value">
-                                            </v-text-field>
-                                          </div>
-                                          <div class="col-md-4">
-                                            <v-btn color="primary" @click="addKeynote(index-1,floor-1)">
-                                              Add
-                                            </v-btn>
-                                          </div>
+                                          <v-form :ref="`keynoteForm-${index-1}-${floor-1}`">
+                                            <div class="row">
+                                              <div class="col-md-4">
+                                                <v-combobox v-model="keynote_name" :items="keynote_content"
+                                                  label="Field Name" :rules="[v => !!v || 'Field Name is required']"
+                                                  required></v-combobox>
+                                              </div>
+                                              <div class="col-md-4">
+                                                <v-text-field v-model="keynote_value" label="Value"
+                                                  :rules="[v => !!v || 'Value is required']" required>
+                                                </v-text-field>
+                                              </div>
+                                              <div class="col-md-4">
+                                                <v-btn color="primary" @click="addKeynote(index-1,floor-1)">
+                                                  Add
+                                                </v-btn>
+                                              </div>
+                                            </div>
+                                          </v-form>
 
                                         </div>
                                       </div>
@@ -1923,7 +1948,9 @@
                                                       </div>
                                                       <v-radio-group v-model="apartment.kitchen" class="p-2"
                                                         v-if="serviceType != 'Storage Area'" row
-                                                        @change="changeApartmentKitchenStat(index-1,floor-1,apindex)">
+                                                        @change="changeApartmentKitchenStat(index-1,floor-1,apindex)"
+                                                        :rules="[v => v !== null && v !== undefined || 'This field is required']"
+                                                        required>
 
                                                         <v-radio :value="true">
                                                           <template v-slot:label>
@@ -1998,7 +2025,9 @@
                                                           <div>Do you want to clean the Cabinet ? <span
                                                               style="color:red">*</span></div>
                                                           <v-radio-group v-model="kitchenData.is_cabinet" class="p-2"
-                                                            row v-on:change="changeNewKitchen()">
+                                                            row v-on:change="changeNewKitchen()"
+                                                            :rules="[v => v !== null && v !== undefined || 'This field is required']"
+                                                            required>
 
                                                             <v-radio :value="true">
                                                               <template v-slot:label>
@@ -2030,7 +2059,9 @@
                                                         </div>
                                                         <div class="col-md-6" v-if="apartment.kitchen">
                                                           <div>Oil Residue? <span style="color:red">*</span></div>
-                                                          <v-radio-group v-model="kitchenData.residue" class="p-2" row>
+                                                          <v-radio-group v-model="kitchenData.residue" class="p-2" row
+                                                            :rules="[v => v !== null && v !== undefined || 'This field is required']"
+                                                            required>
 
                                                             <v-radio :value="true">
                                                               <template v-slot:label>
@@ -2073,20 +2104,28 @@
                                                         </div>
                                                       </div>
                                                     </div>
-                                                    <div class="col-md-4">
-                                                      <v-combobox v-model="keynote_name" :items="keynote_content"
-                                                        label="Field Name"></v-combobox>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                      <v-text-field v-model="keynote_value" label="Value">
-                                                      </v-text-field>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                      <v-btn color="primary"
-                                                        @click="addApartmentKeynote(index-1,floor-1,apindex)">
-                                                        Add
-                                                      </v-btn>
-                                                    </div>
+                                                    <v-form
+                                                      :ref="`keynoteApartmentForm-${index-1}-${floor-1}-${apindex}`">
+                                                      <div class="row">
+                                                        <div class="col-md-4">
+                                                          <v-combobox v-model="keynote_name" :items="keynote_content"
+                                                            label="Field Name"
+                                                            :rules="[v => !!v || 'Field Name is required']"
+                                                            required></v-combobox>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                          <v-text-field v-model="keynote_value" label="Value"
+                                                            :rules="[v => !!v || 'Value is required']" required>
+                                                          </v-text-field>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                          <v-btn color="primary"
+                                                            @click="addApartmentKeynote(index-1,floor-1,apindex)">
+                                                            Add
+                                                          </v-btn>
+                                                        </div>
+                                                      </div>
+                                                    </v-form>
                                                   </div>
                                                 </v-card>
 
@@ -2246,7 +2285,8 @@
                   </div>
                   <div class="col-md-12" v-if="serviceType == 'Kitchen Cleaning'">
                     <div>Do you want to clean the Cabinet ? <span style="color:red">*</span></div>
-                    <v-radio-group v-model="otherService.is_cabinet" class="p-2" row v-on:change="changeKitchen()">
+                    <v-radio-group v-model="otherService.is_cabinet" class="p-2" row v-on:change="changeKitchen()"
+                      :rules="[v => v !== null && v !== undefined || 'This field is required']" required>
 
                       <v-radio :value="true">
                         <template v-slot:label>
@@ -2344,7 +2384,8 @@
                     <div>
                       <div>Any Stain ? <span style="color:red">*</span></div>
                     </div>
-                    <v-radio-group v-model="otherService.stain" class="p-2" row>
+                    <v-radio-group v-model="otherService.stain" class="p-2" row
+                      :rules="[v => v !== null && v !== undefined || 'This field is required']" required>
                       <!-- <template v-slot:label>
                               <div>Any <strong>Stain ?</strong></div>
                             </template> -->
@@ -2394,7 +2435,8 @@
                   </div>
                   <div class="col-md-6" v-if="serviceType == 'Kitchen Cleaning'">
                     <div>Oil Residue? <span style="color:red">*</span></div>
-                    <v-radio-group v-model="otherService.residue" class="p-2" row>
+                    <v-radio-group v-model="otherService.residue" class="p-2" row
+                      :rules="[v => v !== null && v !== undefined || 'This field is required']" required>
 
                       <v-radio :value="true">
                         <template v-slot:label>
@@ -2519,38 +2561,44 @@
                         </div>
                       </div>
                     </div>
-                    <div class="col-md-4" v-if="serviceType==' Upholstery Cleaning' ||
-                              serviceType=='Kitchen Cleaning' || serviceType=='Window Cleaning' ||
-                              serviceType=='Carpet Cleaning'">
-                      <v-combobox v-model=" keynote_name" :items="keynote_content" label="Field Name"></v-combobox>
-                    </div>
-                    <div class="col-md-4"
+                    <v-form ref="keynoteOthersForm"
                       v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning' || serviceType=='Window Cleaning' || serviceType=='Carpet Cleaning'">
-                      <v-text-field v-model="keynote_value" label="Value">
-                      </v-text-field>
-                    </div>
-                    <div class="col-md-4"
-                      v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning' || serviceType=='Window Cleaning' || serviceType=='Carpet Cleaning'">
-                      <v-btn color="primary" @click="addOthersKeynote()">
-                        Add Keynote
-                      </v-btn>
-                    </div>
+                      <div class="row">
+                        <div class="col-md-4">
+                          <v-combobox v-model="keynote_name" :items="keynote_content" label="Field Name"
+                            :rules="[v => !!v || 'Field Name is required']" required></v-combobox>
+                        </div>
+                        <div class="col-md-4">
+                          <v-text-field v-model="keynote_value" label="Value" :rules="[v => !!v || 'Value is required']"
+                            required>
+                          </v-text-field>
+                        </div>
+                        <div class="col-md-4">
+                          <v-btn color="primary" @click="addOthersKeynote()">
+                            Add Keynote
+                          </v-btn>
+                        </div>
+                      </div>
+                    </v-form>
                     <!-- key note ends here-->
-                    <div class="col-md-12 text-center">
-                      <v-btn color="primary" class="mr-4 mx-auto" v-on:click="addOtherService()"
-                        v-if="serviceType!='Kitchen Cleaning'">
-                        Add
-                      </v-btn>
-                      <v-btn color="primary" class="mr-4 mx-auto" v-on:click="addOtherService()"
-                        v-if="add_new_kitchen && serviceType=='Kitchen Cleaning'">
-                        Add
-                      </v-btn>
-                      <v-btn color="primary" class="mr-4 mx-auto" v-on:click="saveChanges()"
-                        v-if="!add_new_kitchen && serviceType=='Kitchen Cleaning'">
-                        Save Changes
-                      </v-btn>
+                  </div>
+                  <div class="row m-0">
+                    <div class="col-md-12">
+                      <div class="col-md-12 text-center mt-4">
+                        <v-btn color="primary" class="mr-4 mx-auto" v-on:click="addOtherService()"
+                          v-if="serviceType!='Kitchen Cleaning'">
+                          Add
+                        </v-btn>
+                        <v-btn color="primary" class="mr-4 mx-auto" v-on:click="addOtherService()"
+                          v-if="add_new_kitchen && serviceType=='Kitchen Cleaning'">
+                          Add
+                        </v-btn>
+                        <v-btn color="primary" class="mr-4 mx-auto" v-on:click="saveChanges()"
+                          v-if="!add_new_kitchen && serviceType=='Kitchen Cleaning'">
+                          Save Changes
+                        </v-btn>
+                      </div>
                     </div>
-                    <div class="col-md-12"></div>
                   </div>
                 </div>
               </v-form>
