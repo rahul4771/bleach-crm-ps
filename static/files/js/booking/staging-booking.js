@@ -139,7 +139,7 @@ const app = new Vue({
         kitchenData: {
             wall_type: '',
             floor_type: '',
-            size: '',
+            size: null,
             ceiling_type: '',
             condition: '',
             type: 'old',
@@ -198,7 +198,7 @@ const app = new Vue({
             material: "",
 
             color: "",
-            size: {},
+            size: null,
             keynote_data: [],
             type: "",
             age: "",
@@ -666,7 +666,7 @@ const app = new Vue({
                 material: '',
                 addons: [],
                 color: '',
-                size: {},
+                size: null,
                 type: '',
                 age: '',
                 stain: false,
@@ -2295,7 +2295,7 @@ const app = new Vue({
                 this.kitchenData = {
                     wall_type: '',
                     floor_type: '',
-                    size: '',
+                    size: null,
                     ceiling_type: '',
                     condition: '',
                     is_cabinet: false,
@@ -2315,7 +2315,7 @@ const app = new Vue({
             this.kitchenData = {
                 wall_type: '',
                 floor_type: '',
-                size: '',
+                size: null,
                 ceiling_type: '',
                 condition: '',
                 is_cabinet: false,
@@ -2336,7 +2336,7 @@ const app = new Vue({
                 this.kitchenData = {
                     wall_type: '',
                     floor_type: '',
-                    size: '',
+                    size: null,
                     ceiling_type: '',
                     condition: '',
                     type: 'old',
@@ -2370,7 +2370,7 @@ const app = new Vue({
             this.kitchenData = {
                 wall_type: '',
                 floor_type: '',
-                size: '',
+                size: null,
                 ceiling_type: '',
                 condition: '',
                 is_cabinet: false,
@@ -2494,7 +2494,7 @@ const app = new Vue({
             this.kitchenData = {
                 wall_type: '',
                 floor_type: '',
-                size: '',
+                size: null,
                 ceiling_type: '',
                 condition: '',
                 is_cabinet: false,
@@ -2511,7 +2511,7 @@ const app = new Vue({
             this.kitchenData = {
                 wall_type: '',
                 floor_type: '',
-                size: '',
+                size: null,
                 ceiling_type: '',
                 condition: '',
                 type: 'old',
@@ -3889,7 +3889,7 @@ const app = new Vue({
             this.otherService = {
                 material: "",
                 color: "",
-                size: "",
+                size: null,
                 type: "",
                 age: "",
                 stain: false,
@@ -4624,7 +4624,7 @@ const app = new Vue({
             for (var i = 0; i < this.no_of_floors[building - 1]; i++) {
                 this.building[building - 1].floors.push({
                     section_name: "",
-                    size: "",
+                    size: null,
                     floor_type: '',
                     wall_type: "",
                     ceiling_type: "",
@@ -4665,7 +4665,7 @@ const app = new Vue({
             ) {
                 this.building[building - 1].floors[floor - 1].apartments.push({
                     section_name: "",
-                    size: "",
+                    size: null,
                     completed: false,
                     wall_type: "",
                     floor_type: "",

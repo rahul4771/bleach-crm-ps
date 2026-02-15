@@ -817,7 +817,7 @@
 
         <v-dialog v-model="kitchendialog" width="500">
           <v-card>
-            <v-form :ref="' KitchenForm-building-'+currentBuilding+'floor'-currentFloor" v-model="validKitchenDialog">
+            <v-form :ref="' KitchenForm-building-'+currentBuilding+'floor'-currentFloor" v-model="validKitchenDialog" lazy-validation>
               <v-card-title class="headline primary text-white">
                 Add Kitchen
               </v-card-title>
@@ -857,7 +857,7 @@
                   </div>
                   <div class="col-md-6">
                     <v-select :items="sizeFilteredData" item-text="combinedSize" return-object label="Size"
-                      :rules="[v => !!v || 'Size is required']" required v-model="kitchenData.size"></v-select>
+                      :rules="[v => v === null || v === undefined || (v && Object.keys(v).length > 0) || 'Size is required']" v-model="kitchenData.size"></v-select>
                   </div>
 
                   <div class="col-md-6">
@@ -938,7 +938,7 @@
       <div class="text-center">
         <v-dialog v-model="dialog" width="700">
           <v-card>
-            <v-form ref="otherServiceDialogForm" v-model="validOtherServiceDialog">
+            <v-form ref="otherServiceDialogForm" v-model="validOtherServiceDialog" lazy-validation>
               <v-card-title class="headline primary text-white">
                 <span v-text="dialogmsg"></span> <span v-text="getFirstWord(serviceType)"></span>
               </v-card-title>
@@ -1009,14 +1009,14 @@
                   </div>
                   <div class="col-md-6"
                     v-if="serviceType != 'Kitchen Cleaning' &&serviceType != 'Facade Cleaning' &&serviceType != 'Car Parking Umbrella' &&serviceType != 'Window Cleaning' &&serviceType != 'Rope Access' &&serviceType != 'Outdoor Cleaning'">
-                    <v-select :items="colors" label="Color" :rules="[v => !!v || 'Color is required']" required multiple
+                    <v-select :items="colors" label="Color" :rules="[v => !!v || 'Color is required']" multiple
                       v-model="otherService.color"></v-select>
                   </div>
                   <div class="col-md-6" v-if="serviceType == 'Upholstery Cleaning'">
                     <v-text-field v-if="otherService.type == 'SOFA'" label="Size ( Seaters )" type="number"
-                      :rules="[v => !!v || 'Size is required']" required v-model="otherService.size"></v-text-field>
+                      :rules="[v => v === null || v === undefined || !!v || 'Size is required']" v-model="otherService.size"></v-text-field>
                     <v-select v-if="otherService.type == 'CURTAIN'" :items="upholsterySize" item-text="combinedSize"
-                      return-object label="Size" :rules="[v => !!v || 'Size is required']" required
+                      return-object label="Size" :rules="[v => v === null || v === undefined || (v && Object.keys(v).length > 0) || 'Size is required']"
                       v-model="otherService.size"></v-select>
 
                   </div>
@@ -1024,24 +1024,24 @@
                   <div class="col-md-6" v-else>
                     <div v-if="serviceType == 'Mattress Cleaning'">
                       <v-select :items="sizeData" item-text="name" return-object label="Size"
-                        :rules="[v => !!v || 'Size is required']" required v-model="otherService.size"></v-select>
+                        :rules="[v => v === null || v === undefined || (v && Object.keys(v).length > 0) || 'Size is required']" v-model="otherService.size"></v-select>
                     </div>
                     <div v-if="serviceType == 'Carpet Cleaning'">
                       <v-select :items="sizeData" item-text="combinedSize" return-object label="Size"
-                        :rules="[v => !!v || 'Size is required']" required v-model="otherService.size"></v-select>
+                        :rules="[v => v === null || v === undefined || (v && Object.keys(v).length > 0) || 'Size is required']" v-model="otherService.size"></v-select>
                     </div>
                     <div v-if="serviceType == 'Kitchen Cleaning'">
                       <v-select :items="sizeFilteredData" item-text="combinedSize" return-object label="Size"
-                        :rules="[v => !!v || 'Size is required']" required v-model="otherService.size"></v-select>
+                        :rules="[v => v === null || v === undefined || (v && Object.keys(v).length > 0) || 'Size is required']" v-model="otherService.size"></v-select>
                     </div>
 
                     <div v-if="serviceType == 'Facade Cleaning'">
                       <v-select :items="facadeSize" item-text="combinedSize" return-object label="Size"
-                        :rules="[v => !!v || 'Size is required']" required v-model="otherService.size"></v-select>
+                        :rules="[v => v === null || v === undefined || (v && Object.keys(v).length > 0) || 'Size is required']" v-model="otherService.size"></v-select>
                     </div>
                     <div v-if="serviceType == 'Window Cleaning' || serviceType == 'Rope Access'">
                       <v-select :items="windowSize" item-text="combinedSize" return-object label="Size"
-                        :rules="[v => !!v || 'Size is required']" required v-model="otherService.size"></v-select>
+                        :rules="[v => v === null || v === undefined || (v && Object.keys(v).length > 0) || 'Size is required']" v-model="otherService.size"></v-select>
                     </div>
                     <div v-if="serviceType == 'Car Parking Umbrella' || serviceType == 'Outdoor Cleaning'">
                       <v-select :items="sizeData" item-text="combinedSize" return-object label="Size "
@@ -1050,7 +1050,7 @@
                   </div>
                   <div class="col-md-6" v-if="serviceType == 'Window Cleaning' || serviceType == 'Rope Access'">
                     <v-select :items="['Outside & Inside', 'Outside', 'Inside']" label="Sides"
-                      :rules="[v => !!v || 'Sides is required']" required v-model="otherService.sides"></v-select>
+                      :rules="[v => !!v || 'Sides is required']" v-model="otherService.sides"></v-select>
                   </div>
                   <div class="col-md-6"
                     v-if="serviceType != 'Kitchen Cleaning' &&serviceType != 'Facade Cleaning' &&serviceType != 'Car Parking Umbrella' &&serviceType != 'Window Cleaning' &&serviceType != 'Rope Access' &&serviceType != 'Outdoor Cleaning'">
@@ -1133,7 +1133,7 @@
                       </div>
                     </div>
                   </div>
-                  <v-form ref="keynoteOthersForm"
+                  <v-form ref="keynoteOthersForm" lazy-validation
                     v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning' || serviceType=='Window Cleaning' || serviceType=='Rope Access' || serviceType=='Carpet Cleaning'">
                     <div class="col-md-12">
                       <div class="row">
@@ -1444,7 +1444,17 @@
                         :items="location_types" v-model="location_type" label="Location Type">
                       </v-select>
                     </div>
-                    <div class="col-md-4 mt-2" id="field-no-of-buildings" v-if="serviceType!='Kitchen Appliances'">
+                    <div class="col-md-4 mt-2" id="field-no-of-buildings" v-if="
+                      serviceType!='Kitchen Appliances' &&
+                      serviceType!='Upholstery Cleaning' &&
+                      serviceType!='Carpet Cleaning' &&
+                      serviceType!='Mattress Cleaning' &&
+                      serviceType!='Kitchen Cleaning' &&
+                      serviceType!='Car Parking Umbrella' &&
+                      serviceType!='Window Cleaning' &&
+                      serviceType!='Outdoor Cleaning' &&
+                      serviceType!='Facade Cleaning'
+                    ">
                       <v-select :items="area_types" v-model="area_type" item-text="name" label="Area Type">
                       </v-select>
                     </div>
@@ -1510,7 +1520,7 @@
                                 <v-stepper-content :step="floor">
                                   <v-card class="mb-12" outlined>
                                     <v-form :ref="'building-'+(index-1)+'floor-'+(floor-1)"
-                                      v-model="valid[index-1].floors[floor-1]">
+                                      v-model="valid[index-1].floors[floor-1]" lazy-validation>
                                       <div>
                                         <div class="row">
                                           <div clas="col-md-6">
@@ -1559,7 +1569,7 @@
                                           <div class="col-md-6" v-if="serviceType == 'Rope Access'">
                                             <v-select :items="ropeAccessSize" item-text="combinedSize"
                                               v-model="building[index - 1].floors[floor - 1].size" label="Size"
-                                              return-object :attach="true" :rules="[v => !!v || 'Size is required']"
+                                              return-object :attach="true" :rules="[v => v === null || v === undefined || (v && Object.keys(v).length > 0) || 'Size is required']"
                                               required>
                                             </v-select>
                                           </div>
@@ -1572,7 +1582,7 @@
                                           <div class="col-md-6" v-if="serviceType != 'Rope Access'">
                                             <v-select :items="sizeData" item-text="combinedSize"
                                               v-model="building[index - 1].floors[floor - 1].size" label="Size"
-                                              return-object :attach="true" :rules="[v => !!v || 'Size is required']"
+                                              return-object :attach="true" :rules="[v => v === null || v === undefined || (v && Object.keys(v).length > 0) || 'Size is required']"
                                               required>
                                             </v-select>
                                           </div>
@@ -1717,7 +1727,7 @@
                                           <div class="col-md-12 "
                                             v-if="building[index - 1].floors[floor - 1].kitchens.length<1">
                                             <v-form :ref="'kitchenFloor-building-'+(index-1)+'floor-'+(floor-1)"
-                                              v-model="validKitchen">
+                                              v-model="validKitchen" lazy-validation>
                                               <div class="row kitchen-box">
                                                 <div class="col-md-12"
                                                   v-if="building[index - 1].floors[floor - 1].kitchen">
@@ -1753,7 +1763,7 @@
                                                 <div v-if="building[index - 1].floors[floor - 1].kitchen"
                                                   class="col-md-6">
                                                   <v-select :items="sizeFilteredData" item-text="combinedSize"
-                                                    return-object label="Size" :rules="[v => !!v || 'Size is required']"
+                                                    return-object label="Size" :rules="[v => v === null || v === undefined || (v && Object.keys(v).length > 0) || 'Size is required']"
                                                     required v-model="kitchenData.size" :attach="true"></v-select>
                                                 </div>
                                                 <div class="col-md-6"
@@ -1800,7 +1810,7 @@
                                               </div>
                                             </div>
                                           </div>
-                                          <v-form :ref="`keynoteForm-${index-1}-${floor-1}`">
+                                          <v-form :ref="`keynoteForm-${index-1}-${floor-1}`" lazy-validation>
                                             <div class="col-md-12">
                                               <div class="row">
                                                 <div class="col-md-5">
@@ -1844,7 +1854,7 @@
                                           <div
                                             v-for="(apartment, apindex) in building[index - 1].floors[floor - 1].apartments"
                                             v-bind:key="apindex">
-                                            <v-form :ref="`building-${index-1}-floor-${floor-1}-apartment-${apindex}`">
+                                            <v-form :ref="`building-${index-1}-floor-${floor-1}-apartment-${apindex}`" lazy-validation>
                                               <v-stepper-step
                                                 :complete="e.building[index - 1].floors[floor - 1].e >apindex + 1"
                                                 :step="`${apindex + 1}`" style="cursor: pointer"
@@ -1875,7 +1885,7 @@
                                                     <div class="col-md-6">
                                                       <v-select :items="sizeData" item-text="combinedSize"
                                                         v-model="apartment.size" label="Size" return-object
-                                                        :rules="[v => !!v || 'Size is required']" required
+                                                        :rules="[v => v === null || v === undefined || (v && Object.keys(v).length > 0) || 'Size is required']"
                                                         :attach="true">
                                                       </v-select>
                                                     </div>
@@ -2057,7 +2067,7 @@
 
                                                         <div v-if="apartment.kitchen" class="col-md-6">
                                                           <v-select :items="sizeFilteredData" item-text="combinedSize"
-                                                            return-object label="Size" :rules="[rules.required]"
+                                                            return-object label="Size" :rules="[v => v === null || v === undefined || (v && Object.keys(v).length > 0) || 'Size is required']"
                                                             required v-model="kitchenData.size"></v-select>
                                                         </div>
                                                         <div class="col-md-6" v-if="apartment.kitchen">
@@ -2236,7 +2246,7 @@
               <v-btn v-if="otherServices.length > 0 " class="mx-2 mt-4" dark color="primary" style="float: right"
                 v-on:click="addNew()" v-text="`Add ${getFirstWord(serviceType)}`">
               </v-btn>
-              <v-form ref="otherServiceForm" v-model="validOtherService" v-if="otherServices.length < 1 ">
+              <v-form ref="otherServiceForm" v-model="validOtherService" lazy-validation v-if="otherServices.length < 1 ">
                 <div class="row items-card" v-if="
                   (serviceType == ' Upholstery Cleaning' || serviceType=='Facade Cleaning' ||
                   serviceType=='Upholstery Cleaning' || serviceType=='Carpet Cleaning' ||
@@ -2244,9 +2254,24 @@
                   serviceType=='Car Parking Umbrella' || serviceType=='Window Cleaning' ||
                   serviceType=='Outdoor Cleaning' ) ">
 
+                  <div class="col-md-6" v-if="
+                    serviceType == 'Upholstery Cleaning' ||
+                    serviceType == 'Carpet Cleaning' ||
+                    serviceType == 'Mattress Cleaning' ||
+                    serviceType == 'Kitchen Cleaning' ||
+                    serviceType == 'Car Parking Umbrella' ||
+                    serviceType == 'Window Cleaning' ||
+                    serviceType == 'Outdoor Cleaning' ||
+                    serviceType == 'Facade Cleaning'
+                  ">
+                    <v-select :items="area_types" v-model="area_type" item-text="name" label="Area Type"
+                      :rules="[v => !!v || 'Area Type is required']" :attach="true">
+                    </v-select>
+                  </div>
+
                   <div class=" col-md-12" v-if="serviceType == 'Upholstery Cleaning'">
                     <v-select :items="upholsteryType" label="Select the type of Upholstery" v-model="otherService.type"
-                      :rules="[v => !!v || 'Type of Upholstery is required']" required v-on:change="updateSize()"
+                      :rules="[v => !!v || 'Type of Upholstery is required']" v-on:change="updateSize()"
                       :attach="true"></v-select>
                   </div>
                   <div class="col-md-6" v-if="serviceType == 'Facade Cleaning'">
@@ -2324,16 +2349,16 @@
                     serviceType != 'Rope Access' &&
                     serviceType != 'Outdoor Cleaning'
                   ">
-                    <v-select :items="colors" label="Color" :rules="[v => !!v || 'Color is required']" required multiple
+                    <v-select :items="colors" label="Color" :rules="[v => !!v || 'Color is required']" multiple
                       v-model="otherService.color" :attach="true"></v-select>
                   </div>
 
                   <div class="col-md-6" v-if="serviceType == 'Upholstery Cleaning'">
                     <v-text-field v-if="otherService.type == 'SOFA'" label="Size ( Seaters )" type="number"
-                      :rules="[v => !!v || 'Size is required']" required v-model="otherService.size">
+                      :rules="[v => v === null || v === undefined || !!v || 'Size is required']" v-model="otherService.size">
                     </v-text-field>
                     <v-select v-if="otherService.type == 'CURTAIN'" :items="upholsterySize" item-text="combinedSize"
-                      return-object label="Size" :rules="[v => !!v || 'Size is required']" required
+                      return-object label="Size" :rules="[v => v === null || v === undefined || (v && Object.keys(v).length > 0) || 'Size is required']"
                       v-model="otherService.size" :attach="true"></v-select>
 
                     <!-- <v-text-field v-if="otherService.type == 'CURTAIN'" label="Size ( SQM )" type="number"
@@ -2343,27 +2368,27 @@
                   <div class="col-md-6" v-else>
                     <div v-if="serviceType == 'Kitchen Cleaning'">
                       <v-select :items="sizeFilteredData" item-text="combinedSize" return-object label="Size"
-                        :rules="[v => !!v || 'Size is required']" required v-model="otherService.size"
+                        :rules="[v => v === null || v === undefined || (v && Object.keys(v).length > 0) || 'Size is required']" v-model="otherService.size"
                         :attach="true"></v-select>
                     </div>
                     <div v-if="serviceType == 'Facade Cleaning'">
                       <v-select :items="facadeSize" item-text="combinedSize" return-object label="Size"
-                        :rules="[v => !!v || 'Size is required']" required v-model="otherService.size"
+                        :rules="[v => v === null || v === undefined || (v && Object.keys(v).length > 0) || 'Size is required']" v-model="otherService.size"
                         :attach="true"></v-select>
                     </div>
                     <div v-if="serviceType == 'Window Cleaning'">
                       <v-select :items="windowSize" item-text="combinedSize" return-object label="Size"
-                        :rules="[v => !!v || 'Size is required']" required v-model="otherService.size"
+                        :rules="[v => v === null || v === undefined || (v && Object.keys(v).length > 0) || 'Size is required']" v-model="otherService.size"
                         :attach="true"></v-select>
                     </div>
                     <div v-if="serviceType == 'Mattress Cleaning'">
                       <v-select :items="sizeData" item-text="name" return-object label="Size"
-                        :rules="[v => !!v || 'Size is required']" required v-model="otherService.size"
+                        :rules="[v => v === null || v === undefined || (v && Object.keys(v).length > 0) || 'Size is required']" v-model="otherService.size"
                         :attach="true"></v-select>
                     </div>
                     <div v-if="serviceType == 'Carpet Cleaning'">
                       <v-select :items="sizeData" item-text="combinedSize" return-object label="Size"
-                        :rules="[v => !!v || 'Size is required']" required v-model="otherService.size"
+                        :rules="[v => v === null || v === undefined || (v && Object.keys(v).length > 0) || 'Size is required']" v-model="otherService.size"
                         :attach="true"></v-select>
                     </div>
                     <div v-if="serviceType == 'Car Parking Umbrella' || serviceType == 'Outdoor Cleaning'">
@@ -2375,7 +2400,7 @@
 
                   <div class="col-md-6" v-if="serviceType == 'Window Cleaning' || serviceType == 'Outdoor Cleaning'">
                     <v-select :items="['Outside & Inside', 'Outside', 'Inside']" label="Sides"
-                      :rules="[v => !!v || 'Size is required']" required v-model="otherService.sides"
+                      :rules="[v => !!v || 'Sides is required']" v-model="otherService.sides"
                       :attach="true"></v-select>
                   </div>
                   <div class="col-md-6" v-if="
@@ -2408,12 +2433,12 @@
                   </div>
                   <div class="col-md-6" v-if="otherService.stain">
                     <v-select :items="cause_of_stain" label="Cause of stain"
-                      :rules="[v => !!v || 'Cause of Stain is required']" required v-model="otherService.stain_reason"
+                      :rules="[v => !!v || 'Cause of Stain is required']" v-model="otherService.stain_reason"
                       :attach="true" multiple></v-select>
                   </div>
                   <div class="col-md-6" v-if="otherService.stain">
                     <v-text-field label="Age of stain (In Weeks)" type="number"
-                      :rules="[v => !!v || 'Age of Stain is required']" required v-model="otherService.stain_age">
+                      :rules="[v => !!v || 'Age of Stain is required']" v-model="otherService.stain_age">
                     </v-text-field>
                   </div>
                   <div class="col-md-6" v-if="
@@ -2566,7 +2591,7 @@
                       </div>
                     </div>
                   </div>
-                  <v-form ref="keynoteOthersForm"
+                  <v-form ref="keynoteOthersForm" lazy-validation
                     v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning' || serviceType=='Window Cleaning' || serviceType=='Carpet Cleaning'">
                     <div class="row">
                       <div class="col-md-12 mb-2">
