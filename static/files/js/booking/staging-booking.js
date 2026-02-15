@@ -1820,7 +1820,7 @@ const app = new Vue({
                 })
                 .catch(error => {
                     console.error('Error fetching service types:', error);
-                    this.snackbar = true;
+                    // Silently fail on page load - don't show popup to user
                 });
         },
 
@@ -2075,8 +2075,8 @@ const app = new Vue({
                             newindex = newindex + 1
                             this.serviceDetails.service_details[i].sections[j].addons[newindex] = {
                                 name: "kitchen",
-                                addon_cost: kitchen.size.cost,
-                                addon_net_cost: kitchen.size.cost,
+                                addon_cost: kitchen.size ? kitchen.size.cost : 0,
+                                addon_net_cost: kitchen.size ? kitchen.size.cost : 0,
                                 quantity: 1,
                                 size: kitchen.size.name,
                                 other_details: JSON.stringify({
@@ -2248,8 +2248,8 @@ const app = new Vue({
                             newindex = newindex + 1
                             this.serviceDetails.service_details[i].sections[j].addons[newindex] = {
                                 name: "kitchen",
-                                addon_cost: kitchen.size.cost,
-                                addon_net_cost: kitchen.size.cost,
+                                addon_cost: kitchen.size ? kitchen.size.cost : 0,
+                                addon_net_cost: kitchen.size ? kitchen.size.cost : 0,
                                 quantity: 1,
                                 size: kitchen.size.name,
                                 other_details: JSON.stringify({
@@ -4008,8 +4008,8 @@ const app = new Vue({
             if (this.otherService.stain_reason.length > 0) {
                 this.otherService.stain_reason = this.otherService.stain_reason.join()
             }
-            this.otherService.sectiononly_cost = this.otherService.size.cost
-            this.otherService.section_cost = this.otherService.size.cost + this.findAddonCost()
+            this.otherService.sectiononly_cost = this.otherService.size ? this.otherService.size.cost : 0
+            this.otherService.section_cost = (this.otherService.size ? this.otherService.size.cost : 0) + this.findAddonCost()
             this.otherServices[this.currentItem] = { ...this.otherService };
             this.billingData[this.currentItem].section_cost = this.otherService.section_cost
             this.billingData[this.currentItem].section_net_cost = this.otherService.section_cost
@@ -4154,8 +4154,8 @@ const app = new Vue({
             if (this.$refs.otherServiceForm.validate()) {
 
                 await this.calcSize();
-                this.otherService.section_cost = this.otherService.size.cost + this.findAddonCost()
-                this.otherService.sectiononly_cost = this.otherService.size.cost
+                this.otherService.section_cost = (this.otherService.size ? this.otherService.size.cost : 0) + this.findAddonCost()
+                this.otherService.sectiononly_cost = this.otherService.size ? this.otherService.size.cost : 0
                 if (this.otherService.stain_reason.length > 0) {
                     this.otherService.stain_reason = this.otherService.stain_reason.join()
                 }
@@ -4219,8 +4219,8 @@ const app = new Vue({
             if (this.$refs.otherServiceDialogForm.validate()) {
 
                 await this.calcSize();
-                this.otherService.section_cost = this.otherService.size.cost + this.findAddonCost()
-                this.otherService.sectiononly_cost = this.otherService.size.cost
+                this.otherService.section_cost = (this.otherService.size ? this.otherService.size.cost : 0) + this.findAddonCost()
+                this.otherService.sectiononly_cost = this.otherService.size ? this.otherService.size.cost : 0
                 if (this.otherService.stain_reason.length > 0) {
                     this.otherService.stain_reason = this.otherService.stain_reason.join()
                 }
@@ -5021,16 +5021,16 @@ const app = new Vue({
                     }
                 }
                 if (!itemFound) {
-                    this.building[building].floors[floor].apartments[apartment].section_cost = this.building[building].floors[floor].apartments[apartment].size.cost
+                    this.building[building].floors[floor].apartments[apartment].section_cost = this.building[building].floors[floor].apartments[apartment].size ? this.building[building].floors[floor].apartments[apartment].size.cost : 0
                     this.building[building].floors[floor].apartments[apartment].section_net_cost = this.building[building].floors[floor].apartments[apartment].section_cost
                     if (this.building[building].floors[floor].apartments[apartment].kitchen) {
 
                         for (let k = 0; k < this.building[building].floors[floor].apartments[apartment].kitchens.length; k++) {
                             if (this.building[building].floors[floor].apartments[apartment].kitchens[k].type == 'old') {
-                                this.building[building].floors[floor].apartments[apartment].section_net_cost = this.building[building].floors[floor].apartments[apartment].section_net_cost + this.building[building].floors[floor].apartments[apartment].kitchens[k].size.cost
+                                this.building[building].floors[floor].apartments[apartment].section_net_cost = this.building[building].floors[floor].apartments[apartment].section_net_cost + (this.building[building].floors[floor].apartments[apartment].kitchens[k].size ? this.building[building].floors[floor].apartments[apartment].kitchens[k].size.cost : 0)
                             }
                             if (this.building[building].floors[floor].apartments[apartment].kitchens[k].type == 'new' && this.serviceType != 'General Cleaning') {
-                                this.building[building].floors[floor].apartments[apartment].section_net_cost = this.building[building].floors[floor].apartments[apartment].section_net_cost + this.building[building].floors[floor].apartments[apartment].kitchens[k].size.cost
+                                this.building[building].floors[floor].apartments[apartment].section_net_cost = this.building[building].floors[floor].apartments[apartment].section_net_cost + (this.building[building].floors[floor].apartments[apartment].kitchens[k].size ? this.building[building].floors[floor].apartments[apartment].kitchens[k].size.cost : 0)
                             }
 
 
@@ -5054,8 +5054,8 @@ const app = new Vue({
                         section: this.building[building].floors[floor].apartments[apartment],
                         section_cost: this.building[building].floors[floor].apartments[apartment].section_net_cost,
                         section_net_cost: this.building[building].floors[floor].apartments[apartment].section_net_cost,
-                        sectiononly_cost: this.building[building].floors[floor].apartments[apartment].size.cost,
-                        sectiononly_net_cost: this.building[building].floors[floor].apartments[apartment].size.cost,
+                        sectiononly_cost: this.building[building].floors[floor].apartments[apartment].size ? this.building[building].floors[floor].apartments[apartment].size.cost : 0,
+                        sectiononly_net_cost: this.building[building].floors[floor].apartments[apartment].size ? this.building[building].floors[floor].apartments[apartment].size.cost : 0,
                     });
                 }
                 if (apartment == (parseInt(this.building[building].floors[floor].no_of_apartments) - 1)) {
@@ -5091,7 +5091,7 @@ const app = new Vue({
             else {
                 this.floor_msg = false
                 if (this.$refs['building-' + building + 'floor-' + (floor - 1)][0].validate()) {
-                    this.building[building].floors[floor - 1].section_cost = this.building[building].floors[floor - 1].size.cost
+                    this.building[building].floors[floor - 1].section_cost = this.building[building].floors[floor - 1].size ? this.building[building].floors[floor - 1].size.cost : 0
                     this.e.building[building].e = floor + 1;
                     this.building[building].floors[floor - 1].completed = true;
                     let floorFound = false;
@@ -5114,24 +5114,24 @@ const app = new Vue({
 
                     if (!floorFound) {
                         if (!this.building[building].floors[floor - 1].apartment) {
-                            this.building[building].floors[floor - 1].section_cost = this.building[building].floors[floor - 1].size.cost
+                            this.building[building].floors[floor - 1].section_cost = this.building[building].floors[floor - 1].size ? this.building[building].floors[floor - 1].size.cost : 0
                             this.building[building].floors[floor - 1].section_net_cost = this.building[building].floors[floor - 1].section_cost
                             if (this.building[building].floors[floor - 1].kitchen) {
 
                                 for (var k = 0; k < this.building[building].floors[floor - 1].kitchens.length; k++) {
 
                                     if (this.building[building].floors[floor - 1].kitchens[k].type == 'old') {
-                                        this.building[building].floors[floor - 1].section_net_cost = this.building[building].floors[floor - 1].section_net_cost + this.building[building].floors[floor - 1].kitchens[k].size.cost
+                                        this.building[building].floors[floor - 1].section_net_cost = this.building[building].floors[floor - 1].section_net_cost + (this.building[building].floors[floor - 1].kitchens[k].size ? this.building[building].floors[floor - 1].kitchens[k].size.cost : 0)
                                     }
                                     if (this.building[building].floors[floor - 1].kitchens[k].type == 'new' && this.serviceType != 'General Cleaning') {
-                                        this.building[building].floors[floor - 1].section_net_cost = this.building[building].floors[floor - 1].section_net_cost + this.building[building].floors[floor - 1].kitchens[k].size.cost
+                                        this.building[building].floors[floor - 1].section_net_cost = this.building[building].floors[floor - 1].section_net_cost + (this.building[building].floors[floor - 1].kitchens[k].size ? this.building[building].floors[floor - 1].kitchens[k].size.cost : 0)
                                     }
 
                                 }
                             }
                             // this.building[building].floors[floor - 1].section_cost=
-                            this.billSample.sectiononly_cost = this.building[building].floors[floor - 1].size.cost
-                            this.billSample.sectiononly_net_cost = this.building[building].floors[floor - 1].size.cost
+                            this.billSample.sectiononly_cost = this.building[building].floors[floor - 1].size ? this.building[building].floors[floor - 1].size.cost : 0
+                            this.billSample.sectiononly_net_cost = this.building[building].floors[floor - 1].size ? this.building[building].floors[floor - 1].size.cost : 0
                             this.billSample.section_cost = this.building[building].floors[floor - 1].section_net_cost
                             this.billSample.section_net_cost = this.building[building].floors[floor - 1].section_net_cost
                             this.billSample.name = "Building " + (building + 1) + " Floor " + floor
