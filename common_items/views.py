@@ -2404,9 +2404,12 @@ class ResourceManagement(IsAuthenticated,View):
 			if str(skill_field).startswith('is_'):
 				filters.append(Q(**{skill_field: True}))
 		
-		if staff_type or service_type or search: 
-		    filters         = functools.reduce(operator.and_,filters)
-		    workers 		= workers.filter(filters)			
+		if filters:
+			combined_filters = Q()
+			for f in filters:
+				combined_filters &= f
+			workers = workers.filter(combined_filters)
+				
 
 		return render(request,'common/resource/resource-new.html',{"workers":workers,"workers_date":workers_date,"service_type":service_type,"staff_type":staff_type,"search":search,"service_types":service_types,"selected_service_type_id":selected_service_type_id})
 
