@@ -148,17 +148,11 @@
                                     <div class="col-md-3">
                                         <div class="model-input-name">Select Service</div>
                                         <div class="wrap-drop" id="dgeneral" style="z-index: 2;" >
-                                            <span id="id_head1">General Cleaning</span>
+                                            <span id="id_head1">{% if service_types %}{{service_types.0.name}}{% else %}Select Service{% endif %}</span>
                                             <ul class="drop">
-                                        
-                                                
-                                                <li onclick="selectActive(this,'detailedCleaning','General Cleaning')" ><a>General Cleaning</a></li>
-                                                <li  onclick="selectActive(this,'detailedCleaning','Deep Cleaning')"><a >Deep Cleaning</a></li>
-                                                <li onclick="selectActive(this,'detailedCleaning','Facade Cleaning')" ><a >Facade Cleaning</a></li>
-                                                <li onclick="selectActive(this,'detailedCleaning','Storage Area')" ><a >Storage Area</a></li>
-                                                <li onclick="selectActive(this,'detailedCleaning','Outdoor Cleaning')" ><a >Outdoor Cleaning</a></li>
-                                                <li onclick="selectActive(this,'detailedCleaning','Window Cleaning')" ><a >Window Cleaning</a></li>
-                                                <li onclick="selectActive(this,'detailedCleaning','Car Parking Umbrella')" ><a >Carparking Umbrella</a></li>
+                                                {% for service in service_types %}
+                                                <li onclick="selectActive(this,'detailedCleaning','{{service.name}}')" ><a>{{service.name}}</a></li>
+                                                {% endfor %}
                                             </ul>
                                         </div>
 
@@ -309,12 +303,11 @@
                                     <div class="col-md-3">
                                         <div class="model-input-name">Select Service</div>
                                         <div class="wrap-drop" id="dsp" style="z-index: 2;" >
-                                            <span id="id_head2">Upholstery Cleaning</span>
+                                            <span id="id_head2">{% if service_types %}{{service_types.0.name}}{% else %}Select Service{% endif %}</span>
                                             <ul class="drop">
-                                        
-                                                <li onclick="selectActive(this,'specialCare','Upholstery Cleaning')"><a >Upholstery Cleaning</a></li>
-                                      <li onclick="selectActive(this,'specialCare','Carpet Cleaning')" ><a >Carpet Cleaning</a></li>
-                                      <li onclick="selectActive(this,'specialCare','Mattress Cleaning')" ><a >Mattress Cleaning</a></li>
+                                                {% for service in service_types %}
+                                                <li onclick="selectActive(this,'specialCare','{{service.name}}')"><a>{{service.name}}</a></li>
+                                                {% endfor %}
                                             </ul>
                                         </div>
 
@@ -483,9 +476,11 @@
                                     <div class="col-md-3">
                                         <div class="model-input-name">Select Service</div>
                                         <div class="wrap-drop" id="dkc" style="z-index: 2;" >
-                                            <span id="id_head3">Kitchen Cleaning</span>
+                                            <span id="id_head3">{% if service_types %}{{service_types.0.name}}{% else %}Select Service{% endif %}</span>
                                             <ul class="drop">
-                                                <li onchange="getName('Kitchen Cleaning','kitchenCleaning')" ><a >Kitchen Cleaning</a></li>
+                                                {% for service in service_types %}
+                                                <li onclick="getName('{{service.name}}','kitchenCleaning')" ><a>{{service.name}}</a></li>
+                                                {% endfor %}
 
 
                                             </ul>
@@ -655,10 +650,11 @@
                                     <div class="col-md-3">
                                         <div class="model-input-name">Select Service</div>
                                         <div class="wrap-drop" id="dic" style="z-index: 2;" >
-                                            <span id="id_head4">Sanitization & Disinfection</span>
+                                              <span id="id_head4">{% if service_types %}{{service_types.0.name}}{% else %}Select Service{% endif %}</span>
                                             <ul class="drop">
-                                               
-                                      <li class="active" onclick="getName('Sterilization','sterilization')"><a >Sanitization & Disinfection</a></li>
+                                                 {% for service in service_types %}
+                                                 <li onclick="getName('{{service.name}}','sterilization')"><a>{{service.name}}</a></li>
+                                                 {% endfor %}
 
 
 
