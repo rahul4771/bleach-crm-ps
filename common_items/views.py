@@ -7428,6 +7428,14 @@ class ServiceGroupAPIView(APIView):
 class StagingBooking(IsAuthenticated,View):
 	def get(self,request,evaluation_detail_id):
 		return render(request,"booking/staging-booking.html")
+
+class StagingBookingAPIView(APIView):
+	def get(self, request):
+		
+		service_groups = list(ServiceGroup.objects.values('id','service_name','service_name_arabic', 'image_path', 'updated_at','status'))
+		service_types = list(ServiceType.objects.values('id','name','name_arabic','service_group_id', 'is_active','updated'))
+		return JsonResponse({"service_groups": service_groups, "service_types": service_types, "MEDIA_URL": settings.MEDIA_URL}, status=200)
+
     
 class SaveEmployeeSkillsAPIView(APIView):
 	def post(self, request, *args, **kwargs):
