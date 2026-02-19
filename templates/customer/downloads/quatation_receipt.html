@@ -25,7 +25,7 @@
         @page {
             size: A4;
             margin-top: 4cm;
-            margin-bottom: 2.5cm;
+            margin-bottom: 2.3cm;
             margin-left: 0;
             margin-right: 0;
 
@@ -35,8 +35,13 @@
 
             @bottom-center {
                 content: element(page-footer);
+                background-repeat: no-repeat;                
+                background-position: center;
+                height: 0.9cm;
+                width: 100%;    
+                max-width: 100%;  
+                display: block;           
             }
-               
         }
 
 
@@ -86,6 +91,7 @@
             width: 100%;
             padding-left: 20px;
             padding-right: 20px;
+            margin-bottom: 5cm;
         }
 
         section {
@@ -397,17 +403,22 @@
         .space-between {
             justify-content: space-between !important;
         }
-        footer {
-            position: running(page-footer);
+        #pdf-footer {
+            position: fixed;
+            bottom: 0;            
+            display: block;
+            height: 0.7cm;          /* MUST match margin-bottom logic */
             width: 100%;
-            height: 2cm;
+            padding: 0;            
+            background: url("https://my.bleachkw.com/static/files/images/customer/fo2.png") no-repeat center;
+            background-size: contain;
+            text-align: center;
+            max-width: 100%;  
+                     /* prevent overflow */
+               /* prevent any overflow */
+             /* scale to fit inside footer */
         }
-
-        footer img {
-            width: 100%;
-            height: 2cm;
-            object-fit: contain;
-        }
+        
 
     </style>
 </head>
@@ -422,9 +433,6 @@
             <img src="{% static 'files/images/customer/logo3.png' %}" alt="Bleach Logo">
         </div>
     </header>
-    <footer>
-        <img src="{% static 'files/images/customer/fo2.png' %}" alt="Footer">
-    </footer>
     <div id="container">
 
         <!-- ================= TITLE ================= -->
@@ -600,7 +608,7 @@
                     Payment Before Cleaning
                 </span>
                 <span id="paymenttime-amount">
-                    <strong>{{order.evaluation.before_cleaning_amount|floatformat:'3'}}</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;KD
+                    <strong>{{order.evaluation.before_cleaning_amount|floatformat:'3'}}</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;KD
                 </span>
             </div>
             <div>
@@ -608,7 +616,7 @@
                     Payment After Cleaning
                 </span>
                 <span id="paymenttime-amount">
-                    <strong>{{order.evaluation.after_cleaning_amount|floatformat:'3'}}</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;KD
+                    <strong>{{order.evaluation.after_cleaning_amount|floatformat:'3'}}</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;KD
                 </span>
             </div>
         </section>
@@ -634,7 +642,7 @@
                     Payment After Cleaning
                 </span>
                 <span id="paymenttime-amount" >
-                    <strong>{{order.total_amount|floatformat:"3"}}</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;KD
+                    <strong>{{order.total_amount|floatformat:"3"}}</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; KD
                 </span>
             </div>
         </section>
@@ -723,9 +731,14 @@
                 {{order.total_amount|floatformat:"3"}} <span id="kd-font">KD</span>
             </h1>
         </section>
-        <div class="page-bottom-spacer"></div>  
+       
     </div>
-    
+    <br>
+    <footer id="pdf-footer">
+        <br>
+        <br>
+        <img style=" width: 800px !important;" src="{% static 'files/images/customer/fo2.png' %}" />
+</footer>
 </body>
 
 </html>

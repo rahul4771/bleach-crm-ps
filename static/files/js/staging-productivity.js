@@ -9,11 +9,15 @@ createApp({
             successMsg: '',
             modalHeading: '',
             serviceTypes: [],
+            serviceTypesWithoutFilter: [],
             productivities: [],
             serviceAddons: [],
             servicePriceRanges: [],
             measurementUnits: [],
+            serviceGroups: [],
             serviceTypeId: '',
+            serviceGroupId: '',
+            activeServiceGroupFilter: 'all',
             colorCodes: [
                 "6366f1",
                 "10b981",
@@ -36,13 +40,20 @@ createApp({
                 showManageMeasurementList: true,
                 showManageMeasurementUnitForm: false,
                 showMUConfirmDelete: false,
-                showServiceGroupModal: false
+                showServiceGroupModal: false,
+                showServiceGroupView: false,
             },
             // renamed from `delete` to avoid using the reserved keyword in template expressions
             deleteModal: {
                 softText: '',
                 strongText: '',
                 id: ''
+            },
+            viewServiceGroup: {
+                title: '',
+                name: '',
+                arabicName: '',
+                activeStatus: ''
             },
             viewServiceType: {
                 title: '',
@@ -55,11 +66,20 @@ createApp({
                 manageProductivity: {},
                 managePriceRange: {},
                 manageAddOn: {},
-                manageMeasurementUnit: {}
+                manageMeasurementUnit: {},
+                manageServiceGroup: {}
+            },
+            serviceGroupFormFields: {
+                id: null,
+                name: '',
+                name_arabic: '',
+                status: '',
+                image_path: null
             },
             serviceFormFields: {
                 name: '',
                 name_arabic: '',
+                servicegroup_id: '',
                 is_active: ''
             },
             categoryFormFields: {
@@ -102,11 +122,40 @@ createApp({
                 abbreviation: '',
                 is_active: '',
                 dataAction: ''
-            }
+            },
         };
     },
     // Methods for handling service types
     methods: {
+
+        handleServiceGroupBtnClick() {
+            this.toggleDivs.showList = false;
+            this.toggleDivs.showServiceGroupView = true;
+            this.toggleDivs.showServiceGroupModal = false;
+        },
+        handleAddServiceGroupBtnClick() {
+            this.toggleDivs.showList = false;
+            this.toggleDivs.showServiceGroupModal = true;
+            this.toggleDivs.showServiceGroupView = false;
+            this.viewServiceType = {
+                title: '',
+            };
+            this.resetServiceGroup();
+            const form = document.getElementById('manage-service-group-form');
+            if (form) {
+                form.setAttribute('data-action', 'add')
+            }
+        },
+        filterByServiceGroup(selectedGroupId) {
+            this.activeServiceGroupFilter = selectedGroupId;
+            if (selectedGroupId === 'all') { // or any value you want for "all"
+                this.serviceTypes = this.serviceTypesWithoutFilter;
+            } else {
+                this.serviceTypes = this.serviceTypesWithoutFilter.filter(
+                    serviceType => String(serviceType.service_group_id) === String(selectedGroupId)
+                );
+            }
+        },
 
         // Handle add button clicks
         handleAddServiceBtnClick() {
@@ -171,7 +220,8 @@ createApp({
 
                 this.serviceFormFields.name = serviceType.name || '';
                 this.serviceFormFields.name_arabic = serviceType.name_arabic || '';
-                this.serviceFormFields.is_active = serviceType.is_active ? 'active' : 'inactive';
+                this.serviceFormFields.servicegroup_id = serviceType.service_group_id || '';
+                this.serviceFormFields.is_active = serviceType.status ? 'active' : 'inactive';
 
                 const hiddenName = 'editing_service_type_id';
                 let hidden = form.querySelector(`input[name="${hiddenName}"]`);
@@ -553,46 +603,15 @@ createApp({
                     this.deleteProductivity(this.toFormData(payload), id);
                     return;
                 }
+                if (propertyType === 'service-group') {
+                    const payload = {
+                        new_group_is_active: "inactive"
+                    };
+                    this.deleteServiceGroup(this.toFormData(payload), id);
+                    return;
+                }
 
             }
-        },
-        // Update productivity status via JSON PUT (more reliable than FormData on PUT)
-        updateProductivityStatus(productivityId, status) {
-            const csrftoken = this.getCookie('csrftoken')
-            const baseUrl = window.location.origin;
-            const url = `${baseUrl}/common/update-service-productivity/${productivityId}`
-            fetch(url, {
-                method: 'PUT',
-                credentials: 'same-origin',
-                headers: {
-                    'X-CSRFToken': csrftoken,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ status: status })
-            })
-                .then(res => {
-                    if (!res.ok) throw res;
-                    return res.json();
-                })
-                .then(data => {
-                    this.closeModal();
-                    const key = String(this.serviceTypeId ?? '0');
-                    if (!this.productivities[key]) this.productivities[key] = [];
-                    const updated = data.service_productivity || data;
-                    const index = this.productivities[key].findIndex(p => p.id === updated.id);
-                    if (index !== -1) this.productivities[key].splice(index, 1, updated);
-                    this.successMsg = updated && updated.name ? `Category ${updated.name} deleted successfully.` : 'Category deleted successfully.';
-                    setTimeout(() => { this.successMsg = ''; }, 5000);
-                })
-                .catch(async err => {
-                    if (err.json) {
-                        const body = await err.json();
-                        this.validationErrors.manageProductivity = body.errors || {};
-                    } else {
-                        console.error(err);
-                    }
-                });
         },
         // Close modal(s).
         // If an Event is passed (e.g. closeModal($event)) we locate the closest .modal from the event
@@ -631,9 +650,60 @@ createApp({
             }
         },
 
-        /* Form submission methods 
-         * Add or update service type 
-         */
+        /* Form submission methods */
+        /* Add or update service group */
+        submitServiceGroupForm() {
+            // Clear previous errors
+            this.validationErrors['manageServiceGroup'] = {};
+
+            // Validations
+            if (!this.serviceGroupFormFields.name || !this.serviceGroupFormFields.name.trim()) {
+                this.validationErrors['manageServiceGroup']['serviceGroupName'] = 'Service name is required.';
+            }
+
+            if (!this.serviceGroupFormFields.name_arabic || !this.serviceGroupFormFields.name_arabic.trim()) {
+                this.validationErrors['manageServiceGroup']['serviceGroupArabicName'] =
+                    'Arabic name is required.';
+            } else {
+                const arabicRegex = /^[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\s]+$/;
+
+                if (!arabicRegex.test(this.serviceGroupFormFields.name_arabic)) {
+                    this.validationErrors['manageServiceGroup']['serviceGroupArabicName'] =
+                        'Arabic name must contain only Arabic characters.';
+                }
+            }
+
+            if (!this.serviceGroupFormFields.status || this.serviceGroupFormFields.status === '') {
+                this.validationErrors['manageServiceGroup']['serviceGroupStatus'] = 'Status is required.';
+            }
+
+            // Stop if validation errors exist
+            if (Object.keys(this.validationErrors['manageServiceGroup']).length) return;
+
+            // Prepare payload
+            const payload = {
+                service_name: this.serviceGroupFormFields.name,
+                service_name_arabic: this.serviceGroupFormFields.name_arabic || '',
+                status: this.serviceGroupFormFields.status,
+            };
+
+            if (this.serviceGroupFormFields.image_path) {
+                payload.image_path = this.serviceGroupFormFields.image_path;
+            }
+
+            // Determine action (add or edit)
+            const form = document.getElementById('manage-service-group-form');
+            const formAction = form.getAttribute('data-action');
+
+            if (formAction === 'add') {
+                this.createServiceGroup(this.toFormData(payload));
+            } else {
+                const serviceId = form.querySelector('input#editing_service_group_id, input[name="editing_service_group_id"]');
+                this.updateServiceGroup(this.toFormData(payload), serviceId.value); // implement this method for editing
+            }
+        },
+
+        /* Add or update service type */
         submitServiceTypeForm() {
             this.validationErrors['manageServiceType'] = {};
             if (!this.serviceFormFields.name || !this.serviceFormFields.name.trim()) {
@@ -649,6 +719,9 @@ createApp({
             if (this.serviceFormFields.is_active === '') {
                 this.validationErrors['manageServiceType']['serviceTypeIsActive'] = 'Status is required.';
             }
+            if (this.serviceFormFields.servicegroup_id === '') {
+                this.validationErrors['manageServiceType']['serviceGroup'] = 'Servicegroup is required.';
+            }
 
             if (Object.keys(this.validationErrors['manageServiceType']).length) return;
 
@@ -656,6 +729,7 @@ createApp({
             const payload = {
                 new_service_name: this.serviceFormFields.name,
                 new_service_name_arabic: this.serviceFormFields.name_arabic,
+                new_service_group_id: this.serviceFormFields.servicegroup_id,
                 new_service_is_active: this.serviceFormFields.is_active
             };
 
@@ -749,41 +823,41 @@ createApp({
 
             // optional integer fields for areas (minimum_area -> minimumArea key in errors)
             const minArea = this.priceRangeFormFields.minimum_area;
-                if (minArea === '' || minArea === null || minArea === undefined) {
-                    this.validationErrors.managePriceRange.minimumArea = 'minimumarea is required';
+            if (minArea !== '' && minArea !== null && minArea !== undefined) {
+                const n = Number(minArea);
+                if (Number.isNaN(n) || n < 0) {
+                    this.validationErrors.managePriceRange.minimumArea = 'Please enter a valid non-negative integer';
                 } else {
-                    const n = Number(minArea);
-                    if (Number.isNaN(n) || n < 0) {
-                        this.validationErrors.managePriceRange.minimumArea = 'Please enter a valid non-negative integer';
-                    } else {
-                        delete this.validationErrors.managePriceRange.minimumArea;
-                    }
+                    delete this.validationErrors.managePriceRange.minimumArea;
                 }
+            } else {
+                delete this.validationErrors.managePriceRange.minimumArea;
+            }
 
             const maxArea = this.priceRangeFormFields.maximum_area;
-                if (maxArea === '' || maxArea === null || maxArea === undefined) {
-                    this.validationErrors.managePriceRange.maximumArea = 'maximumarea is required';
+            if (maxArea !== '' && maxArea !== null && maxArea !== undefined) {
+                const n2 = Number(maxArea);
+                if (Number.isNaN(n2) || n2 < 0) {
+                    this.validationErrors.managePriceRange.maximumArea = 'Please enter a valid non-negative integer';
                 } else {
-                    const n2 = Number(maxArea);
-                    if (Number.isNaN(n2) || n2 < 0) {
-                        this.validationErrors.managePriceRange.maximumArea = 'Please enter a valid non-negative integer';
-                    } else {
-                        delete this.validationErrors.managePriceRange.maximumArea;
-                    }
+                    delete this.validationErrors.managePriceRange.maximumArea;
                 }
+            } else {
+                delete this.validationErrors.managePriceRange.maximumArea;
+            }
 
             // optional unit_price (decimal)
             const unitPrice = this.priceRangeFormFields.unit_price;
-                if (unitPrice === '' || unitPrice === null || unitPrice === undefined) {
-                    this.validationErrors.managePriceRange.unitPrice = 'unitprice is required';
+            if (unitPrice !== '' && unitPrice !== null && unitPrice !== undefined) {
+                const up = Number(unitPrice);
+                if (Number.isNaN(up) || up < 0) {
+                    this.validationErrors.managePriceRange.unitPrice = 'Please enter a valid non-negative number';
                 } else {
-                    const up = Number(unitPrice);
-                    if (Number.isNaN(up) || up < 0) {
-                        this.validationErrors.managePriceRange.unitPrice = 'Please enter a valid non-negative number';
-                    } else {
-                        delete this.validationErrors.managePriceRange.unitPrice;
-                    }
+                    delete this.validationErrors.managePriceRange.unitPrice;
                 }
+            } else {
+                delete this.validationErrors.managePriceRange.unitPrice;
+            }
 
             if (this.priceRangeFormFields.status === '') {
                 this.validationErrors.managePriceRange.status = 'Status is required.';
@@ -889,6 +963,22 @@ createApp({
             }
         },
 
+        // Fetch service groups from the server
+        getServiceGroups() {
+            fetch('get-service-groups/')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.service_groups) {
+                        this.serviceGroups = data.service_groups.map(g => {
+                            return {
+                                ...g,
+                                avatar: `${this.avatarBaseUrl}?name=${encodeURIComponent(g.service_name)}&background=${this.colorCodes[g.id % this.colorCodes.length]}&color=fff`
+                            };
+                        });
+                    }
+                })
+                .catch(error => console.error('Error fetching service groups:', error));
+        },
         // Fetch service types from the server
         getServiceTypes() {
             fetch('get-service-types/')
@@ -901,6 +991,7 @@ createApp({
                                 avatar: `${this.avatarBaseUrl}?name=${encodeURIComponent(serviceType.name)}&background=${this.colorCodes[serviceType.id % this.colorCodes.length]}&color=fff`
                             };
                         });
+                        this.serviceTypesWithoutFilter = [...this.serviceTypes];
                     }
                     if (data.service_productivities) {
                         const grouped = {};
@@ -940,6 +1031,124 @@ createApp({
                     console.error('Error fetching service types:', error);
                 });
         },
+        //create a new service group form
+        createServiceGroup(formData) {
+            const csrftoken = this.getCookie('csrftoken');
+            const baseUrl = window.location.origin;
+
+            const url = `${baseUrl}/common/create-service-group/`;
+
+            fetch(url, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+                .then(r => r.json())
+                .then(data => {
+
+                    if (!data.success) {
+
+                        // Backend returns: error_field + error_message
+                        if (data.error_field && data.error_message) {
+
+                            if (data.error_field === 'service_name') {
+                                this.validationErrors['manageServiceGroup']['serviceGroupName'] = data.error_message;
+                            }
+
+                            if (data.error_field === 'service_name_arabic') {
+                                this.validationErrors['manageServiceGroup']['serviceGroupArabicName'] = data.error_message;
+                            }
+
+                            if (data.error_field === 'status') {
+                                this.validationErrors['manageServiceGroup']['serviceGroupStatus'] = data.error_message;
+                            }
+
+                            if (data.error_field === 'imagepath') {
+                                this.validationErrors['manageServiceGroup']['serviceGroupImage'] = data.error_message;
+                            }
+                        }
+
+                    } else {
+                        // Success handling
+                        this.successMsg = data.service_group
+                            ? `Service group "${data.service_group.service_name}" added successfully.`
+                            : 'Service group added successfully.';
+                        data.service_group.avatar = `${this.avatarBaseUrl}?name=${encodeURIComponent(data.service_group.service_name)}&background=${this.colorCodes[data.service_group.id % this.colorCodes.length]}&color=fff`;
+                        this.serviceGroups.push(data.service_group);
+                        // Reset form
+                        this.resetServiceGroup();
+                        setTimeout(() => { this.successMsg = null; }, 5000);
+                    }
+                })
+                .catch(err => console.error(err));
+        },
+        // Update an existing service group
+        updateServiceGroup(formData, groupId) {
+            const csrftoken = this.getCookie('csrftoken');
+            const baseUrl = window.location.origin;
+
+            const url = `${baseUrl}/common/update-service-group/${groupId}/`;
+
+            fetch(url, {
+                method: 'PUT',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+                .then(r => r.json())
+                .then(data => {
+
+                    if (!data.success) {
+
+                        if (data.error_field && data.error_message) {
+
+                            if (data.error_field === 'service_name') {
+                                this.validationErrors['manageServiceGroup']['serviceGroupName'] = data.error_message;
+                            }
+
+                            if (data.error_field === 'service_name_arabic') {
+                                this.validationErrors['manageServiceGroup']['serviceGroupArabicName'] = data.error_message;
+                            }
+
+                            if (data.error_field === 'status') {
+                                this.validationErrors['manageServiceGroup']['serviceGroupStatus'] = data.error_message;
+                            }
+
+                            // if (data.error_field === 'imagepath') {
+                            //     this.validationErrors['manageServiceGroup']['serviceGroupImage'] = data.error_message;
+                            // }
+                        }
+
+                    } else {
+
+                        this.successMsg = data.service_group
+                            ? `Service group "${data.service_group.service_name}" updated successfully.`
+                            : 'Service group updated successfully.';
+
+                        // Update avatar (same style as service type)
+                        data.service_group.avatar = `${this.avatarBaseUrl}?name=${encodeURIComponent(data.service_group.service_name)}&background=${this.colorCodes[data.service_group.id % this.colorCodes.length]}&color=fff`;
+
+                        // Update local array
+                        const index = this.serviceGroups.findIndex(s => s.id == data.service_group.id);
+                        if (index !== -1) {
+                            this.serviceGroups.splice(index, 1, data.service_group);
+                        }
+
+                        // Reset form
+                        this.resetServiceGroup();
+
+                        setTimeout(() => { this.successMsg = null; }, 5000);
+                    }
+                })
+                .catch(err => console.error(err));
+        },
         // Create a new service type
         createServiceType(formData) {
             const csrftoken = this.getCookie('csrftoken')
@@ -964,6 +1173,9 @@ createApp({
                             }
                             if (data.error_field === 'new_service_name_arabic') {
                                 this.validationErrors['manageServiceType']['serviceTypeArabicName'] = data.error_message;
+                            }
+                            if (data.error_field === 'new_service_group_id') {
+                                this.validationErrors['manageServiceType']['serviceGroup'] = data.error_message;
                             }
                             if (data.error_field === 'new_service_is_active') {
                                 this.validationErrors['manageServiceType']['serviceTypeIsActive'] = data.error_message;
@@ -1007,6 +1219,10 @@ createApp({
                             }
                             if (data.error_field === 'edit_service_name_arabic') {
                                 this.validationErrors['manageServiceType']['serviceTypeArabicName'] = data.error_message;
+                            }
+                            if (data.error_field === 'edit_service_group_id') {
+                                this.validationErrors['manageServiceType']['serviceGroup'] =
+                                    data.error_message;
                             }
                             if (data.error_field === 'edit_service_is_active') {
                                 this.validationErrors['manageServiceType']['serviceTypeIsActive'] = data.error_message;
@@ -1611,8 +1827,19 @@ createApp({
             for (const k in payload) fd.append(k, payload[k]);
             return fd;
         },
+        resetServiceGroup() {
+            this.serviceGroupFormFields = {
+                id: null,
+                name: '',
+                name_arabic: '',
+                status: '',
+                image_path: ''
+
+            };
+            this.validationErrors['manageServiceGroup'] = {};
+        },
         resetNewService() {
-            this.newService = { name: '', name_arabic: '', is_active: '' };
+            this.serviceFormFields = { name: '', name_arabic: '', servicegroup_id: '', is_active: '' };
             this.validationErrors['manageServiceType'] = {};
         },
         formatCurrency(value) {
@@ -1651,26 +1878,121 @@ createApp({
             const year = date.getFullYear();
             return `${day} ${month}, ${year}`;
         },
-         showServiceGroupModal() {
-            this.toggleDivs.showList = false;
-            this.toggleDivs.showServiceGroupModal= true;
-            this.validationErrors['manageServiceType'] = [];
-            this.viewServiceType = {
-                title: '',
-            };
 
-            const form = document.getElementById('manage-service-form');
-            if (form) {
-                form.setAttribute('data-action', 'add')
+        handleImageUpload(event) {
+            if (event.target.files && event.target.files[0]) {
+                this.serviceGroupFormFields.image_path = event.target.files[0];
             }
         },
-         handleImageUpload(event) {
-        this.serviceGroupForm.image = event.target.files[0];
-    },
+        //for submit service group form
+        backButtonAction1() {
+            this.toggleDivs.showServiceGroupModal = false;
+            this.toggleDivs.showServiceGroupView = true;
+        },
 
+        handleEditServiceGroupBtnClick(serviceGroup) {
+
+            this.toggleDivs.showServiceGroupView = false;
+            this.toggleDivs.showServiceGroupModal = true;
+
+            this.serviceGroupId = serviceGroup.id;
+
+            this.viewServiceGroup = {
+                title: `Edit ${serviceGroup.service_name}`,
+            };
+
+            const form = document.getElementById('manage-service-group-form');
+            if (form) {
+                form.setAttribute('data-action', 'edit');
+
+                // FIXED FIELDS
+                this.serviceGroupFormFields.name = serviceGroup.service_name || '';
+                this.serviceGroupFormFields.name_arabic = serviceGroup.service_name_arabic || '';
+                this.serviceGroupFormFields.status = serviceGroup.status ? 'active' : 'inactive';
+
+                const hiddenName = 'editing_service_group_id';
+                let hidden = form.querySelector(`input[name="${hiddenName}"]`);
+
+                if (!hidden) {
+                    hidden = document.createElement('input');
+                    hidden.type = 'hidden';
+                    hidden.name = hiddenName;
+                    hidden.id = hiddenName;
+                    form.appendChild(hidden);
+                }
+
+                hidden.value = serviceGroup.id ?? '';
+            }
+        },
+        removeServiceGroup(serviceGroup) {
+            const modal = document.getElementById('delete-modal');
+            if (modal) {
+                modal.classList.add('in', 'show');
+                modal.style.display = 'block';
+                document.body.classList.add('modal-open');
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                document.body.appendChild(backdrop);
+                this.deleteModal.softText = `Are you sure you want to continue with this action? This action will update the status of the service type "${serviceGroup.service_name}".`;
+                const form = document.getElementById('delete-form');
+                if (form) {
+                    form.setAttribute('data-delete-property', 'service-group');
+                    this.deleteModal.id = serviceGroup.id || '';
+
+                }
+            }
+
+        },
+
+        deleteServiceGroup(formData, groupId) {
+            const csrftoken = this.getCookie('csrftoken');
+            const baseUrl = window.location.origin;
+
+            const url = `${baseUrl}/common/delete-service-group/${groupId}/`;
+
+            fetch(url, {
+                method: 'DELETE',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+                .then(res => {
+                    if (!res.ok) throw res;
+                    return res.json();
+                })
+                .then(data => {
+                    this.closeModal();
+
+                    const index = this.serviceGroups.findIndex(g => g.id == groupId);
+                    if (index !== -1) {
+                        data.service_group.avatar =
+                            `${this.avatarBaseUrl}?name=${encodeURIComponent(data.service_group.service_name)}&background=${this.colorCodes[data.service_group.id % this.colorCodes.length]}&color=fff`;
+
+                        this.serviceGroups.splice(index, 1, data.service_group);
+                    }
+
+                    this.successMsg = data.service_group
+                        ? `Service group "${data.service_group.service_name}" updated successfully.`
+                        : 'Service group updated successfully.';
+
+                    setTimeout(() => { this.successMsg = ''; }, 5000);
+                })
+                .catch(async err => {
+                    if (err.json) {
+                        const body = await err.json();
+                        this.validationErrors.manageServiceGroup = body.errors || {};
+                    } else {
+                        console.error(err);
+                    }
+                });
+        }
     },
     // Lifecycle hook to fetch service types on mount
     mounted() {
         this.getServiceTypes();
+        this.getServiceGroups();
     }
 }).mount('#app');
