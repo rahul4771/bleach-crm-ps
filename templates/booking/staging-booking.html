@@ -180,7 +180,7 @@
                 </div>
                 <div v-for="(sdate,sdindex) in selected_onetime_slots">
 
-                  <div v-if="sdate.slots.length > 0"><b v-text="`Day ${getSlotDayNumber(sdindex)}`"></b></div>
+                  <div v-if="sdate.slots.length > 0"><b v-text="'Day ' + (sdindex + 1)"></b></div>
                   <v-chip v-for="(st,stindex) in sdate.slots" :key="stindex" class="ma-2">
 
                     <span v-if="slotFormat[st]"
