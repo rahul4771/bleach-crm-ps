@@ -6452,7 +6452,7 @@ def add_service_type(request):
 				"name_arabic": service_type.name_arabic,
 				"service_group_id": service_type.service_group.id,
 				"image_path": image_url,
-				"updated_at": getattr(service_type, 'updated', None),
+				"updated": getattr(service_type, 'updated', None),
 				"is_active": service_type.is_active
 			}
 			return JsonResponse({'success': True, 'service_type': st_obj})
@@ -6548,7 +6548,7 @@ class ServiceTypeAPIView(APIView):
 			"name_arabic": service_type.name_arabic,
 			"service_group_id": service_type.service_group.id,
 			# "image_path": service_type.image_path,
-			"updated_at": updated_at.isoformat() if updated_at else None,
+			"updated": updated_at.isoformat() if updated_at else None,
 			"is_active": service_type.is_active,
 		}
 
