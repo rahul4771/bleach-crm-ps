@@ -1322,6 +1322,7 @@
                         v-if="!selectedService || !selectedService.name || selectedService.name != service.name"></i>
                       <i class="fa fa-check-circle active-icon"
                         v-if="selectedService && selectedService.name && selectedService.name == service.name"></i>
+                      <img :src="`https://my.bleachkw.com${mediaUrl}${service.image_path}`" class="service-icon">
                       <div class="text-center pt-2 service-title" v-text="service.name">
                       </div>
                     </div>
