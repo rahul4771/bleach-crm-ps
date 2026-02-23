@@ -198,7 +198,6 @@
                                                 v-text="validationErrors['manageServiceType']['serviceTypeArabicName']">
                                             </div>
                                         </div>
-                                        <div></div>
                                         <div class="form-group">
                                             <label for="serviceGroup" class="form-label">Service Group</label>
 
@@ -233,6 +232,16 @@
                                             <div class="invalid-feedback"
                                                 v-if="validationErrors['manageServiceType']['serviceTypeIsActive']"
                                                 v-text="validationErrors['manageServiceType']['serviceTypeIsActive']">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="serviceTypeImage" class="form-label">Image</label>
+                                            <input type="file" class="form-control" id="serviceTypeImage"
+                                                name="serviceTypeImage"  @change="handleImageUpload($event, 'serviceTypeImage')"
+                                                :class="{'form-control': true, 'is-invalid': validationErrors['manageServiceType']['serviceTypeImage'] }">
+                                            <div class="invalid-feedback"
+                                                v-if="validationErrors['manageServiceType']['serviceTypeImage']"
+                                                v-text="validationErrors['manageServiceType']['serviceTypeImage']">
                                             </div>
                                         </div>
                                     </div>
@@ -1177,7 +1186,7 @@
                         <div class="dashboard-card-header">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h2 v-text="viewServiceGroup.title ? viewServiceGroup.title : 'Add Service Group'"></h2>
-                                <button class="btn btn-secondary" @click="backButtonAction1('showList')">Back to
+                                <button class="btn btn-secondary" @click="backButtonActionToList('showList')">Back to
                                     List</button>
                             </div>
                             <div class="dashboard-card-body">
@@ -1231,7 +1240,7 @@
                                         <div class="form-group">
                                             <label for="serviceGroupImage" class="form-label">Image</label>
                                             <input type="file" id="serviceGroupImage" class="form-control"
-                                                @change="handleImageUpload"
+                                                @change="handleImageUpload($event, 'serviceGroupImage')"
                                                 :class="{'is-invalid': validationErrors.manageServiceGroup.serviceGroupImage}">
                                             <div class="invalid-feedback"
                                                 v-if="validationErrors.manageServiceGroup.serviceGroupImage"
