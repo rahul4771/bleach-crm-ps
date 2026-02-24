@@ -1309,7 +1309,7 @@
                       v-bind:key="'cat_'+index" @click="selectCategory(item.service_name)">
                       <i
                         :class="selectedCategory === item.service_name ? 'fa fa-check-circle active-icon' : 'far fa-circle inactive-icon'"></i>
-                      <img :src="`https://my.bleachkw.com${mediaUrl}${item.image_path}`" class="service-icon">
+                      <img :src="`https://my.bleachkw.com${mediaUrl}${item.image_path}`" class="service-icon" v-if="item.image_path">
                       <div class="text-center pt-2 service-title" v-text="item.service_name"></div>
                     </div>
                   </div>
@@ -1322,7 +1322,7 @@
                         v-if="!selectedService || !selectedService.name || selectedService.name != service.name"></i>
                       <i class="fa fa-check-circle active-icon"
                         v-if="selectedService && selectedService.name && selectedService.name == service.name"></i>
-                      <img :src="`https://my.bleachkw.com${mediaUrl}${service.image_path}`" class="service-icon">
+                      <img :src="`https://my.bleachkw.com${mediaUrl}${service.image_path}`" class="service-icon" v-if="service.image_path">
                       <div class="text-center pt-2 service-title" v-text="service.name">
                       </div>
                     </div>
