@@ -481,7 +481,7 @@
     
                                                     </div>
                                                 </div>
-                                                <a onclick="viewSkills(this)" data-id="{{worker.id}}">View Skills</a>
+                                                <a @click="viewSkills({{worker.id}}, $event.currentTarget)" data-id="{{worker.id}}">View Skills</a>
                                                 <p class="resource-card-text">Daily Occupancy {{workers_date}}</p>
                                                 <br>
                                                 <div class="row ml-5 m-pr-0" id="slote_details{{worker.id}}">
@@ -555,7 +555,7 @@
                                                     <div onclick="editShow(this)" data-id="{{worker.id}}" class="skill-edit" id="edit_id_{{worker.id}}">
                                                         <img src="{% static 'files/icons/edit.png' %}">
                                                     </div>
-                                                    <div onclick="saveEdit({{worker.id}})" data-id="{{worker.id}}" id="id_done_{{worker.id}}" class="skill-edit-done">
+                                                    <div @click="saveEdit({{worker.id}})" data-id="{{worker.id}}" id="id_done_{{worker.id}}" class="skill-edit-done">
                                                         <button class="resource-card-button">Done</button>
                                                     </div>
                                                 </div>
@@ -967,7 +967,7 @@
     }
          
 // Show custom styled alert notification
-function showStyledAlert(message, type = 'success') {
+ function showStyledAlert(message, type = 'success') {
     // Remove existing alert if any
     const existingAlert = document.querySelector('.custom-alert');
     if (existingAlert) existingAlert.remove();
@@ -1019,7 +1019,7 @@ function showStyledAlert(message, type = 'success') {
         })
         .catch(err => console.error(err));
 } {% endcomment %}
-function saveEdit(workerId) {
+{% comment %} function saveEdit(workerId) {
     let selectedServiceTypes = [];
 
     document.querySelectorAll(`#id_skill_edit_list_${workerId} input[type="checkbox"]:checked`)
@@ -1068,7 +1068,7 @@ function saveEdit(workerId) {
         console.error('❌ Network error while saving skills:', err);
         showStyledAlert('Network error: ' + err.message, 'error');
     });
-}
+} {% endcomment %}
 
 // Helper function to show success message
  {% comment %} function showSuccessMessage(message) {
@@ -1153,7 +1153,7 @@ if (!document.getElementById('msgAnimations')) {
     document.head.appendChild(style);
 } {% endcomment %}
 
-function viewSkills(el) {
+{% comment %} function viewSkills(el) {
     const workerId = el.getAttribute('data-id');
     flip(el);
 
@@ -1194,7 +1194,7 @@ function viewSkills(el) {
             alert('Network error: ' + err.message);
         });
 }
-
+ {% endcomment %}
 
 
 
