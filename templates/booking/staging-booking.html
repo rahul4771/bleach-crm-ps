@@ -2406,7 +2406,7 @@
                     </div>
                   </div>
 
-                  <div class="col-md-6" v-if="serviceType == 'Window Cleaning' || serviceType == 'Outdoor Cleaning'">
+                  <div class="col-md-6" v-if="serviceType == 'Window Cleaning'">
                     <v-select :items="['Outside & Inside', 'Outside', 'Inside']" label="Sides"
                       :rules="[v => !!v || 'Sides is required']" v-model="otherService.sides" :attach="true"></v-select>
                   </div>
