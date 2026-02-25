@@ -204,7 +204,7 @@ createApp({
                 this.serviceFormFields.name_arabic = serviceType.name_arabic || '';
                 this.serviceFormFields.servicegroup_id = serviceType.service_group_id || '';
                 this.serviceFormFields.image = serviceType.image || '';
-                this.serviceFormFields.is_active = serviceType.status ? 'active' : 'inactive';
+                this.serviceFormFields.is_active = serviceType.is_active ? 'active' : 'inactive';
 
                 const hiddenName = 'editing_service_type_id';
                 let hidden = form.querySelector(`input[name="${hiddenName}"]`);
