@@ -3621,8 +3621,9 @@ const app = new Vue({
         },
         async getAddons() {
             this.addons = []
-            const ser = 'Kitchen Cleaning'
-            fetch(this.url + '/customer/ajax/getserviceaddons?service_type=' + ser)
+            // const ser = 'Kitchen Cleaning'
+            // console.log("this.serviceType", this.serviceType)
+            fetch(this.url + '/customer/ajax/getserviceaddons?service_type=' + this.serviceType)
                 .then(response => response.json())
                 .then(data => {
                     this.addons = data.service_addons

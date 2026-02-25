@@ -51,7 +51,7 @@
 
       <div>
         <!-- snackbar-->
-        <v-snackbar v-model="snackbar" color="primary" v-text="responseText" timeout="5000" >
+        <v-snackbar v-model="snackbar" color="primary" v-text="responseText" timeout="5000">
           <template v-slot:action="{ attrs }">
             <v-btn color="#ffffff" text v-bind="attrs" @click="snackbar = false">
               Close
@@ -199,7 +199,8 @@
                     v-if="one_time_slots[oneTimeDateSelected] && !slot_loader && !isSlotsSelected()">
                     <div class="time-slot duration text-center p-2"
                       @click="addOneTimeSlot(slot.start_time, slot.end_time, sindex + 1)" v-if="!checkOneTimeSlot(slot.start_time, slot.end_time, sindex + 1) &&
-                        checkOneTimeSlotStat(slot.start_time, slot.end_time, sindex + 1) && !checkSelectedDate()" v-text="`${slot.start_time} - ${slot.end_time}`">
+                        checkOneTimeSlotStat(slot.start_time, slot.end_time, sindex + 1) && !checkSelectedDate()"
+                      v-text="`${slot.start_time} - ${slot.end_time}`">
                     </div>
 
                     <div class="time-slot duration-active text-center p-2"
@@ -207,7 +208,8 @@
                       @click="removeOneTimeSlot(sindex + 1)" v-text="`${slot.start_time} - ${slot.end_time}`">
                     </div>
                     <div class="time-slot duration-inactive text-center p-2" v-if="(!checkOneTimeSlotStat(slot.start_time, slot.end_time, sindex + 1) &&
-                        !checkOneTimeSlot(slot.start_time, slot.end_time, sindex + 1)) || checkSelectedDate()" v-text="`${slot.start_time} - ${slot.end_time}`">
+                        !checkOneTimeSlot(slot.start_time, slot.end_time, sindex + 1)) || checkSelectedDate()"
+                      v-text="`${slot.start_time} - ${slot.end_time}`">
                     </div>
                   </div>
                   <div class="col-md-12" v-if="parsedTimeSlots.length<1 && !slot_loader">
@@ -1189,7 +1191,8 @@
                         </div>
                         <div class="mt-2 text-center primary-text"
                           v-if="!addon.details.category || Object.keys(addon.selected_size).length>0">
-                          <span v-if="Object.keys(addon.selected_size).length > 0"> <b v-text="`${addon.selected_size.price} KD`">
+                          <span v-if="Object.keys(addon.selected_size).length > 0"> <b
+                              v-text="`${addon.selected_size.price} KD`">
                             </b> </span>
                           <span v-else> <b v-text="`${addon.details.price} KD`">
                             </b> </span>
@@ -1309,7 +1312,8 @@
                       v-bind:key="'cat_'+index" @click="selectCategory(item.service_name)">
                       <i
                         :class="selectedCategory === item.service_name ? 'fa fa-check-circle active-icon' : 'far fa-circle inactive-icon'"></i>
-                      <img :src="`https://my.bleachkw.com${mediaUrl}${item.image_path}`" class="service-icon" v-if="item.image_path">
+                      <img :src="`https://my.bleachkw.com${mediaUrl}${item.image_path}`" class="service-icon"
+                        v-if="item.image_path">
                       <div class="text-center pt-2 service-title" v-text="item.service_name"></div>
                     </div>
                   </div>
@@ -1322,7 +1326,8 @@
                         v-if="!selectedService || !selectedService.name || selectedService.name != service.name"></i>
                       <i class="fa fa-check-circle active-icon"
                         v-if="selectedService && selectedService.name && selectedService.name == service.name"></i>
-                      <img :src="`https://my.bleachkw.com${mediaUrl}${service.image_path}`" class="service-icon" v-if="service.image_path">
+                      <img :src="`https://my.bleachkw.com${mediaUrl}${service.image_path}`" class="service-icon"
+                        v-if="service.image_path">
                       <div class="text-center pt-2 service-title" v-text="service.name">
                       </div>
                     </div>
@@ -2620,8 +2625,6 @@
                     </div>
                   </v-form>
                   <!-- key note ends here-->
-                </div>
-                <div class="row m-0">
                   <div class="col-md-12 text-center mt-4">
                     <v-btn color="primary" class="mr-4 mx-auto" v-on:click="addOtherService()"
                       v-if="serviceType!='Kitchen Cleaning' && serviceType != 'Kitchen Appliances'">
@@ -2636,6 +2639,10 @@
                       Save Changes
                     </v-btn>
                   </div>
+                </div>
+                <!-- Add Buttons -->
+                <div class="row m-0">
+
                 </div>
             </div>
             </v-form>
