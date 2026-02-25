@@ -3233,7 +3233,22 @@ const app = new Vue({
             this.serviceCount++;
 
             try {
+                this.serviceChange=false
+                this.selectedService = service;
+                this.serviceType = service.name;
+                this.location_type=''
+                this.area_type=''
+                this.otherServices = [];
+                this.billingData=[];
+                this.building = [];
+                this.no_of_building = 0;
+                this.temp_no_of_building = 0;
+                this.no_of_floors = [];
+                this.no_of_apartments = [];
+                this.buildingsCompleted=false
                 this.getSize();
+                this.getAddons();
+
             } catch (error) {
                 console.error("Error getting service size:", error);
             }
@@ -4046,47 +4061,7 @@ const app = new Vue({
             let max_size_data = []
             let max_size_val = []
             if (this.serviceType == "Upholstery Cleaning") {
-                /* if (this.otherService.type == "CURTAIN") {
-                   for (var item = 0; item < this.sizeData.length; item++) {
-                     console.log("type test passed");
-                    
-                     if (this.sizeData[item].upholstery_type == "CURTAIN") {
-                        max_size_data.push(this.sizeData[item].max_size)
-                        max_size_val.push(this.sizeData[item])
-                       if (
-                         this.otherService.size >= this.sizeData[item].min_size &&
-                         this.otherService.size <= this.sizeData[item].max_size
-                       ) {
-                         this.otherService.size = this.sizeData[item];
-                         sizeFound=true
-                         console.log("size test passed");
-                       }
-                     }
-                   }
-                   let max_val=Math.max(...max_size_data)
-                   let left_size=0
-                   console.log('max val is '+max_val)
-                   if(!sizeFound && this.otherService.size>0){
-                     left_size=this.otherService.size-max_val
-                     
-                     for(var j=0;j<max_size_val.length;j++){
-                       if(max_size_val[j].max_size==max_val){
-                         let new_cost=left_size*max_size_val[j].unit_price
-                         let current_cost=max_size_val[j].cost+new_cost
-                         let size=this.otherService.size
-                         this.otherService.size={
-                           name: "Custom size",
-                           cost: current_cost,
-                           max_size:size,
-                           min_size:size,
-                           upholstery_type: "CURTAIN",
-                           combinedSize:size+' Seater'
-           
-                         }
-                       }
-                     }
-                 }
-                 }*/
+               
                 if (this.otherService.type == "SOFA") {
                     for (let item = 0; item < this.sizeData.length; item++) {
                         if (this.sizeData[item].upholstery_type == "SOFA") {
@@ -5986,6 +5961,7 @@ const app = new Vue({
         this.getMultipleSlots();
 
         this.changeNewKitchen();
+        console.log("this.addons_parsed", JSON.stringify(this.addons_parsed))
 
         // Initialize owl carousels after Vue has finished rendering
         this.$nextTick(() => {
