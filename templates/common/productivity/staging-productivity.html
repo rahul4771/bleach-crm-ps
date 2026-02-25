@@ -226,8 +226,10 @@
                                                 v-model="serviceFormFields.is_active"
                                                 :class="{'form-control': true, 'is-invalid': validationErrors['manageServiceType']['serviceTypeIsActive'] }">
                                                 <option value="" selected="">Choose an option</option>
-                                                <option value="active">Active</option>
-                                                <option value="inactive">Inactive</option>
+                                                <option :selected="serviceFormFields.is_active === 1" value="active">
+                                                    Active</option>
+                                                <option :selected="serviceFormFields.is_active === 0" value="inactive">
+                                                    Inactive</option>
                                             </select>
                                             <div class="invalid-feedback"
                                                 v-if="validationErrors['manageServiceType']['serviceTypeIsActive']"
@@ -237,7 +239,8 @@
                                         <div class="form-group">
                                             <label for="serviceTypeImage" class="form-label">Image</label>
                                             <input type="file" class="form-control" id="serviceTypeImage"
-                                                name="serviceTypeImage"  @change="handleImageUpload($event, 'serviceTypeImage')"
+                                                name="serviceTypeImage"
+                                                @change="handleImageUpload($event, 'serviceTypeImage')"
                                                 :class="{'form-control': true, 'is-invalid': validationErrors['manageServiceType']['serviceTypeImage'] }">
                                             <div class="invalid-feedback"
                                                 v-if="validationErrors['manageServiceType']['serviceTypeImage']"
