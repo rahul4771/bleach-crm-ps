@@ -1450,6 +1450,20 @@
                         :items="location_types" v-model="location_type" label="Location Type">
                       </v-select>
                     </div>
+                    <div class="col-md-4 mt-2" id="field-location-type" v-if="
+                    serviceType == 'Upholstery Cleaning' ||
+                    serviceType == 'Carpet Cleaning' ||
+                    serviceType == 'Mattress Cleaning' ||
+                    serviceType == 'Kitchen Cleaning' ||
+                    serviceType == 'Car Parking Umbrella' ||
+                    serviceType == 'Window Cleaning' ||
+                    serviceType == 'Outdoor Cleaning' ||
+                    serviceType == 'Facade Cleaning'
+                  ">
+                      <v-select :items="area_types" v-model="area_type" item-text="name" label="Area Type"
+                        :rules="[v => !!v || 'Area Type is required']" :attach="true">
+                      </v-select>
+                    </div>
                     <div class="col-md-4 mt-2" id="field-no-of-buildings" v-if="
                       serviceType!='Kitchen Appliances' &&
                       serviceType!='Upholstery Cleaning' &&
@@ -2265,20 +2279,6 @@
                   serviceType=='Car Parking Umbrella' || serviceType=='Window Cleaning' ||
                   serviceType=='Outdoor Cleaning' ) ">
 
-                  <div class="col-md-6" v-if="
-                    serviceType == 'Upholstery Cleaning' ||
-                    serviceType == 'Carpet Cleaning' ||
-                    serviceType == 'Mattress Cleaning' ||
-                    serviceType == 'Kitchen Cleaning' ||
-                    serviceType == 'Car Parking Umbrella' ||
-                    serviceType == 'Window Cleaning' ||
-                    serviceType == 'Outdoor Cleaning' ||
-                    serviceType == 'Facade Cleaning'
-                  ">
-                    <v-select :items="area_types" v-model="area_type" item-text="name" label="Area Type"
-                      :rules="[v => !!v || 'Area Type is required']" :attach="true">
-                    </v-select>
-                  </div>
 
                   <div class=" col-md-12" v-if="serviceType == 'Upholstery Cleaning'">
                     <v-select :items="upholsteryType" label="Select the type of Upholstery" v-model="otherService.type"
