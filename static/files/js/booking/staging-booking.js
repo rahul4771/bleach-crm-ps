@@ -2538,25 +2538,26 @@ const app = new Vue({
 
             this.sizeFilteredData = [];
             this.otherService.size = ""
-            if (this.otherService.type == "new") {
-                this.parseAddons()
-                $('.more-services').hide()
-                if (this.otherService.is_cabinet) {
-                    this.sizeFilteredData = this.sizeData.filter(size => size.is_newkitchen && size.is_cabinet)
-                }
-                else {
-                    this.sizeFilteredData = this.sizeData.filter(size => size.is_newkitchen && !size.is_cabinet)
-                }
-            }
-            if (this.otherService.type == "old") {
-                $('.more-services').show()
-                if (this.otherService.is_cabinet) {
-                    this.sizeFilteredData = this.sizeData.filter(size => !size.is_newkitchen && size.is_cabinet)
-                }
-                else {
-                    this.sizeFilteredData = this.sizeData.filter(size => !size.is_newkitchen && !size.is_cabinet)
-                }
-            }
+            this.parseAddons()
+            this.kitchenTypeFilter();
+            // $('.more-services').hide()
+            // if (this.otherService.type == "new") {
+            //     if (this.otherService.is_cabinet) {
+            //         this.sizeFilteredData = this.sizeData.filter(size => size.is_newkitchen && size.is_cabinet)
+            //     }
+            //     else {
+            //         this.sizeFilteredData = this.sizeData.filter(size => size.is_newkitchen && !size.is_cabinet)
+            //     }
+            // }
+            // if (this.otherService.type == "old") {
+            //     $('.more-services').show()
+            //     if (this.otherService.is_cabinet) {
+            //         this.sizeFilteredData = this.sizeData.filter(size => !size.is_newkitchen && size.is_cabinet)
+            //     }
+            //     else {
+            //         this.sizeFilteredData = this.sizeData.filter(size => !size.is_newkitchen && !size.is_cabinet)
+            //     }
+            // }
         },
         changeNewKitchen() {
             this.kitchenData.size = ''
@@ -3784,7 +3785,7 @@ const app = new Vue({
                 });
         },
         getSize() {
-            console.log("object 1")
+            console.log("object 1", this.serviceType)
             let service = this.serviceType
             if (service == 'Hourly Cleaning') {
                 service = 'General Cleaning'
@@ -3992,7 +3993,8 @@ const app = new Vue({
             this.otherService.size = {}
         },
         kitchenTypeFilter() {
-            this.kitchenSize = this.sizeData.filter(size => size.kitchen_type === selectedType);
+            this.sizeFilteredData = this.sizeData.filter(size => size.kitchen_type === this.otherService.type);
+            console.log("sizeFilteredData", JSON.stringify(this.sizeFilteredData))
             this.otherService.size = {}
         },
         editItem(a, b) {
