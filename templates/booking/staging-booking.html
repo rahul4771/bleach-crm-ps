@@ -3017,7 +3017,7 @@
                           <div class="ml-auto primary-text">
                             KD <span v-if="!addon.details.category"
                               v-text="addon.details.price * addon.quantity"></span><span v-else
-                              v-text="getAddonPrice(addon)"></span>
+                              v-text="addon.details.price * addon.quantity"></span>
                             <span v-if="service.schedule_details && service.cleaning_policy==' SUBSCRIPTION'">x
                               <span v-text="Object.keys(service.schedule_details).length"></span>
                           </div>
