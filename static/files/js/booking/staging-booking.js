@@ -501,6 +501,8 @@ const app = new Vue({
         hourly_slots: true,
         current_service: '',
         ropeAccessTypes: '',
+        kitchenTypes: '',
+        kitchenSize: '',
 
 
     },
@@ -3782,6 +3784,7 @@ const app = new Vue({
                 });
         },
         getSize() {
+            console.log("object 1")
             let service = this.serviceType
             if (service == 'Hourly Cleaning') {
                 service = 'General Cleaning'
@@ -3801,6 +3804,10 @@ const app = new Vue({
                         this.serviceSize = data;
                     }
                     this.parseSize();
+                    if(this.serviceType == 'Kitchen Cleaning'){
+                        this.kitchenTypes = [...new Set(this.sizeData.map(size => size.kitchen_type))];
+                        this.kitchenTypeFilter();
+                    }
                     if (this.serviceType == 'Rope Access') {
                         this.ropeAccessTypes = [...new Set(this.sizeData.map(size => size.rope_access_type))];
                         this.ropeAccessFilter();
@@ -3981,6 +3988,10 @@ const app = new Vue({
                 selectedType = this.ropeAccessTypes[0];
             }
             this.ropeAccessSize = this.sizeData.filter(size => size.rope_access_type === selectedType);
+            this.otherService.size = {}
+        },
+        kitchenTypeFilter() {
+            this.kitchenSize = this.sizeData.filter(size => size.kitchen_type === selectedType);
             this.otherService.size = {}
         },
         editItem(a, b) {
@@ -5963,7 +5974,6 @@ const app = new Vue({
         this.getMultipleSlots();
 
         this.changeNewKitchen();
-        console.log("this.addons_parsed", JSON.stringify(this.addons_parsed))
 
         // Initialize owl carousels after Vue has finished rendering
         this.$nextTick(() => {

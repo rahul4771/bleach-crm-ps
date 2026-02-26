@@ -821,9 +821,9 @@
               <v-card-text>
                 <div class="row mt-4">
                   <div class="col-md-12">
-                    <v-radio-group v-model="kitchenData.type" row v-on:change="changeNewKitchen()">
-                      <v-radio label="Used Kitchen" value="old"></v-radio>
-                      <v-radio label="New Kitchen" value="new"></v-radio>
+                    <v-radio-group v-model="kitchenData.type" row v-on:change="changeNewKitchen()"
+                      v-for="(type,kindex) in kitchenTypes" :key="kindex">
+                      <v-radio :label="type" :value="type"></v-radio>
                     </v-radio-group>
                   </div>
                   <div class="col-md-12">
@@ -976,9 +976,9 @@
                     </v-radio-group>
                   </div>
                   <div class="col-md-12 text-center" v-if="serviceType == 'Kitchen Cleaning'">
-                    <v-radio-group v-model="otherService.type" row @change="changeKitchen()">
-                      <v-radio label="Used Kitchen" value="old"></v-radio>
-                      <v-radio label="New Kitchen" value="new"></v-radio>
+                    <v-radio-group v-model="otherService.type" row @change="changeKitchen()"
+                      v-for="(type,kindex) in kitchenTypes" :key="kindex">
+                      <v-radio :label="type" :value="type"></v-radio>
                     </v-radio-group>
                   </div>
                   <div class="col-md-12" v-if="serviceType == 'Kitchen Cleaning'">
@@ -1772,9 +1772,9 @@
                                                   v-if="building[index - 1].floors[floor - 1].kitchen ">
                                                   <v-radio-group v-model="kitchenData.type" row
                                                     v-on:change="changeNewKitchen()"
+                                                    v-for="(type,kindex) in kitchenTypes" :key="kindex"
                                                     :rules="[v => !!v || 'This field is required']" required>
-                                                    <v-radio label="Used Kitchen" value="old"></v-radio>
-                                                    <v-radio label="New Kitchen" value="new"></v-radio>
+                                                    <v-radio :label="type" :value="type"></v-radio>
                                                   </v-radio-group>
                                                 </div>
 
@@ -2079,9 +2079,9 @@
                                                         <div class="col-md-12 text-center" v-if="apartment.kitchen ">
 
                                                           <v-radio-group v-model="kitchenData.type" row
-                                                            v-on:change="changeNewKitchen()">
-                                                            <v-radio label="Used Kitchen" value="old"></v-radio>
-                                                            <v-radio label="New Kitchen" value="new"></v-radio>
+                                                            v-on:change="changeNewKitchen()"
+                                                            v-for="(type,kindex) in kitchenTypes" :key="kindex">
+                                                            <v-radio :label="type" :value="type"></v-radio>
                                                           </v-radio-group>
                                                         </div>
 
@@ -2310,9 +2310,9 @@
                       required v-model="otherService.age"></v-text-field>
                   </div>
                   <div class="col-md-12 text-center" v-if="serviceType == 'Kitchen Cleaning'">
-                    <v-radio-group v-model="otherService.type" row v-on:change="changeKitchen()">
-                      <v-radio label="Used Kitchen" value="old"></v-radio>
-                      <v-radio label="New Kitchen" value="new"></v-radio>
+                    <v-radio-group v-model="otherService.type" row v-on:change="changeKitchen()"
+                      v-for="(type,kindex) in kitchenTypes" :key="kindex">
+                      <v-radio :label="type" :value="type"></v-radio>
                     </v-radio-group>
                   </div>
                   <div class="col-md-12 text-center" v-if="serviceType == 'Window Cleaning'">
