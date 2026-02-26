@@ -1309,7 +1309,7 @@
                   <!-- Category displayed as carousel with conditional navigation -->
                   <div class="owl-carousel" id="category-carousel">
                     <div class="sr-service-card cursor-pointer" v-for="(item, index) in categories"
-                      v-bind:key="'cat_'+index" @click="selectCategory(item.service_name)">
+                      v-bind:key="'cat_'+index" @click="selectCategory(item)">
                       <i
                         :class="selectedCategory === item.service_name ? 'fa fa-check-circle active-icon' : 'far fa-circle inactive-icon'"></i>
                       <img :src="`https://my.bleachkw.com${mediaUrl}${item.image_path}`" class="service-icon"
