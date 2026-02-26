@@ -3806,6 +3806,7 @@ const app = new Vue({
                     this.parseSize();
                     if(this.serviceType == 'Kitchen Cleaning'){
                         this.kitchenTypes = [...new Set(this.sizeData.map(size => size.kitchen_type))];
+                        this.otherService.type = this.kitchenTypes[0]
                         this.kitchenTypeFilter();
                     }
                     if (this.serviceType == 'Rope Access') {
