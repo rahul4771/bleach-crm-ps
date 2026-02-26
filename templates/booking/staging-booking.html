@@ -1170,22 +1170,21 @@
                         <div class="text-center" v-text="addon.details.name">
                         </div>
                         <div class="text-center mt-2">
-                          <img src='/static/files/icons/oven.png' class="service-icon"
+                          <img :src="'/static/files/icons/oven.png'" class="service-icon"
                             v-if="addon.details.name=='Microwave Oven'" />
-                          <img src='/static/files/icons/refrigerator_single.png' class="service-icon"
+                          <img :src="'/static/files/icons/refrigerator_single.png'" class="service-icon"
                             v-if="addon.details.name=='Refrigerator & Freezer' && addon.details.size=='One Side'" />
-                          <img src='/static/files/icons/refrigerator_double.png' class="service-icon"
+                          <img :src="'/static/files/icons/refrigerator_double.png'" class="service-icon"
                             v-if="addon.details.name=='Refrigerator & Freezer' && addon.details.size=='Two Side'" />
-
-                          <img src='/static/files/icons/exhaust-hood.png' class="service-icon"
+                          <img :src="'/static/files/icons/exhaust-hood.png'" class="service-icon"
                             v-if="addon.details.name=='Exhaust Filters'" />
-                          <img src='/static/files/icons/griller.png' class="service-icon"
+                          <img :src="'/static/files/icons/griller.png'" class="service-icon"
                             v-if="addon.details.name=='Grillers'" />
-                          <img src='/static/files/icons/deep-fryer.png' class="service-icon"
+                          <img :src="'/static/files/icons/deep-fryer.png'" class="service-icon"
                             v-if="addon.details.name=='Fryers'" />
-                          <img src='/static/files/icons/stove.png' class="service-icon"
+                          <img :src="'/static/files/icons/stove.png'" class="service-icon"
                             v-if="addon.details.name=='Cooking Range'" />
-                          <img src='/static/files/icons/cabinet.png' class="service-icon"
+                          <img :src="'/static/files/icons/cabinet.png'" class="service-icon"
                             v-if="addon.details.name=='Cabinet'" />
 
                         </div>
@@ -1342,24 +1341,22 @@
                         <div class="text-center" v-text="addon.details.name">
                         </div>
                         <div class="text-center mt-2">
-                          <img src='/static/files/icons/oven.png' class="service-icon"
+                          <img :src="'/static/files/icons/oven.png'" class="service-icon"
                             v-if="addon.details.name=='Microwave Oven'" />
-                          <img src='/static/files/icons/refrigerator_single.png' class="service-icon"
+                          <img :src="'/static/files/icons/refrigerator_single.png'" class="service-icon"
                             v-if="addon.details.name=='Refrigerator & Freezer' && addon.details.size=='One Side'" />
-                          <img src='/static/files/icons/refrigerator_double.png' class="service-icon"
+                          <img :src="'/static/files/icons/refrigerator_double.png'" class="service-icon"
                             v-if="addon.details.name=='Refrigerator & Freezer' && addon.details.size=='Two Side'" />
-
-                          <img src='/static/files/icons/exhaust-hood.png' class="service-icon"
+                          <img :src="'/static/files/icons/exhaust-hood.png'" class="service-icon"
                             v-if="addon.details.name=='Exhaust Filters'" />
-                          <img src='/static/files/icons/griller.png' class="service-icon"
+                          <img :src="'/static/files/icons/griller.png'" class="service-icon"
                             v-if="addon.details.name=='Grillers'" />
-                          <img src='/static/files/icons/deep-fryer.png' class="service-icon"
+                          <img :src="'/static/files/icons/deep-fryer.png'" class="service-icon"
                             v-if="addon.details.name=='Fryers'" />
-                          <img src='/static/files/icons/stove.png' class="service-icon"
+                          <img :src="'/static/files/icons/stove.png'" class="service-icon"
                             v-if="addon.details.name=='Cooking Range'" />
-                          <img src='/static/files/icons/cabinet.png' class="service-icon"
+                          <img :src="'/static/files/icons/cabinet.png'" class="service-icon"
                             v-if="addon.details.name=='Cabinet'" />
-
                         </div>
                         <div class="mt-2 text-center primary-text"
                           v-if="!addon.details.category || Object.keys(addon.selected_size).length>0">

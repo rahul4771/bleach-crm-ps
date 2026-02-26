@@ -3215,7 +3215,6 @@ const app = new Vue({
                 const filteredServices = this.services.filter(service => service.service_group_id === item.id);
 
                 if (filteredServices && filteredServices.length > 0) {
-                    console.log("filteredServices", JSON.stringify(filteredServices));
                     const firstService = filteredServices[0];
                     this.selectedService = firstService;
                     this.serviceType = firstService.name;
