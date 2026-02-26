@@ -1032,7 +1032,7 @@
                         v-model="otherService.size"></v-select>
                     </div>
                     <div v-if="serviceType == 'Kitchen Cleaning'">
-                      <v-select :items="sizeFilteredData" item-text="combinedSize" return-object label="Size88"
+                      <v-select :items="sizeFilteredData" item-text="combinedSize" return-object label="Size"
                         :rules="[v => v === null || v === undefined || (v && Object.keys(v).length > 0) || 'Size is required']"
                         v-model="otherService.size"></v-select>
                     </div>
@@ -2377,7 +2377,7 @@
                   </div>
                   <div class="col-md-6" v-else>
                     <div v-if="serviceType == 'Kitchen Cleaning'">
-                      <v-select :items="sizeFilteredData" item-text="combinedSize" return-object label="Size77"
+                      <v-select :items="sizeFilteredData" item-text="combinedSize" return-object label="Size"
                         :rules="[v => v === null || v === undefined || (v && Object.keys(v).length > 0) || 'Size is required']"
                         v-model="otherService.size" :attach="true"></v-select>
                     </div>
