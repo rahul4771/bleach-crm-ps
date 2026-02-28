@@ -1161,7 +1161,7 @@
 
                   <div class="col-md-12"></div>
                   <!--more services  only for kitchen cleaning-->
-                  <div class="col-md-12 more-services" v-if="serviceType=='Kitchen Cleaning'">
+                  <div class="col-md-12 more-services" v-if="addons_parsed.length>0">
                     <div class="service-content-heading">
                       Add-ons
                     </div>
@@ -1332,11 +1332,11 @@
                     </div>
                   </div>
                   <!--more services  only for kitchen Appliances cleaning-->
-                  <div class="col-md-12 more-services" v-if="serviceType=='Kitchen Appliances'">
+                  <div class="col-md-12 more-services" v-if="addons_parsed.length>0">
                     <div class="service-content-heading">
                       Add-ons
                     </div>
-                    <div class="owl-carousel" id="otherServiceCarousel">
+                    <div class="owl-carousel other-service-carousel" id="otherServiceCarousel">
                       <div class="more-service-card" v-for="(addon,index) in addons_parsed" v-bind:key="index">
                         <div class="text-center" v-text="addon.details.name">
                         </div>
@@ -2495,7 +2495,7 @@
                       Add-ons
                     </div>
                     <div style="padding-left: 32px; padding-right: 32px;">
-                      <div class="owl-carousel" id="otherServiceCarousel">
+                      <div class="owl-carousel other-service-carousel" id="otherServiceCarousel">
                         <div class="more-service-card" v-for="(addon,index) in addons_parsed" v-bind:key="index">
                           <div class="text-center" v-text="addon.details.name"></div>
                           <div class="text-center mt-2">

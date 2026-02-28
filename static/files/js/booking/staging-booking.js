@@ -531,8 +531,11 @@ const app = new Vue({
             this.reinitAddonsCarousel();
         },
         serviceType(newVal) {
-            // Reinitialize addons carousel when service type changes to Kitchen types
-            if (newVal === 'Kitchen Appliances' || newVal === 'Kitchen Cleaning') {
+            // Whenever the selected service type changes, fetch associated addons
+            if (newVal) {
+                this.getAddons();
+
+                // ensure carousel is reinitialized after addons_parsed is updated
                 this.$nextTick(() => {
                     this.reinitAddonsCarousel();
                 });
@@ -1815,6 +1818,8 @@ const app = new Vue({
                                 // Now fetch size data
                                 this.$nextTick(() => {
                                     this.getSize();
+                                    // also fetch addons for initial service
+                                    this.getAddons();
                                 });
                             }
                         });
@@ -3352,11 +3357,11 @@ const app = new Vue({
         reinitAddonsCarousel() {
             setTimeout(() => {
                 this.$nextTick(() => {
-                    // Handle both otherServiceCarousel and otherServiceDialogCarousel
-                    const carouselIds = ['#otherServiceCarousel', '#otherServiceDialogCarousel'];
+                    // Handle add-ons carousels (supports multiple carousel elements)
+                    const carouselSelectors = ['.other-service-carousel', '#otherServiceDialogCarousel'];
 
-                    carouselIds.forEach(carouselId => {
-                        const $carousel = $(carouselId);
+                    carouselSelectors.forEach(selector => {
+                        const $carousel = $(selector);
 
                         // Only proceed if the carousel exists in the DOM
                         if ($carousel.length === 0) {
@@ -5966,6 +5971,11 @@ const app = new Vue({
         this.getAreaTypes();
         this.getIp();
         this.getGovernorate();
+
+        // Ensure addons are loaded for initial serviceType if already set
+        if (this.serviceType) {
+            this.getAddons();
+        }
 
         this.dateSelected = moment().format().split('T')[0];
         this.today = moment().format().split('T')[0];
