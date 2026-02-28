@@ -6954,6 +6954,9 @@ class ServiceAddOnsAPIView(APIView):
 		price = (data.get("price")).strip()
 		productivity = (data.get("productivity")).strip()
 		is_active =  data.get("is_active") or 1
+		image_path = None
+		if request.FILES.get('image_path'):
+			image_path = request.FILES.get('image_path')
 
 		if not name:
 			return JsonResponse({"success": False, "error_field": "name", "error_message": "Name is required."}, status=400)
@@ -6992,29 +6995,58 @@ class ServiceAddOnsAPIView(APIView):
 		if productivity_val < 0:
 			return JsonResponse({"success": False, "error_field": "productivity", "error_message": "Productivity must be non-negative."}, status=400)
         
-		# Create the service addon
-		service_addon = ServiceAddOns.objects.create(
-			service_type=service_type,
-			name=name,
-			category=category,
-			size=size,
-			price=price,
-			productivity=productivity,
-			is_active=is_active
-		)
-		sa_obj = service_addon
-		sa_data= {
-			"id": sa_obj.id,
-			"service_type_id": sa_obj.service_type_id,
-			"name": sa_obj.name,
-			"category": sa_obj.category,
-			"size": sa_obj.size,
-			"price": float(sa_obj.price) if sa_obj.price is not None else None,
-			"productivity": float(sa_obj.productivity) if sa_obj.productivity is not None else None,
-			"is_active": bool(sa_obj.is_active)
-		}
+		if not image_path:
+			return JsonResponse({"success": False, "error_field": "image_path", "error_message": "Image path is required."}, status=400)
 
-		return JsonResponse({"success": True, "service_addon": sa_data}, status=201)
+		if image_path:
+			allowed_ext = {'.jpg', '.jpeg', '.png', '.gif'}
+			ext = os.path.splitext(image_path.name)[1].lower()
+			if ext not in allowed_ext:
+				return JsonResponse({"success": False, "error_field": "image_path", "error_message": "Unsupported file type. Allowed types: jpg, jpeg, png, gif."}, status=400)
+
+			max_size = 2 * 1024 * 1024 
+			if image_path.size > max_size:
+				return JsonResponse({"success": False, "error_field": "image_path", "error_message": "File size exceeds 2MB limit."}, status=400)
+				
+
+		# Create the service addon
+		try:
+			service_addon = ServiceAddOns.objects.create(
+				service_type=service_type,
+				name=name,
+				category=category,
+				size=size,
+				price=price,
+				productivity=productivity,
+				is_active=is_active,
+				image_path=image_path
+			)
+
+			sa_obj = ServiceAddOns.objects.filter(id=service_addon.id).first()
+
+			image_url = None
+			if getattr(sa_obj, "image_path", None):
+				try:
+					image_url = sa_obj.image_path.url
+				except Exception:
+					image_url = str(sa_obj.image_path)
+
+			sa_data= {
+				"id": sa_obj.id,
+				"service_type_id": sa_obj.service_type_id,
+				"name": sa_obj.name,
+				"category": sa_obj.category,
+				"size": sa_obj.size,
+				"image_path": image_url,
+				"price": float(sa_obj.price) if sa_obj.price is not None else None,
+				"productivity": float(sa_obj.productivity) if sa_obj.productivity is not None else None,
+				"is_active": bool(sa_obj.is_active)
+
+			}
+			return JsonResponse({"success": True, "service_addon": sa_data}, status=201)
+		except Exception as e:
+			return JsonResponse({"success": False, "error": str(e)}, status=500)
+
 
 	def put(self, request, *args, **kwargs):
 		data = getattr(request, "data", None) or request.data or {}
@@ -7073,9 +7105,37 @@ class ServiceAddOnsAPIView(APIView):
 			if not service_type:
 				return JsonResponse({"success": False, "error_field": "service_type", "error_message": "Invalid service type."}, status=400)
 
+		image_path = None
+		image_path = request.FILES.get('image_path')
+
+		if image_path:
+			allowed_ext = {'.jpg', '.jpeg', '.png', '.gif'}
+			ext = os.path.splitext(image_path.name)[1].lower()
+			if ext not in allowed_ext:
+				return JsonResponse({"success": False, "error_field": "image_path", "error_message": "Unsupported file type. Allowed types: jpg, jpeg, png, gif."}, status=400)
+
+			max_size = 2 * 1024 * 1024 
+			if image_path.size > max_size:
+				return JsonResponse({"success": False, "error_field": "image_path", "error_message": "File size exceeds 2MB limit."}, status=400)
+			
+
 		sa = ServiceAddOns.objects.filter(id=addon_id)
 		if not sa.exists():
 			return JsonResponse({"success": False, "error": "Service addon not found"}, status=404)
+
+
+		if image_path:
+			image_path = request.FILES.get('image_path')
+			try:
+				old_file = getattr(ServiceAddOns.objects.get(id=addon_id), 'image_path')
+				if old_file:
+					old_path = getattr(old_file, 'path', None) or str(old_file)
+					if os.path.isfile(old_path):
+						os.remove(old_path)
+			except Exception:
+				pass
+			sa.image_path = image_path
+			sa.save()
 		
 		try:
 			sa.update(
@@ -7094,6 +7154,7 @@ class ServiceAddOnsAPIView(APIView):
 				"name": sa_obj.name,
 				"category": sa_obj.category,
 				"size": sa_obj.size,
+				"image_path": sa_obj.image_path if sa_obj.image_path else None,
 				"price": float(sa_obj.price) if sa_obj.price is not None else None,
 				"productivity": float(sa_obj.productivity) if sa_obj.productivity is not None else None,
 				"is_active": bool(sa_obj.is_active)
