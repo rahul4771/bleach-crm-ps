@@ -26,6 +26,99 @@ function selectServiceOnly(service) {
     });
 }
 
+// Global component: AddonCarousel
+Vue.component('addon-carousel', {
+    template: `
+        <div class="col-md-12 mt-2" v-if="addons.length > 0">
+            <div class="more-services">
+                <div class="service-content-heading">{{ heading }}</div>
+                <div style="padding-left: 32px; padding-right: 32px;">
+                    <div class="owl-carousel other-service-carousel" :id="carouselId">
+                        <addon-card 
+                            v-for="(addon, index) in addons" 
+                            :key="index"
+                            :addon="addon" 
+                            :index="index"
+                            @select="$emit('select', $event)"
+                            @reduce="$emit('reduce', $event)"
+                            @increase="$emit('increase', $event)"
+                            @update-quantity="$emit('update-quantity', $event)"
+                            @choose-size="$emit('choose-size', $event)">
+                        </addon-card>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `,
+    props: {
+        addons: {
+            type: Array,
+            required: true,
+            default: () => []
+        },
+        carouselId: {
+            type: String,
+            required: true
+        },
+        heading: {
+            type: String,
+            default: 'Add-ons'
+        }
+    },
+    watch: {
+        addons: {
+            handler() {
+                this.reinitializeCarousel();
+            },
+            deep: true
+        }
+    },
+    mounted() {
+        this.reinitializeCarousel();
+    },
+    methods: {
+        reinitializeCarousel() {
+            const self = this;
+            setTimeout(() => {
+                self.$nextTick(() => {
+                    const selector = `#${self.carouselId}`;
+                    const $carousel = $(selector);
+
+                    if ($carousel.length === 0) return;
+
+                    $carousel.css({ 'opacity': '0', 'transition': 'opacity 0.1s' });
+
+                    if ($carousel.hasClass('owl-loaded')) {
+                        $carousel.trigger('destroy.owl.carousel').removeClass('owl-loaded owl-drag owl-carousel');
+                        $carousel.find('.owl-stage-outer, .owl-stage, .owl-item, .owl-nav, .owl-dots').remove();
+                    }
+
+                    const finalItemsCount = $carousel.children().length;
+
+                    if (finalItemsCount > 0) {
+                        $carousel.addClass('owl-carousel').owlCarousel({
+                            items: 4,
+                            loop: false,
+                            margin: 10,
+                            nav: true,
+                            dots: false,
+                            responsive: {
+                                0: { items: 1 },
+                                600: { items: 2 },
+                                1000: { items: 4 }
+                            }
+                        });
+
+                        setTimeout(() => {
+                            $carousel.css('opacity', '1');
+                        }, 50);
+                    }
+                });
+            }, 150);
+        }
+    }
+});
+
 const app = new Vue({
     el: '#app',
     delimiters: ['<%', '%>'],
@@ -526,19 +619,12 @@ const app = new Vue({
             // Reinitialize category carousel when categories change
             this.reinitCategoryCarousel();
         },
-        addons_parsed() {
-            // Reinitialize addons carousel when add-ons change
-            this.reinitAddonsCarousel();
-        },
+        // addons_parsed watcher - addon-carousel component handles re-initialization automatically
         serviceType(newVal) {
             // Whenever the selected service type changes, fetch associated addons
             if (newVal) {
                 this.getAddons();
-
-                // ensure carousel is reinitialized after addons_parsed is updated
-                this.$nextTick(() => {
-                    this.reinitAddonsCarousel();
-                });
+                // addon-carousel component will automatically re-initialize when addons_parsed updates
             }
         }
     },
@@ -3351,56 +3437,7 @@ const app = new Vue({
             }, 150);
         },
 
-        /**
-         * Reinitialize the add-ons carousel after content changes
-         */
-        reinitAddonsCarousel() {
-            setTimeout(() => {
-                this.$nextTick(() => {
-                    // Handle add-ons carousels (supports multiple carousel elements)
-                    const carouselSelectors = ['.other-service-carousel', '#otherServiceDialogCarousel'];
 
-                    carouselSelectors.forEach(selector => {
-                        const $carousel = $(selector);
-
-                        // Only proceed if the carousel exists in the DOM
-                        if ($carousel.length === 0) {
-                            return;
-                        }
-
-                        // Hide carousel to prevent visual flicker during transition
-                        $carousel.css({ 'opacity': '0', 'transition': 'opacity 0.1s' });
-
-                        if ($carousel.hasClass('owl-loaded')) {
-                            $carousel.trigger('destroy.owl.carousel').removeClass('owl-loaded owl-drag owl-carousel');
-                            $carousel.find('.owl-stage-outer, .owl-stage, .owl-item, .owl-nav, .owl-dots').remove();
-                        }
-
-                        const finalItemsCount = $carousel.find('.more-service-card').length;
-
-                        if (finalItemsCount > 0) {
-                            $carousel.addClass('owl-carousel').owlCarousel({
-                                items: 4,
-                                loop: false,
-                                margin: 10,
-                                nav: true,
-                                dots: false,
-                                responsive: {
-                                    0: { items: 1 },
-                                    600: { items: 2 },
-                                    1000: { items: 4 }
-                                }
-                            });
-
-                            // Show carousel again with smooth fade-in
-                            setTimeout(() => {
-                                $carousel.css('opacity', '1');
-                            }, 50);
-                        }
-                    });
-                });
-            }, 150);
-        },
 
         /* ================================================================
             12. BOOKING EXECUTION METHODS  
@@ -3810,7 +3847,7 @@ const app = new Vue({
                         this.serviceSize = data;
                     }
                     this.parseSize();
-                    if(this.serviceType == 'Kitchen Cleaning'){
+                    if (this.serviceType == 'Kitchen Cleaning') {
                         this.kitchenTypes = [...new Set(this.sizeData.map(size => size.kitchen_type))];
                         this.otherService.type = this.kitchenTypes[0]
                         this.kitchenTypeFilter();
