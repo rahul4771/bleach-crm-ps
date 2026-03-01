@@ -2706,6 +2706,7 @@
                   @click="viewEditSchedule(service,sindex)">
                   <a>View Schedule</a>
                 </div>
+
                 <div class="cart-card-items">
                   <div v-for="(bill,bindex) in service.bill" v-bind:key="bindex">
                     <div v-if="service.service!='Kitchen Appliances' && bill.section.size && bill.section.size.name"><b
@@ -2762,6 +2763,7 @@
                   </div>
 
                 </div>
+                
                 <hr>
                 </hr>
                 <div class="mt-4">

@@ -3827,7 +3827,6 @@ const app = new Vue({
                 });
         },
         getSize() {
-            console.log("object 1", this.serviceType)
             let service = this.serviceType
             if (service == 'Hourly Cleaning') {
                 service = 'General Cleaning'
@@ -4036,7 +4035,6 @@ const app = new Vue({
         },
         kitchenTypeFilter() {
             this.sizeFilteredData = this.sizeData.filter(size => size.kitchen_type === this.otherService.type);
-            console.log("sizeFilteredData", JSON.stringify(this.sizeFilteredData))
             this.otherService.size = {}
         },
         editItem(a, b) {
@@ -4192,9 +4190,39 @@ const app = new Vue({
                 if (this.otherService.stain_reason.length > 0) {
                     this.otherService.stain_reason = this.otherService.stain_reason.join()
                 }
-                if (this.serviceType == 'Kitchen Cleaning') {
-                    this.otherService.addons = [...this.addons_parsed]
+                
+                // Format addons with proper name and price fields
+                if (this.addons_parsed && this.addons_parsed.length > 0) {
+                    const formattedAddons = [];
+                    for (const addon of this.addons_parsed) {
+                        if (addon.selected) {
+                            let addonPrice = 0;
+                            let selectedSize = addon.selected_size || {};
+                            
+                            if (selectedSize && selectedSize.price) {
+                                addonPrice = parseFloat(selectedSize.price);
+                            } else if (addon.size && addon.size.length > 0 && addon.size[0].price) {
+                                addonPrice = parseFloat(addon.size[0].price) || 0;
+                                selectedSize = addon.size[0];
+                            } else if (addon.details && addon.details.price) {
+                                addonPrice = parseFloat(addon.details.price);
+                            }
+                            
+                            if (addonPrice > 0 && addon.quantity > 0) {
+                                formattedAddons.push({
+                                    id: addon.details?.id || null,
+                                    name: addon.details?.name || 'Addon',
+                                    quantity: addon.quantity || 1,
+                                    unit_price: addonPrice,
+                                    total_price: (addonPrice * (addon.quantity || 1)),
+                                    selected: true
+                                });
+                            }
+                        }
+                    }
+                    this.otherService.addons = formattedAddons;
                 }
+                
                 this.otherServices.push(this.otherService);
                 if (this.serviceType == 'Upholstery Cleaning') {
                     this.billingData.push({
@@ -4257,9 +4285,39 @@ const app = new Vue({
                 if (this.otherService.stain_reason.length > 0) {
                     this.otherService.stain_reason = this.otherService.stain_reason.join()
                 }
-                if (this.serviceType == 'Kitchen Cleaning') {
-                    this.otherService.addons = [...this.addons_parsed]
+                
+                // Format addons with proper name and price fields
+                if (this.addons_parsed && this.addons_parsed.length > 0) {
+                    const formattedAddons = [];
+                    for (const addon of this.addons_parsed) {
+                        if (addon.selected) {
+                            let addonPrice = 0;
+                            let selectedSize = addon.selected_size || {};
+                            
+                            if (selectedSize && selectedSize.price) {
+                                addonPrice = parseFloat(selectedSize.price);
+                            } else if (addon.size && addon.size.length > 0 && addon.size[0].price) {
+                                addonPrice = parseFloat(addon.size[0].price) || 0;
+                                selectedSize = addon.size[0];
+                            } else if (addon.details && addon.details.price) {
+                                addonPrice = parseFloat(addon.details.price);
+                            }
+                            
+                            if (addonPrice > 0 && addon.quantity > 0) {
+                                formattedAddons.push({
+                                    id: addon.details?.id || null,
+                                    name: addon.details?.name || 'Addon',
+                                    quantity: addon.quantity || 1,
+                                    unit_price: addonPrice,
+                                    total_price: (addonPrice * (addon.quantity || 1)),
+                                    selected: true
+                                });
+                            }
+                        }
+                    }
+                    this.otherService.addons = formattedAddons;
                 }
+                
                 this.otherServices.push(this.otherService);
                 if (this.serviceType == 'Upholstery Cleaning') {
                     this.billingData.push({
@@ -4434,26 +4492,26 @@ const app = new Vue({
                     const formattedAddons = [];
                     for (const addon of this.addons_parsed) {
                         if (addon.selected) {
-                            // Extract addon price - check multiple possible locations
+                            // Extract addon price - unified logic for all service types
                             let addonPrice = 0;
+                            let selectedSize = addon.selected_size || {};
                             
-                            // Priority 1: If selected_size exists with price
-                            if (addon.selected_size && addon.selected_size.price) {
-                                addonPrice = parseFloat(addon.selected_size.price);
+                            // Priority 1: If selected_size exists with price, use it
+                            if (selectedSize && selectedSize.price) {
+                                addonPrice = parseFloat(selectedSize.price);
                             }
-                            // Priority 2: Check details object
-                            else if (addon.details) {
-                                if (addon.details.price) {
-                                    addonPrice = parseFloat(addon.details.price);
-                                } 
-                                // Priority 3: Check if details has a price_value or cost property
-                                else if (addon.details.price_value) {
-                                    addonPrice = parseFloat(addon.details.price_value);
-                                }
+                            // Priority 2: If size array exists with items, use first size's price
+                            else if (addon.size && addon.size.length > 0 && addon.size[0].price) {
+                                addonPrice = parseFloat(addon.size[0].price) || 0;
+                                selectedSize = addon.size[0]; // Set default selected size
+                            }
+                            // Priority 3: Check details.price for simple addons
+                            else if (addon.details && addon.details.price) {
+                                addonPrice = parseFloat(addon.details.price);
                             }
                             
-                            // Only add addon if it has a positive price
-                            if (addonPrice > 0 || addon.quantity > 0) {
+                            // Add addon if it has a price and quantity
+                            if (addonPrice > 0 && addon.quantity > 0) {
                                 formattedAddons.push({
                                     id: addon.details?.id || null,
                                     name: addon.details?.name || 'Addon',
@@ -4461,7 +4519,7 @@ const app = new Vue({
                                     quantity: addon.quantity || 1,
                                     unit_price: addonPrice,
                                     total_price: (addonPrice * (addon.quantity || 1)),
-                                    selected_size: addon.selected_size || null,
+                                    selected_size: selectedSize,
                                     details: addon.details || {},
                                     selected: true
                                 });
