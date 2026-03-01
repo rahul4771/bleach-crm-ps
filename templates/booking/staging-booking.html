@@ -2419,7 +2419,8 @@
 
 
           <!-- Other service image upload -->
-          <div class="row" v-if="
+          <div class="col-md-12">
+            <div class="row" v-if="
                   (serviceType == 'Upholstery Cleaning' ||
                     serviceType == 'Facade Cleaning' ||
                     serviceType == 'Upholstery Cleaning' ||
@@ -2431,23 +2432,24 @@
                     serviceType == 'Rope Access' ||
                     serviceType == 'Outdoor Cleaning') &&
                   otherServices.length > 0">
-            <div class="col-md-12 mt-4">
-              <h5>Add Images</h5>
-            </div>
-            <div class="col-md-3" v-for="(image, imageindex) in imageData" v-bind:key="imageindex">
-              <div>
-                <img :src="image.url" style="max-width: 100%" />
+              <div class="col-md-12 mt-4">
+                <h5>Add Images</h5>
               </div>
-              <div class="image-footer">
-                <!-- <i class="far fa-edit img-icon"  v-on:click="editImage(imageindex)"></i>-->
-                <i class="far fa-trash-alt pl-2 img-icon" v-on:click="deleteImage(imageindex)"></i>
+              <div class="col-md-3" v-for="(image, imageindex) in imageData" v-bind:key="imageindex">
+                <div>
+                  <img :src="image.url" style="max-width: 100%" />
+                </div>
+                <div class="image-footer">
+                  <!-- <i class="far fa-edit img-icon"  v-on:click="editImage(imageindex)"></i>-->
+                  <i class="far fa-trash-alt pl-2 img-icon" v-on:click="deleteImage(imageindex)"></i>
+                </div>
               </div>
-            </div>
-            <div class="col-md-3">
-              <div class="addImg">
-                <div class="item_image" @click="$refs.itemfile.click()" v-on:change="onImageFileChanged">
-                  <input type="file" ref="itemfile" style="display: none" accept="image/*" id="itemfileselected" />
-                  <i class="ImageIcon fa fa-plus"></i>
+              <div class="col-md-3">
+                <div class="addImg">
+                  <div class="item_image" @click="$refs.itemfile.click()" v-on:change="onImageFileChanged">
+                    <input type="file" ref="itemfile" style="display: none" accept="image/*" id="itemfileselected" />
+                    <i class="ImageIcon fa fa-plus"></i>
+                  </div>
                 </div>
               </div>
             </div>
@@ -2706,9 +2708,11 @@
                 </div>
                 <div class="cart-card-items">
                   <div v-for="(bill,bindex) in service.bill" v-bind:key="bindex">
-                    <div v-if="service.service!='Kitchen Appliances' && bill.section.size && bill.section.size.name"><b v-text="bill.section_name">
+                    <div v-if="service.service!='Kitchen Appliances' && bill.section.size && bill.section.size.name"><b
+                        v-text="bill.section_name">
                       </b></div>
-                    <div class="d-flex mt-1" v-if="service.service!='Kitchen Appliances' && bill.section.size && bill.section.size.name">
+                    <div class="d-flex mt-1"
+                      v-if="service.service!='Kitchen Appliances' && bill.section.size && bill.section.size.name">
                       <div v-text="bill.section.size.name">
                       </div>
                       <div class="ml-auto primary-text">
