@@ -103,89 +103,99 @@ const appCard = new Vue({
 
   data: {
     userid:[],
-    //url:"http://localhost:8000/"
-    url:"https://my.bleachkw.com"
+    url:"http://localhost:8000/"
+    //url:"https://my.bleachkw.com"
     //url : 'http://127.0.0.1:8000'
 
   },
   methods: {
-    saveEdit(id){
-      var userData = new FormData()
+   saveEdit(workerId) {
+    let selectedServiceTypes = [];
 
-      userData.append("user_id",id)
-      userData.append("csrfmiddlewaretoken",$("input[name=csrfmiddlewaretoken]").val())
+    document.querySelectorAll(`#id_skill_edit_list_${workerId} input[type="checkbox"]:checked`)
+        .forEach(cb => {
+            selectedServiceTypes.push(cb.value);
+        });
 
-      if($("#is_general_skill_"+id+":checked").val()=="on"){
-        userData.append('is_general_skill','True')
-      }else{
-        userData.append('is_general_skill','False')
-      }
-      if($("#is_deep_skill_"+id+":checked").val()=="on"){
-        userData.append('is_deep_skill','True')
-      }else{
-        userData.append('is_deep_skill','False')
-      }
-      if($("#is_upholstery_skill_"+id+":checked").val()=="on"){
-        userData.append('is_upholstery_skill','True')
-      }else{
-        userData.append('is_upholstery_skill','False')
-      }
-      if($("#is_kitchen_skill_"+id+":checked").val()=="on"){
-        userData.append('is_kitchen_skill','True')
-      }else{
-        userData.append('is_kitchen_skill','False')
-      }
-      if($("#is_sterilization_skill_"+id+":checked").val()=="on"){
-        userData.append('is_sterilization_skill','True')
-      }else{
-        userData.append('is_sterilization_skill','False')
-      }
-      if($("#is_carpet_skill_"+id+":checked").val()=="on"){
-        userData.append('is_carpet_skill','True')
-      }else{
-        userData.append('is_carpet_skill','False')
-      }
-      if($("#is_mattress_skill_"+id+":checked").val()=="on"){
-        userData.append('is_mattress_skill','True')
-      }else{
-        userData.append('is_mattress_skill','False')
-      }
-      if($("#is_facade_skill_"+id+":checked").val()=="on"){
-        userData.append('is_facade_skill','True')
-      }else{
-        userData.append('is_facade_skill','False')
-      }
-      if($("#is_storagearea_skill_"+id+":checked").val()=="on"){
-        userData.append('is_storagearea_skill','True')
-      }else{
-        userData.append('is_storagearea_skill','False')
-      }
-      if($("#is_carparkingumbrella_skill_"+id+":checked").val()=="on"){
-        userData.append('is_carparkingumbrella_skill','True')
-      }else{
-        userData.append('is_carparkingumbrella_skill','False')
-      }
-      if($("#is_outdoor_skill_"+id+":checked").val()=="on"){
-        userData.append('is_outdoor_skill','True')
-      }else{
-        userData.append('is_outdoor_skill','False')
-      }
-      if($("#is_window_skill_"+id+":checked").val()=="on"){
-        userData.append('is_window_skill','True')
-      }else{
-        userData.append('is_window_skill','False')
-      }
+    console.log('Saving skills for employee:', workerId, 'Service types:', selectedServiceTypes);
 
-      console.log(id,"udt")
-      axios.post(this.url+"/api/resource-skills/",userData).then((response) => {
-        // editDone(id)
-        location.reload();
-              })
-               .catch((error) => {
-                console.log(error);
-              });
-      
-    }
+    fetch('/common/save-employee-skills/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            employee_id: workerId,
+            service_type_ids: selectedServiceTypes
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            console.log('✅ Skills saved successfully for employee:', workerId);
+            console.log('Selected service types:', selectedServiceTypes);
+            
+            // Show styled success alert
+            showStyledAlert('Skills updated Successfully!', 'success');
+
+            console.log('Details:', data.details);
+            
+            document.getElementById("id_done_"+workerId).style.display = "none";
+            document.getElementById("id_skill_edit_list_"+workerId).style.display = "none";
+            document.getElementById("id_skill_list_"+workerId).style.display = "block";
+
+            // Small delay before refreshing view
+            setTimeout(() => {
+                viewSkills({ getAttribute: () => workerId });
+            }, 500);
+        } else {
+            console.error('❌ Failed to save skills. Error:', data.error);
+            showStyledAlert('Error: ' + (data.error || 'Failed to save skills'), 'error');
+        }
+    })
+    .catch(err => {
+        console.error('❌ Network error while saving skills:', err);
+        showStyledAlert('Network error: ' + err.message, 'error');
+    });
+},
+    viewSkills(workerId, el) {
+  // Flip the card if needed
+  if (typeof flip === 'function') {
+    flip(el);
+  }
+
+  const skillListDiv = document.getElementById(`id_skill_list_${workerId}`);
+  if (skillListDiv) {
+    skillListDiv.innerHTML = '<span class="text-muted">Loading...</span>';
+  }
+
+  fetch(`/common/get-employee-skills/?employee_id=${workerId}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.success && data.skills && data.skills.length > 0) {
+        let html = '';
+        data.skills.forEach(skill => {
+          html += `
+            <div class="col-xs-6 mb-5">
+              <ul>
+                <li>
+                  <span class="primary">${skill.name}</span>
+                </li>
+              </ul>
+            </div>
+          `;
+        });
+        skillListDiv.innerHTML = html;
+      } else {
+        skillListDiv.innerHTML = '<span class="text-muted">No skills assigned</span>';
+      }
+    })
+    .catch(() => {
+      skillListDiv.innerHTML = '<span class="text-danger">Network error</span>';
+    });
+},
+
   },
 });
 
