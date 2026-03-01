@@ -3329,10 +3329,8 @@ class GetServiceAddOns(APIView):
 
 		service_addons       = ServiceAddOns.objects.select_related('service_type').filter(service_type__name=service_type)
 
-		print(service_addons)
 		response_dict['service_addons'] = ServiceAddOnsSerializer(instance=service_addons,many=True).data
 		response_dict['success']        = True
-
 		return Response(response_dict,HTTP_200_OK)
 
 
