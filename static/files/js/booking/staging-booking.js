@@ -4321,9 +4321,10 @@ const app = new Vue({
             for (var i = 0; i < this.multiServicesBill.length; i++) {
                 let servcost = 0;
                 for (var j = 0; j < this.multiServicesBill[i].bill.length; j++) {
-                    servcost = servcost + this.multiServicesBill[i].bill[j].section_cost
+                    let itemCost = parseFloat(this.multiServicesBill[i].bill[j].section_cost) || 0;
+                    servcost = servcost + itemCost;
                 }
-                this.multiServicesBill[i]['total_cost'] = servcost
+                this.multiServicesBill[i]['total_cost'] = servcost;
             }
 
         },
@@ -4424,58 +4425,105 @@ const app = new Vue({
             $('.owl-nav').show();
         },
         goToCart() {
-            if (this.serviceType == 'Kitchen Appliances') {
-                const otherService = {
-                    material: "",
-                    addons: [],
-                    color: "",
-                    size: {},
-                    section_cost: this.findAddonCost(),
-                    sectiononly_cost: 0,
-                    type: "",
-                    age: "",
-                    stain: false,
-                    stain_reason: "",
-                    wall_type: "",
-                    floor_type: "",
-                    ceiling_type: "",
-                    residue: false,
-                    is_cabinet: false,
-                    hallway_size: "",
-                    sides: "",
-                    stain_age: "",
-                    height: "",
-                    keynote_data: []
+            // Handle addons for ANY service type (not just Kitchen Appliances)
+            if (this.addons_parsed && this.addons_parsed.length > 0) {
+                const hasSelectedAddons = this.addons_parsed.some(addon => addon.selected);
+                
+                if (hasSelectedAddons) {
+                    // Format addons properly with all display information
+                    const formattedAddons = [];
+                    for (const addon of this.addons_parsed) {
+                        if (addon.selected) {
+                            // Extract addon price - check multiple possible locations
+                            let addonPrice = 0;
+                            
+                            // Priority 1: If selected_size exists with price
+                            if (addon.selected_size && addon.selected_size.price) {
+                                addonPrice = parseFloat(addon.selected_size.price);
+                            }
+                            // Priority 2: Check details object
+                            else if (addon.details) {
+                                if (addon.details.price) {
+                                    addonPrice = parseFloat(addon.details.price);
+                                } 
+                                // Priority 3: Check if details has a price_value or cost property
+                                else if (addon.details.price_value) {
+                                    addonPrice = parseFloat(addon.details.price_value);
+                                }
+                            }
+                            
+                            // Only add addon if it has a positive price
+                            if (addonPrice > 0 || addon.quantity > 0) {
+                                formattedAddons.push({
+                                    id: addon.details?.id || null,
+                                    name: addon.details?.name || 'Addon',
+                                    category: addon.details?.category || null,
+                                    quantity: addon.quantity || 1,
+                                    unit_price: addonPrice,
+                                    total_price: (addonPrice * (addon.quantity || 1)),
+                                    selected_size: addon.selected_size || null,
+                                    details: addon.details || {},
+                                    selected: true
+                                });
+                            }
+                        }
+                    }
+                    
+                    if (formattedAddons.length > 0) {
+                        const addonTotalCost = formattedAddons.reduce((sum, addon) => sum + (addon.total_price || 0), 0);
+                        const sizeCost = (this.otherService.size && this.otherService.size.cost) ? parseFloat(this.otherService.size.cost) : 0;
+                        
+                        const otherService = {
+                            material: this.otherService.material || "",
+                            addons: formattedAddons,  // Use formatted addons with proper pricing
+                            color: this.otherService.color || "",
+                            size: this.otherService.size || {},
+                            section_cost: sizeCost + addonTotalCost,
+                            sectiononly_cost: sizeCost,
+                            type: this.otherService.type || "",
+                            age: this.otherService.age || "",
+                            stain: this.otherService.stain || false,
+                            stain_reason: this.otherService.stain_reason || "",
+                            wall_type: this.otherService.wall_type || "",
+                            floor_type: this.otherService.floor_type || "",
+                            ceiling_type: this.otherService.ceiling_type || "",
+                            residue: this.otherService.residue || false,
+                            is_cabinet: this.otherService.is_cabinet || false,
+                            hallway_size: this.otherService.hallway_size || "",
+                            sides: this.otherService.sides || "",
+                            stain_age: this.otherService.stain_age || "",
+                            height: this.otherService.height || "",
+                            keynote_data: this.otherService.keynote_data || []
+                        };
+                        
+                        const serviceData = {
+                            name: this.serviceType,
+                            section_name: this.serviceType,
+                            section_cost: otherService.section_cost,
+                            section_net_cost: otherService.section_cost,
+                            sectiononly_cost: otherService.sectiononly_cost,
+                            sectiononly_net_cost: otherService.sectiononly_cost,
+                            section: otherService
+                        };
+                        
+                        this.billingData.push(serviceData);
+                    }
                 }
-                otherService.addons = [...this.addons_parsed]
-                const serviceData = {
-                    name: '',
-                    section_cost: '',
-                    section_net_cost: '',
-                    sectiononly_cost: '',
-                    sectiononly_net_cost: '',
-                    section: otherService
-                }
-                serviceData.name = 'Kitchen Appliances'
-                serviceData.section_name = 'Kitchen Appliances'
-                serviceData.section_cost = this.findAddonCost()
-                serviceData.section_net_cost = this.findAddonCost()
-                serviceData.sectiononly_cost = 0
-                serviceData.sectiononly_net_cost = 0
-                this.billingData.push(serviceData)
-                this.parseAddons()
             }
-            if (this.serviceType == 'Hourly Cleaning') {
-                for (let b = 0; b < this.billingData.length; b++) {
-                    this.billingData[b].section_net_cost = 0
-                    this.billingData[b].section_cost = 0
-                    this.billingData[b].sectiononly_net_cost = 0
-                    this.billingData[b].sectiononly_cost = 0
-                }
 
+            // Generic cost handling for Hourly Cleaning (special case)
+            if (this.serviceType === 'Hourly Cleaning') {
+                for (let b = 0; b < this.billingData.length; b++) {
+                    this.billingData[b].section_net_cost = 0;
+                    this.billingData[b].section_cost = 0;
+                    this.billingData[b].sectiononly_net_cost = 0;
+                    this.billingData[b].sectiononly_cost = 0;
+                }
             }
+
+            // Build service bill with dynamic service type
             let sampleServicesBill = {
-                service: '',
+                service: this.serviceType,
                 bill: [],
                 serviceNo: this.serviceCount,
                 area_type: this.area_type,
@@ -4484,22 +4532,24 @@ const app = new Vue({
                 schedule_details: {},
                 cleaners: null,
                 shift_availability_check: true
-            }
+            };
 
-            this.serviceTypes.push(this.serviceType)
+            this.serviceTypes.push(this.serviceType);
 
-            this.multiServiceImages.push({ service: this.selectedService.name, images: this.imageData })
-            this.imageData = []
-            sampleServicesBill.service = this.serviceType
-            Object.assign(sampleServicesBill.bill, this.billingData);
+            this.multiServiceImages.push({ service: this.selectedService.name, images: this.imageData });
+            this.imageData = [];
+            
+            sampleServicesBill.bill = this.billingData;
 
-            this.multiServicesBill.push(sampleServicesBill)
-            this.activeTab = 'Cart'
+            this.multiServicesBill.push(sampleServicesBill);
+            this.activeTab = 'Cart';
 
             // Hide carousel navigation arrows in Cart tab
             $('.owl-nav').hide();
 
             window.scrollTo(0, 0);
+            
+            // Reset temporary service bill
             sampleServicesBill = {
                 service: '',
                 bill: [],
@@ -4507,12 +4557,17 @@ const app = new Vue({
                 area_type: '',
                 location_type: '',
                 evaluator_note: ''
-            }
-            this.area_type = ''
-            this.location_type = ''
-            this.evaluator_note = ''
-            this.billingData = []
-            this.otherServices = []
+            };
+            
+            // Reset area and location data
+            this.area_type = '';
+            this.location_type = '';
+            this.evaluator_note = '';
+            this.billingData = [];
+            this.otherServices = [];
+            this.addons_parsed = [];  // Reset addons after adding to bill
+            
+            // Reset other service object
             this.otherService = {
                 material: "",
                 addons: [],
@@ -4534,33 +4589,34 @@ const app = new Vue({
                 stain_age: "",
                 height: "",
                 keynote_data: []
-            },
-                this.building = []
+            };
+            
+            // Reset building and apartment data
+            this.building = [];
             this.no_of_apartments = [];
 
-            this.buildingsCompleted = false
-            this.serviceData.service_details.location_type = ''
-            this.serviceData.service_details.area_type = ''
-            this.e = { building: [] }
-            this.no_of_building = 0
-            this.temp_no_of_building = 0
-            this.no_of_floors = []
-            this.calcTotal()
-            //this.findTotalSize()
-            this.findSelectedTotalSize()
-            this.findServiceCost()
-            this.tempCost = 0
-            this.schedule_serviceTypes_selected = []
-            this.schedule_serviceTypes = []
-            //  this.durationcalculation();
+            this.buildingsCompleted = false;
+            this.serviceData.service_details.location_type = '';
+            this.serviceData.service_details.area_type = '';
+            this.e = { building: [] };
+            this.no_of_building = 0;
+            this.temp_no_of_building = 0;
+            this.no_of_floors = [];
+            
+            // Recalculate costs and schedules
+            this.calcTotal();
+            this.findSelectedTotalSize();
+            this.findServiceCost();
+            this.tempCost = 0;
+            this.schedule_serviceTypes_selected = [];
+            this.schedule_serviceTypes = [];
+            
+            // Set schedule status based on service type
             if (this.checkIsHourly()) {
-                this.scheduleStat = false
+                this.scheduleStat = false;
+            } else {
+                this.scheduleStat = true;
             }
-            else {
-                this.scheduleStat = true
-            }
-
-
         },
         hourlySelection() {
             if (this.is_hourly) {

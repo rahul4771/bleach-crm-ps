@@ -1634,7 +1634,7 @@
                                           </addon-carousel>
 
                                           <div class="col-md-12 mt-2">
-                                            <div><strong>Add Keynotes ###</strong></div>
+                                            <div><strong>Add Keynotes</strong></div>
                                             <div class="row">
                                               <div
                                                 v-for="(keynote,kindex) in building[index-1].floors[floor-1].keynote_data"
@@ -2318,7 +2318,7 @@
                   <!-- keynote for services other than detailed cleaning category begins here-->
                   <div class="col-md-12"
                     v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning'|| serviceType=='Window Cleaning' || serviceType=='Carpet Cleaning'">
-                    <div>Add Keynotes ^^^</div>
+                    <div>Add Keynotes</div>
                     <div class="row">
                       <div v-for="(keynote,kindex) in otherService.keynote_data" v-bind:key="kindex" class="col-md-3">
                         <div class="keynote-item">
@@ -2352,7 +2352,7 @@
                       </div>
                     </div>
                   </v-form>
-                  
+
                 </div>
 
                 <!-- key note ends here-->
@@ -2363,7 +2363,7 @@
                     </v-btn> -->
                   <v-btn color="primary" class="mr-4 mx-auto" v-on:click="addOtherService()"
                     v-if="add_new_kitchen && serviceType=='Kitchen Cleaning'">
-                    Add @@
+                    Add
                   </v-btn>
                   <v-btn color="primary" class="mr-4 mx-auto" v-on:click="saveChanges()"
                     v-if="!add_new_kitchen && serviceType=='Kitchen Cleaning'">
@@ -2379,39 +2379,41 @@
           </v-form>
           <!-- upholsetry , deep, carpet ends here -->
           <!-- Image Uploading -->
-          <div class="row" v-if="buildingsCompleted">
-            <div class="col-md-12 mt-4">
-              <h5>Add Images</h5>
-            </div>
-            <div class="col-md-3" v-for="(image, imageindex) in imageData" v-bind:key="imageindex">
-              <div class="bk-image-upload">
-                <img :src="image.url" style="max-width: 100%" class="h-100 w-100" />
+          <div class="col-md-12">
+            <div class="row" v-if="buildingsCompleted">
+              <div class="col-md-12 mt-4">
+                <h5>Add Images</h5>
               </div>
-              <div class="image-footer">
-                <!-- <i class="far fa-edit img-icon"  v-on:click="editImage(imageindex)"></i>-->
-                <i class="far fa-trash-alt pl-2 img-icon" v-on:click="deleteImage(imageindex)"></i>
+              <div class="col-md-3" v-for="(image, imageindex) in imageData" v-bind:key="imageindex">
+                <div class="bk-image-upload">
+                  <img :src="image.url" style="max-width: 100%" class="h-100 w-100" />
+                </div>
+                <div class="image-footer">
+                  <!-- <i class="far fa-edit img-icon"  v-on:click="editImage(imageindex)"></i>-->
+                  <i class="far fa-trash-alt pl-2 img-icon" v-on:click="deleteImage(imageindex)"></i>
+                </div>
               </div>
-            </div>
-            <div class="col-md-3">
-              <div class="addImg">
-                <div class="item_image" @click="$refs.itemfile.click()">
-                  <input type="file" ref="itemfile" style="display: none" accept="image/*" id="itemfileselected"
-                    @change="onImageFileChanged" />
-                  <i class="ImageIcon fa fa-plus"></i>
+              <div class="col-md-3">
+                <div class="addImg">
+                  <div class="item_image" @click="$refs.itemfile.click()">
+                    <input type="file" ref="itemfile" style="display: none" accept="image/*" id="itemfileselected"
+                      @change="onImageFileChanged" />
+                    <i class="ImageIcon fa fa-plus"></i>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="row" v-if="buildingsCompleted">
-            <div class="col-md-12">
-              <v-textarea name="input-7-1" label="Notes" v-model="evaluator_note"
-                hint="Do you any other projects or contracts on same location ?  Please mention if you have any specific request.">
-              </v-textarea>
-            </div>
-            <div class="col-3 offset-5">
-              <v-btn depressed color="primary" class="mx-auto" @click="goToCart()">
-                Proceed
-              </v-btn>
+            <div class="row" v-if="buildingsCompleted">
+              <div class="col-md-12">
+                <v-textarea name="input-7-1" label="Notes" v-model="evaluator_note"
+                  hint="Do you any other projects or contracts on same location ?  Please mention if you have any specific request.">
+                </v-textarea>
+              </div>
+              <div class="col-3 offset-5">
+                <v-btn depressed color="primary" class="mx-auto" @click="goToCart()">
+                  Proceed
+                </v-btn>
+              </div>
             </div>
           </div>
 
@@ -2669,8 +2671,6 @@
                     <v-checkbox v-model="schedule_serviceTypes_selected" @change="hourlySelection()" :value='sindex'
                       class="mt-0 pt-0 "
                       v-if="!scheduleStat && Object.keys(service.schedule_details).length<1 && !custBookStat"></v-checkbox>
-
-
                   </div>
                   <div>
                     <b>
@@ -2679,7 +2679,6 @@
                   </div>
                   <div class="ml-auto" @click="openDelConfirm(sindex)">
                     <i class="far fa-trash-alt cp"></i>
-
                   </div>
                 </div>
 
@@ -2707,9 +2706,9 @@
                 </div>
                 <div class="cart-card-items">
                   <div v-for="(bill,bindex) in service.bill" v-bind:key="bindex">
-                    <div v-if="service.service!='Kitchen Appliances'"><b v-text="bill.section_name">
+                    <div v-if="service.service!='Kitchen Appliances' && bill.section.size && bill.section.size.name"><b v-text="bill.section_name">
                       </b></div>
-                    <div class="d-flex mt-1" v-if="service.service!='Kitchen Appliances'">
+                    <div class="d-flex mt-1" v-if="service.service!='Kitchen Appliances' && bill.section.size && bill.section.size.name">
                       <div v-text="bill.section.size.name">
                       </div>
                       <div class="ml-auto primary-text">
@@ -2742,17 +2741,16 @@
                         </div>
                       </div>
                     </div>
-                    <div v-for="addon in bill.section.addons" v-bind:key="addon">
+                    <div v-for="addon in bill.section.addons" v-bind:key="addon.id">
                       <div class="d-flex mt-1" v-if="addon.selected">
                         <div>
-                          <span v-text="`${addon.details.name} x ${addon.quantity}`"></span>
+                          <span v-text="`${addon.name} x ${addon.quantity}`"></span>
                         </div>
                         <div class="ml-auto primary-text">
-                          KD <span v-if="!addon.details.category"
-                            v-text="addon.details.price * addon.quantity"></span><span v-else
-                            v-text="addon.details.price * addon.quantity"></span>
-                          <span v-if="service.schedule_details && service.cleaning_policy==' SUBSCRIPTION'">x
+                          KD <span v-text="addon.total_price"></span>
+                          <span v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">x
                             <span v-text="Object.keys(service.schedule_details).length"></span>
+                          </span>
                         </div>
                       </div>
                     </div>
