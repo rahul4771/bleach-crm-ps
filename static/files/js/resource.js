@@ -109,57 +109,8 @@ const appCard = new Vue({
 
   },
   methods: {
-   saveEdit(workerId) {
-    let selectedServiceTypes = [];
-
-    document.querySelectorAll(`#id_skill_edit_list_${workerId} input[type="checkbox"]:checked`)
-        .forEach(cb => {
-            selectedServiceTypes.push(cb.value);
-        });
-
-    console.log('Saving skills for employee:', workerId, 'Service types:', selectedServiceTypes);
-
-    fetch('/common/save-employee-skills/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken')
-        },
-        body: JSON.stringify({
-            employee_id: workerId,
-            service_type_ids: selectedServiceTypes
-        })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            console.log('✅ Skills saved successfully for employee:', workerId);
-            console.log('Selected service types:', selectedServiceTypes);
-            
-            // Show styled success alert
-            showStyledAlert('Skills updated Successfully!', 'success');
-
-            console.log('Details:', data.details);
-            
-            document.getElementById("id_done_"+workerId).style.display = "none";
-            document.getElementById("id_skill_edit_list_"+workerId).style.display = "none";
-            document.getElementById("id_skill_list_"+workerId).style.display = "block";
-
-            // Small delay before refreshing view
-            setTimeout(() => {
-                viewSkills({ getAttribute: () => workerId });
-            }, 500);
-        } else {
-            console.error('❌ Failed to save skills. Error:', data.error);
-            showStyledAlert('Error: ' + (data.error || 'Failed to save skills'), 'error');
-        }
-    })
-    .catch(err => {
-        console.error('❌ Network error while saving skills:', err);
-        showStyledAlert('Network error: ' + err.message, 'error');
-    });
-},
-    viewSkills(workerId, el) {
+  
+  viewSkills(workerId, el) {
   // Flip the card if needed
   if (typeof flip === 'function') {
     flip(el);
