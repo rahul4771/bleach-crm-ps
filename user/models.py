@@ -303,3 +303,28 @@ class CustomerOTP(models.Model):
 
     def __str__(self):
         return self.mobile_number
+
+class Skills(models.Model):
+    """
+    Junction table mapping service types to employees with status
+    - service_type: Foreign key to ServiceType
+    - employee: Foreign key to UserProfile
+    - status: ACTIVE or INACTIVE
+    """
+    STATUS_CHOICES = (
+        ('ACTIVE', 'Active'),
+        ('INACTIVE', 'Inactive'),
+    )
+    
+    service_type = models.ForeignKey('evaluator.ServiceType', on_delete=models.CASCADE, related_name='employee_skills')
+    employee = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='skills')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='ACTIVE')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    class Meta:
+        unique_together = ('service_type', 'employee')
+        verbose_name = 'Skill'
+        verbose_name_plural = 'Skills'
+    
+    def __str__(self):
+        return f"{self.employee.name} - {self.service_type.name} ({self.status})"
