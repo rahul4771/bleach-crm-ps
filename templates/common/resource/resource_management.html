@@ -100,19 +100,16 @@
                 </label>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
-                <div class=" bold-text common-label"> <label>Service Type</label></div>
-                <label for="favcity">
-                <select name="servicetype_filter" id="service_type_filter_id">
+     <div class=" bold-text common-label"> <label>Service Type</label></div>
+        <label for="favcity">
+            <select name="servicetype_filter" id="service_type_filter_id">
                 <option value=''>---ALL---</option>
-                <option value='is_general_skill' {% if service_type == 'is_general_skill' %}selected{% endif %}>General Cleaning</option>
-                <option value='is_deep_skill' {% if service_type == 'is_deep_skill' %}selected{% endif %}>Deep Cleaning</option>
-                <option value='is_upholstery_skill' {% if service_type == 'is_upholstery_skill' %}selected{% endif %}>Upholstery Cleaning</option>
-                <option value='is_carpet_skill' {% if service_type == 'is_carpet_skill' %}selected{% endif %}>Carpet Cleaning</option>
-                <option value='is_kitchen_skill' {% if service_type == 'is_kitchen_skill' %}selected{% endif %}>Kitchen Cleaning</option>
-                <option value='is_sterilization_skill' {% if service_type == 'is_sterilization_skill' %}selected{% endif %}>Sterilization</option>
-                </select>
-                </label>
-  </div><!--ticket-form-right-->
+                {% for service in service_types %}
+                <option value='{{service.id}}' {% if service.id == selected_service_type_id %}selected{% endif %}>{{service.name}}</option>
+                {% endfor %}
+            </select>
+        </label>
+    </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes--> 
 <hr class="hr-dashedpad"> 
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->

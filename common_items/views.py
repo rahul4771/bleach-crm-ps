@@ -29,7 +29,7 @@ from django.db.models.functions import Cast,TruncDate,ExtractMonth,ExtractYear,C
 from django.db.models import Prefetch
 from django.contrib import messages
 
-from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
+from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule,Skills
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons,CleaningMethod,CleaningSection,ServiceType,AreaType,ServiceGroup 
 from order.models import Promocode,OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia,CancellOrderAmountHistory,XeroInvoice
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
@@ -61,6 +61,7 @@ from rest_framework.status import HTTP_200_OK
 from agent.serializers import CleaningScheduleSerializer,FollowupScheduleSerializer,UserProfileShowSerializer
 
 import pytz
+
 
 utc=pytz.UTC
 
@@ -2357,50 +2358,58 @@ class ResourceManagement(IsAuthenticated,View):
 		search 		   = request.GET.get('search')
 		staff_type     = request.GET.get('staff_type')
 		service_type   = request.GET.get('service_type')
-		
+		try:
+			service_types = ServiceType.objects.filter(is_active=True).order_by('name')
+		except:
+			service_types = None
 
-		filters=[]
-		if search: 
-		    case1 = Q(name__icontains=search)
-		    filters.append(case1)
-		if staff_type:
-			case2 = Q(user_type=staff_type)
-			filters.append(case2)
+		selected_service_type_id = None
+		service_type_filter = None
 		if service_type:
-			if service_type == 'is_general_skill':
-				case3 = Q(is_general_skill=True)
-			if service_type == 'is_deep_skill':
-				case3 = Q(is_deep_skill=True)
-			if service_type == 'is_upholstery_skill':
-				case3 = Q(is_upholstery_skill=True)
-			if service_type == 'is_carpet_skill':
-				case3 = Q(is_carpet_skill=True)
-			if service_type == 'is_kitchen_skill':
-				case3 = Q(is_kitchen_skill=True)
-			if service_type == 'is_sterilization_skill':
-				case3 = Q(is_sterilization_skill=True)
-			if service_type == 'is_carpet_skill':
-				case3 = Q(is_carpet_skill=True)
-			if service_type == 'is_mattress_skill':
-				case3 = Q(is_mattress_skill=True)
-			if service_type == 'is_facade_skill':
-				case3 = Q(is_facade_skill=True)
-			if service_type == 'is_storagearea_skill':
-				case3 = Q(is_storagearea_skill=True)
-			if service_type == 'is_carparkingumbrella_skill':
-				case3 = Q(is_carparkingumbrella_skill=True)
-			if service_type == 'is_outdoor_skill':
-				case3 = Q(is_outdoor_skill=True)
-			if service_type == 'is_window_skill':
-				case3 = Q(is_window_skill=True)
-			
-			filters.append(case3)
+			if str(service_type).startswith('is_'):
+				service_type_filter = service_type
+			else:
+				try:
+					selected_service_type_id = int(service_type)
+					service_type_obj = ServiceType.objects.filter(is_active=True,id=selected_service_type_id).first()
+					if service_type_obj:
+						service_type_filter = service_type_obj.name
+				except:
+					service_type_filter = None
 		
-		if staff_type or service_type or search: 
-		    filters         = functools.reduce(operator.and_,filters)
-		    workers 		= workers.filter(filters)			
 
-		return render(request,'common/resource/resource-new.html',{"workers":workers,"workers_date":workers_date,"service_type":service_type,"staff_type":staff_type,"search":search})
+		filters = []
+		if search:
+			filters.append(Q(name__icontains=search))
+		if staff_type:
+			filters.append(Q(user_type=staff_type))
+		if service_type_filter:
+			try:
+				selected_service_type = ServiceType.objects.filter(is_active=True, id=service_type_filter).first()
+				if selected_service_type:
+					skilled_employee_ids = Skills.objects.filter(
+						service_type=selected_service_type,
+						status='ACTIVE'
+					).values_list('employee_id', flat=True)
+					filters.append(Q(id__in=skilled_employee_ids))
+			except Exception as e:
+				pass
+		
+		if filters:
+			combined_filters = Q()
+			for f in filters:
+				combined_filters &= f
+			workers = workers.filter(combined_filters)
+		
+		return render(request, 'common/resource/resource-new.html', {
+			"workers": workers,
+			"workers_date": workers_date,
+			"service_type": service_type,
+			"staff_type": staff_type,
+			"search": search,
+			"service_types": service_types,
+			"selected_service_type_id": selected_service_type_id
+		})
 
 	def post(self,request):
 		
@@ -6419,6 +6428,14 @@ def add_service_type(request):
 			return JsonResponse({'success': False, 'error': str(e)})
 
 class ServiceTypeAPIView(APIView):
+	def get(self, request, *args, **kwargs):
+		try:
+			service_types = ServiceType.objects.filter(is_active=True).values('id', 'name', 'name_arabic').order_by('name')
+			service_types_list = list(service_types)
+			return JsonResponse({"success": True, "service_types": service_types_list})
+		except Exception as e:
+			return JsonResponse({"success": False, "error": str(e)}, status=400)
+
 	def put(self, request, *args, **kwargs):
 
 		data = getattr(request, "data", None) or request.data or {}
@@ -6499,6 +6516,10 @@ class ServiceTypeAPIView(APIView):
 		}
 
 		return JsonResponse({"success": True, "message": "Service type deactivated successfully.", "service_type": st_obj})
+
+		#get service type
+	
+			
 
 class ServiceProductivityAPIView(APIView):
 	
@@ -7405,3 +7426,98 @@ class ServiceGroupAPIView(APIView):
 class StagingBooking(IsAuthenticated,View):
 	def get(self,request,evaluation_detail_id):
 		return render(request,"booking/staging-booking.html")
+    
+class SaveEmployeeSkillsAPIView(APIView):
+	def post(self, request, *args, **kwargs):
+		try:
+			# Use request.data for APIView (DRF handles parsing)
+			employee_id = request.data.get('employee_id')
+			service_type_ids = request.data.get('service_type_ids', [])
+
+			# Validate employee_id
+			if not employee_id:
+				return JsonResponse({
+					"success": False, 
+					"error": "Employee ID is required"
+				}, status=400)
+
+			employee = UserProfile.objects.get(id=employee_id)
+
+			# Get count of existing skills before deactivation (for tracking deactivated items)
+			existing_skills_count = Skills.objects.filter(employee=employee).count()
+
+			# 1️⃣ Mark all existing skills as INACTIVE
+			deactivate_result = Skills.objects.filter(employee=employee).update(status='INACTIVE')
+			deactivated_count = deactivate_result  # Count of records updated to INACTIVE
+
+			# 2️⃣ Activate or create selected skills
+			created_count = 0
+			updated_count = 0
+			
+			if service_type_ids and len(service_type_ids) > 0:
+				for st_id in service_type_ids:
+					try:
+						service_type = ServiceType.objects.get(id=st_id)
+						skill, created = Skills.objects.get_or_create(
+							employee=employee,
+							service_type=service_type,
+							defaults={'status': 'ACTIVE'}
+						)
+						if created:
+							created_count += 1
+						else:
+							skill.status = 'ACTIVE'
+							skill.save()
+							updated_count += 1
+					except ServiceType.DoesNotExist:
+						return JsonResponse({
+							"success": False, 
+							"error": f"Service type with ID {st_id} not found"
+						}, status=400)
+
+			# Calculate how many were actually deactivated (not reactivated)
+			final_deactivated_count = deactivated_count - updated_count
+
+			return JsonResponse({
+				"success": True,
+				 "message": f"✅ Skills updated! Added: {created_count}, Reactivated: {updated_count}, Deactivated: {final_deactivated_count}",
+				"details": {
+					"created": created_count,
+					"reactivated": updated_count,
+					"deactivated": final_deactivated_count,
+					"total_active": created_count + updated_count,
+					"employee_name": employee.name
+				}
+			})
+					
+		except UserProfile.DoesNotExist:
+			return JsonResponse({
+				"success": False, 
+				"error": f"❌ Employee not found"
+			}, status=400)
+		except Exception as e:
+			return JsonResponse({
+				"success": False, 
+				"error": f"❌ Error saving skills: {str(e)}"
+			}, status=400)
+
+class EmployeeSkillsAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        employee_id = request.GET.get('employee_id')
+
+        skills = Skills.objects.filter(
+            employee_id=employee_id,
+            status='ACTIVE'
+        ).select_related('service_type')
+
+        data = [
+            {
+                "id": skill.service_type.id,
+                "name": skill.service_type.name
+            }
+            for skill in skills
+        ]
+
+        return JsonResponse({"success": True, "skills": data})
+	
+	

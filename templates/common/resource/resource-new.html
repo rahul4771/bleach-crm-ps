@@ -7,6 +7,46 @@
     .date-wrapper-inner-resource {
      right: 0px !important; 
 }
+.skil-list {
+      max-height: 200px;   /* Set the height of the box */
+      overflow-y: auto;    /* Enable vertical scroll */
+     
+      padding: 10px;
+  }
+
+  /* Optional: nicer scrollbar for Chrome/Edge */
+  .skil-list::-webkit-scrollbar {
+      width: 8px;
+  }
+  .skil-list::-webkit-scrollbar-thumb {
+      background-color: #888;
+      border-radius: 4px;
+  }
+  .skil-list::-webkit-scrollbar-thumb:hover {
+      background-color: #555;
+  }
+
+  .skil-list-edit {
+      max-height: 200px;   /* Set the height of the box */
+      overflow-y: auto;    /* Enable vertical scroll */
+      overflow-x: hidden;  /* Hide horizontal scroll */
+      padding: 10px;
+  }
+
+  .skil-list-edit::-webkit-scrollbar {
+      width: 8px;
+  }
+
+
+  .skil-list-edit::-webkit-scrollbar-thumb {
+          background-color: #888;
+      border-radius: 4px;
+  }
+
+  .skil-list-edit::-webkit-scrollbar-thumb:hover {
+      background-color: #555;
+  }
+
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
@@ -161,19 +201,9 @@
                                                 <label for="favcity">
                                                 <select name="servicetype_filter" id="service_type_filter_id">
                                                 <option value=''>---ALL---</option>
-                                                <option value='is_general_skill' {% if service_type == "is_general_skill" %}selected{% endif %}>General Cleaning</option>
-                                                <option value='is_deep_skill' {% if service_type == "is_deep_skill" %}selected{% endif %}>Deep Cleaning</option>
-                                                <option value='is_upholstery_skill' {% if service_type == "is_upholstery_skill" %}selected{% endif %}>Upholstery Cleaning</option>
-                                                <option value='is_carpet_skill' {% if service_type == "is_carpet_skill" %}selected{% endif %}>Carpet Cleaning</option>
-                                                <option value='is_kitchen_skill' {% if service_type == "is_kitchen_skill" %}selected{% endif %}>Kitchen Cleaning</option>
-                                                <option value='is_sterilization_skill' {% if service_type == "is_sterilization_skill" %}selected{% endif %}>Sterilization</option>
-                                                <option value="is_carpet_skill" {% if service_type == "is_carpet_skill" %}selected{% endif %}>Carpet Cleaning</option>
-                                                <option value="is_mattress_skill" {% if service_type == "is_mattress_skill" %}selected{% endif %}>Mattress Cleaning</option>
-                                                <option value="is_facade_skill" {% if service_type == "is_facade_skill" %}selected{% endif %}>Facade Cleaning</option>
-                                                <option value="is_storagearea_skill" {% if service_type == "is_storagearea_skill" %}selected{% endif %}>Storage Area Cleaning</option>
-                                                <option value="is_carparkingumbrella_skill" {% if service_type == "is_carparkingumbrella_skill" %}selected{% endif %}>Car Parking Umbrella</option>
-                                                <option value="is_outdoor_skill" {% if service_type == "is_outdoor_skill" %}selected{% endif %}>Outdoor Cleaning</option>
-                                                <option value="is_window_skill" {% if service_type == "is_outdoor_skill" %}selected{% endif %}>Window Cleaning</option>
+                                                {% for service in service_types %}
+                                                <option value='{{service.id}}' {% if service.id == selected_service_type_id %}selected{% endif %}>{{service.name}}</option>
+                                                {% endfor %}
                                                 </select>
                                                 </label>
                                   </div><!--ticket-form-right-->
@@ -313,7 +343,7 @@
                                                             </div>
 
                                                             <div>
-                                                                <div style="margin-left: 10px;" class="resource-user-details text-left">
+                                                                <div style="margin-left: 12px;" class="resource-user-details text-left">
                                                                     <h2>{{worker.name}}</h2>
                                                                     <h6>{% if worker.user_type == 'TEAMINCHARGE' %}
                                                                         Cleaning Agent
@@ -451,7 +481,7 @@
     
                                                     </div>
                                                 </div>
-                                                <a onclick="flip(this)" data-id="{{worker.id}}">View Skills</a>
+                                                <a @click="viewSkills({{worker.id}}, $event.currentTarget)" data-id="{{worker.id}}">View Skills</a>
                                                 <p class="resource-card-text">Daily Occupancy {{workers_date}}</p>
                                                 <br>
                                                 <div class="row ml-5 m-pr-0" id="slote_details{{worker.id}}">
@@ -515,10 +545,6 @@
                                                             12
                                                         </div>
                                                     </div>
-    
-    
-    
-    
                                                 </div>
                                             </div>
                                         </div>
@@ -529,12 +555,15 @@
                                                     <div onclick="editShow(this)" data-id="{{worker.id}}" class="skill-edit" id="edit_id_{{worker.id}}">
                                                         <img src="{% static 'files/icons/edit.png' %}">
                                                     </div>
-                                                    <div   @click="saveEdit({{worker.id}})" data-id="{{worker.id}}" id="id_done_{{worker.id}}" class="skill-edit-done">
+                                                    <div @click="saveEdit({{worker.id}})" data-id="{{worker.id}}" id="id_done_{{worker.id}}" class="skill-edit-done">
                                                         <button class="resource-card-button">Done</button>
                                                     </div>
                                                 </div>
                                                 <div id="id_skill_list_{{worker.id}}" class="skil-list">
                                                     <div class="row mt-10">
+                                                       <!-- All service types will be listed here -->
+                                                    </div>
+                                                    {% comment %} <div class="row mt-10">
     
                                                         {% if worker.is_general_skill %}
                                                         <div class="col-xs-6 mb-5">
@@ -607,92 +636,101 @@
                                                             Window Cleaning
                                                         </div>
                                                         {% endif %}
+                                                         {% endcomment %}
     
-    
-                                                    </div>
-                                                </div>
+                                                    
+                                                </div> 
                                                 <div id="id_skill_edit_list_{{worker.id}}" class="skil-list-edit">
                                                     <div class="row mt-10">
                                                         <input type="hidden" id="{{worker.id}}" name="user_id"  value="{{worker.id}}">
                                                         {% csrf_token %}
-                                                        <div class="col-xs-6 mb-5">
+                                                        {% comment %} <div class="col-xs-6 mb-5">
                                                             <label class="c-container">General Cleaning
                                                                 <input type="checkbox" id="is_general_skill_{{worker.id}}"  {% if worker.is_general_skill %}checked{% endif %} name="is_general_skill">
                                                                 <span class="c-checkmark"></span>
                                                             </label>
-                                                        </div>
-                                                        <div class="col-xs-6 mb-5">
+                                                        </div> {% endcomment %}
+                                                        {% comment %} <div class="col-xs-6 mb-5">
                                                             <label class="c-container">Deep Cleaning
                                                                 <input type="checkbox" id="is_deep_skill_{{worker.id}}" {% if worker.is_deep_skill %}checked{% endif %} name="is_deep_skill">
                                                                 <span class="c-checkmark"></span>
                                                             </label>
-                                                        </div>
-                                                        <div class="col-xs-6 mb-5">
+                                                        </div> {% endcomment %}
+                                                        {% comment %} <div class="col-xs-6 mb-5">
                                                             <label class="c-container">Upholstery Cleaning
                                                                 <input type="checkbox" id="is_upholstery_skill_{{worker.id}}" {% if worker.is_upholstery_skill %}checked{% endif %} name="is_upholstery_skill">
                                                                 <span class="c-checkmark"></span>
                                                             </label>
-                                                        </div>
-                                                        <div class="col-xs-6 mb-5">
+                                                        </div> {% endcomment %}
+                                                        {% comment %} <div class="col-xs-6 mb-5">
                                                             <label class="c-container">Kitchen Cleaning
                                                                 <input type="checkbox" id="is_kitchen_skill_{{worker.id}}" {% if worker.is_kitchen_skill %}checked{% endif %} name="is_kitchen_skill">
                                                                 <span class="c-checkmark"></span>
                                                             </label>
-                                                        </div>
-                                                        <div class="col-xs-6 mb-5">
+                                                        </div> {% endcomment %}
+                                                        {% comment %} <div class="col-xs-6 mb-5">
                                                             <label class="c-container">Sterilization Cleaning
                                                                 <input type="checkbox" id="is_sterilization_skill_{{worker.id}}" {% if worker.is_sterilization_skill %}checked{% endif %} name="is_sterilization_skill">
                                                                 <span class="c-checkmark"></span>
                                                             </label>
-                                                        </div>
-                                                        <div class="col-xs-6 mb-5">
+                                                        </div> {% endcomment %}
+                                                        {% comment %} <div class="col-xs-6 mb-5">
                                                             <label class="c-container">Carpet Cleaning
                                                                 <input type="checkbox"  id="is_carpet_skill_{{worker.id}}"  {% if worker.is_carpet_skill %}checked{% endif %} name="is_carpet_skill">
                                                                 <span class="c-checkmark"></span>
                                                             </label>
-                                                        </div>
-                                                        <div class="col-xs-6 mb-5">
+                                                        </div> {% endcomment %}
+                                                        {% comment %} <div class="col-xs-6 mb-5">
                                                             <label class="c-container">Mattress Cleaning
                                                                 <input type="checkbox" id="is_mattress_skill_{{worker.id}}" {% if worker.is_mattress_skill %}checked{% endif %} name="is_mattress_skill">
                                                                 <span class="c-checkmark"></span>
                                                             </label>
-                                                        </div>
-                                                        <div class="col-xs-6 mb-5">
+                                                        </div> {% endcomment %}
+                                                        {% comment %} <div class="col-xs-6 mb-5">
                                                             <label class="c-container">Facade Cleaning
                                                                 <input type="checkbox" id="is_facade_skill_{{worker.id}}" {% if worker.is_facade_skill %}checked{% endif %} name="is_facade_skill">
                                                                 <span class="c-checkmark"></span>
                                                             </label>
-                                                        </div>
-                                                        <div class="col-xs-6 mb-5">
+                                                        </div> {% endcomment %}
+                                                        {% comment %} <div class="col-xs-6 mb-5">
                                                             <label class="c-container">Storage Area Cleaning
                                                                 <input type="checkbox" id="is_storagearea_skill_{{worker.id}}" {% if worker.is_storagearea_skill %}checked{% endif %} name="is_storagearea_skill">
                                                                 <span class="c-checkmark"></span>
                                                             </label>
-                                                        </div>
-                                                        <div class="col-xs-6 mb-5">
+                                                        </div> {% endcomment %}
+                                                        {% comment %} <div class="col-xs-6 mb-5">
                                                             <label class="c-container">Car Parking Umbrella
                                                                 <input type="checkbox" id="is_carparkingumbrella_skill_{{worker.id}}" {% if worker.is_carparkingumbrella_skill %}checked{% endif %} name="is_carparkingumbrella_skill">
                                                                 <span class="c-checkmark"></span>
                                                             </label>
-                                                        </div>
-                                                        <div class="col-xs-6 mb-5">
+                                                        </div> {% endcomment %}
+                                                        {% comment %} <div class="col-xs-6 mb-5">
                                                             <label class="c-container">Outdoor Cleaning
                                                                 <input type="checkbox" id="is_outdoor_skill_{{worker.id}}" {% if worker.is_outdoor_skill %}checked{% endif %} name="is_outdoor_skill">
                                                                 <span class="c-checkmark"></span>
                                                             </label>
-                                                        </div>
-                                                        <div class="col-xs-6 mb-5">
+                                                        </div> {% endcomment %}
+                                                        {% comment %} <div class="col-xs-6 mb-5">
                                                             <label class="c-container">Window Cleaning
                                                                 <input type="checkbox" id="is_window_skill_{{worker.id}}" {% if worker.is_window_skill %}checked{% endif %} name="is_window_skill">
                                                                 <span class="c-checkmark"></span>
                                                             </label>
-                                                        </div>
+                                                        </div> {% endcomment %}
     
                                                     </div>
                                                 </div>
     
                                                 <div class="back-button" >
                                                     <button onclick="flipBack(this)" data-id="{{worker.id}}" class="resource-card-button">Back</button>
+                                                </div>
+                                                <div id="custom-alert" class="alert-box hidden">
+                                                    <div class="alert-content">
+                                                        <span class="alert-icon">✅</span>
+                                                        <div class="alert-text">
+                                                        <p id="alert-message"></p>
+                                                        <p id="alert-employee" class="employee-name"></p>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -747,19 +785,74 @@
 
 
     function editShow(element) {
-   
-        document.getElementById("id_done_"+$(element).data('id')).style.display = "block";
-        document.getElementById("id_skill_edit_list_"+$(element).data('id')).style.display = "none";
-        document.getElementById("id_skill_list_"+$(element).data('id')).style.display = "none";
-        document.getElementById("id_skill_edit_list_"+$(element).data('id')).style.display = "block";
+        const workerId = $(element).data('id');
+        
+        console.log('Opening edit mode for employee:', workerId);
+        
+        document.getElementById("id_done_"+workerId).style.display = "block";
+        document.getElementById("id_skill_list_"+workerId).style.display = "none";
+        document.getElementById("id_skill_edit_list_"+workerId).style.display = "none";
+
+        // Fetch both service types and existing skills for this employee
+        Promise.all([
+            fetch('/common/get-service-types/').then(res => res.json()),
+            fetch(`/common/get-employee-skills/?employee_id=${workerId}`).then(res => res.json())
+        ])
+        .then(([serviceTypesData, skillsData]) => {
+            if (serviceTypesData.success && skillsData.success) {
+                console.log('✅ Service types fetched:', serviceTypesData.service_types);
+                console.log('✅ Existing skills fetched:', skillsData.skills);
+                
+                // Create a set of existing skill IDs for quick lookup
+                const existingSkillIds = new Set(skillsData.skills.map(skill => skill.id));
+                console.log('Existing skill IDs:', Array.from(existingSkillIds));
+                
+                let html = '<div class="row mt-10"><input type="hidden" id="' + workerId + '" name="user_id" value="' + workerId + '">';
+                html += '{% csrf_token %}';
+                
+                serviceTypesData.service_types.forEach(service => {
+                    const serviceName = service.name;
+                    const serviceId = service.id;
+                    const isChecked = existingSkillIds.has(serviceId) ? 'checked' : '';
+                    
+                    console.log(`Service: ${serviceName} (${serviceId}) - Checked: ${isChecked ? 'YES' : 'NO'}`);
+                    
+                    html += `
+                        <div class="col-xs-6 mb-5">
+                            <label class="c-container">${serviceName}
+                                <input type="checkbox" id="service_${serviceId}_${workerId}" value="${serviceId}" ${isChecked} name="service_type_${workerId}">
+                                <span class="c-checkmark"></span>
+                            </label>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                document.getElementById('id_skill_edit_list_'+workerId).innerHTML = html;
+                document.getElementById("id_skill_edit_list_"+workerId).style.display = "block";
+            } else {
+                console.error('❌ Failed to fetch data');
+                if (!serviceTypesData.success) {
+                    alert('Error loading service types: ' + (serviceTypesData.error || 'Unknown error'));
+                }
+                if (!skillsData.success) {
+                    alert('Error loading existing skills: ' + (skillsData.error || 'Unknown error'));
+                }
+            }
+        })
+        .catch(err => {
+            console.error('❌ Network error:', err);
+            alert('Network error: ' + err.message);
+        });
     }
-    function editDone(id) {
+
+    {% comment %} function editDone(id) {
         console.log(id)
         document.getElementById("id_done_"+id).style.display = "none";
         document.getElementById("id_skill_edit_list_"+id).style.display = "block";
         document.getElementById("id_skill_list_"+id).style.display = "block";
         document.getElementById("id_skill_edit_list_"+id).style.display = "none";
-    }
+    } {% endcomment %}
     function flip(element) {
         $('#front_id_'+$(element).data('id')).closest('.flip-container').toggleClass('flip-hover');
         $('#front_id_'+$(element).data('id')).css('transform, rotateY(180deg)');
@@ -856,5 +949,343 @@
             query=query.replace('&','?');
             window.location.href=url+query;  
             }
+
+    // CSRF helper (Django)
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+         
+// Show custom styled alert notification
+ function showStyledAlert(message, type = 'success') {
+    // Remove existing alert if any
+    const existingAlert = document.querySelector('.custom-alert');
+    if (existingAlert) existingAlert.remove();
+
+    const alertBox = document.createElement('div');
+    alertBox.className = `custom-alert custom-alert-${type}`;
+    alertBox.innerHTML = `
+        <div class="alert-content">
+            <span class="alert-icon">✓</span>
+            <span class="alert-message">${message}</span>
+            
+        </div>
+    `;
+    document.body.appendChild(alertBox);
+
+    // Auto remove after 4 seconds
+    setTimeout(() => {
+        if (alertBox.parentElement) {
+            alertBox.style.opacity = '0';
+            setTimeout(() => alertBox.remove(), 300);
+        }
+    }, 4000);
+}
+
+{% comment %} function viewSkills(el) {
+    const workerId = el.getAttribute('data-id');
+
+    flip(el);
+
+    fetch('/common/get-service-types/')
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                let html = '';
+                data.service_types.forEach(service => {
+                    html += `
+                        <div class="col-xs-6 mb-5">
+                        <ul>
+                            <li><span class="primary">
+                                ${service.name}
+                            </span></li>
+                        </ul>
+                        </div>
+                    `;
+                });
+
+                document.getElementById(`id_skill_list_${workerId}`).innerHTML = html;
+            }
+        })
+        .catch(err => console.error(err));
+} {% endcomment %}
+{% comment %} function saveEdit(workerId) {
+    let selectedServiceTypes = [];
+
+    document.querySelectorAll(`#id_skill_edit_list_${workerId} input[type="checkbox"]:checked`)
+        .forEach(cb => {
+            selectedServiceTypes.push(cb.value);
+        });
+
+    console.log('Saving skills for employee:', workerId, 'Service types:', selectedServiceTypes);
+
+    fetch('/common/save-employee-skills/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            employee_id: workerId,
+            service_type_ids: selectedServiceTypes
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            console.log('✅ Skills saved successfully for employee:', workerId);
+            console.log('Selected service types:', selectedServiceTypes);
+            
+            // Show styled success alert
+            showStyledAlert('Skills updated Successfully!', 'success');
+
+            console.log('Details:', data.details);
+            
+            document.getElementById("id_done_"+workerId).style.display = "none";
+            document.getElementById("id_skill_edit_list_"+workerId).style.display = "none";
+            document.getElementById("id_skill_list_"+workerId).style.display = "block";
+
+            // Small delay before refreshing view
+            setTimeout(() => {
+                viewSkills({ getAttribute: () => workerId });
+            }, 500);
+        } else {
+            console.error('❌ Failed to save skills. Error:', data.error);
+            showStyledAlert('Error: ' + (data.error || 'Failed to save skills'), 'error');
+        }
+    })
+    .catch(err => {
+        console.error('❌ Network error while saving skills:', err);
+        showStyledAlert('Network error: ' + err.message, 'error');
+    });
+} {% endcomment %}
+
+// Helper function to show success message
+ {% comment %} function showSuccessMessage(message) {
+    const msgDiv = document.createElement('div');
+    msgDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #e8f9f0;
+        color: #1e8449;
+        border-left: 6px solid #2ecc71;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        font-family: Arial, sans-serif;
+        min-width: 280px;
+        z-index: 9999;
+        animation: slideIn 0.4s ease forwards;
+    `;
+    msgDiv.textContent = message;
+    document.body.appendChild(msgDiv);
+    
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+        msgDiv.style.animation = 'slideOut 0.3s ease-in-out';
+        setTimeout(() => msgDiv.remove(), 300);
+    }, 3000);
+}
+
+// Helper function to show error message
+function showErrorMessage(message) {
+    const msgDiv = document.createElement('div');
+    msgDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #f44336;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        z-index: 10000;
+        font-size: 14px;
+        font-weight: bold;
+        animation: slideIn 0.3s ease-in-out;
+    `;
+    msgDiv.textContent = message;
+    document.body.appendChild(msgDiv);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        msgDiv.style.animation = 'slideOut 0.3s ease-in-out';
+        setTimeout(() => msgDiv.remove(), 300);
+    }, 5000);
+} 
+
+// Add CSS animations
+if (!document.getElementById('msgAnimations')) {
+    const style = document.createElement('style');
+    style.id = 'msgAnimations';
+    style.textContent = `
+        @keyframes slideIn {
+            from {
+                transform: translateX(120%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+            opacity: 0;
+            transform: translateX(120%);
+        }
+    `;
+    document.head.appendChild(style);
+} {% endcomment %}
+
+{% comment %} function viewSkills(el) {
+    const workerId = el.getAttribute('data-id');
+    flip(el);
+
+    console.log('Fetching skills for employee:', workerId);
+
+    fetch(`/common/get-employee-skills/?employee_id=${workerId}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                console.log('✅ Skills fetched successfully:', data.skills);
+                
+                if (data.skills && data.skills.length > 0) {
+                    let html = '';
+                    data.skills.forEach(skill => {
+                        console.log('Displaying skill:', skill.name);
+                        html += `
+                            <div class="col-xs-6 mb-5">
+                                <ul>
+                                    <li>
+                                        <span class="primary">${skill.name}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        `;
+                    });
+                    document.getElementById(`id_skill_list_${workerId}`).innerHTML = html;
+                } else {
+                    console.log('⚠️ No skills found for employee:', workerId);
+                    document.getElementById(`id_skill_list_${workerId}`).innerHTML = '<span class="text-muted">No skills assigned</span>';
+                }
+            } else {
+                console.error('❌ Failed to fetch skills. Error:', data.error);
+                alert('Error fetching skills: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(err => {
+            console.error('❌ Network error while fetching skills:', err);
+            alert('Network error: ' + err.message);
+        });
+}
+ {% endcomment %}
+
+
+
 </script>
+<style>
+  /* Custom Alert Styles */
+  .custom-alert {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    min-width: 320px;
+    padding: 16px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 10000;
+    font-family: 'Inter', Arial, sans-serif;
+    animation: slideInAlert 0.3s ease-out;
+    transition: opacity 0.3s ease;
+  }
+
+  .custom-alert-success {
+    background-color: #4caf50;
+    color: white;
+    border-left: 4px solid #45a049;
+  }
+
+  .custom-alert-error {
+    background-color: #f44336;
+    color: white;
+    border-left: 4px solid #da190b;
+  }
+
+  .alert-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .alert-icon {
+    font-size: 20px;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+
+  .alert-message {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .alert-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .alert-close:hover {
+    opacity: 0.8;
+  }
+
+  @keyframes slideInAlert {
+    from {
+      transform: translateX(400px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  ul {
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    
+    text-align: left;      /* right alignment */
+    line-height: 1.0;       /* reduce line spacing */
+    margin-bottom: 4px;     /* optional: tighter spacing */
+  }
+
+  .primary {
+    font-weight: bold;
+    color: #2c3e50;
+  }
+</style>
 {% endblock %}
