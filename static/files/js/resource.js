@@ -109,51 +109,93 @@ const appCard = new Vue({
 
   },
   methods: {
-    saveEdit(id){
-      // Collect all checked skill checkboxes
-      let selectedServiceTypes = [];
-      
-      // Find all checked service type checkboxes for this employee
-      $(`input[name="service_type_${id}"]:checked`).each(function() {
-        selectedServiceTypes.push($(this).val());
-      });
+   saveEdit(workerId) {
+    let selectedServiceTypes = [];
 
-      console.log('Saving skills for employee:', id);
-      console.log('Selected service types:', selectedServiceTypes);
+    document.querySelectorAll(`#id_skill_edit_list_${workerId} input[type="checkbox"]:checked`)
+        .forEach(cb => {
+            selectedServiceTypes.push(cb.value);
+        });
 
-      // Send to new endpoint with service type IDs
-      fetch('/common/save-employee-skills/', {
+    console.log('Saving skills for employee:', workerId, 'Service types:', selectedServiceTypes);
+
+    fetch('/common/save-employee-skills/', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': $("input[name=csrfmiddlewaretoken]").val()
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
         },
         body: JSON.stringify({
-          employee_id: id,
-          service_type_ids: selectedServiceTypes
+            employee_id: workerId,
+            service_type_ids: selectedServiceTypes
         })
-      })
-      .then(res => res.json())
-      .then(data => {
+    })
+    .then(res => res.json())
+    .then(data => {
         if (data.success) {
-          console.log('✅ Skills saved successfully!');
-          console.log('Details:', data.details);
-          
-          // Show success message with operation details
-          alert(`✅ ${data.message}\nEmployee: ${data.details.employee_name}`);
-          
-          // Reload page to reflect changes
-          location.reload();
+            console.log('✅ Skills saved successfully for employee:', workerId);
+            console.log('Selected service types:', selectedServiceTypes);
+            
+            // Show styled success alert
+            showStyledAlert('Skills updated Successfully!', 'success');
+
+            console.log('Details:', data.details);
+            
+            document.getElementById("id_done_"+workerId).style.display = "none";
+            document.getElementById("id_skill_edit_list_"+workerId).style.display = "none";
+            document.getElementById("id_skill_list_"+workerId).style.display = "block";
+
+            // Small delay before refreshing view
+            setTimeout(() => {
+                viewSkills({ getAttribute: () => workerId });
+            }, 500);
         } else {
-          console.error('❌ Failed to save skills:', data.error);
-          alert(`❌ Error: ${data.error}`);
+            console.error('❌ Failed to save skills. Error:', data.error);
+            showStyledAlert('Error: ' + (data.error || 'Failed to save skills'), 'error');
         }
-      })
-      .catch((error) => {
-        console.error('❌ Network error while saving skills:', error);
-        alert('❌ Network error: ' + error.message);
-      });
-    },
+    })
+    .catch(err => {
+        console.error('❌ Network error while saving skills:', err);
+        showStyledAlert('Network error: ' + err.message, 'error');
+    });
+},
+    viewSkills(workerId, el) {
+  // Flip the card if needed
+  if (typeof flip === 'function') {
+    flip(el);
+  }
+
+  const skillListDiv = document.getElementById(`id_skill_list_${workerId}`);
+  if (skillListDiv) {
+    skillListDiv.innerHTML = '<span class="text-muted">Loading...</span>';
+  }
+
+  fetch(`/common/get-employee-skills/?employee_id=${workerId}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.success && data.skills && data.skills.length > 0) {
+        let html = '';
+        data.skills.forEach(skill => {
+          html += `
+            <div class="col-xs-6 mb-5">
+              <ul>
+                <li>
+                  <span class="primary">${skill.name}</span>
+                </li>
+              </ul>
+            </div>
+          `;
+        });
+        skillListDiv.innerHTML = html;
+      } else {
+        skillListDiv.innerHTML = '<span class="text-muted">No skills assigned</span>';
+      }
+    })
+    .catch(() => {
+      skillListDiv.innerHTML = '<span class="text-danger">Network error</span>';
+    });
+},
+
   },
 });
 

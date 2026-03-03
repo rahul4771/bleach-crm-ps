@@ -50,6 +50,8 @@ from Api.models import XeroConnection
 from django.core.mail import send_mail,EmailMultiAlternatives
 from django.template.loader import render_to_string
 
+
+
 #restframe work 
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
@@ -61,6 +63,7 @@ from datetime import datetime
 from agent.serializers import CleaningScheduleSerializer,FollowupScheduleSerializer,UserProfileShowSerializer
 
 import pytz
+
 
 utc=pytz.UTC
 
@@ -6425,6 +6428,10 @@ def add_service_type(request):
 		service_group_id = request.POST.get('new_service_group_id')
 		is_active =  True if request.POST.get('new_service_is_active') == 'active' else False
 
+		image_path = None
+		if request.FILES.get('image_path'):
+			image_path = request.FILES.get('image_path')
+
 		# Backend validation for duplicate names
 		if ServiceType.objects.filter(name__iexact=service_name).exists():
 			return JsonResponse({'success': False, 'error_field': 'new_service_name', 'error_message': 'Service name already exists.'})
@@ -6434,20 +6441,46 @@ def add_service_type(request):
 		service_group = ServiceGroup.objects.filter(id=service_group_id).first()
 		if not service_group:
 			return JsonResponse({'success': False, 'error_field': 'new_service_group_id', 'error_message': 'Invalid service group.'})
+
+		if not image_path:
+			return JsonResponse({"success": False, "error_field": "image_path", "error_message": "Image path is required."}, status=400)
+
+		if image_path:
+			allowed_ext = {'.jpg', '.jpeg', '.png', '.gif'}
+			ext = os.path.splitext(image_path.name)[1].lower()
+			if ext not in allowed_ext:
+				return JsonResponse({"success": False, "error_field": "image_path", "error_message": "Unsupported file type. Allowed types: jpg, jpeg, png, gif."}, status=400)
+
+			max_size = 2 * 1024 * 1024 
+			if image_path.size > max_size:
+				return JsonResponse({"success": False, "error_field": "image_path", "error_message": "File size exceeds 2MB limit."}, status=400)
+				
 		
 		try:
 			service_type = ServiceType.objects.create(
 				name=service_name,
 				name_arabic=service_name_arabic,
 				service_group=service_group,
+				image_path = image_path,
 				is_active=is_active
 			)
+
+			service_type = ServiceType.objects.filter(id=service_type.id).first()
+
+			image_url = None
+			if getattr(service_type, "image_path", None):
+				try:
+					image_url = service_type.image_path.url
+				except Exception:
+					image_url = str(service_type.image_path)
+
 			st_obj = {
 				"id": service_type.id,
 				"name": service_type.name,
 				"name_arabic": service_type.name_arabic,
 				"service_group_id": service_type.service_group.id,
-				"updated_at": service_type.updated_at,
+				"image_path": image_url,
+				"updated": getattr(service_type, 'updated', None),
 				"is_active": service_type.is_active
 			}
 			return JsonResponse({'success': True, 'service_type': st_obj})
@@ -6506,14 +6539,44 @@ class ServiceTypeAPIView(APIView):
 			service_type.name_arabic = name_arabic
 			service_type.service_group= ServiceGroup.objects.get(id=service_group_id)
 			service_type.is_active = is_active
+
+		image_path = None
+		image_path = request.FILES.get('image_path')
+
+		if image_path:
+			allowed_ext = {'.jpg', '.jpeg', '.png', '.gif'}
+			ext = os.path.splitext(image_path.name)[1].lower()
+			if ext not in allowed_ext:
+				return JsonResponse({"success": False, "error_field": "image_path", "error_message": "Unsupported file type. Allowed types: jpg, jpeg, png, gif."}, status=400)
+
+			max_size = 2 * 1024 * 1024 
+			if image_path.size > max_size:
+				return JsonResponse({"success": False, "error_field": "image_path", "error_message": "File size exceeds 2MB limit."}, status=400)
+				
+		
+		if image_path:
+			image_path = request.FILES.get('image_path')
+			try:
+				old_file = getattr(ServiceType.objects.get(id=service_type_id), 'image_path')
+				if old_file:
+					old_path = getattr(old_file, 'path', None) or str(old_file)
+					if os.path.isfile(old_path):
+						os.remove(old_path)
+			except Exception:
+				pass
+			service_type.image_path = image_path
 		
 		service_type.save()
+
+		updated_at = ServiceType.objects.filter(id=service_type.id).values_list("updated", flat=True).first()
 		
 		st_obj = {
 			"id": service_type.id,
 			"name": service_type.name,
 			"name_arabic": service_type.name_arabic,
 			"service_group_id": service_type.service_group.id,
+			# "image_path": service_type.image_path,
+			"updated": updated_at.isoformat() if updated_at else None,
 			"is_active": service_type.is_active,
 		}
 
@@ -7347,7 +7410,7 @@ class ServiceGroupAPIView(APIView):
             sg = ServiceGroup.objects.create(
                 service_name=service_name,
                 service_name_arabic=service_name_arabic,
-				            image_path=image_path,
+				image_path=image_path,
                 status=is_active,
             )
 
@@ -7481,15 +7544,14 @@ class ServiceGroupAPIView(APIView):
 class StagingBooking(IsAuthenticated,View):
 	def get(self,request,evaluation_detail_id):
 		return render(request,"booking/staging-booking.html")
-
+    
 class StagingBookingAPIView(APIView):
 	def get(self, request):
 		
 		service_groups = list(ServiceGroup.objects.values('id','service_name','service_name_arabic', 'image_path', 'updated_at','status'))
-		service_types = list(ServiceType.objects.values('id','name','name_arabic','service_group_id', 'is_active','updated'))
+		service_types = list(ServiceType.objects.values('id','name','name_arabic','service_group_id', 'image_path', 'is_active','updated'))
 		return JsonResponse({"service_groups": service_groups, "service_types": service_types, "MEDIA_URL": settings.MEDIA_URL}, status=200)
-
-    
+	
 class SaveEmployeeSkillsAPIView(APIView):
 	def post(self, request, *args, **kwargs):
 		try:
