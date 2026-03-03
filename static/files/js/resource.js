@@ -109,51 +109,43 @@ const appCard = new Vue({
 
   },
   methods: {
-    saveEdit(id){
-      // Collect all checked skill checkboxes
-      let selectedServiceTypes = [];
-      
-      // Find all checked service type checkboxes for this employee
-      $(`input[name="service_type_${id}"]:checked`).each(function() {
-        selectedServiceTypes.push($(this).val());
-      });
+  viewSkills(workerId, el) {
+  // Flip the card if needed
+  if (typeof flip === 'function') {
+    flip(el);
+  }
 
-      console.log('Saving skills for employee:', id);
-      console.log('Selected service types:', selectedServiceTypes);
+  const skillListDiv = document.getElementById(`id_skill_list_${workerId}`);
+  if (skillListDiv) {
+    skillListDiv.innerHTML = '<span class="text-muted">Loading...</span>';
+  }
 
-      // Send to new endpoint with service type IDs
-      fetch('/common/save-employee-skills/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': $("input[name=csrfmiddlewaretoken]").val()
-        },
-        body: JSON.stringify({
-          employee_id: id,
-          service_type_ids: selectedServiceTypes
-        })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          console.log('✅ Skills saved successfully!');
-          console.log('Details:', data.details);
-          
-          // Show success message with operation details
-          alert(`✅ ${data.message}\nEmployee: ${data.details.employee_name}`);
-          
-          // Reload page to reflect changes
-          location.reload();
-        } else {
-          console.error('❌ Failed to save skills:', data.error);
-          alert(`❌ Error: ${data.error}`);
-        }
-      })
-      .catch((error) => {
-        console.error('❌ Network error while saving skills:', error);
-        alert('❌ Network error: ' + error.message);
-      });
-    },
+  fetch(`/common/get-employee-skills/?employee_id=${workerId}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.success && data.skills && data.skills.length > 0) {
+        let html = '';
+        data.skills.forEach(skill => {
+          html += `
+            <div class="col-xs-6 mb-5">
+              <ul>
+                <li>
+                  <span class="primary">${skill.name}</span>
+                </li>
+              </ul>
+            </div>
+          `;
+        });
+        skillListDiv.innerHTML = html;
+      } else {
+        skillListDiv.innerHTML = '<span class="text-muted">No skills assigned</span>';
+      }
+    })
+    .catch(() => {
+      skillListDiv.innerHTML = '<span class="text-danger">Network error</span>';
+    });
+},
+
   },
 });
 

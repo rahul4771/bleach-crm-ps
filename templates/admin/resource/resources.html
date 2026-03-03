@@ -82,11 +82,14 @@
   <div class="ticket-form-right"><!--ticket-form-right-->
                 <div class=" bold-text common-label"> <label>Service Type</label></div>
                 <label for="favcity">
-                <select name="servicetype_filter" id="service_type_filter_id" style="width:220px;" size="6">
+                <select name="servicetype_filter" id="service_type_filter_id">
                 <option value=''>---ALL---</option>
-                                {% for service in service_types %}
-                                <option value='{{service.id}}' {% if service.id == selected_service_type_id %}selected{% endif %}>{{service.name}}</option>
-                                {% endfor %}
+                <option value='is_general_skill' {% if service_type == 'is_general_skill' %}selected{% endif %}>General Cleaning</option>
+                <option value='is_deep_skill' {% if service_type == 'is_deep_skill' %}selected{% endif %}>Deep Cleaning</option>
+                <option value='is_upholstery_skill' {% if service_type == 'is_upholstery_skill' %}selected{% endif %}>Upholstery Cleaning</option>
+                <option value='is_carpet_skill' {% if service_type == 'is_carpet_skill' %}selected{% endif %}>Carpet Cleaning</option>
+                <option value='is_kitchen_skill' {% if service_type == 'is_kitchen_skill' %}selected{% endif %}>Kitchen Cleaning</option>
+                <option value='is_sterilization_skill' {% if service_type == 'is_sterilization_skill' %}selected{% endif %}>Sterilization</option>
                 </select>
                 </label>
   </div><!--ticket-form-right-->

@@ -133,7 +133,6 @@ class UserProfile(AbstractUser):
     is_mattress_skill      = models.BooleanField(null=False,blank=True,default=False)
     is_facade_skill        = models.BooleanField(null=False,blank=True,default=False)
     is_storagearea_skill   = models.BooleanField(null=False,blank=True,default=False)
-    is_rope_access_skill   = models.BooleanField(null=False,blank=True,default=False)
     is_carparkingumbrella_skill = models.BooleanField(null=False,blank=True,default=False)
     is_outdoor_skill            = models.BooleanField(null=False,blank=True,default=False)
     is_window_skill             = models.BooleanField(null=False,blank=True,default=False)
@@ -303,7 +302,6 @@ class CustomerOTP(models.Model):
 
     def __str__(self):
         return self.mobile_number
-
 
 class Skills(models.Model):
     """

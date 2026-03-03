@@ -15,7 +15,7 @@ from django.db.models.functions import Cast,TruncDate,ExtractMonth,ExtractYear,C
 from order.models import OrderScheduler,FollowUpScheduler
 from senior_team_leader.models import CleaningTeam,CleaningTeamMember,FollowUpTeam,FollowUpTeamMember
 from bleachadmin.models import ServicePriceRange
-from evaluator.models import EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons,ServiceType
+from evaluator.models import EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons
 import functools
 import operator
 from django.utils import timezone
@@ -3001,11 +3001,7 @@ class InventoryOrderDetails(IsInventoryAdminUser,View):
 class InventoryServices(IsInventoryAdminUser,View):
 	def get(self,request):
 		items = InventoryItem.objects.all()
-		try:
-			service_types = ServiceType.objects.filter(is_active=True).order_by('name')
-		except:
-			service_types = None
-		return render(request,'inventory/services.html',{"items":items,"service_types":service_types})
+		return render(request,'inventory/services.html',{"items":items})
 
 	def post(self,request):
 		action =request.POST.get('action')
