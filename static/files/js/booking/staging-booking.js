@@ -501,6 +501,8 @@ const app = new Vue({
         hourly_slots: true,
         current_service: '',
         ropeAccessTypes: '',
+        kitchenTypes: '',
+        kitchenSize: '',
 
 
     },
@@ -538,8 +540,8 @@ const app = new Vue({
         }
     },
     methods: {
-       
-       
+
+
         /* ================================================================
             METHODS ORGANIZATION INDEX
             ================================================================
@@ -578,7 +580,7 @@ const app = new Vue({
         isSlotsSelected() {
             return this.currentSlotDay > this.cleaning_set.length;
         },
-        
+
         /**
          * Get visit number based on index
          * @param {number} index - Index of the visit
@@ -594,9 +596,9 @@ const app = new Vue({
          * @returns {boolean} True if datetime is available
          */
         isDateTimeAvailable(dateTime) {
-            return this.slotStat && 
-                   Array.isArray(this.slotStat.available_slotes) && 
-                   this.slotStat.available_slotes.includes(dateTime);
+            return this.slotStat &&
+                Array.isArray(this.slotStat.available_slotes) &&
+                this.slotStat.available_slotes.includes(dateTime);
         },
 
         /**
@@ -966,7 +968,7 @@ const app = new Vue({
             // Get the form ref (may be array in v-for)
             let formRef = this.$refs[`keynoteForm-${building}-${floor}`];
             if (Array.isArray(formRef)) formRef = formRef[0];
-            
+
             // Validate the form before adding
             if (formRef && formRef.validate()) {
                 this.building[building].floors[floor].keynote_data.push({
@@ -988,7 +990,7 @@ const app = new Vue({
             // Get the form ref (may be array)
             let formRef = this.$refs.keynoteOthersForm;
             if (Array.isArray(formRef)) formRef = formRef[0];
-            
+
             // Validate the form before adding
             if (formRef && formRef.validate()) {
                 this.otherService.keynote_data.push({
@@ -1029,7 +1031,7 @@ const app = new Vue({
             // Get the form ref (may be array in v-for)
             let formRef = this.$refs[`keynoteApartmentForm-${building}-${floor}-${apartment}`];
             if (Array.isArray(formRef)) formRef = formRef[0];
-            
+
             // Validate the form before adding
             if (formRef && formRef.validate()) {
                 this.building[building].floors[floor].apartments[apartment].keynote_data.push({
@@ -2536,25 +2538,26 @@ const app = new Vue({
 
             this.sizeFilteredData = [];
             this.otherService.size = ""
-            if (this.otherService.type == "new") {
-                this.parseAddons()
-                $('.more-services').hide()
-                if (this.otherService.is_cabinet) {
-                    this.sizeFilteredData = this.sizeData.filter(size => size.is_newkitchen && size.is_cabinet)
-                }
-                else {
-                    this.sizeFilteredData = this.sizeData.filter(size => size.is_newkitchen && !size.is_cabinet)
-                }
-            }
-            if (this.otherService.type == "old") {
-                $('.more-services').show()
-                if (this.otherService.is_cabinet) {
-                    this.sizeFilteredData = this.sizeData.filter(size => !size.is_newkitchen && size.is_cabinet)
-                }
-                else {
-                    this.sizeFilteredData = this.sizeData.filter(size => !size.is_newkitchen && !size.is_cabinet)
-                }
-            }
+            this.parseAddons()
+            this.kitchenTypeFilter();
+            // $('.more-services').hide()
+            // if (this.otherService.type == "new") {
+            //     if (this.otherService.is_cabinet) {
+            //         this.sizeFilteredData = this.sizeData.filter(size => size.is_newkitchen && size.is_cabinet)
+            //     }
+            //     else {
+            //         this.sizeFilteredData = this.sizeData.filter(size => size.is_newkitchen && !size.is_cabinet)
+            //     }
+            // }
+            // if (this.otherService.type == "old") {
+            //     $('.more-services').show()
+            //     if (this.otherService.is_cabinet) {
+            //         this.sizeFilteredData = this.sizeData.filter(size => !size.is_newkitchen && size.is_cabinet)
+            //     }
+            //     else {
+            //         this.sizeFilteredData = this.sizeData.filter(size => !size.is_newkitchen && !size.is_cabinet)
+            //     }
+            // }
         },
         changeNewKitchen() {
             this.kitchenData.size = ''
@@ -3209,13 +3212,16 @@ const app = new Vue({
             this.specialCareServices = []
             this.kitchenCleaningServices = []
             this.infectionControlServices = []
-            this.selectedCategory = item
+            this.selectedCategory = item.service_name
 
             this.$nextTick(() => {
-                if (this.filteredServices && this.filteredServices.length > 0) {
-                    const firstService = this.filteredServices[0];
+                const filteredServices = this.services.filter(service => service.service_group_id === item.id);
+
+                if (filteredServices && filteredServices.length > 0) {
+                    const firstService = filteredServices[0];
                     this.selectedService = firstService;
                     this.serviceType = firstService.name;
+                    this.selectService(firstService);
                     // Get size info for the auto-selected service
                     this.getSize();
                 }
@@ -3233,7 +3239,22 @@ const app = new Vue({
             this.serviceCount++;
 
             try {
+                this.serviceChange = false
+                this.selectedService = service;
+                this.serviceType = service.name;
+                this.location_type = ''
+                this.area_type = ''
+                this.otherServices = [];
+                this.billingData = [];
+                this.building = [];
+                this.no_of_building = 0;
+                this.temp_no_of_building = 0;
+                this.no_of_floors = [];
+                this.no_of_apartments = [];
+                this.buildingsCompleted = false
                 this.getSize();
+                this.getAddons();
+
             } catch (error) {
                 console.error("Error getting service size:", error);
             }
@@ -3245,21 +3266,21 @@ const app = new Vue({
          */
         reinitServiceCarousel() {
             const $carousel = $('#service-carousel');
-            
+
             // Hide carousel to prevent visual flicker during transition
             $carousel.css({ 'opacity': '0', 'transition': 'opacity 0.1s' });
-            
+
             // Destroy old carousel instance if it exists
             if ($carousel.hasClass('owl-loaded')) {
                 $carousel.trigger('destroy.owl.carousel').removeClass('owl-loaded owl-drag owl-carousel');
                 $carousel.find('.owl-stage-outer, .owl-stage, .owl-item, .owl-nav, .owl-dots').remove();
             }
-            
+
             // Wait for Vue to render new items, then reinitialize
             setTimeout(() => {
                 this.$nextTick(() => {
                     const finalItemsCount = $carousel.find('.sr-service-card').length;
-                    
+
                     // Re-initialize carousel if we have items
                     if (finalItemsCount > 0) {
                         $carousel.addClass('owl-carousel').owlCarousel({
@@ -3274,7 +3295,7 @@ const app = new Vue({
                                 1000: { items: 4 }
                             }
                         });
-                        
+
                         // Show carousel again with smooth fade-in
                         setTimeout(() => {
                             $carousel.css('opacity', '1');
@@ -3289,19 +3310,19 @@ const app = new Vue({
          */
         reinitCategoryCarousel() {
             const $carousel = $('#category-carousel');
-            
+
             // Hide carousel to prevent visual flicker during transition
             $carousel.css({ 'opacity': '0', 'transition': 'opacity 0.1s' });
-            
+
             if ($carousel.hasClass('owl-loaded')) {
                 $carousel.trigger('destroy.owl.carousel').removeClass('owl-loaded owl-drag owl-carousel');
                 $carousel.find('.owl-stage-outer, .owl-stage, .owl-item, .owl-nav, .owl-dots').remove();
             }
-            
+
             setTimeout(() => {
                 this.$nextTick(() => {
                     const finalItemsCount = $carousel.find('.sr-service-card').length;
-                    
+
                     if (finalItemsCount > 0) {
                         $carousel.addClass('owl-carousel').owlCarousel({
                             items: 4,
@@ -3315,7 +3336,7 @@ const app = new Vue({
                                 1000: { items: 4 }
                             }
                         });
-                        
+
                         // Show carousel again with smooth fade-in
                         setTimeout(() => {
                             $carousel.css('opacity', '1');
@@ -3333,25 +3354,25 @@ const app = new Vue({
                 this.$nextTick(() => {
                     // Handle both otherServiceCarousel and otherServiceDialogCarousel
                     const carouselIds = ['#otherServiceCarousel', '#otherServiceDialogCarousel'];
-                    
+
                     carouselIds.forEach(carouselId => {
                         const $carousel = $(carouselId);
-                        
+
                         // Only proceed if the carousel exists in the DOM
                         if ($carousel.length === 0) {
                             return;
                         }
-                        
+
                         // Hide carousel to prevent visual flicker during transition
                         $carousel.css({ 'opacity': '0', 'transition': 'opacity 0.1s' });
-                        
+
                         if ($carousel.hasClass('owl-loaded')) {
                             $carousel.trigger('destroy.owl.carousel').removeClass('owl-loaded owl-drag owl-carousel');
                             $carousel.find('.owl-stage-outer, .owl-stage, .owl-item, .owl-nav, .owl-dots').remove();
                         }
-                        
+
                         const finalItemsCount = $carousel.find('.more-service-card').length;
-                        
+
                         if (finalItemsCount > 0) {
                             $carousel.addClass('owl-carousel').owlCarousel({
                                 items: 4,
@@ -3365,7 +3386,7 @@ const app = new Vue({
                                     1000: { items: 4 }
                                 }
                             });
-                            
+
                             // Show carousel again with smooth fade-in
                             setTimeout(() => {
                                 $carousel.css('opacity', '1');
@@ -3606,8 +3627,7 @@ const app = new Vue({
         },
         async getAddons() {
             this.addons = []
-            const ser = 'Kitchen Cleaning'
-            fetch(this.url + '/customer/ajax/getserviceaddons?service_type=' + ser)
+            fetch(this.url + '/customer/ajax/getserviceaddons?service_type=' + this.serviceType)
                 .then(response => response.json())
                 .then(data => {
                     this.addons = data.service_addons
@@ -3765,6 +3785,7 @@ const app = new Vue({
                 });
         },
         getSize() {
+            console.log("object 1", this.serviceType)
             let service = this.serviceType
             if (service == 'Hourly Cleaning') {
                 service = 'General Cleaning'
@@ -3784,6 +3805,11 @@ const app = new Vue({
                         this.serviceSize = data;
                     }
                     this.parseSize();
+                    if(this.serviceType == 'Kitchen Cleaning'){
+                        this.kitchenTypes = [...new Set(this.sizeData.map(size => size.kitchen_type))];
+                        this.otherService.type = this.kitchenTypes[0]
+                        this.kitchenTypeFilter();
+                    }
                     if (this.serviceType == 'Rope Access') {
                         this.ropeAccessTypes = [...new Set(this.sizeData.map(size => size.rope_access_type))];
                         this.ropeAccessFilter();
@@ -3966,6 +3992,11 @@ const app = new Vue({
             this.ropeAccessSize = this.sizeData.filter(size => size.rope_access_type === selectedType);
             this.otherService.size = {}
         },
+        kitchenTypeFilter() {
+            this.sizeFilteredData = this.sizeData.filter(size => size.kitchen_type === this.otherService.type);
+            console.log("sizeFilteredData", JSON.stringify(this.sizeFilteredData))
+            this.otherService.size = {}
+        },
         editItem(a, b) {
             this.edit_item = true
             this.add_new_kitchen = false
@@ -4046,47 +4077,7 @@ const app = new Vue({
             let max_size_data = []
             let max_size_val = []
             if (this.serviceType == "Upholstery Cleaning") {
-                /* if (this.otherService.type == "CURTAIN") {
-                   for (var item = 0; item < this.sizeData.length; item++) {
-                     console.log("type test passed");
-                    
-                     if (this.sizeData[item].upholstery_type == "CURTAIN") {
-                        max_size_data.push(this.sizeData[item].max_size)
-                        max_size_val.push(this.sizeData[item])
-                       if (
-                         this.otherService.size >= this.sizeData[item].min_size &&
-                         this.otherService.size <= this.sizeData[item].max_size
-                       ) {
-                         this.otherService.size = this.sizeData[item];
-                         sizeFound=true
-                         console.log("size test passed");
-                       }
-                     }
-                   }
-                   let max_val=Math.max(...max_size_data)
-                   let left_size=0
-                   console.log('max val is '+max_val)
-                   if(!sizeFound && this.otherService.size>0){
-                     left_size=this.otherService.size-max_val
-                     
-                     for(var j=0;j<max_size_val.length;j++){
-                       if(max_size_val[j].max_size==max_val){
-                         let new_cost=left_size*max_size_val[j].unit_price
-                         let current_cost=max_size_val[j].cost+new_cost
-                         let size=this.otherService.size
-                         this.otherService.size={
-                           name: "Custom size",
-                           cost: current_cost,
-                           max_size:size,
-                           min_size:size,
-                           upholstery_type: "CURTAIN",
-                           combinedSize:size+' Seater'
-           
-                         }
-                       }
-                     }
-                 }
-                 }*/
+
                 if (this.otherService.type == "SOFA") {
                     for (let item = 0; item < this.sizeData.length; item++) {
                         if (this.sizeData[item].upholstery_type == "SOFA") {
@@ -4311,10 +4302,10 @@ const app = new Vue({
 
 
             this.activeTab = 'Services'
-            
+
             // Show carousel navigation arrows
             $('.owl-nav').show();
-            
+
             setTimeout(function () {
 
                 app.reinitCat()
@@ -4341,7 +4332,7 @@ const app = new Vue({
 
             this.activeTab = 'Schedule';
             this.currentPageTitle = 'Schedule';
-            
+
             // Hide carousel navigation arrows in Schedule tab
             $('.owl-nav').hide();
 
@@ -4373,10 +4364,10 @@ const app = new Vue({
          */
         goToBilling() {
             this.activeTab = 'Payment Method';
-            
+
             // Hide carousel navigation arrows in Payment Method tab
             $('.owl-nav').hide();
-            
+
             this.arrangeData();
         },
         /**
@@ -4386,7 +4377,7 @@ const app = new Vue({
             reinit();
             this.serviceCount++;
             this.activeTab = 'Services';
-            
+
             // Show carousel navigation arrows
             $('.owl-nav').show();
         },
@@ -4462,10 +4453,10 @@ const app = new Vue({
 
             this.multiServicesBill.push(sampleServicesBill)
             this.activeTab = 'Cart'
-            
+
             // Hide carousel navigation arrows in Cart tab
             $('.owl-nav').hide();
-            
+
             window.scrollTo(0, 0);
             sampleServicesBill = {
                 service: '',

@@ -198,7 +198,6 @@
                                                 v-text="validationErrors['manageServiceType']['serviceTypeArabicName']">
                                             </div>
                                         </div>
-                                        <div></div>
                                         <div class="form-group">
                                             <label for="serviceGroup" class="form-label">Service Group</label>
 
@@ -227,12 +226,25 @@
                                                 v-model="serviceFormFields.is_active"
                                                 :class="{'form-control': true, 'is-invalid': validationErrors['manageServiceType']['serviceTypeIsActive'] }">
                                                 <option value="" selected="">Choose an option</option>
-                                                <option value="active">Active</option>
-                                                <option value="inactive">Inactive</option>
+                                                <option :selected="serviceFormFields.is_active === 1" value="active">
+                                                    Active</option>
+                                                <option :selected="serviceFormFields.is_active === 0" value="inactive">
+                                                    Inactive</option>
                                             </select>
                                             <div class="invalid-feedback"
                                                 v-if="validationErrors['manageServiceType']['serviceTypeIsActive']"
                                                 v-text="validationErrors['manageServiceType']['serviceTypeIsActive']">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="serviceTypeImage" class="form-label">Image</label>
+                                            <input type="file" class="form-control" id="serviceTypeImage"
+                                                name="serviceTypeImage"
+                                                @change="handleImageUpload($event, 'serviceTypeImage')"
+                                                :class="{'form-control': true, 'is-invalid': validationErrors['manageServiceType']['serviceTypeImage'] }">
+                                            <div class="invalid-feedback"
+                                                v-if="validationErrors['manageServiceType']['serviceTypeImage']"
+                                                v-text="validationErrors['manageServiceType']['serviceTypeImage']">
                                             </div>
                                         </div>
                                     </div>
@@ -749,8 +761,7 @@
 
                                             <div class="form-group">
                                                 <label for="price_range_minimum_area" class="form-label">Minimum
-                                                    Area <span
-                                                        class="text-danger">*</span></label>
+                                                    Area <span class="text-danger">*</span></label>
                                                 <input type="number" step="1" id="price_range_minimum_area"
                                                     name="price_range_minimum_area"
                                                     v-model="priceRangeFormFields.minimum_area" placeholder=""
@@ -763,8 +774,7 @@
 
                                             <div class="form-group">
                                                 <label for="price_range_maximum_area" class="form-label">Maximum
-                                                    Area <span
-                                                        class="text-danger">*</span></label>
+                                                    Area <span class="text-danger">*</span></label>
                                                 <input type="number" step="1" id="price_range_maximum_area"
                                                     name="price_range_maximum_area"
                                                     v-model="priceRangeFormFields.maximum_area" placeholder=""
@@ -777,8 +787,7 @@
 
                                             <div class="form-group">
                                                 <label for="price_range_unit_price" class="form-label">Unit
-                                                    Price <span
-                                                        class="text-danger">*</span></label>
+                                                    Price <span class="text-danger">*</span></label>
                                                 <input type="number" step="0.01" id="price_range_unit_price"
                                                     name="price_range_unit_price"
                                                     v-model="priceRangeFormFields.unit_price" placeholder=""
@@ -1180,7 +1189,7 @@
                         <div class="dashboard-card-header">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h2 v-text="viewServiceGroup.title ? viewServiceGroup.title : 'Add Service Group'"></h2>
-                                <button class="btn btn-secondary" @click="backButtonAction1('showList')">Back to
+                                <button class="btn btn-secondary" @click="backButtonActionToList('showList')">Back to
                                     List</button>
                             </div>
                             <div class="dashboard-card-body">
@@ -1234,7 +1243,7 @@
                                         <div class="form-group">
                                             <label for="serviceGroupImage" class="form-label">Image</label>
                                             <input type="file" id="serviceGroupImage" class="form-control"
-                                                @change="handleImageUpload"
+                                                @change="handleImageUpload($event, 'serviceGroupImage')"
                                                 :class="{'is-invalid': validationErrors.manageServiceGroup.serviceGroupImage}">
                                             <div class="invalid-feedback"
                                                 v-if="validationErrors.manageServiceGroup.serviceGroupImage"

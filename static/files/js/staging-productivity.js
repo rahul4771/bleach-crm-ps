@@ -80,6 +80,7 @@ createApp({
                 name: '',
                 name_arabic: '',
                 servicegroup_id: '',
+                image: '',
                 is_active: ''
             },
             categoryFormFields: {
@@ -202,7 +203,8 @@ createApp({
                 this.serviceFormFields.name = serviceType.name || '';
                 this.serviceFormFields.name_arabic = serviceType.name_arabic || '';
                 this.serviceFormFields.servicegroup_id = serviceType.service_group_id || '';
-                this.serviceFormFields.is_active = serviceType.status ? 'active' : 'inactive';
+                this.serviceFormFields.image = serviceType.image || '';
+                this.serviceFormFields.is_active = serviceType.is_active ? 'active' : 'inactive';
 
                 const hiddenName = 'editing_service_type_id';
                 let hidden = form.querySelector(`input[name="${hiddenName}"]`);
@@ -687,6 +689,9 @@ createApp({
         /* Add or update service type */
         submitServiceTypeForm() {
             this.validationErrors['manageServiceType'] = {};
+            const form = document.getElementById('manage-service-form');
+            const formAction = form.getAttribute('data-action');
+
             if (!this.serviceFormFields.name || !this.serviceFormFields.name.trim()) {
                 this.validationErrors['manageServiceType']['serviceTypeName'] = 'Service name is required.';
             }
@@ -704,6 +709,19 @@ createApp({
                 this.validationErrors['manageServiceType']['serviceGroup'] = 'Servicegroup is required.';
             }
 
+            if (formAction === 'add' && this.serviceFormFields.image_path === '') {
+                this.validationErrors['manageServiceType']['serviceTypeImage'] = 'Image is required.';
+            }
+
+            if (!this.serviceFormFields.image_path) {
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                if (this.serviceFormFields.image_path && !allowedTypes.includes(this.serviceFormFields.image_path.type)) {
+                    this.validationErrors['manageServiceType']['serviceTypeImage'] = 'Only JPEG, PNG, and GIF images are allowed.';
+                } else if (this.serviceFormFields.image_path && this.serviceFormFields.image_path.size > 2 * 1024 * 1024) {
+                    this.validationErrors['manageServiceType']['serviceTypeImage'] = 'Image size must be less than 2MB.';
+                }
+            }
+
             if (Object.keys(this.validationErrors['manageServiceType']).length) return;
 
             // prepare payload for backend (convert boolean to expected value)
@@ -714,11 +732,13 @@ createApp({
                 new_service_is_active: this.serviceFormFields.is_active
             };
 
-            const form = document.getElementById('manage-service-form');
-            const formAction = form.getAttribute('data-action')
             if (formAction === 'add') {
+                payload.image_path = this.serviceFormFields.image_path;
                 this.createServiceType(this.toFormData(payload));
             } else {
+                if (this.serviceFormFields.image_path instanceof File || typeof this.serviceFormFields.image_path === 'object') {
+                    payload.image_path = this.serviceFormFields.image_path;
+                }
                 const serviceId = form.querySelector('input#editing_service_type_id, input[name="editing_service_type_id"]');
                 this.updateServiceType(this.toFormData(payload), serviceId.value);
             }
@@ -1102,9 +1122,9 @@ createApp({
                                 this.validationErrors['manageServiceGroup']['serviceGroupStatus'] = data.error_message;
                             }
 
-                            // if (data.error_field === 'imagepath') {
-                            //     this.validationErrors['manageServiceGroup']['serviceGroupImage'] = data.error_message;
-                            // }
+                            if (data.error_field === 'image_path') {
+                                this.validationErrors['manageServiceGroup']['serviceGroupImage'] = data.error_message;
+                            }
                         }
 
                     } else {
@@ -1163,7 +1183,6 @@ createApp({
                             }
                         }
                     } else {
-                        console.log("service type", data.service_type);
                         this.successMsg = data.service_type
                             ? `Service type "${data.service_type.name}" added successfully.`
                             : 'Service type added successfully.';
@@ -1820,7 +1839,7 @@ createApp({
             this.validationErrors['manageServiceGroup'] = {};
         },
         resetNewService() {
-            this.serviceFormFields = { name: '', name_arabic: '', servicegroup_id: '', is_active: '' };
+            this.serviceFormFields = { name: '', name_arabic: '', servicegroup_id: '', image_path: '', is_active: '' };
             this.validationErrors['manageServiceType'] = {};
         },
         formatCurrency(value) {
@@ -1860,13 +1879,19 @@ createApp({
             return `${day} ${month}, ${year}`;
         },
 
-        handleImageUpload(event) {
+        handleImageUpload(event, formField) {
             if (event.target.files && event.target.files[0]) {
-                this.serviceGroupFormFields.image_path = event.target.files[0];
+                if (formField === 'serviceGroupImage') {
+                    this.serviceGroupFormFields.image_path = event.target.files[0];
+                }
+
+                if (formField === 'serviceTypeImage') {
+                    this.serviceFormFields.image_path = event.target.files[0];
+                }
             }
         },
         //for submit service group form
-        backButtonAction1() {
+        backButtonActionToList() {
             this.toggleDivs.showServiceGroupModal = false;
             this.toggleDivs.showServiceGroupView = true;
         },
