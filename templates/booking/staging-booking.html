@@ -2410,7 +2410,7 @@
                 </v-textarea>
               </div>
               <div class="col-3 offset-5">
-                <v-btn depressed color="primary" class="mx-auto" @click="goToCart()">
+                <v-btn depressed color="primary" class="mx-auto" @click="handleGoToCart()">
                   Proceed
                 </v-btn>
               </div>
@@ -2471,12 +2471,25 @@
               </v-textarea>
             </div>
             <div class="col-3 offset-5">
-              <v-btn depressed color="primary" class="mx-auto" @click="goToCart()">
+              <v-btn depressed color="primary" class="mx-auto" @click="handleGoToCart()">
                 Proceed
               </v-btn>
             </div>
           </div>
         </div>
+          <!-- Kitchen Appliances: addon-only service, no building/size form -->
+          <div class="row" v-if="serviceType == 'Kitchen Appliances'">
+            <div class="col-md-12">
+              <v-textarea name="input-7-1" label="Notes" v-model="evaluator_note"
+                hint="Please mention if you have any specific request.">
+              </v-textarea>
+            </div>
+            <div class="col-3 offset-5">
+              <v-btn depressed color="primary" class="mx-auto" @click="handleGoToCart()">
+                Proceed
+              </v-btn>
+            </div>
+          </div>
         <!-- Tab 1 Ends here -->
 
         <!-- Tab 2 begins here -->
@@ -2749,7 +2762,7 @@
                     <div v-for="addon in bill.section.addons" v-bind:key="addon.id">
                       <div class="d-flex mt-1" v-if="addon.selected">
                         <div>
-                          <span v-text="`${addon.name} x ${addon.quantity}`"></span>
+                          <span v-text="`${addon.name} xpp ${addon.quantity}`"></span>
                         </div>
                         <div class="ml-auto primary-text">
                           KD <span v-text="addon.total_price"></span>

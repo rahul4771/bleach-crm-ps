@@ -229,6 +229,7 @@ const app = new Vue({
         // url:'https://my.bleachkw.com',
         url: 'http://127.0.0.1:8000',
         slot_loader: false,
+        lastLoadedServiceType: '',  // Track last loaded service to prevent duplicate addon calls
         kitchenData: {
             wall_type: '',
             floor_type: '',
@@ -622,7 +623,9 @@ const app = new Vue({
         // addons_parsed watcher - addon-carousel component handles re-initialization automatically
         serviceType(newVal) {
             // Whenever the selected service type changes, fetch associated addons
-            if (newVal) {
+            // Only call if the service type is different from the last loaded one (prevents duplicate calls)
+            if (newVal && newVal !== this.lastLoadedServiceType) {
+                this.lastLoadedServiceType = newVal;  // Update the last loaded service
                 this.getAddons();
                 // addon-carousel component will automatically re-initialize when addons_parsed updates
             }
@@ -916,6 +919,7 @@ const app = new Vue({
          * Clears previous slot selections and fetches slots for new date
          */
         oneTimeNewDateChange() {
+
             this.one_time_slots = {};
             this.one_time_slots[this.oneTimeDateSelected] = { slots: [] };
 
@@ -3163,8 +3167,11 @@ const app = new Vue({
             this.new_kitchen_cabinet_size = 0
             this.old_kitchen_cabinet_size = 0
             this.old_kitchen_nocabinet_size = 0
+
+
             for (const j of this.schedule_serviceTypes_selected) {
                 const serIndex = j
+
                 if (this.multiServicesBill[serIndex].service == 'Upholstery Cleaning') {
                     for (const bill of this.multiServicesBill[serIndex].bill) {
                         if (bill.section.type == 'SOFA') {
@@ -3178,16 +3185,15 @@ const app = new Vue({
                 else if (this.multiServicesBill[serIndex].service == 'Kitchen Cleaning') {
                     for (const bill of this.multiServicesBill[serIndex].bill) {
                         if (bill.section.type == 'old') {
-                            if (bill.is_cabinet) {
+                            if (bill.section.is_cabinet) {
                                 this.old_kitchen_cabinet_size = this.old_kitchen_cabinet_size + parseInt(bill.section.size.max_size)
                             }
                             else {
                                 this.old_kitchen_nocabinet_size = this.old_kitchen_nocabinet_size + parseInt(bill.section.size.max_size)
                             }
-
                         }
                         if (bill.section.type == 'new') {
-                            if (bill.is_cabinet) {
+                            if (bill.section.is_cabinet) {
                                 this.new_kitchen_cabinet_size = this.new_kitchen_cabinet_size + parseInt(bill.section.size.max_size)
                             }
                             else {
@@ -3276,8 +3282,7 @@ const app = new Vue({
             this.no_of_apartments = [];
             this.buildingsCompleted = false
             this.getSize();
-            this.getAddons()
-
+            // Watcher on serviceType will call getAddons() automatically
 
             if (this.selectedService.name == 'Kitchen Cleaning') {
                 this.otherService.type = 'old'
@@ -3313,8 +3318,7 @@ const app = new Vue({
                     this.selectedService = firstService;
                     this.serviceType = firstService.name;
                     this.selectService(firstService);
-                    // Get size info for the auto-selected service
-                    this.getSize();
+                    // Watcher will handle getAddons() and getSize() via serviceType change
                 }
             });
         },
@@ -3344,7 +3348,7 @@ const app = new Vue({
                 this.no_of_apartments = [];
                 this.buildingsCompleted = false
                 this.getSize();
-                this.getAddons();
+                // Watcher on serviceType will call getAddons() automatically
 
             } catch (error) {
                 console.error("Error getting service size:", error);
@@ -3749,10 +3753,21 @@ const app = new Vue({
         },
         getMultipleSlots() {
             this.slot_loader = true
-            const schedule_services = this.schedule_serviceTypes
-            if (this.checkKitchen()) {
-                schedule_services.push('Kitchen Cleaning')
+
+            // Build service types array from multiServicesBill if schedule_serviceTypes is empty
+            let schedule_services = [];
+
+            if (this.schedule_serviceTypes && this.schedule_serviceTypes.length > 0) {
+                schedule_services = [...this.schedule_serviceTypes];
+            } else {
+                // If schedule_serviceTypes is not populated, build from multiServicesBill
+                for (const service of this.multiServicesBill) {
+                    if (service.service && !schedule_services.includes(service.service)) {
+                        schedule_services.push(service.service);
+                    }
+                }
             }
+            if (schedule_services.length === 0) return; // No services to fetch slots for, exit early
 
             fetch(this.url + "/customer/ajax/getmultipleservicecleaningslotes", {
                 method: 'POST',
@@ -3974,10 +3989,10 @@ const app = new Vue({
                 addons: []
             };
             this.parseAddons()
-            if (this.selectedService.name == 'Kitchen Cleaning') {
-                this.otherService.type = "old"
-                this.changeKitchen()
-            }
+            // if (this.selectedService.name == 'Kitchen Cleaning') {
+            //     this.otherService.type = "old"
+            //     this.changeKitchen()
+            // }
 
             this.dialog = true;
             this.dialogmsg = "Add New";
@@ -4190,7 +4205,7 @@ const app = new Vue({
                 if (this.otherService.stain_reason.length > 0) {
                     this.otherService.stain_reason = this.otherService.stain_reason.join()
                 }
-                
+
                 // Format addons with proper name and price fields
                 if (this.addons_parsed && this.addons_parsed.length > 0) {
                     const formattedAddons = [];
@@ -4198,7 +4213,7 @@ const app = new Vue({
                         if (addon.selected) {
                             let addonPrice = 0;
                             let selectedSize = addon.selected_size || {};
-                            
+
                             if (selectedSize && selectedSize.price) {
                                 addonPrice = parseFloat(selectedSize.price);
                             } else if (addon.size && addon.size.length > 0 && addon.size[0].price) {
@@ -4207,7 +4222,7 @@ const app = new Vue({
                             } else if (addon.details && addon.details.price) {
                                 addonPrice = parseFloat(addon.details.price);
                             }
-                            
+
                             if (addonPrice > 0 && addon.quantity > 0) {
                                 formattedAddons.push({
                                     id: addon.details?.id || null,
@@ -4222,7 +4237,7 @@ const app = new Vue({
                     }
                     this.otherService.addons = formattedAddons;
                 }
-                
+
                 this.otherServices.push(this.otherService);
                 if (this.serviceType == 'Upholstery Cleaning') {
                     this.billingData.push({
@@ -4267,8 +4282,6 @@ const app = new Vue({
                     stain_age: "",
                     section_cost: null,
                     sectiononly_cost: null,
-
-
                     addons: []
                 };
                 this.parseAddons()
@@ -4285,7 +4298,7 @@ const app = new Vue({
                 if (this.otherService.stain_reason.length > 0) {
                     this.otherService.stain_reason = this.otherService.stain_reason.join()
                 }
-                
+
                 // Format addons with proper name and price fields
                 if (this.addons_parsed && this.addons_parsed.length > 0) {
                     const formattedAddons = [];
@@ -4293,7 +4306,7 @@ const app = new Vue({
                         if (addon.selected) {
                             let addonPrice = 0;
                             let selectedSize = addon.selected_size || {};
-                            
+
                             if (selectedSize && selectedSize.price) {
                                 addonPrice = parseFloat(selectedSize.price);
                             } else if (addon.size && addon.size.length > 0 && addon.size[0].price) {
@@ -4302,7 +4315,7 @@ const app = new Vue({
                             } else if (addon.details && addon.details.price) {
                                 addonPrice = parseFloat(addon.details.price);
                             }
-                            
+
                             if (addonPrice > 0 && addon.quantity > 0) {
                                 formattedAddons.push({
                                     id: addon.details?.id || null,
@@ -4317,7 +4330,7 @@ const app = new Vue({
                     }
                     this.otherService.addons = formattedAddons;
                 }
-                
+
                 this.otherServices.push(this.otherService);
                 if (this.serviceType == 'Upholstery Cleaning') {
                     this.billingData.push({
@@ -4437,8 +4450,10 @@ const app = new Vue({
             // Hide carousel navigation arrows in Schedule tab
             $('.owl-nav').hide();
 
-            if (this.scheduleStat && !this.editScheduleStat) {
-                this.addAllServiceTypes();
+            // Always populate schedule_serviceTypes from multiServicesBill
+            // This ensures Kitchen Cleaning and other services get duration options
+            if (!this.editScheduleStat) {
+                this.schedule_serviceTypes_selected = this.multiServicesBill.map((_, i) => i)
             }
 
             this.findSelectedTotalSize();
@@ -4482,105 +4497,74 @@ const app = new Vue({
             // Show carousel navigation arrows
             $('.owl-nav').show();
         },
-        goToCart() {
-            // Handle addons for ANY service type (not just Kitchen Appliances)
-            if (this.addons_parsed && this.addons_parsed.length > 0) {
-                const hasSelectedAddons = this.addons_parsed.some(addon => addon.selected);
-                
-                if (hasSelectedAddons) {
-                    // Format addons properly with all display information
-                    const formattedAddons = [];
-                    for (const addon of this.addons_parsed) {
-                        if (addon.selected) {
-                            // Extract addon price - unified logic for all service types
-                            let addonPrice = 0;
-                            let selectedSize = addon.selected_size || {};
-                            
-                            // Priority 1: If selected_size exists with price, use it
-                            if (selectedSize && selectedSize.price) {
-                                addonPrice = parseFloat(selectedSize.price);
-                            }
-                            // Priority 2: If size array exists with items, use first size's price
-                            else if (addon.size && addon.size.length > 0 && addon.size[0].price) {
-                                addonPrice = parseFloat(addon.size[0].price) || 0;
-                                selectedSize = addon.size[0]; // Set default selected size
-                            }
-                            // Priority 3: Check details.price for simple addons
-                            else if (addon.details && addon.details.price) {
-                                addonPrice = parseFloat(addon.details.price);
-                            }
-                            
-                            // Add addon if it has a price and quantity
-                            if (addonPrice > 0 && addon.quantity > 0) {
-                                formattedAddons.push({
-                                    id: addon.details?.id || null,
-                                    name: addon.details?.name || 'Addon',
-                                    category: addon.details?.category || null,
-                                    quantity: addon.quantity || 1,
-                                    unit_price: addonPrice,
-                                    total_price: (addonPrice * (addon.quantity || 1)),
-                                    selected_size: selectedSize,
-                                    details: addon.details || {},
-                                    selected: true
-                                });
-                            }
-                        }
-                    }
-                    
-                    if (formattedAddons.length > 0) {
-                        const addonTotalCost = formattedAddons.reduce((sum, addon) => sum + (addon.total_price || 0), 0);
-                        const sizeCost = (this.otherService.size && this.otherService.size.cost) ? parseFloat(this.otherService.size.cost) : 0;
-                        
-                        const otherService = {
-                            material: this.otherService.material || "",
-                            addons: formattedAddons,  // Use formatted addons with proper pricing
-                            color: this.otherService.color || "",
-                            size: this.otherService.size || {},
-                            section_cost: sizeCost + addonTotalCost,
-                            sectiononly_cost: sizeCost,
-                            type: this.otherService.type || "",
-                            age: this.otherService.age || "",
-                            stain: this.otherService.stain || false,
-                            stain_reason: this.otherService.stain_reason || "",
-                            wall_type: this.otherService.wall_type || "",
-                            floor_type: this.otherService.floor_type || "",
-                            ceiling_type: this.otherService.ceiling_type || "",
-                            residue: this.otherService.residue || false,
-                            is_cabinet: this.otherService.is_cabinet || false,
-                            hallway_size: this.otherService.hallway_size || "",
-                            sides: this.otherService.sides || "",
-                            stain_age: this.otherService.stain_age || "",
-                            height: this.otherService.height || "",
-                            keynote_data: this.otherService.keynote_data || []
-                        };
-                        
-                        const serviceData = {
-                            name: this.serviceType,
-                            section_name: this.serviceType,
-                            section_cost: otherService.section_cost,
-                            section_net_cost: otherService.section_cost,
-                            sectiononly_cost: otherService.sectiononly_cost,
-                            sectiononly_net_cost: otherService.sectiononly_cost,
-                            section: otherService
-                        };
-                        
-                        this.billingData.push(serviceData);
-                    }
-                }
+        /**
+         * Prepare billing entry for Kitchen Appliances (addon-only service).
+         * Has no size/area cost — pricing is purely from selected addons.
+         * Call this before goToCart() when serviceType is 'Kitchen Appliances'.
+         */
+        prepareBilling() {
+            const addonCost = this.findAddonCost()
+            const otherService = {
+                material: "",
+                addons: [...this.addons_parsed],
+                color: "",
+                size: {},
+                section_cost: addonCost,
+                sectiononly_cost: 0,
+                type: "",
+                age: "",
+                stain: false,
+                stain_reason: "",
+                wall_type: "",
+                floor_type: "",
+                ceiling_type: "",
+                residue: false,
+                is_cabinet: false,
+                hallway_size: "",
+                sides: "",
+                stain_age: "",
+                height: "",
+                keynote_data: []
             }
-
-            // Generic cost handling for Hourly Cleaning (special case)
+            this.billingData.push({
+                name: this.serviceType,
+                section_name: this.serviceType,
+                section: otherService,
+                section_cost: addonCost,
+                section_net_cost: addonCost,
+                sectiononly_cost: 0,
+                sectiononly_net_cost: 0
+            })
+            // 
+        },
+        /**
+         * Zero out all billing costs for Hourly Cleaning.
+         * Pricing for hourly is handled separately at the scheduling level.
+         * Call this before goToCart() when serviceType is 'Hourly Cleaning'.
+         */
+        prepareHourlyCleaningBilling() {
+            for (var b = 0; b < this.billingData.length; b++) {
+                this.billingData[b].section_net_cost = 0
+                this.billingData[b].section_cost = 0
+                this.billingData[b].sectiononly_net_cost = 0
+                this.billingData[b].sectiononly_cost = 0
+            }
+        },
+        /**
+         * Entry point for cart navigation.
+         * Calls the appropriate billing preparation method for special service types
+         * before delegating to goToCart().
+         */
+        handleGoToCart() {
             if (this.serviceType === 'Hourly Cleaning') {
-                for (let b = 0; b < this.billingData.length; b++) {
-                    this.billingData[b].section_net_cost = 0;
-                    this.billingData[b].section_cost = 0;
-                    this.billingData[b].sectiononly_net_cost = 0;
-                    this.billingData[b].sectiononly_cost = 0;
-                }
+                this.prepareHourlyCleaningBilling()
+            } else {
+                this.prepareBilling()
             }
-
-            // Build service bill with dynamic service type
-            let sampleServicesBill = {
+            this.goToCart()
+        },
+        goToCart() {
+            var sampleServicesBill = {
                 service: this.serviceType,
                 bill: [],
                 serviceNo: this.serviceCount,
@@ -4590,24 +4574,17 @@ const app = new Vue({
                 schedule_details: {},
                 cleaners: null,
                 shift_availability_check: true
-            };
+            }
 
-            this.serviceTypes.push(this.serviceType);
+            this.serviceTypes.push(this.serviceType)
 
-            this.multiServiceImages.push({ service: this.selectedService.name, images: this.imageData });
-            this.imageData = [];
-            
-            sampleServicesBill.bill = this.billingData;
+            this.multiServiceImages.push({ service: this.selectedService.name, images: this.imageData })
+            this.imageData = []
+            Object.assign(sampleServicesBill.bill, this.billingData);
 
-            this.multiServicesBill.push(sampleServicesBill);
-            this.activeTab = 'Cart';
-
-            // Hide carousel navigation arrows in Cart tab
-            $('.owl-nav').hide();
-
+            this.multiServicesBill.push(sampleServicesBill)
+            this.activeTab = 'Cart'
             window.scrollTo(0, 0);
-            
-            // Reset temporary service bill
             sampleServicesBill = {
                 service: '',
                 bill: [],
@@ -4615,17 +4592,12 @@ const app = new Vue({
                 area_type: '',
                 location_type: '',
                 evaluator_note: ''
-            };
-            
-            // Reset area and location data
-            this.area_type = '';
-            this.location_type = '';
-            this.evaluator_note = '';
-            this.billingData = [];
-            this.otherServices = [];
-            this.addons_parsed = [];  // Reset addons after adding to bill
-            
-            // Reset other service object
+            }
+            this.area_type = ''
+            this.location_type = ''
+            this.evaluator_note = ''
+            this.billingData = []
+            this.otherServices = []
             this.otherService = {
                 material: "",
                 addons: [],
@@ -4647,34 +4619,33 @@ const app = new Vue({
                 stain_age: "",
                 height: "",
                 keynote_data: []
-            };
-            
-            // Reset building and apartment data
-            this.building = [];
+            },
+                this.building = []
             this.no_of_apartments = [];
 
-            this.buildingsCompleted = false;
-            this.serviceData.service_details.location_type = '';
-            this.serviceData.service_details.area_type = '';
-            this.e = { building: [] };
-            this.no_of_building = 0;
-            this.temp_no_of_building = 0;
-            this.no_of_floors = [];
-            
-            // Recalculate costs and schedules
-            this.calcTotal();
-            this.findSelectedTotalSize();
-            this.findServiceCost();
-            this.tempCost = 0;
-            this.schedule_serviceTypes_selected = [];
-            this.schedule_serviceTypes = [];
-            
-            // Set schedule status based on service type
+            this.buildingsCompleted = false
+            this.serviceData.service_details.location_type = ''
+            this.serviceData.service_details.area_type = ''
+            this.e = { building: [] }
+            this.no_of_building = 0
+            this.temp_no_of_building = 0
+            this.no_of_floors = []
+            this.calcTotal()
+            //this.findTotalSize()
+            this.findSelectedTotalSize()
+            this.findServiceCost()
+            this.tempCost = 0
+            this.schedule_serviceTypes_selected = []
+            this.schedule_serviceTypes = []
+            //  this.durationcalculation();
             if (this.checkIsHourly()) {
-                this.scheduleStat = false;
-            } else {
-                this.scheduleStat = true;
+                this.scheduleStat = false
             }
+            else {
+                this.scheduleStat = true
+            }
+            // this.parseAddons();
+
         },
         hourlySelection() {
             if (this.is_hourly) {
@@ -4866,7 +4837,9 @@ const app = new Vue({
             const [year, month, day] = this.dateSelected.split('-');
             this.slotDate = `${day}-${month}-${year}`;
 
-            if (this.selectedDuration.cleaners && this.serviceType && this.slotDate) {
+            // Call getMultipleSlots when we have date and cleaners
+            // Works for both single and multiple service scheduling
+            if (this.selectedDuration.cleaners && this.slotDate) {
                 this.getMultipleSlots();
             }
         },
@@ -5386,9 +5359,9 @@ const app = new Vue({
         setCost(building, floor, apartment) {
             this.building[building].floors[floor].apartments[apartment].cost = "";
         },
-        getKitchenProductivity() {
-            fetch(this.url + "/customer/ajax/getserviceproductivity?service_type=" +
-                'Kitchen Cleaning')
+        getServiceProductivity() {
+            if (!this.serviceType) return;
+            fetch(`${this.url}/customer/ajax/getserviceproductivity?service_type=${this.serviceType}`)
                 .then(response => response.json())
                 .then(data => {
                     this.new_kitchen_cabinet_productivity = data.newkitchenwithcabinet_perhour_cleaning
@@ -5409,9 +5382,40 @@ const app = new Vue({
                 return false
             }
         },
+        /**
+         * Calculate addon manhour from bill items
+         * @param {Array} billItems - Array of bill items containing addons
+         * @returns {number} Total addon manhour
+         */
+        calculateAddonManhour(billItems) {
+            return billItems
+                .flatMap(item => item.section?.addons || [])
+                .filter(addon => addon?.selected)
+                .reduce((total, addon) => {
+                    // Validate required properties
+                    if (!addon?.details?.productivity || !addon?.quantity) {
+                        return total;
+                    }
+
+                    const quantity = addon.quantity;
+                    const productivity = addon.details.productivity;
+
+                    if (addon.details.category && addon.selected_size?.max_size) {
+                        const maxSize = parseInt(addon.selected_size.max_size);
+                        if (productivity > 0) {
+                            return total + (quantity * (maxSize / productivity));
+                        }
+                    } else if (productivity > 0) {
+                        return total + (productivity * quantity);
+                    }
+                    
+                    return total;
+                }, 0);
+        },
         doSomethingAsync(k) {
             return new Promise((resolve) => {
                 let service_to_select = '';
+
                 if (this.schedule_serviceTypes[k] == 'Kitchen Appliances') {
                     service_to_select = 'Kitchen Cleaning'
                 }
@@ -5421,8 +5425,8 @@ const app = new Vue({
                 else {
                     service_to_select = this.schedule_serviceTypes[k]
                 }
-                fetch(this.url + "/customer/ajax/getserviceproductivity?service_type=" +
-                    service_to_select)
+
+                fetch(`${this.url}/customer/ajax/getserviceproductivity?service_type=${service_to_select}`)
                     .then(response => response.json())
                     .then((data) => {
                         let total_estimated_size = 0
@@ -5503,38 +5507,14 @@ const app = new Vue({
                                     this.old_kitchen_nocabinet_size / data["oldkitchenwithoutcabinet_perhour_cleaning"]
                                 )
                             //To find addons man hour 
-                            var addon_manhour = 0
-                            for (var ao = 0; ao < this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length; ao++) {
-                                for (var addon = 0; addon < this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons.length; addon++) {
-                                    if (this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].selected) {
-                                        if (this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].details.category) {
-                                            addon_manhour = addon_manhour + (this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].quantity * (parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].selected_size.max_size) / this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].details.productivity))
-                                        }
-                                        else {
-                                            addon_manhour = addon_manhour + this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].details.productivity * this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].quantity
-                                        }
-                                    }
-                                }
-
-                            }
+                            const billItems = this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill;
+                            const addon_manhour = this.calculateAddonManhour(billItems);
                             manhour = parseInt(manhour) + parseInt(addon_manhour)
                         }
                         else if (selected_service == 'Kitchen Appliances') {
-                            var addon_manhour = 0
-                            for (var ao = 0; ao < this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length; ao++) {
-                                for (var addon = 0; addon < this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons.length; addon++) {
-                                    if (this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].selected) {
-                                        if (this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].details.category) {
-                                            addon_manhour = addon_manhour + (this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].quantity * (parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].selected_size.max_size) / this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].details.productivity))
-                                        }
-                                        else {
-                                            addon_manhour = addon_manhour + this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].details.productivity * this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].quantity
-                                        }
-                                    }
-                                }
-
-                            }
-                            var manhour = parseInt(addon_manhour)
+                            const billItems = this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill;
+                            const addon_manhour = this.calculateAddonManhour(billItems);
+                            var manhour = parseInt(addon_manhour);
                         }
 
                         else if (selected_service == "Window Cleaning") {
@@ -5639,6 +5619,8 @@ const app = new Vue({
 
 
                     }).catch((error) => {
+                        console.error("doSomethingAsync failed for service:", service_to_select, error.message || error, error.stack)
+                        resolve("done")
                     })
             });
         },
@@ -5659,28 +5641,43 @@ const app = new Vue({
             this.totalmanhour = 0
             let promises = [];
             var count = 0;
+
+
             for (var k = 0; k < this.schedule_serviceTypes.length; k++) {
-
-
                 promises.push(
                     this.doSomethingAsync(k)
                 )
-
-
             }
+
             /** Loop ends here  */
             Promise.all(promises)
                 .then(responses => {
                     var manhour = this.totalmanhour
+
                     // var n=this.n
                     if (this.cleaningPolicy == 'Subscription') {
                         this.subscriptionHourCalculation(manhour)
                     }
                     else {
-
                         this.newHourCalculation(manhour)
                     }
 
+
+                    // Fallback: If no duration was calculated but we have services, call getMultipleSlots directly
+                    if (this.duration.length === 0 && this.schedule_serviceTypes.length > 0) {
+                        // Set a default duration as fallback
+                        this.selectedDuration = {
+                            cleaners: 1,
+                            hours: 2,
+                            slots: 1
+                        };
+                        // Try to get slots after a short delay to ensure data is ready
+                        setTimeout(() => {
+                            if (this.slotDate) {
+                                this.getMultipleSlots();
+                            }
+                        }, 500);
+                    }
                 })
         },
         oldHourCalculation(n) {
@@ -5855,9 +5852,6 @@ const app = new Vue({
 
         },
         newHourCalculation(n) {
-
-
-
             if (n % 2 == 1) {
                 n = n + 1
             }
@@ -6118,7 +6112,7 @@ const app = new Vue({
         this.url = api;
         this.getServiceTypes();
         this.getServices();
-        this.getKitchenProductivity();
+        this.getServiceProductivity();
         this.getAreaTypes();
         this.getIp();
         this.getGovernorate();
@@ -6137,7 +6131,7 @@ const app = new Vue({
         this.formatDate();
         this.getMultipleSlots();
 
-        this.changeNewKitchen();
+        // this.changeNewKitchen();
 
         // Initialize owl carousels after Vue has finished rendering
         this.$nextTick(() => {
