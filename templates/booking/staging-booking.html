@@ -2234,7 +2234,7 @@
                         v-model="otherService.size" :attach="true"></v-select>
                     </div>
                     <div v-if="serviceType == 'Car Parking Umbrella' || serviceType == 'Outdoor Cleaning'">
-                      <v-select :items="sizeData" item-text="combinedSize" return-object label="Size "
+                      <v-select :items="sizeData" item-text="combinedSize" return-object label="Size"
                         :rules="[v => !!v || 'Size is required']" required v-model="otherService.size"
                         :attach="true"></v-select>
                     </div>
@@ -2370,10 +2370,10 @@
 
                 <!-- key note ends here-->
                 <div class="col-md-12 text-center mt-4">
-                  <!-- <v-btn color="primary" class="mr-4 mx-auto" v-on:click="addOtherService()"
-                      v-if="serviceType!='Kitchen Cleaning' && serviceType != 'Kitchen Appliances'">
-                      Add --
-                    </v-btn> -->
+                  <v-btn color="primary" class="mr-4 mx-auto" v-on:click="addOtherService()"
+                      v-if="serviceType =='Upholstery Cleaning' || serviceType == 'Mattress Cleaning' || serviceType == 'Carpet Cleaning'">
+                      Add
+                    </v-btn>
                   <v-btn color="primary" class="mr-4 mx-auto" v-on:click="addOtherService()"
                     v-if="add_new_kitchen && serviceType=='Kitchen Cleaning'">
                     Add
