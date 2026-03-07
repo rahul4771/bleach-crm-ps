@@ -3885,8 +3885,8 @@ const app = new Vue({
                 .catch((error) => {
                 });
         },
-        getSize() {
-            let service = this.serviceType
+        getSize(serviceType = null) {
+            let service = serviceType || this.serviceType
             if (service == 'Hourly Cleaning') {
                 service = 'General Cleaning'
             }
@@ -3905,7 +3905,7 @@ const app = new Vue({
                         this.serviceSize = data;
                     }
                     this.parseSize();
-                    if (this.serviceType == 'Kitchen Cleaning') {
+                    if (service == 'Kitchen Cleaning' || this.serviceType == 'Kitchen Cleaning') {
                         this.kitchenTypes = [...new Set(this.sizeData.map(size => size.kitchen_type))];
                         this.otherService.type = this.kitchenTypes[0]
                         this.kitchenTypeFilter();

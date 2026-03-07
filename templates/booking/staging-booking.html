@@ -1503,7 +1503,7 @@
                                               :rules="[v => v !== null && v !== undefined || 'This field is required']"
                                               required>
 
-                                              <v-radio :value="true">
+                                              <v-radio :value="true" @change="getSize('Kitchen Cleaning')">
                                                 <template v-slot:label>
                                                   <div>
                                                     Yes<strong class="success--text"></strong>
@@ -1817,7 +1817,7 @@
                                                         :rules="[v => v !== null && v !== undefined || 'This field is required']"
                                                         required>
 
-                                                        <v-radio :value="true">
+                                                        <v-radio :value="true" @change="getSize('Kitchen Cleaning')">
                                                           <template v-slot:label>
                                                             <div>
                                                               Yes<strong class="success--text"></strong>
