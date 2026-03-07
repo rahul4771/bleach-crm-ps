@@ -2762,7 +2762,7 @@
                     <div v-for="addon in bill.section.addons" v-bind:key="addon.id">
                       <div class="d-flex mt-1" v-if="addon.selected">
                         <div>
-                          <span v-text="`${addon.name} xpp ${addon.quantity}`"></span>
+                          <span v-text="`${addon.name} x ${addon.quantity}`"></span>
                         </div>
                         <div class="ml-auto primary-text">
                           KD <span v-text="addon.total_price"></span>

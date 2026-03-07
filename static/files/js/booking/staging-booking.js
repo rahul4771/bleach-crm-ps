@@ -2152,16 +2152,25 @@ const app = new Vue({
                         for (const addon of this.multiServicesBill[i].bill[j].section.addons) {
                             if (addon.selected) {
                                 addoncounter = addoncounter + 1
+                                // Handle both old structure (addon.details.name) and new structure (addon.name)
+                                const addonName = addon.name || addon.details?.name || 'Addon';
+                                const addonPrice = addon.unit_price || addon.details?.price || 0;
+                                const addonQuantity = addon.quantity || 1;
+                                
                                 this.serviceDetails.service_details[i].sections[j].addons[addoncounter] = {
-                                    name: addon.details.name,
-                                    addon_cost: addon.details.price,
-                                    addon_net_cost: addon.details.price * addon.quantity,
-                                    quantity: addon.quantity,
+                                    name: addonName,
+                                    addon_cost: addonPrice,
+                                    addon_net_cost: addonPrice * addonQuantity,
+                                    quantity: addonQuantity,
                                     size: '',
                                     other_details: ''
                                 }
-                                if (addon.details.category) {
-                                    this.serviceDetails.service_details[i].sections[j].addons[addoncounter].size = addon.selected_size.size
+                                
+                                // Check if addon has size information
+                                const selectedSize = addon.selected_size || addon.details?.category;
+                                if (selectedSize) {
+                                    const sizeValue = addon.selected_size?.size || selectedSize;
+                                    this.serviceDetails.service_details[i].sections[j].addons[addoncounter].size = sizeValue;
                                 }
                             }
                         }
@@ -2327,14 +2336,23 @@ const app = new Vue({
                         for (const addon of this.multiServicesBill[i].bill[j].section.addons) {
                             if (addon.selected) {
                                 addoncounter = addoncounter + 1
+                                // Handle both old structure (addon.details.name) and new structure (addon.name)
+                                const addonName = addon.name || addon.details?.name || 'Addon';
+                                const addonPrice = addon.unit_price || addon.details?.price || 0;
+                                const addonQuantity = addon.quantity || 1;
+                                
                                 this.serviceDetails.service_details[i].sections[j].addons[addoncounter] = {
-                                    name: addon.details.name,
-                                    addon_cost: addon.details.price,
-                                    addon_net_cost: addon.details.price * addon.quantity,
-                                    quantity: addon.quantity
+                                    name: addonName,
+                                    addon_cost: addonPrice,
+                                    addon_net_cost: addonPrice * addonQuantity,
+                                    quantity: addonQuantity
                                 }
-                                if (addon.details.category) {
-                                    this.serviceDetails.service_details[i].sections[j].addons[addoncounter].size = addon.selected_size.size
+                                
+                                // Check if addon has size information
+                                const selectedSize = addon.selected_size || addon.details?.category;
+                                if (selectedSize) {
+                                    const sizeValue = addon.selected_size?.size || selectedSize;
+                                    this.serviceDetails.service_details[i].sections[j].addons[addoncounter].size = sizeValue;
                                 }
                             }
                         }
@@ -3324,6 +3342,7 @@ const app = new Vue({
         },
 
         selectServiceType(service) {
+            
             if (!service || !service.name) {
                 console.error("Invalid service object");
                 return;
@@ -4504,9 +4523,39 @@ const app = new Vue({
          */
         prepareBilling() {
             const addonCost = this.findAddonCost()
+            
+            // Format addons same way as addOtherService()
+            const formattedAddons = [];
+            for (const addon of this.addons_parsed) {
+                if (addon.selected) {
+                    let addonPrice = 0;
+                    let selectedSize = addon.selected_size || {};
+
+                    if (selectedSize && selectedSize.price) {
+                        addonPrice = parseFloat(selectedSize.price);
+                    } else if (addon.size && addon.size.length > 0 && addon.size[0].price) {
+                        addonPrice = parseFloat(addon.size[0].price) || 0;
+                        selectedSize = addon.size[0];
+                    } else if (addon.details && addon.details.price) {
+                        addonPrice = parseFloat(addon.details.price);
+                    }
+
+                    if (addonPrice > 0 && addon.quantity > 0) {
+                        formattedAddons.push({
+                            id: addon.details?.id || null,
+                            name: addon.details?.name || 'Addon',
+                            quantity: addon.quantity || 1,
+                            unit_price: addonPrice,
+                            total_price: (addonPrice * (addon.quantity || 1)),
+                            selected: true
+                        });
+                    }
+                }
+            }
+            
             const otherService = {
                 material: "",
-                addons: [...this.addons_parsed],
+                addons: formattedAddons,
                 color: "",
                 size: {},
                 section_cost: addonCost,
@@ -4580,7 +4629,7 @@ const app = new Vue({
 
             this.multiServiceImages.push({ service: this.selectedService.name, images: this.imageData })
             this.imageData = []
-            Object.assign(sampleServicesBill.bill, this.billingData);
+            sampleServicesBill.bill = [...this.billingData];
 
             this.multiServicesBill.push(sampleServicesBill)
             this.activeTab = 'Cart'
