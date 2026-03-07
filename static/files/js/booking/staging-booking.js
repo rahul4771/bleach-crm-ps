@@ -698,12 +698,10 @@ const app = new Vue({
          * @returns {number} Number of slots required based on hours
          */
         getRequiredSlots() {
-            console.log("getRequiredSlots object", JSON.stringify(this.cleaning_set));
             if (!this.cleaning_set || this.currentSlotDay < 1) {
                 return 0;
             }
             const hours = this.cleaning_set[this.currentSlotDay - 1]?.[0] || 0;
-            console.log("hours", hours)
             return Math.ceil(hours / 2);
         },
 
@@ -3126,8 +3124,6 @@ const app = new Vue({
             this.slot_msg = false;
             const slotsCount = this.oneTimeSlotCounter();
             const slotsRequired = Math.ceil(this.selectedDuration.hours / 2);
-            console.log("this.selectedDuration.hours", this.selectedDuration.hours)
-            console.log("slotsRequired", slotsRequired, "slotsCount", slotsCount);
 
             if (slotsCount !== slotsRequired) {
                 this.slot_msg = true;
@@ -6029,7 +6025,6 @@ const app = new Vue({
                 if (Number.isInteger(cleaningset[0])) {
                     cleaningset = [cleaningset]
                 }
-            console.log("newHourCalculation cleaningset", JSON.stringify(cleaningset))
             this.cleaning_set = cleaningset
             this.selectedDuration = {
                 cleaners: this.cleaning_set[0][1],
@@ -6144,7 +6139,6 @@ const app = new Vue({
                 if (Number.isInteger(cleaningset[0])) {
                     cleaningset = [cleaningset]
                 }
-            console.log("subscriptionHourCalculation cleaningset", JSON.stringify(cleaningset))
 
             this.cleaning_set = cleaningset
             var sub_cleaners = 0
