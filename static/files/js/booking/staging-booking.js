@@ -226,8 +226,8 @@ const app = new Vue({
             required: v => !!v || 'this field is required',
         },
         // url:'',
-        // url:'https://my.bleachkw.com',
-        url: 'http://127.0.0.1:8000',
+        url:'https://my.bleachkw.com',
+        // url: 'http://127.0.0.1:8000',
         slot_loader: false,
         lastLoadedServiceType: '',  // Track last loaded service to prevent duplicate addon calls
         kitchenData: {
