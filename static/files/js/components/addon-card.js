@@ -54,7 +54,6 @@ Vue.component('addon-card', {
       return this.addon && this.addon.selected_size && Object.keys(this.addon.selected_size || {}).length > 0;
     },
     hasImagePath() {
-      console.log(JSON.stringify(this.addon));
       return this.addon && this.addon.details && this.addon.details.image_path && this.addon.details.image_path.length > 0;
     }
   },
