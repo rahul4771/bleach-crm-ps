@@ -52,6 +52,7 @@ urlpatterns = [
 		url(r'^ajax/getareatypes$',views.GetAreaTypes.as_view(),name='ajax-getareatypes'),
 		url(r'^ajax/getservicesizeprice$',views.GetServiceSizePrice.as_view(),name='ajax-getservicesizeprice'),
 		url(r'^ajax/getserviceproductivity$',views.GetServiceProductivity.as_view(),name='ajax-serviceproductivity'),
+		url(r'^ajax/getstagingserviceproductivity$',views.GetStagingServiceProductivity.as_view(),name='ajax-staging-serviceproductivity'),
 		url(r'^ajax/getserviceaddons$',views.GetServiceAddOns.as_view(),name='ajax-serviceaddons'),
 		
 		url(r'^ajax/getmultipleservicecleaningslotes$',views.GetMultipleServiceCleaningSlotes.as_view(),name='ajax-multipleservicecleaningslotes'),#New logic applied latest 8 to 22 logic

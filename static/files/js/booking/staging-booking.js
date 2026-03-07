@@ -698,10 +698,12 @@ const app = new Vue({
          * @returns {number} Number of slots required based on hours
          */
         getRequiredSlots() {
+            console.log("getRequiredSlots object", JSON.stringify(this.cleaning_set));
             if (!this.cleaning_set || this.currentSlotDay < 1) {
                 return 0;
             }
             const hours = this.cleaning_set[this.currentSlotDay - 1]?.[0] || 0;
+            console.log("hours", hours)
             return Math.ceil(hours / 2);
         },
 
@@ -919,9 +921,22 @@ const app = new Vue({
          * Clears previous slot selections and fetches slots for new date
          */
         oneTimeNewDateChange() {
+            // Save current date's slots before moving to new date
+            if (this.oneTimeDateSelected && 
+                this.one_time_slots[this.oneTimeDateSelected] && 
+                this.one_time_slots[this.oneTimeDateSelected].slots.length > 0) {
+                
+                // Save to selected_onetime_slots to preserve across date changes
+                this.selected_onetime_slots[this.oneTimeDateSelected] = {
+                    slots: [...this.one_time_slots[this.oneTimeDateSelected].slots],
+                    day_count: this.currentSlotDay
+                };
+            }
 
-            this.one_time_slots = {};
-            this.one_time_slots[this.oneTimeDateSelected] = { slots: [] };
+            // Initialize slots for the new date
+            if (!this.one_time_slots[this.oneTimeDateSelected]) {
+                this.$set(this.one_time_slots, this.oneTimeDateSelected, { slots: [] });
+            }
 
             const [yr, mt, dy] = this.oneTimeDateSelected.split('-');
             this.slotDate = `${dy}-${mt}-${yr}`;
@@ -2922,25 +2937,37 @@ const app = new Vue({
         },
         /**
          * Remove a one-time slot from selection
-         * Adjusts slot numbers if needed (removes higher slots when adjacent slots remain)
-         * @param {number} slot - The slot to remove
+         * @param {number} slot - The slot number to remove (e.g., sindex + 1)
          */
         removeOneTimeSlot(slot) {
             this.onetimerender = false;
-            const slots = this.one_time_slots[this.oneTimeDateSelected].slots;
-            const index = slots.indexOf(slot);
-
-            if (index > -1) {
-                slots.splice(index, 1);
+            
+            if (!this.oneTimeDateSelected || !this.one_time_slots[this.oneTimeDateSelected]) {
+                this.onetimerender = true;
+                return;
             }
 
-            // If both adjacent slots exist, remove all higher slots
-            const prevSlot = parseInt(slot, 10) - 1;
-            const nextSlot = parseInt(slot, 10) + 1;
-
-            if (slots.includes(nextSlot) && slots.includes(prevSlot)) {
-                const filteredSlots = slots.filter(s => s <= slot);
-                this.one_time_slots[this.oneTimeDateSelected].slots = filteredSlots;
+            const slots = this.one_time_slots[this.oneTimeDateSelected].slots;
+            
+            // Find the slot index using the slot number to get start_time
+            // We need to find which slot object has this slot number
+            const parsedSlots = this.parsedTimeSlots || [];
+            if (slot > 0 && slot <= parsedSlots.length) {
+                const selectedSlot = parsedSlots[slot - 1]; // slot is 1-indexed, array is 0-indexed
+                
+                if (selectedSlot) {
+                    // Find the slot index in slotFormat by matching start_time
+                    const slotIndex = Object.keys(this.slotFormat).find(
+                        i => this.slotFormat[i].start_time === selectedSlot.start_time
+                    );
+                    
+                    if (slotIndex !== undefined) {
+                        const index = slots.indexOf(slotIndex);
+                        if (index > -1) {
+                            slots.splice(index, 1);
+                        }
+                    }
+                }
             }
 
             this.onetimerender = true;
@@ -3099,6 +3126,8 @@ const app = new Vue({
             this.slot_msg = false;
             const slotsCount = this.oneTimeSlotCounter();
             const slotsRequired = Math.ceil(this.selectedDuration.hours / 2);
+            console.log("this.selectedDuration.hours", this.selectedDuration.hours)
+            console.log("slotsRequired", slotsRequired, "slotsCount", slotsCount);
 
             if (slotsCount !== slotsRequired) {
                 this.slot_msg = true;
@@ -5410,7 +5439,7 @@ const app = new Vue({
         },
         getServiceProductivity() {
             if (!this.serviceType) return;
-            fetch(`${this.url}/customer/ajax/getserviceproductivity?service_type=${this.serviceType}`)
+            fetch(`${this.url}/customer/ajax/getstagingserviceproductivity?service_type=${this.serviceType}`)
                 .then(response => response.json())
                 .then(data => {
                     this.new_kitchen_cabinet_productivity = data.newkitchenwithcabinet_perhour_cleaning
@@ -5465,17 +5494,17 @@ const app = new Vue({
             return new Promise((resolve) => {
                 let service_to_select = '';
 
-                if (this.schedule_serviceTypes[k] == 'Kitchen Appliances') {
-                    service_to_select = 'Kitchen Cleaning'
-                }
-                else if (this.schedule_serviceTypes[k] == 'Hourly Cleaning') {
+                // if (this.schedule_serviceTypes[k] == 'Kitchen Appliances') {
+                //     service_to_select = 'Kitchen Cleaning'
+                // }
+                if (this.schedule_serviceTypes[k] == 'Hourly Cleaning') {
                     service_to_select = 'General Cleaning'
                 }
                 else {
                     service_to_select = this.schedule_serviceTypes[k]
                 }
 
-                fetch(`${this.url}/customer/ajax/getserviceproductivity?service_type=${service_to_select}`)
+                fetch(`${this.url}/customer/ajax/getstagingserviceproductivity?service_type=${service_to_select}`)
                     .then(response => response.json())
                     .then((data) => {
                         let total_estimated_size = 0
@@ -6000,7 +6029,7 @@ const app = new Vue({
                 if (Number.isInteger(cleaningset[0])) {
                     cleaningset = [cleaningset]
                 }
-
+            console.log("newHourCalculation cleaningset", JSON.stringify(cleaningset))
             this.cleaning_set = cleaningset
             this.selectedDuration = {
                 cleaners: this.cleaning_set[0][1],
@@ -6115,6 +6144,7 @@ const app = new Vue({
                 if (Number.isInteger(cleaningset[0])) {
                     cleaningset = [cleaningset]
                 }
+            console.log("subscriptionHourCalculation cleaningset", JSON.stringify(cleaningset))
 
             this.cleaning_set = cleaningset
             var sub_cleaners = 0
