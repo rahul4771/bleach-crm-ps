@@ -1241,7 +1241,20 @@
                       </div>
                     </div>
                   </div>
-
+                  <!-- Kitchen Appliances: addon-only service, no building/size form -->
+                  <div class="row" v-if="serviceType == 'Kitchen Appliances'">
+                    <addon-carousel :addons="addons_parsed" carousel-id="otherServiceCarousel4" heading="Add-ons"
+                      @select="selectAddons" @reduce="reduceQty" @increase="increaseQty"
+                      @update-quantity="addons_parsed[$event.index].quantity = $event.quantity"
+                      @choose-size="addons_parsed[$event.index].selected_size = $event.size">
+                    </addon-carousel>
+                    <div class="col-3 offset-5">
+                      <v-btn depressed color="primary" class="mx-auto" @click="handleGoToCart()"
+                        :disabled="findAbsoluteCost() <= 0">
+                        Proceed
+                      </v-btn>
+                    </div>
+                  </div>
 
 
                   <div>
@@ -2477,19 +2490,6 @@
             </div>
           </div>
         </div>
-          <!-- Kitchen Appliances: addon-only service, no building/size form -->
-          <div class="row" v-if="serviceType == 'Kitchen Appliances'">
-            <div class="col-md-12">
-              <v-textarea name="input-7-1" label="Notes" v-model="evaluator_note"
-                hint="Please mention if you have any specific request.">
-              </v-textarea>
-            </div>
-            <div class="col-3 offset-5">
-              <v-btn depressed color="primary" class="mx-auto" @click="handleGoToCart()">
-                Proceed
-              </v-btn>
-            </div>
-          </div>
         <!-- Tab 1 Ends here -->
 
         <!-- Tab 2 begins here -->
@@ -2776,7 +2776,7 @@
                   </div>
 
                 </div>
-                
+
                 <hr>
                 </hr>
                 <div class="mt-4">
