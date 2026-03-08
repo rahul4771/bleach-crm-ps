@@ -2693,53 +2693,55 @@ const app = new Vue({
                     this.kitchenSize = kitchenSize;
                     this.kitchenSizeData = [];
                     // Ensure kitchenSize is an array
-                    const kitchenArray = Array.isArray(kitchenSize) ? kitchenSize : (kitchenSize.data || []);
-                    for (const kitchen of kitchenArray) {
-                        kitchen["combinedSize"] =
-                            kitchen.name +
-                            " ( " +
-                            kitchen.min_size +
-                            " sq. m - " +
-                            kitchen.max_size +
-                            " sq. m )";
+                    Object.values(kitchenSize).forEach(kitchen => {
+                        kitchen.combinedSize = `${kitchen.name} ( ${kitchen.min_size} sq. m - ${kitchen.max_size} sq. m )`;
                         this.kitchenSizeData.push(kitchen);
-                    }
+                    });
                     this.serviceSize = {};
-                    if (this.kitchenData.type == "new") {
-                        $('.more-services').hide()
-                        this.parseAddons()
-                        if (this.kitchenData.is_cabinet) {
-                            for (var i = 0; i < this.kitchenSizeData.length; i++) {
-                                if (this.kitchenSizeData[i].is_newkitchen && this.kitchenSizeData[i].is_cabinet) {
-                                    this.sizeFilteredData.push(this.kitchenSizeData[i]);
-                                }
-                            }
-                        }
-                        else {
-                            for (var i = 0; i < this.kitchenSizeData.length; i++) {
-                                if (this.kitchenSizeData[i].is_newkitchen && !this.kitchenSizeData[i].is_cabinet) {
-                                    this.sizeFilteredData.push(this.kitchenSizeData[i]);
-                                }
-                            }
-                        }
+
+                    this.parseAddons();
+                    if (this.kitchenData.is_cabinet) {
+                        this.sizeFilteredData.push(...this.kitchenSizeData.filter(item => item.kitchen_type == this.kitchenData.type && item.is_cabinet));
+                    } else {
+                        this.sizeFilteredData.push(...this.kitchenSizeData.filter(item => item.kitchen_type == this.kitchenData.type && !item.is_cabinet));
                     }
-                    if (this.kitchenData.type == "old") {
-                        $('.more-services').show()
-                        if (this.kitchenData.is_cabinet) {
-                            for (var i = 0; i < this.kitchenSizeData.length; i++) {
-                                if (!this.kitchenSizeData[i].is_newkitchen && this.kitchenSizeData[i].is_cabinet) {
-                                    this.sizeFilteredData.push(this.kitchenSizeData[i]);
-                                }
-                            }
-                        }
-                        else {
-                            for (var i = 0; i < this.kitchenSizeData.length; i++) {
-                                if (!this.kitchenSizeData[i].is_newkitchen && !this.kitchenSizeData[i].is_cabinet) {
-                                    this.sizeFilteredData.push(this.kitchenSizeData[i]);
-                                }
-                            }
-                        }
-                    }
+
+
+                    // if (this.kitchenData.type == "new") {
+                    //     $('.more-services').hide()
+                    //     this.parseAddons()
+                    //     if (this.kitchenData.is_cabinet) {
+                    //         for (var i = 0; i < this.kitchenSizeData.length; i++) {
+                    //             if (this.kitchenSizeData[i].is_newkitchen && this.kitchenSizeData[i].is_cabinet) {
+                    //                 this.sizeFilteredData.push(this.kitchenSizeData[i]);
+                    //             }
+                    //         }
+                    //     }
+                    //     else {
+                    //         for (var i = 0; i < this.kitchenSizeData.length; i++) {
+                    //             if (this.kitchenSizeData[i].is_newkitchen && !this.kitchenSizeData[i].is_cabinet) {
+                    //                 this.sizeFilteredData.push(this.kitchenSizeData[i]);
+                    //             }
+                    //         }
+                    //     }
+                    // }
+                    // if (this.kitchenData.type == "old") {
+                    //     $('.more-services').show()
+                    //     if (this.kitchenData.is_cabinet) {
+                    //         for (var i = 0; i < this.kitchenSizeData.length; i++) {
+                    //             if (!this.kitchenSizeData[i].is_newkitchen && this.kitchenSizeData[i].is_cabinet) {
+                    //                 this.sizeFilteredData.push(this.kitchenSizeData[i]);
+                    //             }
+                    //         }
+                    //     }
+                    //     else {
+                    //         for (var i = 0; i < this.kitchenSizeData.length; i++) {
+                    //             if (!this.kitchenSizeData[i].is_newkitchen && !this.kitchenSizeData[i].is_cabinet) {
+                    //                 this.sizeFilteredData.push(this.kitchenSizeData[i]);
+                    //             }
+                    //         }
+                    //     }
+                    // }
                 })
                 .catch((error) => {
                 });
