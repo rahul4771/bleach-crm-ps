@@ -2700,6 +2700,7 @@ const app = new Vue({
                     this.serviceSize = {};
 
                     this.parseAddons();
+                    $('.more-services').hide()
                     if (this.kitchenData.is_cabinet) {
                         this.sizeFilteredData.push(...this.kitchenSizeData.filter(item => item.kitchen_type == this.kitchenData.type && item.is_cabinet));
                     } else {
