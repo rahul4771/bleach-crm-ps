@@ -226,7 +226,7 @@ const app = new Vue({
             required: v => !!v || 'this field is required',
         },
         // url:'',
-        url:'https://my.bleachkw.com',
+        url: 'https://my.bleachkw.com',
         // url: 'http://127.0.0.1:8000',
         slot_loader: false,
         lastLoadedServiceType: '',  // Track last loaded service to prevent duplicate addon calls
@@ -920,10 +920,10 @@ const app = new Vue({
          */
         oneTimeNewDateChange() {
             // Save current date's slots before moving to new date
-            if (this.oneTimeDateSelected && 
-                this.one_time_slots[this.oneTimeDateSelected] && 
+            if (this.oneTimeDateSelected &&
+                this.one_time_slots[this.oneTimeDateSelected] &&
                 this.one_time_slots[this.oneTimeDateSelected].slots.length > 0) {
-                
+
                 // Save to selected_onetime_slots to preserve across date changes
                 this.selected_onetime_slots[this.oneTimeDateSelected] = {
                     slots: [...this.one_time_slots[this.oneTimeDateSelected].slots],
@@ -2169,7 +2169,7 @@ const app = new Vue({
                                 const addonName = addon.name || addon.details?.name || 'Addon';
                                 const addonPrice = addon.unit_price || addon.details?.price || 0;
                                 const addonQuantity = addon.quantity || 1;
-                                
+
                                 this.serviceDetails.service_details[i].sections[j].addons[addoncounter] = {
                                     name: addonName,
                                     addon_cost: addonPrice,
@@ -2178,7 +2178,7 @@ const app = new Vue({
                                     size: '',
                                     other_details: ''
                                 }
-                                
+
                                 // Check if addon has size information
                                 const selectedSize = addon.selected_size || addon.details?.category;
                                 if (selectedSize) {
@@ -2353,14 +2353,14 @@ const app = new Vue({
                                 const addonName = addon.name || addon.details?.name || 'Addon';
                                 const addonPrice = addon.unit_price || addon.details?.price || 0;
                                 const addonQuantity = addon.quantity || 1;
-                                
+
                                 this.serviceDetails.service_details[i].sections[j].addons[addoncounter] = {
                                     name: addonName,
                                     addon_cost: addonPrice,
                                     addon_net_cost: addonPrice * addonQuantity,
                                     quantity: addonQuantity
                                 }
-                                
+
                                 // Check if addon has size information
                                 const selectedSize = addon.selected_size || addon.details?.category;
                                 if (selectedSize) {
@@ -2939,26 +2939,26 @@ const app = new Vue({
          */
         removeOneTimeSlot(slot) {
             this.onetimerender = false;
-            
+
             if (!this.oneTimeDateSelected || !this.one_time_slots[this.oneTimeDateSelected]) {
                 this.onetimerender = true;
                 return;
             }
 
             const slots = this.one_time_slots[this.oneTimeDateSelected].slots;
-            
+
             // Find the slot index using the slot number to get start_time
             // We need to find which slot object has this slot number
             const parsedSlots = this.parsedTimeSlots || [];
             if (slot > 0 && slot <= parsedSlots.length) {
                 const selectedSlot = parsedSlots[slot - 1]; // slot is 1-indexed, array is 0-indexed
-                
+
                 if (selectedSlot) {
                     // Find the slot index in slotFormat by matching start_time
                     const slotIndex = Object.keys(this.slotFormat).find(
                         i => this.slotFormat[i].start_time === selectedSlot.start_time
                     );
-                    
+
                     if (slotIndex !== undefined) {
                         const index = slots.indexOf(slotIndex);
                         if (index > -1) {
@@ -3367,7 +3367,7 @@ const app = new Vue({
         },
 
         selectServiceType(service) {
-            
+
             if (!service || !service.name) {
                 console.error("Invalid service object");
                 return;
@@ -3885,8 +3885,8 @@ const app = new Vue({
                 .catch((error) => {
                 });
         },
-        getSize() {
-            let service = this.serviceType
+        getSize(serviceType = null) {
+            let service = serviceType || this.serviceType
             if (service == 'Hourly Cleaning') {
                 service = 'General Cleaning'
             }
@@ -3905,7 +3905,7 @@ const app = new Vue({
                         this.serviceSize = data;
                     }
                     this.parseSize();
-                    if (this.serviceType == 'Kitchen Cleaning') {
+                    if (service == 'Kitchen Cleaning' || this.serviceType == 'Kitchen Cleaning') {
                         this.kitchenTypes = [...new Set(this.sizeData.map(size => size.kitchen_type))];
                         this.otherService.type = this.kitchenTypes[0]
                         this.kitchenTypeFilter();
@@ -4548,7 +4548,7 @@ const app = new Vue({
          */
         prepareBilling() {
             const addonCost = this.findAddonCost()
-            
+
             // Format addons same way as addOtherService()
             const formattedAddons = [];
             for (const addon of this.addons_parsed) {
@@ -4577,7 +4577,7 @@ const app = new Vue({
                     }
                 }
             }
-            
+
             const otherService = {
                 material: "",
                 addons: formattedAddons,
@@ -5482,7 +5482,7 @@ const app = new Vue({
                     } else if (productivity > 0) {
                         return total + (productivity * quantity);
                     }
-                    
+
                     return total;
                 }, 0);
         },
