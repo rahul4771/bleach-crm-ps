@@ -1525,14 +1525,14 @@
                                           </div>
 
                                           <div class="col-md-10 offset-md-1" v-if="renderComponent">
-                                            <div
+                                            <div class="row floors-card mb-4"
                                               v-for="(service, serindex) in building[index - 1].floors[floor - 1].kitchens"
                                               :key="serindex">
 
                                               <div class="col-md-3 col-6">
                                                 <div class="p-2">
                                                   <div class="sr-sub-heading">Item</div>
-                                                  <div v-text="`Kitchen ${getKitchenNumber(serindex)}`"></div>
+                                                  <div v-text="`Kitchen ${serindex+1}`"></div>
                                                 </div>
                                               </div>
                                               <div class="col-md-3 col-6">
@@ -1551,12 +1551,16 @@
                                                 </div>
                                               </div>
 
-                                              <div class="sr-sub-heading">Actions</div>
-                                              <div>
-                                                <i class="far fa-edit edit-icon"
-                                                  @click="editNewKitchen(index - 1, floor - 1, serindex)"></i>
-                                                <i class="far fa-trash-alt pl-2 del-icon"
-                                                  @click="deleteKitchen(index - 1, floor - 1, serindex)"></i>
+                                              <div class="col-md-2 offset-md-1 col-6">
+                                                <div class="p-2">
+                                                  <div class="sr-sub-heading">Actions</div>
+                                                  <div>
+                                                    <i class="far fa-edit edit-icon"
+                                                      @click="editNewKitchen(index - 1, floor - 1, serindex)"></i>
+                                                    <i class="far fa-trash-alt pl-2 del-icon"
+                                                      @click="deleteKitchen(index - 1, floor - 1, serindex)"></i>
+                                                  </div>
+                                                </div>
                                               </div>
                                             </div>
                                           </div>

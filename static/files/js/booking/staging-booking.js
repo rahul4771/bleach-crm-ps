@@ -4096,7 +4096,8 @@ const app = new Vue({
             this.otherService.size = {}
         },
         kitchenTypeFilter() {
-            this.sizeFilteredData = this.sizeData.filter(size => size.kitchen_type === this.otherService.type);
+            const kitchenType = this.otherService.type || this.kitchenData.type || this.kitchenTypes[0];
+            this.sizeFilteredData = this.sizeData.filter(size => size.kitchen_type === kitchenType);
             this.otherService.size = {}
         },
         editItem(a, b) {
