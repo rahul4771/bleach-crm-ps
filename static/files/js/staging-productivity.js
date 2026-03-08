@@ -115,7 +115,9 @@ createApp({
                 price: '',
                 productivity: '',
                 service_type_id: '',
-                status: false
+                status: false,
+                image_path: '',
+                _image_preview: ''
             },
             measurementUnitFormFields: {
                 id: '',
@@ -424,12 +426,15 @@ createApp({
                     form.setAttribute('data-action', 'add');
                     this.addonFormFields = {
                         id: '',
+                        item: '',
                         category_name: '',
                         size: '',
                         price: '',
                         productivity: '',
                         service_type_id: this.serviceTypeId || '',
-                        status: false
+                        status: false,
+                        image_path: '',
+                        _image_preview: ''
                     }
                 }
             }
@@ -456,7 +461,9 @@ createApp({
                         price: addon.price || '',
                         productivity: addon.productivity || '',
                         service_type_id: this.serviceTypeId || '',
-                        status: addon.is_active || false
+                        status: addon.is_active || false,
+                        image_path: addon.image || '',
+                        _image_preview: addon.image || ''
                     }
                 }
             }
@@ -631,6 +638,17 @@ createApp({
             if (!remaining.length) {
                 document.body.classList.remove('modal-open');
             }
+
+            // clean up any blob URLs used for previews (addon image)
+            try {
+                if (this.addonFormFields && this.addonFormFields._image_preview && this.addonFormFields._image_preview.startsWith('blob:')) {
+                    URL.revokeObjectURL(this.addonFormFields._image_preview);
+                }
+            } catch (e) {
+                // ignore
+            }
+            // clear preview when modal closed
+            if (this.addonFormFields) this.addonFormFields._image_preview = '';
         },
 
         /* Form submission methods */
@@ -919,6 +937,11 @@ createApp({
                 service_type: this.addonFormFields.service_type_id || this.serviceTypeId || '',
                 is_active: this.addonFormFields.status ? 1 : 0
             };
+
+            // include the image file if provided
+            if (this.addonFormFields.image_path) {
+                payload.image_path = this.addonFormFields.image_path;
+            }
 
             const form = document.getElementById('manage-addon-form');
             const formAction = form ? form.getAttribute('data-action') : 'add';
@@ -1494,7 +1517,7 @@ createApp({
                 });
         },
         // Create a new service add-on via API
-        createAddOn(formData) {
+        createAddOn(formData, payload = {}) {
             const csrftoken = this.getCookie('csrftoken');
             const baseUrl = window.location.origin;
             const url = `${baseUrl}/common/add-service-addons/`;
@@ -1513,6 +1536,13 @@ createApp({
                 })
                 .then(data => {
                     this.closeModal();
+                    // cleanup preview blob URL if present
+                    try {
+                        if (this.addonFormFields && this.addonFormFields._image_preview && this.addonFormFields._image_preview.startsWith('blob:')) {
+                            URL.revokeObjectURL(this.addonFormFields._image_preview);
+                        }
+                    } catch (e) {}
+                    if (this.addonFormFields) this.addonFormFields._image_preview = '';
                     const key = String(payload.service_type || this.serviceTypeId || '0');
                     if (!this.serviceAddons[key]) this.serviceAddons[key] = [];
                     const item = data.service_addon || data;
@@ -1538,7 +1568,7 @@ createApp({
                 });
         },
         // Update an existing service add-on via API
-        updateAddOn(formData, addonId) {
+        updateAddOn(formData, addonId, payload = {}) {
             const csrftoken = this.getCookie('csrftoken');
             const baseUrl = window.location.origin;
             const url = `${baseUrl}/common/update-service-addons/${addonId}`;
@@ -1558,6 +1588,13 @@ createApp({
                 .then(data => {
                     if (data.success) {
                         this.closeModal();
+                        // cleanup preview blob URL if present
+                        try {
+                            if (this.addonFormFields && this.addonFormFields._image_preview && this.addonFormFields._image_preview.startsWith('blob:')) {
+                                URL.revokeObjectURL(this.addonFormFields._image_preview);
+                            }
+                        } catch (e) {}
+                        if (this.addonFormFields) this.addonFormFields._image_preview = '';
                         const key = String(data.service_addon?.service_type_id || this.serviceTypeId || '0');
                         if (!this.serviceAddons[key]) this.serviceAddons[key] = [];
                         const updated = data.service_addon || data;
@@ -1888,6 +1925,18 @@ createApp({
                 if (formField === 'serviceTypeImage') {
                     this.serviceFormFields.image_path = event.target.files[0];
                 }
+                if (formField === 'addonImage') {
+                    // revoke previous blob URL if any
+                    try {
+                        if (this.addonFormFields._image_preview && this.addonFormFields._image_preview.startsWith('blob:')) {
+                            URL.revokeObjectURL(this.addonFormFields._image_preview);
+                        }
+                    } catch (e) {
+                        // ignore
+                    }
+                    this.addonFormFields.image_path = event.target.files[0];
+                    this.addonFormFields._image_preview = URL.createObjectURL(event.target.files[0]);
+                }
             }
         },
         //for submit service group form
@@ -2000,5 +2049,10 @@ createApp({
     mounted() {
         this.getServiceTypes();
         this.getServiceGroups();
+        // attach change listener for addon image input if present
+        const addonInput = document.getElementById('addon_image');
+        if (addonInput) {
+            addonInput.addEventListener('change', (e) => this.handleImageUpload(e, 'addonImage'));
+        }
     }
 }).mount('#app');

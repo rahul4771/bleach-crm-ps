@@ -5,7 +5,7 @@ from agent.serializers import ServiceTypeShowSerializer
 class ServiceAddOnsSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = ServiceAddOns
-		fields= ('name','category','size','price','productivity')
+		fields= ('name','category','size','price','productivity', 'image_path')
 
 class ServiceProductivitySerializer(serializers.ModelSerializer):
 	service_type = ServiceTypeShowSerializer(read_only=True)

@@ -1125,7 +1125,7 @@
                   <!-- keynote for services other than detailed cleaning category begins here-->
                   <div class="col-md-12"
                     v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning' || serviceType=='Window Cleaning' || serviceType=='Rope Access' || serviceType=='Carpet Cleaning'">
-                    <div>Add Keynotes</div>
+                    <div>Add Keynotes @@@</div>
                     <div class="row">
                       <div v-for="(keynote,kindex) in otherService.keynote_data" v-bind:key="kindex" class="col-md-6">
                         <div class="keynote-item">
@@ -1161,101 +1161,11 @@
 
                   <div class="col-md-12"></div>
                   <!--more services  only for kitchen cleaning-->
-                  <div class="col-md-12 more-services" v-if="serviceType=='Kitchen Cleaning'">
-                    <div class="service-content-heading">
-                      Add-ons
-                    </div>
-                    <div class="owl-carousel" id="otherServiceDialogCarousel">
-                      <div class="more-service-card" v-for="(addon,index) in addons_parsed" v-bind:key="index">
-                        <div class="text-center" v-text="addon.details.name">
-                        </div>
-                        <div class="text-center mt-2">
-                          <img :src="'/static/files/icons/oven.png'" class="service-icon"
-                            v-if="addon.details.name=='Microwave Oven'" />
-                          <img :src="'/static/files/icons/refrigerator_single.png'" class="service-icon"
-                            v-if="addon.details.name=='Refrigerator & Freezer' && addon.details.size=='One Side'" />
-                          <img :src="'/static/files/icons/refrigerator_double.png'" class="service-icon"
-                            v-if="addon.details.name=='Refrigerator & Freezer' && addon.details.size=='Two Side'" />
-                          <img :src="'/static/files/icons/exhaust-hood.png'" class="service-icon"
-                            v-if="addon.details.name=='Exhaust Filters'" />
-                          <img :src="'/static/files/icons/griller.png'" class="service-icon"
-                            v-if="addon.details.name=='Grillers'" />
-                          <img :src="'/static/files/icons/deep-fryer.png'" class="service-icon"
-                            v-if="addon.details.name=='Fryers'" />
-                          <img :src="'/static/files/icons/stove.png'" class="service-icon"
-                            v-if="addon.details.name=='Cooking Range'" />
-                          <img :src="'/static/files/icons/cabinet.png'" class="service-icon"
-                            v-if="addon.details.name=='Cabinet'" />
-
-                        </div>
-                        <div class="mt-2 text-center primary-text"
-                          v-if="!addon.details.category || Object.keys(addon.selected_size).length>0">
-                          <span v-if="Object.keys(addon.selected_size).length > 0"> <b
-                              v-text="`${addon.selected_size.price} KD`">
-                            </b> </span>
-                          <span v-else> <b v-text="`${addon.details.price} KD`">
-                            </b> </span>
-                        </div>
-                        <v-select v-if="addon.details.category" dense :items="addon.size" item-text="size"
-                          v-model="addon.selected_size" return-object label="Size" class="mt-2"></v-select>
-                        <div class="text-center  mb-2" v-if="!addon.details.category">
-                          <v-btn class="mt-4 mb-2" color="primary" type="primary" small outlined
-                            @click="selectAddons(index)" v-if="!addon.selected">
-                            <v-icon left>
-                              mdi-cart
-                            </v-icon>
-                            Add
-                          </v-btn>
-
-                          <div v-else>
-
-                            <div class="d-flex justify-center mt-2">
-                              <div class="reduce-addon-qty" @click="reduceQty(index)">
-                                <i class="fas fa-minus-square primary-text"></i>
-                              </div>
-                              <div class="input-addon-qty">
-                                <input type="number" :min="0" class="input-addon" v-model="addon.quantity" />
-                              </div>
-                              <div class="add-addon-qty" @click="increaseQty(index)">
-                                <i class="fas fa-plus-square primary-text"></i>
-                              </div>
-
-                            </div>
-                          </div>
-                        </div>
-
-                        <!-- for addons with options-->
-                        <div class="text-center  mb-2"
-                          v-if="addon.details.category && Object.keys(addon.selected_size).length>0">
-                          <v-btn class="mt-4 mb-2" color="primary" type="primary" small outlined
-                            @click="selectAddons(index)" v-if="!addon.selected">
-                            <v-icon left>
-                              mdi-cart
-                            </v-icon>
-                            Add
-                          </v-btn>
-
-                          <div v-else>
-
-                            <div class="d-flex justify-center mt-2">
-                              <div class="reduce-addon-qty" @click="reduceQty(index)">
-                                <i class="fas fa-minus-square primary-text"></i>
-                              </div>
-                              <div class="input-addon-qty">
-                                <input type="number" :min="0" class="input-addon" v-model="addon.quantity" />
-                              </div>
-                              <div class="add-addon-qty" @click="increaseQty(index)">
-                                <i class="fas fa-plus-square primary-text"></i>
-                              </div>
-
-                            </div>
-                          </div>
-                        </div>
-                        <!-- addons with option sends here-->
-
-                      </div>
-                    </div>
-                  </div>
+                  <addon-carousel :addons="addons_parsed" carousel-id="otherServiceCarousel1" heading="Add-ons"
+                    wrapper-class="more-services" @select="selectAddons" @reduce="reduceQty" @increase="increaseQty"
+                    @update-quantity="addons_parsed[$event.index].quantity = $event.quantity"
+                    @choose-size="addons_parsed[$event.index].selected_size = $event.size">
+                  </addon-carousel>
 
                   <!--more services  only for kitchen cleaning ends here-->
                 </div>
@@ -1331,106 +1241,20 @@
                       </div>
                     </div>
                   </div>
-                  <!--more services  only for kitchen Appliances cleaning-->
-                  <div class="col-md-12 more-services" v-if="serviceType=='Kitchen Appliances'">
-                    <div class="service-content-heading">
-                      Add-ons
-                    </div>
-                    <div class="owl-carousel" id="otherServiceCarousel">
-                      <div class="more-service-card" v-for="(addon,index) in addons_parsed" v-bind:key="index">
-                        <div class="text-center" v-text="addon.details.name">
-                        </div>
-                        <div class="text-center mt-2">
-                          <img :src="'/static/files/icons/oven.png'" class="service-icon"
-                            v-if="addon.details.name=='Microwave Oven'" />
-                          <img :src="'/static/files/icons/refrigerator_single.png'" class="service-icon"
-                            v-if="addon.details.name=='Refrigerator & Freezer' && addon.details.size=='One Side'" />
-                          <img :src="'/static/files/icons/refrigerator_double.png'" class="service-icon"
-                            v-if="addon.details.name=='Refrigerator & Freezer' && addon.details.size=='Two Side'" />
-                          <img :src="'/static/files/icons/exhaust-hood.png'" class="service-icon"
-                            v-if="addon.details.name=='Exhaust Filters'" />
-                          <img :src="'/static/files/icons/griller.png'" class="service-icon"
-                            v-if="addon.details.name=='Grillers'" />
-                          <img :src="'/static/files/icons/deep-fryer.png'" class="service-icon"
-                            v-if="addon.details.name=='Fryers'" />
-                          <img :src="'/static/files/icons/stove.png'" class="service-icon"
-                            v-if="addon.details.name=='Cooking Range'" />
-                          <img :src="'/static/files/icons/cabinet.png'" class="service-icon"
-                            v-if="addon.details.name=='Cabinet'" />
-                        </div>
-                        <div class="mt-2 text-center primary-text"
-                          v-if="!addon.details.category || Object.keys(addon.selected_size).length>0">
-                          <span v-if="Object.keys(addon.selected_size).length>0"> <b
-                              v-text="addon.selected_size.price + ' KD'">
-                            </b> </span>
-                          <span v-else> <b v-text="addon.details.price + ' KD'">
-                            </b> </span>
-                        </div>
-                        <v-select v-if="addon.details.category" dense :items="addon.size" item-text="size"
-                          v-model="addon.selected_size" return-object label="Size" class="mt-2"></v-select>
-                        <div class="text-center  mb-2" v-if="!addon.details.category">
-                          <v-btn class="mt-2 mb-2" color="primary" type="primary" small outlined
-                            @click="selectAddons(index)" v-if="!addon.selected">
-                            <v-icon left>
-                              mdi-cart
-                            </v-icon>
-                            Add
-                          </v-btn>
-                          <div v-else>
-
-                            <div class="d-flex justify-center mt-2">
-                              <div class="reduce-addon-qty" @click="reduceQty(index)">
-                                <i class="fas fa-minus-square primary-text"></i>
-                              </div>
-                              <div class="input-addon-qty">
-                                <input type="number" :min="0" class="input-addon" v-model="addon.quantity" />
-                              </div>
-                              <div class="add-addon-qty" @click="increaseQty(index)">
-                                <i class="fas fa-plus-square primary-text"></i>
-                              </div>
-
-                            </div>
-                          </div>
-                        </div>
-                        <!-- addons with size options-->
-                        <div class="text-center  mb-2"
-                          v-if="addon.details.category && Object.keys(addon.selected_size).length>0">
-                          <v-btn class="mt-2 mb-2" color="primary" type="primary" small outlined
-                            @click="selectAddons(index)" v-if="!addon.selected">
-                            <v-icon left>
-                              mdi-cart
-                            </v-icon>
-                            Add
-                          </v-btn>
-                          <div v-else>
-
-                            <div class="d-flex justify-center mt-2">
-                              <div class="reduce-addon-qty" @click="reduceQty(index)">
-                                <i class="fas fa-minus-square primary-text"></i>
-                              </div>
-                              <div class="input-addon-qty">
-                                <input type="number" :min="0" class="input-addon" v-model="addon.quantity" />
-                              </div>
-                              <div class="add-addon-qty" @click="increaseQty(index)">
-                                <i class="fas fa-plus-square primary-text"></i>
-                              </div>
-
-                            </div>
-                          </div>
-                        </div>
-                        <!-- addons without size options-->
-                      </div>
-                    </div>
-                    <div class="text-center">
-                      <v-btn depressed color="primary" class="mx-auto" @click="goToCart()" v-if="findAbsoluteCost()>0">
-                        Proceed
-                      </v-btn>
-                      <v-btn depressed color="primary" class="mx-auto" v-else disabled>
+                  <!-- Kitchen Appliances: addon-only service, no building/size form -->
+                  <div class="row" v-if="serviceType == 'Kitchen Appliances'">
+                    <addon-carousel :addons="addons_parsed" carousel-id="otherServiceCarousel4" heading="Add-ons"
+                      @select="selectAddons" @reduce="reduceQty" @increase="increaseQty"
+                      @update-quantity="addons_parsed[$event.index].quantity = $event.quantity"
+                      @choose-size="addons_parsed[$event.index].selected_size = $event.size">
+                    </addon-carousel>
+                    <div class="col-3 offset-5">
+                      <v-btn depressed color="primary" class="mx-auto" @click="handleGoToCart()"
+                        :disabled="findAbsoluteCost() <= 0">
                         Proceed
                       </v-btn>
                     </div>
                   </div>
-                  <!-- kitchen Appliances cleaning ends here-->
 
 
                   <div>
@@ -1814,6 +1638,14 @@
                                               </div>
                                             </v-form>
                                           </div>
+
+                                          <addon-carousel :addons="addons_parsed" carousel-id="otherServiceCarousel2"
+                                            heading="Add-ons" @select="selectAddons" @reduce="reduceQty"
+                                            @increase="increaseQty"
+                                            @update-quantity="addons_parsed[$event.index].quantity = $event.quantity"
+                                            @choose-size="addons_parsed[$event.index].selected_size = $event.size">
+                                          </addon-carousel>
+
                                           <div class="col-md-12 mt-2">
                                             <div><strong>Add Keynotes</strong></div>
                                             <div class="row">
@@ -2123,7 +1955,7 @@
                                                     <!-- Apartment kitchen ends here -->
 
                                                     <div class="col-md-12 mt-2">
-                                                      <div><strong>Add Keynotes</strong></div>
+                                                      <div><strong>Add Keynotes %%%</strong></div>
                                                       <div class="row">
                                                         <div v-for="(keynote,kindex) in apartment.keynote_data"
                                                           v-bind:key="kindex" class="col-md-3 mb-2">
@@ -2402,9 +2234,9 @@
                         v-model="otherService.size" :attach="true"></v-select>
                     </div>
                     <div v-if="serviceType == 'Car Parking Umbrella' || serviceType == 'Outdoor Cleaning'">
-                      <v-select :items="sizeData" item-text="combinedSize" return-object label="Size "
-                        :rules="[v => !!v || 'Size is required']" required v-model="otherService.size"
-                        :attach="true"></v-select>
+                      <v-select :items="sizeData" item-text="combinedSize" return-object label="Size"
+                        :rules="[v => v === null || v === undefined || (v && Object.keys(v).length > 0) || 'Size is required']"
+                        required v-model="otherService.size" :attach="true"></v-select>
                     </div>
                   </div>
 
@@ -2490,117 +2322,28 @@
                     </v-radio-group>
                   </div>
                   <!--more services  only for kitchen cleaning-->
-                  <div class="col-md-12 more-services" v-if="serviceType=='Kitchen Cleaning'">
-                    <div class="service-content-heading">
-                      Add-ons
-                    </div>
-                    <div style="padding-left: 32px; padding-right: 32px;">
-                      <div class="owl-carousel" id="otherServiceCarousel">
-                        <div class="more-service-card" v-for="(addon,index) in addons_parsed" v-bind:key="index">
-                          <div class="text-center" v-text="addon.details.name"></div>
-                          <div class="text-center mt-2">
-                            <img :src="'/static/files/icons/oven.png'" class="service-icon"
-                              v-if="addon.details.name=='Microwave Oven'" />
-                            <img :src="'/static/files/icons/refrigerator_single.png'" class="service-icon"
-                              v-if="addon.details.name=='Refrigerator & Freezer' && addon.details.size=='One Side'" />
-                            <img :src="'/static/files/icons/refrigerator_double.png'" class="service-icon"
-                              v-if="addon.details.name=='Refrigerator & Freezer' && addon.details.size=='Two Side'" />
-                            <img :src="'/static/files/icons/exhaust-hood.png'" class="service-icon"
-                              v-if="addon.details.name=='Exhaust Filters'" />
-                            <img :src="'/static/files/icons/griller.png'" class="service-icon"
-                              v-if="addon.details.name=='Grillers'" />
-                            <img :src="'/static/files/icons/deep-fryer.png'" class="service-icon"
-                              v-if="addon.details.name=='Fryers'" />
-                            <img :src="'/static/files/icons/stove.png'" class="service-icon"
-                              v-if="addon.details.name=='Cooking Range'" />
-                            <img :src="'/static/files/icons/cabinet.png'" class="service-icon"
-                              v-if="addon.details.name=='Cabinet'" />
-                          </div>
-
-                          <div class="mt-2 text-center primary-text"
-                            v-if="!addon.details.category || Object.keys(addon.selected_size).length>0">
-                            <span v-if="Object.keys(addon.selected_size).length>0">
-                              <b><span v-text="`${addon.selected_size.price} KD`"></span></b>
-                            </span>
-                            <span v-else>
-                              <b><span v-text="`${addon.details.price} KD`"></span></b>
-                            </span>
-                          </div>
-
-                          <v-select v-if="addon.details.category" dense :items="addon.size" item-text="size"
-                            v-model="addon.selected_size" return-object label="Size" class="mt-2"></v-select>
-
-                          <div class="text-center  mb-2" v-if="!addon.details.category">
-                            <v-btn class="mt-2 mb-2" color="primary" type="primary" small outlined
-                              @click="selectAddons(index)" v-if="!addon.selected">
-                              <v-icon left>
-                                mdi-cart
-                              </v-icon>
-                              Add
-                            </v-btn>
-
-                            <div v-else>
-                              <div class="d-flex justify-center mt-2">
-                                <div class="reduce-addon-qty" @click="reduceQty(index)">
-                                  <i class="fas fa-minus-square primary-text"></i>
-                                </div>
-                                <div class="input-addon-qty">
-                                  <input type="number" :min="0" class="input-addon" v-model="addon.quantity" />
-                                </div>
-                                <div class="add-addon-qty" @click="increaseQty(index)">
-                                  <i class="fas fa-plus-square primary-text"></i>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <!-- addons with size options-->
-                          <div class="text-center  mb-2"
-                            v-if="addon.details.category && Object.keys(addon.selected_size).length>0">
-                            <v-btn class="mt-2 mb-2" color="primary" type="primary" small outlined
-                              @click="selectAddons(index)" v-if="!addon.selected">
-                              <v-icon left>
-                                mdi-cart
-                              </v-icon>
-                              Add
-                            </v-btn>
-                            <div v-else>
-
-                              <div class="d-flex justify-center mt-2">
-                                <div class="reduce-addon-qty" @click="reduceQty(index)">
-                                  <i class="fas fa-minus-square primary-text"></i>
-                                </div>
-                                <div class="input-addon-qty">
-                                  <input type="number" :min="0" class="input-addon" v-model="addon.quantity" />
-                                </div>
-                                <div class="add-addon-qty" @click="increaseQty(index)">
-                                  <i class="fas fa-plus-square primary-text"></i>
-                                </div>
-
-                              </div>
-                            </div>
-                          </div>
-                          <!-- addons without size options-->
-                        </div>
-                      </div>
-                    </div>
-                    <!--more services  only for kitchen cleaning ends here-->
-                    <!-- keynote for services other than detailed cleaning category begins here-->
-                    <div class="col-md-12"
-                      v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning'|| serviceType=='Window Cleaning' || serviceType=='Carpet Cleaning'">
-                      <div>Add Keynotes</div>
-                      <div class="row">
-                        <div v-for="(keynote,kindex) in otherService.keynote_data" v-bind:key="kindex" class="col-md-3">
-                          <div class="keynote-item">
-                            <v-chip class="ma-2 w-100" color="primary" id="keynote-chip" close label outlined
-                              @click:close="removeOthersKeynote(kindex)">
-                              <span v-text="`${keynote.name} - ${keynote.value}`"></span>
-                            </v-chip>
-                          </div>
+                  <addon-carousel :addons="addons_parsed" carousel-id="otherServiceCarousel3" heading="Add-ons"
+                    @select="selectAddons" @reduce="reduceQty" @increase="increaseQty"
+                    @update-quantity="addons_parsed[$event.index].quantity = $event.quantity"
+                    @choose-size="addons_parsed[$event.index].selected_size = $event.size">
+                  </addon-carousel>
+                  <!--more services  only for kitchen cleaning ends here-->
+                  <!-- keynote for services other than detailed cleaning category begins here-->
+                  <div class="col-md-12"
+                    v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning'|| serviceType=='Window Cleaning' || serviceType=='Carpet Cleaning'">
+                    <div>Add Keynotes</div>
+                    <div class="row">
+                      <div v-for="(keynote,kindex) in otherService.keynote_data" v-bind:key="kindex" class="col-md-3">
+                        <div class="keynote-item">
+                          <v-chip class="ma-2 w-100" color="primary" id="keynote-chip" close label outlined
+                            @click:close="removeOthersKeynote(kindex)">
+                            <span v-text="`${keynote.name} - ${keynote.value}`"></span>
+                          </v-chip>
                         </div>
                       </div>
                     </div>
                   </div>
+
                   <v-form ref="keynoteOthersForm" lazy-validation
                     v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning' || serviceType=='Window Cleaning' || serviceType=='Carpet Cleaning'">
                     <div class="row">
@@ -2622,30 +2365,34 @@
                       </div>
                     </div>
                   </v-form>
-                  <!-- key note ends here-->
-                  <div class="col-md-12 text-center mt-4">
-                    <v-btn color="primary" class="mr-4 mx-auto" v-on:click="addOtherService()"
-                      v-if="serviceType!='Kitchen Cleaning' && serviceType != 'Kitchen Appliances'">
-                      Add
-                    </v-btn>
-                    <v-btn color="primary" class="mr-4 mx-auto" v-on:click="addOtherService()"
-                      v-if="add_new_kitchen && serviceType=='Kitchen Cleaning'">
-                      Add
-                    </v-btn>
-                    <v-btn color="primary" class="mr-4 mx-auto" v-on:click="saveChanges()"
-                      v-if="!add_new_kitchen && serviceType=='Kitchen Cleaning'">
-                      Save Changes
-                    </v-btn>
-                  </div>
-                </div>
-                <!-- Add Buttons -->
-                <div class="row m-0">
 
                 </div>
+
+                <!-- key note ends here-->
+                <div class="col-md-12 text-center mt-4">
+                  <v-btn color="primary" class="mr-4 mx-auto" v-on:click="addOtherService()"
+                    v-if="serviceType =='Outdoor Cleaning' || serviceType =='Car Parking Umbrella' || serviceType =='Window Cleaning' ||   serviceType =='Upholstery Cleaning' || serviceType == 'Mattress Cleaning' || serviceType == 'Carpet Cleaning'">
+                    Add
+                  </v-btn>
+                  <v-btn color="primary" class="mr-4 mx-auto" v-on:click="addOtherService()"
+                    v-if="add_new_kitchen && serviceType=='Kitchen Cleaning'">
+                    Add
+                  </v-btn>
+                  <v-btn color="primary" class="mr-4 mx-auto" v-on:click="saveChanges()"
+                    v-if="!add_new_kitchen && serviceType=='Kitchen Cleaning'">
+                    Save Changes
+                  </v-btn>
+                </div>
             </div>
-            </v-form>
-            <!-- upholsetry , deep, carpet ends here -->
-            <!-- Image Uploading -->
+            <!-- Add Buttons -->
+            <div class="row m-0">
+
+            </div>
+          </div>
+          </v-form>
+          <!-- upholsetry , deep, carpet ends here -->
+          <!-- Image Uploading -->
+          <div class="col-md-12">
             <div class="row" v-if="buildingsCompleted">
               <div class="col-md-12 mt-4">
                 <h5>Add Images</h5>
@@ -2676,14 +2423,16 @@
                 </v-textarea>
               </div>
               <div class="col-3 offset-5">
-                <v-btn depressed color="primary" class="mx-auto" @click="goToCart()">
+                <v-btn depressed color="primary" class="mx-auto" @click="handleGoToCart()">
                   Proceed
                 </v-btn>
               </div>
             </div>
+          </div>
 
 
-            <!-- Other service image upload -->
+          <!-- Other service image upload -->
+          <div class="col-md-12">
             <div class="row" v-if="
                   (serviceType == 'Upholstery Cleaning' ||
                     serviceType == 'Facade Cleaning' ||
@@ -2717,8 +2466,9 @@
                 </div>
               </div>
             </div>
-            <!-- Other service Question-->
-            <div class="row" v-if="(serviceType == 'Upholstery Cleaning' ||
+          </div>
+          <!-- Other service Question-->
+          <div class="row" v-if="(serviceType == 'Upholstery Cleaning' ||
                     serviceType == 'Facade Cleaning' ||
                     serviceType == 'Carpet Cleaning' ||
                     serviceType == 'Mattress Cleaning' ||
@@ -2728,94 +2478,94 @@
                     serviceType == 'Rope Access' ||
                     serviceType == 'Outdoor Cleaning') &&
                   otherServices.length > 0">
-              <div class="col-md-12">
-                <v-textarea name="input-7-1" label="Notes" v-model="evaluator_note"
-                  hint="Do you any other projects or contracts on same location ?  Please mention if you have any specific request.">
-                </v-textarea>
-              </div>
-              <div class="col-3 offset-5">
-                <v-btn depressed color="primary" class="mx-auto" @click="goToCart()">
-                  Proceed
-                </v-btn>
-              </div>
+            <div class="col-md-12">
+              <v-textarea name="input-7-1" label="Notes" v-model="evaluator_note"
+                hint="Do you any other projects or contracts on same location ?  Please mention if you have any specific request.">
+              </v-textarea>
+            </div>
+            <div class="col-3 offset-5">
+              <v-btn depressed color="primary" class="mx-auto" @click="handleGoToCart()">
+                Proceed
+              </v-btn>
             </div>
           </div>
-          <!-- Tab 1 Ends here -->
+        </div>
+        <!-- Tab 1 Ends here -->
 
-          <!-- Tab 2 begins here -->
-          <div v-if="activeTab == 'Schedules'">
-            <div class="row mt-4">
-              <div class="col-md-12">
-                <h6>Choose a duration</h6>
+        <!-- Tab 2 begins here -->
+        <div v-if="activeTab == 'Schedules'">
+          <div class="row mt-4">
+            <div class="col-md-12">
+              <h6>Choose a duration</h6>
+            </div>
+            <div class="col-md-2 mt-2 col-12">
+              <div class="text-center p-2">In Hours</div>
+            </div>
+            <div class="col-md-2 mt-2 col-6" v-for="(item, durindex) in duration" v-bind:key="durindex">
+              <div class="duration-active text-center p-2" v-on:click="selectDuration(item)"
+                v-if="selectedDuration == item">
+                <b>
+                  <span v-text="item.hours"></span>
+                </b>
               </div>
-              <div class="col-md-2 mt-2 col-12">
-                <div class="text-center p-2">In Hours</div>
+              <div class="duration text-center p-2" v-on:click="selectDuration(item)" v-else>
+                <b>
+                  <span v-text="item.hours"></span>
+                </b>
               </div>
-              <div class="col-md-2 mt-2 col-6" v-for="(item, durindex) in duration" v-bind:key="durindex">
-                <div class="duration-active text-center p-2" v-on:click="selectDuration(item)"
-                  v-if="selectedDuration == item">
-                  <b>
-                    <span v-text="item.hours"></span>
-                  </b>
-                </div>
-                <div class="duration text-center p-2" v-on:click="selectDuration(item)" v-else>
-                  <b>
-                    <span v-text="item.hours"></span>
-                  </b>
-                </div>
-                <div v-if="selectedDuration == item" class="text-center sub-content">
-                  <span v-text="`${getSlotsRequired(item.hours)} slots`"></span>
-                </div>
+              <div v-if="selectedDuration == item" class="text-center sub-content">
+                <span v-text="`${getSlotsRequired(item.hours)} slots`"></span>
               </div>
-              <div class="col-md-12">
-                <h6>Choose Slots</h6>
-              </div>
-              <div class="col-md-6">
-                <v-date-picker v-model="dateSelected" full-width elevation="5" color="primary"
-                  v-on:change="formatDate()"></v-date-picker>
-              </div>
-              <div class="col-md-6" v-if="selectedDuration.slots">
-                <h6>Slots Available</h6>
+            </div>
+            <div class="col-md-12">
+              <h6>Choose Slots</h6>
+            </div>
+            <div class="col-md-6">
+              <v-date-picker v-model="dateSelected" full-width elevation="5" color="primary"
+                v-on:change="formatDate()"></v-date-picker>
+            </div>
+            <div class="col-md-6" v-if="selectedDuration.slots">
+              <h6>Slots Available</h6>
 
-                <div class="ma-2 primary-text" label color="primary"
-                  v-if="slotCounter < selectedDuration.slots && !errMsg">
-                  <span v-text="`Select ${getRemainingSlots()}`"></span><span v-if="slotCounter > 0"
-                    v-text="' more'"></span> Slots
-                </div>
-                <div class="ma-2 danger" label v-if="errMsg">
-                  <span v-text="errMsg"></span>
-                </div>
-                <div v-if="slotCounter >= selectedDuration.slots" class="ma-2 primary-text">
-                  Slots selection Completed. Please proceed to continue.
-                </div>
-                <div class="row mt-4" v-if="renderComponent">
-                  <div class="col-md-6" v-for="(slot, sindex) in timeSlots" v-bind:key="sindex">
-                    <div class="time-slot duration text-center p-2" v-if="
+              <div class="ma-2 primary-text" label color="primary"
+                v-if="slotCounter < selectedDuration.slots && !errMsg">
+                <span v-text="`Select ${getRemainingSlots()}`"></span><span v-if="slotCounter > 0"
+                  v-text="' more'"></span> Slots
+              </div>
+              <div class="ma-2 danger" label v-if="errMsg">
+                <span v-text="errMsg"></span>
+              </div>
+              <div v-if="slotCounter >= selectedDuration.slots" class="ma-2 primary-text">
+                Slots selection Completed. Please proceed to continue.
+              </div>
+              <div class="row mt-4" v-if="renderComponent">
+                <div class="col-md-6" v-for="(slot, sindex) in timeSlots" v-bind:key="sindex">
+                  <div class="time-slot duration text-center p-2" v-if="
                             sindex == 0 &&
                             !time_slot[slotDate].selectedSlot.includes(sindex) &&
                             slot.length > 0 &&
                             checkSlot(sindex)
                           " @click="addSlot(sindex)">
-                      12:00 AM - 3:00 AM
-                    </div>
+                    12:00 AM - 3:00 AM
+                  </div>
 
-                    <div class="time-slot duration-active text-center p-2" v-if="
+                  <div class="time-slot duration-active text-center p-2" v-if="
                             sindex == 0 &&
                             time_slot[slotDate].selectedSlot.includes(sindex) &&
                             slot.length > 0
                           " @click="removeSlot(sindex)">
-                      12:00 AM - 3:00 AM
-                    </div>
-                    <div class="time-slot duration-inactive text-center p-2" v-if="
+                    12:00 AM - 3:00 AM
+                  </div>
+                  <div class="time-slot duration-inactive text-center p-2" v-if="
                             sindex == 0 &&
                             !time_slot[slotDate].selectedSlot.includes(sindex) &&
                             slot.length > 0 &&
                             !checkSlot(sindex)
                           ">
-                      12:00 AM - 3:00 AM
-                    </div>
+                    12:00 AM - 3:00 AM
+                  </div>
 
-                    <div class="time-slot duration text-center p-2" v-if="
+                  <div class="time-slot duration text-center p-2" v-if="
                             sindex != 21 &&
                             sindex != 0 &&
                             !time_slot[slotDate].selectedSlot.includes(sindex) &&
@@ -2823,456 +2573,487 @@
                             checkSlot(sindex)
                           " @click="addSlot(sindex)">
 
-                      <span v-if="sindex>12">
-                        <span v-text="getTimeSlotDisplay(sindex, 'PM')"></span>
-                      </span>
-                      <span v-if="sindex==12">
-                        <span v-text="getTimeSlotDisplay(sindex, 'PM12')"></span>
-                      </span>
-                      <span v-if="sindex<12">
-                        <span v-text="getTimeSlotDisplay(sindex, 'AM')"></span>
-                      </span>
-                    </div>
-                    <div class="time-slot duration-inactive text-center p-2" v-if="
+                    <span v-if="sindex>12">
+                      <span v-text="getTimeSlotDisplay(sindex, 'PM')"></span>
+                    </span>
+                    <span v-if="sindex==12">
+                      <span v-text="getTimeSlotDisplay(sindex, 'PM12')"></span>
+                    </span>
+                    <span v-if="sindex<12">
+                      <span v-text="getTimeSlotDisplay(sindex, 'AM')"></span>
+                    </span>
+                  </div>
+                  <div class="time-slot duration-inactive text-center p-2" v-if="
                             sindex != 21 &&
                             sindex != 0 &&
                             !time_slot[slotDate].selectedSlot.includes(sindex) &&
                             slot.length > 0 &&
                             !checkSlot(sindex)
                           ">
-                      <span v-if="sindex>12">
-                        <span v-text="getTimeSlotDisplay(sindex, 'PM')"></span>
-                      </span>
-                      <span v-if="sindex==12">
-                        <span v-text="getTimeSlotDisplay(sindex, 'PM12')"></span>
-                      </span>
-                      <span v-if="sindex<12">
-                        <span v-text="getTimeSlotDisplay(sindex, 'AM')"></span>
-                      </span>
-                    </div>
-                    <div class="time-slot duration-active text-center p-2" v-if="
+                    <span v-if="sindex>12">
+                      <span v-text="getTimeSlotDisplay(sindex, 'PM')"></span>
+                    </span>
+                    <span v-if="sindex==12">
+                      <span v-text="getTimeSlotDisplay(sindex, 'PM12')"></span>
+                    </span>
+                    <span v-if="sindex<12">
+                      <span v-text="getTimeSlotDisplay(sindex, 'AM')"></span>
+                    </span>
+                  </div>
+                  <div class="time-slot duration-active text-center p-2" v-if="
                             sindex != 21 &&
                             sindex != 0 &&
                             time_slot[slotDate].selectedSlot.includes(sindex) &&
                             slot.length > 0
                           " @click="removeSlot(sindex)">
-                      <span v-if="sindex>12">
-                        <span v-text="getTimeSlotDisplay(sindex, 'PM')"></span>
-                      </span>
-                      <span v-if="sindex==12">
-                        <span v-text="getTimeSlotDisplay(sindex, 'PM12')"></span>
-                      </span>
-                      <span v-if="sindex<12">
-                        <span v-text="getTimeSlotDisplay(sindex, 'AM')"></span>
-                      </span>
-                    </div>
-                    <div class="time-slot duration text-center p-2" v-if="
+                    <span v-if="sindex>12">
+                      <span v-text="getTimeSlotDisplay(sindex, 'PM')"></span>
+                    </span>
+                    <span v-if="sindex==12">
+                      <span v-text="getTimeSlotDisplay(sindex, 'PM12')"></span>
+                    </span>
+                    <span v-if="sindex<12">
+                      <span v-text="getTimeSlotDisplay(sindex, 'AM')"></span>
+                    </span>
+                  </div>
+                  <div class="time-slot duration text-center p-2" v-if="
                             sindex == 21 &&
                             !time_slot[slotDate].selectedSlot.includes(sindex) &&
                             slot.length > 0 &&
                             checkSlot(sindex) &&
                             slot.length > 0
                           " @click="addSlot(sindex)">
-                      9:00 PM - 12:00 AM
-                    </div>
-                    <div class="time-slot duration-inactive text-center p-2" v-if="
+                    9:00 PM - 12:00 AM
+                  </div>
+                  <div class="time-slot duration-inactive text-center p-2" v-if="
                             sindex == 21 &&
                             !time_slot[slotDate].selectedSlot.includes(sindex) &&
                             slot.length > 0 &&
                             !checkSlot(sindex) &&
                             slot.length > 0
                           ">
-                      9:00 PM - 12:00 AM
-                    </div>
-                    <div class="time-slot duration-active text-center p-2" v-if="
+                    9:00 PM - 12:00 AM
+                  </div>
+                  <div class="time-slot duration-active text-center p-2" v-if="
                             sindex == 21 &&
                             time_slot[slotDate].selectedSlot.includes(sindex) &&
                             slot.length > 0
                           " @click="removeSlot(sindex)">
-                      9:00 PM - 12:00 AM
-                    </div>
+                    9:00 PM - 12:00 AM
                   </div>
                 </div>
               </div>
-
             </div>
 
-
-            <div class="row">
-
-
-            </div>
-            <div class="row">
-              <div class="col-md-12 text-center">
-                <v-btn color="primary" @click="scheduleBooking()" class="mb-2"
-                  v-if="slotCounter == selectedDuration.slots">
-                  Proceed
-                </v-btn>
-              </div>
-            </div>
           </div>
 
-          <!-- Tab 2 Ends here -->
-          <!-- Cart Begins here -->
-          <div class="col-md-12" v-if="activeTab=='Cart'">
-            <div class="mt-4">
-              You can update your cleaning or add more services in the below section. To continue, click
-              Proceed.
+
+          <div class="row">
+
+
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <v-btn color="primary" @click="scheduleBooking()" class="mb-2"
+                v-if="slotCounter == selectedDuration.slots">
+                Proceed
+              </v-btn>
             </div>
-            <div class="mt-4">
-              <div class="ev-booking-title">
-                Services
-              </div>
-              <div v-if="!custBookStat && !is_hourly">
-                <v-switch v-model="scheduleStat" inset class="book-stat" label="Schedule Together"
-                  @change="addAllServiceTypes()"></v-switch>
-              </div>
+          </div>
+        </div>
+
+        <!-- Tab 2 Ends here -->
+        <!-- Cart Begins here -->
+        <div class="col-md-12" v-if="activeTab=='Cart'">
+          <div class="mt-4">
+            You can update your cleaning or add more services in the below section. To continue, click
+            Proceed.
+          </div>
+          <div class="mt-4">
+            <div class="ev-booking-title">
+              Services
             </div>
-            <div class="row mt-4">
-              <div class="col-md-3" v-for="(service,sindex) in multiServicesBill" v-bind:key="sindex">
-                <div class="cart-item-card justify-center">
-                  <div class="d-flex">
-                    <div class="text-left mr-auto">
-                      <v-checkbox v-model="schedule_serviceTypes_selected" @change="hourlySelection()" :value='sindex'
-                        class="mt-0 pt-0 "
-                        v-if="!scheduleStat && Object.keys(service.schedule_details).length<1 && !custBookStat"></v-checkbox>
+            <div v-if="!custBookStat && !is_hourly">
+              <v-switch v-model="scheduleStat" inset class="book-stat" label="Schedule Together"
+                @change="addAllServiceTypes()"></v-switch>
+            </div>
+          </div>
+          <div class="row mt-4">
+            <div class="col-md-3" v-for="(service,sindex) in multiServicesBill" v-bind:key="sindex">
+              <div class="cart-item-card justify-center">
+                <div class="d-flex">
+                  <div class="text-left mr-auto">
+                    <v-checkbox v-model="schedule_serviceTypes_selected" @change="hourlySelection()" :value='sindex'
+                      class="mt-0 pt-0 "
+                      v-if="!scheduleStat && Object.keys(service.schedule_details).length<1 && !custBookStat"></v-checkbox>
+                  </div>
+                  <div>
+                    <b>
+                      <span v-text="service.service"></span>
+                    </b>
+                  </div>
+                  <div class="ml-auto" @click="openDelConfirm(sindex)">
+                    <i class="far fa-trash-alt cp"></i>
+                  </div>
+                </div>
 
-
-                    </div>
-                    <div>
-                      <b>
-                        <span v-text="service.service"></span>
-                      </b>
-                    </div>
-                    <div class="ml-auto" @click="openDelConfirm(sindex)">
-                      <i class="far fa-trash-alt cp"></i>
-
-                    </div>
+                <div class="d-flex" v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">
+                  <div v-if='service.schedule_details[1]' v-text="service.schedule_details[1].date">
+                  </div>
+                  <div class="ml-4" v-text="`${Object.keys(service.schedule_details).length} Visits`">
                   </div>
 
-                  <div class="d-flex" v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">
-                    <div v-if='service.schedule_details[1]' v-text="service.schedule_details[1].date">
+                </div>
+                <div v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'"
+                  @click="viewEditSchedule(service,sindex)">
+                  <a>View Schedule</a>
+                </div>
+
+                <div class="d-flex" v-if="service.schedule_details && service.cleaning_policy=='ONE TIME SERVICE'">
+
+                  <div v-if='service.schedule_details[1]' v-text="service.schedule_details[1].date">
+                  </div>
+
+                </div>
+                <div v-if="service.schedule_details && service.cleaning_policy=='ONE TIME SERVICE'"
+                  @click="viewEditSchedule(service,sindex)">
+                  <a>View Schedule</a>
+                </div>
+
+                <div class="cart-card-items">
+                  <div v-for="(bill,bindex) in service.bill" v-bind:key="bindex">
+                    <div v-if="service.service!='Kitchen Appliances' && bill.section.size && bill.section.size.name"><b
+                        v-text="bill.section_name">
+                      </b></div>
+                    <div class="d-flex mt-1"
+                      v-if="service.service!='Kitchen Appliances' && bill.section.size && bill.section.size.name">
+                      <div v-text="bill.section.size.name">
+                      </div>
+                      <div class="ml-auto primary-text">
+                        KD <span v-text="bill.sectiononly_cost"></span><span
+                          v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">x
+                          <span v-text="Object.keys(service.schedule_details).length"></span>
+                        </span>
+                      </div>
                     </div>
-                    <div class="ml-4" v-text="`${Object.keys(service.schedule_details).length} Visits`">
-                    </div>
+                    <div v-for="(kitchen,kindex) in bill.section.kitchens" v-bind:key="kindex">
+                      <div class="d-flex mt-1">
+                        <div>
+                          <span v-text="getKitchenWithSize(kindex, kitchen.size.name)"></span><br>
 
-                  </div>
-                  <div v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'"
-                    @click="viewEditSchedule(service,sindex)">
-                    <a>View Schedule</a>
-                  </div>
-
-                  <div class="d-flex" v-if="service.schedule_details && service.cleaning_policy=='ONE TIME SERVICE'">
-
-                    <div v-if='service.schedule_details[1]' v-text="service.schedule_details[1].date">
-                    </div>
-
-                  </div>
-                  <div v-if="service.schedule_details && service.cleaning_policy=='ONE TIME SERVICE'"
-                    @click="viewEditSchedule(service,sindex)">
-                    <a>View Schedule</a>
-                  </div>
-                  <div class="cart-card-items">
-                    <div v-for="(bill,bindex) in service.bill" v-bind:key="bindex">
-                      <div v-if="service.service!='Kitchen Appliances'"><b v-text="bill.section_name">
-                        </b></div>
-                      <div class="d-flex mt-1" v-if="service.service!='Kitchen Appliances'">
-                        <div v-text="bill.section.size.name">
                         </div>
-                        <div class="ml-auto primary-text">
-                          KD <span v-text="bill.sectiononly_cost"></span><span
-                            v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">x
+                        <div class="ml-auto primary-text strike-text"
+                          v-if="kitchen.type=='new' && service.service=='General Cleaning'">
+                          KD <span v-text="kitchen.size.cost">
+                          </span>
+                          <span v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">x
+                            <span v-text="Object.keys(service.schedule_details).length"></span>
+                          </span>
+                        </div>
+                        <div class="ml-auto primary-text" v-else>
+                          KD <span v-text="kitchen.size.cost">
+                          </span>
+                          <span v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">x
                             <span v-text="Object.keys(service.schedule_details).length"></span>
                           </span>
                         </div>
                       </div>
-                      <div v-for="(kitchen,kindex) in bill.section.kitchens" v-bind:key="kindex">
-                        <div class="d-flex mt-1">
-                          <div>
-                            <span v-text="getKitchenWithSize(kindex, kitchen.size.name)"></span><br>
-
-                          </div>
-                          <div class="ml-auto primary-text strike-text"
-                            v-if="kitchen.type=='new' && service.service=='General Cleaning'">
-                            KD <span v-text="kitchen.size.cost">
-                            </span>
-                            <span v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">x
-                              <span v-text="Object.keys(service.schedule_details).length"></span>
-                            </span>
-                          </div>
-                          <div class="ml-auto primary-text" v-else>
-                            KD <span v-text="kitchen.size.cost">
-                            </span>
-                            <span v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">x
-                              <span v-text="Object.keys(service.schedule_details).length"></span>
-                            </span>
-                          </div>
+                    </div>
+                    <div v-for="addon in bill.section.addons" v-bind:key="addon.id">
+                      <div class="d-flex mt-1" v-if="addon.selected">
+                        <div>
+                          <span v-text="`${addon.name} x ${addon.quantity}`"></span>
+                        </div>
+                        <div class="ml-auto primary-text">
+                          KD <span v-text="addon.total_price"></span>
+                          <span v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">x
+                            <span v-text="Object.keys(service.schedule_details).length"></span>
+                          </span>
                         </div>
                       </div>
-                      <div v-for="addon in bill.section.addons" v-bind:key="addon">
-                        <div class="d-flex mt-1" v-if="addon.selected">
-                          <div>
-                            <span v-text="`${addon.details.name} x ${addon.quantity}`"></span>
-                          </div>
-                          <div class="ml-auto primary-text">
-                            KD <span v-if="!addon.details.category"
-                              v-text="addon.details.price * addon.quantity"></span><span v-else
-                              v-text="addon.details.price * addon.quantity"></span>
-                            <span v-if="service.schedule_details && service.cleaning_policy==' SUBSCRIPTION'">x
-                              <span v-text="Object.keys(service.schedule_details).length"></span>
-                          </div>
-                        </div>
-                      </div>
-
                     </div>
 
                   </div>
-                  <hr>
-                  </hr>
-                  <div class="mt-4">
 
-                    <div class="d-flex mt-1">
-                      <div>
-                        <b>Total</b>
-                      </div>
-                      <div class="ml-auto primary-text">
-                        <span v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">KD
-                          <span v-text="service.total_cost * Object.keys(service.schedule_details).length"></span>
-                        </span>
-                        <span v-else>KD <span v-text="service.total_cost"></span></span>
+                </div>
 
-                      </div>
+                <hr>
+                </hr>
+                <div class="mt-4">
+
+                  <div class="d-flex mt-1">
+                    <div>
+                      <b>Total</b>
+                    </div>
+                    <div class="ml-auto primary-text">
+                      <span v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">KD
+                        <span v-text="service.total_cost * Object.keys(service.schedule_details).length"></span>
+                      </span>
+                      <span v-else>KD <span v-text="service.total_cost"></span></span>
+
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
 
 
-              <div class="col-md-3" @click="goToServices()">
-                <div class="cart-item-card justify-center h-100">
-                  <div class="cart-item-add h-100">
-                    <div class="text-center ">
-                      <v-btn class="mx-2 cart-plus" fab dark color="primary">
-                        <v-icon dark>
-                          mdi-plus
-                        </v-icon>
-                      </v-btn>
-                    </div>
-                    <div class="text-center mt-10">Add More Services</div>
+            <div class="col-md-3" @click="goToServices()">
+              <div class="cart-item-card justify-center h-100">
+                <div class="cart-item-add h-100">
+                  <div class="text-center ">
+                    <v-btn class="mx-2 cart-plus" fab dark color="primary">
+                      <v-icon dark>
+                        mdi-plus
+                      </v-icon>
+                    </v-btn>
                   </div>
+                  <div class="text-center mt-10">Add More Services</div>
                 </div>
               </div>
             </div>
-            <div class="text-center mt-10 d-flex justify-center">
-              <v-btn class="ma-2" outlined color="primary" @click.once="goToSchedule()"
-                :disabled="schedule_serviceTypes_selected.length>0?false:true" v-if="!scheduleStat">
-                Schedule
-              </v-btn>
-              <v-btn class="ma-2" outlined color="primary" @click.once="scheduleTogether()"
-                v-if="scheduleStat  && !custBookStat">
-                Schedule
-              </v-btn>
-              <v-btn class="ma-2 text-white" disabled color="grey" v-if="!checkScheduleStatus() && !custBookStat">
-                Submit
-              </v-btn>
-              <v-btn class="ma-2 text-white" v-if="checkScheduleStatus() && !custBookStat" color="primary"
-                @click.once="arrangeData()" :loading="submit_loader">
-                Submit
-              </v-btn>
-              <v-btn class="ma-2 text-white" v-if="custBookStat" color="primary" @click.once="arrangeCustData()"
-                :loading="submit_loader">
-                Submit
-              </v-btn>
-
-            </div>
-
+          </div>
+          <div class="text-center mt-10 d-flex justify-center">
+            <v-btn class="ma-2" outlined color="primary" @click.once="goToSchedule()"
+              :disabled="schedule_serviceTypes_selected.length>0?false:true" v-if="!scheduleStat">
+              Schedule
+            </v-btn>
+            <v-btn class="ma-2" outlined color="primary" @click.once="scheduleTogether()"
+              v-if="scheduleStat  && !custBookStat">
+              Schedule
+            </v-btn>
+            <v-btn class="ma-2 text-white" disabled color="grey" v-if="!checkScheduleStatus() && !custBookStat">
+              Submit
+            </v-btn>
+            <v-btn class="ma-2 text-white" v-if="checkScheduleStatus() && !custBookStat" color="primary"
+              @click.once="arrangeData()" :loading="submit_loader">
+              Submit
+            </v-btn>
+            <v-btn class="ma-2 text-white" v-if="custBookStat" color="primary" @click.once="arrangeCustData()"
+              :loading="submit_loader">
+              Submit
+            </v-btn>
 
           </div>
 
 
-          <!-- Cart ends here-->
-          <div class="row" v-if="activeTab=='Schedule'">
-            <div class="col-md-12">
-              <div class="mt-2 mb-2">
+        </div>
 
-                <v-btn color="primary" outlined @click="activeTab='Cart'">
+
+        <!-- Cart ends here-->
+        <div class="row" v-if="activeTab=='Schedule'">
+          <div class="col-md-12">
+            <div class="mt-2 mb-2">
+
+              <v-btn color="primary" outlined @click="activeTab='Cart'">
+                <v-icon left>
+                  mdi-arrow-left
+                </v-icon>
+                Back
+              </v-btn>
+            </div>
+            <div class="row m-0" v-if="!scheduleDateSat && !editScheduleStat">
+              <div class="col-md-3">
+                <div>
+                  <v-select :items="['Subscription','One Time']" label="Cleaning Policy" dense v-model="cleaningPolicy"
+                    v-if="current_service!='Hourly Cleaning'" @change="newdurationcalculation()"></v-select>
+                  <v-select :items="['Subscription']" label="Cleaning Policy" dense v-model="cleaningPolicy"
+                    v-if="current_service=='Hourly Cleaning'"></v-select>
+                </div>
+              </div>
+              <div class="col-md-3" v-if="cleaningPolicy=='Subscription'">
+                <div>
+                  <v-select :items="['Daily','Weekly','Monthly','Custom']" label="Subscription Plan" v-model="subStat"
+                    dense></v-select>
+
+                </div>
+              </div>
+              <div class="col-md-2" v-if="subStat=='Daily'">
+                <v-switch v-model="altdaysStat" inset label="Alternate Days" class="mt-0 book-stat"></v-switch>
+              </div>
+              <div class="col-md-2" v-if="subStat=='Weekly'">
+                <v-switch v-model="altweekStat" inset label="Alternate Weeks" class="mt-0 book-stat"></v-switch>
+              </div>
+              <div class="col-md-3" v-if="subStat!='Custom' && cleaningPolicy=='Subscription'">
+                <div>
+                  <v-text-field label="No of Visits" type="number" v-model="no_of_visits" dense></v-text-field>
+                </div>
+              </div>
+
+            </div>
+            <div class="row m-0" v-if="subStat=='Weekly' && !this.scheduleDateSat && !editScheduleStat">
+              <div class="col-md-12">
+                <div> Preferred Days</div>
+              </div>
+              <div class="col-6 col-md-1">
+                <div class="ev-day-active" @click="selectPrefDay('Sun')" v-if="prefDay.includes('Sun')">
+                  Sun
+                </div>
+                <div class="ev-day" @click="selectPrefDay('Sun')" v-else>
+                  Sun
+                </div>
+              </div>
+              <div class="col-6 col-md-1">
+                <div class="ev-day-active" @click="selectPrefDay('Mon')" v-if="prefDay.includes('Mon')">
+                  Mon
+                </div>
+                <div class="ev-day" @click="selectPrefDay('Mon')" v-else>
+                  Mon
+                </div>
+              </div>
+              <div class="col-6 col-md-1">
+                <div class="ev-day-active" @click="selectPrefDay('Tue')" v-if="prefDay.includes('Tue')">
+                  Tue
+                </div>
+                <div class="ev-day" @click="selectPrefDay('Tue')" v-else>
+                  Tue
+                </div>
+              </div>
+              <div class="col-6 col-md-1">
+                <div class="ev-day-active" @click="selectPrefDay('Wed')" v-if="prefDay.includes('Wed')">
+                  Wed
+                </div>
+                <div class="ev-day" @click="selectPrefDay('Wed')" v-else>
+                  Wed
+                </div>
+              </div>
+              <div class="col-6 col-md-1">
+                <div class="ev-day-active" @click="selectPrefDay('Thu')" v-if="prefDay.includes('Thu')">
+                  Thu
+                </div>
+                <div class="ev-day" @click="selectPrefDay('Thu')" v-else>
+                  Thu
+                </div>
+              </div>
+              <div class="col-6 col-md-1">
+                <div class="ev-day-active" @click="selectPrefDay('Fri')" v-if="prefDay.includes('Fri')">
+                  Fri
+                </div>
+                <div class="ev-day" @click="selectPrefDay('Fri')" v-else>
+                  Fri
+                </div>
+              </div>
+              <div class="col-6 col-md-1">
+                <div class="ev-day-active" @click="selectPrefDay('Sat')" v-if="prefDay.includes('Sat')">
+                  Sat
+                </div>
+                <div class="ev-day" @click="selectPrefDay('Sat')" v-else>
+                  Sat
+                </div>
+              </div>
+            </div>
+            <div class="row m-0" v-if="!this.scheduleDateSat && !editScheduleStat">
+              <div class="col-md-12 " v-if="subStat=='Custom'">
+                <v-btn tile color="primary" @click="customDialog=true">
                   <v-icon left>
-                    mdi-arrow-left
+                    mdi-calendar
                   </v-icon>
-                  Back
+                  Select Visit Dates
                 </v-btn>
               </div>
-              <div class="row m-0" v-if="!scheduleDateSat && !editScheduleStat">
-                <div class="col-md-3">
-                  <div>
-                    <v-select :items="['Subscription','One Time']" label="Cleaning Policy" dense
-                      v-model="cleaningPolicy" v-if="current_service!='Hourly Cleaning'"
-                      @change="newdurationcalculation()"></v-select>
-                    <v-select :items="['Subscription']" label="Cleaning Policy" dense v-model="cleaningPolicy"
-                      v-if="current_service=='Hourly Cleaning'"></v-select>
-                  </div>
-                </div>
-                <div class="col-md-3" v-if="cleaningPolicy=='Subscription'">
-                  <div>
-                    <v-select :items="['Daily','Weekly','Monthly','Custom']" label="Subscription Plan" v-model="subStat"
-                      dense></v-select>
+            </div>
+            <div class="row m-0"
+              v-if="subStat && cleaningPolicy && no_of_visits && !scheduleDateSat && cleaningPolicy!='One Time' && !editScheduleStat">
 
-                  </div>
-                </div>
-                <div class="col-md-2" v-if="subStat=='Daily'">
-                  <v-switch v-model="altdaysStat" inset label="Alternate Days" class="mt-0 book-stat"></v-switch>
-                </div>
-                <div class="col-md-2" v-if="subStat=='Weekly'">
-                  <v-switch v-model="altweekStat" inset label="Alternate Weeks" class="mt-0 book-stat"></v-switch>
-                </div>
-                <div class="col-md-3" v-if="subStat!='Custom' && cleaningPolicy=='Subscription'">
-                  <div>
-                    <v-text-field label="No of Visits" type="number" v-model="no_of_visits" dense></v-text-field>
-                  </div>
-                </div>
+              <div class="col-md-12 " v-if="subStat!='Monthly' && subStat!='Custom'">
+                <v-btn tile color="primary" @click="scheduleDialog=true">
+                  <v-icon left>
+                    mdi-calendar
+                  </v-icon>
+                  Choose a Starting Date
+                </v-btn>
+              </div>
 
-              </div>
-              <div class="row m-0" v-if="subStat=='Weekly' && !this.scheduleDateSat && !editScheduleStat">
-                <div class="col-md-12">
-                  <div> Preferred Days</div>
-                </div>
-                <div class="col-6 col-md-1">
-                  <div class="ev-day-active" @click="selectPrefDay('Sun')" v-if="prefDay.includes('Sun')">
-                    Sun
-                  </div>
-                  <div class="ev-day" @click="selectPrefDay('Sun')" v-else>
-                    Sun
-                  </div>
-                </div>
-                <div class="col-6 col-md-1">
-                  <div class="ev-day-active" @click="selectPrefDay('Mon')" v-if="prefDay.includes('Mon')">
-                    Mon
-                  </div>
-                  <div class="ev-day" @click="selectPrefDay('Mon')" v-else>
-                    Mon
-                  </div>
-                </div>
-                <div class="col-6 col-md-1">
-                  <div class="ev-day-active" @click="selectPrefDay('Tue')" v-if="prefDay.includes('Tue')">
-                    Tue
-                  </div>
-                  <div class="ev-day" @click="selectPrefDay('Tue')" v-else>
-                    Tue
-                  </div>
-                </div>
-                <div class="col-6 col-md-1">
-                  <div class="ev-day-active" @click="selectPrefDay('Wed')" v-if="prefDay.includes('Wed')">
-                    Wed
-                  </div>
-                  <div class="ev-day" @click="selectPrefDay('Wed')" v-else>
-                    Wed
-                  </div>
-                </div>
-                <div class="col-6 col-md-1">
-                  <div class="ev-day-active" @click="selectPrefDay('Thu')" v-if="prefDay.includes('Thu')">
-                    Thu
-                  </div>
-                  <div class="ev-day" @click="selectPrefDay('Thu')" v-else>
-                    Thu
-                  </div>
-                </div>
-                <div class="col-6 col-md-1">
-                  <div class="ev-day-active" @click="selectPrefDay('Fri')" v-if="prefDay.includes('Fri')">
-                    Fri
-                  </div>
-                  <div class="ev-day" @click="selectPrefDay('Fri')" v-else>
-                    Fri
-                  </div>
-                </div>
-                <div class="col-6 col-md-1">
-                  <div class="ev-day-active" @click="selectPrefDay('Sat')" v-if="prefDay.includes('Sat')">
-                    Sat
-                  </div>
-                  <div class="ev-day" @click="selectPrefDay('Sat')" v-else>
-                    Sat
-                  </div>
-                </div>
-              </div>
-              <div class="row m-0" v-if="!this.scheduleDateSat && !editScheduleStat">
-                <div class="col-md-12 " v-if="subStat=='Custom'">
-                  <v-btn tile color="primary" @click="customDialog=true">
+              <div v-if="subStat=='Monthly'" class="col-md-3">
+                <v-menu v-model="menu2" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
+                  offset-y min-width="auto">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field v-model="monthly_starting_date" label="Starting Date" prepend-icon="mdi-calendar"
+                      readonly v-bind="attrs" v-on="on"></v-text-field>
+                  </template>
+                  <v-date-picker v-model="monthly_starting_date" @input="menu2 = false" style="max-width:300px"
+                    :min="today"></v-date-picker>
+                </v-menu>
+                <div>
+                  <v-btn tile color="primary" @click="monthlyDialog=true">
                     <v-icon left>
                       mdi-calendar
                     </v-icon>
                     Select Visit Dates
                   </v-btn>
                 </div>
+
               </div>
-              <div class="row m-0"
-                v-if="subStat && cleaningPolicy && no_of_visits && !scheduleDateSat && cleaningPolicy!='One Time' && !editScheduleStat">
+            </div>
+            <div class="row schedule-details-head mt-2"
+              v-if="scheduleDateSat && cleaningPolicy!='One Time' && !editScheduleStat">
 
-                <div class="col-md-12 " v-if="subStat!='Monthly' && subStat!='Custom'">
-                  <v-btn tile color="primary" @click="scheduleDialog=true">
-                    <v-icon left>
-                      mdi-calendar
-                    </v-icon>
-                    Choose a Starting Date
-                  </v-btn>
+              <div class="col-md-2">
+                <div>
+                  <b>Cleaning Policy</b>
                 </div>
-
-                <div v-if="subStat=='Monthly'" class="col-md-3">
-                  <v-menu v-model="menu2" :close-on-content-click="false" :nudge-right="40"
-                    transition="scale-transition" offset-y min-width="auto">
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-text-field v-model="monthly_starting_date" label="Starting Date" prepend-icon="mdi-calendar"
-                        readonly v-bind="attrs" v-on="on"></v-text-field>
-                    </template>
-                    <v-date-picker v-model="monthly_starting_date" @input="menu2 = false" style="max-width:300px"
-                      :min="today"></v-date-picker>
-                  </v-menu>
-                  <div>
-                    <v-btn tile color="primary" @click="monthlyDialog=true">
-                      <v-icon left>
-                        mdi-calendar
-                      </v-icon>
-                      Select Visit Dates
-                    </v-btn>
-                  </div>
-
+                <div>
+                  <span v-text="cleaningPolicy"></span>
                 </div>
               </div>
-              <div class="row schedule-details-head mt-2"
-                v-if="scheduleDateSat && cleaningPolicy!='One Time' && !editScheduleStat">
+              <div class="col-md-2">
+                <div>
+                  <b>Subscription Plan</b>
+                </div>
+                <div v-text="subStat">
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div>
+                  <b> Number Of Visits</b>
+                </div>
+                <div v-text="visits.length">
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div>
+                  <b> Starting Date</b>
+                </div>
+                <div v-if="subStat=='Custom'" v-text="customDateSelected[0]">
+                </div>
+                <div v-if="subStat!='Monthly' && subStat!='Custom' && subStat!='Weekly'" v-text="slotDate">
+                </div>
+                <div v-if="subStat=='Monthly'" v-text="monthly_starting_date">
+                </div>
+                <div v-if="subStat=='Weekly'" v-text="visits[0].date">
+                </div>
+              </div>
+              <div class="col-md-2 offset-md-2">
+                <v-btn color="primary" @click="confirmation_dialog=true">
+                  Reset
+                </v-btn>
+              </div>
+            </div>
+            <div v-if="editScheduleStat">
 
+              <div class="row schedule-details-head mt-4">
                 <div class="col-md-2">
                   <div>
                     <b>Cleaning Policy</b>
                   </div>
-                  <div>
-                    <span v-text="cleaningPolicy"></span>
+                  <div v-text="editScheduleData.cleaning_policy">
                   </div>
                 </div>
-                <div class="col-md-2">
-                  <div>
-                    <b>Subscription Plan</b>
-                  </div>
-                  <div v-text="subStat">
-                  </div>
-                </div>
+
                 <div class="col-md-2">
                   <div>
                     <b> Number Of Visits</b>
                   </div>
-                  <div v-text="visits.length">
+                  <div v-text="Object.keys(editScheduleData.schedule_details).length">
                   </div>
                 </div>
                 <div class="col-md-2">
                   <div>
                     <b> Starting Date</b>
                   </div>
-                  <div v-if="subStat=='Custom'" v-text="customDateSelected[0]">
+                  <div v-text="editScheduleData.schedule_details[1].date">
                   </div>
-                  <div v-if="subStat!='Monthly' && subStat!='Custom' && subStat!='Weekly'" v-text="slotDate">
-                  </div>
-                  <div v-if="subStat=='Monthly'" v-text="monthly_starting_date">
-                  </div>
-                  <div v-if="subStat=='Weekly'" v-text="visits[0].date">
-                  </div>
+
                 </div>
                 <div class="col-md-2 offset-md-2">
                   <v-btn color="primary" @click="confirmation_dialog=true">
@@ -3280,190 +3061,157 @@
                   </v-btn>
                 </div>
               </div>
-              <div v-if="editScheduleStat">
-
-                <div class="row schedule-details-head mt-4">
-                  <div class="col-md-2">
-                    <div>
-                      <b>Cleaning Policy</b>
+              <div class="row">
+                <div class="col-md-12" class="primary-text schedule-heading mt-2">
+                  <b>Visits</b>
+                </div>
+                <div class="col-md-2" v-for="(service,sindex) in editScheduleData.schedule_details" v-bind:key="sindex">
+                  <div class="available-slot-card p-2">
+                    <div class="d-flex">
+                      <div>
+                        <b v-text="`Visit ${sindex}`"></b>
+                      </div>
+                      <div class="ml-auto">
+                        <span v-text="service.date"></span>
+                      </div>
                     </div>
-                    <div v-text="editScheduleData.cleaning_policy">
+                    <div class="text-center pt-2">
+                      <span v-text="service.time"></span>
                     </div>
-                  </div>
-
-                  <div class="col-md-2">
-                    <div>
-                      <b> Number Of Visits</b>
-                    </div>
-                    <div v-text="Object.keys(editScheduleData.schedule_details).length">
-                    </div>
-                  </div>
-                  <div class="col-md-2">
-                    <div>
-                      <b> Starting Date</b>
-                    </div>
-                    <div v-text="editScheduleData.schedule_details[1].date">
-                    </div>
-
-                  </div>
-                  <div class="col-md-2 offset-md-2">
-                    <v-btn color="primary" @click="confirmation_dialog=true">
-                      Reset
-                    </v-btn>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col-md-12" class="primary-text schedule-heading mt-2">
-                    <b>Visits</b>
-                  </div>
-                  <div class="col-md-2" v-for="(service,sindex) in editScheduleData.schedule_details"
-                    v-bind:key="sindex">
-                    <div class="available-slot-card p-2">
+              </div>
+            </div>
+
+            <div class="row m-0 mt-4">
+              <div class="col-md-12" v-if="visits.length>0 && cleaningPolicy!='One Time'">
+                <div>
+                  Please Change Unavailable Slots
+                </div>
+                <div class="row mt-2" v-if="cleaningPolicy!='One Time'">
+                  <!--- for  cleaning without availablity check-->
+
+                  <!---  for  cleaning with availablity check-->
+                  <div class="col-md-2" v-for="(visit,vindex) in visits" v-bind:key="vindex">
+                    <div class="available-slot-card p-2"
+                      v-if="isDateTimeAvailable(visit.dateTime) || visit.status=='fixed'">
                       <div class="d-flex">
                         <div>
-                          <b v-text="`Visit ${sindex}`"></b>
+                          <b v-text="`Visit ${getVisitNumber(vindex)}`"></b>
                         </div>
                         <div class="ml-auto">
-                          <span v-text="service.date"></span>
+                          <span v-text="visit.date"></span>
                         </div>
                       </div>
                       <div class="text-center pt-2">
-                        <span v-text="service.time"></span>
+                        <span v-text="getCombinedSlot(visit.slots)"></span>
                       </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row m-0 mt-4">
-                <div class="col-md-12" v-if="visits.length>0 && cleaningPolicy!='One Time'">
-                  <div>
-                    Please Change Unavailable Slots
-                  </div>
-                  <div class="row mt-2" v-if="cleaningPolicy!='One Time'">
-                    <!--- for  cleaning without availablity check-->
-
-                    <!---  for  cleaning with availablity check-->
-                    <div class="col-md-2" v-for="(visit,vindex) in visits" v-bind:key="vindex">
-                      <div class="available-slot-card p-2"
-                        v-if="isDateTimeAvailable(visit.dateTime) || visit.status=='fixed'">
-                        <div class="d-flex">
-                          <div>
-                            <b v-text="`Visit ${getVisitNumber(vindex)}`"></b>
-                          </div>
-                          <div class="ml-auto">
-                            <span v-text="visit.date"></span>
-                          </div>
+                    <div class="not-available-slot-card p-2"
+                      v-if="!isDateTimeAvailable(visit.dateTime) && !checkFixedSlots(visit.dateTime,vindex) && visit.status!='fixed'"
+                      @click="reselectVisitDate(visit,vindex)">
+                      <div class="d-flex">
+                        <div>
+                          <b v-text="`Visit ${getVisitNumber(vindex)}`"></b>
                         </div>
-                        <div class="text-center pt-2">
-                          <span v-text="getCombinedSlot(visit.slots)"></span>
+                        <div class="ml-auto">
+                          <span v-text="visit.date"></span>
                         </div>
                       </div>
-                      <div class="not-available-slot-card p-2"
-                        v-if="!isDateTimeAvailable(visit.dateTime) && !checkFixedSlots(visit.dateTime,vindex) && visit.status!='fixed'"
-                        @click="reselectVisitDate(visit,vindex)">
-                        <div class="d-flex">
-                          <div>
-                            <b v-text="`Visit ${getVisitNumber(vindex)}`"></b>
-                          </div>
-                          <div class="ml-auto">
-                            <span v-text="visit.date"></span>
-                          </div>
-                        </div>
-                        <div class="text-center pt-2">
-                          <span v-text="getCombinedSlot(visit.slots)"></span>
-                        </div>
-                      </div>
-
-
-                      <!-- autofixed slots-->
-                      <div class="available-slot-card p-2"
-                        v-if="checkFixedSlots(visit.dateTime,vindex) && !isDateTimeAvailable(visit.dateTime)">
-                        <div class="d-flex">
-                          <div>
-                            <b v-text="`Visit ${getVisitNumber(vindex)}`"></b>
-                          </div>
-                          <div class="ml-auto">
-                            <span v-text="visit.date"></span>
-                          </div>
-                        </div>
-                        <div class="text-center pt-2">
-                          <span v-text="checkFixedSlots(visit.dateTime,vindex)"></span>
-                        </div>
-                      </div>
-
-                      <!-- autofixed slots ended-->
-                    </div>
-
-                  </div>
-
-                  <div class="text-center mt-4" v-if="visits.length>0 && !autofixStat && cleaningPolicy!='One Time'">
-                    <v-btn color="primary" @click="autoFix()">
-                      Autofix
-                    </v-btn>
-                  </div>
-                  <div class="text-center mt-4" v-if="visits.length>0 && autofixStat && cleaningPolicy!='One Time'">
-                    Please select Unavailable dates manually
-                  </div>
-                  <div class="text-center mt-2" v-if="visits.length>0 && autofixStat && cleaningPolicy!='One Time'">
-                    <v-btn color="primary" v-if="checkFixStatus()" @click="addToSchedule()">
-                      Proceed
-                    </v-btn>
-                  </div>
-                </div>
-                <!-- One time cleaning selected slots-->
-                <div class="col-md-12" v-if="cleaningPolicy=='One Time'">
-
-                  <div class="row">
-
-                    <div class="col-md-2" v-for="(visit,vindex) in selected_onetime_slots" v-bind:key="vindex">
-                      <div class="available-slot-card p-2">
-                        <div class="d-flex">
-                          <div>
-                            <!-- <b>Slot </b> -->
-                          </div>
-                          <div class="ml-auto">
-                            <span v-text="vindex"></span>
-                          </div>
-                        </div>
-                        <div class="text-center pt-2">
-                          <span v-text="getCombinedOnetimeSlot(visit.slots)"></span>
-                          <!-- slot time display -->
-                        </div>
+                      <div class="text-center pt-2">
+                        <span v-text="getCombinedSlot(visit.slots)"></span>
                       </div>
                     </div>
 
 
+                    <!-- autofixed slots-->
+                    <div class="available-slot-card p-2"
+                      v-if="checkFixedSlots(visit.dateTime,vindex) && !isDateTimeAvailable(visit.dateTime)">
+                      <div class="d-flex">
+                        <div>
+                          <b v-text="`Visit ${getVisitNumber(vindex)}`"></b>
+                        </div>
+                        <div class="ml-auto">
+                          <span v-text="visit.date"></span>
+                        </div>
+                      </div>
+                      <div class="text-center pt-2">
+                        <span v-text="checkFixedSlots(visit.dateTime,vindex)"></span>
+                      </div>
+                    </div>
+
+                    <!-- autofixed slots ended-->
                   </div>
+
                 </div>
-                <div class="text-center mt-4" v-if="oneTimeSelectionStat">
-                  <v-btn color="primary" @click="addOneTimeToSchedule()">
+
+                <div class="text-center mt-4" v-if="visits.length>0 && !autofixStat && cleaningPolicy!='One Time'">
+                  <v-btn color="primary" @click="autoFix()">
+                    Autofix
+                  </v-btn>
+                </div>
+                <div class="text-center mt-4" v-if="visits.length>0 && autofixStat && cleaningPolicy!='One Time'">
+                  Please select Unavailable dates manually
+                </div>
+                <div class="text-center mt-2" v-if="visits.length>0 && autofixStat && cleaningPolicy!='One Time'">
+                  <v-btn color="primary" v-if="checkFixStatus()" @click="addToSchedule()">
                     Proceed
                   </v-btn>
                 </div>
-                <!-- One time cleaning selected slots ends here-->
-
-
               </div>
+              <!-- One time cleaning selected slots-->
+              <div class="col-md-12" v-if="cleaningPolicy=='One Time'">
 
-              <!-- One time cleaning begins here-->
+                <div class="row">
 
-              <div class="row m-0" v-if="cleaningPolicy=='One Time' && checkEditSchedule()">
-                <div class="col-md-12 " v-if="!oneTimeSelectionStat">
-                  <v-btn tile color="primary" @click="onetime_dialog=true">
-                    <v-icon left>
-                      mdi-calendar
-                    </v-icon>
-                    Select Slots
-                  </v-btn>
+                  <div class="col-md-2" v-for="(visit,vindex) in selected_onetime_slots" v-bind:key="vindex">
+                    <div class="available-slot-card p-2">
+                      <div class="d-flex">
+                        <div>
+                          <!-- <b>Slot </b> -->
+                        </div>
+                        <div class="ml-auto">
+                          <span v-text="vindex"></span>
+                        </div>
+                      </div>
+                      <div class="text-center pt-2">
+                        <span v-text="getCombinedOnetimeSlot(visit.slots)"></span>
+                        <!-- slot time display -->
+                      </div>
+                    </div>
+                  </div>
+
+
                 </div>
               </div>
-              <!-- one tim ecleaning ends here-->
+              <div class="text-center mt-4" v-if="oneTimeSelectionStat">
+                <v-btn color="primary" @click="addOneTimeToSchedule()">
+                  Proceed
+                </v-btn>
+              </div>
+              <!-- One time cleaning selected slots ends here-->
+
+
             </div>
-            <!-- Schedule ends here-->
+
+            <!-- One time cleaning begins here-->
+
+            <div class="row m-0" v-if="cleaningPolicy=='One Time' && checkEditSchedule()">
+              <div class="col-md-12 " v-if="!oneTimeSelectionStat">
+                <v-btn tile color="primary" @click="onetime_dialog=true">
+                  <v-icon left>
+                    mdi-calendar
+                  </v-icon>
+                  Select Slots
+                </v-btn>
+              </div>
+            </div>
+            <!-- one tim ecleaning ends here-->
           </div>
+          <!-- Schedule ends here-->
         </div>
       </div>
+</div>
 </div>
 </div>
 </div>
@@ -3505,6 +3253,7 @@
 <script type="text/javascript"
   src="https://cdn.jsdelivr.net/npm/browser-image-compression@1.0.13/dist/browser-image-compression.js"></script>
 
+<script src="{% static 'files/js/components/addon-card.js' %}"></script>
 <script src="{% static 'files/js/booking/staging-booking.js' %}"></script>
 
 

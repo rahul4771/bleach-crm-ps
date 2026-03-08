@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from evaluator.models import ServiceType
 
@@ -5,6 +6,9 @@ SERVICEDIVISION_CHOICES = (('SOFA','SOFA'),
 					 ('CHAIR','CHAIR'),
 					 ('CURTAIN','CURTAIN'))
 
+def addons_image_path(instance, filename):
+	ext = filename.split('.')[-1].lower()
+	return f"addons/{uuid.uuid4().hex}.{ext}"
 
 class ServiceProductivity(models.Model):
 	service_type     	= models.ForeignKey(ServiceType,on_delete=models.PROTECT,blank=True,null=True,related_name='productivity_service_type')
@@ -68,6 +72,11 @@ class ServiceAddOns(models.Model):
 	is_active    = models.BooleanField(null=False,blank=True,default=True)
 	created      = models.DateTimeField(auto_now_add=True)
 	updated      = models.DateTimeField(auto_now=True)
+	image_path = models.ImageField(
+        upload_to= addons_image_path,
+        blank=True,
+        null=True
+    )
 	def __unicode__(self):
 		return str(self.service_type.name)
 
