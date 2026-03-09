@@ -1577,7 +1577,7 @@
                                               <div class="row kitchen-box">
                                                 <div class="col-md-12"
                                                   v-if="building[index - 1].floors[floor - 1].kitchen">
-                                                  <div>Do you want to clean the Cabinet ? <span
+                                                  <div>Do you want to clean the Cabinet ? 11<span
                                                       style="color:red">*</span></div>
                                                   <v-radio-group v-model="kitchenData.is_cabinet" class="p-2" row
                                                     v-on:change="changeNewKitchen()"
@@ -1959,7 +1959,7 @@
                                                     <!-- Apartment kitchen ends here -->
 
                                                     <div class="col-md-12 mt-2">
-                                                      <div><strong>Add Keynotes %%%</strong></div>
+                                                      <div><strong>Add Keynotes</strong></div>
                                                       <div class="row">
                                                         <div v-for="(keynote,kindex) in apartment.keynote_data"
                                                           v-bind:key="kindex" class="col-md-3 mb-2">

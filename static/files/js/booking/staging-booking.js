@@ -226,8 +226,8 @@ const app = new Vue({
             required: v => !!v || 'this field is required',
         },
         // url:'',
-        url: 'https://my.bleachkw.com',
-        // url: 'http://127.0.0.1:8000',
+        // url: 'https://my.bleachkw.com',
+        url: 'http://127.0.0.1:8000',
         slot_loader: false,
         lastLoadedServiceType: '',  // Track last loaded service to prevent duplicate addon calls
         kitchenData: {
@@ -236,7 +236,7 @@ const app = new Vue({
             size: null,
             ceiling_type: '',
             condition: '',
-            type: 'old',
+            type: '',
             residue: false,
             is_cabinet: false
         },
@@ -2428,7 +2428,7 @@ const app = new Vue({
                     ceiling_type: '',
                     condition: '',
                     is_cabinet: false,
-                    type: 'old',
+                    type: '',
                     residue: false
                 }
                 this.changeNewKitchen()
@@ -2448,7 +2448,7 @@ const app = new Vue({
                 ceiling_type: '',
                 condition: '',
                 is_cabinet: false,
-                type: 'old',
+                type: '',
                 residue: false
             }
             this.changeNewKitchen()
@@ -2468,7 +2468,7 @@ const app = new Vue({
                     size: null,
                     ceiling_type: '',
                     condition: '',
-                    type: 'old',
+                    type: '',
                     is_cabinet: false,
                     residue: false
                 }
@@ -2504,7 +2504,7 @@ const app = new Vue({
                 condition: '',
                 is_cabinet: false,
                 residue: false,
-                type: 'old'
+                type: ''
             }
             this.changeNewKitchen()
             this.kitchendialog = false
@@ -2524,7 +2524,7 @@ const app = new Vue({
                 size: '',
                 ceiling_type: '',
                 condition: '',
-                type: 'old',
+                type: '',
                 is_cabinet: false,
                 residue: false
             }
@@ -2538,7 +2538,7 @@ const app = new Vue({
                 material: "",
                 color: "",
                 size: "",
-                type: "old",
+                type: "",
                 age: "",
                 stain: false,
                 stain_reason: "",
@@ -2571,7 +2571,7 @@ const app = new Vue({
                 size: '',
                 ceiling_type: '',
                 condition: '',
-                type: 'old',
+                type: '',
                 is_cabinet: false,
                 residue: false
             }
@@ -2613,6 +2613,7 @@ const app = new Vue({
             this.kitchenData.condition = this.building[building].floors[floor].apartments[apartment].kitchens[serv].condition
             this.kitchenData.type = this.building[building].floors[floor].apartments[apartment].kitchens[serv].type
             this.kitchenData.residue = this.building[building].floors[floor].apartments[apartment].kitchens[serv].residue
+            this.changeNewKitchen()
 
 
         },
@@ -2643,7 +2644,7 @@ const app = new Vue({
                 size: null,
                 ceiling_type: '',
                 condition: '',
-                type: 'old',
+                type: '',
                 residue: false,
                 is_cabinet: false,
             }
@@ -2703,6 +2704,7 @@ const app = new Vue({
 
                     this.parseAddons();
                     this.showAddonCarousel = false
+                    console.log("kitchenData.type", this.kitchenData.type)
                     // $('.more-services').hide()
                     if (this.kitchenData.is_cabinet) {
                         this.sizeFilteredData.push(...this.kitchenSizeData.filter(item => item.kitchen_type == this.kitchenData.type && item.is_cabinet));
@@ -4321,7 +4323,7 @@ const app = new Vue({
                     material: "",
                     color: "",
                     size: "",
-                    type: "old",
+                    type: "",
                     is_cabinet: false,
                     age: "",
                     stain: false,
