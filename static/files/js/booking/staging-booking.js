@@ -597,7 +597,7 @@ const app = new Vue({
         ropeAccessTypes: '',
         kitchenTypes: '',
         kitchenSize: '',
-
+        showAddonCarousel: false,
 
     },
     computed: {
@@ -2416,6 +2416,7 @@ const app = new Vue({
         ================================================================ */
 
         addKitchen(building, floor) {
+            console.log("object")
 
             if (this.$refs['kitchenFloor-building-' + (building) + 'floor-' + (floor)][0].validate()) {
                 this.building[building].floors[floor].kitchens.push(this.kitchenData)
@@ -2666,6 +2667,7 @@ const app = new Vue({
             this.otherService.size = ""
             this.parseAddons()
             this.kitchenTypeFilter();
+            this.showAddonCarousel = true;
             // $('.more-services').hide()
             // if (this.otherService.type == "new") {
             //     if (this.otherService.is_cabinet) {
@@ -2700,7 +2702,8 @@ const app = new Vue({
                     this.serviceSize = {};
 
                     this.parseAddons();
-                    $('.more-services').hide()
+                    this.showAddonCarousel = false
+                    // $('.more-services').hide()
                     if (this.kitchenData.is_cabinet) {
                         this.sizeFilteredData.push(...this.kitchenSizeData.filter(item => item.kitchen_type == this.kitchenData.type && item.is_cabinet));
                     } else {
@@ -3889,6 +3892,7 @@ const app = new Vue({
                 });
         },
         getSize(serviceType = null) {
+            this.showAddonCarousel = !serviceType ? true : false
             let service = serviceType || this.serviceType
             if (service == 'Hourly Cleaning') {
                 service = 'General Cleaning'
@@ -3911,6 +3915,7 @@ const app = new Vue({
                     if (service == 'Kitchen Cleaning' || this.serviceType == 'Kitchen Cleaning') {
                         this.kitchenTypes = [...new Set(this.sizeData.map(size => size.kitchen_type))];
                         this.otherService.type = this.kitchenTypes[0]
+                        this.kitchenData.type = this.kitchenTypes[0]
                         this.kitchenTypeFilter();
                     }
                     if (this.serviceType == 'Rope Access') {
@@ -4036,6 +4041,7 @@ const app = new Vue({
                 addons: []
             };
             this.parseAddons()
+
             // if (this.selectedService.name == 'Kitchen Cleaning') {
             //     this.otherService.type = "old"
             //     this.changeKitchen()

@@ -1161,7 +1161,7 @@
 
                   <div class="col-md-12"></div>
                   <!--more services  only for kitchen cleaning-->
-                  <addon-carousel :addons="addons_parsed" carousel-id="otherServiceCarousel1" heading="Add-ons"
+                  <addon-carousel v-if="showAddonCarousel" :addons="addons_parsed" carousel-id="otherServiceCarousel1" heading="Add-ons"
                     wrapper-class="more-services" @select="selectAddons" @reduce="reduceQty" @increase="increaseQty"
                     @update-quantity="addons_parsed[$event.index].quantity = $event.quantity"
                     @choose-size="addons_parsed[$event.index].selected_size = $event.size">
@@ -1243,7 +1243,7 @@
                   </div>
                   <!-- Kitchen Appliances: addon-only service, no building/size form -->
                   <div class="row" v-if="serviceType == 'Kitchen Appliances'">
-                    <addon-carousel :addons="addons_parsed" carousel-id="otherServiceCarousel4" heading="Add-ons"
+                    <addon-carousel  v-if="showAddonCarousel" :addons="addons_parsed" carousel-id="otherServiceCarousel4" heading="Add-ons"
                       @select="selectAddons" @reduce="reduceQty" @increase="increaseQty"
                       @update-quantity="addons_parsed[$event.index].quantity = $event.quantity"
                       @choose-size="addons_parsed[$event.index].selected_size = $event.size">
@@ -1643,7 +1643,7 @@
                                             </v-form>
                                           </div>
 
-                                          <addon-carousel :addons="addons_parsed" carousel-id="otherServiceCarousel2"
+                                          <addon-carousel  v-if="showAddonCarousel" :addons="addons_parsed" carousel-id="otherServiceCarousel2"
                                             heading="Add-ons" @select="selectAddons" @reduce="reduceQty"
                                             @increase="increaseQty"
                                             @update-quantity="addons_parsed[$event.index].quantity = $event.quantity"
@@ -2326,7 +2326,7 @@
                     </v-radio-group>
                   </div>
                   <!--more services  only for kitchen cleaning-->
-                  <addon-carousel :addons="addons_parsed" carousel-id="otherServiceCarousel3" heading="Add-ons"
+                  <addon-carousel  v-if="showAddonCarousel" :addons="addons_parsed" carousel-id="otherServiceCarousel3" heading="Add-ons"
                     @select="selectAddons" @reduce="reduceQty" @increase="increaseQty"
                     @update-quantity="addons_parsed[$event.index].quantity = $event.quantity"
                     @choose-size="addons_parsed[$event.index].selected_size = $event.size">
