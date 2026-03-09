@@ -1603,6 +1603,7 @@ createApp({
                         if (index !== -1) this.serviceAddons[key].splice(index, 1, updated);
                         this.successMsg = updated && updated.name ? `Addon ${updated.name} updated successfully.` : 'Addon updated successfully.';
                         setTimeout(() => { this.successMsg = ''; }, 5000);
+                        this.resetFileInput('addon_image');
                     }
                 })
                 .catch(async err => {
@@ -1943,6 +1944,9 @@ createApp({
         backButtonActionToList() {
             this.toggleDivs.showServiceGroupModal = false;
             this.toggleDivs.showServiceGroupView = true;
+        },
+        resetFileInput(inputFieldId) {
+            document.getElementById(inputFieldId).value = '';
         },
 
         handleEditServiceGroupBtnClick(serviceGroup) {
