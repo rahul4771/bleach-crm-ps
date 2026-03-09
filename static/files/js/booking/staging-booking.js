@@ -2580,6 +2580,7 @@ const app = new Vue({
         },
         editNewKitchen(building, floor, serv) {
 
+            this.changeNewKitchen()
             this.kitchenType = 'floor'
             this.currentBuilding = building
             this.currentFloor = floor
@@ -2595,10 +2596,9 @@ const app = new Vue({
             this.kitchenData.residue = this.building[building].floors[floor].kitchens[serv].residue
 
 
-
         },
         editNewApartmentKitchen(building, floor, apartment, serv) {
-
+            this.changeNewKitchen()
             this.kitchenType = 'apartment'
             this.currentBuilding = building
             this.currentFloor = floor
@@ -2613,7 +2613,6 @@ const app = new Vue({
             this.kitchenData.condition = this.building[building].floors[floor].apartments[apartment].kitchens[serv].condition
             this.kitchenData.type = this.building[building].floors[floor].apartments[apartment].kitchens[serv].type
             this.kitchenData.residue = this.building[building].floors[floor].apartments[apartment].kitchens[serv].residue
-            this.changeNewKitchen()
 
 
         },
@@ -2704,7 +2703,6 @@ const app = new Vue({
 
                     this.parseAddons();
                     this.showAddonCarousel = false
-                    console.log("kitchenData.type", this.kitchenData.type)
                     // $('.more-services').hide()
                     if (this.kitchenData.is_cabinet) {
                         this.sizeFilteredData.push(...this.kitchenSizeData.filter(item => item.kitchen_type == this.kitchenData.type && item.is_cabinet));
