@@ -462,8 +462,8 @@ createApp({
                         productivity: addon.productivity || '',
                         service_type_id: this.serviceTypeId || '',
                         status: addon.is_active || false,
-                        image_path: addon.image || '',
-                        _image_preview: addon.image || ''
+                        image_path: addon.image_path || '',
+                        _image_preview: ''
                     }
                 }
             }
