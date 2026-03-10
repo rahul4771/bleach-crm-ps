@@ -226,8 +226,8 @@ const app = new Vue({
             required: v => !!v || 'this field is required',
         },
         // url:'',
-        // url: 'https://my.bleachkw.com',
-        url: 'http://127.0.0.1:8000',
+        url: 'https://my.bleachkw.com',
+        // url: 'http://127.0.0.1:8000',
         slot_loader: false,
         lastLoadedServiceType: '',  // Track last loaded service to prevent duplicate addon calls
         kitchenData: {
@@ -597,7 +597,6 @@ const app = new Vue({
         ropeAccessTypes: '',
         kitchenTypes: '',
         kitchenSize: '',
-        showAddonCarousel: false,
 
     },
     computed: {
@@ -2667,7 +2666,6 @@ const app = new Vue({
             this.otherService.size = ""
             this.parseAddons()
             this.kitchenTypeFilter();
-            this.showAddonCarousel = true;
             // $('.more-services').hide()
             // if (this.otherService.type == "new") {
             //     if (this.otherService.is_cabinet) {
@@ -2702,7 +2700,6 @@ const app = new Vue({
                     this.serviceSize = {};
 
                     this.parseAddons();
-                    this.showAddonCarousel = false
                     // $('.more-services').hide()
                     if (this.kitchenData.is_cabinet) {
                         this.sizeFilteredData.push(...this.kitchenSizeData.filter(item => item.kitchen_type == this.kitchenData.type && item.is_cabinet));
@@ -3892,7 +3889,6 @@ const app = new Vue({
                 });
         },
         getSize(serviceType = null) {
-            this.showAddonCarousel = !serviceType ? true : false
             let service = serviceType || this.serviceType
             if (service == 'Hourly Cleaning') {
                 service = 'General Cleaning'
