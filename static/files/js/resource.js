@@ -23,17 +23,17 @@ const app = new Vue({
     ],
   },
   methods: {
-    setSolt(s,e){
+    setSolt(s, e) {
       var sPos, ePos;
-      for(var i =0; i<this.solt.length;i++){
-        if(this.solt[i].start_time == s){
+      for (var i = 0; i < this.solt.length; i++) {
+        if (this.solt[i].start_time == s) {
           sPos = i;
         }
-        if(this.solt[i].end_time == e){
+        if (this.solt[i].end_time == e) {
           ePos = i;
         }
       }
-      for(var j = sPos;j<=ePos;j++){
+      for (var j = sPos; j <= ePos; j++) {
         this.solt[j].check = true;
       }
     },
@@ -102,19 +102,19 @@ const appCard = new Vue({
   },
 
   data: {
-    userid:[],
+    userid: [],
     //url:"http://localhost:8000/"
-    url:"https://my.bleachkw.com"
+    url: "https://my.bleachkw.com"
     //url : 'http://127.0.0.1:8000'
 
   },
   methods: {
-    saveEdit(id){
+    saveEdit(id) {
       // Collect all checked skill checkboxes
       let selectedServiceTypes = [];
-      
+
       // Find all checked service type checkboxes for this employee
-      $(`input[name="service_type_${id}"]:checked`).each(function() {
+      $(`input[name="service_type_${id}"]:checked`).each(function () {
         selectedServiceTypes.push($(this).val());
       });
 
@@ -133,26 +133,26 @@ const appCard = new Vue({
           service_type_ids: selectedServiceTypes
         })
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          console.log('✅ Skills saved successfully!');
-          console.log('Details:', data.details);
-          
-          // Show success message with operation details
-          alert(`✅ ${data.message}\nEmployee: ${data.details.employee_name}`);
-          
-          // Reload page to reflect changes
-          location.reload();
-        } else {
-          console.error('❌ Failed to save skills:', data.error);
-          alert(`❌ Error: ${data.error}`);
-        }
-      })
-      .catch((error) => {
-        console.error('❌ Network error while saving skills:', error);
-        alert('❌ Network error: ' + error.message);
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            console.log('✅ Skills saved successfully!');
+            console.log('Details:', data.details);
+
+            // Show success message with operation details
+            alert(`✅ ${data.message}\nEmployee: ${data.details.employee_name}`);
+
+            // Reload page to reflect changes
+            location.reload();
+          } else {
+            console.error('❌ Failed to save skills:', data.error);
+            alert(`❌ Error: ${data.error}`);
+          }
+        })
+        .catch((error) => {
+          console.error('❌ Network error while saving skills:', error);
+          alert('❌ Network error: ' + error.message);
+        });
     },
   },
 });
@@ -160,11 +160,11 @@ const appCard = new Vue({
 
 
 var mainurl = window.location.href;
-if(mainurl.includes("starting_time")){
+if (mainurl.includes("starting_time")) {
   var urlSplit = mainurl.split("&")
   var s = urlSplit[1].split("=")[1]
   var e = urlSplit[2].split("=")[1]
-  var starting_time = s.replace("%20"," ")
-  var ending_time = e.replace("%20"," ")
-  app.setSolt(starting_time,ending_time)
+  var starting_time = s.replace("%20", " ")
+  var ending_time = e.replace("%20", " ")
+  app.setSolt(starting_time, ending_time)
 }
