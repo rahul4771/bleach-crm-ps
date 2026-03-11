@@ -2742,8 +2742,7 @@
                     <div v-for="(kitchen,kindex) in bill.section.kitchens" v-bind:key="kindex">
                       <div class="d-flex mt-1">
                         <div>
-                          <span v-text="getKitchenWithSize(kindex, kitchen.size.name)"></span><br>
-
+                          <span v-text="`Kitchen ${kindex+1} (${kitchen.size.name})`"></span><br>
                         </div>
                         <div class="ml-auto primary-text strike-text"
                           v-if="kitchen.type=='new' && service.service=='General Cleaning'">
