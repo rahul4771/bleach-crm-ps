@@ -1161,7 +1161,7 @@
 
                   <div class="col-md-12"></div>
                   <!--more services  only for kitchen cleaning-->
-                  <addon-carousel :addons="addons_parsed" carousel-id="otherServiceCarousel1" heading="Add-ons"
+                  <addon-carousel  :addons="addons_parsed" carousel-id="otherServiceCarousel1" heading="Add-ons"
                     wrapper-class="more-services" @select="selectAddons" @reduce="reduceQty" @increase="increaseQty"
                     @update-quantity="addons_parsed[$event.index].quantity = $event.quantity"
                     @choose-size="addons_parsed[$event.index].selected_size = $event.size">
@@ -1503,7 +1503,7 @@
                                               :rules="[v => v !== null && v !== undefined || 'This field is required']"
                                               required>
 
-                                              <v-radio :value="true">
+                                              <v-radio :value="true" @change="getSize('Kitchen Cleaning')">
                                                 <template v-slot:label>
                                                   <div>
                                                     Yes<strong class="success--text"></strong>
@@ -1525,14 +1525,14 @@
                                           </div>
 
                                           <div class="col-md-10 offset-md-1" v-if="renderComponent">
-                                            <div
+                                            <div class="row floors-card mb-4"
                                               v-for="(service, serindex) in building[index - 1].floors[floor - 1].kitchens"
                                               :key="serindex">
 
                                               <div class="col-md-3 col-6">
                                                 <div class="p-2">
                                                   <div class="sr-sub-heading">Item</div>
-                                                  <div v-text="`Kitchen ${getKitchenNumber(serindex)}`"></div>
+                                                  <div v-text="`Kitchen ${serindex+1}`"></div>
                                                 </div>
                                               </div>
                                               <div class="col-md-3 col-6">
@@ -1551,12 +1551,16 @@
                                                 </div>
                                               </div>
 
-                                              <div class="sr-sub-heading">Actions</div>
-                                              <div>
-                                                <i class="far fa-edit edit-icon"
-                                                  @click="editNewKitchen(index - 1, floor - 1, serindex)"></i>
-                                                <i class="far fa-trash-alt pl-2 del-icon"
-                                                  @click="deleteKitchen(index - 1, floor - 1, serindex)"></i>
+                                              <div class="col-md-2 offset-md-1 col-6">
+                                                <div class="p-2">
+                                                  <div class="sr-sub-heading">Actions</div>
+                                                  <div>
+                                                    <i class="far fa-edit edit-icon"
+                                                      @click="editNewKitchen(index - 1, floor - 1, serindex)"></i>
+                                                    <i class="far fa-trash-alt pl-2 del-icon"
+                                                      @click="deleteKitchen(index - 1, floor - 1, serindex)"></i>
+                                                  </div>
+                                                </div>
                                               </div>
                                             </div>
                                           </div>
@@ -1573,7 +1577,7 @@
                                               <div class="row kitchen-box">
                                                 <div class="col-md-12"
                                                   v-if="building[index - 1].floors[floor - 1].kitchen">
-                                                  <div>Do you want to clean the Cabinet ? <span
+                                                  <div>Do you want to clean the Cabinet ?<span
                                                       style="color:red">*</span></div>
                                                   <v-radio-group v-model="kitchenData.is_cabinet" class="p-2" row
                                                     v-on:change="changeNewKitchen()"
@@ -1817,7 +1821,7 @@
                                                         :rules="[v => v !== null && v !== undefined || 'This field is required']"
                                                         required>
 
-                                                        <v-radio :value="true">
+                                                        <v-radio :value="true" @change="getSize('Kitchen Cleaning')">
                                                           <template v-slot:label>
                                                             <div>
                                                               Yes<strong class="success--text"></strong>
@@ -1955,7 +1959,7 @@
                                                     <!-- Apartment kitchen ends here -->
 
                                                     <div class="col-md-12 mt-2">
-                                                      <div><strong>Add Keynotes %%%</strong></div>
+                                                      <div><strong>Add Keynotes</strong></div>
                                                       <div class="row">
                                                         <div v-for="(keynote,kindex) in apartment.keynote_data"
                                                           v-bind:key="kindex" class="col-md-3 mb-2">
@@ -2322,7 +2326,7 @@
                     </v-radio-group>
                   </div>
                   <!--more services  only for kitchen cleaning-->
-                  <addon-carousel :addons="addons_parsed" carousel-id="otherServiceCarousel3" heading="Add-ons"
+                  <addon-carousel  :addons="addons_parsed" carousel-id="otherServiceCarousel3" heading="Add-ons"
                     @select="selectAddons" @reduce="reduceQty" @increase="increaseQty"
                     @update-quantity="addons_parsed[$event.index].quantity = $event.quantity"
                     @choose-size="addons_parsed[$event.index].selected_size = $event.size">

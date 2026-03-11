@@ -226,7 +226,7 @@ const app = new Vue({
             required: v => !!v || 'this field is required',
         },
         // url:'',
-        url:'https://my.bleachkw.com',
+        url: 'https://my.bleachkw.com',
         // url: 'http://127.0.0.1:8000',
         slot_loader: false,
         lastLoadedServiceType: '',  // Track last loaded service to prevent duplicate addon calls
@@ -236,7 +236,7 @@ const app = new Vue({
             size: null,
             ceiling_type: '',
             condition: '',
-            type: 'old',
+            type: '',
             residue: false,
             is_cabinet: false
         },
@@ -598,7 +598,6 @@ const app = new Vue({
         kitchenTypes: '',
         kitchenSize: '',
 
-
     },
     computed: {
         filteredServices() {
@@ -920,10 +919,10 @@ const app = new Vue({
          */
         oneTimeNewDateChange() {
             // Save current date's slots before moving to new date
-            if (this.oneTimeDateSelected && 
-                this.one_time_slots[this.oneTimeDateSelected] && 
+            if (this.oneTimeDateSelected &&
+                this.one_time_slots[this.oneTimeDateSelected] &&
                 this.one_time_slots[this.oneTimeDateSelected].slots.length > 0) {
-                
+
                 // Save to selected_onetime_slots to preserve across date changes
                 this.selected_onetime_slots[this.oneTimeDateSelected] = {
                     slots: [...this.one_time_slots[this.oneTimeDateSelected].slots],
@@ -2169,7 +2168,7 @@ const app = new Vue({
                                 const addonName = addon.name || addon.details?.name || 'Addon';
                                 const addonPrice = addon.unit_price || addon.details?.price || 0;
                                 const addonQuantity = addon.quantity || 1;
-                                
+
                                 this.serviceDetails.service_details[i].sections[j].addons[addoncounter] = {
                                     name: addonName,
                                     addon_cost: addonPrice,
@@ -2178,7 +2177,7 @@ const app = new Vue({
                                     size: '',
                                     other_details: ''
                                 }
-                                
+
                                 // Check if addon has size information
                                 const selectedSize = addon.selected_size || addon.details?.category;
                                 if (selectedSize) {
@@ -2353,14 +2352,14 @@ const app = new Vue({
                                 const addonName = addon.name || addon.details?.name || 'Addon';
                                 const addonPrice = addon.unit_price || addon.details?.price || 0;
                                 const addonQuantity = addon.quantity || 1;
-                                
+
                                 this.serviceDetails.service_details[i].sections[j].addons[addoncounter] = {
                                     name: addonName,
                                     addon_cost: addonPrice,
                                     addon_net_cost: addonPrice * addonQuantity,
                                     quantity: addonQuantity
                                 }
-                                
+
                                 // Check if addon has size information
                                 const selectedSize = addon.selected_size || addon.details?.category;
                                 if (selectedSize) {
@@ -2416,6 +2415,7 @@ const app = new Vue({
         ================================================================ */
 
         addKitchen(building, floor) {
+            console.log("object")
 
             if (this.$refs['kitchenFloor-building-' + (building) + 'floor-' + (floor)][0].validate()) {
                 this.building[building].floors[floor].kitchens.push(this.kitchenData)
@@ -2427,7 +2427,7 @@ const app = new Vue({
                     ceiling_type: '',
                     condition: '',
                     is_cabinet: false,
-                    type: 'old',
+                    type: '',
                     residue: false
                 }
                 this.changeNewKitchen()
@@ -2447,7 +2447,7 @@ const app = new Vue({
                 ceiling_type: '',
                 condition: '',
                 is_cabinet: false,
-                type: 'old',
+                type: '',
                 residue: false
             }
             this.changeNewKitchen()
@@ -2467,7 +2467,7 @@ const app = new Vue({
                     size: null,
                     ceiling_type: '',
                     condition: '',
-                    type: 'old',
+                    type: '',
                     is_cabinet: false,
                     residue: false
                 }
@@ -2503,7 +2503,7 @@ const app = new Vue({
                 condition: '',
                 is_cabinet: false,
                 residue: false,
-                type: 'old'
+                type: ''
             }
             this.changeNewKitchen()
             this.kitchendialog = false
@@ -2523,7 +2523,7 @@ const app = new Vue({
                 size: '',
                 ceiling_type: '',
                 condition: '',
-                type: 'old',
+                type: '',
                 is_cabinet: false,
                 residue: false
             }
@@ -2537,7 +2537,7 @@ const app = new Vue({
                 material: "",
                 color: "",
                 size: "",
-                type: "old",
+                type: "",
                 age: "",
                 stain: false,
                 stain_reason: "",
@@ -2570,7 +2570,7 @@ const app = new Vue({
                 size: '',
                 ceiling_type: '',
                 condition: '',
-                type: 'old',
+                type: '',
                 is_cabinet: false,
                 residue: false
             }
@@ -2579,6 +2579,7 @@ const app = new Vue({
         },
         editNewKitchen(building, floor, serv) {
 
+            this.changeNewKitchen()
             this.kitchenType = 'floor'
             this.currentBuilding = building
             this.currentFloor = floor
@@ -2594,10 +2595,9 @@ const app = new Vue({
             this.kitchenData.residue = this.building[building].floors[floor].kitchens[serv].residue
 
 
-
         },
         editNewApartmentKitchen(building, floor, apartment, serv) {
-
+            this.changeNewKitchen()
             this.kitchenType = 'apartment'
             this.currentBuilding = building
             this.currentFloor = floor
@@ -2642,7 +2642,7 @@ const app = new Vue({
                 size: null,
                 ceiling_type: '',
                 condition: '',
-                type: 'old',
+                type: '',
                 residue: false,
                 is_cabinet: false,
             }
@@ -2693,53 +2693,56 @@ const app = new Vue({
                     this.kitchenSize = kitchenSize;
                     this.kitchenSizeData = [];
                     // Ensure kitchenSize is an array
-                    const kitchenArray = Array.isArray(kitchenSize) ? kitchenSize : (kitchenSize.data || []);
-                    for (const kitchen of kitchenArray) {
-                        kitchen["combinedSize"] =
-                            kitchen.name +
-                            " ( " +
-                            kitchen.min_size +
-                            " sq. m - " +
-                            kitchen.max_size +
-                            " sq. m )";
+                    Object.values(kitchenSize).forEach(kitchen => {
+                        kitchen.combinedSize = `${kitchen.name} ( ${kitchen.min_size} sq. m - ${kitchen.max_size} sq. m )`;
                         this.kitchenSizeData.push(kitchen);
-                    }
+                    });
                     this.serviceSize = {};
-                    if (this.kitchenData.type == "new") {
-                        $('.more-services').hide()
-                        this.parseAddons()
-                        if (this.kitchenData.is_cabinet) {
-                            for (var i = 0; i < this.kitchenSizeData.length; i++) {
-                                if (this.kitchenSizeData[i].is_newkitchen && this.kitchenSizeData[i].is_cabinet) {
-                                    this.sizeFilteredData.push(this.kitchenSizeData[i]);
-                                }
-                            }
-                        }
-                        else {
-                            for (var i = 0; i < this.kitchenSizeData.length; i++) {
-                                if (this.kitchenSizeData[i].is_newkitchen && !this.kitchenSizeData[i].is_cabinet) {
-                                    this.sizeFilteredData.push(this.kitchenSizeData[i]);
-                                }
-                            }
-                        }
+
+                    this.parseAddons();
+                    // $('.more-services').hide()
+                    if (this.kitchenData.is_cabinet) {
+                        this.sizeFilteredData.push(...this.kitchenSizeData.filter(item => item.kitchen_type == this.kitchenData.type && item.is_cabinet));
+                    } else {
+                        this.sizeFilteredData.push(...this.kitchenSizeData.filter(item => item.kitchen_type == this.kitchenData.type && !item.is_cabinet));
                     }
-                    if (this.kitchenData.type == "old") {
-                        $('.more-services').show()
-                        if (this.kitchenData.is_cabinet) {
-                            for (var i = 0; i < this.kitchenSizeData.length; i++) {
-                                if (!this.kitchenSizeData[i].is_newkitchen && this.kitchenSizeData[i].is_cabinet) {
-                                    this.sizeFilteredData.push(this.kitchenSizeData[i]);
-                                }
-                            }
-                        }
-                        else {
-                            for (var i = 0; i < this.kitchenSizeData.length; i++) {
-                                if (!this.kitchenSizeData[i].is_newkitchen && !this.kitchenSizeData[i].is_cabinet) {
-                                    this.sizeFilteredData.push(this.kitchenSizeData[i]);
-                                }
-                            }
-                        }
-                    }
+
+
+                    // if (this.kitchenData.type == "new") {
+                    //     $('.more-services').hide()
+                    //     this.parseAddons()
+                    //     if (this.kitchenData.is_cabinet) {
+                    //         for (var i = 0; i < this.kitchenSizeData.length; i++) {
+                    //             if (this.kitchenSizeData[i].is_newkitchen && this.kitchenSizeData[i].is_cabinet) {
+                    //                 this.sizeFilteredData.push(this.kitchenSizeData[i]);
+                    //             }
+                    //         }
+                    //     }
+                    //     else {
+                    //         for (var i = 0; i < this.kitchenSizeData.length; i++) {
+                    //             if (this.kitchenSizeData[i].is_newkitchen && !this.kitchenSizeData[i].is_cabinet) {
+                    //                 this.sizeFilteredData.push(this.kitchenSizeData[i]);
+                    //             }
+                    //         }
+                    //     }
+                    // }
+                    // if (this.kitchenData.type == "old") {
+                    //     $('.more-services').show()
+                    //     if (this.kitchenData.is_cabinet) {
+                    //         for (var i = 0; i < this.kitchenSizeData.length; i++) {
+                    //             if (!this.kitchenSizeData[i].is_newkitchen && this.kitchenSizeData[i].is_cabinet) {
+                    //                 this.sizeFilteredData.push(this.kitchenSizeData[i]);
+                    //             }
+                    //         }
+                    //     }
+                    //     else {
+                    //         for (var i = 0; i < this.kitchenSizeData.length; i++) {
+                    //             if (!this.kitchenSizeData[i].is_newkitchen && !this.kitchenSizeData[i].is_cabinet) {
+                    //                 this.sizeFilteredData.push(this.kitchenSizeData[i]);
+                    //             }
+                    //         }
+                    //     }
+                    // }
                 })
                 .catch((error) => {
                 });
@@ -2939,26 +2942,26 @@ const app = new Vue({
          */
         removeOneTimeSlot(slot) {
             this.onetimerender = false;
-            
+
             if (!this.oneTimeDateSelected || !this.one_time_slots[this.oneTimeDateSelected]) {
                 this.onetimerender = true;
                 return;
             }
 
             const slots = this.one_time_slots[this.oneTimeDateSelected].slots;
-            
+
             // Find the slot index using the slot number to get start_time
             // We need to find which slot object has this slot number
             const parsedSlots = this.parsedTimeSlots || [];
             if (slot > 0 && slot <= parsedSlots.length) {
                 const selectedSlot = parsedSlots[slot - 1]; // slot is 1-indexed, array is 0-indexed
-                
+
                 if (selectedSlot) {
                     // Find the slot index in slotFormat by matching start_time
                     const slotIndex = Object.keys(this.slotFormat).find(
                         i => this.slotFormat[i].start_time === selectedSlot.start_time
                     );
-                    
+
                     if (slotIndex !== undefined) {
                         const index = slots.indexOf(slotIndex);
                         if (index > -1) {
@@ -3367,7 +3370,7 @@ const app = new Vue({
         },
 
         selectServiceType(service) {
-            
+
             if (!service || !service.name) {
                 console.error("Invalid service object");
                 return;
@@ -3885,8 +3888,8 @@ const app = new Vue({
                 .catch((error) => {
                 });
         },
-        getSize() {
-            let service = this.serviceType
+        getSize(serviceType = null) {
+            let service = serviceType || this.serviceType
             if (service == 'Hourly Cleaning') {
                 service = 'General Cleaning'
             }
@@ -3905,9 +3908,10 @@ const app = new Vue({
                         this.serviceSize = data;
                     }
                     this.parseSize();
-                    if (this.serviceType == 'Kitchen Cleaning') {
+                    if (service == 'Kitchen Cleaning' || this.serviceType == 'Kitchen Cleaning') {
                         this.kitchenTypes = [...new Set(this.sizeData.map(size => size.kitchen_type))];
                         this.otherService.type = this.kitchenTypes[0]
+                        this.kitchenData.type = this.kitchenTypes[0]
                         this.kitchenTypeFilter();
                     }
                     if (this.serviceType == 'Rope Access') {
@@ -4033,6 +4037,7 @@ const app = new Vue({
                 addons: []
             };
             this.parseAddons()
+
             // if (this.selectedService.name == 'Kitchen Cleaning') {
             //     this.otherService.type = "old"
             //     this.changeKitchen()
@@ -4093,7 +4098,8 @@ const app = new Vue({
             this.otherService.size = {}
         },
         kitchenTypeFilter() {
-            this.sizeFilteredData = this.sizeData.filter(size => size.kitchen_type === this.otherService.type);
+            const kitchenType = this.otherService.type || this.kitchenData.type || this.kitchenTypes[0];
+            this.sizeFilteredData = this.sizeData.filter(size => size.kitchen_type === kitchenType);
             this.otherService.size = {}
         },
         editItem(a, b) {
@@ -4311,7 +4317,7 @@ const app = new Vue({
                     material: "",
                     color: "",
                     size: "",
-                    type: "old",
+                    type: "",
                     is_cabinet: false,
                     age: "",
                     stain: false,
@@ -4548,7 +4554,7 @@ const app = new Vue({
          */
         prepareBilling() {
             const addonCost = this.findAddonCost()
-            
+
             // Format addons same way as addOtherService()
             const formattedAddons = [];
             for (const addon of this.addons_parsed) {
@@ -4577,7 +4583,7 @@ const app = new Vue({
                     }
                 }
             }
-            
+
             const otherService = {
                 material: "",
                 addons: formattedAddons,
@@ -5482,7 +5488,7 @@ const app = new Vue({
                     } else if (productivity > 0) {
                         return total + (productivity * quantity);
                     }
-                    
+
                     return total;
                 }, 0);
         },
