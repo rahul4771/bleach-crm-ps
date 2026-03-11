@@ -1686,11 +1686,12 @@ const app = new Vue({
             }
         },
         findHourlyCost() {
+            let total_cost = 0
             if (this.hourly_cleaning.hourly_duration <= 2) {
-                let total_cost = 15 * parseInt(this.hourly_cleaning.cleaners)
+                total_cost = 15 * parseInt(this.hourly_cleaning.cleaners)
             }
             else {
-                let total_cost = 25 * parseInt(this.hourly_cleaning.cleaners)
+                total_cost = 25 * parseInt(this.hourly_cleaning.cleaners)
             }
             let section_length = this.multiServicesBill[this.schedule_serviceTypes_selected[0]].bill.length
             for (let i = 0; i < section_length; i++) {
@@ -1763,7 +1764,7 @@ const app = new Vue({
             }
         },
         checkAvailablility() {
-            const schedule_serviceTypes = this.schedule_serviceTypes
+            let schedule_serviceTypes = this.schedule_serviceTypes
             if (this.current_service == 'Hourly Cleaning') {
                 schedule_serviceTypes = []
                 schedule_serviceTypes.push('General Cleaning')
@@ -3379,6 +3380,7 @@ const app = new Vue({
             this.selectedService = service;
             this.serviceType = service.name;
             this.serviceCount++;
+            this.current_service = service.name;
 
             try {
                 this.serviceChange = false
