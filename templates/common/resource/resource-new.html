@@ -5,48 +5,55 @@
 <!-- Bootstrap Datepicker -->
 <style>
     .date-wrapper-inner-resource {
-     right: 0px !important; 
-}
-.skil-list {
-      max-height: 200px;   /* Set the height of the box */
-      overflow-y: auto;    /* Enable vertical scroll */
-     
-      padding: 10px;
-  }
+        right: 0px !important;
+    }
 
-  /* Optional: nicer scrollbar for Chrome/Edge */
-  .skil-list::-webkit-scrollbar {
-      width: 8px;
-  }
-  .skil-list::-webkit-scrollbar-thumb {
-      background-color: #888;
-      border-radius: 4px;
-  }
-  .skil-list::-webkit-scrollbar-thumb:hover {
-      background-color: #555;
-  }
+    .skil-list {
+        max-height: 200px;
+        /* Set the height of the box */
+        overflow-y: auto;
+        /* Enable vertical scroll */
 
-  .skil-list-edit {
-      max-height: 200px;   /* Set the height of the box */
-      overflow-y: auto;    /* Enable vertical scroll */
-      overflow-x: hidden;  /* Hide horizontal scroll */
-      padding: 10px;
-  }
+        padding: 10px;
+    }
 
-  .skil-list-edit::-webkit-scrollbar {
-      width: 8px;
-  }
+    /* Optional: nicer scrollbar for Chrome/Edge */
+    .skil-list::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .skil-list::-webkit-scrollbar-thumb {
+        background-color: #888;
+        border-radius: 4px;
+    }
+
+    .skil-list::-webkit-scrollbar-thumb:hover {
+        background-color: #555;
+    }
+
+    .skil-list-edit {
+        max-height: 200px;
+        /* Set the height of the box */
+        overflow-y: auto;
+        /* Enable vertical scroll */
+        overflow-x: hidden;
+        /* Hide horizontal scroll */
+        padding: 10px;
+    }
+
+    .skil-list-edit::-webkit-scrollbar {
+        width: 8px;
+    }
 
 
-  .skil-list-edit::-webkit-scrollbar-thumb {
-          background-color: #888;
-      border-radius: 4px;
-  }
+    .skil-list-edit::-webkit-scrollbar-thumb {
+        background-color: #888;
+        border-radius: 4px;
+    }
 
-  .skil-list-edit::-webkit-scrollbar-thumb:hover {
-      background-color: #555;
-  }
-
+    .skil-list-edit::-webkit-scrollbar-thumb:hover {
+        background-color: #555;
+    }
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
@@ -54,24 +61,24 @@
 
 <div class="wrapper">
     {% if request.user.user_type == 'SALESADMIN' %}
-  {% include "salesadmin/common/header.html" %}
-{% elif request.user.user_type == 'AGENT' %}
-  {% include "agent/common/header.html" %}
-{% elif request.user.user_type == 'ADMIN' %}
-  {% include "admin/common/header.html" %}
-{% elif request.user.user_type == 'BOOKINGOFFICER' %}
-  {% include "bookingofficer/common/header.html" %} 
-{% elif request.user.user_type == 'EVALUATOR' %}
-  {% include "evaluator/common/header.html" %}
-{% elif request.user.user_type == 'SENIORTEAMLEADER' %}
-  {% include "stl/common/header.html" %}
-{% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
-  {% include "operationsupervisor/common/header.html" %}
-{% elif request.user.user_type == 'TECHNICALSUPERVISOR' %}
-  {% include "technicalsupervisor/common/header.html" %}
-{% elif request.user.user_type == 'ACCOUNTANT' %}
-  {% include "accountant/common/header.html" %}
-{% endif %}
+    {% include "salesadmin/common/header.html" %}
+    {% elif request.user.user_type == 'AGENT' %}
+    {% include "agent/common/header.html" %}
+    {% elif request.user.user_type == 'ADMIN' %}
+    {% include "admin/common/header.html" %}
+    {% elif request.user.user_type == 'BOOKINGOFFICER' %}
+    {% include "bookingofficer/common/header.html" %}
+    {% elif request.user.user_type == 'EVALUATOR' %}
+    {% include "evaluator/common/header.html" %}
+    {% elif request.user.user_type == 'SENIORTEAMLEADER' %}
+    {% include "stl/common/header.html" %}
+    {% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
+    {% include "operationsupervisor/common/header.html" %}
+    {% elif request.user.user_type == 'TECHNICALSUPERVISOR' %}
+    {% include "technicalsupervisor/common/header.html" %}
+    {% elif request.user.user_type == 'ACCOUNTANT' %}
+    {% include "accountant/common/header.html" %}
+    {% endif %}
     <section class="content">
         <!--content-->
         <div class="container-fluid space topspace">
@@ -99,9 +106,9 @@
                                 <!--column-right-->
                                 <h1>Workers</h1>
                                 <h2 class="blue-text">
-                                    <label>Active<span>{{total_active_workers|default_if_none:''}}</span></label>
+                                    <label>Active<span v-text="total_active_workers"></span></label>
                                 </h2>
-                                <p><label>Total <span>{{total_workers|default_if_none:''}}</span></label></p>
+                                <p><label>Total <span v-text="total_workers"></span></label></p>
                             </div>
                             <!--column-right-->
                         </div>
@@ -155,9 +162,9 @@
                                 <!--column-right-->
                                 <h1>Active Team</h1>
                                 <h2 class="red-text">
-                                    <label>Today<span>{{today_active_teams_count|default_if_none:''}}</span></label>
+                                    <label>Today<span v-text="today_active_teams_count"></span></label>
                                 </h2>
-                                <p><label>This Week <span>{{week_active_teams_count|default_if_none:''}}</span></label>
+                                <p><label>This Week <span v-text="week_active_teams_count"></span></label>
                                 </p>
                             </div>
                             <!--column-right-->
@@ -180,50 +187,57 @@
                             <!--filter-column-boxes filter-columns-left-->
                             <div class="filter-button arrow-left"><span>Check Availability</span></div>
 
+                            <div class="menu-filter-left ltgreen-border" style="display:none;">
+                                <!--menu-filter-left ltgreen-border-->
 
-
-
-                            <div class="menu-filter-left ltgreen-border" style="display:none;"><!--menu-filter-left ltgreen-border-->
-
-                                <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-                                  <div class="ticket-form-left"><!--ticket-form-left-->
-                                                <div class=" bold-text common-label"> <label>Type of Staff</label></div>
-                                                <label for="favcity">
-                                                <select name="staff_filter" id="staff_type_filter_id">
+                                <div class="ticket-wrapper-row ticket-forms-boxes">
+                                    <!--ticket-wrapper-row ticket-forms-boxes-->
+                                    <div class="ticket-form-left"><!--ticket-form-left-->
+                                        <div class=" bold-text common-label"> <label>Type of Staff</label></div>
+                                        <label for="favcity">
+                                            <select name="staff_filter" id="staff_type_filter_id">
                                                 <option value=''>---ALL---</option>
-                                                <option value='TEAMINCHARGE' {% if staff_type == "TEAMINCHARGE" %}selected{% endif %}>TEAMINCHARGE</option>
-                                                <option value='CLEANER' {% if staff_type == "CLEANER" %}selected{% endif %}>CLEANER</option>
-                                                </select>
-                                                </label>
-                                  </div><!--ticket-form-left-->
-                                  <div class="ticket-form-right"><!--ticket-form-right-->
-                                                <div class=" bold-text common-label"> <label>Service Type</label></div>
-                                                <label for="favcity">
-                                                <select name="servicetype_filter" id="service_type_filter_id">
+                                                <option value='TEAMINCHARGE' :selected="staff_type === 'TEAMINCHARGE'">
+                                                    TEAMINCHARGE</option>
+                                                <option value='CLEANER' :selected="staff_type === 'CLEANER'">CLEANER
+                                                </option>
+                                            </select>
+                                        </label>
+                                    </div><!--ticket-form-left-->
+                                    <div class="ticket-form-right"><!--ticket-form-right-->
+                                        <div class=" bold-text common-label"> <label>Service Type</label></div>
+                                        <label for="favcity">
+                                            <select name="servicetype_filter" id="service_type_filter_id">
                                                 <option value=''>---ALL---</option>
-                                                {% for service in service_types %}
-                                                <option value='{{service.id}}' {% if service.id == selected_service_type_id %}selected{% endif %}>{{service.name}}</option>
-                                                {% endfor %}
-                                                </select>
-                                                </label>
-                                  </div><!--ticket-form-right-->
-                                </div><!--ticket-wrapper-row ticket-forms-boxes-->  
-                                <div align="center"> 
-                                <button type="button" class="red-btn assignButton" onclick="set_params_go();">Submit</button> 
-                                <button type="button" class="cancel-Button arrow-left-close" id="id_reset">Reset</button>
+                                                <option v-for="service in service_types" :value="service.id"
+                                                    :selected="service.id == selected_service_type_id"
+                                                    :label="service.name">
+                                                </option>
+
+                                            </select>
+                                        </label>
+                                    </div><!--ticket-form-right-->
+                                </div><!--ticket-wrapper-row ticket-forms-boxes-->
+                                <div align="center">
+                                    <button type="button" class="red-btn assignButton"
+                                        onclick="set_params_go();">Submit</button>
+                                    <button type="button" class="cancel-Button arrow-left-close"
+                                        id="id_reset">Reset</button>
                                 </div>
-                                </div><!--menu-filter-left ltgreen-border-->
+                            </div><!--menu-filter-left ltgreen-border-->
 
 
                             <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar"
-                                    placeholder="Search Worker Name Here" value="{{search|default_if_none:''}}" onchange="set_params_go();">
-                            <span id="resource_search"><img class="search-icon"
-                                    src="{% static 'files/images/search-icon.png' %}"></span>
+                                    placeholder="Search Worker Name Here" v-model="search"
+                                    @change="set_params_go();">
+                                <span id="resource_search"><img class="search-icon"
+                                        src="{% static 'files/images/search-icon.png' %}"></span>
                             </span>
                         </div>
-                        <div id="appResource" class="filter-columns-center"  v-cloak>
-                            <div id="id_1"   v-for="item,i in solt"  :key="item.solt" @click="selectSolt(item.solt)" class="solt-filter-box "  :class="item.check ? 'solt-filter-box-active' : ''">
-                                <% item.solt %>
+                        <div id="appResource" class="filter-columns-center" v-cloak>
+                            <div id="id_1" v-for="item,i in solt" :key="item.solt" @click="selectSolt(item.solt)"
+                                class="solt-filter-box " :class="item.check ? 'solt-filter-box-active' : ''"
+                                v-text="item.solt">
                             </div>
                             <div class="hide-div-solt"></div>
                             <div class="hide-div-solt"></div>
@@ -237,47 +251,9 @@
                             <div class="hide-div-solt"></div>
                             <div class="hide-div-solt"></div>
                             <div class="hide-div-solt"></div>
-                           
-                        </div>
-                        <!-- <div id="id_solt" class="filter-columns-center">
 
-                            <div id="id_1" class="solt-filter-box ">
-                                1
-                            </div>
-                            <div id="id_2" class="solt-filter-box">
-                                2
-                            </div>
-                            <div id="id_3" class="solt-filter-box">
-                                3
-                            </div>
-                            <div id="id_4" class="solt-filter-box">
-                                4
-                            </div>
-                            <div id="id_5" class="solt-filter-box">
-                                5
-                            </div>
-                            <div id="id_6" class="solt-filter-box">
-                                6
-                            </div>
-                            <div id="id_7" class="solt-filter-box">
-                                7
-                            </div>
-                            <div id="id_8" class="solt-filter-box">
-                                8
-                            </div>
-                            <div id="id_9" class="solt-filter-box">
-                                9
-                            </div>
-                            <div id="id_10" class="solt-filter-box">
-                                10
-                            </div>
-                            <div id="id_11" class="solt-filter-box">
-                                11
-                            </div>
-                            <div id="id_12" class="solt-filter-box">
-                                12
-                            </div>
-                        </div> -->
+                        </div>
+                        
                         <div class="filter-column-boxes filter-columns-right">
                             <!--filter-column-boxes filter-columns-right-->
                             <!-- datepicker -->
@@ -289,202 +265,58 @@
                                         <button class="prev-day-resource previous-button"><i class="fa fa-caret-left"
                                                 aria-hidden="true"></i></button>
                                         <input type='text' id='working_calendar_date' name='datepicker'
-                                            class="date-box resource_date_pick" value="{{workers_date|date:"d-m-Y"}}" onchange="set_params_go()">
+                                            class="date-box resource_date_pick" :value="workers_date"
+                                            @change="set_params_go()">
                                         <button class='next-day-resource next-button'><i class="fa fa-caret-right"
                                                 aria-hidden="true"></i></button>
                                         <button class='today-date-resource current-date'>Today</button>
-                                    </div>
-
-                                    <!-- monthpicker -->
-                                    <!-- <div id="working_calendar2" hidden>
-                            <button class="prev-month-resource previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-                            <input type='text' id='working_calendar_month'  name='monthpicker' class="date-box month_pick_resource" >
-                            <button class='next-month-resource next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
-                            <button class='this-month-resource current-date'>Month</button>
-                            </div> -->
-                                    {% comment %} <input type="text" id="resource_month"
-                                        class="month_pick date-picker-resource" hidden> {% endcomment %}
+                                    </div>                                    
                                 </div>
                                 <!--date-wrapper-inner-->
-
-
                             </div>
                             <!--date-togglewrapper-->
                         </div>
                         <!--date-wrapper-->
-
-
                     </div>
 
-
-
-                    <div class="row mb-40"  id="refresh">
+                    <div class="row mb-40" id="refresh">
                         <div id="vueCard">
-                            {% for worker in workers %}
-                            <div class="col-md-3 pr-0  m-pl-0 m-mlr-0" style="margin-bottom: 10px;">
-                                <div class="flip-container">
+                            <div v-for="worker in workers" :key="worker.id" class="col-md-3 pr-0  m-pl-0 m-mlr-0"
+                                style="margin-bottom: 10px;">
+                                <div class="flip-container" :class="flippingWorkers[worker.id] ? 'flip-hover' : ''">
                                     <div class="flipper">
                                         <div class="front">
-                                            <div class="resource-card" id="front_id_{{worker.id}}">
+                                            <div class="resource-card" :id="'front_id_' + worker.id">
                                                 <div class="row">
                                                     <div class="col-md-12">
-
                                                         <div class="d-flex">
-
                                                             <div class="resource-card-profile">
                                                                 <img class="resource-img-circle"
-                                                                        {% if worker.profile_image %}
-                                                                        src="{{worker.profile_image.url}}"
-                                                                        {% else %}
-                                                                        src="{% static 'files/icons/profile.png' %}"
-                                                                        {% endif %}
-                                                                        >
-                                                                    <span {% if worker.leave == 1 %}class="dot-red"{% else %}class="dot-gray"{% endif %} id="attendance_{{worker.id}}"></span>
+                                                                    :src="worker.profile_image ? worker.profile_image.url : '{% static 'files/icons/profile.png' %}'">
+                                                                <span
+                                                                    :class="worker.leave == 1 ? 'dot-red' : 'dot-gray'"
+                                                                    :id="'attendance_' + worker.id"></span>
                                                             </div>
 
                                                             <div>
-                                                                <div style="margin-left: 12px;" class="resource-user-details text-left">
-                                                                    <h2>{{worker.name}}</h2>
-                                                                    <h6>{% if worker.user_type == 'TEAMINCHARGE' %}
-                                                                        Cleaning Agent
-                                                                        {% elif worker.user_type == 'CLEANER' %}
-                                                                        Cleaner
-                                                                        {% endif %}
+                                                                <div style="margin-left: 12px;"
+                                                                    class="resource-user-details text-left">
+                                                                    <h2 v-text="worker.name"></h2>
+                                                                    <h6
+                                                                        v-text="worker.user_type === 'TEAMINCHARGE' ? 'Cleaning Agent' : worker.user_type === 'CLEANER' ? 'Cleaner' : ''">
                                                                     </h6>
                                                                     <div class="resource-user-rating">
-                                                                        <!--rating section-->
-                                                                        <!-- {% if worker.rating >= 4.5 %}
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        {% elif worker.rating < 4.5 and worker.rating >= 3.5 %}
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star "></i>
-                                                                        {% elif worker.rating < 3.5 and worker.rating >= 2.5 %}
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star "></i>
-                                                                        <i class="fas fa-star "></i>
-                                                                        {% elif worker.rating < 2.5 and worker.rating >= 1.5 %}
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star"></i>
-                                                                        <i class="fas fa-star"></i>
-                                                                        <i class="fas fa-star "></i>
-                                                                        {% elif worker.rating < 1.5 and worker.rating >= .5 %}
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star "></i>
-                                                                        <i class="fas fa-star "></i>
-                                                                        <i class="fas fa-star "></i>
-                                                                        <i class="fas fa-star "></i>
-                                                                        {% endif %}
-                                                                        <i class="fas fa-star "></i>
-                                                                        <i class="fas fa-star "></i>
-                                                                        <i class="fas fa-star "></i>
-                                                                        <i class="fas fa-star "></i>
-                                                                        <i class="fas fa-star "></i> -->
-                                                                        <!--rating section-->
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-
-                                                        <!-- <div class="row">
-                                                            <div class="col-xs-2 pr-0">
-                                                                <div class="resource-card-profile">
-                                                                    <img class="resource-user-pic"
-                                                                        {% if worker.profile_image %}
-                                                                        src="{{worker.profile_image.url}}"
-                                                                        {% else %}
-                                                                        src="{% static 'files/icons/profile.png' %}"
-                                                                        {% endif %}
-                                                                        >
-                                                                    <span {% if worker.leave == 1 %}class="dot-red"{% else %}class="dot-gray"{% endif %} id="attendance_{{worker.id}}"></span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-xs-10">
-                                                                <div class="resource-user-details text-left">
-                                                                    <h2>{{worker.name}}</h2>
-                                                                    <h6>{% if worker.user_type == 'TEAMINCHARGE' %}
-                                                                        Cleaning Agent
-                                                                        {% elif worker.user_type == 'CLEANER' %}
-                                                                        Cleaner
-                                                                        {% endif %}
-                                                                    </h6>
-                                                                    <div class="resource-user-rating">
-                                                                        <!--rating section-->
-                                                                        <!-- {% if worker.rating >= 4.5 %}
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        {% elif worker.rating < 4.5 and worker.rating >= 3.5 %}
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star "></i>
-                                                                        {% elif worker.rating < 3.5 and worker.rating >= 2.5 %}
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star "></i>
-                                                                        <i class="fas fa-star "></i>
-                                                                        {% elif worker.rating < 2.5 and worker.rating >= 1.5 %}
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star"></i>
-                                                                        <i class="fas fa-star"></i>
-                                                                        <i class="fas fa-star "></i>
-                                                                        {% elif worker.rating < 1.5 and worker.rating >= .5 %}
-                                                                        <i class="fas fa-star yellow-icon"></i>
-                                                                        <i class="fas fa-star "></i>
-                                                                        <i class="fas fa-star "></i>
-                                                                        <i class="fas fa-star "></i>
-                                                                        <i class="fas fa-star "></i>
-                                                                        {% endif %}
-                                                                        <i class="fas fa-star "></i>
-                                                                        <i class="fas fa-star "></i>
-                                                                        <i class="fas fa-star "></i>
-                                                                        <i class="fas fa-star "></i>
-                                                                        <i class="fas fa-star "></i>
-                                                                        <!--rating section-->
-                                                                    <!-- </div>
-                                                                </div>
-                                                            </div>
-                                                        </div> -->
-                                                    <!-- </div>
-                                                    <div class="col-md-6 "> --> 
-                                                        <!-- <div class="woking-details">
-                                                            <h2>
-                                                                Main Shift
-                                                            </h2>
-                                                            <div class="row ">
-                                                                <div class="col-xs-8  pr-0">Start at</div>
-                                                                <div class="col-xs-4 pl-0 pr-0">: <span
-                                                                        class="c-text">{{worker.universal_shift_start|date:"H:i p"|default_if_none:''}}</span></div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-xs-8  pr-0">End At</div>
-                                                                <div class="col-xs-4 pl-0 pr-0">: <span
-                                                                        class="c-text">{{worker.universal_shift_start|default_if_none:''}}</span></div>
-                                                            </div>
-    
-                                                        </div> -->
-    
                                                     </div>
                                                 </div>
-                                                <a onclick="viewSkills(this)" data-id="{{worker.id}}">View Skills</a>
-                                                <p class="resource-card-text">Daily Occupancy {{workers_date}}</p>
+                                                <a @click="viewSkills(worker.id)" :data-id="worker.id"
+                                                    v-show="!editingWorkers[worker.id]">View Skills</a>
+                                                <p class="resource-card-text" v-text="'Daily Occupancy ' + formatDate(workers_date)"></p>
                                                 <br>
-                                                <div class="row ml-5 m-pr-0" id="slote_details{{worker.id}}">
+                                                <div class="row ml-5 m-pr-0" :id="'slote_details' + worker.id">
                                                     <div class="col-xs-2 mb-10 pl-0 pr-0">
                                                         <div class="resource-card-solt-1">
                                                             1
@@ -549,186 +381,57 @@
                                             </div>
                                         </div>
                                         <div class="back">
-                                            <div class="resource-card" id="back_id_{{worker.id}}">
+                                            <div class="resource-card" :id="'back_id_' + worker.id">
                                                 <div class="resource-user-details">
-                                                    <h2>Skill Of {{worker.name}}</h2>
-                                                    <div onclick="editShow(this)" data-id="{{worker.id}}" class="skill-edit" id="edit_id_{{worker.id}}">
+                                                    <h2 v-text="'Skill Of ' + worker.name"></h2>
+                                                    <div @click="editShow(worker.id)" class="skill-edit"
+                                                        :id="'edit_id_' + worker.id" v-show="!editingWorkers[worker.id]">
                                                         <img src="{% static 'files/icons/edit.png' %}">
                                                     </div>
-                                                    <div onclick="saveEdit({{worker.id}})" data-id="{{worker.id}}" id="id_done_{{worker.id}}" class="skill-edit-done">
+                                                    <div @click="saveEdit(worker.id)" class="skill-edit-done" v-show="editingWorkers[worker.id]">
                                                         <button class="resource-card-button">Done</button>
                                                     </div>
                                                 </div>
-                                                <div id="id_skill_list_{{worker.id}}" class="skil-list">
-                                                    <div class="row mt-10">
-                                                       <!-- All service types will be listed here -->
-                                                    </div>
-                                                    {% comment %} <div class="row mt-10">
-    
-                                                        {% if worker.is_general_skill %}
-                                                        <div class="col-xs-6 mb-5">
-                                                            General Cleaning
-                                                        </div>
-                                                        {% endif %}
-    
-                                                        {% if worker.is_deep_skill %}
-                                                        <div class="col-xs-6 mb-5">
-                                                            Deep Cleaning
-                                                        </div>
-                                                        {% endif %}
-    
-                                                        {% if worker.is_upholstery_skill %}
-                                                        <div class="col-xs-6 mb-5">
-                                                            Upholstery Cleaning
-                                                        </div>
-                                                        {% endif %}
-    
-                                                        {% if worker.is_kitchen_skill %}
-                                                        <div class="col-xs-6 mb-5">
-                                                            Kitchen Cleaning
-                                                        </div>
-                                                        {% endif %}
-    
-                                                        {% if worker.is_sterilization_skill %}
-                                                        <div class="col-xs-6 mb-5">
-                                                            Sterilization Cleaning
-                                                        </div>
-                                                        {% endif %}
-    
-                                                        {% if worker.is_carpet_skill %}
-                                                        <div class="col-xs-6 mb-5">
-                                                            Carpet Cleaning
-                                                        </div>
-                                                        {% endif %}
-    
-                                                        {% if worker.is_mattress_skill %}
-                                                        <div class="col-xs-6 mb-5">
-                                                            Mattress Cleaning
-                                                        </div>
-                                                        {% endif %}
-    
-                                                        {% if worker.is_facade_skill %}
-                                                        <div class="col-xs-6 mb-5">
-                                                            Facade Cleaning
-                                                        </div>
-                                                        {% endif %}
-    
-                                                        {% if worker.is_storagearea_skill %}
-                                                        <div class="col-xs-6 mb-5">
-                                                            Storage Area Cleaning
-                                                        </div>
-                                                        {% endif %}
-    
-                                                        {% if worker.is_carparkingumbrella_skill %}
-                                                        <div class="col-xs-6 mb-5">
-                                                            Car Parking Umbrella
-                                                        </div>
-                                                        {% endif %}
-    
-                                                        {% if worker.is_outdoor_skill %}
-                                                        <div class="col-xs-6 mb-5">
-                                                            Outdoor Cleaning
-                                                        </div>
-                                                        {% endif %}
-    
-                                                        {% if worker.is_window_skill %}
-                                                        <div class="col-xs-6 mb-5">
-                                                            Window Cleaning
-                                                        </div>
-                                                        {% endif %}
-                                                         {% endcomment %}
-    
-                                                    
-                                                </div> 
-                                                <div id="id_skill_edit_list_{{worker.id}}" class="skil-list-edit">
-                                                    <div class="row mt-10">
-                                                        <input type="hidden" id="{{worker.id}}" name="user_id"  value="{{worker.id}}">
-                                                        {% csrf_token %}
-                                                        {% comment %} <div class="col-xs-6 mb-5">
-                                                            <label class="c-container">General Cleaning
-                                                                <input type="checkbox" id="is_general_skill_{{worker.id}}"  {% if worker.is_general_skill %}checked{% endif %} name="is_general_skill">
-                                                                <span class="c-checkmark"></span>
-                                                            </label>
-                                                        </div> {% endcomment %}
-                                                        {% comment %} <div class="col-xs-6 mb-5">
-                                                            <label class="c-container">Deep Cleaning
-                                                                <input type="checkbox" id="is_deep_skill_{{worker.id}}" {% if worker.is_deep_skill %}checked{% endif %} name="is_deep_skill">
-                                                                <span class="c-checkmark"></span>
-                                                            </label>
-                                                        </div> {% endcomment %}
-                                                        {% comment %} <div class="col-xs-6 mb-5">
-                                                            <label class="c-container">Upholstery Cleaning
-                                                                <input type="checkbox" id="is_upholstery_skill_{{worker.id}}" {% if worker.is_upholstery_skill %}checked{% endif %} name="is_upholstery_skill">
-                                                                <span class="c-checkmark"></span>
-                                                            </label>
-                                                        </div> {% endcomment %}
-                                                        {% comment %} <div class="col-xs-6 mb-5">
-                                                            <label class="c-container">Kitchen Cleaning
-                                                                <input type="checkbox" id="is_kitchen_skill_{{worker.id}}" {% if worker.is_kitchen_skill %}checked{% endif %} name="is_kitchen_skill">
-                                                                <span class="c-checkmark"></span>
-                                                            </label>
-                                                        </div> {% endcomment %}
-                                                        {% comment %} <div class="col-xs-6 mb-5">
-                                                            <label class="c-container">Sterilization Cleaning
-                                                                <input type="checkbox" id="is_sterilization_skill_{{worker.id}}" {% if worker.is_sterilization_skill %}checked{% endif %} name="is_sterilization_skill">
-                                                                <span class="c-checkmark"></span>
-                                                            </label>
-                                                        </div> {% endcomment %}
-                                                        {% comment %} <div class="col-xs-6 mb-5">
-                                                            <label class="c-container">Carpet Cleaning
-                                                                <input type="checkbox"  id="is_carpet_skill_{{worker.id}}"  {% if worker.is_carpet_skill %}checked{% endif %} name="is_carpet_skill">
-                                                                <span class="c-checkmark"></span>
-                                                            </label>
-                                                        </div> {% endcomment %}
-                                                        {% comment %} <div class="col-xs-6 mb-5">
-                                                            <label class="c-container">Mattress Cleaning
-                                                                <input type="checkbox" id="is_mattress_skill_{{worker.id}}" {% if worker.is_mattress_skill %}checked{% endif %} name="is_mattress_skill">
-                                                                <span class="c-checkmark"></span>
-                                                            </label>
-                                                        </div> {% endcomment %}
-                                                        {% comment %} <div class="col-xs-6 mb-5">
-                                                            <label class="c-container">Facade Cleaning
-                                                                <input type="checkbox" id="is_facade_skill_{{worker.id}}" {% if worker.is_facade_skill %}checked{% endif %} name="is_facade_skill">
-                                                                <span class="c-checkmark"></span>
-                                                            </label>
-                                                        </div> {% endcomment %}
-                                                        {% comment %} <div class="col-xs-6 mb-5">
-                                                            <label class="c-container">Storage Area Cleaning
-                                                                <input type="checkbox" id="is_storagearea_skill_{{worker.id}}" {% if worker.is_storagearea_skill %}checked{% endif %} name="is_storagearea_skill">
-                                                                <span class="c-checkmark"></span>
-                                                            </label>
-                                                        </div> {% endcomment %}
-                                                        {% comment %} <div class="col-xs-6 mb-5">
-                                                            <label class="c-container">Car Parking Umbrella
-                                                                <input type="checkbox" id="is_carparkingumbrella_skill_{{worker.id}}" {% if worker.is_carparkingumbrella_skill %}checked{% endif %} name="is_carparkingumbrella_skill">
-                                                                <span class="c-checkmark"></span>
-                                                            </label>
-                                                        </div> {% endcomment %}
-                                                        {% comment %} <div class="col-xs-6 mb-5">
-                                                            <label class="c-container">Outdoor Cleaning
-                                                                <input type="checkbox" id="is_outdoor_skill_{{worker.id}}" {% if worker.is_outdoor_skill %}checked{% endif %} name="is_outdoor_skill">
-                                                                <span class="c-checkmark"></span>
-                                                            </label>
-                                                        </div> {% endcomment %}
-                                                        {% comment %} <div class="col-xs-6 mb-5">
-                                                            <label class="c-container">Window Cleaning
-                                                                <input type="checkbox" id="is_window_skill_{{worker.id}}" {% if worker.is_window_skill %}checked{% endif %} name="is_window_skill">
-                                                                <span class="c-checkmark"></span>
-                                                            </label>
-                                                        </div> {% endcomment %}
-    
+                                                <div :id="'id_skill_list_' + worker.id" class="skil-list"
+                                                    v-show="!editingWorkers[worker.id]">
+                                                    <div class="row mt-10 mr-10 ml-10">
+                                                        <ul v-if="workerSkills[worker.id] && workerSkills[worker.id].length > 0">
+                                                            <li v-for="skill in workerSkills[worker.id]" :key="skill.id"
+                                                                class="primary" v-text="skill.name">
+                                                            </li>
+                                                        </ul>
+                                                        <p v-else>No skills assigned</p>
                                                     </div>
                                                 </div>
-    
-                                                <div class="back-button" >
-                                                    <button onclick="flipBack(this)" data-id="{{worker.id}}" class="resource-card-button">Back</button>
+                                                <div :id="'id_skill_edit_list_' + worker.id" class="skil-list-edit"
+                                                    v-if="editingWorkers[worker.id] && serviceTypes.length > 0">
+                                                    <div class="row mt-10 mr-10 ml-10">
+                                                        <input type="hidden" :id="worker.id" name="user_id"
+                                                            :value="worker.id">
+                                                        <!-- {% csrf_token %} -->
+                                                        <div v-for="service in serviceTypes" :key="service.id"
+                                                            class="col-xs-6 mb-5">
+                                                            <label class="c-container" v-text="service.name">
+                                                                <input type="checkbox"
+                                                                    :id="'service_' + worker.id + '_' + service.id"
+                                                                    :value="service.id" name="service_type">
+                                                                <span class="c-checkmark"></span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div id="custom-alert" class="alert-box hidden">
+
+                                                <div class="back-button">
+                                                    <button @click="flip(worker.id)"
+                                                        class="resource-card-button">Back</button>
+                                                </div>
+                                                <div v-if="alert.show"
+                                                    :class="['custom-alert', 'custom-alert-' + alert.type]">
                                                     <div class="alert-content">
                                                         <span class="alert-icon">✅</span>
                                                         <div class="alert-text">
-                                                        <p id="alert-message"></p>
-                                                        <p id="alert-employee" class="employee-name"></p>
+                                                            <p class="alert-message" v-text="alert.message">
+                                                            </p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -737,136 +440,130 @@
                                     </div>
                                 </div>
                             </div>
-                            {% endfor %}
                         </div>
-
-                      
-                      
                     </div>
-
-
-
-
                 </div>
-
             </div>
         </div>
-
-
-        <input type="hidden" id="starting_id" name="starting_time" >
-        <input type="hidden" id="ending_id" name="ending_time" >
-
-
-
+        <input type="hidden" id="starting_id" name="starting_time">
+        <input type="hidden" id="ending_id" name="ending_time">
     </section>
-
 </div>
 
 {% endblock %}
 {% block javascript %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"
+    integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+
 <script src="{% static 'files/js/resource.js' %}"></script>
 
 <!--Bootstrap Date Picker-->
 
 <script src="{% static  'files/plugins/bootstrap-datepicker/moment.min.js' %}" type="text/javascript"></script>
-<script src="{% static 'files/plugins/bootstrap-datepicker/bootstrap-datetimepicker.min.js' %}" type="text/javascript"></script>
-<script src="{% static 'files/plugins/bootstrap-multipledatepicker/datepicker1.3.js' %}" type="text/javascript"></script>
+<script src="{% static 'files/plugins/bootstrap-datepicker/bootstrap-datetimepicker.min.js' %}"
+    type="text/javascript"></script>
+<script src="{% static 'files/plugins/bootstrap-multipledatepicker/datepicker1.3.js' %}"
+    type="text/javascript"></script>
 
 <!--Bootstrap Date Picker-->
 
 
 
 <style>
-  /* Custom Alert Styles */
-  .custom-alert {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    min-width: 320px;
-    padding: 16px 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 10000;
-    font-family: 'Inter', Arial, sans-serif;
-    animation: slideInAlert 0.3s ease-out;
-    transition: opacity 0.3s ease;
-  }
-
-  .custom-alert-success {
-    background-color: #4caf50;
-    color: white;
-    border-left: 4px solid #45a049;
-  }
-
-  .custom-alert-error {
-    background-color: #f44336;
-    color: white;
-    border-left: 4px solid #da190b;
-  }
-
-  .alert-content {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .alert-icon {
-    font-size: 20px;
-    font-weight: bold;
-    flex-shrink: 0;
-  }
-
-  .alert-message {
-    flex: 1;
-    font-size: 14px;
-    font-weight: 500;
-  }
-
-  .alert-close {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
-    padding: 0;
-    line-height: 1;
-    flex-shrink: 0;
-  }
-
-  .alert-close:hover {
-    opacity: 0.8;
-  }
-
-  @keyframes slideInAlert {
-    from {
-      transform: translateX(400px);
-      opacity: 0;
+    /* Custom Alert Styles */
+    .custom-alert {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        min-width: 320px;
+        padding: 16px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 10000;
+        font-family: 'Inter', Arial, sans-serif;
+        animation: slideInAlert 0.3s ease-out;
+        transition: opacity 0.3s ease;
     }
-    to {
-      transform: translateX(0);
-      opacity: 1;
+
+    .custom-alert-success {
+        background-color: #4caf50;
+        color: white;
+        border-left: 4px solid #45a049;
     }
-  }
 
-  ul {
-    padding: 0;
-    margin: 0;
-  }
+    .custom-alert-error {
+        background-color: #f44336;
+        color: white;
+        border-left: 4px solid #da190b;
+    }
 
-  li {
-    
-    text-align: left;      /* right alignment */
-    line-height: 1.0;       /* reduce line spacing */
-    margin-bottom: 4px;     /* optional: tighter spacing */
-  }
+    .alert-content {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
 
-  .primary {
-    font-weight: bold;
-    color: #2c3e50;
-  }
+    .alert-icon {
+        font-size: 20px;
+        font-weight: bold;
+        flex-shrink: 0;
+    }
+
+    .alert-message {
+        flex: 1;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .alert-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+        flex-shrink: 0;
+    }
+
+    .alert-close:hover {
+        opacity: 0.8;
+    }
+
+    @keyframes slideInAlert {
+        from {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    ul {
+        padding: 0;
+        margin: 0;
+    }
+
+    li {
+
+        text-align: left;
+        /* right alignment */
+        line-height: 1.0;
+        /* reduce line spacing */
+        margin-bottom: 4px;
+        /* optional: tighter spacing */
+    }
+
+    .primary {
+        font-weight: bold;
+        color: #2c3e50;
+    }
 </style>
 {% endblock %}

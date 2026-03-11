@@ -109,6 +109,11 @@ const appCard = new Vue({
 
   },
   methods: {
+    // Button click handlers
+    viewSkills(element){
+      const employeeId = element.dataset.id;
+      console.log('View skills for employee ID:', employeeId);
+    },
     saveEdit(id) {
       // Collect all checked skill checkboxes
       let selectedServiceTypes = [];
