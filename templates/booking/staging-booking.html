@@ -306,15 +306,15 @@
         </v-dialog>
         <!-- Reselect dialog ends here-->
 
-        <!-- Custpm Booking Begins -->
+        <!-- Custom Booking Begins -->
         <v-dialog v-model="customDialog" width="1000">
           <v-card style="min-height:600px">
             <div class="shift_switch">
               <v-switch v-model="out_of_shift" label="Out of Shift Cleaning" @change="clearOutOfShift()"
                 class="mt-4 ml-2 not-required"></v-switch>
             </div>
-            <!--- Hourly Cleaning Begins Here-->
-            <div v-if="current_service==' Hourly Cleaning'">
+            <!---Hourly Cleaning Begins Here-->
+            <div v-if="current_service=='Hourly Cleaning'">
               <div class="row m-0 justify-center">
                 <div class="col-md-4">
                   <h6>Enter Number of cleaners</h6>
@@ -384,8 +384,8 @@
                 </div>
               </div>
             </div>
-            <!--- Hourly Cleaning Ends Here-->
-            <div v-if="current_service!=' Hourly Cleaning'">
+            <!---Hourly Cleaning Ends Here-->
+            <div v-if="current_service!='Hourly Cleaning'">
 
               <div class="row m-0" v-if="selectedDuration.hours" style="margin:0 !important">
                 <div class="col-md-4">
@@ -448,13 +448,12 @@
         <!-- Monthly Booking Begins -->
         <v-dialog v-model="monthlyDialog" width="1000">
           <v-card style="min-height:600px">
-
             <div class="shift_switch">
               <v-switch v-model="out_of_shift" label="Out of Shift Cleaning" class="mt-4 ml-2 not-required"
                 @change="clearOutOfShift()"></v-switch>
             </div>
-            <!--- Hourly Cleaning Begins Here-->
-            <div v-if="current_service==' Hourly Cleaning'">
+            <!---Hourly Cleaning Begins Here-->
+            <div v-if="current_service=='Hourly Cleaning'">
               <div class="row m-0 justify-center">
                 <div class="col-md-4">
                   <h6>Enter Number of cleaners</h6>
@@ -563,9 +562,9 @@
                 </div>
               </div>
             </div>
-            <!--- Hourly Cleaning Ends Here-->
+            <!---Hourly Cleaning Ends Here-->
 
-            <div v-if="current_service!=' Hourly Cleaning'">
+            <div v-if="current_service!='Hourly Cleaning'">
               <div class="row m-0" v-if="selectedDuration.hours" style="margin:0 !important">
                 <div class="col-md-4 text-center">
                   <div class="mt-4">
@@ -671,8 +670,8 @@
               <v-switch v-model="out_of_shift" label="Out of Shift Cleaning" class="mt-4 ml-2 not-required"
                 @change="clearOutOfShift()"></v-switch>
             </div>
-            <!--- Hourly Cleaning Begins Here-->
-            <div v-if="current_service==' Hourly Cleaning'">
+            <!---Hourly Cleaning Begins Here-->
+            <div v-if="current_service=='Hourly Cleaning'">
               <div class="row m-0 justify-center">
                 <div class="col-md-4">
                   <h6>Enter Number
@@ -746,8 +745,8 @@
                 </div>
               </div>
             </div>
-            <!--- Hourly Cleaning Ends Here-->
-            <div v-if="current_service != ' Hourly Cleaning'">
+            <!---Hourly Cleaning Ends Here-->
+            <div v-if="current_service != 'Hourly Cleaning'">
               <div class="row " style="margin:0 !important" v-if="selectedDuration.hours">
                 <div class="col-md-4">
                   <div>Choose starting Date</div>
@@ -2743,8 +2742,7 @@
                     <div v-for="(kitchen,kindex) in bill.section.kitchens" v-bind:key="kindex">
                       <div class="d-flex mt-1">
                         <div>
-                          <span v-text="getKitchenWithSize(kindex, kitchen.size.name)"></span><br>
-
+                          <span v-text="`Kitchen ${kindex+1} (${kitchen.size.name})`"></span><br>
                         </div>
                         <div class="ml-auto primary-text strike-text"
                           v-if="kitchen.type=='new' && service.service=='General Cleaning'">
