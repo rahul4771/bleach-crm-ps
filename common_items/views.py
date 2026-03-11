@@ -7119,42 +7119,47 @@ class ServiceAddOnsAPIView(APIView):
 				return JsonResponse({"success": False, "error_field": "image_path", "error_message": "File size exceeds 2MB limit."}, status=400)
 			
 
-		sa = ServiceAddOns.objects.filter(id=addon_id)
-		if not sa.exists():
+		try:
+			sa_obj = ServiceAddOns.objects.get(id=addon_id)
+		except ServiceAddOns.DoesNotExist:
 			return JsonResponse({"success": False, "error": "Service addon not found"}, status=404)
 
 
 		if image_path:
-			image_path = request.FILES.get('image_path')
 			try:
-				old_file = getattr(ServiceAddOns.objects.get(id=addon_id), 'image_path')
+				old_file = sa_obj.image_path
 				if old_file:
 					old_path = getattr(old_file, 'path', None) or str(old_file)
 					if os.path.isfile(old_path):
 						os.remove(old_path)
 			except Exception:
 				pass
-			sa.image_path = image_path
-			sa.save()
+			sa_obj.image_path = image_path
 		
 		try:
-			sa.update(
-				service_type=service_type,
-				name=name,
-				category=category,
-				size=size,
-				price=price,
-				productivity=productivity,
-				is_active=is_active
-			)
-			sa_obj = sa.first()
+			sa_obj.service_type = service_type
+			sa_obj.name = name
+			sa_obj.category = category
+			sa_obj.size = size
+			sa_obj.price = price
+			sa_obj.productivity = productivity
+			sa_obj.is_active = is_active
+			sa_obj.save()
+
+			image_url = None
+			if getattr(sa_obj, "image_path", None):
+				try:
+					image_url = sa_obj.image_path.url
+				except Exception:
+					image_url = str(sa_obj.image_path)
+					
 			sa_data = {
 				"id": sa_obj.id,
 				"service_type_id": sa_obj.service_type_id,
 				"name": sa_obj.name,
 				"category": sa_obj.category,
 				"size": sa_obj.size,
-				"image_path": sa_obj.image_path if sa_obj.image_path else None,
+				"image_path": image_url,
 				"price": float(sa_obj.price) if sa_obj.price is not None else None,
 				"productivity": float(sa_obj.productivity) if sa_obj.productivity is not None else None,
 				"is_active": bool(sa_obj.is_active)
@@ -7200,7 +7205,7 @@ class StagingProductivity(IsAuthenticated,View):
 
 class ProductivityServiceTypeAPIView(APIView):
 	def get(self, request):
-		service_types = list(ServiceType.objects.values('id','name','name_arabic','service_group_id', 'is_active','updated'))
+		service_types = list(ServiceType.objects.values('id','name','name_arabic','service_group_id', 'is_active','updated','image_path'))
 
 		service_productivities = []
 		for p in ServiceProductivity.objects.select_related('service_type').all():
@@ -7221,7 +7226,7 @@ class ProductivityServiceTypeAPIView(APIView):
 			})
 		
 		service_addons = list(ServiceAddOns.objects.values(
-			'id', 'service_type_id', 'name', 'category', 'size', 'price', 'productivity', 'is_active'
+			'id', 'service_type_id', 'name', 'category', 'size', 'price', 'productivity', 'is_active', 'image_path'
 		))
 
 		service_price_ranges = list(ServicePriceRange.objects.values(
