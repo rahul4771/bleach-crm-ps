@@ -88,15 +88,13 @@ const app = new Vue({
       }
 
       if (selected.length > 0) {
-        const startingIdInput = document.getElementById("starting_id");
-        const endingIdInput = document.getElementById("ending_id");
-
+        // Use Vue data binding instead of direct DOM manipulation
         if (selected.length == 1) {
-          startingIdInput.value = selected[0].start_time;
-          endingIdInput.value = selected[0].end_time;
+          this.startingTime = selected[0].start_time;
+          this.endingTime = selected[0].end_time;
         } else {
-          startingIdInput.value = selected[0].start_time;
-          endingIdInput.value = selected[selected.length - 1].end_time;
+          this.startingTime = selected[0].start_time;
+          this.endingTime = selected[selected.length - 1].end_time;
         }
       }
       this.set_params_go();
@@ -104,7 +102,12 @@ const app = new Vue({
     set_params_go(args = {}) {
       var url = '{% url "common_items:resource-management" %}';
       var params = {
-        workers_calendar_date: $('#working_calendar_date').val(), search: $('#search-bar').val(), staff_type: $('#staff_type_filter_id').val(), service_type: $('#service_type_filter_id').val(), starting_time: $('#starting_id').val(), ending_time: $('#ending_id').val()
+        workers_calendar_date: this.workersCalendarDate || document.getElementById('working_calendar_date')?.value || '', 
+        search: this.search || document.getElementById('search-bar')?.value || '', 
+        staff_type: this.staffTypeFilter || document.getElementById('staff_type_filter_id')?.value || '', 
+        service_type: this.serviceTypeFilter || document.getElementById('service_type_filter_id')?.value || '', 
+        starting_time: this.startingTime || document.getElementById('starting_id')?.value || '', 
+        ending_time: this.endingTime || document.getElementById('ending_id')?.value || ''
       };
       for (key in args)
         if (args.hasOwnProperty(key))
@@ -138,6 +141,7 @@ const appCard = new Vue({
       serviceTypes: [],
       workerSkills: {},
       existingSkills: {},
+      selectedSkills: {},
       editingWorkers: {},
       flippingWorkers: {},
       workerBusySlots: {},
@@ -244,36 +248,28 @@ const appCard = new Vue({
      * Initialize skill checkboxes based on existing skills
      */
     initializeSkillCheckboxes(workerId, existingSkills) {
-      const existingSkillIds = new Set(existingSkills.map(skill => skill.id));
-
-      // Check appropriate checkboxes
-      this.$nextTick(() => {
-        existingSkillIds.forEach(skillId => {
-          const checkbox = document.getElementById(`service_${workerId}_${skillId}`);
-          if (checkbox) {
-            checkbox.checked = true;
-          }
-        });
-      });
+      // Initialize the array for this worker
+      const selectedIds = existingSkills && existingSkills.length > 0 
+        ? existingSkills.map(skill => skill.id.toString())
+        : [];
+      
+      // Use $set for proper reactivity
+      this.$set(this.selectedSkills, workerId, selectedIds);
     },
 
     /**
      * Save edited skills for employee
      */
     saveEdit(workerId) {
-      let selectedServiceTypes = [];
-
-      document.querySelectorAll(`#id_skill_edit_list_${workerId} input[type="checkbox"]:checked`)
-        .forEach(cb => {
-          selectedServiceTypes.push(cb.value);
-        });
+      // Get selected skills from Vue data instead of DOM
+      let selectedServiceTypes = this.selectedSkills[workerId] || [];
 
 
       fetch('/common/save-employee-skills/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRFToken': getCsrfToken('csrftoken')
+          'X-CSRFToken': this.getCsrfToken('csrftoken')
         },
         body: JSON.stringify({
           employee_id: workerId,
@@ -282,26 +278,22 @@ const appCard = new Vue({
       })
         .then(res => res.json())
         .then(data => {
-          if (data.success) {
-
-            // Show styled success alert
-            showStyledAlert('Skills updated Successfully!', 'success');
-
-
-            document.getElementById("id_done_" + workerId).style.display = "none";
-            document.getElementById("id_skill_edit_list_" + workerId).style.display = "none";
-            document.getElementById("id_skill_list_" + workerId).style.display = "block";
-
-            // Small delay before refreshing view
-            setTimeout(() => {
-              viewSkills({ getAttribute: () => workerId });
-            }, 500);
-          } else {
-            showStyledAlert('Error: ' + (data.error || 'Failed to save skills'), 'error');
+          if (!data.success) {
+            this.showStyledAlert('Error: ' + (data.error || 'Failed to save skills'), 'error');
+            return;
           }
+            this.showStyledAlert('Skills updated Successfully!', 'success');
+            // Use Vue reactivity instead of DOM manipulation
+            this.$set(this.editingWorkers, workerId, false);
+            // Fetch updated skills
+            setTimeout(() => {
+              this.viewSkills(workerId);
+            }, 500);
+          
         })
         .catch(err => {
-          showStyledAlert('Network error: ' + err.message, 'error');
+          console.log("err", JSON.stringify(err))
+          this.showStyledAlert('Network error: ' + err.message, 'error');
         });
     },
 
@@ -338,6 +330,20 @@ const appCard = new Vue({
      */
     flip(workerId) {
       this.$set(this.flippingWorkers, workerId, !this.flippingWorkers[workerId]);
+    },
+
+    /**
+     * Display styled alert message
+     */
+    showStyledAlert(message, type = 'success') {
+      this.alert.message = message;
+      this.alert.type = type;
+      this.alert.show = true;
+      
+      // Auto-hide alert after 5 seconds
+      setTimeout(() => {
+        this.alert.show = false;
+      }, 5000);
     },
 
     /**

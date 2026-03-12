@@ -281,6 +281,17 @@
 
                     <div class="row mb-40" id="refresh">
                         <div id="vueCard">
+                            <!-- Alert positioned at top level for correct top-right positioning -->
+                            <div v-if="alert.show"
+                                :class="['custom-alert', 'custom-alert-' + alert.type]">
+                                <div class="alert-content">
+                                    <span class="alert-icon">✅</span>
+                                    <div class="alert-text">
+                                        <p class="alert-message" v-text="alert.message"></p>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div v-for="worker in workers" :key="worker.id" class="col-md-3 pr-0  m-pl-0 m-mlr-0"
                                 style="margin-bottom: 10px;">
                                 <div class="flip-container" :class="flippingWorkers[worker.id] ? 'flip-hover' : ''">
@@ -411,11 +422,14 @@
                                                         <!-- {% csrf_token %} -->
                                                         <div v-for="service in serviceTypes" :key="service.id"
                                                             class="col-xs-6 mb-5">
-                                                            <label class="c-container" v-text="service.name">
+                                                            <label class="c-container">
                                                                 <input type="checkbox"
                                                                     :id="'service_' + worker.id + '_' + service.id"
-                                                                    :value="service.id" name="service_type">
+                                                                    :value="service.id.toString()"
+                                                                    v-model="selectedSkills[worker.id]"
+                                                                    name="service_type">
                                                                 <span class="c-checkmark"></span>
+                                                                <span v-text="service.name"></span>
                                                             </label>
                                                         </div>
                                                     </div>
@@ -424,16 +438,6 @@
                                                 <div class="back-button">
                                                     <button @click="flip(worker.id)"
                                                         class="resource-card-button">Back</button>
-                                                </div>
-                                                <div v-if="alert.show"
-                                                    :class="['custom-alert', 'custom-alert-' + alert.type]">
-                                                    <div class="alert-content">
-                                                        <span class="alert-icon">✅</span>
-                                                        <div class="alert-text">
-                                                            <p class="alert-message" v-text="alert.message">
-                                                            </p>
-                                                        </div>
-                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -445,8 +449,8 @@
                 </div>
             </div>
         </div>
-        <input type="hidden" id="starting_id" name="starting_time">
-        <input type="hidden" id="ending_id" name="ending_time">
+        <input type="hidden" id="starting_id" name="starting_time" v-model="startingTime">
+        <input type="hidden" id="ending_id" name="ending_time" v-model="endingTime">
     </section>
 </div>
 
@@ -473,97 +477,4 @@
 
 
 
-<style>
-    /* Custom Alert Styles */
-    .custom-alert {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        min-width: 320px;
-        padding: 16px 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        z-index: 10000;
-        font-family: 'Inter', Arial, sans-serif;
-        animation: slideInAlert 0.3s ease-out;
-        transition: opacity 0.3s ease;
-    }
-
-    .custom-alert-success {
-        background-color: #4caf50;
-        color: white;
-        border-left: 4px solid #45a049;
-    }
-
-    .custom-alert-error {
-        background-color: #f44336;
-        color: white;
-        border-left: 4px solid #da190b;
-    }
-
-    .alert-content {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .alert-icon {
-        font-size: 20px;
-        font-weight: bold;
-        flex-shrink: 0;
-    }
-
-    .alert-message {
-        flex: 1;
-        font-size: 14px;
-        font-weight: 500;
-    }
-
-    .alert-close {
-        background: none;
-        border: none;
-        color: white;
-        font-size: 24px;
-        cursor: pointer;
-        padding: 0;
-        line-height: 1;
-        flex-shrink: 0;
-    }
-
-    .alert-close:hover {
-        opacity: 0.8;
-    }
-
-    @keyframes slideInAlert {
-        from {
-            transform: translateX(400px);
-            opacity: 0;
-        }
-
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-
-    ul {
-        padding: 0;
-        margin: 0;
-    }
-
-    li {
-
-        text-align: left;
-        /* right alignment */
-        line-height: 1.0;
-        /* reduce line spacing */
-        margin-bottom: 4px;
-        /* optional: tighter spacing */
-    }
-
-    .primary {
-        font-weight: bold;
-        color: #2c3e50;
-    }
-</style>
 {% endblock %}
