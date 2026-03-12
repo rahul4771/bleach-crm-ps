@@ -153,12 +153,12 @@ const appCard = new Vue({
         message: '',
         type: 'success'
       },
+      userid: [],
       url: "https://my.bleachkw.com"
     };
   },
   computed: {
     filteredWorkers() {
-      // Can add filtering logic here if needed
       return this.workers;
     }
   },
@@ -203,8 +203,6 @@ const appCard = new Vue({
         fetch(`/common/get-employee-skills/?employee_id=${workerId}`).then(res => res.json())
       ])
         .then(([serviceTypesData, skillsData]) => {
-          console.log('Service Types Response:', serviceTypesData);
-          console.log('Skills Data Response:', skillsData);
           
           if (serviceTypesData.success && skillsData.success) {
             this.serviceTypes = serviceTypesData.service_types;
@@ -215,17 +213,17 @@ const appCard = new Vue({
               this.initializeSkillCheckboxes(workerId, skillsData.skills);
             });
           } else {
-            console.error('❌ Failed to fetch data');
+            console.error('Failed to fetch data');
             console.error('Service Types Success:', serviceTypesData.success, 'Error:', serviceTypesData.error);
             console.error('Skills Success:', skillsData.success, 'Error:', skillsData.error);
-            
+
             if (serviceTypesData.success) {
               this.serviceTypes = serviceTypesData.service_types || [];
             }
             if (skillsData.success) {
               this.existingSkills[workerId] = skillsData.skills || [];
             }
-            
+
             if (!serviceTypesData.success) {
               this.showAlert('Error loading service types: ' + (serviceTypesData.error || 'Unknown error'), 'error');
             }
@@ -236,7 +234,7 @@ const appCard = new Vue({
           this.loadingSkills = false;
         })
         .catch(err => {
-          console.error('❌ Network error:', err);
+          console.error('Network error:', err);
           this.showAlert('Network error: ' + err.message, 'error');
           this.loadingSkills = false;
         });
@@ -275,7 +273,7 @@ const appCard = new Vue({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRFToken': this.getCsrfToken()
+          'X-CSRFToken': getCsrfToken('csrftoken')
         },
         body: JSON.stringify({
           employee_id: workerId,
@@ -285,26 +283,25 @@ const appCard = new Vue({
         .then(res => res.json())
         .then(data => {
           if (data.success) {
-            this.showAlert('Skills updated Successfully!', 'success');
 
-            // Update local skills data
-            this.$set(this.workerSkills, workerId, selectedServiceTypes);
+            // Show styled success alert
+            showStyledAlert('Skills updated Successfully!', 'success');
 
-            // Reset edit mode
-            this.$set(this.editingWorkers, workerId, false);
 
-            // Refresh view
+            document.getElementById("id_done_" + workerId).style.display = "none";
+            document.getElementById("id_skill_edit_list_" + workerId).style.display = "none";
+            document.getElementById("id_skill_list_" + workerId).style.display = "block";
+
+            // Small delay before refreshing view
             setTimeout(() => {
-              this.viewSkills(workerId);
+              viewSkills({ getAttribute: () => workerId });
             }, 500);
           } else {
-            console.error('❌ Failed to save skills. Error:', data.error);
-            this.showAlert('Error: ' + (data.error || 'Failed to save skills'), 'error');
+            showStyledAlert('Error: ' + (data.error || 'Failed to save skills'), 'error');
           }
         })
         .catch(err => {
-          console.error('❌ Network error while saving skills:', err);
-          this.showAlert('Network error: ' + err.message, 'error');
+          showStyledAlert('Network error: ' + err.message, 'error');
         });
     },
 

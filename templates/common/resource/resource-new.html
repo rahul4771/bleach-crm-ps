@@ -404,8 +404,8 @@
                                                     </div>
                                                 </div>
                                                 <div :id="'id_skill_edit_list_' + worker.id" class="skil-list-edit"
-                                                    v-if="editingWorkers[worker.id] && serviceTypes.length > 0">
-                                                    <div class="row mt-10 mr-10 ml-10">
+                                                    v-show="editingWorkers[worker.id] && workerSkills[worker.id] && workerSkills[worker.id].length > 0" :style="{ display: editingWorkers[worker.id] ? 'block' : 'none' }">
+                                                    <div class="row">
                                                         <input type="hidden" :id="worker.id" name="user_id"
                                                             :value="worker.id">
                                                         <!-- {% csrf_token %} -->
