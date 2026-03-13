@@ -1,19 +1,15 @@
 
+/**
+ * Consolidated Resource Management Vue Application
+ * Manages time slot selection, worker display, and skill management
+ */
 const app = new Vue({
-  el: "#appResource",
+  el: "#resourceApp",
   delimiters: ["<%", "%>"],
-  mounted() {
-    console.log("vue app");
-    // Initialize date input with today's date if not already set
-    const dateInput = document.getElementById('working_calendar_date');
-    if (dateInput && !dateInput.value) {
-      dateInput.value = moment().format('YYYY-MM-DD');
-    }
-    this.set_params_go();
-  },
-
+  
   data() {
     return {
+      // Slot management
       solt: [
         { solt: 1, check: false, start_time: "12:00 AM", end_time: "02:00 AM" },
         { solt: 2, check: false, start_time: "02:00 AM", end_time: "04:00 AM" },
@@ -27,10 +23,70 @@ const app = new Vue({
         { solt: 10, check: false, start_time: "06:00 PM", end_time: "08:00 PM" },
         { solt: 11, check: false, start_time: "08:00 PM", end_time: "10:00 PM" },
         { solt: 12, check: false, start_time: "10:00 PM", end_time: "12:00 AM" },
-      ]
+      ],
+      startingTime: '',
+      endingTime: '',
+
+      // Filter controls
+      workersCalendarDate: '',
+      search: '',
+      staffTypeFilter: '',
+      serviceTypeFilter: '',
+      staff_type: '',
+      selected_service_type_id: '',
+
+      // Worker display
+      workers: [],
+      workers_date: '',
+      serviceTypes: [],
+      service_types: [],
+      workerSkills: {},
+      existingSkills: {},
+      selectedSkills: {},
+      editingWorkers: {},
+      flippingWorkers: {},
+      workerBusySlots: {},
+
+      // UI state
+      loadingSkills: false,
+      alert: {
+        show: false,
+        message: '',
+        type: 'success'
+      },
+      url: "https://my.bleachkw.com"
     };
   },
+
+  computed: {
+    filteredWorkers() {
+      return this.workers;
+    }
+  },
+
+  mounted() {
+    
+    // Initialize date input with today's date if not set
+    const dateInput = document.getElementById('working_calendar_date');
+    if (dateInput) {
+      if (!dateInput.value) {
+        const todayDate = moment().format('DD-MM-YYYY');
+        dateInput.value = todayDate;
+        this.workersCalendarDate = todayDate;
+      } else {
+        // Sync existing value with Vue data
+        this.workersCalendarDate = dateInput.value;
+      }
+    }
+    
+    // Load initial data
+    this.set_params_go();
+  },
+
   methods: {
+    /**
+     * Set slot time range
+     */
     setSolt(s, e) {
       var sPos, ePos;
       for (var i = 0; i < this.solt.length; i++) {
@@ -45,6 +101,10 @@ const app = new Vue({
         this.solt[j].check = true;
       }
     },
+
+    /**
+     * Toggle slot selection
+     */
     selectSolt(soltNo) {
       var pos, prevPos;
       if (soltNo == 1) {
@@ -80,6 +140,7 @@ const app = new Vue({
           this.solt[j].check = false;
         }
       }
+      
       var selected = [];
       for (var i = 0; i < this.solt.length; i++) {
         if (this.solt[i].check) {
@@ -88,7 +149,6 @@ const app = new Vue({
       }
 
       if (selected.length > 0) {
-        // Use Vue data binding instead of direct DOM manipulation
         if (selected.length == 1) {
           this.startingTime = selected[0].start_time;
           this.endingTime = selected[0].end_time;
@@ -99,88 +159,43 @@ const app = new Vue({
       }
       this.set_params_go();
     },
+
+    /**
+     * Fetch and update worker data based on filter parameters
+     */
     set_params_go(args = {}) {
-      var url = '{% url "common_items:resource-management" %}';
       var params = {
-        workers_calendar_date: this.workersCalendarDate || document.getElementById('working_calendar_date')?.value || '', 
-        search: this.search || document.getElementById('search-bar')?.value || '', 
-        staff_type: this.staffTypeFilter || document.getElementById('staff_type_filter_id')?.value || '', 
-        service_type: this.serviceTypeFilter || document.getElementById('service_type_filter_id')?.value || '', 
-        starting_time: this.startingTime || document.getElementById('starting_id')?.value || '', 
+        workers_calendar_date: this.workersCalendarDate || document.getElementById('working_calendar_date')?.value || '',
+        search: this.search || document.getElementById('search-bar')?.value || '',
+        staff_type: this.staffTypeFilter || document.getElementById('staff_type_filter_id')?.value || '',
+        service_type: this.serviceTypeFilter || document.getElementById('service_type_filter_id')?.value || '',
+        starting_time: this.startingTime || document.getElementById('starting_id')?.value || '',
         ending_time: this.endingTime || document.getElementById('ending_id')?.value || ''
       };
+
       for (key in args)
         if (args.hasOwnProperty(key))
           params[key] = args[key];
+
       var query = '';
       for (key in params)
         if (params[key])
           query += '&' + key + '=' + params[key].toString();
       query = query.replace('&', '?');
-      // window.location.href = url + query;
-      fetch('/common/resources-management/' + query).then(res => res.json().then(data => {
-        // Update the appCard Vue component with fetched data
-        appCard.workers = data.workers || [];
-        appCard.workers_date = data.workers_date || '';
-        appCard.serviceTypes = data.service_types || [];
-        appCard.initializeWorkerData();
-      })).catch(err => {
-        console.error('Error fetching resource management data:', err);
-      });
-    }
-  },
-});
 
-const appCard = new Vue({
-  el: "#vueCard",
-  delimiters: ["<%", "%>"],
-  data() {
-    return {
-      workers: [],
-      workers_date: '',
-      serviceTypes: [],
-      workerSkills: {},
-      existingSkills: {},
-      selectedSkills: {},
-      editingWorkers: {},
-      flippingWorkers: {},
-      workerBusySlots: {},
-      selectedDate: new Date(),
-      searchQuery: '',
-      staffTypeFilter: '',
-      serviceTypeFilter: '',
-      startingTime: '',
-      endingTime: '',
-      loadingSkills: false,
-      alert: {
-        show: false,
-        message: '',
-        type: 'success'
-      },
-      userid: [],
-      url: "https://my.bleachkw.com"
-    };
-  },
-  computed: {
-    filteredWorkers() {
-      return this.workers;
-    }
-  },
-  mounted() {
-    console.log("Resource Vue app mounted");
-
-    // Initialize workers from data attribute instead of global variable
-    const workersData = this.$el.dataset.workers;
-    if (workersData) {
-      try {
-        this.workers = JSON.parse(workersData);
-        this.initializeWorkerData();
-      } catch (error) {
-        console.error('Error parsing workers data:', error);
-      }
-    }
-  },
-  methods: {
+      fetch('/common/resources-management/' + query)
+        .then(res => res.json())
+        .then(data => {
+          this.workers = data.workers || [];
+          this.workers_date = data.workers_date || '';
+          this.serviceTypes = data.service_types || [];
+          this.service_types = data.service_types || [];
+          this.initializeWorkerData();
+        })
+        .catch(err => {
+          console.error('Error fetching resource management data:', err);
+        });
+    },
     /**
      * Initialize worker data - calculate busy slots and attendance
      */
@@ -210,6 +225,7 @@ const appCard = new Vue({
           
           if (serviceTypesData.success && skillsData.success) {
             this.serviceTypes = serviceTypesData.service_types;
+            this.service_types = serviceTypesData.service_types;
             this.existingSkills[workerId] = skillsData.skills;
 
             // Update the skill selection state
@@ -223,6 +239,7 @@ const appCard = new Vue({
 
             if (serviceTypesData.success) {
               this.serviceTypes = serviceTypesData.service_types || [];
+              this.service_types = serviceTypesData.service_types || [];
             }
             if (skillsData.success) {
               this.existingSkills[workerId] = skillsData.skills || [];
@@ -315,12 +332,12 @@ const appCard = new Vue({
               this.$set(this.workerSkills, workerId, []);
             }
           } else {
-            console.error('❌ Failed to fetch skills. Error:', data.error);
+            console.error('Failed to fetch skills. Error:', data.error);
             this.showAlert('Error fetching skills: ' + (data.error || 'Unknown error'), 'error');
           }
         })
         .catch(err => {
-          console.error('❌ Network error while fetching skills:', err);
+          console.error('Network error while fetching skills:', err);
           this.showAlert('Network error: ' + err.message, 'error');
         });
     },
@@ -490,6 +507,22 @@ const appCard = new Vue({
      */
     closeAlert() {
       this.alert.show = false;
+    },
+
+    /**
+     * Get display date with formatting
+     */
+    getDisplayDate() {
+      const dateInput = document.getElementById('working_calendar_date');
+      return dateInput ? dateInput.value : moment().format('DD-MM-YYYY');
+    },
+
+    /**
+     * Handle date input change
+     */
+    handleDateInput(event) {
+      this.workersCalendarDate = event.target.value;
+      this.set_params_go();
     }
   },
   watch: {

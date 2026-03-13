@@ -179,7 +179,7 @@
 
             <div class="main-content-holder">
                 <!--main-content-holder-->
-                <div class="white-wrapper">
+                <div class="white-wrapper" id="resourceApp" v-cloak>
                     <!--white-wrapper-->
                     <div class="filter-columns-wrapper">
                         <!--filter-columns-wrapper-->
@@ -234,7 +234,7 @@
                                         src="{% static 'files/images/search-icon.png' %}"></span>
                             </span>
                         </div>
-                        <div id="appResource" class="filter-columns-center" v-cloak>
+                        <div class="filter-columns-center" v-cloak>
                             <div id="id_1" v-for="item,i in solt" :key="item.solt" @click="selectSolt(item.solt)"
                                 class="solt-filter-box " :class="item.check ? 'solt-filter-box-active' : ''"
                                 v-text="item.solt">
@@ -253,7 +253,7 @@
                             <div class="hide-div-solt"></div>
 
                         </div>
-                        
+
                         <div class="filter-column-boxes filter-columns-right">
                             <!--filter-column-boxes filter-columns-right-->
                             <!-- datepicker -->
@@ -265,8 +265,8 @@
                                         <button class="prev-day-resource previous-button"><i class="fa fa-caret-left"
                                                 aria-hidden="true"></i></button>
                                         <input type='text' id='working_calendar_date' name='datepicker'
-                                            class="date-box resource_date_pick" :value="workers_date"
-                                            @change="set_params_go()">
+                                            class="date-box resource_date_pick" v-model="workersCalendarDate"
+                                            @input="handleDateInput($event)">
                                         <button class='next-day-resource next-button'><i class="fa fa-caret-right"
                                                 aria-hidden="true"></i></button>
                                         <button class='today-date-resource current-date'>Today</button>
@@ -280,12 +280,13 @@
                     </div>
 
                     <div class="row mb-40" id="refresh">
-                        <div id="vueCard">
+                        <!-- Worker Cards -->
+                        <div>
                             <!-- Alert positioned at top level for correct top-right positioning -->
-                            <div v-if="alert.show"
+                            <div v-show="alert.show"
                                 :class="['custom-alert', 'custom-alert-' + alert.type]">
                                 <div class="alert-content">
-                                    <span class="alert-icon">✅</span>
+                                    <span class="alert-icon"></span>
                                     <div class="alert-text">
                                         <p class="alert-message" v-text="alert.message"></p>
                                     </div>
