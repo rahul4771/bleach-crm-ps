@@ -124,7 +124,6 @@ const app = new Vue({
      * Toggle slot selection
      */
     selectSolt(soltNo) {
-      console.log("soltNoselected :", soltNo);
       var pos, prevPos;
       if (soltNo == 1) {
         pos = 0;
