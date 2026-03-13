@@ -298,7 +298,7 @@
                                 <div class="flip-container" :class="flippingWorkers[worker.id] ? 'flip-hover' : ''">
                                     <div class="flipper">
                                         <div class="front">
-                                            <div class="resource-card" :id="'front_id_' + worker.id">
+                                            <div class="resource-card" :id="`front_id_${worker.id}`">
                                                 <div class="row">
                                                     <div class="col-md-12">
                                                         <div class="d-flex">
@@ -307,7 +307,7 @@
                                                                     :src="worker.profile_image ? worker.profile_image.url : '{% static 'files/icons/profile.png' %}'">
                                                                 <span
                                                                     :class="worker.attendanceClass"
-                                                                    :id="'attendance_' + worker.id"></span>
+                                                                    :id="`attendance_${worker.id}`"></span>
                                                             </div>
 
                                                             <div>
@@ -326,9 +326,9 @@
                                                 </div>
                                                 <a @click="viewSkills(worker.id)" :data-id="worker.id"
                                                     v-show="!editingWorkers[worker.id]">View Skills</a>
-                                                <p class="resource-card-text" v-text="'Daily Occupancy ' + formatDate(workers_date)"></p>
+                                                <p class="resource-card-text" v-text="`Daily Occupancy ${formatDate(workers_date)}`"></p>
                                                 <br>
-                                                <div class="row ml-5 m-pr-0" :id="'slote_details' + worker.id">
+                                                <div class="row ml-5 m-pr-0" :id="`sloe_details${worker.id}`">
                                                     <div class="col-xs-2 mb-10 pl-0 pr-0" v-for="slot in dailyOccupencyCount" :key="slot">
                                                         <div :class="['resource-card-solt-1', getSlotClass(worker, slot)]" v-text="slot">
                                                         </div>
@@ -337,18 +337,18 @@
                                             </div>
                                         </div>
                                         <div class="back">
-                                            <div class="resource-card" :id="'back_id_' + worker.id">
+                                            <div class="resource-card" :id="`back_id_${worker.id}`">
                                                 <div class="resource-user-details">
-                                                    <h2 v-text="'Skill Of ' + worker.name"></h2>
+                                                    <h2 v-text="`Skill Of ${worker.name}`"></h2>
                                                     <div @click="editShow(worker.id)" class="skill-edit"
-                                                        :id="'edit_id_' + worker.id" v-show="!editingWorkers[worker.id]">
+                                                        :id="`edit_id_${worker.id}`" v-show="!editingWorkers[worker.id]">
                                                         <img src="{% static 'files/icons/edit.png' %}">
                                                     </div>
                                                     <div @click="saveEdit(worker.id)" class="skill-edit-done" v-show="editingWorkers[worker.id]">
                                                         <button class="resource-card-button">Done</button>
                                                     </div>
                                                 </div>
-                                                <div :id="'id_skill_list_' + worker.id" class="skil-list"
+                                                <div :id="`id_skill_list_${worker.id}`" class="skil-list"
                                                     v-show="!editingWorkers[worker.id]">
                                                     <div class="row mt-10 mr-10 ml-10">
                                                         <ul v-if="workerSkills[worker.id] && workerSkills[worker.id].length > 0">
@@ -359,7 +359,7 @@
                                                         <p v-else>No skills assigned</p>
                                                     </div>
                                                 </div>
-                                                <div :id="'id_skill_edit_list_' + worker.id" class="skil-list-edit"
+                                                <div :id="`id_skill_edit_list_${worker.id}`" class="skil-list-edit"
                                                     v-show="editingWorkers[worker.id] && workerSkills[worker.id] && workerSkills[worker.id].length > 0" :style="{ display: editingWorkers[worker.id] ? 'block' : 'none' }">
                                                     <div class="row">
                                                         <input type="hidden" :id="worker.id" name="user_id"
@@ -369,7 +369,7 @@
                                                             class="col-xs-6 mb-5">
                                                             <label class="c-container">
                                                                 <input type="checkbox"
-                                                                    :id="'service_' + worker.id + '_' + service.id"
+                                                                    :id="`service_${worker.id}_${service.id}`"
                                                                     :value="service.id.toString()"
                                                                     v-model="selectedSkills[worker.id]"
                                                                     name="service_type">

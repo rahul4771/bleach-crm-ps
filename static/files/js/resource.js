@@ -67,7 +67,6 @@ const app = new Vue({
   },
 
   mounted() {
-    console.log("Resource Management App mounted");
 
     // Initialize date input with today's date if not set
     const dateInput = document.getElementById('working_calendar_date');
@@ -200,13 +199,14 @@ const app = new Vue({
         if (args.hasOwnProperty(key))
           params[key] = args[key];
 
-      var query = '';
-      for (key in params)
-        if (params[key])
-          query += '&' + key + '=' + params[key].toString();
-      query = query.replace('&', '?');
+      const queryParams = new URLSearchParams();
+      for (const key in params) {
+        if (params[key]) {
+          queryParams.append(key, params[key].toString());
+        }
+      }
 
-      fetch('/common/resources-management/' + query)
+      fetch(`/common/resources-management/?${queryParams.toString()}`)
         .then(res => res.json())
         .then(data => {
           this.workers = data.workers || [];
@@ -268,17 +268,17 @@ const app = new Vue({
             }
 
             if (!serviceTypesData.success) {
-              this.showAlert('Error loading service types: ' + (serviceTypesData.error || 'Unknown error'), 'error');
+              this.showAlert(`Error loading service types: ${serviceTypesData.error || 'Unknown error'}`, 'error');
             }
             if (!skillsData.success) {
-              this.showAlert('Error loading existing skills: ' + (skillsData.error || 'Unknown error'), 'error');
+              this.showAlert(`Error loading existing skills: ${skillsData.error || 'Unknown error'}`, 'error');
             }
           }
           this.loadingSkills = false;
         })
         .catch(err => {
           console.error('Network error:', err);
-          this.showAlert('Network error: ' + err.message, 'error');
+          this.showAlert(`Network error: ${err.message}`, 'error');
           this.loadingSkills = false;
         });
     },
@@ -318,7 +318,7 @@ const app = new Vue({
         .then(res => res.json())
         .then(data => {
           if (!data.success) {
-            this.showStyledAlert('Error: ' + (data.error || 'Failed to save skills'), 'error');
+            this.showStyledAlert(`Error: ${data.error || 'Failed to save skills'}`, 'error');
             return;
           }
           this.showStyledAlert('Skills updated Successfully!', 'success');
@@ -331,7 +331,7 @@ const app = new Vue({
 
         })
         .catch(err => {
-          this.showStyledAlert('Network error: ' + err.message, 'error');
+          this.showStyledAlert(`Network error: ${err.message}`, 'error');
         });
     },
 
@@ -354,12 +354,12 @@ const app = new Vue({
             }
           } else {
             console.error('Failed to fetch skills. Error:', data.error);
-            this.showAlert('Error fetching skills: ' + (data.error || 'Unknown error'), 'error');
+            this.showAlert(`Error fetching skills: ${data.error || 'Unknown error'}`, 'error');
           }
         })
         .catch(err => {
           console.error('Network error while fetching skills:', err);
-          this.showAlert('Network error: ' + err.message, 'error');
+          this.showAlert(`Network error: ${err.message}`, 'error');
         });
     },
 
@@ -560,12 +560,12 @@ const app = new Vue({
 });
 
 
-var mainurl = window.location.href;
+const mainurl = window.location.href;
 if (mainurl.includes("starting_time")) {
-  var urlSplit = mainurl.split("&")
-  var s = urlSplit[1].split("=")[1]
-  var e = urlSplit[2].split("=")[1]
-  var starting_time = s.replace("%20", " ")
-  var ending_time = e.replace("%20", " ")
-  app.setSolt(starting_time, ending_time)
+  const urlSplit = mainurl.split("&");
+  const s = urlSplit[1].split("=")[1];
+  const e = urlSplit[2].split("=")[1];
+  const starting_time = s.replace(/%20/g, " ");
+  const ending_time = e.replace(/%20/g, " ");
+  app.setSolt(starting_time, ending_time);
 }
