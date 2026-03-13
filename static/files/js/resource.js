@@ -6,9 +6,10 @@
 const app = new Vue({
   el: "#resourceApp",
   delimiters: ["<%", "%>"],
-  
+
   data() {
     return {
+      dailyOccupencyCount: 12,
       // Slot management
       solt: [
         { solt: 1, check: false, start_time: "12:00 AM", end_time: "02:00 AM" },
@@ -67,7 +68,7 @@ const app = new Vue({
 
   mounted() {
     console.log("Resource Management App mounted");
-    
+
     // Initialize date input with today's date if not set
     const dateInput = document.getElementById('working_calendar_date');
     if (dateInput) {
@@ -79,12 +80,12 @@ const app = new Vue({
         // Sync existing value with Vue data
         this.workersCalendarDate = dateInput.value;
       }
-      
+
       // Listen to manual input changes
       dateInput.addEventListener('input', (e) => {
         this.onDateChange(e);
       });
-      
+
       // Listen to datepicker change event
       $(dateInput).on('change.datetimepicker', (e) => {
         if (e.target.value) {
@@ -93,10 +94,10 @@ const app = new Vue({
         }
       });
     }
-    
+
     // Initialize datepicker
     this.initializeDatepicker();
-    
+
     // Load initial data
     this.setParamsGo();
   },
@@ -124,6 +125,7 @@ const app = new Vue({
      * Toggle slot selection
      */
     selectSolt(soltNo) {
+      console.log("soltNoselected :", soltNo);
       var pos, prevPos;
       if (soltNo == 1) {
         pos = 0;
@@ -158,7 +160,7 @@ const app = new Vue({
           this.solt[j].check = false;
         }
       }
-      
+
       var selected = [];
       for (var i = 0; i < this.solt.length; i++) {
         if (this.solt[i].check) {
@@ -184,7 +186,7 @@ const app = new Vue({
     setParamsGo(args = {}) {
       const dateInput = document.getElementById('working_calendar_date');
       const dateValue = dateInput ? dateInput.value : '';
-      
+
       var params = {
         workers_calendar_date: dateValue || this.workersCalendarDate || '',
         search: this.search || document.getElementById('search-bar')?.value || '',
@@ -242,7 +244,7 @@ const app = new Vue({
         fetch(`/common/get-employee-skills/?employee_id=${workerId}`).then(res => res.json())
       ])
         .then(([serviceTypesData, skillsData]) => {
-          
+
           if (serviceTypesData.success && skillsData.success) {
             this.serviceTypes = serviceTypesData.service_types;
             this.service_types = serviceTypesData.service_types;
@@ -286,10 +288,10 @@ const app = new Vue({
      */
     initializeSkillCheckboxes(workerId, existingSkills) {
       // Initialize the array for this worker
-      const selectedIds = existingSkills && existingSkills.length > 0 
+      const selectedIds = existingSkills && existingSkills.length > 0
         ? existingSkills.map(skill => skill.id.toString())
         : [];
-      
+
       // Use $set for proper reactivity
       this.$set(this.selectedSkills, workerId, selectedIds);
     },
@@ -319,14 +321,14 @@ const app = new Vue({
             this.showStyledAlert('Error: ' + (data.error || 'Failed to save skills'), 'error');
             return;
           }
-            this.showStyledAlert('Skills updated Successfully!', 'success');
-            // Use Vue reactivity instead of DOM manipulation
-            this.$set(this.editingWorkers, workerId, false);
-            // Fetch updated skills
-            setTimeout(() => {
-              this.viewSkills(workerId);
-            }, 500);
-          
+          this.showStyledAlert('Skills updated Successfully!', 'success');
+          // Use Vue reactivity instead of DOM manipulation
+          this.$set(this.editingWorkers, workerId, false);
+          // Fetch updated skills
+          setTimeout(() => {
+            this.viewSkills(workerId);
+          }, 500);
+
         })
         .catch(err => {
           this.showStyledAlert('Network error: ' + err.message, 'error');
@@ -375,7 +377,7 @@ const app = new Vue({
       this.alert.message = message;
       this.alert.type = type;
       this.alert.show = true;
-      
+
       // Auto-hide alert after 5 seconds
       setTimeout(() => {
         this.alert.show = false;
@@ -451,31 +453,6 @@ const app = new Vue({
       }
 
       return classes;
-    },
-
-    /**
-     * Set parameters and navigate (legacy - use setParamsGo for data fetching)
-     */
-    navigateWithParams(args = {}) {
-      const params = {
-        workers_calendar_date: document.getElementById('working_calendar_date')?.value || '',
-        search: document.getElementById('search-bar')?.value || '',
-        staff_type: document.getElementById('staff_type_filter_id')?.value || '',
-        service_type: document.getElementById('service_type_filter_id')?.value || '',
-        starting_time: document.getElementById('starting_id')?.value || '',
-        ending_time: document.getElementById('ending_id')?.value || '',
-        ...args
-      };
-
-      const queryParams = new URLSearchParams();
-      Object.keys(params).forEach(key => {
-        if (params[key]) {
-          queryParams.append(key, params[key]);
-        }
-      });
-
-      const url = '{% url "common_items:resource-management" %}';
-      window.location.href = url + '?' + queryParams.toString();
     },
 
     /**
