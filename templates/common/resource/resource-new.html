@@ -185,9 +185,9 @@
                         <!--filter-columns-wrapper-->
                         <div class="filter-column-boxes filter-columns-left">
                             <!--filter-column-boxes filter-columns-left-->
-                            <div class="filter-button arrow-left"><span>Check Availability</span></div>
+                            <div class="filter-button arrow-left" @click="toggleAvailability"><span>Check Availability</span></div>
 
-                            <div class="menu-filter-left ltgreen-border" style="display:none;">
+                            <div class="menu-filter-left ltgreen-border" v-show="showAvailabilityFilter">
                                 <!--menu-filter-left ltgreen-border-->
 
                                 <div class="ticket-wrapper-row ticket-forms-boxes">
@@ -220,7 +220,7 @@
                                 </div><!--ticket-wrapper-row ticket-forms-boxes-->
                                 <div align="center">
                                     <button type="button" class="red-btn assignButton"
-                                        onclick="set_params_go();">Submit</button>
+                                        @click="setParamsGo();showAvailabilityFilter=false">Submit</button>
                                     <button type="button" class="cancel-Button arrow-left-close"
                                         id="id_reset">Reset</button>
                                 </div>
@@ -229,7 +229,7 @@
 
                             <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar"
                                     placeholder="Search Worker Name Here" v-model="search"
-                                    @change="set_params_go();">
+                                    @input="setParamsGo();showAvailabilityFilter=false">
                                 <span id="resource_search"><img class="search-icon"
                                         src="{% static 'files/images/search-icon.png' %}"></span>
                             </span>
@@ -265,8 +265,8 @@
                                         <button class="prev-day-resource previous-button"><i class="fa fa-caret-left"
                                                 aria-hidden="true"></i></button>
                                         <input type='text' id='working_calendar_date' name='datepicker'
-                                            class="date-box resource_date_pick" v-model="workersCalendarDate"
-                                            @input="handleDateInput($event)">
+                                            class="date-box resource_date_pick" 
+                                            @input="onDateChange($event)">
                                         <button class='next-day-resource next-button'><i class="fa fa-caret-right"
                                                 aria-hidden="true"></i></button>
                                         <button class='today-date-resource current-date'>Today</button>

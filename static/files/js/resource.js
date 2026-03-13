@@ -49,6 +49,7 @@ const app = new Vue({
 
       // UI state
       loadingSkills: false,
+      showAvailabilityFilter: false,
       alert: {
         show: false,
         message: '',
@@ -65,6 +66,7 @@ const app = new Vue({
   },
 
   mounted() {
+    console.log("Resource Management App mounted");
     
     // Initialize date input with today's date if not set
     const dateInput = document.getElementById('working_calendar_date');
@@ -77,10 +79,26 @@ const app = new Vue({
         // Sync existing value with Vue data
         this.workersCalendarDate = dateInput.value;
       }
+      
+      // Listen to manual input changes
+      dateInput.addEventListener('input', (e) => {
+        this.onDateChange(e);
+      });
+      
+      // Listen to datepicker change event
+      $(dateInput).on('change.datetimepicker', (e) => {
+        if (e.target.value) {
+          this.workersCalendarDate = e.target.value;
+          this.setParamsGo();
+        }
+      });
     }
     
+    // Initialize datepicker
+    this.initializeDatepicker();
+    
     // Load initial data
-    this.set_params_go();
+    this.setParamsGo();
   },
 
   methods: {
@@ -157,15 +175,18 @@ const app = new Vue({
           this.endingTime = selected[selected.length - 1].end_time;
         }
       }
-      this.set_params_go();
+      this.setParamsGo();
     },
 
     /**
      * Fetch and update worker data based on filter parameters
      */
-    set_params_go(args = {}) {
+    setParamsGo(args = {}) {
+      const dateInput = document.getElementById('working_calendar_date');
+      const dateValue = dateInput ? dateInput.value : '';
+      
       var params = {
-        workers_calendar_date: this.workersCalendarDate || document.getElementById('working_calendar_date')?.value || '',
+        workers_calendar_date: dateValue || this.workersCalendarDate || '',
         search: this.search || document.getElementById('search-bar')?.value || '',
         staff_type: this.staffTypeFilter || document.getElementById('staff_type_filter_id')?.value || '',
         service_type: this.serviceTypeFilter || document.getElementById('service_type_filter_id')?.value || '',
@@ -210,7 +231,6 @@ const app = new Vue({
      * Edit skill mode - fetch service types and existing skills
      */
     editShow(workerId) {
-      console.log('Opening edit mode for employee:', workerId);
 
       // Show the edit form immediately
       this.$set(this.editingWorkers, workerId, true);
@@ -309,7 +329,6 @@ const app = new Vue({
           
         })
         .catch(err => {
-          console.log("err", JSON.stringify(err))
           this.showStyledAlert('Network error: ' + err.message, 'error');
         });
     },
@@ -435,9 +454,9 @@ const app = new Vue({
     },
 
     /**
-     * Set parameters and navigate
+     * Set parameters and navigate (legacy - use setParamsGo for data fetching)
      */
-    setParamsGo(args = {}) {
+    navigateWithParams(args = {}) {
       const params = {
         workers_calendar_date: document.getElementById('working_calendar_date')?.value || '',
         search: document.getElementById('search-bar')?.value || '',
@@ -510,6 +529,17 @@ const app = new Vue({
     },
 
     /**
+     * Toggle availability filter visibility
+     */
+    toggleAvailability() {
+      this.showAvailabilityFilter = !this.showAvailabilityFilter;
+      const filterMenu = document.querySelector('.menu-filter-left');
+      if (filterMenu) {
+        filterMenu.style.display = this.showAvailabilityFilter ? 'block' : 'none';
+      }
+    },
+
+    /**
      * Get display date with formatting
      */
     getDisplayDate() {
@@ -518,12 +548,34 @@ const app = new Vue({
     },
 
     /**
-     * Handle date input change
+     * Initialize datepicker plugin
      */
-    handleDateInput(event) {
-      this.workersCalendarDate = event.target.value;
-      this.set_params_go();
-    }
+    initializeDatepicker() {
+      const dateInput = document.getElementById('working_calendar_date');
+      if (dateInput && $.fn.datetimepicker) {
+        // Initialize with moment.js and custom format
+        try {
+          $(dateInput).datetimepicker({
+            format: 'DD-MM-YYYY',
+            useCurrent: false,
+            allowInputToggle: true
+          });
+        } catch (e) {
+          console.log('Datepicker initialization note:', e.message);
+        }
+      }
+    },
+
+    /**
+     * Handle date change from calendar picker or manual input
+     */
+    onDateChange(event) {
+      const dateValue = event.target.value;
+      if (dateValue) {
+        this.workersCalendarDate = dateValue;
+        this.setParamsGo();
+      }
+    },
   },
   watch: {
     // Watch for changes if needed
