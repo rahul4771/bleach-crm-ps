@@ -106,8 +106,8 @@ const app = new Vue({
      * Set slot time range
      */
     setSolt(s, e) {
-      var sPos, ePos;
-      for (var i = 0; i < this.solt.length; i++) {
+      let sPos, ePos;
+      for (let i = 0; i < this.solt.length; i++) {
         if (this.solt[i].start_time == s) {
           sPos = i;
         }
@@ -115,7 +115,7 @@ const app = new Vue({
           ePos = i;
         }
       }
-      for (var j = sPos; j <= ePos; j++) {
+      for (let j = sPos; j <= ePos; j++) {
         this.solt[j].check = true;
       }
     },
@@ -124,7 +124,7 @@ const app = new Vue({
      * Toggle slot selection
      */
     selectSolt(soltNo) {
-      var pos, prevPos;
+      let pos, prevPos;
       if (soltNo == 1) {
         pos = 0;
         prevPos = null;
@@ -132,8 +132,8 @@ const app = new Vue({
         pos = soltNo - 1;
         prevPos = soltNo - 2;
       }
-      var firstFlag = true;
-      for (var i = 0; i < this.solt.length; i++) {
+      let firstFlag = true;
+      for (let i = 0; i < this.solt.length; i++) {
         if (this.solt[i].check) {
           firstFlag = false;
           break;
@@ -154,13 +154,13 @@ const app = new Vue({
           }
         }
       } else {
-        for (var j = pos; j < this.solt.length; j++) {
+        for (let j = pos; j < this.solt.length; j++) {
           this.solt[j].check = false;
         }
       }
 
-      var selected = [];
-      for (var i = 0; i < this.solt.length; i++) {
+      let selected = [];
+      for (let i = 0; i < this.solt.length; i++) {
         if (this.solt[i].check) {
           selected.push(this.solt[i]);
         }
@@ -185,7 +185,7 @@ const app = new Vue({
       const dateInput = document.getElementById('working_calendar_date');
       const dateValue = dateInput ? dateInput.value : '';
 
-      var params = {
+      let params = {
         workers_calendar_date: dateValue || this.workersCalendarDate || '',
         search: this.search || document.getElementById('search-bar')?.value || '',
         staff_type: this.staffTypeFilter || document.getElementById('staff_type_filter_id')?.value || '',
@@ -194,7 +194,7 @@ const app = new Vue({
         ending_time: this.endingTime || document.getElementById('ending_id')?.value || ''
       };
 
-      for (key in args)
+      for (const key in args)
         if (args.hasOwnProperty(key))
           params[key] = args[key];
 
