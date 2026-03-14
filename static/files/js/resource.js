@@ -428,11 +428,6 @@ const app = new Vue({
     getSlotClass(workerId, slotNo) {
       const busySlots = this.workerBusySlots[workerId] || {};
 
-      // if (workerId === 37) {
-      //   console.log("workerId", workerId);
-      //   console.log("slotNo", slotNo);
-      //   console.log("busySlots", JSON.stringify(busySlots));
-      // }
 
       let classes = 'resource-card-solt-1';
 
