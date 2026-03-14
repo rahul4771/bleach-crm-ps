@@ -150,6 +150,9 @@ const app = new Vue({
       if (selected.length > 0) {
         this.startingTime = selected[0].start_time;
         this.endingTime = selected[selected.length - 1].end_time;
+      } else {
+        this.startingTime = '';
+        this.endingTime = '';
       }
 
       this.setParamsGo();
