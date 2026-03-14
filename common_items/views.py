@@ -58,7 +58,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response 
 from rest_framework.status import HTTP_200_OK
 
-from agent.serializers import CleaningScheduleSerializer,FollowupScheduleSerializer,UserProfileShowSerializer
+from agent.serializers import CleaningScheduleSerializer,FollowupScheduleSerializer,UserProfileShowSerializer,UserProfileResourceSerializer
 
 import pytz
 
@@ -7736,10 +7736,10 @@ class ResourceManagementAPIView(APIView):
 				combined_filters &= f
 			workers = workers.filter(combined_filters)
 
+
 		# Serialize QuerySets to JSON-compatible format
-		workers_serialized = UserProfileShowSerializer(workers, many=True).data
+		workers_serialized = UserProfileResourceSerializer(workers, many=True).data
 		service_types_list = list(service_types.values('id', 'name')) if service_types else []
 
 		return JsonResponse({"workers":workers_serialized,"workers_date":str(workers_date),"service_type":service_type,"staff_type":staff_type,"search":search,"service_types":service_types_list,"selected_service_type_id":selected_service_type_id})		
-		# return render(request,'common/resource/resource-new.html',{"workers":workers,"workers_date":workers_date,"service_type":service_type,"staff_type":staff_type,"search":search,"service_types":service_types,"selected_service_type_id":selected_service_type_id})
 

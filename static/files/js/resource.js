@@ -124,57 +124,34 @@ const app = new Vue({
      * Toggle slot selection
      */
     selectSolt(soltNo) {
-      let pos, prevPos;
-      if (soltNo == 1) {
-        pos = 0;
-        prevPos = null;
-      } else {
-        pos = soltNo - 1;
-        prevPos = soltNo - 2;
-      }
-      let firstFlag = true;
-      for (let i = 0; i < this.solt.length; i++) {
-        if (this.solt[i].check) {
-          firstFlag = false;
-          break;
-        }
-      }
+      const pos = soltNo - 1;
+      const prevPos = pos - 1;
+
+      // Check if any slot is already selected
+      const hasSelection = this.solt.some(slot => slot.check);
+
       if (!this.solt[pos].check) {
-        if (firstFlag) {
+        // Enable slot if: no selection exists, OR previous slot is checked, OR next slot is checked
+        const nextSlotChecked = soltNo < this.solt.length && this.solt[soltNo]?.check;
+        const prevSlotChecked = prevPos >= 0 && this.solt[prevPos]?.check;
+
+        if (!hasSelection || prevSlotChecked || nextSlotChecked) {
           this.solt[pos].check = true;
-        } else {
-          if (prevPos != null) {
-            if (this.solt[prevPos].check || this.solt[soltNo].check) {
-              this.solt[pos].check = true;
-            }
-          } else {
-            if (this.solt[soltNo].check) {
-              this.solt[pos].check = true;
-            }
-          }
         }
       } else {
-        for (let j = pos; j < this.solt.length; j++) {
-          this.solt[j].check = false;
-        }
+        // Disable this slot and all following slots
+        this.solt.forEach((slot, i) => {
+          if (i >= pos) slot.check = false;
+        });
       }
 
-      let selected = [];
-      for (let i = 0; i < this.solt.length; i++) {
-        if (this.solt[i].check) {
-          selected.push(this.solt[i]);
-        }
-      }
-
+      // Update time range based on selected slots
+      const selected = this.solt.filter(slot => slot.check);
       if (selected.length > 0) {
-        if (selected.length == 1) {
-          this.startingTime = selected[0].start_time;
-          this.endingTime = selected[0].end_time;
-        } else {
-          this.startingTime = selected[0].start_time;
-          this.endingTime = selected[selected.length - 1].end_time;
-        }
+        this.startingTime = selected[0].start_time;
+        this.endingTime = selected[selected.length - 1].end_time;
       }
+
       this.setParamsGo();
     },
 
@@ -392,23 +369,28 @@ const app = new Vue({
 
       if (worker.cleaning_member_details && worker.cleaning_member_details.length > 0) {
         worker.cleaning_member_details.forEach(cleaningDetail => {
-          const startHour = parseInt(cleaningDetail.start_at_hour) || 0;
-          const endHour = parseInt(cleaningDetail.end_at_hour) || 0;
+          const startDate = cleaningDetail.start_at_date;
+          const endDate = cleaningDetail.end_at_date;
+          const startHour = cleaningDetail.start_at_hour;
+          const endHour = cleaningDetail.end_at_hour;
           const cleaningPolicy = cleaningDetail.cleaning_policy || 'UNKNOWN';
           const busySlots = [];
 
+
           for (let i = 0; i < slotArray.length; i++) {
             if (startHour > endHour) {
-              // Overnight shift
-              if ((startHour <= slotArray[i][0] && 24 > slotArray[i][0]) ||
-                (startHour <= slotArray[i][1] && 24 > slotArray[i][1])) {
-                busySlots.push(i + 1);
+              if (startDate === this.workersCalendarDate) {
+                if ((startHour <= slotArray[i][0] && 24 > slotArray[i][0]) || (startHour <= slotArray[i][1] && 24 > slotArray[i][1])) {
+                  busySlots.push(i + 1);
+                }
+              } else {
+                if ((0 <= slotArray[i][0] && endHour > slotArray[i][0]) || (0 <= slotArray[i][1] && endHour > slotArray[i][1])) {
+                  busySlots.push(i + 1)
+                }
               }
             } else {
-              // Regular shift
-              if ((startHour <= slotArray[i][0] && endHour > slotArray[i][0]) ||
-                (startHour <= slotArray[i][1] && endHour > slotArray[i][1])) {
-                busySlots.push(i + 1);
+              if ((startHour <= slotArray[i][0] && endHour > slotArray[i][0]) || (startHour <= slotArray[i][1] && endHour > slotArray[i][1])) {
+                busySlots.push(i + 1)
               }
             }
           }
@@ -442,6 +424,13 @@ const app = new Vue({
      */
     getSlotClass(workerId, slotNo) {
       const busySlots = this.workerBusySlots[workerId] || {};
+
+      // if (workerId === 37) {
+      //   console.log("workerId", workerId);
+      //   console.log("slotNo", slotNo);
+      //   console.log("busySlots", JSON.stringify(busySlots));
+      // }
+
       let classes = 'resource-card-solt-1';
 
       if (busySlots['ONE TIME SERVICE'] && busySlots['ONE TIME SERVICE'].includes(slotNo)) {
