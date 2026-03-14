@@ -412,10 +412,11 @@ const app = new Vue({
      * Update attendance status for worker
      */
     updateAttendanceStatus(worker) {
-      if (!worker.cleaning_member_details || worker.cleaning_member_details.length === 0) {
-        // No cleaning details - worker is unavailable
-        worker.attendanceClass = 'dot-gray';
-      } else if (worker.leave === 1) {
+      // if ((!worker.cleaning_member_details || worker.cleaning_member_details.length === 0) && worker.leave === 1) {
+      //   worker.attendanceClass = 'dot-gray';
+      //   return;
+      // }
+      if (worker.leave === 1) {
         worker.attendanceClass = 'dot-red';
       } else {
         worker.attendanceClass = 'dot-green';
