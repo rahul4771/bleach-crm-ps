@@ -58,7 +58,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response 
 from rest_framework.status import HTTP_200_OK
 
-from agent.serializers import CleaningScheduleSerializer,FollowupScheduleSerializer,UserProfileShowSerializer
+from agent.serializers import CleaningScheduleSerializer,FollowupScheduleSerializer,UserProfileShowSerializer,UserProfileResourceSerializer
 
 import pytz
 
@@ -2328,91 +2328,90 @@ class ResourceManagement(IsAuthenticated,View):
 	def get(self,request):
 		
 		#workers_date
-		workers_calendar_date	= request.GET.get('workers_calendar_date')
+		# workers_calendar_date	= request.GET.get('workers_calendar_date')
 		
-		try:
-			workers_date = datetime.strptime(workers_calendar_date,'%d-%m-%Y')
-			workers_date_start = workers_date.replace(hour=0,minute=0,second=0,microsecond=0)
-			workers_date_end   = workers_date_start + timedelta(1)
-		except:
-			workers_date = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)
-			workers_date_start = workers_date.date()
-			workers_date_end   = workers_date_start + timedelta(1)
+		# try:
+		# 	workers_date = datetime.strptime(workers_calendar_date,'%d-%m-%Y')
+		# 	workers_date_start = workers_date.replace(hour=0,minute=0,second=0,microsecond=0)
+		# 	workers_date_end   = workers_date_start + timedelta(1)
+		# except:
+		# 	workers_date = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)
+		# 	workers_date_start = workers_date.date()
+		# 	workers_date_end   = workers_date_start + timedelta(1)
 
-		#time filter
-		try:
-			starting_datetime  = datetime.strptime(str(workers_calendar_date+' '+request.GET.get('starting_time')),'%d-%m-%Y %I:%M %p')
-			ending_datetime    = datetime.strptime(str(workers_calendar_date+' '+request.GET.get('ending_time')),'%d-%m-%Y %I:%M %p')
-		except:
-			starting_datetime  = None 
-			ending_datetime    = None
+		# #time filter
+		# try:
+		# 	starting_datetime  = datetime.strptime(str(workers_calendar_date+' '+request.GET.get('starting_time')),'%d-%m-%Y %I:%M %p')
+		# 	ending_datetime    = datetime.strptime(str(workers_calendar_date+' '+request.GET.get('ending_time')),'%d-%m-%Y %I:%M %p')
+		# except:
+		# 	starting_datetime  = None 
+		# 	ending_datetime    = None
 
-		#apply time and date filter
-		if starting_datetime and ending_datetime:
-			workers            =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).prefetch_related('leave_staff').annotate(leave=Sum( Case( When( leave_staff__leave_date=workers_date,then=1),default=0,output_field=IntegerField())) ).prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end)) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter(Q( Q(is_active=True)&Q(Q(start_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end)) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details')).annotate(cleaning_contained=Sum(Case(When(Q(Q(Q(cleaning_member_user__start_at__gte=starting_datetime)&Q(cleaning_member_user__end_at__lte=ending_datetime))|Q(Q(cleaning_member_user__start_at__gte=starting_datetime)&Q(cleaning_member_user__start_at__lt=ending_datetime)&Q(cleaning_member_user__end_at__gt=ending_datetime))|Q(Q(cleaning_member_user__end_at__gt=starting_datetime)&Q(cleaning_member_user__end_at__lte=ending_datetime)&Q(cleaning_member_user__start_at__lt=starting_datetime))),then=1),default=0,output_field=IntegerField()))).filter(cleaning_contained=0)
-		else:
-			workers            =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).prefetch_related('leave_staff').annotate(leave=Sum( Case( When( leave_staff__leave_date=workers_date,then=1),default=0,output_field=IntegerField())) ).prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end)) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter(Q( Q(is_active=True)&Q(Q(start_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end)) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
+		# #apply time and date filter
+		# if starting_datetime and ending_datetime:
+		# 	workers            =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).prefetch_related('leave_staff').annotate(leave=Sum( Case( When( leave_staff__leave_date=workers_date,then=1),default=0,output_field=IntegerField())) ).prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end)) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter(Q( Q(is_active=True)&Q(Q(start_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end)) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details')).annotate(cleaning_contained=Sum(Case(When(Q(Q(Q(cleaning_member_user__start_at__gte=starting_datetime)&Q(cleaning_member_user__end_at__lte=ending_datetime))|Q(Q(cleaning_member_user__start_at__gte=starting_datetime)&Q(cleaning_member_user__start_at__lt=ending_datetime)&Q(cleaning_member_user__end_at__gt=ending_datetime))|Q(Q(cleaning_member_user__end_at__gt=starting_datetime)&Q(cleaning_member_user__end_at__lte=ending_datetime)&Q(cleaning_member_user__start_at__lt=starting_datetime))),then=1),default=0,output_field=IntegerField()))).filter(cleaning_contained=0)
+		# else:
+		# 	workers            =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).prefetch_related('leave_staff').annotate(leave=Sum( Case( When( leave_staff__leave_date=workers_date,then=1),default=0,output_field=IntegerField())) ).prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end)) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter(Q( Q(is_active=True)&Q(Q(start_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end)) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
 
 
-		#otherfilters
-		search 		   = request.GET.get('search')
-		staff_type     = request.GET.get('staff_type')
-		service_type   = request.GET.get('service_type')
-		try:
-			service_types = ServiceType.objects.filter(is_active=True).order_by('name')
-		except:
-			service_types = None
+		# #otherfilters
+		# search 		   = request.GET.get('search')
+		# staff_type     = request.GET.get('staff_type')
+		# service_type   = request.GET.get('service_type')
+		# try:
+		# 	service_types = ServiceType.objects.filter(is_active=True).order_by('name')
+		# except:
+		# 	service_types = None
 
-		selected_service_type_id = None
-		service_type_filter = None
-		if service_type:
-			if str(service_type).startswith('is_'):
-				service_type_filter = service_type
-			else:
-				try:
-					selected_service_type_id = int(service_type)
-					service_type_obj = ServiceType.objects.filter(is_active=True,id=selected_service_type_id).first()
-					if service_type_obj:
-						service_type_filter = service_type_obj.name
-				except:
-					service_type_filter = None
+		# selected_service_type_id = None
+		# service_type_filter = None
+		# if service_type:
+		# 	if str(service_type).startswith('is_'):
+		# 		service_type_filter = service_type
+		# 	else:
+		# 		try:
+		# 			selected_service_type_id = int(service_type)
+		# 			service_type_obj = ServiceType.objects.filter(is_active=True,id=selected_service_type_id).first()
+		# 			if service_type_obj:
+		# 				service_type_filter = service_type_obj.name
+		# 		except:
+		# 			service_type_filter = None
 		
 
-		filters=[]
-		if search: 
-		    case1 = Q(name__icontains=search)
-		    filters.append(case1)
-		if staff_type:
-			case2 = Q(user_type=staff_type)
-			filters.append(case2)
-		if service_type_filter:
-			service_type_map = {
-				'General Cleaning': 'is_general_skill',
-				'Deep Cleaning': 'is_deep_skill',
-				'Upholstery Cleaning': 'is_upholstery_skill',
-				'Carpet Cleaning': 'is_carpet_skill',
-				'Kitchen Cleaning': 'is_kitchen_skill',
-				'Sterilization': 'is_sterilization_skill',
-				'Mattress Cleaning': 'is_mattress_skill',
-				'Facade Cleaning': 'is_facade_skill',
-				'Storage Area Cleaning': 'is_storagearea_skill',
-				'Car Parking Umbrella': 'is_carparkingumbrella_skill',
-				'Outdoor Cleaning': 'is_outdoor_skill',
-				'Window Cleaning': 'is_window_skill',
-			}
-			skill_field = service_type_map.get(service_type_filter, service_type_filter)
-			if str(skill_field).startswith('is_'):
-				filters.append(Q(**{skill_field: True}))
+		# filters=[]
+		# if search: 
+		#     case1 = Q(name__icontains=search)
+		#     filters.append(case1)
+		# if staff_type:
+		# 	case2 = Q(user_type=staff_type)
+		# 	filters.append(case2)
+		# if service_type_filter:
+		# 	service_type_map = {
+		# 		'General Cleaning': 'is_general_skill',
+		# 		'Deep Cleaning': 'is_deep_skill',
+		# 		'Upholstery Cleaning': 'is_upholstery_skill',
+		# 		'Carpet Cleaning': 'is_carpet_skill',
+		# 		'Kitchen Cleaning': 'is_kitchen_skill',
+		# 		'Sterilization': 'is_sterilization_skill',
+		# 		'Mattress Cleaning': 'is_mattress_skill',
+		# 		'Facade Cleaning': 'is_facade_skill',
+		# 		'Storage Area Cleaning': 'is_storagearea_skill',
+		# 		'Car Parking Umbrella': 'is_carparkingumbrella_skill',
+		# 		'Outdoor Cleaning': 'is_outdoor_skill',
+		# 		'Window Cleaning': 'is_window_skill',
+		# 	}
+		# 	skill_field = service_type_map.get(service_type_filter, service_type_filter)
+		# 	if str(skill_field).startswith('is_'):
+		# 		filters.append(Q(**{skill_field: True}))
 		
-		if filters:
-			combined_filters = Q()
-			for f in filters:
-				combined_filters &= f
-			workers = workers.filter(combined_filters)
+		# if filters:
+		# 	combined_filters = Q()
+		# 	for f in filters:
+		# 		combined_filters &= f
+		# 	workers = workers.filter(combined_filters)
 				
-
-		return render(request,'common/resource/resource-new.html',{"workers":workers,"workers_date":workers_date,"service_type":service_type,"staff_type":staff_type,"search":search,"service_types":service_types,"selected_service_type_id":selected_service_type_id})
-
+		# return render(request,'common/resource/resource-new.html',{"workers":workers,"workers_date":workers_date,"service_type":service_type,"staff_type":staff_type,"search":search,"service_types":service_types,"selected_service_type_id":selected_service_type_id})
+		return render(request,'common/resource/resource-new.html')
 	def post(self,request):
 		
 		response_dict = {}
@@ -7656,4 +7655,96 @@ class EmployeeSkillsAPIView(APIView):
 
         return JsonResponse({"success": True, "skills": data})
 	
-	
+class ResourceManagementAPIView(APIView):
+	def get(self,request):
+		
+		#workers_date
+		workers_calendar_date	= request.GET.get('workers_calendar_date')
+		
+		try:
+			workers_date = datetime.strptime(workers_calendar_date,'%d-%m-%Y')
+			workers_date_start = workers_date.replace(hour=0,minute=0,second=0,microsecond=0)
+			workers_date_end   = workers_date_start + timedelta(1)
+		except:
+			workers_date = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)
+			workers_date_start = workers_date.date()
+			workers_date_end   = workers_date_start + timedelta(1)
+
+		#time filter
+		try:
+			starting_datetime  = datetime.strptime(str(workers_calendar_date+' '+request.GET.get('starting_time')),'%d-%m-%Y %I:%M %p')
+			ending_datetime    = datetime.strptime(str(workers_calendar_date+' '+request.GET.get('ending_time')),'%d-%m-%Y %I:%M %p')
+		except:
+			starting_datetime  = None 
+			ending_datetime    = None
+
+		#apply time and date filter
+		if starting_datetime and ending_datetime:
+			workers            =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).prefetch_related('leave_staff').annotate(leave=Sum( Case( When( leave_staff__leave_date=workers_date,then=1),default=0,output_field=IntegerField())) ).prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end)) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter(Q( Q(is_active=True)&Q(Q(start_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end)) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details')).annotate(cleaning_contained=Sum(Case(When(Q(Q(Q(cleaning_member_user__start_at__gte=starting_datetime)&Q(cleaning_member_user__end_at__lte=ending_datetime))|Q(Q(cleaning_member_user__start_at__gte=starting_datetime)&Q(cleaning_member_user__start_at__lt=ending_datetime)&Q(cleaning_member_user__end_at__gt=ending_datetime))|Q(Q(cleaning_member_user__end_at__gt=starting_datetime)&Q(cleaning_member_user__end_at__lte=ending_datetime)&Q(cleaning_member_user__start_at__lt=starting_datetime))),then=1),default=0,output_field=IntegerField()))).filter(cleaning_contained=0)
+		else:
+			workers            =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).prefetch_related('leave_staff').annotate(leave=Sum( Case( When( leave_staff__leave_date=workers_date,then=1),default=0,output_field=IntegerField())) ).prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end)) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter(Q( Q(is_active=True)&Q(Q(start_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end)) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
+
+
+		#otherfilters
+		search 		   = request.GET.get('search')
+		staff_type     = request.GET.get('staff_type')
+		service_type   = request.GET.get('service_type')
+		try:
+			service_types = ServiceType.objects.filter(is_active=True).order_by('name')
+		except:
+			service_types = None
+
+		selected_service_type_id = None
+		service_type_filter = None
+		if service_type:
+			if str(service_type).startswith('is_'):
+				service_type_filter = service_type
+			else:
+				try:
+					selected_service_type_id = int(service_type)
+					service_type_obj = ServiceType.objects.filter(is_active=True,id=selected_service_type_id).first()
+					if service_type_obj:
+						service_type_filter = service_type_obj.name
+				except:
+					service_type_filter = None
+		
+
+		filters=[]
+		if search: 
+			case1 = Q(name__icontains=search)
+			filters.append(case1)
+		if staff_type:
+			case2 = Q(user_type=staff_type)
+			filters.append(case2)
+		if service_type_filter:
+			service_type_map = {
+				'General Cleaning': 'is_general_skill',
+				'Deep Cleaning': 'is_deep_skill',
+				'Upholstery Cleaning': 'is_upholstery_skill',
+				'Carpet Cleaning': 'is_carpet_skill',
+				'Kitchen Cleaning': 'is_kitchen_skill',
+				'Sterilization': 'is_sterilization_skill',
+				'Mattress Cleaning': 'is_mattress_skill',
+				'Facade Cleaning': 'is_facade_skill',
+				'Storage Area Cleaning': 'is_storagearea_skill',
+				'Car Parking Umbrella': 'is_carparkingumbrella_skill',
+				'Outdoor Cleaning': 'is_outdoor_skill',
+				'Window Cleaning': 'is_window_skill',
+			}
+			skill_field = service_type_map.get(service_type_filter, service_type_filter)
+			if str(skill_field).startswith('is_'):
+				filters.append(Q(**{skill_field: True}))
+		
+		if filters:
+			combined_filters = Q()
+			for f in filters:
+				combined_filters &= f
+			workers = workers.filter(combined_filters)
+
+
+		# Serialize QuerySets to JSON-compatible format
+		workers_serialized = UserProfileResourceSerializer(workers, many=True).data
+		service_types_list = list(service_types.values('id', 'name')) if service_types else []
+
+		return JsonResponse({"workers":workers_serialized,"workers_date":str(workers_date),"service_type":service_type,"staff_type":staff_type,"search":search,"service_types":service_types_list,"selected_service_type_id":selected_service_type_id})		
+
