@@ -304,7 +304,7 @@
                                                         <div class="d-flex">
                                                             <div class="resource-card-profile">
                                                                 <img class="resource-img-circle"
-                                                                    :src="worker.profile_image ? worker.profile_image.url : '{% static 'files/icons/profile.png' %}'">
+                                                                    :src="worker.profile_image ? worker.profile_image : '{% static 'files/icons/profile.png' %}'">
                                                                 <span
                                                                     :class="worker.attendanceClass"
                                                                     :id="`attendance_${worker.id}`"></span>
