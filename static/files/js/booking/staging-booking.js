@@ -1890,7 +1890,7 @@ const app = new Vue({
             this.$refs.item - image.input.click()
         },
         getServiceTypes() {
-            fetch('/common/staging/dynamic/get-service-types/')
+            fetch('/common/v1/dynamic/get-service-types/')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
