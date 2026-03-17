@@ -80,6 +80,7 @@ createApp({
                 name: '',
                 name_arabic: '',
                 servicegroup_id: '',
+                image: '',
                 is_active: ''
             },
             categoryFormFields: {
@@ -114,7 +115,9 @@ createApp({
                 price: '',
                 productivity: '',
                 service_type_id: '',
-                status: false
+                status: false,
+                image_path: '',
+                _image_preview: ''
             },
             measurementUnitFormFields: {
                 id: '',
@@ -202,7 +205,8 @@ createApp({
                 this.serviceFormFields.name = serviceType.name || '';
                 this.serviceFormFields.name_arabic = serviceType.name_arabic || '';
                 this.serviceFormFields.servicegroup_id = serviceType.service_group_id || '';
-                this.serviceFormFields.is_active = serviceType.status ? 'active' : 'inactive';
+                this.serviceFormFields.image = serviceType.image || '';
+                this.serviceFormFields.is_active = serviceType.is_active ? 'active' : 'inactive';
 
                 const hiddenName = 'editing_service_type_id';
                 let hidden = form.querySelector(`input[name="${hiddenName}"]`);
@@ -422,12 +426,15 @@ createApp({
                     form.setAttribute('data-action', 'add');
                     this.addonFormFields = {
                         id: '',
+                        item: '',
                         category_name: '',
                         size: '',
                         price: '',
                         productivity: '',
                         service_type_id: this.serviceTypeId || '',
-                        status: false
+                        status: false,
+                        image_path: '',
+                        _image_preview: ''
                     }
                 }
             }
@@ -454,7 +461,9 @@ createApp({
                         price: addon.price || '',
                         productivity: addon.productivity || '',
                         service_type_id: this.serviceTypeId || '',
-                        status: addon.is_active || false
+                        status: addon.is_active || false,
+                        image_path: addon.image_path || '',
+                        _image_preview: ''
                     }
                 }
             }
@@ -629,6 +638,17 @@ createApp({
             if (!remaining.length) {
                 document.body.classList.remove('modal-open');
             }
+
+            // clean up any blob URLs used for previews (addon image)
+            try {
+                if (this.addonFormFields && this.addonFormFields._image_preview && this.addonFormFields._image_preview.startsWith('blob:')) {
+                    URL.revokeObjectURL(this.addonFormFields._image_preview);
+                }
+            } catch (e) {
+                // ignore
+            }
+            // clear preview when modal closed
+            if (this.addonFormFields) this.addonFormFields._image_preview = '';
         },
 
         /* Form submission methods */
@@ -687,6 +707,9 @@ createApp({
         /* Add or update service type */
         submitServiceTypeForm() {
             this.validationErrors['manageServiceType'] = {};
+            const form = document.getElementById('manage-service-form');
+            const formAction = form.getAttribute('data-action');
+
             if (!this.serviceFormFields.name || !this.serviceFormFields.name.trim()) {
                 this.validationErrors['manageServiceType']['serviceTypeName'] = 'Service name is required.';
             }
@@ -704,6 +727,19 @@ createApp({
                 this.validationErrors['manageServiceType']['serviceGroup'] = 'Servicegroup is required.';
             }
 
+            if (formAction === 'add' && this.serviceFormFields.image_path === '') {
+                this.validationErrors['manageServiceType']['serviceTypeImage'] = 'Image is required.';
+            }
+
+            if (!this.serviceFormFields.image_path) {
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                if (this.serviceFormFields.image_path && !allowedTypes.includes(this.serviceFormFields.image_path.type)) {
+                    this.validationErrors['manageServiceType']['serviceTypeImage'] = 'Only JPEG, PNG, and GIF images are allowed.';
+                } else if (this.serviceFormFields.image_path && this.serviceFormFields.image_path.size > 2 * 1024 * 1024) {
+                    this.validationErrors['manageServiceType']['serviceTypeImage'] = 'Image size must be less than 2MB.';
+                }
+            }
+
             if (Object.keys(this.validationErrors['manageServiceType']).length) return;
 
             // prepare payload for backend (convert boolean to expected value)
@@ -714,11 +750,13 @@ createApp({
                 new_service_is_active: this.serviceFormFields.is_active
             };
 
-            const form = document.getElementById('manage-service-form');
-            const formAction = form.getAttribute('data-action')
             if (formAction === 'add') {
+                payload.image_path = this.serviceFormFields.image_path;
                 this.createServiceType(this.toFormData(payload));
             } else {
+                if (this.serviceFormFields.image_path instanceof File || typeof this.serviceFormFields.image_path === 'object') {
+                    payload.image_path = this.serviceFormFields.image_path;
+                }
                 const serviceId = form.querySelector('input#editing_service_type_id, input[name="editing_service_type_id"]');
                 this.updateServiceType(this.toFormData(payload), serviceId.value);
             }
@@ -899,6 +937,11 @@ createApp({
                 service_type: this.addonFormFields.service_type_id || this.serviceTypeId || '',
                 is_active: this.addonFormFields.status ? 1 : 0
             };
+
+            // include the image file if provided
+            if (this.addonFormFields.image_path) {
+                payload.image_path = this.addonFormFields.image_path;
+            }
 
             const form = document.getElementById('manage-addon-form');
             const formAction = form ? form.getAttribute('data-action') : 'add';
@@ -1102,9 +1145,9 @@ createApp({
                                 this.validationErrors['manageServiceGroup']['serviceGroupStatus'] = data.error_message;
                             }
 
-                            // if (data.error_field === 'imagepath') {
-                            //     this.validationErrors['manageServiceGroup']['serviceGroupImage'] = data.error_message;
-                            // }
+                            if (data.error_field === 'image_path') {
+                                this.validationErrors['manageServiceGroup']['serviceGroupImage'] = data.error_message;
+                            }
                         }
 
                     } else {
@@ -1163,7 +1206,6 @@ createApp({
                             }
                         }
                     } else {
-                        console.log("service type", data.service_type);
                         this.successMsg = data.service_type
                             ? `Service type "${data.service_type.name}" added successfully.`
                             : 'Service type added successfully.';
@@ -1475,7 +1517,7 @@ createApp({
                 });
         },
         // Create a new service add-on via API
-        createAddOn(formData) {
+        createAddOn(formData, payload = {}) {
             const csrftoken = this.getCookie('csrftoken');
             const baseUrl = window.location.origin;
             const url = `${baseUrl}/common/add-service-addons/`;
@@ -1494,6 +1536,13 @@ createApp({
                 })
                 .then(data => {
                     this.closeModal();
+                    // cleanup preview blob URL if present
+                    try {
+                        if (this.addonFormFields && this.addonFormFields._image_preview && this.addonFormFields._image_preview.startsWith('blob:')) {
+                            URL.revokeObjectURL(this.addonFormFields._image_preview);
+                        }
+                    } catch (e) {}
+                    if (this.addonFormFields) this.addonFormFields._image_preview = '';
                     const key = String(payload.service_type || this.serviceTypeId || '0');
                     if (!this.serviceAddons[key]) this.serviceAddons[key] = [];
                     const item = data.service_addon || data;
@@ -1519,7 +1568,7 @@ createApp({
                 });
         },
         // Update an existing service add-on via API
-        updateAddOn(formData, addonId) {
+        updateAddOn(formData, addonId, payload = {}) {
             const csrftoken = this.getCookie('csrftoken');
             const baseUrl = window.location.origin;
             const url = `${baseUrl}/common/update-service-addons/${addonId}`;
@@ -1539,6 +1588,13 @@ createApp({
                 .then(data => {
                     if (data.success) {
                         this.closeModal();
+                        // cleanup preview blob URL if present
+                        try {
+                            if (this.addonFormFields && this.addonFormFields._image_preview && this.addonFormFields._image_preview.startsWith('blob:')) {
+                                URL.revokeObjectURL(this.addonFormFields._image_preview);
+                            }
+                        } catch (e) {}
+                        if (this.addonFormFields) this.addonFormFields._image_preview = '';
                         const key = String(data.service_addon?.service_type_id || this.serviceTypeId || '0');
                         if (!this.serviceAddons[key]) this.serviceAddons[key] = [];
                         const updated = data.service_addon || data;
@@ -1547,6 +1603,7 @@ createApp({
                         if (index !== -1) this.serviceAddons[key].splice(index, 1, updated);
                         this.successMsg = updated && updated.name ? `Addon ${updated.name} updated successfully.` : 'Addon updated successfully.';
                         setTimeout(() => { this.successMsg = ''; }, 5000);
+                        this.resetFileInput('addon_image');
                     }
                 })
                 .catch(async err => {
@@ -1820,7 +1877,7 @@ createApp({
             this.validationErrors['manageServiceGroup'] = {};
         },
         resetNewService() {
-            this.serviceFormFields = { name: '', name_arabic: '', servicegroup_id: '', is_active: '' };
+            this.serviceFormFields = { name: '', name_arabic: '', servicegroup_id: '', image_path: '', is_active: '' };
             this.validationErrors['manageServiceType'] = {};
         },
         formatCurrency(value) {
@@ -1860,15 +1917,36 @@ createApp({
             return `${day} ${month}, ${year}`;
         },
 
-        handleImageUpload(event) {
+        handleImageUpload(event, formField) {
             if (event.target.files && event.target.files[0]) {
-                this.serviceGroupFormFields.image_path = event.target.files[0];
+                if (formField === 'serviceGroupImage') {
+                    this.serviceGroupFormFields.image_path = event.target.files[0];
+                }
+
+                if (formField === 'serviceTypeImage') {
+                    this.serviceFormFields.image_path = event.target.files[0];
+                }
+                if (formField === 'addonImage') {
+                    // revoke previous blob URL if any
+                    try {
+                        if (this.addonFormFields._image_preview && this.addonFormFields._image_preview.startsWith('blob:')) {
+                            URL.revokeObjectURL(this.addonFormFields._image_preview);
+                        }
+                    } catch (e) {
+                        // ignore
+                    }
+                    this.addonFormFields.image_path = event.target.files[0];
+                    this.addonFormFields._image_preview = URL.createObjectURL(event.target.files[0]);
+                }
             }
         },
         //for submit service group form
-        backButtonAction1() {
+        backButtonActionToList() {
             this.toggleDivs.showServiceGroupModal = false;
             this.toggleDivs.showServiceGroupView = true;
+        },
+        resetFileInput(inputFieldId) {
+            document.getElementById(inputFieldId).value = '';
         },
 
         handleEditServiceGroupBtnClick(serviceGroup) {
@@ -1975,5 +2053,10 @@ createApp({
     mounted() {
         this.getServiceTypes();
         this.getServiceGroups();
+        // attach change listener for addon image input if present
+        const addonInput = document.getElementById('addon_image');
+        if (addonInput) {
+            addonInput.addEventListener('change', (e) => this.handleImageUpload(e, 'addonImage'));
+        }
     }
 }).mount('#app');

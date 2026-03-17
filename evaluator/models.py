@@ -123,6 +123,10 @@ def service_group_image_path(instance, filename):
 	ext = filename.split('.')[-1].lower()
 	return f"service_groups/{uuid.uuid4().hex}.{ext}"
 
+def service_type_image_path(instance, filename):
+	ext = filename.split('.')[-1].lower()
+	return f"service_types/{uuid.uuid4().hex}.{ext}"
+
 class ServiceGroup(models.Model):
     service_name = models.CharField(max_length=255, blank=False, null=False)
     service_name_arabic = models.CharField(max_length=255, blank=True, null=True)
@@ -171,6 +175,11 @@ class ServiceType(models.Model):
     )
 	created         = models.DateTimeField(auto_now_add=True)
 	updated         = models.DateTimeField(auto_now=True)
+	image_path = models.ImageField(
+		upload_to=service_type_image_path,
+		blank=True,
+		null=True
+    )
 
 	def __unicode__(self):
 		return str(self.name)

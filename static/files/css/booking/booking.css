@@ -1265,3 +1265,30 @@ cursor:pointer;
 .p-2 {
     padding: .5rem!important;
 }
+.align-items-center{
+    align-items: center !important;
+}
+
+/* Multi-select chips overflow handling */
+.chips-overflow-hidden .v-select__selections {
+    max-height: 80px;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+.chips-overflow-hidden .v-select__selections::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chips-overflow-hidden .v-select__selections::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.chips-overflow-hidden .v-select__selections::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+.chips-overflow-hidden .v-select__selections::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

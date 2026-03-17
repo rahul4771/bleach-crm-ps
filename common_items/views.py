@@ -29,7 +29,7 @@ from django.db.models.functions import Cast,TruncDate,ExtractMonth,ExtractYear,C
 from django.db.models import Prefetch
 from django.contrib import messages
 
-from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
+from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule,Skills
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons,CleaningMethod,CleaningSection,ServiceType,AreaType,ServiceGroup 
 from order.models import Promocode,OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia,CancellOrderAmountHistory,XeroInvoice
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
@@ -58,9 +58,10 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response 
 from rest_framework.status import HTTP_200_OK
 
-from agent.serializers import CleaningScheduleSerializer,FollowupScheduleSerializer,UserProfileShowSerializer
+from agent.serializers import CleaningScheduleSerializer,FollowupScheduleSerializer,UserProfileShowSerializer,UserProfileResourceSerializer
 
 import pytz
+
 
 utc=pytz.UTC
 
@@ -2327,81 +2328,90 @@ class ResourceManagement(IsAuthenticated,View):
 	def get(self,request):
 		
 		#workers_date
-		workers_calendar_date	= request.GET.get('workers_calendar_date')
+		# workers_calendar_date	= request.GET.get('workers_calendar_date')
 		
-		try:
-			workers_date = datetime.strptime(workers_calendar_date,'%d-%m-%Y')
-			workers_date_start = workers_date.replace(hour=0,minute=0,second=0,microsecond=0)
-			workers_date_end   = workers_date_start + timedelta(1)
-		except:
-			workers_date = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)
-			workers_date_start = workers_date.date()
-			workers_date_end   = workers_date_start + timedelta(1)
+		# try:
+		# 	workers_date = datetime.strptime(workers_calendar_date,'%d-%m-%Y')
+		# 	workers_date_start = workers_date.replace(hour=0,minute=0,second=0,microsecond=0)
+		# 	workers_date_end   = workers_date_start + timedelta(1)
+		# except:
+		# 	workers_date = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)
+		# 	workers_date_start = workers_date.date()
+		# 	workers_date_end   = workers_date_start + timedelta(1)
 
-		#time filter
-		try:
-			starting_datetime  = datetime.strptime(str(workers_calendar_date+' '+request.GET.get('starting_time')),'%d-%m-%Y %I:%M %p')
-			ending_datetime    = datetime.strptime(str(workers_calendar_date+' '+request.GET.get('ending_time')),'%d-%m-%Y %I:%M %p')
-		except:
-			starting_datetime  = None 
-			ending_datetime    = None
+		# #time filter
+		# try:
+		# 	starting_datetime  = datetime.strptime(str(workers_calendar_date+' '+request.GET.get('starting_time')),'%d-%m-%Y %I:%M %p')
+		# 	ending_datetime    = datetime.strptime(str(workers_calendar_date+' '+request.GET.get('ending_time')),'%d-%m-%Y %I:%M %p')
+		# except:
+		# 	starting_datetime  = None 
+		# 	ending_datetime    = None
 
-		#apply time and date filter
-		if starting_datetime and ending_datetime:
-			workers            =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).prefetch_related('leave_staff').annotate(leave=Sum( Case( When( leave_staff__leave_date=workers_date,then=1),default=0,output_field=IntegerField())) ).prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end)) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter(Q( Q(is_active=True)&Q(Q(start_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end)) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details')).annotate(cleaning_contained=Sum(Case(When(Q(Q(Q(cleaning_member_user__start_at__gte=starting_datetime)&Q(cleaning_member_user__end_at__lte=ending_datetime))|Q(Q(cleaning_member_user__start_at__gte=starting_datetime)&Q(cleaning_member_user__start_at__lt=ending_datetime)&Q(cleaning_member_user__end_at__gt=ending_datetime))|Q(Q(cleaning_member_user__end_at__gt=starting_datetime)&Q(cleaning_member_user__end_at__lte=ending_datetime)&Q(cleaning_member_user__start_at__lt=starting_datetime))),then=1),default=0,output_field=IntegerField()))).filter(cleaning_contained=0)
-		else:
-			workers            =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).prefetch_related('leave_staff').annotate(leave=Sum( Case( When( leave_staff__leave_date=workers_date,then=1),default=0,output_field=IntegerField())) ).prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end)) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter(Q( Q(is_active=True)&Q(Q(start_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end)) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
+		# #apply time and date filter
+		# if starting_datetime and ending_datetime:
+		# 	workers            =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).prefetch_related('leave_staff').annotate(leave=Sum( Case( When( leave_staff__leave_date=workers_date,then=1),default=0,output_field=IntegerField())) ).prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end)) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter(Q( Q(is_active=True)&Q(Q(start_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end)) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details')).annotate(cleaning_contained=Sum(Case(When(Q(Q(Q(cleaning_member_user__start_at__gte=starting_datetime)&Q(cleaning_member_user__end_at__lte=ending_datetime))|Q(Q(cleaning_member_user__start_at__gte=starting_datetime)&Q(cleaning_member_user__start_at__lt=ending_datetime)&Q(cleaning_member_user__end_at__gt=ending_datetime))|Q(Q(cleaning_member_user__end_at__gt=starting_datetime)&Q(cleaning_member_user__end_at__lte=ending_datetime)&Q(cleaning_member_user__start_at__lt=starting_datetime))),then=1),default=0,output_field=IntegerField()))).filter(cleaning_contained=0)
+		# else:
+		# 	workers            =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).prefetch_related('leave_staff').annotate(leave=Sum( Case( When( leave_staff__leave_date=workers_date,then=1),default=0,output_field=IntegerField())) ).prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end)) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter(Q( Q(is_active=True)&Q(Q(start_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end)) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
 
 
-		#otherfilters
-		search 		   = request.GET.get('search')
-		staff_type     = request.GET.get('staff_type')
-		service_type   = request.GET.get('service_type')
+		# #otherfilters
+		# search 		   = request.GET.get('search')
+		# staff_type     = request.GET.get('staff_type')
+		# service_type   = request.GET.get('service_type')
+		# try:
+		# 	service_types = ServiceType.objects.filter(is_active=True).order_by('name')
+		# except:
+		# 	service_types = None
+
+		# selected_service_type_id = None
+		# service_type_filter = None
+		# if service_type:
+		# 	if str(service_type).startswith('is_'):
+		# 		service_type_filter = service_type
+		# 	else:
+		# 		try:
+		# 			selected_service_type_id = int(service_type)
+		# 			service_type_obj = ServiceType.objects.filter(is_active=True,id=selected_service_type_id).first()
+		# 			if service_type_obj:
+		# 				service_type_filter = service_type_obj.name
+		# 		except:
+		# 			service_type_filter = None
 		
 
-		filters=[]
-		if search: 
-		    case1 = Q(name__icontains=search)
-		    filters.append(case1)
-		if staff_type:
-			case2 = Q(user_type=staff_type)
-			filters.append(case2)
-		if service_type:
-			if service_type == 'is_general_skill':
-				case3 = Q(is_general_skill=True)
-			if service_type == 'is_deep_skill':
-				case3 = Q(is_deep_skill=True)
-			if service_type == 'is_upholstery_skill':
-				case3 = Q(is_upholstery_skill=True)
-			if service_type == 'is_carpet_skill':
-				case3 = Q(is_carpet_skill=True)
-			if service_type == 'is_kitchen_skill':
-				case3 = Q(is_kitchen_skill=True)
-			if service_type == 'is_sterilization_skill':
-				case3 = Q(is_sterilization_skill=True)
-			if service_type == 'is_carpet_skill':
-				case3 = Q(is_carpet_skill=True)
-			if service_type == 'is_mattress_skill':
-				case3 = Q(is_mattress_skill=True)
-			if service_type == 'is_facade_skill':
-				case3 = Q(is_facade_skill=True)
-			if service_type == 'is_storagearea_skill':
-				case3 = Q(is_storagearea_skill=True)
-			if service_type == 'is_carparkingumbrella_skill':
-				case3 = Q(is_carparkingumbrella_skill=True)
-			if service_type == 'is_outdoor_skill':
-				case3 = Q(is_outdoor_skill=True)
-			if service_type == 'is_window_skill':
-				case3 = Q(is_window_skill=True)
-			
-			filters.append(case3)
+		# filters=[]
+		# if search: 
+		#     case1 = Q(name__icontains=search)
+		#     filters.append(case1)
+		# if staff_type:
+		# 	case2 = Q(user_type=staff_type)
+		# 	filters.append(case2)
+		# if service_type_filter:
+		# 	service_type_map = {
+		# 		'General Cleaning': 'is_general_skill',
+		# 		'Deep Cleaning': 'is_deep_skill',
+		# 		'Upholstery Cleaning': 'is_upholstery_skill',
+		# 		'Carpet Cleaning': 'is_carpet_skill',
+		# 		'Kitchen Cleaning': 'is_kitchen_skill',
+		# 		'Sterilization': 'is_sterilization_skill',
+		# 		'Mattress Cleaning': 'is_mattress_skill',
+		# 		'Facade Cleaning': 'is_facade_skill',
+		# 		'Storage Area Cleaning': 'is_storagearea_skill',
+		# 		'Car Parking Umbrella': 'is_carparkingumbrella_skill',
+		# 		'Outdoor Cleaning': 'is_outdoor_skill',
+		# 		'Window Cleaning': 'is_window_skill',
+		# 	}
+		# 	skill_field = service_type_map.get(service_type_filter, service_type_filter)
+		# 	if str(skill_field).startswith('is_'):
+		# 		filters.append(Q(**{skill_field: True}))
 		
-		if staff_type or service_type or search: 
-		    filters         = functools.reduce(operator.and_,filters)
-		    workers 		= workers.filter(filters)			
-
-		return render(request,'common/resource/resource-new.html',{"workers":workers,"workers_date":workers_date,"service_type":service_type,"staff_type":staff_type,"search":search})
-
+		# if filters:
+		# 	combined_filters = Q()
+		# 	for f in filters:
+		# 		combined_filters &= f
+		# 	workers = workers.filter(combined_filters)
+				
+		# return render(request,'common/resource/resource-new.html',{"workers":workers,"workers_date":workers_date,"service_type":service_type,"staff_type":staff_type,"search":search,"service_types":service_types,"selected_service_type_id":selected_service_type_id})
+		return render(request,'common/resource/resource-new.html')
 	def post(self,request):
 		
 		response_dict = {}
@@ -6389,6 +6399,10 @@ def add_service_type(request):
 		service_group_id = request.POST.get('new_service_group_id')
 		is_active =  True if request.POST.get('new_service_is_active') == 'active' else False
 
+		image_path = None
+		if request.FILES.get('image_path'):
+			image_path = request.FILES.get('image_path')
+
 		# Backend validation for duplicate names
 		if ServiceType.objects.filter(name__iexact=service_name).exists():
 			return JsonResponse({'success': False, 'error_field': 'new_service_name', 'error_message': 'Service name already exists.'})
@@ -6398,20 +6412,46 @@ def add_service_type(request):
 		service_group = ServiceGroup.objects.filter(id=service_group_id).first()
 		if not service_group:
 			return JsonResponse({'success': False, 'error_field': 'new_service_group_id', 'error_message': 'Invalid service group.'})
+
+		if not image_path:
+			return JsonResponse({"success": False, "error_field": "image_path", "error_message": "Image path is required."}, status=400)
+
+		if image_path:
+			allowed_ext = {'.jpg', '.jpeg', '.png', '.gif'}
+			ext = os.path.splitext(image_path.name)[1].lower()
+			if ext not in allowed_ext:
+				return JsonResponse({"success": False, "error_field": "image_path", "error_message": "Unsupported file type. Allowed types: jpg, jpeg, png, gif."}, status=400)
+
+			max_size = 2 * 1024 * 1024 
+			if image_path.size > max_size:
+				return JsonResponse({"success": False, "error_field": "image_path", "error_message": "File size exceeds 2MB limit."}, status=400)
+				
 		
 		try:
 			service_type = ServiceType.objects.create(
 				name=service_name,
 				name_arabic=service_name_arabic,
 				service_group=service_group,
+				image_path = image_path,
 				is_active=is_active
 			)
+
+			service_type = ServiceType.objects.filter(id=service_type.id).first()
+
+			image_url = None
+			if getattr(service_type, "image_path", None):
+				try:
+					image_url = service_type.image_path.url
+				except Exception:
+					image_url = str(service_type.image_path)
+
 			st_obj = {
 				"id": service_type.id,
 				"name": service_type.name,
 				"name_arabic": service_type.name_arabic,
 				"service_group_id": service_type.service_group.id,
-				"updated_at": service_type.updated_at,
+				"image_path": image_url,
+				"updated": getattr(service_type, 'updated', None),
 				"is_active": service_type.is_active
 			}
 			return JsonResponse({'success': True, 'service_type': st_obj})
@@ -6419,6 +6459,14 @@ def add_service_type(request):
 			return JsonResponse({'success': False, 'error': str(e)})
 
 class ServiceTypeAPIView(APIView):
+	def get(self, request, *args, **kwargs):
+		try:
+			service_types = ServiceType.objects.filter(is_active=True).values('id', 'name', 'name_arabic').order_by('name')
+			service_types_list = list(service_types)
+			return JsonResponse({"success": True, "service_types": service_types_list})
+		except Exception as e:
+			return JsonResponse({"success": False, "error": str(e)}, status=400)
+
 	def put(self, request, *args, **kwargs):
 
 		data = getattr(request, "data", None) or request.data or {}
@@ -6462,14 +6510,44 @@ class ServiceTypeAPIView(APIView):
 			service_type.name_arabic = name_arabic
 			service_type.service_group= ServiceGroup.objects.get(id=service_group_id)
 			service_type.is_active = is_active
+
+		image_path = None
+		image_path = request.FILES.get('image_path')
+
+		if image_path:
+			allowed_ext = {'.jpg', '.jpeg', '.png', '.gif'}
+			ext = os.path.splitext(image_path.name)[1].lower()
+			if ext not in allowed_ext:
+				return JsonResponse({"success": False, "error_field": "image_path", "error_message": "Unsupported file type. Allowed types: jpg, jpeg, png, gif."}, status=400)
+
+			max_size = 2 * 1024 * 1024 
+			if image_path.size > max_size:
+				return JsonResponse({"success": False, "error_field": "image_path", "error_message": "File size exceeds 2MB limit."}, status=400)
+				
+		
+		if image_path:
+			image_path = request.FILES.get('image_path')
+			try:
+				old_file = getattr(ServiceType.objects.get(id=service_type_id), 'image_path')
+				if old_file:
+					old_path = getattr(old_file, 'path', None) or str(old_file)
+					if os.path.isfile(old_path):
+						os.remove(old_path)
+			except Exception:
+				pass
+			service_type.image_path = image_path
 		
 		service_type.save()
+
+		updated_at = ServiceType.objects.filter(id=service_type.id).values_list("updated", flat=True).first()
 		
 		st_obj = {
 			"id": service_type.id,
 			"name": service_type.name,
 			"name_arabic": service_type.name_arabic,
 			"service_group_id": service_type.service_group.id,
+			# "image_path": service_type.image_path,
+			"updated": updated_at.isoformat() if updated_at else None,
 			"is_active": service_type.is_active,
 		}
 
@@ -6499,6 +6577,10 @@ class ServiceTypeAPIView(APIView):
 		}
 
 		return JsonResponse({"success": True, "message": "Service type deactivated successfully.", "service_type": st_obj})
+
+		#get service type
+	
+			
 
 class ServiceProductivityAPIView(APIView):
 	
@@ -6871,6 +6953,9 @@ class ServiceAddOnsAPIView(APIView):
 		price = (data.get("price")).strip()
 		productivity = (data.get("productivity")).strip()
 		is_active =  data.get("is_active") or 1
+		image_path = None
+		if request.FILES.get('image_path'):
+			image_path = request.FILES.get('image_path')
 
 		if not name:
 			return JsonResponse({"success": False, "error_field": "name", "error_message": "Name is required."}, status=400)
@@ -6909,29 +6994,58 @@ class ServiceAddOnsAPIView(APIView):
 		if productivity_val < 0:
 			return JsonResponse({"success": False, "error_field": "productivity", "error_message": "Productivity must be non-negative."}, status=400)
         
-		# Create the service addon
-		service_addon = ServiceAddOns.objects.create(
-			service_type=service_type,
-			name=name,
-			category=category,
-			size=size,
-			price=price,
-			productivity=productivity,
-			is_active=is_active
-		)
-		sa_obj = service_addon
-		sa_data= {
-			"id": sa_obj.id,
-			"service_type_id": sa_obj.service_type_id,
-			"name": sa_obj.name,
-			"category": sa_obj.category,
-			"size": sa_obj.size,
-			"price": float(sa_obj.price) if sa_obj.price is not None else None,
-			"productivity": float(sa_obj.productivity) if sa_obj.productivity is not None else None,
-			"is_active": bool(sa_obj.is_active)
-		}
+		if not image_path:
+			return JsonResponse({"success": False, "error_field": "image_path", "error_message": "Image path is required."}, status=400)
 
-		return JsonResponse({"success": True, "service_addon": sa_data}, status=201)
+		if image_path:
+			allowed_ext = {'.jpg', '.jpeg', '.png', '.gif'}
+			ext = os.path.splitext(image_path.name)[1].lower()
+			if ext not in allowed_ext:
+				return JsonResponse({"success": False, "error_field": "image_path", "error_message": "Unsupported file type. Allowed types: jpg, jpeg, png, gif."}, status=400)
+
+			max_size = 2 * 1024 * 1024 
+			if image_path.size > max_size:
+				return JsonResponse({"success": False, "error_field": "image_path", "error_message": "File size exceeds 2MB limit."}, status=400)
+				
+
+		# Create the service addon
+		try:
+			service_addon = ServiceAddOns.objects.create(
+				service_type=service_type,
+				name=name,
+				category=category,
+				size=size,
+				price=price,
+				productivity=productivity,
+				is_active=is_active,
+				image_path=image_path
+			)
+
+			sa_obj = ServiceAddOns.objects.filter(id=service_addon.id).first()
+
+			image_url = None
+			if getattr(sa_obj, "image_path", None):
+				try:
+					image_url = sa_obj.image_path.url
+				except Exception:
+					image_url = str(sa_obj.image_path)
+
+			sa_data= {
+				"id": sa_obj.id,
+				"service_type_id": sa_obj.service_type_id,
+				"name": sa_obj.name,
+				"category": sa_obj.category,
+				"size": sa_obj.size,
+				"image_path": image_url,
+				"price": float(sa_obj.price) if sa_obj.price is not None else None,
+				"productivity": float(sa_obj.productivity) if sa_obj.productivity is not None else None,
+				"is_active": bool(sa_obj.is_active)
+
+			}
+			return JsonResponse({"success": True, "service_addon": sa_data}, status=201)
+		except Exception as e:
+			return JsonResponse({"success": False, "error": str(e)}, status=500)
+
 
 	def put(self, request, *args, **kwargs):
 		data = getattr(request, "data", None) or request.data or {}
@@ -6990,27 +7104,61 @@ class ServiceAddOnsAPIView(APIView):
 			if not service_type:
 				return JsonResponse({"success": False, "error_field": "service_type", "error_message": "Invalid service type."}, status=400)
 
-		sa = ServiceAddOns.objects.filter(id=addon_id)
-		if not sa.exists():
+		image_path = None
+		image_path = request.FILES.get('image_path')
+
+		if image_path:
+			allowed_ext = {'.jpg', '.jpeg', '.png', '.gif'}
+			ext = os.path.splitext(image_path.name)[1].lower()
+			if ext not in allowed_ext:
+				return JsonResponse({"success": False, "error_field": "image_path", "error_message": "Unsupported file type. Allowed types: jpg, jpeg, png, gif."}, status=400)
+
+			max_size = 2 * 1024 * 1024 
+			if image_path.size > max_size:
+				return JsonResponse({"success": False, "error_field": "image_path", "error_message": "File size exceeds 2MB limit."}, status=400)
+			
+
+		try:
+			sa_obj = ServiceAddOns.objects.get(id=addon_id)
+		except ServiceAddOns.DoesNotExist:
 			return JsonResponse({"success": False, "error": "Service addon not found"}, status=404)
+
+
+		if image_path:
+			try:
+				old_file = sa_obj.image_path
+				if old_file:
+					old_path = getattr(old_file, 'path', None) or str(old_file)
+					if os.path.isfile(old_path):
+						os.remove(old_path)
+			except Exception:
+				pass
+			sa_obj.image_path = image_path
 		
 		try:
-			sa.update(
-				service_type=service_type,
-				name=name,
-				category=category,
-				size=size,
-				price=price,
-				productivity=productivity,
-				is_active=is_active
-			)
-			sa_obj = sa.first()
+			sa_obj.service_type = service_type
+			sa_obj.name = name
+			sa_obj.category = category
+			sa_obj.size = size
+			sa_obj.price = price
+			sa_obj.productivity = productivity
+			sa_obj.is_active = is_active
+			sa_obj.save()
+
+			image_url = None
+			if getattr(sa_obj, "image_path", None):
+				try:
+					image_url = sa_obj.image_path.url
+				except Exception:
+					image_url = str(sa_obj.image_path)
+					
 			sa_data = {
 				"id": sa_obj.id,
 				"service_type_id": sa_obj.service_type_id,
 				"name": sa_obj.name,
 				"category": sa_obj.category,
 				"size": sa_obj.size,
+				"image_path": image_url,
 				"price": float(sa_obj.price) if sa_obj.price is not None else None,
 				"productivity": float(sa_obj.productivity) if sa_obj.productivity is not None else None,
 				"is_active": bool(sa_obj.is_active)
@@ -7056,7 +7204,7 @@ class StagingProductivity(IsAuthenticated,View):
 
 class ProductivityServiceTypeAPIView(APIView):
 	def get(self, request):
-		service_types = list(ServiceType.objects.values('id','name','name_arabic','service_group_id', 'is_active','updated'))
+		service_types = list(ServiceType.objects.values('id','name','name_arabic','service_group_id', 'is_active','updated','image_path'))
 
 		service_productivities = []
 		for p in ServiceProductivity.objects.select_related('service_type').all():
@@ -7077,7 +7225,7 @@ class ProductivityServiceTypeAPIView(APIView):
 			})
 		
 		service_addons = list(ServiceAddOns.objects.values(
-			'id', 'service_type_id', 'name', 'category', 'size', 'price', 'productivity', 'is_active'
+			'id', 'service_type_id', 'name', 'category', 'size', 'price', 'productivity', 'is_active', 'image_path'
 		))
 
 		service_price_ranges = list(ServicePriceRange.objects.values(
@@ -7271,7 +7419,7 @@ class ServiceGroupAPIView(APIView):
             sg = ServiceGroup.objects.create(
                 service_name=service_name,
                 service_name_arabic=service_name_arabic,
-				            image_path=image_path,
+				image_path=image_path,
                 status=is_active,
             )
 
@@ -7405,3 +7553,198 @@ class ServiceGroupAPIView(APIView):
 class StagingBooking(IsAuthenticated,View):
 	def get(self,request,evaluation_detail_id):
 		return render(request,"booking/staging-booking.html")
+
+class StagingBookingAPIView(APIView):
+	def get(self, request):
+		
+		service_groups = list(ServiceGroup.objects.values('id','service_name','service_name_arabic', 'image_path', 'updated_at','status'))
+		service_types = list(ServiceType.objects.values('id','name','name_arabic','service_group_id', 'image_path', 'is_active','updated'))
+		return JsonResponse({"service_groups": service_groups, "service_types": service_types, "MEDIA_URL": settings.MEDIA_URL}, status=200)
+
+    
+class SaveEmployeeSkillsAPIView(APIView):
+	def post(self, request, *args, **kwargs):
+		try:
+			# Use request.data for APIView (DRF handles parsing)
+			employee_id = request.data.get('employee_id')
+			service_type_ids = request.data.get('service_type_ids', [])
+
+			# Validate employee_id
+			if not employee_id:
+				return JsonResponse({
+					"success": False, 
+					"error": "Employee ID is required"
+				}, status=400)
+
+			employee = UserProfile.objects.get(id=employee_id)
+
+			# Get count of existing skills before deactivation (for tracking deactivated items)
+			existing_skills_count = Skills.objects.filter(employee=employee).count()
+
+			# 1️⃣ Mark all existing skills as INACTIVE
+			deactivate_result = Skills.objects.filter(employee=employee).update(status='INACTIVE')
+			deactivated_count = deactivate_result  # Count of records updated to INACTIVE
+
+			# 2️⃣ Activate or create selected skills
+			created_count = 0
+			updated_count = 0
+			
+			if service_type_ids and len(service_type_ids) > 0:
+				for st_id in service_type_ids:
+					try:
+						service_type = ServiceType.objects.get(id=st_id)
+						skill, created = Skills.objects.get_or_create(
+							employee=employee,
+							service_type=service_type,
+							defaults={'status': 'ACTIVE'}
+						)
+						if created:
+							created_count += 1
+						else:
+							skill.status = 'ACTIVE'
+							skill.save()
+							updated_count += 1
+					except ServiceType.DoesNotExist:
+						return JsonResponse({
+							"success": False, 
+							"error": f"Service type with ID {st_id} not found"
+						}, status=400)
+
+			# Calculate how many were actually deactivated (not reactivated)
+			final_deactivated_count = deactivated_count - updated_count
+
+			return JsonResponse({
+				"success": True,
+				 "message": f"✅ Skills updated! Added: {created_count}, Reactivated: {updated_count}, Deactivated: {final_deactivated_count}",
+				"details": {
+					"created": created_count,
+					"reactivated": updated_count,
+					"deactivated": final_deactivated_count,
+					"total_active": created_count + updated_count,
+					"employee_name": employee.name
+				}
+			})
+					
+		except UserProfile.DoesNotExist:
+			return JsonResponse({
+				"success": False, 
+				"error": f"❌ Employee not found"
+			}, status=400)
+		except Exception as e:
+			return JsonResponse({
+				"success": False, 
+				"error": f"❌ Error saving skills: {str(e)}"
+			}, status=400)
+
+class EmployeeSkillsAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        employee_id = request.GET.get('employee_id')
+
+        skills = Skills.objects.filter(
+            employee_id=employee_id,
+            status='ACTIVE'
+        ).select_related('service_type')
+
+        data = [
+            {
+                "id": skill.service_type.id,
+                "name": skill.service_type.name
+            }
+            for skill in skills
+        ]
+
+        return JsonResponse({"success": True, "skills": data})
+	
+class ResourceManagementAPIView(APIView):
+	def get(self,request):
+		
+		#workers_date
+		workers_calendar_date	= request.GET.get('workers_calendar_date')
+		
+		try:
+			workers_date = datetime.strptime(workers_calendar_date,'%d-%m-%Y')
+			workers_date_start = workers_date.replace(hour=0,minute=0,second=0,microsecond=0)
+			workers_date_end   = workers_date_start + timedelta(1)
+		except:
+			workers_date = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)
+			workers_date_start = workers_date.date()
+			workers_date_end   = workers_date_start + timedelta(1)
+
+		#time filter
+		try:
+			starting_datetime  = datetime.strptime(str(workers_calendar_date+' '+request.GET.get('starting_time')),'%d-%m-%Y %I:%M %p')
+			ending_datetime    = datetime.strptime(str(workers_calendar_date+' '+request.GET.get('ending_time')),'%d-%m-%Y %I:%M %p')
+		except:
+			starting_datetime  = None 
+			ending_datetime    = None
+
+		#apply time and date filter
+		if starting_datetime and ending_datetime:
+			workers            =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).prefetch_related('leave_staff').annotate(leave=Sum( Case( When( leave_staff__leave_date=workers_date,then=1),default=0,output_field=IntegerField())) ).prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end)) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter(Q( Q(is_active=True)&Q(Q(start_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end)) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details')).annotate(cleaning_contained=Sum(Case(When(Q(Q(Q(cleaning_member_user__start_at__gte=starting_datetime)&Q(cleaning_member_user__end_at__lte=ending_datetime))|Q(Q(cleaning_member_user__start_at__gte=starting_datetime)&Q(cleaning_member_user__start_at__lt=ending_datetime)&Q(cleaning_member_user__end_at__gt=ending_datetime))|Q(Q(cleaning_member_user__end_at__gt=starting_datetime)&Q(cleaning_member_user__end_at__lte=ending_datetime)&Q(cleaning_member_user__start_at__lt=starting_datetime))),then=1),default=0,output_field=IntegerField()))).filter(cleaning_contained=0)
+		else:
+			workers            =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).prefetch_related('leave_staff').annotate(leave=Sum( Case( When( leave_staff__leave_date=workers_date,then=1),default=0,output_field=IntegerField())) ).prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end)) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter(Q( Q(is_active=True)&Q(Q(start_at__gte=workers_date_start)&Q(end_at__lte=workers_date_end)) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
+
+
+		#otherfilters
+		search 		   = request.GET.get('search')
+		staff_type     = request.GET.get('staff_type')
+		service_type   = request.GET.get('service_type')
+		try:
+			service_types = ServiceType.objects.filter(is_active=True).order_by('name')
+		except:
+			service_types = None
+
+		selected_service_type_id = None
+		service_type_filter = None
+		if service_type:
+			if str(service_type).startswith('is_'):
+				service_type_filter = service_type
+			else:
+				try:
+					selected_service_type_id = int(service_type)
+					service_type_obj = ServiceType.objects.filter(is_active=True,id=selected_service_type_id).first()
+					if service_type_obj:
+						service_type_filter = service_type_obj.name
+				except:
+					service_type_filter = None
+		
+
+		filters=[]
+		if search: 
+			case1 = Q(name__icontains=search)
+			filters.append(case1)
+		if staff_type:
+			case2 = Q(user_type=staff_type)
+			filters.append(case2)
+		if service_type_filter:
+			service_type_map = {
+				'General Cleaning': 'is_general_skill',
+				'Deep Cleaning': 'is_deep_skill',
+				'Upholstery Cleaning': 'is_upholstery_skill',
+				'Carpet Cleaning': 'is_carpet_skill',
+				'Kitchen Cleaning': 'is_kitchen_skill',
+				'Sterilization': 'is_sterilization_skill',
+				'Mattress Cleaning': 'is_mattress_skill',
+				'Facade Cleaning': 'is_facade_skill',
+				'Storage Area Cleaning': 'is_storagearea_skill',
+				'Car Parking Umbrella': 'is_carparkingumbrella_skill',
+				'Outdoor Cleaning': 'is_outdoor_skill',
+				'Window Cleaning': 'is_window_skill',
+			}
+			skill_field = service_type_map.get(service_type_filter, service_type_filter)
+			if str(skill_field).startswith('is_'):
+				filters.append(Q(**{skill_field: True}))
+		
+		if filters:
+			combined_filters = Q()
+			for f in filters:
+				combined_filters &= f
+			workers = workers.filter(combined_filters)
+
+
+		# Serialize QuerySets to JSON-compatible format
+		workers_serialized = UserProfileResourceSerializer(workers, many=True).data
+		service_types_list = list(service_types.values('id', 'name')) if service_types else []
+
+		return JsonResponse({"workers":workers_serialized,"workers_date":str(workers_date),"service_type":service_type,"staff_type":staff_type,"search":search,"service_types":service_types_list,"selected_service_type_id":selected_service_type_id})		
+

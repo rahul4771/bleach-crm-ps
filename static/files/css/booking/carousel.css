@@ -1,0 +1,113 @@
+/* Owl Carousel Styling for Category and Service Type Sections */
+
+#category-carousel,
+#service-carousel {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative;
+    padding: 0 60px;
+    margin: 20px 0;
+}
+
+/* Hide owl nav buttons by default - JS will show if needed */
+#category-carousel .owl-nav,
+#service-carousel .owl-nav {
+    display: none !important;
+}
+
+/* Category carousel arrow styling */
+#category-carousel.owl-loaded .owl-nav {
+    display: flex !important;
+    justify-content: space-between;
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+#category-carousel .owl-prev,
+#category-carousel .owl-next {
+    position: absolute;
+    top: 50% !important;
+    transform: translateY(-50%);
+    display: block !important;
+    border: none;
+    height: 35px !important;
+    width: 35px !important;
+    background: #2f4e8596 !important;
+    color: #fff !important;
+    border-radius: 50% !important;
+    cursor: pointer;
+    pointer-events: all;
+    z-index: 10;
+    transition: background 0.3s ease;
+}
+
+#category-carousel .owl-prev:hover,
+#category-carousel .owl-next:hover {
+    background: #2f4e85 !important;
+}
+
+#category-carousel .owl-prev {
+    left: -50px !important;
+}
+
+#category-carousel .owl-next {
+    right: -50px !important;
+}
+
+#category-carousel .owl-prev i,
+#category-carousel .owl-next i {
+    color: #fff;
+    font-size: 14px;
+}
+
+/* Service carousel arrow styling */
+#service-carousel.owl-loaded .owl-nav {
+    display: flex !important;
+    justify-content: space-between;
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+#service-carousel .owl-prev,
+#service-carousel .owl-next {
+    position: absolute;
+    top: 50% !important;
+    transform: translateY(-50%);
+    display: block !important;
+    border: none;
+    height: 35px !important;
+    width: 35px !important;
+    background: #2f4e8596 !important;
+    color: #fff !important;
+    border-radius: 50% !important;
+    cursor: pointer;
+    pointer-events: all;
+    z-index: 10;
+    transition: background 0.3s ease;
+}
+
+#service-carousel .owl-prev:hover,
+#service-carousel .owl-next:hover {
+    background: #2f4e85 !important;
+}
+
+#service-carousel .owl-prev {
+    left: -50px !important;
+}
+
+#service-carousel .owl-next {
+    right: -50px !important;
+}
+
+#service-carousel .owl-prev i,
+#service-carousel .owl-next i {
+    color: #fff;
+    font-size: 14px;
+}

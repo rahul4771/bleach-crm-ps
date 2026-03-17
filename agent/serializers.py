@@ -18,6 +18,70 @@ class UserProfileShowSerializer(serializers.ModelSerializer):
 		model  = UserProfile
 		fields = ('id','name','gender','email','mobile_number','profile_image')	
 
+class UserProfileResourceSerializer(serializers.ModelSerializer):
+	cleaning_member_details = serializers.SerializerMethodField()
+	followup_member_details = serializers.SerializerMethodField()
+	leave = serializers.SerializerMethodField()
+
+	class Meta:
+		model = UserProfile
+		fields = [
+            'id', 'name', 'gender', 'email', 'mobile_number', 'profile_image',
+            'user_type', 'is_active', 'leave', 'cleaning_member_details', 
+            'followup_member_details'
+        ]
+
+	def get_leave(self, obj):
+		return getattr(obj, 'leave', 0)
+
+	def get_cleaning_member_details(self, obj):
+		if hasattr(obj, 'cleaning_member_details'):
+				return CleaningTeamMemberSerializer(
+					obj.cleaning_member_details,
+					many=True
+				).data	 
+		return []
+
+	def get_followup_member_details(self, obj):
+		if hasattr(obj, 'followup_member_details'):
+				return FollowUpTeamMemberShowSerializer(
+					obj.followup_member_details,
+					many=True
+				).data
+		return []
+
+
+class CleaningTeamMemberSerializer(serializers.ModelSerializer):
+	member = UserProfileShowSerializer(read_only=True)
+	start_at_date = serializers.SerializerMethodField()
+	end_at_date = serializers.SerializerMethodField()
+	start_at_hour = serializers.SerializerMethodField()
+	end_at_hour = serializers.SerializerMethodField()
+	cleaning_policy = serializers.SerializerMethodField()
+
+	class Meta:
+		model = CleaningTeamMember
+		fields= ('member','is_backup_cleaner','start_at_date','end_at_date','start_at_hour','end_at_hour','cleaning_policy')
+
+	def get_start_at_date(self, obj):
+		return obj.start_at.date().strftime("%d-%m-%Y") if obj.start_at else None
+
+	def get_end_at_date(self, obj):
+		return obj.end_at.date().strftime("%d-%m-%Y") if obj.end_at else None
+
+	def get_start_at_hour(self, obj):
+		return obj.start_at.hour if obj.start_at else None
+	
+	def get_end_at_hour(self, obj):
+		return obj.end_at.hour if obj.end_at else None
+	
+	def get_cleaning_policy(self, obj):
+		try:
+			return obj.team.order_scheduler.order_scheduler_book.cleaning_policy
+		except:
+			return 'UNKNOWN'	
+	
+
 class CleaningTeamMemberShowSerializer(serializers.ModelSerializer):
 	member = UserProfileShowSerializer(read_only=True)
 	class Meta:

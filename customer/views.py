@@ -3202,8 +3202,11 @@ class GetServiceSizePrice(APIView):
 			elif service_price_range.service_type.name == 'Facade Cleaning':
 				service_price_range_dict['is_highprice_facade'] = service_price_range.is_highprice_facade 
 			elif service_price_range.service_type.name == 'Kitchen Cleaning':
-				service_price_range_dict['is_newkitchen']       = service_price_range.is_newkitchen
-				service_price_range_dict['is_cabinet']          = service_price_range.is_cabinet
+				# service_price_range_dict['is_newkitchen']       = service_price_range.is_newkitchen
+				# service_price_range_dict['is_cabinet']          = service_price_range.is_cabinet
+				service_productivity = ServiceProductivity.objects.get(id=service_price_range.service_productivity_id)
+				service_price_range_dict['kitchen_type'] = service_productivity.name
+
 			elif service_price_range.service_type.name == 'Rope Access':
 				service_productivity = ServiceProductivity.objects.get(id=service_price_range.service_productivity_id)
 				service_price_range_dict['rope_access_type'] = service_productivity.name
@@ -3326,10 +3329,8 @@ class GetServiceAddOns(APIView):
 
 		service_addons       = ServiceAddOns.objects.select_related('service_type').filter(service_type__name=service_type)
 
-		print(service_addons)
 		response_dict['service_addons'] = ServiceAddOnsSerializer(instance=service_addons,many=True).data
 		response_dict['success']        = True
-
 		return Response(response_dict,HTTP_200_OK)
 
 
@@ -10058,3 +10059,100 @@ class UserEmailView(APIView):
 				},
 				status=500
 			)
+class GetStagingServiceProductivity(APIView):  
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request):
+		service_productivity = {}
+		service_type         = request.GET.get('service_type')
+
+		if service_type         == 'Upholstery Cleaning':
+			serviceproductivities = ServiceProductivity.objects.select_related('service_type').filter(service_type__name=service_type)
+			for serviceproductivity in serviceproductivities:
+				if serviceproductivity.upholstery_type == 'SOFA':
+					service_productivity['sofa_perhour_cleaning']     = serviceproductivity.perhour_cleaning
+				elif serviceproductivity.upholstery_type == 'CURTAIN':
+					service_productivity['curtain_perhour_cleaning']  = serviceproductivity.perhour_cleaning
+				else:
+					service_productivity['chair_perhour_cleaning']    = serviceproductivity.perhour_cleaning
+				service_productivity['max_hours'] 		 = serviceproductivity.max_hours
+				service_productivity['min_hours'] 		 = serviceproductivity.min_hours
+				service_productivity['min_cleaners']     = serviceproductivity.min_cleaners
+				service_productivity['max_cleaners']     = serviceproductivity.max_cleaners
+
+		
+		elif service_type         == 'Window Cleaning':
+			serviceproductivities = ServiceProductivity.objects.select_related('service_type').filter(service_type__name=service_type)
+			for serviceproductivity in serviceproductivities:
+				if serviceproductivity.is_highprice_window:
+					service_productivity['highpricewindow_perhour_cleaning'] = serviceproductivity.perhour_cleaning
+				else:
+					service_productivity['lowpricewindow_perhour_cleaning']  = serviceproductivity.perhour_cleaning
+				service_productivity['max_hours'] 		 = serviceproductivity.max_hours
+				service_productivity['min_hours'] 		 = serviceproductivity.min_hours
+				service_productivity['min_cleaners']     = serviceproductivity.min_cleaners
+				service_productivity['max_cleaners']     = serviceproductivity.max_cleaners
+				service_productivity['perhour_cleaning'] = serviceproductivity.perhour_cleaning
+		
+		elif service_type         == 'Facade Cleaning':
+			serviceproductivities = ServiceProductivity.objects.select_related('service_type').filter(service_type__name=service_type)
+			for serviceproductivity in serviceproductivities:
+				if serviceproductivity.is_highprice_facade:
+					service_productivity['highpricefacade_perhour_cleaning'] = serviceproductivity.perhour_cleaning
+				else:
+					service_productivity['lowpricefacade_perhour_cleaning']  = serviceproductivity.perhour_cleaning
+				service_productivity['max_hours'] 		 = serviceproductivity.max_hours
+				service_productivity['min_hours'] 		 = serviceproductivity.min_hours
+				service_productivity['min_cleaners']     = serviceproductivity.min_cleaners
+				service_productivity['max_cleaners']     = serviceproductivity.max_cleaners
+				service_productivity['perhour_cleaning'] = serviceproductivity.perhour_cleaning
+		
+		elif service_type         == 'Kitchen Cleaning':
+			serviceproductivities = ServiceProductivity.objects.select_related('service_type').filter(service_type__name=service_type)
+			for serviceproductivity in serviceproductivities:
+				if serviceproductivity.is_newkitchen and not serviceproductivity.is_cabinet:
+					service_productivity['newkitchenwithout_perhour_cleaning'] = serviceproductivity.perhour_cleaning
+				elif not serviceproductivity.is_newkitchen and not serviceproductivity.is_cabinet:
+					service_productivity['oldkitchenwithoutcabinet_perhour_cleaning'] = serviceproductivity.perhour_cleaning
+				elif serviceproductivity.is_newkitchen and serviceproductivity.is_cabinet:
+					service_productivity['newkitchenwithcabinet_perhour_cleaning'] = serviceproductivity.perhour_cleaning
+				elif not serviceproductivity.is_newkitchen and serviceproductivity.is_cabinet:
+					service_productivity['oldkitchenwithcabinet_perhour_cleaning'] = serviceproductivity.perhour_cleaning	
+				
+				service_productivity['max_hours'] 		 = serviceproductivity.max_hours
+				service_productivity['min_hours'] 		 = serviceproductivity.min_hours
+				service_productivity['min_cleaners']     = serviceproductivity.min_cleaners
+				service_productivity['max_cleaners']     = serviceproductivity.max_cleaners
+				service_productivity['perhour_cleaning']     = serviceproductivity.perhour_cleaning
+
+		elif service_type         == 'Kitchen Appliances':
+			serviceproductivities = ServiceProductivity.objects.select_related('service_type').filter(service_type__name=service_type)
+			for serviceproductivity in serviceproductivities:
+				service_productivity['max_hours'] 		 = serviceproductivity.max_hours
+				service_productivity['min_hours'] 		 = serviceproductivity.min_hours
+				service_productivity['min_cleaners']     = serviceproductivity.min_cleaners
+				service_productivity['max_cleaners']     = serviceproductivity.max_cleaners
+				service_productivity['perhour_cleaning']     = serviceproductivity.perhour_cleaning
+
+
+		elif service_type         == 'Rope Access':
+			serviceproductivities = ServiceProductivity.objects.select_related('service_type').filter(service_type__name=service_type)
+			for serviceproductivity in serviceproductivities:
+				if serviceproductivity.name not in service_productivity:
+					service_productivity[serviceproductivity.name] = {}
+					
+				service_productivity[serviceproductivity.name]['perhour_cleaning']	= serviceproductivity.perhour_cleaning
+				service_productivity[serviceproductivity.name]['max_hours']			= serviceproductivity.max_hours
+				service_productivity[serviceproductivity.name]['min_hours']			= serviceproductivity.min_hours
+				service_productivity[serviceproductivity.name]['min_cleaners']      = serviceproductivity.min_cleaners
+				service_productivity[serviceproductivity.name]['max_cleaners']      = serviceproductivity.max_cleaners
+		else:
+			serviceproductivity = ServiceProductivity.objects.select_related('service_type').get(service_type__name=service_type)
+			service_productivity['perhour_cleaning'] = serviceproductivity.perhour_cleaning
+			service_productivity['max_hours'] 		 = serviceproductivity.max_hours
+			service_productivity['min_hours'] 		 = serviceproductivity.min_hours
+			service_productivity['min_cleaners']     = serviceproductivity.min_cleaners
+			service_productivity['max_cleaners']     = serviceproductivity.max_cleaners
+
+		return JsonResponse(service_productivity)
