@@ -80,8 +80,12 @@
         {% elif detail.status == 'CANCELLED' %}
           <span >{{detail.evaluation_cancel_reason|default_if_none:''}}</span>
         {% else %}
+        <div>
           <a href="{% url 'common_items:booking' detail.id %}?enquiry_id={{detail.evaluation.customer.id}}&evaluation_id={{detail.evaluation.id}}"><div><input name="view" type="button" value="Check-in" class="checkonButton"></div></a>
-        
+        </div>
+         <div style="margin-top: 10px;">
+          <a href="{% url 'common_items:v1-booking' detail.id %}?enquiry_id={{detail.evaluation.customer.id}}&evaluation_id={{detail.evaluation.id}}"><div><input name="view" type="button" value="Check-in V1" class="checkonButton"></div></a>
+        </div>
           {% if detail.evaluator == request.user %}
             <div><input type="button" value="Cancel" class="cancel-Button cancelevaluation" style="background-color:red;color:white;" data-evaluationdetail="{{detail.id}}"></div>
           {% elif detail.evaluator == None and detail.evaluation.call_attender == request.user %}
