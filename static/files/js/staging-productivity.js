@@ -143,6 +143,9 @@ createApp({
             this.viewServiceType = {
                 title: '',
             };
+            this.viewServiceGroup = {
+                title: '',
+            };
             this.resetServiceGroup();
             const form = document.getElementById('manage-service-group-form');
             if (form) {
