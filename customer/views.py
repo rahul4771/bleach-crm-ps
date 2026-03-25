@@ -3202,8 +3202,8 @@ class GetServiceSizePrice(APIView):
 			elif service_price_range.service_type.name == 'Facade Cleaning':
 				service_price_range_dict['is_highprice_facade'] = service_price_range.is_highprice_facade 
 			elif service_price_range.service_type.name == 'Kitchen Cleaning':
-				# service_price_range_dict['is_newkitchen']       = service_price_range.is_newkitchen
-				# service_price_range_dict['is_cabinet']          = service_price_range.is_cabinet
+				service_price_range_dict['is_newkitchen']       = service_price_range.is_newkitchen
+				service_price_range_dict['is_cabinet']          = service_price_range.is_cabinet
 				service_productivity = ServiceProductivity.objects.get(id=service_price_range.service_productivity_id)
 				service_price_range_dict['kitchen_type'] = service_productivity.name
 
