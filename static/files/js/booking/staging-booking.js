@@ -430,6 +430,7 @@ const app = new Vue({
         facadeSize: [],
         windowSize: [],
         ropeAccessSize: [],
+        hourlyCleaningSize: [],
         durationData: {},
         billSample: {
             name: '',
@@ -595,6 +596,7 @@ const app = new Vue({
         hourly_slots: true,
         current_service: '',
         ropeAccessTypes: '',
+        hourlyCleaningTypes: '',
         kitchenTypes: '',
         kitchenSize: '',
 
@@ -3817,6 +3819,7 @@ const app = new Vue({
                 }
             }
             if (schedule_services.length === 0) return; // No services to fetch slots for, exit early
+            if(!this.selectedDuration.cleaners) return; // No cleaner count selected, exit early
 
             fetch(this.url + "/customer/ajax/getmultipleservicecleaningslotes", {
                 method: 'POST',
@@ -3892,9 +3895,9 @@ const app = new Vue({
         },
         getSize(serviceType = null) {
             let service = serviceType || this.serviceType
-            if (service == 'Hourly Cleaning') {
-                service = 'General Cleaning'
-            }
+            // if (service == 'Hourly Cleaning') {
+            //     service = 'General Cleaning'
+            // }
             fetch(this.url + "/customer/ajax/getservicesizeprice?service_type=" + service)
                 .then(response => {
                     if (!response.ok) {
@@ -3919,6 +3922,11 @@ const app = new Vue({
                     if (this.serviceType == 'Rope Access') {
                         this.ropeAccessTypes = [...new Set(this.sizeData.map(size => size.rope_access_type))];
                         this.ropeAccessFilter();
+                        return;
+                    }
+                    if (this.serviceType == 'Hourly Cleaning') {
+                        this.hourlyCleaningTypes = [...new Set(this.sizeData.map(size => size.hourly_cleaning_type))];
+                        this.hourlyCleaningFilter();
                         return;
                     }
                     this.facadeFilter();
@@ -4102,6 +4110,15 @@ const app = new Vue({
         kitchenTypeFilter() {
             const kitchenType = this.otherService.type || this.kitchenData.type || this.kitchenTypes[0];
             this.sizeFilteredData = this.sizeData.filter(size => size.kitchen_type === kitchenType);
+            this.otherService.size = {}
+        },
+        hourlyCleaningFilter(index = null, floor = null) {
+            if (index !== null && floor !== null && this.building[index] && this.building[index].floors[floor]) {
+                selectedType = this.building[index].floors[floor].hourly_cleaning_type || this.hourlyCleaningTypes[0];
+            } else {
+                selectedType = this.hourlyCleaningTypes[0];
+            }
+            this.hourlyCleaningSize = this.sizeData.filter(size => size.hourly_cleaning_type === selectedType);
             this.otherService.size = {}
         },
         editItem(a, b) {
@@ -5501,12 +5518,13 @@ const app = new Vue({
                 // if (this.schedule_serviceTypes[k] == 'Kitchen Appliances') {
                 //     service_to_select = 'Kitchen Cleaning'
                 // }
-                if (this.schedule_serviceTypes[k] == 'Hourly Cleaning') {
-                    service_to_select = 'General Cleaning'
-                }
-                else {
-                    service_to_select = this.schedule_serviceTypes[k]
-                }
+                // if (this.schedule_serviceTypes[k] == 'Hourly Cleaning') {
+                //     service_to_select = 'General Cleaning'
+                // }
+                // else {
+                //     service_to_select = this.schedule_serviceTypes[k]
+                // }
+                service_to_select = this.schedule_serviceTypes[k]
 
                 fetch(`${this.url}/customer/ajax/getstagingserviceproductivity?service_type=${service_to_select}`)
                     .then(response => response.json())

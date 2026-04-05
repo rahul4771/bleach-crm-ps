@@ -1402,6 +1402,18 @@
                                             </v-radio-group>
                                           </div>
                                         </div>
+                                        <div class="row">
+                                          <div clas="col-md-6 text-center" v-if="serviceType == 'Hourly Cleaning'">
+                                            <v-radio-group row class="p-4"
+                                              v-model="building[index - 1].floors[floor - 1].hourly_cleaning_type"
+                                              @change="hourlyCleaningFilter(index - 1, floor - 1)"
+                                              :rules="[v => !!v || 'Hourly Cleaning Type is required']" required>
+                                              <div>Select Hourly Cleaning Type <span style="color:red">*</span></div>
+                                              <v-radio v-for="(type, typeIndex) in hourlyCleaningTypes" :key="type"
+                                                :label="type" :value="type"></v-radio>
+                                            </v-radio-group>
+                                          </div>
+                                        </div>
                                       </div>
                                       <div class="p-2" v-if="!building[index - 1].floors[floor - 1].apartment">
 
