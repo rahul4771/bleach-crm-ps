@@ -2432,13 +2432,14 @@
               </div>
             </div>
             <div class="row" v-if="buildingsCompleted">
-              <div class="col-md-12">
+              <v-form ref="notesForm1" v-model="validNotes" lazy-validation class="col-md-12">
                 <v-textarea name="input-7-1" label="Notes" v-model="evaluator_note"
-                  hint="Do you any other projects or contracts on same location ?  Please mention if you have any specific request.">
+                  hint="Do you any other projects or contracts on same location ?  Please mention if you have any specific request."
+                  :rules="[v => !!v || 'Notes is required']" required>
                 </v-textarea>
-              </div>
+              </v-form>
               <div class="col-3 offset-5">
-                <v-btn depressed color="primary" class="mx-auto" @click="handleGoToCart()">
+                <v-btn depressed color="primary" class="mx-auto" @click="validateAndProceed('notesForm1')">
                   Proceed
                 </v-btn>
               </div>
@@ -2493,13 +2494,14 @@
                     serviceType == 'Rope Access' ||
                     serviceType == 'Outdoor Cleaning') &&
                   otherServices.length > 0">
-            <div class="col-md-12">
+            <v-form ref="notesForm2" v-model="validNotes" lazy-validation class="col-md-12">
               <v-textarea name="input-7-1" label="Notes" v-model="evaluator_note"
-                hint="Do you any other projects or contracts on same location ?  Please mention if you have any specific request.">
+                hint="Do you any other projects or contracts on same location ?  Please mention if you have any specific request."
+                :rules="[v => !!v || 'Notes is required']" required>
               </v-textarea>
-            </div>
+            </v-form>
             <div class="col-3 offset-5">
-              <v-btn depressed color="primary" class="mx-auto" @click="handleGoToCart()">
+              <v-btn depressed color="primary" class="mx-auto" @click="validateAndProceed('notesForm2')">
                 Proceed
               </v-btn>
             </div>
