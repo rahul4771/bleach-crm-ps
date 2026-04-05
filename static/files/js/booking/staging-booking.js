@@ -213,7 +213,7 @@ const app = new Vue({
         validApartment: true,
         validKitchen: true,
         validKitchenDialog: true,
-
+        validNotes: true,
         validOtherService: true,
         validOtherServiceDialog: true,
         hallway_check: false,
@@ -3398,6 +3398,33 @@ const app = new Vue({
                 this.no_of_floors = [];
                 this.no_of_apartments = [];
                 this.buildingsCompleted = false
+                // Reset otherService object when switching service types to ensure clean form state
+                this.otherService = {
+                    material: "",
+                    color: "",
+                    size: null,
+                    keynote_data: [],
+                    type: "",
+                    age: "",
+                    stain: false,
+                    stain_reason: "",
+                    wall_type: "",
+                    floor_type: "",
+                    ceiling_type: "",
+                    residue: false,
+                    hallway_size: "",
+                    sides: "",
+                    stain_age: "",
+                    height: "",
+                    is_cabinet: false,
+                    addons: [],
+                    section_net_cost: null,
+                    section_cost: null
+                };
+                // Reset form validation state for inline form if it exists
+                if (this.$refs.otherServiceForm) {
+                    this.$refs.otherServiceForm.resetValidation();
+                }
                 this.getSize();
                 // Watcher on serviceType will call getAddons() automatically
 
@@ -4335,7 +4362,7 @@ const app = new Vue({
                 this.otherService = {
                     material: "",
                     color: "",
-                    size: "",
+                    size: null,
                     type: "",
                     is_cabinet: false,
                     age: "",
@@ -4427,7 +4454,7 @@ const app = new Vue({
                 this.otherService = {
                     material: "",
                     color: "",
-                    size: "",
+                    size: null,
                     type: "",
                     age: "",
                     stain: false,
@@ -4647,6 +4674,14 @@ const app = new Vue({
                 this.billingData[b].section_cost = 0
                 this.billingData[b].sectiononly_net_cost = 0
                 this.billingData[b].sectiononly_cost = 0
+            }
+        },
+        /**
+         * Validates the notes form before proceeding to cart
+         */
+        validateAndProceed(formRef) {
+            if (this.$refs[formRef] && this.$refs[formRef].validate()) {
+                this.handleGoToCart()
             }
         },
         /**
