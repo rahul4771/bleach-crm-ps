@@ -5248,8 +5248,16 @@ const app = new Vue({
 
         },
         nextApartment(building, floor, apartment) {
-            //this.$refs.apartmentForm[0].validate()
-            if (this.$refs['building-' + building + 'floor-' + floor + 'apartment-' + apartment][0].validate()) {
+            const refName = `building-${building}-floor-${floor}-apartment-${apartment}`;
+            const refElement = this.$refs[refName];
+
+            // Check if ref exists before accessing [0].validate()
+            if (!refElement || !refElement[0]) {
+                console.warn(`Form of '${refName}' not found or not ready`);
+                return;
+            }
+
+            if (refElement[0].validate()) {
 
 
                 this.building[building].floors[floor].apartments[apartment].section_cost = 0
