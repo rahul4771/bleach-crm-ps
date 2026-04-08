@@ -192,7 +192,8 @@
                 <div class="mt-4" v-if="!isSlotsSelected()" v-text="`Select Day ${currentSlotDay}`">
                 </div>
                 <div class="mt-4" v-if="!isSlotsSelected()">
-                  Please Select <span v-text="`${getRequiredSlots()} slot(s)`"></span>
+                  <span v-if="otherService.type == 'Old Kitchen (with cabinet)' || otherService.type == 'New Kitchen (with Cabinet)'"  v-text="`Please Select 1 slot(s)`"></span>
+                  <span v-else v-text="`Please Select ${getRequiredSlots()} slot(s)`"></span>
                 </div>
                 <div class="row mt-2" style="margin:0 !important">
                   <div v-for="(slot,sindex) in parsedTimeSlots" :key="sindex"
