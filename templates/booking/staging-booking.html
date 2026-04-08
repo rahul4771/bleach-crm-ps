@@ -192,7 +192,7 @@
                 <div class="mt-4" v-if="!isSlotsSelected()" v-text="`Select Day ${currentSlotDay}`">
                 </div>
                 <div class="mt-4" v-if="!isSlotsSelected()">
-                  <span v-if="otherService.type == 'Old Kitchen (with cabinet)' || otherService.type == 'New Kitchen (with Cabinet)'"  v-text="`Please Select 1 slot(s)`"></span>
+                  <span v-if="otherService.type == 'Old Kitchen (with cabinet)' || otherService.type == 'New Kitchen (with Cabinet)' || otherService.type == 'Old Kitchen' || otherService.type == 'New Kitchen'"  v-text="`Please Select 1 slot(s)`"></span>
                   <span v-else v-text="`Please Select ${getRequiredSlots()} slot(s)`"></span>
                 </div>
                 <div class="row mt-2" style="margin:0 !important">
@@ -812,7 +812,7 @@
 
         <v-dialog v-model="kitchendialog" width="500">
           <v-card>
-            <v-form :ref="' KitchenForm-building-'+currentBuilding+'floor'-currentFloor" v-model="validKitchenDialog"
+            <v-form :ref="'KitchenForm-building-'+currentBuilding+'floor'-currentFloor" v-model="validKitchenDialog"
               lazy-validation>
               <v-card-title class="headline primary text-white">
                 Add Kitchen
