@@ -3210,6 +3210,9 @@ class GetServiceSizePrice(APIView):
 			elif service_price_range.service_type.name == 'Rope Access':
 				service_productivity = ServiceProductivity.objects.get(id=service_price_range.service_productivity_id)
 				service_price_range_dict['rope_access_type'] = service_productivity.name
+			elif service_price_range.service_type.name == 'Hourly Cleaning':
+				service_productivity = ServiceProductivity.objects.get(id=service_price_range.service_productivity_id)
+				service_price_range_dict['hourly_cleaning_type'] = service_productivity.name
 			response_dict[counter] = service_price_range_dict
 
 			counter += 1
@@ -10137,6 +10140,17 @@ class GetStagingServiceProductivity(APIView):
 
 
 		elif service_type         == 'Rope Access':
+			serviceproductivities = ServiceProductivity.objects.select_related('service_type').filter(service_type__name=service_type)
+			for serviceproductivity in serviceproductivities:
+				if serviceproductivity.name not in service_productivity:
+					service_productivity[serviceproductivity.name] = {}
+					
+				service_productivity[serviceproductivity.name]['perhour_cleaning']	= serviceproductivity.perhour_cleaning
+				service_productivity[serviceproductivity.name]['max_hours']			= serviceproductivity.max_hours
+				service_productivity[serviceproductivity.name]['min_hours']			= serviceproductivity.min_hours
+				service_productivity[serviceproductivity.name]['min_cleaners']      = serviceproductivity.min_cleaners
+				service_productivity[serviceproductivity.name]['max_cleaners']      = serviceproductivity.max_cleaners
+		elif service_type         == 'Hourly Cleaning':
 			serviceproductivities = ServiceProductivity.objects.select_related('service_type').filter(service_type__name=service_type)
 			for serviceproductivity in serviceproductivities:
 				if serviceproductivity.name not in service_productivity:

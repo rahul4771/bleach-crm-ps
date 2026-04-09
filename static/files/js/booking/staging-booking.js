@@ -213,7 +213,7 @@ const app = new Vue({
         validApartment: true,
         validKitchen: true,
         validKitchenDialog: true,
-
+        validNotes: true,
         validOtherService: true,
         validOtherServiceDialog: true,
         hallway_check: false,
@@ -430,6 +430,7 @@ const app = new Vue({
         facadeSize: [],
         windowSize: [],
         ropeAccessSize: [],
+        hourlyCleaningSize: [],
         durationData: {},
         billSample: {
             name: '',
@@ -595,6 +596,7 @@ const app = new Vue({
         hourly_slots: true,
         current_service: '',
         ropeAccessTypes: '',
+        hourlyCleaningTypes: '',
         kitchenTypes: '',
         kitchenSize: '',
 
@@ -3396,6 +3398,33 @@ const app = new Vue({
                 this.no_of_floors = [];
                 this.no_of_apartments = [];
                 this.buildingsCompleted = false
+                // Reset otherService object when switching service types to ensure clean form state
+                this.otherService = {
+                    material: "",
+                    color: "",
+                    size: null,
+                    keynote_data: [],
+                    type: "",
+                    age: "",
+                    stain: false,
+                    stain_reason: "",
+                    wall_type: "",
+                    floor_type: "",
+                    ceiling_type: "",
+                    residue: false,
+                    hallway_size: "",
+                    sides: "",
+                    stain_age: "",
+                    height: "",
+                    is_cabinet: false,
+                    addons: [],
+                    section_net_cost: null,
+                    section_cost: null
+                };
+                // Reset form validation state for inline form if it exists
+                if (this.$refs.otherServiceForm) {
+                    this.$refs.otherServiceForm.resetValidation();
+                }
                 this.getSize();
                 // Watcher on serviceType will call getAddons() automatically
 
@@ -3817,6 +3846,7 @@ const app = new Vue({
                 }
             }
             if (schedule_services.length === 0) return; // No services to fetch slots for, exit early
+            if(!this.selectedDuration.cleaners) return; // No cleaner count selected, exit early
 
             fetch(this.url + "/customer/ajax/getmultipleservicecleaningslotes", {
                 method: 'POST',
@@ -3892,9 +3922,9 @@ const app = new Vue({
         },
         getSize(serviceType = null) {
             let service = serviceType || this.serviceType
-            if (service == 'Hourly Cleaning') {
-                service = 'General Cleaning'
-            }
+            // if (service == 'Hourly Cleaning') {
+            //     service = 'General Cleaning'
+            // }
             fetch(this.url + "/customer/ajax/getservicesizeprice?service_type=" + service)
                 .then(response => {
                     if (!response.ok) {
@@ -3919,6 +3949,11 @@ const app = new Vue({
                     if (this.serviceType == 'Rope Access') {
                         this.ropeAccessTypes = [...new Set(this.sizeData.map(size => size.rope_access_type))];
                         this.ropeAccessFilter();
+                        return;
+                    }
+                    if (this.serviceType == 'Hourly Cleaning') {
+                        this.hourlyCleaningTypes = [...new Set(this.sizeData.map(size => size.hourly_cleaning_type))];
+                        this.hourlyCleaningFilter();
                         return;
                     }
                     this.facadeFilter();
@@ -4102,6 +4137,15 @@ const app = new Vue({
         kitchenTypeFilter() {
             const kitchenType = this.otherService.type || this.kitchenData.type || this.kitchenTypes[0];
             this.sizeFilteredData = this.sizeData.filter(size => size.kitchen_type === kitchenType);
+            this.otherService.size = {}
+        },
+        hourlyCleaningFilter(index = null, floor = null) {
+            if (index !== null && floor !== null && this.building[index] && this.building[index].floors[floor]) {
+                selectedType = this.building[index].floors[floor].hourly_cleaning_type || this.hourlyCleaningTypes[0];
+            } else {
+                selectedType = this.hourlyCleaningTypes[0];
+            }
+            this.hourlyCleaningSize = this.sizeData.filter(size => size.hourly_cleaning_type === selectedType);
             this.otherService.size = {}
         },
         editItem(a, b) {
@@ -4318,7 +4362,7 @@ const app = new Vue({
                 this.otherService = {
                     material: "",
                     color: "",
-                    size: "",
+                    size: null,
                     type: "",
                     is_cabinet: false,
                     age: "",
@@ -4410,7 +4454,7 @@ const app = new Vue({
                 this.otherService = {
                     material: "",
                     color: "",
-                    size: "",
+                    size: null,
                     type: "",
                     age: "",
                     stain: false,
@@ -4630,6 +4674,14 @@ const app = new Vue({
                 this.billingData[b].section_cost = 0
                 this.billingData[b].sectiononly_net_cost = 0
                 this.billingData[b].sectiononly_cost = 0
+            }
+        },
+        /**
+         * Validates the notes form before proceeding to cart
+         */
+        validateAndProceed(formRef) {
+            if (this.$refs[formRef] && this.$refs[formRef].validate()) {
+                this.handleGoToCart()
             }
         },
         /**
@@ -5196,8 +5248,16 @@ const app = new Vue({
 
         },
         nextApartment(building, floor, apartment) {
-            //this.$refs.apartmentForm[0].validate()
-            if (this.$refs['building-' + building + 'floor-' + floor + 'apartment-' + apartment][0].validate()) {
+            const refName = `building-${building}-floor-${floor}-apartment-${apartment}`;
+            const refElement = this.$refs[refName];
+
+            // Check if ref exists before accessing [0].validate()
+            if (!refElement || !refElement[0]) {
+                console.warn(`Form of '${refName}' not found or not ready`);
+                return;
+            }
+
+            if (refElement[0].validate()) {
 
 
                 this.building[building].floors[floor].apartments[apartment].section_cost = 0
@@ -5501,12 +5561,13 @@ const app = new Vue({
                 // if (this.schedule_serviceTypes[k] == 'Kitchen Appliances') {
                 //     service_to_select = 'Kitchen Cleaning'
                 // }
-                if (this.schedule_serviceTypes[k] == 'Hourly Cleaning') {
-                    service_to_select = 'General Cleaning'
-                }
-                else {
-                    service_to_select = this.schedule_serviceTypes[k]
-                }
+                // if (this.schedule_serviceTypes[k] == 'Hourly Cleaning') {
+                //     service_to_select = 'General Cleaning'
+                // }
+                // else {
+                //     service_to_select = this.schedule_serviceTypes[k]
+                // }
+                service_to_select = this.schedule_serviceTypes[k]
 
                 fetch(`${this.url}/customer/ajax/getstagingserviceproductivity?service_type=${service_to_select}`)
                     .then(response => response.json())
